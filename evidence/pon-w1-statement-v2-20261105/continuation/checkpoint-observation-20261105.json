@@ -1,0 +1,208 @@
+{
+  "schema": "trnm-w1-v2-interrupted-live-observation-v1",
+  "created_utc": "2026-11-05 03:30:11 UTC",
+  "evidence_scope": "Reconstructed solely from tool outputs already observed before executor disconnection. This is not a recovered raw log, receipt, manifest, or complete prover result.",
+  "run_state_after_disconnect": "UNKNOWN",
+  "complete_proof_observed": false,
+  "complete_proof_claim": false,
+  "end_to_end_observation_complete": false,
+  "new_receipt_controls_58_status": "NOT_RUN",
+  "production_activation": false,
+  "qrom_budget_status": "HOLD",
+  "source_scope": {
+    "runner_compile_time_checkout": "/workspace/scratch/79360d3567d1/chain",
+    "runner_observed_source_commit": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+    "runner_observed_source_tree": "b02426da27aea65182e6e1240ed07b517780f025",
+    "observer_checkout": "/workspace/scratch/f4976366a32a/chain",
+    "observer_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "latest_source_rebuild_claim": false,
+    "retained_source_raw_check": {
+      "exit_code": 0,
+      "tracked_entries": 9136,
+      "tracked_bytes": 948569416,
+      "wall_seconds": 2.992970774999776,
+      "stdout_sha256": "d14ae02514c5e1e0879432d6100fdcb871cb4b0efe27454ff886655743d247ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local_dependency_projection": {
+      "old": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+      "new": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "tracked_inputs_each": 120,
+      "tracked_input_bytes_old": 3060085,
+      "changed_paths": [],
+      "package_paths": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier",
+        "formal/pon-nakamoto-v1/w1_v2_verifier",
+        "formal/pon-nakamoto-v1/w1_zkvm/host-v2",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods-v2",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2",
+        "formal/pon-nakamoto-v1/w1_zkvm/relation",
+        "trillionnium/crates/trnm-crypto-primitives",
+        "trillionnium/crates/trnm-protocol"
+      ],
+      "additional_inputs": [
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+        "formal/pon-nakamoto-v1/w1_zkvm/host/src",
+        "trillionnium/Cargo.toml",
+        "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+        "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+        "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+        "scripts/w1_v2_receipt_controls.py"
+      ],
+      "method": "Recursively resolve every manifest path dependency from host-v2, guest-v2 and verifier, including target/build/dev path declarations; compare tracked local package contents, external bin sources, parent workspace manifests and tracked locks with git ls-tree at both commits.",
+      "full_per_path_blob_map_status": "Written to tmpfs before disconnect; full 120-entry map was not printed or retained in tool memory and is not reconstructed here.",
+      "scope_limit": "Lock equality constrains selected external dependency versions and checksums, not installed crate bytes, toolchain integrity or reproducible builds."
+    }
+  },
+  "bindings": [
+    {
+      "path": "/workspace/scratch/79360d3567d1/validated-bin/w1-staged-prover-v2",
+      "bytes": 44926256,
+      "sha256": "00f082a35de398d4d2ba59d26f213d8f72eacbd5e7103545d1c113bd9dd53f51"
+    },
+    {
+      "path": "/workspace/scratch/79360d3567d1/validated-bin/w1-verify-v2",
+      "bytes": 18851240,
+      "sha256": "574f604838be7f9dd9b8edeb68e77349534917d256506b388d8b70959a880e9d"
+    },
+    {
+      "path": "/workspace/scratch/79360d3567d1/validated-bin/trnm-w1-full-guest-v2.bin",
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    {
+      "path": "/workspace/scratch/79360d3567d1/risc0/bin/r0vm",
+      "bytes": 108764424,
+      "sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6"
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    }
+  ],
+  "launch": {
+    "command": [
+      "python3",
+      "/workspace/scratch/f4976366a32a/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "--runner",
+      "/workspace/scratch/79360d3567d1/validated-bin/w1-staged-prover-v2",
+      "--r0vm",
+      "/workspace/scratch/79360d3567d1/risc0/bin/r0vm",
+      "--fresh-verifier",
+      "/workspace/scratch/79360d3567d1/validated-bin/w1-verify-v2",
+      "--statement-version",
+      "2",
+      "--prepare-input",
+      "/workspace/scratch/f4976366a32a/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+      "--expected-artifacts",
+      "/workspace/scratch/f4976366a32a/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+      "--checkpoint",
+      "/dev/shm/work-proofs-ffb43113-822cc50e/full-v2-checkpoint",
+      "--out",
+      "/dev/shm/work-proofs-ffb43113-822cc50e/full-v2-run",
+      "--total-wall-seconds",
+      "7200",
+      "--local-bytes-per-second",
+      "1000000"
+    ],
+    "cwd": "/workspace/scratch/f4976366a32a/chain",
+    "rayon_threads": 8,
+    "coordinator_pid_in_original_tool_namespace": 6,
+    "exec_session_id": 51435,
+    "limits": {
+      "total_wall_seconds": 7200,
+      "prepare_wall_seconds": 180,
+      "per_new_segment_wall_seconds": 300,
+      "free_disk_floor_bytes": 1073741824,
+      "checkpoint_disk_cap_bytes": 268435456
+    },
+    "checkpoint_path": "/dev/shm/work-proofs-ffb43113-822cc50e/full-v2-checkpoint",
+    "observation_path": "/dev/shm/work-proofs-ffb43113-822cc50e/full-v2-run"
+  },
+  "observed_stages": [
+    {
+      "stage": "prepare-full-execution",
+      "exit_code": 0,
+      "wall_seconds": 2.9692383849996986,
+      "complete_process_observed": true,
+      "user_cpu_seconds": 1.276654,
+      "system_cpu_seconds": 0.8123929999999999,
+      "max_single_process_rss_bytes": 111407104,
+      "aggregate_process_tree_peak_rss_bytes": null,
+      "started_unix_ns": "1793849104432816575",
+      "finished_unix_ns": "1793849107402035771",
+      "stdout_sha256": "7497c2a36000087190983b1012023d8390fafd31ae38a33bce729a3965fe2d45",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "segments_exported": 43
+    },
+    {
+      "stage": "reverify-existing-prefix",
+      "exit_code": 0,
+      "wall_seconds": 3.5604481830014265,
+      "complete_process_observed": true,
+      "user_cpu_seconds": 1.071036,
+      "system_cpu_seconds": 1.194091,
+      "max_single_process_rss_bytes": 111476736,
+      "aggregate_process_tree_peak_rss_bytes": null,
+      "started_unix_ns": "1793849107442140001",
+      "finished_unix_ns": "1793849111002567053",
+      "stdout_sha256": "9d445eb27dc3a759be88d1f1b85dd6bb777c1eb29b8bee5b00cf9ae553fcf0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "verified_prefix": 0
+    },
+    {
+      "stage": "prove-0000",
+      "exit_code": 0,
+      "wall_seconds": 67.74533939399953,
+      "user_cpu_seconds": 479.517998,
+      "max_single_process_rss_bytes": 2463023104,
+      "aggregate_process_tree_peak_rss_bytes": null,
+      "termination_reasons": [],
+      "prover_ns": "66253813323",
+      "verifier_ns": "20780506",
+      "receipt_bytes": 255842,
+      "receipt_sha256": "fc345ae764514321bef9056d34aed65ec9d201076f49819318ebdcada411645b",
+      "observed_event": "REAL_SEGMENT_STARK_SAVED_VERIFIED",
+      "verified_prefix": 1,
+      "total_segments": 43,
+      "cryptographic_proof_complete": false
+    },
+    {
+      "stage": "prove-0001",
+      "last_observed_status": "STARTED",
+      "remaining_total_seconds_at_start": 7125.397245944001,
+      "disk_free_bytes_at_start": 1137545216,
+      "checkpoint_files_at_start": 51,
+      "checkpoint_allocated_bytes_at_start": 3055616,
+      "checkpoint_logical_bytes_at_start": 2956348,
+      "outcome": "UNKNOWN_AFTER_EXECUTOR_DISCONNECT"
+    }
+  ],
+  "last_observed_resource_snapshot": {
+    "tmpfs_available_bytes": 1137491968,
+    "memory_current_bytes": 8587997184,
+    "memory_max_bytes": 8589934592,
+    "oom_events": 13,
+    "oom_kill_events": 4,
+    "new_oom_kill_since_preflight": 0,
+    "cpu_quota": "800000 100000"
+  },
+  "interruption": {
+    "new_exec_error": "Failed to create unified exec process: exec-server rejected request (-32603): No such file or directory (os error 2)",
+    "session_recovery_error": "exec-server transport disconnected; failed to resume exec-server session: exec-server protocol error: executor key changed during session recovery",
+    "termination_confirmed": false,
+    "checkpoint_deleted_or_lost_confirmed": false,
+    "original_raw_log_bytes_recovered": false,
+    "actual_segment_receipt_bytes_recovered": false,
+    "attempt_restarted": false,
+    "budget_changed": false,
+    "priority_on_recovery": "Inspect original attempt/checkpoint/result and retain original costs and failures; do not overwrite or restart under a reset deadline."
+  }
+}

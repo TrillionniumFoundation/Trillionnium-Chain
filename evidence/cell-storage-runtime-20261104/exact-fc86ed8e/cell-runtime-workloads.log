@@ -1,0 +1,1771 @@
+{
+  "architecture": "x86_64",
+  "configuration": {
+    "cache_max_chunk_rows": 4096,
+    "cache_max_database_bytes": 33554432,
+    "cache_max_logical_bytes": 16777216,
+    "cache_max_manifest_rows": 256,
+    "chunk_bytes": 16384,
+    "dense_target_seed": "200 + version",
+    "fetch_operation_timeout_ms": 15000,
+    "fixture_generator": "SHA256(domain || seed:u64le || block:u64le)",
+    "maximum_reconstruction_depth": 1,
+    "original_base_seed": 0,
+    "payload_bytes": 262144,
+    "per_fetch_max_connections": 64,
+    "per_fetch_max_response_bytes": 528384,
+    "per_fetch_parallelism": 2,
+    "ready_timeout_ms": 15000,
+    "serve_operation_timeout_ms": 120000,
+    "sparse_replacement_seed": "100 + version",
+    "version_zero_base_for_every_delta": true,
+    "versions_per_group_including_original_base": 9
+  },
+  "groups": [
+    {
+      "cache_comparison": {
+        "closed_file_lengths_minus_full_copy_payload_bytes": -2027520,
+        "logical_cache_minus_full_copy_payload_bytes": -2095781,
+        "unique_payload_saving_bytes": 2097152
+      },
+      "comparisons_complete": true,
+      "errors": [],
+      "full_copy_payload_baseline_bytes": 2359296,
+      "origin_cache": {
+        "closed_cache_file_length_sum_bytes": 331776,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 299008
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 0
+          }
+        },
+        "key_logical_bytes": 544,
+        "manifest_rows": 1,
+        "manifest_wire_bytes": 827,
+        "total_logical_bytes": 263515,
+        "unique_chunk_rows": 16,
+        "unique_payload_bytes": 262144
+      },
+      "provider_final": {
+        "accepted_connections": 0,
+        "completed_requests": 0,
+        "overloaded_connections": 0,
+        "peak_active_workers": 0,
+        "sent_response_bytes": 0
+      },
+      "provider_ready": {
+        "channel_handoff": true,
+        "probe_connections": 0
+      },
+      "receiver_cache": {
+        "closed_cache_file_length_sum_bytes": 331776,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 299008
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 0
+          }
+        },
+        "key_logical_bytes": 544,
+        "manifest_rows": 1,
+        "manifest_wire_bytes": 827,
+        "total_logical_bytes": 263515,
+        "unique_chunk_rows": 16,
+        "unique_payload_bytes": 262144
+      },
+      "status": "passed",
+      "versions": [
+        {
+          "actual_transport": null,
+          "kind": "initial-base-local-pack",
+          "payload_bytes": 262144,
+          "payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 0,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "version": 0
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 1
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 2
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 3
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 4
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 5
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 6
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 7
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 263515,
+            "manifest_rows": 1
+          },
+          "delta_id": "bcd553b6ae80366f127609cca57e5224c14c478ba5c9e18863643ffb5759df84",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "target_payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "version": 8
+        }
+      ],
+      "workload": "identical"
+    },
+    {
+      "cache_comparison": {
+        "closed_file_lengths_minus_full_copy_payload_bytes": -1863456,
+        "logical_cache_minus_full_copy_payload_bytes": -1957581,
+        "unique_payload_saving_bytes": 1966080
+      },
+      "comparisons_complete": true,
+      "errors": [],
+      "full_copy_payload_baseline_bytes": 2359296,
+      "origin_cache": {
+        "closed_cache_file_length_sum_bytes": 495768,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 442368
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 20632
+          }
+        },
+        "key_logical_bytes": 1056,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 401715,
+        "unique_chunk_rows": 24,
+        "unique_payload_bytes": 393216
+      },
+      "provider_final": {
+        "accepted_connections": 8,
+        "completed_requests": 8,
+        "overloaded_connections": 0,
+        "peak_active_workers": 1,
+        "sent_response_bytes": 131144
+      },
+      "provider_ready": {
+        "channel_handoff": true,
+        "probe_connections": 0
+      },
+      "receiver_cache": {
+        "closed_cache_file_length_sum_bytes": 495840,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 430080
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 32992
+          }
+        },
+        "key_logical_bytes": 1056,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 401715,
+        "unique_chunk_rows": 24,
+        "unique_payload_bytes": 393216
+      },
+      "status": "passed",
+      "versions": [
+        {
+          "actual_transport": null,
+          "kind": "initial-base-local-pack",
+          "payload_bytes": 262144,
+          "payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 0,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "version": 0
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 17,
+            "logical_bytes": 280790,
+            "manifest_rows": 2
+          },
+          "delta_id": "4f10666fecf83e571d20a1ad01fc94d314e32b672eef2b22e334e9391d470ba2",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "dd6f1fe7b061277c2f9c02dbac8539adc515f542e344f04155835cdc1ec5e78c",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "66cd50a98607df67e3e9423776f5bd2f82eaef677cef7be8c278a0cbd40eeb7e",
+          "target_payload_sha256": "dd6f1fe7b061277c2f9c02dbac8539adc515f542e344f04155835cdc1ec5e78c",
+          "version": 1
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 18,
+            "logical_bytes": 298065,
+            "manifest_rows": 3
+          },
+          "delta_id": "88bed9e97e4153018b089cbf82e092a530fa0e3527070735c9175fb8ca3a22ca",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "7f413f510ab6ea48ec1343df5a25e8c7dc84cd199fc619edbe0ff61f7b175e06",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "28d5934230aa73bfc6ca70beecb890413bbb2398978f9dbc8c897158c891457d",
+          "target_payload_sha256": "7f413f510ab6ea48ec1343df5a25e8c7dc84cd199fc619edbe0ff61f7b175e06",
+          "version": 2
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 19,
+            "logical_bytes": 315340,
+            "manifest_rows": 4
+          },
+          "delta_id": "081e9e2c1fd21fc7e896911bf8dad4d1edefdfe6d14ecbad470465da84ca718f",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "7bd74107ed12ab46dcb48aca7e2c1e22dce6afcf82b6909b6122dfc68f1ac3e0",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "d7859824cf142c3ebaba383ba16eb0669f8319794ed6212f655b91f58abaaabb",
+          "target_payload_sha256": "7bd74107ed12ab46dcb48aca7e2c1e22dce6afcf82b6909b6122dfc68f1ac3e0",
+          "version": 3
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 20,
+            "logical_bytes": 332615,
+            "manifest_rows": 5
+          },
+          "delta_id": "e95bc522a44e17a6ba142ede29f74fb2dbce0f93ff300c5e65014d97cb47dde4",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "435d0bee0ed9d4b9d00765a235e9a9ef9253b72620cc07215cb5a3ddd70d6cdd",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "2346f18969ac8555256c1bbe1c79efd3872ebf2adb52d1a9b1174e1a9e84c357",
+          "target_payload_sha256": "435d0bee0ed9d4b9d00765a235e9a9ef9253b72620cc07215cb5a3ddd70d6cdd",
+          "version": 4
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 21,
+            "logical_bytes": 349890,
+            "manifest_rows": 6
+          },
+          "delta_id": "bea55a5973cc4183f523c906001e20ccb15ac8f3d8dc69968507201ff019f4bc",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "e2310f38ee0867ccb95eb4c28c5d6719fd54426f61dda5cf4772f20794aa5369",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "c82d50a137ad273b9d2a13effe5d37f73a930fcc6737da53ad6b076a3250372a",
+          "target_payload_sha256": "e2310f38ee0867ccb95eb4c28c5d6719fd54426f61dda5cf4772f20794aa5369",
+          "version": 5
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 22,
+            "logical_bytes": 367165,
+            "manifest_rows": 7
+          },
+          "delta_id": "2423c3420ce51103c18811bf13ffca9cdbaee2fa9da408dabd3fbe323390ec97",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "a9409c2f5b0b8a7d293bb99dbf4f2fcd6c10d0f81e4939f41627691795b5125a",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "06801f9bcf1d9e7be7c5522572979c3b819c7877d5b9042d854ca3215ea06f29",
+          "target_payload_sha256": "a9409c2f5b0b8a7d293bb99dbf4f2fcd6c10d0f81e4939f41627691795b5125a",
+          "version": 6
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 23,
+            "logical_bytes": 384440,
+            "manifest_rows": 8
+          },
+          "delta_id": "db8cf4f3124e278f03350a4b7addc26226538c3b4a9398e8c9c092ef8a29e401",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "2475966ae45769d483693d93cf93a96967ef44105974f2e1649ce5710194949d",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9b3587ae818677b642bc85f4e413b7325ef16c5f1e9747d9a40ba5d79f6fd9b1",
+          "target_payload_sha256": "2475966ae45769d483693d93cf93a96967ef44105974f2e1649ce5710194949d",
+          "version": 7
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 15,
+            "connection_attempts": 1,
+            "downloaded_chunk_positions": 1,
+            "downloaded_payload_bytes": 16384,
+            "received_response_bytes": 16393,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 24,
+            "logical_bytes": 401715,
+            "manifest_rows": 9
+          },
+          "delta_id": "7679cb0faa7475d30d856c41750f6824227c027ddf9818eba8aa9ad9310280a9",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 16384,
+            "new_chunk_positions": 1,
+            "reused_bytes": 245760,
+            "reused_chunk_positions": 15
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "6811544555ba5bc1560fb6a6578a9cf60fce7ca2787d510ca7c41ecb32e30097",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "2c5fa73bc9f6f0bf8b5e07d589a90dde74dced540df38b6f61381cde268d464a",
+          "target_payload_sha256": "6811544555ba5bc1560fb6a6578a9cf60fce7ca2787d510ca7c41ecb32e30097",
+          "version": 8
+        }
+      ],
+      "workload": "single-chunk-sparse-change"
+    },
+    {
+      "cache_comparison": {
+        "closed_file_lengths_minus_full_copy_payload_bytes": -1998696,
+        "logical_cache_minus_full_copy_payload_bytes": -2088909,
+        "unique_payload_saving_bytes": 2097152
+      },
+      "comparisons_complete": true,
+      "errors": [],
+      "full_copy_payload_baseline_bytes": 2359296,
+      "origin_cache": {
+        "closed_cache_file_length_sum_bytes": 360600,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 307200
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 20632
+          }
+        },
+        "key_logical_bytes": 800,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 270387,
+        "unique_chunk_rows": 16,
+        "unique_payload_bytes": 262144
+      },
+      "provider_final": {
+        "accepted_connections": 0,
+        "completed_requests": 0,
+        "overloaded_connections": 0,
+        "peak_active_workers": 0,
+        "sent_response_bytes": 0
+      },
+      "provider_ready": {
+        "channel_handoff": true,
+        "probe_connections": 0
+      },
+      "receiver_cache": {
+        "closed_cache_file_length_sum_bytes": 360600,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 307200
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 20632
+          }
+        },
+        "key_logical_bytes": 800,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 270387,
+        "unique_chunk_rows": 16,
+        "unique_payload_bytes": 262144
+      },
+      "status": "passed",
+      "versions": [
+        {
+          "actual_transport": null,
+          "kind": "initial-base-local-pack",
+          "payload_bytes": 262144,
+          "payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 0,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "version": 0
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 264374,
+            "manifest_rows": 2
+          },
+          "delta_id": "0b95c1e9894908fc24c8e448186bef9dc09a158c14d414a84ba200a850a04d11",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "8ff9285653251863fe6a8ea290feccdba5f016da92e2928bc9d18cd99c8b4380",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "99b3309809466fa9cac4cebd676d53a75a3574af76daeeeee12f3fde2bb0abfe",
+          "target_payload_sha256": "8ff9285653251863fe6a8ea290feccdba5f016da92e2928bc9d18cd99c8b4380",
+          "version": 1
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 265233,
+            "manifest_rows": 3
+          },
+          "delta_id": "e8de0554146c927f314672313cafd5363d9b5238ad6b2f47854ce31650737a67",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "43dd7445f3524b9d86fd013f431c62af550f0781f56e5f9ea9d56863971ca819",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9d14a3f11768a5145aebb6a559d1cf65dae17dceee11232f30680962b6a3b46e",
+          "target_payload_sha256": "43dd7445f3524b9d86fd013f431c62af550f0781f56e5f9ea9d56863971ca819",
+          "version": 2
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 266092,
+            "manifest_rows": 4
+          },
+          "delta_id": "51a33ae2be300780c42bdd0541593ac8aff77da403f38abfc57c83364bc49569",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "c075ba46d48576c2c45490355cf2fb1e890a998c6509ef946f57ff6215e22e6a",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "45bd9266519f9a7b9c72a578cf5089a751be1ad8720450d76946d0441c3d5d5d",
+          "target_payload_sha256": "c075ba46d48576c2c45490355cf2fb1e890a998c6509ef946f57ff6215e22e6a",
+          "version": 3
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 266951,
+            "manifest_rows": 5
+          },
+          "delta_id": "821040ab2d501e839cde97e097bdab3b5abd9beacd8ac27481ece19a3251fda1",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "d6d4ab48ff5de6c1af6ce08f67a87325308e67ab0cf354f45348a43d3fd9eb81",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "b0859356a6f7cad4ed4543a62c82d85b1cbba4ffaf78ffb2b63dc929a85b3c1e",
+          "target_payload_sha256": "d6d4ab48ff5de6c1af6ce08f67a87325308e67ab0cf354f45348a43d3fd9eb81",
+          "version": 4
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 267810,
+            "manifest_rows": 6
+          },
+          "delta_id": "1e9d1d1ab519e3bad6f118a23bbf5b8d0a85d3220202dccea2a63db7469937e6",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "6c5f58c447447d9f9a164127591febd2859629b5b5e032976450f421d14f69d3",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "d5ae1b0b8846f098beb7c916f49fcc3098936bcba56207f78bb86db689c79878",
+          "target_payload_sha256": "6c5f58c447447d9f9a164127591febd2859629b5b5e032976450f421d14f69d3",
+          "version": 5
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 268669,
+            "manifest_rows": 7
+          },
+          "delta_id": "790eb29735cee4f5a455451665fb1bca10361affc1b131b03020f120284e2732",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "457a476e1a890f270d77bbfd3d212ff53fad430dfb37476ab25d7357124d9720",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "ed2cd252c9ddc1a36e581af28ec5e32bf8a76e06eaeb4194cc126d2e416f4a8b",
+          "target_payload_sha256": "457a476e1a890f270d77bbfd3d212ff53fad430dfb37476ab25d7357124d9720",
+          "version": 6
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 269528,
+            "manifest_rows": 8
+          },
+          "delta_id": "310012e256c36b870be50b61fbb14b57e8b9d81e11253c03101977c2394e99cb",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "1bcdb198dc7ad4a55975cc9956187fc981a806e3ee378a064fb2edbc048f6ea2",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "e7d69aee622240576109b6113ef99ab85058fc4f47d173c529c484e96fc6fb51",
+          "target_payload_sha256": "1bcdb198dc7ad4a55975cc9956187fc981a806e3ee378a064fb2edbc048f6ea2",
+          "version": 7
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 16,
+            "connection_attempts": 0,
+            "downloaded_chunk_positions": 0,
+            "downloaded_payload_bytes": 0,
+            "received_response_bytes": 0,
+            "rejected_responses": 0,
+            "supplying_peers": 0
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 16,
+            "logical_bytes": 270387,
+            "manifest_rows": 9
+          },
+          "delta_id": "217334c7032533c86004d61483944418b95d5f6d18a512ae4ad4b9398410f7e9",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 0,
+            "new_chunk_positions": 0,
+            "reused_bytes": 262144,
+            "reused_chunk_positions": 16
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "7115703ca2e45536ec5520f214e6d08e714c83c7dcefb4ecac8cf892fe65b44e",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "1f565576f530d33cfc2c1f2ea032a05b26ed1f1e5684101af8281a44df285187",
+          "target_payload_sha256": "7115703ca2e45536ec5520f214e6d08e714c83c7dcefb4ecac8cf892fe65b44e",
+          "version": 8
+        }
+      ],
+      "workload": "chunk-reordering"
+    },
+    {
+      "cache_comparison": {
+        "closed_file_lengths_minus_full_copy_payload_bytes": 177072,
+        "logical_cache_minus_full_copy_payload_bytes": 12339,
+        "unique_payload_saving_bytes": 0
+      },
+      "comparisons_complete": true,
+      "errors": [],
+      "full_copy_payload_baseline_bytes": 2359296,
+      "origin_cache": {
+        "closed_cache_file_length_sum_bytes": 2531480,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 2478080
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 20632
+          }
+        },
+        "key_logical_bytes": 4896,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 2371635,
+        "unique_chunk_rows": 144,
+        "unique_payload_bytes": 2359296
+      },
+      "provider_final": {
+        "accepted_connections": 128,
+        "completed_requests": 128,
+        "overloaded_connections": 0,
+        "peak_active_workers": 2,
+        "sent_response_bytes": 2098304
+      },
+      "provider_ready": {
+        "channel_handoff": true,
+        "probe_connections": 0
+      },
+      "receiver_cache": {
+        "closed_cache_file_length_sum_bytes": 2536368,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 2347008
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 156592
+          }
+        },
+        "key_logical_bytes": 4896,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 2371635,
+        "unique_chunk_rows": 144,
+        "unique_payload_bytes": 2359296
+      },
+      "status": "passed",
+      "versions": [
+        {
+          "actual_transport": null,
+          "kind": "initial-base-local-pack",
+          "payload_bytes": 262144,
+          "payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 0,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "version": 0
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 32,
+            "logical_bytes": 527030,
+            "manifest_rows": 2
+          },
+          "delta_id": "9508b4bd0f9119c575a7d20b5cd0729ccacf2da4f0e920a2d9417068d1f641fb",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "501082fd41119cdac1ee6908995142e12a4702a5ff44f3dad82f99150f31662c",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "83385f1a0dbc8fdbaf1fac42cca191c65bde4dd7caebe6668b9f41e107ec4a9a",
+          "target_payload_sha256": "501082fd41119cdac1ee6908995142e12a4702a5ff44f3dad82f99150f31662c",
+          "version": 1
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 48,
+            "logical_bytes": 790545,
+            "manifest_rows": 3
+          },
+          "delta_id": "412795f88aad1ad645e1772aefbc1ddf0f99e3f05296c6d9f72feeadb56eec78",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "b02f26d1c713f39945eeb95d426c4818e3c83530549ceacc0ec381dabc51a455",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "b30b7260b5def69de244d8b4cfb7c748caf39c43cc4b2336498b15bedf0dc7b3",
+          "target_payload_sha256": "b02f26d1c713f39945eeb95d426c4818e3c83530549ceacc0ec381dabc51a455",
+          "version": 2
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 64,
+            "logical_bytes": 1054060,
+            "manifest_rows": 4
+          },
+          "delta_id": "f3c21ac3c7e2a18643d91429c5e13ab05f5cb4bfbec22850f000bdfc92c468fc",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "cd2329696bd520afdad0d18741fc891be74b955b6510bed0f16a67852f0140a4",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "d3156a8f7ed1042ce5b7fcaf65188f22a83736572914d8f62e838eb334fab74d",
+          "target_payload_sha256": "cd2329696bd520afdad0d18741fc891be74b955b6510bed0f16a67852f0140a4",
+          "version": 3
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 80,
+            "logical_bytes": 1317575,
+            "manifest_rows": 5
+          },
+          "delta_id": "aa58824969f0e6f3eef06605b06605c6cfcace4dd78beb806f2e710a8dab4edb",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "fe0a48e5f7a1747cdeb8fbd552e5982aba4204cb69b4d15a5d9da62116fee3de",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "99bde9eb7a7f3a114e353a3cf9dbf15ff7d0fdfd6b4bcd5b41885453b4302a21",
+          "target_payload_sha256": "fe0a48e5f7a1747cdeb8fbd552e5982aba4204cb69b4d15a5d9da62116fee3de",
+          "version": 4
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 96,
+            "logical_bytes": 1581090,
+            "manifest_rows": 6
+          },
+          "delta_id": "41ee6726729c01735bc736556ace17e886c85577a8499c39a05e0d4ce889459b",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "7b7a0014b19acecc942c4c721a688af23c50d95a586b87283ad6d23b9ad0211d",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "447c845405b9a749c880781ac45d657f555f633164e1c770ea9a4bdf1dbba941",
+          "target_payload_sha256": "7b7a0014b19acecc942c4c721a688af23c50d95a586b87283ad6d23b9ad0211d",
+          "version": 5
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 112,
+            "logical_bytes": 1844605,
+            "manifest_rows": 7
+          },
+          "delta_id": "df828587594cb18a32f4ead82d8bcf9484577957c76d34a0d0ed4442c5184366",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "bd01e4e48b13612ee7a80c5761100eec3c34202a8ea04784c62e033cb0374146",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "90c006947f5348a194e7f8b8ee72974a7dddda2c14117c2e7674baac4d1d720d",
+          "target_payload_sha256": "bd01e4e48b13612ee7a80c5761100eec3c34202a8ea04784c62e033cb0374146",
+          "version": 6
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 128,
+            "logical_bytes": 2108120,
+            "manifest_rows": 8
+          },
+          "delta_id": "1cb12e20947e4f2cbc7326e61762fae9cf563d92aafdec471abfa894ff809405",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "376aa4b38d85dbece1fcf3e0b23739827d94dbcf2099a7f8e03d14c3cc924f26",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "54bcef15e723d7bdc08f6387836162787e565208720c1a327ae8de65d0f090cf",
+          "target_payload_sha256": "376aa4b38d85dbece1fcf3e0b23739827d94dbcf2099a7f8e03d14c3cc924f26",
+          "version": 7
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 144,
+            "logical_bytes": 2371635,
+            "manifest_rows": 9
+          },
+          "delta_id": "91cb6f9ecb96a861a650f0d576495c7572abe6c87c9c538afe77caee3cf794bb",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "b629b59f08099516bbae5367f355a45a16fd7e5ca3102598d18325c199e90e49",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "cd31bada491f8524a7c8fa7e2973e960c9f7d39aa4ed2f520c76ef23cd2461ad",
+          "target_payload_sha256": "b629b59f08099516bbae5367f355a45a16fd7e5ca3102598d18325c199e90e49",
+          "version": 8
+        }
+      ],
+      "workload": "one-to-eight-byte-shift"
+    },
+    {
+      "cache_comparison": {
+        "closed_file_lengths_minus_full_copy_payload_bytes": 177072,
+        "logical_cache_minus_full_copy_payload_bytes": 12339,
+        "unique_payload_saving_bytes": 0
+      },
+      "comparisons_complete": true,
+      "errors": [],
+      "full_copy_payload_baseline_bytes": 2359296,
+      "origin_cache": {
+        "closed_cache_file_length_sum_bytes": 2531480,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 2478080
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 20632
+          }
+        },
+        "key_logical_bytes": 4896,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 2371635,
+        "unique_chunk_rows": 144,
+        "unique_payload_bytes": 2359296
+      },
+      "provider_final": {
+        "accepted_connections": 128,
+        "completed_requests": 128,
+        "overloaded_connections": 0,
+        "peak_active_workers": 2,
+        "sent_response_bytes": 2098304
+      },
+      "provider_ready": {
+        "channel_handoff": true,
+        "probe_connections": 0
+      },
+      "receiver_cache": {
+        "closed_cache_file_length_sum_bytes": 2536368,
+        "closed_cache_files": {
+          "main": {
+            "exists": true,
+            "file_length_bytes": 2347008
+          },
+          "shm": {
+            "exists": true,
+            "file_length_bytes": 32768
+          },
+          "wal": {
+            "exists": true,
+            "file_length_bytes": 156592
+          }
+        },
+        "key_logical_bytes": 4896,
+        "manifest_rows": 9,
+        "manifest_wire_bytes": 7443,
+        "total_logical_bytes": 2371635,
+        "unique_chunk_rows": 144,
+        "unique_payload_bytes": 2359296
+      },
+      "status": "passed",
+      "versions": [
+        {
+          "actual_transport": null,
+          "kind": "initial-base-local-pack",
+          "payload_bytes": 262144,
+          "payload_sha256": "98d421482e186143683c02ccf9c6abf425e001421031dbcf7a13fa9f8c5a5239",
+          "reconstruction_depth": 0,
+          "status": "passed",
+          "target_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "version": 0
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 32,
+            "logical_bytes": 527030,
+            "manifest_rows": 2
+          },
+          "delta_id": "2ca30962820971a5ab7761228b80887d19950b8e69c6724721dd9ec17e023d60",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "206f3dd9a714037871d78c42a7f5bd56cafaf043d7235aa704dfa0f5c39e945f",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "30064a82b50a9596a8257abef0648a42e80cc3c13edb3a7d2bd4a0cfd8fa58f0",
+          "target_payload_sha256": "206f3dd9a714037871d78c42a7f5bd56cafaf043d7235aa704dfa0f5c39e945f",
+          "version": 1
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 48,
+            "logical_bytes": 790545,
+            "manifest_rows": 3
+          },
+          "delta_id": "25e2053abb3e56760f7c230c5babac5a6e6ab4823152b85cd3ec571ebb667bc9",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "fef4d5b507cd1c12adb4919f95dcbc93a1d4bd333be4c31e1e4068af44d4d825",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "59867adb491ec92e5f48b77c18d6b8a901c72fa705faf86aa046d9a91fb3e1fe",
+          "target_payload_sha256": "fef4d5b507cd1c12adb4919f95dcbc93a1d4bd333be4c31e1e4068af44d4d825",
+          "version": 2
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 64,
+            "logical_bytes": 1054060,
+            "manifest_rows": 4
+          },
+          "delta_id": "153b4a929993cd046c6a3a3a19c3ff5d1d51614af036d9acb993c1079a4b7328",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "fec22c59e5b7dc12cf13c69be6cbf7a41b3f5c32d686d21e26629260d5691ed2",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "d93467272984b775071ef8ff250ed964970cc61cfd7cbb7c2c2d3ddca66f4a40",
+          "target_payload_sha256": "fec22c59e5b7dc12cf13c69be6cbf7a41b3f5c32d686d21e26629260d5691ed2",
+          "version": 3
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 80,
+            "logical_bytes": 1317575,
+            "manifest_rows": 5
+          },
+          "delta_id": "5db742e9843a4901643fca51476a4f849de1bea7ae175766c399bcdd569015ec",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "8bb8638a272898acbf7b380f67ada7651988a0d2914a9dd54c23348db239398d",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "eba1ef799238e39102fb6e6119db4eabe03ab603a4c5b82d248381786eb35cfa",
+          "target_payload_sha256": "8bb8638a272898acbf7b380f67ada7651988a0d2914a9dd54c23348db239398d",
+          "version": 4
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 96,
+            "logical_bytes": 1581090,
+            "manifest_rows": 6
+          },
+          "delta_id": "8b6bbe277eb9256c060173467577205993762e956d3acf04b9da03647b6d25fe",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "0e9af90d6edf2b48b2b6dbc5fd387f3250925693fef46a245a48c29775276e32",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "3349ce450ac01b263adb0dbb23351ae14cffe9356c2794beaddb45353dcccf36",
+          "target_payload_sha256": "0e9af90d6edf2b48b2b6dbc5fd387f3250925693fef46a245a48c29775276e32",
+          "version": 5
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 112,
+            "logical_bytes": 1844605,
+            "manifest_rows": 7
+          },
+          "delta_id": "bb5c4ad3f731cdbf659d67e882f1353e5a4cceaf3ba44bc60fe24ee5a7cd4110",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "35b222aaf99a3f3c50add876c59db1b57d9fe17874b8b353583691c3bff01840",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "9baf8942b693bc40fc1a6afdb76ee96b8fa40f891498d4d0ab948605c44f4292",
+          "target_payload_sha256": "35b222aaf99a3f3c50add876c59db1b57d9fe17874b8b353583691c3bff01840",
+          "version": 6
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 128,
+            "logical_bytes": 2108120,
+            "manifest_rows": 8
+          },
+          "delta_id": "0855c1967e7c5acf1b2190f365e29ca4045f4e1321d4a7a1f786715219d5131e",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "79d734de0b5ff05fe13a520650c2ef65f6bb4f3905412b59ff80b0b00ded5e5a",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "ad4be631ea660b0e53d37a638bf3d3e83a88578124ca0c78ce462cf9c265d335",
+          "target_payload_sha256": "79d734de0b5ff05fe13a520650c2ef65f6bb4f3905412b59ff80b0b00ded5e5a",
+          "version": 7
+        },
+        {
+          "actual_transport": {
+            "cached_chunk_positions": 0,
+            "connection_attempts": 16,
+            "downloaded_chunk_positions": 16,
+            "downloaded_payload_bytes": 262144,
+            "received_response_bytes": 262288,
+            "rejected_responses": 0,
+            "supplying_peers": 1
+          },
+          "base_manifest": "9c35fb906e202fec3191ba2da67e4fbf4982ba7aff87efd7553e5235bb6220d1",
+          "cache_after_attempt": {
+            "chunk_rows": 144,
+            "logical_bytes": 2371635,
+            "manifest_rows": 9
+          },
+          "delta_id": "37c8a44019e6dfc29b1c4d63f7b104f37ca9caa9b702033d4567d7a5c50565c0",
+          "delta_wire_bytes": 935,
+          "error": null,
+          "fixed_base_plan": {
+            "new_bytes": 262144,
+            "new_chunk_positions": 16,
+            "reused_bytes": 0,
+            "reused_chunk_positions": 0
+          },
+          "materialized_bytes": 262144,
+          "materialized_sha256": "7e98dfa3685a3f22a3c8586bc5a34887b8df4efc12e3513b6e286adefd16d146",
+          "reconstruction_depth": 1,
+          "status": "passed",
+          "target_manifest": "ab8c0565d496872c41fda022f848c4654b4d8267808d7807ed1677aa88dd1202",
+          "target_payload_sha256": "7e98dfa3685a3f22a3c8586bc5a34887b8df4efc12e3513b6e286adefd16d146",
+          "version": 8
+        }
+      ],
+      "workload": "dense-full-change"
+    }
+  ],
+  "os": "linux",
+  "schema": "trnm.cell-delta-workload-observation.v1",
+  "scope": {
+    "delta_depth": "each target directly pins original complete base; no recursive reconstruction chain",
+    "excluded_from_cache_totals": "fixture input files, materialized output files, TCX1 recipes, directory entries and worker memory",
+    "failed_transport_counters": "null if native error returned no report; partial cache usage remains observed",
+    "file_lengths": "closed DB/WAL/SHM lengths; not allocated blocks or peak disk use",
+    "full_copy_baseline": "nine complete payload copies; excludes format/storage overhead",
+    "local_inputs": "initial base packed locally; TCX1 recipe with complete target manifest supplied locally",
+    "logical_cache": "actual unique payload + manifest wire + all 32-byte keys",
+    "model_runtime_executed": false,
+    "response_bytes": "response frames only; excludes requests, TCP/IP and recipe distribution",
+    "retention_or_custody_authority": false,
+    "savings": "positive payload savings; positive logical/file-length deltas are overhead; no pass threshold on savings",
+    "synthetic_finite_workloads_only": true,
+    "transport": "actual loopback TCQ1/TCS1",
+    "wan_qualification": false
+  },
+  "source_sha256": "46ccb76a9f3f6d3cd70f98c33dc1b4469fabb9bb8078e800aa9099fefbe6ed8f",
+  "status": "complete"
+}

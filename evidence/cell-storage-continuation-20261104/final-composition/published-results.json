@@ -1,0 +1,40 @@
+{
+  "schema": "trnm.cell.published-storage-source-observation.v1",
+  "tested_commit": "e94781d2323f5dc8987e1eb7ed2bef23ee8745c3",
+  "tested_tree": "ebf1d4264f43d5c9f1ff801e80f24d0391b838e1",
+  "source_before_after_equal": true,
+  "tracked_entries_verified": 8873,
+  "tracked_bytes_verified": 942501289,
+  "source_pins": 442,
+  "required_paths": 359,
+  "native_inventory": "PASS",
+  "ci_contract": "PASS",
+  "repository": {
+    "activation": false,
+    "head": "e94781d2323f5dc8987e1eb7ed2bef23ee8745c3",
+    "local_links": 2580,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1123,
+    "source_state": "committed-clean",
+    "tree": "ebf1d4264f43d5c9f1ff801e80f24d0391b838e1",
+    "workspace_packages": 26
+  },
+  "native_tests_executed_by_this_receipt": 0,
+  "clippy_executed_by_this_receipt": false,
+  "published_branch": "fix/chain-six-axis-performance-20261103",
+  "expected_previous_head": "03163dcb849a15cd267fcaf704a533a88cd54131",
+  "force_push": false,
+  "remote_head_readback_matches": true,
+  "protected_main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "draft_pr": 688,
+  "merged": false,
+  "qualification_promoted": false,
+  "production_activation": false,
+  "notes": [
+    "The final follow-up changes only this evidence directory.",
+    "C runtime and E strict checks retain their exact source identities.",
+    "The E selected Node invocation failed in compilation; its resource scheduler executed no retry."
+  ]
+}

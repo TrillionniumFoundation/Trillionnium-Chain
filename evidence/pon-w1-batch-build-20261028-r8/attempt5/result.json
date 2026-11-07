@@ -1,0 +1,689 @@
+{
+  "assessment": "supervision result only; no build, cryptographic, or proof validity claim",
+  "command_returncode": 0,
+  "cpu_peak_seconds": 138.300131,
+  "declaration_file": "declaration.json",
+  "elapsed_seconds": 140.6670017610013,
+  "errors": [],
+  "kill_monotonic": null,
+  "last_sample": {
+    "cpu_peak_seconds": 138.300131,
+    "cpu_seconds": 138.300131,
+    "elapsed_seconds": 140.6668974339991,
+    "free_bytes": 1624666112,
+    "processes": [],
+    "reaped_cpu_seconds": 138.300131,
+    "rss_bytes": 0,
+    "scan_seconds": 0.07834902498871088,
+    "target_bytes": 2493583360,
+    "target_growth_bytes": 371240960,
+    "wait4_peak_process_rss_bytes": 516853760
+  },
+  "remaining_owned_processes": [],
+  "sampled_peak_rss_bytes": 645951488,
+  "sampled_peak_target_growth_bytes": 371240960,
+  "seen_identities": [
+    {
+      "birth": 7657431,
+      "local_pid": 5,
+      "pid": 990473,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657431,
+      "local_pid": 6,
+      "pid": 990474,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657435,
+      "local_pid": 8,
+      "pid": 990476,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657780,
+      "local_pid": 54,
+      "pid": 990765,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657782,
+      "local_pid": 56,
+      "pid": 990767,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657818,
+      "local_pid": 60,
+      "pid": 990771,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657820,
+      "local_pid": 63,
+      "pid": 990774,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657879,
+      "local_pid": 141,
+      "pid": 990865,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7657959,
+      "local_pid": 165,
+      "pid": 990891,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7658478,
+      "local_pid": 188,
+      "pid": 990939,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7658916,
+      "local_pid": 247,
+      "pid": 990998,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7658948,
+      "local_pid": 259,
+      "pid": 991033,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659023,
+      "local_pid": 268,
+      "pid": 991042,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659122,
+      "local_pid": 324,
+      "pid": 991098,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659165,
+      "local_pid": 355,
+      "pid": 991129,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659217,
+      "local_pid": 406,
+      "pid": 991180,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659237,
+      "local_pid": 419,
+      "pid": 991193,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659719,
+      "local_pid": 513,
+      "pid": 991287,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659830,
+      "local_pid": 531,
+      "pid": 991305,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7659956,
+      "local_pid": 540,
+      "pid": 991314,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660024,
+      "local_pid": 548,
+      "pid": 991322,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660119,
+      "local_pid": 565,
+      "pid": 991371,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660130,
+      "local_pid": 573,
+      "pid": 991379,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660130,
+      "local_pid": 574,
+      "pid": 991380,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660130,
+      "local_pid": 575,
+      "pid": 991381,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660132,
+      "local_pid": 586,
+      "pid": 991392,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660256,
+      "local_pid": 604,
+      "pid": 991410,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660311,
+      "local_pid": 612,
+      "pid": 991418,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660381,
+      "local_pid": 620,
+      "pid": 991428,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660468,
+      "local_pid": 646,
+      "pid": 991465,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660522,
+      "local_pid": 655,
+      "pid": 991475,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660575,
+      "local_pid": 664,
+      "pid": 991484,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660614,
+      "local_pid": 686,
+      "pid": 991506,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660650,
+      "local_pid": 709,
+      "pid": 991530,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660780,
+      "local_pid": 765,
+      "pid": 991611,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660815,
+      "local_pid": 792,
+      "pid": 991638,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660843,
+      "local_pid": 801,
+      "pid": 991647,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7660958,
+      "local_pid": 845,
+      "pid": 991693,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7661380,
+      "local_pid": 885,
+      "pid": 991748,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7661526,
+      "local_pid": 901,
+      "pid": 991764,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7661778,
+      "local_pid": 910,
+      "pid": 991796,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7661868,
+      "local_pid": 939,
+      "pid": 991826,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7661928,
+      "local_pid": 998,
+      "pid": 991885,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7661961,
+      "local_pid": 1029,
+      "pid": 991916,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662000,
+      "local_pid": 1062,
+      "pid": 991958,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662172,
+      "local_pid": 1071,
+      "pid": 992026,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662194,
+      "local_pid": 1080,
+      "pid": 992035,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662256,
+      "local_pid": 1107,
+      "pid": 992064,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662478,
+      "local_pid": 1142,
+      "pid": 992130,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662524,
+      "local_pid": 1167,
+      "pid": 992156,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662566,
+      "local_pid": 1184,
+      "pid": 992174,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662655,
+      "local_pid": 1195,
+      "pid": 992187,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662682,
+      "local_pid": 1204,
+      "pid": 992196,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662683,
+      "local_pid": 1205,
+      "pid": 992197,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662683,
+      "local_pid": 1206,
+      "pid": 992198,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662688,
+      "local_pid": 1217,
+      "pid": 992209,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662772,
+      "local_pid": 1255,
+      "pid": 992248,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662783,
+      "local_pid": 1263,
+      "pid": 992256,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662783,
+      "local_pid": 1264,
+      "pid": 992257,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662784,
+      "local_pid": 1265,
+      "pid": 992258,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662788,
+      "local_pid": 1280,
+      "pid": 992273,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662883,
+      "local_pid": 1315,
+      "pid": 992308,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7662887,
+      "local_pid": 1324,
+      "pid": 992317,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663350,
+      "local_pid": 1333,
+      "pid": 992447,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663581,
+      "local_pid": 1383,
+      "pid": 992540,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663588,
+      "local_pid": 1392,
+      "pid": 992549,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663650,
+      "local_pid": 1421,
+      "pid": 992578,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663924,
+      "local_pid": 1456,
+      "pid": 992616,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663984,
+      "local_pid": 1519,
+      "pid": 992680,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7663984,
+      "local_pid": 1520,
+      "pid": 992681,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664024,
+      "local_pid": 1548,
+      "pid": 992710,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664091,
+      "local_pid": 1561,
+      "pid": 992723,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664139,
+      "local_pid": 1570,
+      "pid": 992732,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664280,
+      "local_pid": 1614,
+      "pid": 992776,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664335,
+      "local_pid": 1656,
+      "pid": 992818,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664426,
+      "local_pid": 1683,
+      "pid": 992845,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664526,
+      "local_pid": 1718,
+      "pid": 992880,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664550,
+      "local_pid": 1768,
+      "pid": 992930,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664703,
+      "local_pid": 1809,
+      "pid": 992971,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7664866,
+      "local_pid": 1829,
+      "pid": 992991,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665010,
+      "local_pid": 1851,
+      "pid": 993013,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665134,
+      "local_pid": 1898,
+      "pid": 993060,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665137,
+      "local_pid": 1907,
+      "pid": 993069,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665213,
+      "local_pid": 1916,
+      "pid": 993078,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665263,
+      "local_pid": 1925,
+      "pid": 993087,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665297,
+      "local_pid": 1934,
+      "pid": 993096,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665486,
+      "local_pid": 1943,
+      "pid": 993105,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665783,
+      "local_pid": 1975,
+      "pid": 993137,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665870,
+      "local_pid": 1997,
+      "pid": 993159,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665931,
+      "local_pid": 2006,
+      "pid": 993179,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7665962,
+      "local_pid": 2024,
+      "pid": 993198,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666274,
+      "local_pid": 2064,
+      "pid": 993317,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666432,
+      "local_pid": 2108,
+      "pid": 993363,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666483,
+      "local_pid": 2156,
+      "pid": 993423,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666544,
+      "local_pid": 2187,
+      "pid": 993464,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666588,
+      "local_pid": 2198,
+      "pid": 993475,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666680,
+      "local_pid": 2213,
+      "pid": 993499,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666708,
+      "local_pid": 2249,
+      "pid": 993535,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7666742,
+      "local_pid": 2258,
+      "pid": 993555,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7667624,
+      "local_pid": 2297,
+      "pid": 993678,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7667731,
+      "local_pid": 2306,
+      "pid": 993700,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7667739,
+      "local_pid": 2315,
+      "pid": 993709,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7668243,
+      "local_pid": 2348,
+      "pid": 993756,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7668884,
+      "local_pid": 2399,
+      "pid": 993891,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7668939,
+      "local_pid": 2421,
+      "pid": 993928,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7670764,
+      "local_pid": 2472,
+      "pid": 994153,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7670789,
+      "local_pid": 2484,
+      "pid": 994165,
+      "pid_namespace": "pid:[4026532413]"
+    },
+    {
+      "birth": 7671371,
+      "local_pid": 2535,
+      "pid": 994217,
+      "pid_namespace": "pid:[4026532413]"
+    }
+  ],
+  "source_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "status": "completed",
+  "stop_reason": null,
+  "term_monotonic": null,
+  "wait4_peak_process_rss_bytes": 516853760,
+  "wait4_records": [
+    {
+      "maxrss_kib": 504740,
+      "pid": 5,
+      "returncode": 0,
+      "system_seconds": 8.930653,
+      "user_seconds": 129.369478
+    }
+  ]
+}

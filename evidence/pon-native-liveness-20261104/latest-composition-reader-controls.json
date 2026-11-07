@@ -1,0 +1,22 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "latest-composition-reader-controls",
+  "command": [
+    "python3",
+    "-c",
+    "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\",\"test_ci_source_integrity\",\"test_pq_research_integration\",\"test_pon_public_v3_phase_read\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+  "tree": "924397c8ca6ea1d0d8e9c003f4ca7f3c6a9022be",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:30:49.873284+00:00",
+  "returncode": 120,
+  "completed": true,
+  "wall_ns": 14938479392,
+  "finished_at": "2026-11-04T14:31:04.812163+00:00",
+  "log_bytes": 69632,
+  "log_sha256": "e19288b106f91c0f4ec67ea318689147304c3b3057d480c9048ff64ea5ee1727",
+  "final_head": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+  "final_dirty_paths": []
+}

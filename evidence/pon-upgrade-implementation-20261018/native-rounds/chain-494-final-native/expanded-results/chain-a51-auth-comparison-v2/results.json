@@ -1,0 +1,35 @@
+{
+  "head": "a51a2eeab84e3c1ff59e4df1a1088e1c16dd5a13",
+  "tree": "63b81f6874d4360db3bf70a9340ee82c2aa67397",
+  "state_backend": "authenticated-v1",
+  "scope": "original three 30-second phases; same workload/resource budget; independent OS processes, one host/controller",
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.08870821300661191,
+      "child_user_seconds": 0.06798299999999996,
+      "child_system_seconds": 0.020550999999999986
+    },
+    {
+      "name": "format",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 16.612070330011193,
+      "child_user_seconds": 16.210304999999998,
+      "child_system_seconds": 0.138154
+    }
+  ]
+}

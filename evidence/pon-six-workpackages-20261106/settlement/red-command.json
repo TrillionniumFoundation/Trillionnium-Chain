@@ -1,0 +1,20 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::storage_service::tests::replay_owner::",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "wall_ns": 280958613539,
+  "expected": "Four foreign-owner controls fail because old retain/repair accepts the unrelated owner. Runtime failure is retained; compile failure would not qualify as RED."
+}

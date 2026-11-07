@@ -1,0 +1,2365 @@
+{
+  "binary_unchanged": true,
+  "commands": [
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 506672,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 970954,
+          "raw_sha256": "e8a939075e2c4ceaaafb24ca08d5f9e18673f91d13cdc4850710835e763ab7a2",
+          "sha256": "3853622463a94e5fa20e0f034e3c2e704c5b5f009b5ac4fcb8c76a17bd2fd3f1"
+        }
+      },
+      "name": "full-rank-field-t0-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.10793,
+        "elapsed_wall_seconds": 0.12183279199962271,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 16519168,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948777305854570,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e8a939075e2c4ceaaafb24ca08d5f9e18673f91d13cdc4850710835e763ab7a2",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 3771494,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 7254545,
+          "raw_sha256": "dadd71ce80eceb644977d6a00bda9aa7722975021ab9c3c3d303d494feff0a33",
+          "sha256": "d0bcf49889147579dbdaed366ffc2991aa2b3e81ce43772ddccd0116add96e39"
+        }
+      },
+      "name": "full-rank-field-t0-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.10091699999999999,
+        "cpu_user_seconds": 1.023283,
+        "elapsed_wall_seconds": 1.148812977997295,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 17313792,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948777478986765,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "dadd71ce80eceb644977d6a00bda9aa7722975021ab9c3c3d303d494feff0a33",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 30220048,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 57367440,
+          "raw_sha256": "85c2b4f46853df2c0a8c40fcac042fbff4910913d2c931fd60d30c20b0e414d0",
+          "sha256": "bad648c958725c78fbf861bd983b9cfc596efec90aff5ec6e2625601a108693d"
+        }
+      },
+      "name": "full-rank-field-t0-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.49074599999999996,
+        "cpu_user_seconds": 7.986555,
+        "elapsed_wall_seconds": 8.542941948999214,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 18825216,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948779083486270,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "85c2b4f46853df2c0a8c40fcac042fbff4910913d2c931fd60d30c20b0e414d0",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 634926,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 1399293,
+          "raw_sha256": "6d95238a52c08a378e0c4268c86f782cf6308e29a5dc48028ebea2e64f80f13c",
+          "sha256": "880cdd15966d908225d72a9ff7eb5dbf4edc42e4a1cb93c9c7bde19bbca73cb6"
+        }
+      },
+      "name": "full-rank-field-t1-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.011961999999999999,
+        "cpu_user_seconds": 0.571317,
+        "elapsed_wall_seconds": 0.5909846120011935,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 18825216,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948790692487863,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6d95238a52c08a378e0c4268c86f782cf6308e29a5dc48028ebea2e64f80f13c",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 5014327,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 9918944,
+          "raw_sha256": "19a6b11ac1d9284245ce019c6d7c181747bfe0ebc482c053df2865e81f48d89c",
+          "sha256": "8af75ca0acb6e3047a9b1898f48a153b24de7ac745e2a4568f450ddcd49a1cad"
+        }
+      },
+      "name": "full-rank-field-t1-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.279252,
+        "cpu_user_seconds": 3.79132,
+        "elapsed_wall_seconds": 4.099906724000903,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 18825216,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948791353467059,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "19a6b11ac1d9284245ce019c6d7c181747bfe0ebc482c053df2865e81f48d89c",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 40209773,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 79759785,
+          "raw_sha256": "e9876ec74a7abcc0fe85fbc0c128e5fa3c221875e4db97604d8f556f2bb8a4ed",
+          "sha256": "12fb473b1b2055af750fa5f2abda467d9d1340c8a25cdf17115033a60e6484ad"
+        }
+      },
+      "name": "full-rank-field-t1-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.8090919999999999,
+        "cpu_user_seconds": 28.528753000000002,
+        "elapsed_wall_seconds": 29.561242251002113,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 18825216,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948795973461031,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e9876ec74a7abcc0fe85fbc0c128e5fa3c221875e4db97604d8f556f2bb8a4ed",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 17633,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 968876,
+          "raw_sha256": "0b8482667a635b1dc4fd926bcb6f652fa6b23613ced65883ffbe2902aba699ca",
+          "sha256": "6909bd637bf36bc41f8b73424aaa9982866599da0448103fb0fce1eb4a151f9c"
+        }
+      },
+      "name": "zero-t0-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.012438999999999999,
+        "cpu_user_seconds": 0.11366699999999999,
+        "elapsed_wall_seconds": 0.1419204300000274,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 18825216,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948830316380129,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "0b8482667a635b1dc4fd926bcb6f652fa6b23613ced65883ffbe2902aba699ca",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 134787,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 7217618,
+          "raw_sha256": "6fa3c20bace628cb9a7a8d11c940e7e900cb0493e0c63fb0ed572681f530eb64",
+          "sha256": "8134cbd92a70f14d4e3482f1123916bdef3d5d6ba8ee33208d3da70684b9dc31"
+        }
+      },
+      "name": "zero-t0-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.220822,
+        "cpu_user_seconds": 1.236828,
+        "elapsed_wall_seconds": 1.482734660999995,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 18825216,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948830471420366,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6fa3c20bace628cb9a7a8d11c940e7e900cb0493e0c63fb0ed572681f530eb64",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1430543,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 57290001,
+          "raw_sha256": "3f89c81230cb5d93a563560159448081bf1a4d1068efee55b197e35c0e953243",
+          "sha256": "52886c66de4d5472abf5d73acf40725b5ac7e77b2529d5147550fbbd98d0aab0"
+        }
+      },
+      "name": "zero-t0-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.251198,
+        "cpu_user_seconds": 8.316333,
+        "elapsed_wall_seconds": 8.632353143999353,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948832046887042,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "3f89c81230cb5d93a563560159448081bf1a4d1068efee55b197e35c0e953243",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 71714,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 1188124,
+          "raw_sha256": "f452e84111cd3b5bacf4325b4e122a0ea2764945d8e12ded3c75950c632d1064",
+          "sha256": "0ab66406ed0de94ebb4a120ed0c6a297cb619a71d4b2c0638d3d65712e2e95c8"
+        }
+      },
+      "name": "zero-t1-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.296715,
+        "elapsed_wall_seconds": 0.3048717220008257,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948841221013962,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "f452e84111cd3b5bacf4325b4e122a0ea2764945d8e12ded3c75950c632d1064",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1217903,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 9504892,
+          "raw_sha256": "0b9ef61e47aa300ec57701833cb5d5f45134abbd51e93528c632d35627cfb838",
+          "sha256": "8e97d4149b91e26c7559f15c28f096bc1e77d1f7fe888444feab6774167a4a1b"
+        }
+      },
+      "name": "zero-t1-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.07421799999999999,
+        "cpu_user_seconds": 3.322602,
+        "elapsed_wall_seconds": 3.402496635000716,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948841544314375,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "0b9ef61e47aa300ec57701833cb5d5f45134abbd51e93528c632d35627cfb838",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 11448091,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 79479797,
+          "raw_sha256": "a07028a1f642973a893aea5b9f7301ca25a6e3260bb29cc5e0268ac05e970306",
+          "sha256": "ba1412c48b121842452ccb0ca3ca90f588308a273a905e86fd821aa29bf1c557"
+        }
+      },
+      "name": "zero-t1-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.833896,
+        "cpu_user_seconds": 30.41706,
+        "elapsed_wall_seconds": 31.432751456002734,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948845115883357,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "a07028a1f642973a893aea5b9f7301ca25a6e3260bb29cc5e0268ac05e970306",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 195295,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 973891,
+          "raw_sha256": "5e942e53ee10fca94c9244dd04b5aa5b733e6e925a046c0aecb73f5b927264a0",
+          "sha256": "678332ebf6936ca3847a1958800384345f1f211cce821cba0d3a90ab7059938a"
+        }
+      },
+      "name": "rank-one-t0-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.012048,
+        "cpu_user_seconds": 0.144581,
+        "elapsed_wall_seconds": 0.1631779080016713,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948878014449462,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "5e942e53ee10fca94c9244dd04b5aa5b733e6e925a046c0aecb73f5b927264a0",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1478331,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 7225740,
+          "raw_sha256": "94b2cfcb956b17561d22a7470ff6822a70c3b632b7f673908a0037f9b310108a",
+          "sha256": "5cec3b64f26e3eb16b63aa5eca108e193adc688fffcce6c3264953298ee9006f"
+        }
+      },
+      "name": "rank-one-t0-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.040757999999999996,
+        "cpu_user_seconds": 0.943946,
+        "elapsed_wall_seconds": 0.9927053600004001,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948878231803749,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "94b2cfcb956b17561d22a7470ff6822a70c3b632b7f673908a0037f9b310108a",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 12075327,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 57248610,
+          "raw_sha256": "6d2452e219ee488741fe0bc1ca2824290fdca397bee7977c6af742454a04d445",
+          "sha256": "3b2cdb6ef2f6619baff2546b19aedb479d03fe85cc3960e974df437d53b90f81"
+        }
+      },
+      "name": "rank-one-t0-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.370175,
+        "cpu_user_seconds": 7.861645,
+        "elapsed_wall_seconds": 8.289299584001128,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19177472,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948879970820935,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6d2452e219ee488741fe0bc1ca2824290fdca397bee7977c6af742454a04d445",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 270887,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 1268704,
+          "raw_sha256": "2349c68b096e063e22ad15ff075b49e7bcd3fe71575a61de1162f16003d5f209",
+          "sha256": "b6930e8680d1b9323f43be3b9bed938e2b68e48634ec86ccc2ab782432757162"
+        }
+      },
+      "name": "rank-one-t1-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.419323,
+        "elapsed_wall_seconds": 0.4268763450018014,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948891176242725,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "2349c68b096e063e22ad15ff075b49e7bcd3fe71575a61de1162f16003d5f209",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 2920927,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 10260434,
+          "raw_sha256": "fe9a3f2b04c03c5b2e47b6e6b2f59b10e9539b7ca9d30666b7732c0037a4ac66",
+          "sha256": "49e0f0e0922dca3b81277424b457254c3cac346609b5d59d2679f117a997f6ee"
+        }
+      },
+      "name": "rank-one-t1-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.05257,
+        "cpu_user_seconds": 4.167517,
+        "elapsed_wall_seconds": 4.2440099339983135,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948891659527427,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "fe9a3f2b04c03c5b2e47b6e6b2f59b10e9539b7ca9d30666b7732c0037a4ac66",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 22798476,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 80709252,
+          "raw_sha256": "9431988fb0e09290defe95596be20ac39c5321c668ef82ebed8e0852d791216f",
+          "sha256": "93210d9db7907ebba8c37af783e86dc30bf914ec91f767955e9db94c9ed7e5e1"
+        }
+      },
+      "name": "rank-one-t1-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.6432559999999999,
+        "cpu_user_seconds": 32.09262,
+        "elapsed_wall_seconds": 32.832561652998265,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948896409093303,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9431988fb0e09290defe95596be20ac39c5321c668ef82ebed8e0852d791216f",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 26569,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 982392,
+          "raw_sha256": "55ca921cd5e6f9e06a976663acdcefee80be62a66ab1ee672a63b88997c23284",
+          "sha256": "572b9a7a0eba7e12cf34529e5cc3e50f28552f1b633d2307fecb7f2c269c96fe"
+        }
+      },
+      "name": "sparse-diagonal-t0-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.145365,
+        "elapsed_wall_seconds": 0.16293275499992887,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948932985702288,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "55ca921cd5e6f9e06a976663acdcefee80be62a66ab1ee672a63b88997c23284",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 176964,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 7227655,
+          "raw_sha256": "6692a43ade3224f7419d9a2fd4386dfe25352db58370ac141b9991d536927b45",
+          "sha256": "e90ebd02bb2258f4690b57d8b564b63cb201e0ae8085b883eb4e332b2e25374f"
+        }
+      },
+      "name": "sparse-diagonal-t0-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.035907999999999995,
+        "cpu_user_seconds": 1.120776,
+        "elapsed_wall_seconds": 1.164236766002432,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948933161992757,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6692a43ade3224f7419d9a2fd4386dfe25352db58370ac141b9991d536927b45",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1779418,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 57348093,
+          "raw_sha256": "66a9c56824eb4c1cf2a507b8f4f1870810137b7426319af55194ffe774916960",
+          "sha256": "bf3c25349e10405dcf74bb97a188fddd7c44703f8056176f28ca752d2bbe852c"
+        }
+      },
+      "name": "sparse-diagonal-t0-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.316256,
+        "cpu_user_seconds": 8.102021,
+        "elapsed_wall_seconds": 8.466918026999338,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948934416122748,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "66a9c56824eb4c1cf2a507b8f4f1870810137b7426319af55194ffe774916960",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 79785,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 1198728,
+          "raw_sha256": "951b5a5a05c3d09495ab1bc3ce09bab01a5b011be6c24517a3b41028cf015181",
+          "sha256": "683c1877bf676d0ca00c3514df5a154d2e71215fe65ecac0285646de7a17019c"
+        }
+      },
+      "name": "sparse-diagonal-t1-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.003777,
+        "cpu_user_seconds": 0.338261,
+        "elapsed_wall_seconds": 0.344676114997128,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948943448831309,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "951b5a5a05c3d09495ab1bc3ce09bab01a5b011be6c24517a3b41028cf015181",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1273329,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 9542050,
+          "raw_sha256": "9852902e19dfd5fef562729dad9f238c59a5fe1d46fd74b5e7b98edeb9d6859b",
+          "sha256": "6f0ac52ffe28287e49416bb6d792766c8ade3caeee19cb8bc9721a48a1d6314f"
+        }
+      },
+      "name": "sparse-diagonal-t1-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.070199,
+        "cpu_user_seconds": 3.084273,
+        "elapsed_wall_seconds": 3.1954373699991265,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948943813393171,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9852902e19dfd5fef562729dad9f238c59a5fe1d46fd74b5e7b98edeb9d6859b",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 11673815,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 79272022,
+          "raw_sha256": "23c3c2815e98d547c3b5108ef4b214aa0f96546d37da02605575819558fe4a4e",
+          "sha256": "79ff44f3acc162a58c23e91dbeb305b0fda0e19e33f0085f08fd7f06c5ed075b"
+        }
+      },
+      "name": "sparse-diagonal-t1-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.583019,
+        "cpu_user_seconds": 30.107758,
+        "elapsed_wall_seconds": 30.80212322800071,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948947185355193,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "23c3c2815e98d547c3b5108ef4b214aa0f96546d37da02605575819558fe4a4e",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 94711,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 991760,
+          "raw_sha256": "2b12f17ca2b25d2c37a22e51c7883e063c43057f411bf25f3be25be29fd45199",
+          "sha256": "fa12f6491f58eb0a01c2a67fbc703345005e1e2a33dc94d42201e2a98e94064d"
+        }
+      },
+      "name": "sparse-field-t0-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.051892999999999995,
+        "cpu_user_seconds": 0.196961,
+        "elapsed_wall_seconds": 0.2736381539980357,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948979484517823,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "2b12f17ca2b25d2c37a22e51c7883e063c43057f411bf25f3be25be29fd45199",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 695185,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 7261801,
+          "raw_sha256": "8140fa74da968307ef5518392fcc57f9d1a7996409197c7d18bc0dde91578e62",
+          "sha256": "cf496ca2bb3e63706d34743149c1d801d5c5ec625d29eb0313eaf38b28331490"
+        }
+      },
+      "name": "sparse-field-t0-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.062844,
+        "cpu_user_seconds": 0.959279,
+        "elapsed_wall_seconds": 1.0472434770017571,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948979856512806,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "8140fa74da968307ef5518392fcc57f9d1a7996409197c7d18bc0dde91578e62",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 5845421,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 57312489,
+          "raw_sha256": "0ce8ae4e902104926c49af90760fab19b87146a0baf5bd39434482c5231d73c7",
+          "sha256": "b08ae3b72f92fcde6ec7c35085abf3b0b80db5582e7164d52254551ada98decc"
+        }
+      },
+      "name": "sparse-field-t0-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.583911,
+        "cpu_user_seconds": 8.933938,
+        "elapsed_wall_seconds": 9.58325723100279,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948981001357843,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "0ce8ae4e902104926c49af90760fab19b87146a0baf5bd39434482c5231d73c7",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 163280,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 1276212,
+          "raw_sha256": "457eeef9f132788cb484cfbcb94ea965a98ec9894a83e923626b1288e0cf2973",
+          "sha256": "08ae836302162ed3c59f1f0fa4ad1bfd726f962575709b1efd27d7938b159e9c"
+        }
+      },
+      "name": "sparse-field-t1-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.43817999999999996,
+        "elapsed_wall_seconds": 0.4451956730008533,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948991503761006,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "457eeef9f132788cb484cfbcb94ea965a98ec9894a83e923626b1288e0cf2973",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1780586,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 9540833,
+          "raw_sha256": "6186c849ee22ebfd454983d8ff796097ee6448c12aac66eb91e51b583b8fe3ed",
+          "sha256": "7fc7b07f99ee1e5e15c99a89d3f829b024e07406f98d7599f574aca28b62061b"
+        }
+      },
+      "name": "sparse-field-t1-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.35974799999999996,
+        "cpu_user_seconds": 3.568361,
+        "elapsed_wall_seconds": 3.9887040040011925,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948991978251292,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6186c849ee22ebfd454983d8ff796097ee6448c12aac66eb91e51b583b8fe3ed",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 15376806,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 78505711,
+          "raw_sha256": "974b6a5ddb5c6771df888ecf52bab49f6f243129f71a5a39e3009c61a2ea941f",
+          "sha256": "d1a70f63dc538c387536fa480e17423249e0c6f9db4d5546db5bcac908f7c9d4"
+        }
+      },
+      "name": "sparse-field-t1-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.486118,
+        "cpu_user_seconds": 28.156257,
+        "elapsed_wall_seconds": 28.71272493699871,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793948996205505571,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "974b6a5ddb5c6771df888ecf52bab49f6f243129f71a5a39e3009c61a2ea941f",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 19302,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 973434,
+          "raw_sha256": "16ce162678aeff35198dcc6f5e2b052f13ce1be12fb4e169fbe3cc2d9637028c",
+          "sha256": "b65e0aaf9c96646ff19a2678c41fc4f8ac2cdde7ad097a07ebd8da2b87bc3d1b"
+        }
+      },
+      "name": "maximum-field-t0-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.004115,
+        "cpu_user_seconds": 0.13741499999999998,
+        "elapsed_wall_seconds": 0.14288851500168676,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949026846949597,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "16ce162678aeff35198dcc6f5e2b052f13ce1be12fb4e169fbe3cc2d9637028c",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 142242,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 7234026,
+          "raw_sha256": "068ca5d7162759faeb5380c631d1f60b86fd2725957e0c91a6366e35bd8af541",
+          "sha256": "e87ca3845d08830f982043a04a020ec8d865d44ba52eee95098c1060f8bf8dca"
+        }
+      },
+      "name": "maximum-field-t0-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.033652999999999995,
+        "cpu_user_seconds": 0.940639,
+        "elapsed_wall_seconds": 0.9919235449997359,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949027001463480,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "068ca5d7162759faeb5380c631d1f60b86fd2725957e0c91a6366e35bd8af541",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1488920,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 57353128,
+          "raw_sha256": "64e5ab3fe63029c126692e4f58d756b389cb4e6f59796924dc2d982b31468e31",
+          "sha256": "677c4fd2e11ebf65e724505a5b235265ac391d47710153d615c4673c5b6601cc"
+        }
+      },
+      "name": "maximum-field-t0-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "0",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.41160599999999997,
+        "cpu_user_seconds": 8.07449,
+        "elapsed_wall_seconds": 8.495446565000748,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949028061208542,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "64e5ab3fe63029c126692e4f58d756b389cb4e6f59796924dc2d982b31468e31",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 91095,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 1266834,
+          "raw_sha256": "9367094a59e3cba2acba14f24ca855db25d50fc0ccf9341342b80d9b4a3f7dc0",
+          "sha256": "ca0f88316379af2da68decb5b6a7e0415be165bd16016169e4f9d3aafe9b9da9"
+        }
+      },
+      "name": "maximum-field-t1-h1",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.012232999999999999,
+        "cpu_user_seconds": 0.38553699999999996,
+        "elapsed_wall_seconds": 0.40500167600112036,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949036999520358,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9367094a59e3cba2acba14f24ca855db25d50fc0ccf9341342b80d9b4a3f7dc0",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 1166636,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 9386621,
+          "raw_sha256": "dde8472a73a1ff657bd95b23a8d2fdf69c4d43330ba4977b0012979a5dfdcda2",
+          "sha256": "8de777db958101b4c7f1ad880ab833c930c7935f795c04ed7bbaaaae12b172db"
+        }
+      },
+      "name": "maximum-field-t1-h8",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "8"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.097284,
+        "cpu_user_seconds": 2.86423,
+        "elapsed_wall_seconds": 2.9813611280005716,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949037426926700,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "dde8472a73a1ff657bd95b23a8d2fdf69c4d43330ba4977b0012979a5dfdcda2",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 11987408,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 80637233,
+          "raw_sha256": "27aa4a48122c49dd495a10c59f8e662c84bba6e6381ea7a08c5de32f96cd3e8f",
+          "sha256": "f341c03d8319dcac799943ed3ec4318164a0c7960ed71908017d1227cb0af138"
+        }
+      },
+      "name": "maximum-field-t1-h64",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "1",
+          "--reuse-winners",
+          "64"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.50388,
+        "cpu_user_seconds": 29.780767,
+        "elapsed_wall_seconds": 30.330926656002703,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949040563216005,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "27aa4a48122c49dd495a10c59f8e662c84bba6e6381ea7a08c5de32f96cd3e8f",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "search-cost",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 46082,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 124557,
+          "raw_sha256": "d6384799813d51feecfff76240dd4943f783e7cd9b3406c0a21275f535d065d4",
+          "sha256": "c8729ea5b8f3d38a2f5970ecab6433644a08a03f9ff819d72e9fdb0cb9e61f7d"
+        }
+      },
+      "name": "full-rank-field-control-t2",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "2",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.040665,
+        "elapsed_wall_seconds": 0.04160323500036611,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949072421246713,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "d6384799813d51feecfff76240dd4943f783e7cd9b3406c0a21275f535d065d4",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "exhaustion-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 504065,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 960597,
+          "raw_sha256": "dfe7d66babd428d27016988152f067dc68f0495afcada5ade629735b2ef8b04b",
+          "sha256": "2662011c670adfc9b6995cf208f53b0028fc1c4f899b957bf908e690df18c04e"
+        }
+      },
+      "name": "full-rank-field-control-t3",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "full-rank-field",
+          "--target-index",
+          "3",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.008166,
+        "cpu_user_seconds": 0.118214,
+        "elapsed_wall_seconds": 0.14456981599869323,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949072472195807,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "dfe7d66babd428d27016988152f067dc68f0495afcada5ade629735b2ef8b04b",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "first-hit-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 8028,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 124549,
+          "raw_sha256": "ce55121375f360714ae0edd365dd3f1d7cab6a7d23be34e35f343a46ed34a05e",
+          "sha256": "41ff705675024d9c1a83571280c8abd4b9d33892c9bc4c86189777b113c58795"
+        }
+      },
+      "name": "zero-control-t2",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "2",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.047049,
+        "elapsed_wall_seconds": 0.0612597450017347,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949072666875682,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "ce55121375f360714ae0edd365dd3f1d7cab6a7d23be34e35f343a46ed34a05e",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "exhaustion-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 15075,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 959987,
+          "raw_sha256": "4fe05f6aa70c3749d7e1a6a12e0890bbe55a63959fcd23c2b61d282437723a56",
+          "sha256": "572957166df62cb99a7680d2587f4e3d68dd1c946d746746771dc061dcb13b16"
+        }
+      },
+      "name": "zero-control-t3",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "zero",
+          "--target-index",
+          "3",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.131819,
+        "elapsed_wall_seconds": 0.1426653879971127,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949072734584165,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "4fe05f6aa70c3749d7e1a6a12e0890bbe55a63959fcd23c2b61d282437723a56",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "first-hit-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 17766,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 124594,
+          "raw_sha256": "92d66bfa5069e486a3f1df50c14a29f762dcecf717d0fc9ab2ef3958307f5d2e",
+          "sha256": "3ae970488f7296a37b0c63a64e24958defc75af95fdb14ea17d2a7fd258f3135"
+        }
+      },
+      "name": "rank-one-control-t2",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "2",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.002962,
+        "cpu_user_seconds": 0.055465,
+        "elapsed_wall_seconds": 0.06453130999943824,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949072896173408,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "92d66bfa5069e486a3f1df50c14a29f762dcecf717d0fc9ab2ef3958307f5d2e",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "exhaustion-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 191285,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 960521,
+          "raw_sha256": "c063d987b0ffd44c0a78e932024bda971041fcda286a0774a1954dd8671c56ea",
+          "sha256": "095123f3ec274c7ff3db9b368c7ea1a616335a17b0e5f4e1fad7e390e7ab951a"
+        }
+      },
+      "name": "rank-one-control-t3",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "rank-one",
+          "--target-index",
+          "3",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.111618,
+        "elapsed_wall_seconds": 0.12210108199724345,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949072970598155,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "c063d987b0ffd44c0a78e932024bda971041fcda286a0774a1954dd8671c56ea",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "first-hit-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 8477,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 124510,
+          "raw_sha256": "3b7515d0cbf0953b630fcd9822f11a245eb4177c072cd5c608bf63b3e20a031f",
+          "sha256": "b93661540f3d4ed7c8ea11da2fff8b085c73326bbb0e38181620ea5a8702918a"
+        }
+      },
+      "name": "sparse-diagonal-control-t2",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "2",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.040063,
+        "elapsed_wall_seconds": 0.041324224999698345,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949073147404832,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "3b7515d0cbf0953b630fcd9822f11a245eb4177c072cd5c608bf63b3e20a031f",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "exhaustion-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 20639,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 960165,
+          "raw_sha256": "a421d547b0fc86aaaeee931e2de3fad1ee6690af1f40eb5191f05b45fe2ab5da",
+          "sha256": "5df402a44801df0139a003292bce2ad638768a431a0e04ca0d068b46bdba615a"
+        }
+      },
+      "name": "sparse-diagonal-control-t3",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-diagonal",
+          "--target-index",
+          "3",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.10912799999999999,
+        "elapsed_wall_seconds": 0.12347294799837982,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949073209068215,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "a421d547b0fc86aaaeee931e2de3fad1ee6690af1f40eb5191f05b45fe2ab5da",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "first-hit-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 11052,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 124497,
+          "raw_sha256": "66c39a29e476df3e11472255c8e1fb9c9502581196ca54c45eb07346c1088a37",
+          "sha256": "bd0f9e1b9e8194c3a7ef542f7f73a3ea491d4401598446754b55202d556d7f5b"
+        }
+      },
+      "name": "sparse-field-control-t2",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "2",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0037159999999999997,
+        "cpu_user_seconds": 0.035061999999999996,
+        "elapsed_wall_seconds": 0.04123163599797408,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949073358534504,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "66c39a29e476df3e11472255c8e1fb9c9502581196ca54c45eb07346c1088a37",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "exhaustion-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 86724,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 960545,
+          "raw_sha256": "49409c9114b3b58c6c6da51c0e13ef9c4759bfaed8c7d09db26ea3d934045436",
+          "sha256": "b561f06d2b57cbf317784f5bb06e0d4f2d9c99b759c59952c813047ca67fe7f6"
+        }
+      },
+      "name": "sparse-field-control-t3",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "sparse-field",
+          "--target-index",
+          "3",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.004181,
+        "cpu_user_seconds": 0.09555799999999999,
+        "elapsed_wall_seconds": 0.10174530899894307,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949073412916762,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "49409c9114b3b58c6c6da51c0e13ef9c4759bfaed8c7d09db26ea3d934045436",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "first-hit-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 8055,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 124543,
+          "raw_sha256": "6a7b685a6e658e076d5df35c38b4ea43dca4c39357d48afb2692b21aee88890f",
+          "sha256": "f86ed703e325860d50ac49322cf3de7e6cf2d0a561836521d5c02288f3983904"
+        }
+      },
+      "name": "maximum-field-control-t2",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "2",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.0,
+        "cpu_user_seconds": 0.041318,
+        "elapsed_wall_seconds": 0.06107746099951328,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949073533769536,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6a7b685a6e658e076d5df35c38b4ea43dca4c39357d48afb2692b21aee88890f",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "exhaustion-control",
+      "readback_consistent": true
+    },
+    {
+      "archives": {
+        "stderr.log": {
+          "bytes": 20,
+          "file": "stderr.log.gz",
+          "raw_bytes": 0,
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+        },
+        "stdout.jsonl": {
+          "bytes": 15565,
+          "file": "stdout.jsonl.gz",
+          "raw_bytes": 960095,
+          "raw_sha256": "623d2930315fcc8209d32e85d2bbe431520a88e8c6f4568be5f4cd70ed7247a6",
+          "sha256": "e0b62ac9f7e0c293d4547cc0e1f64ba212ad04c86bc13710ac4bea0051c69dfc"
+        }
+      },
+      "name": "maximum-field-control-t3",
+      "process": {
+        "argv": [
+          "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+          "--preparation-strategy-v4",
+          "--class",
+          "maximum-field",
+          "--target-index",
+          "3",
+          "--reuse-winners",
+          "1"
+        ],
+        "cleanup_extends_accepted_budget": false,
+        "cleanup_grace_seconds": 5,
+        "cpu_system_seconds": 0.004588,
+        "cpu_user_seconds": 0.129547,
+        "elapsed_wall_seconds": 0.14251477599827922,
+        "observer_interrupted": false,
+        "peak_rss_bytes": 19832832,
+        "process_complete": true,
+        "resource_failure": null,
+        "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+        "returncode": 0,
+        "started_unix_ns": 1793949073603678539,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "623d2930315fcc8209d32e85d2bbe431520a88e8c6f4568be5f4cd70ed7247a6",
+        "timed_out": false,
+        "timeout_seconds": 300
+      },
+      "purpose": "first-hit-control",
+      "readback_consistent": true
+    }
+  ],
+  "complete": true,
+  "complete_cost_grid_consistent": true,
+  "observed_commands": 48,
+  "planned": 48,
+  "qualification_status": "HOLD",
+  "schema": "pon-w1-preparation-campaign-capture-v4",
+  "source_unchanged": true,
+  "unobserved_planned_commands": []
+}

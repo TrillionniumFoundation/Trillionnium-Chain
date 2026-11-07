@@ -1,0 +1,58 @@
+{
+  "schema": "trnm-pq-startup-same-binary-execution-v1",
+  "label": "final-archive-native",
+  "base_sha": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+  "source_commit": "2936d148019e20d6ad4f1ad8351026365c9904ea",
+  "source_tree": "3b093dfd3c3b6119b3d8a70925b28a751e98fe30",
+  "startup_execution": "candidate-bounded-reopen-native-restored.json",
+  "startup_log_sha256": "64184a73689094939cb9c1be099ba36e7123f728c8c351dc070c7746c34409f8",
+  "executable": "/tmp/chain-pq-startup-repair-target/release/deps/trnm_pon_node-a8515e07877dcc8f",
+  "executable_sha256": "ceab53aff05d196bcc1036cd6b38f2020d006a91448836620fb70618208da8bd",
+  "same_executable_after_run": true,
+  "command": [
+    "/tmp/chain-pq-startup-repair-target/release/deps/trnm_pon_node-a8515e07877dcc8f",
+    "authenticated_state_archive::tests",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.6838197609904455,
+  "expected_tests": 8,
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered_out": 802
+  },
+  "exact_expected_tests_ran": true,
+  "log_sha256": "3e355f3de95799b4291fcdf6e3bf1fcf1b5d19d0fa0f65f2d892b07ae0d36301",
+  "input_sha256": {
+    "trillionnium/Cargo.lock": "420b25c7cdf17e04be7c9f4e33b85fd026f8f464de7d9f4b3ea101faec228691",
+    "trillionnium/Cargo.toml": "18bfd6f65c0bd8a033b2faa266e1f668a1aa80d808c24d3edaef82559f42b988",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs": "1bfc3d97f39f3be7313add487a255a79ccbf9e32dd654b8d098f90398429e299",
+    "config/pon/pq-cross-branch-corpus-v1.json": "7cb0e07fec223c053f625fbcd2a475eb5ad74865bf83b5264567c896148fa86c",
+    "scripts/ci/check_pq_research_integration.py": "27d1c4b4d5f8f776b4bbd94806f5f25825d918583eb8ffaebec5ea30ee33f21e",
+    "docs/security/PQ_NATIVE_NETWORK_OWNER_V2.md": "42e877f5e84808403ea24f633b1ec27f4ffe909abb2801ab0ce4006cbb9f4439",
+    "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs": "17ef7e3cbf9b2e57719a4b764b9489a68cbfa2941c891fcd7a8a7573b4cc5afc",
+    "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs": "75b372db00207e75a1bf122c946ed9f777f4a1b4f6906df424fb4b78660b1cf5",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "2d2dcec2cedb3e6e507bd7256233fa9266bca8707c50e4c7b8dbe17d00076bf0",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "959a89e43002a54a878867ea4c143036af53db8905031795994dfbfdb276a039"
+  },
+  "inputs_unchanged_during_execution": true,
+  "cgroup_memory_before": {
+    "memory.current": "8534089728",
+    "memory.max": "8589934592",
+    "memory.events": "low 0\nhigh 0\nmax 15171848\noom 38\noom_kill 8\noom_group_kill 0"
+  },
+  "cgroup_memory_after": {
+    "memory.current": "8531935232",
+    "memory.max": "8589934592",
+    "memory.events": "low 0\nhigh 0\nmax 15171897\noom 38\noom_kill 8\noom_group_kill 0"
+  },
+  "native_observations": [],
+  "shared_host_exclusive_hardware_established": false,
+  "scope": "retained tests on the exact final startup executable; no budget, input, schedule, or assertion changes; no full Node or whole-chain qualification",
+  "production_activation": false,
+  "whole_chain_qualification": false
+}

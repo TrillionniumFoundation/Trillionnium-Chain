@@ -1,0 +1,23 @@
+{
+  "base_sha": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+  "command": [
+    "/tmp/pq-r3-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--offline",
+    "--locked",
+    "--release",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "operator_pq_startup::tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 0.14693990899831988,
+  "log_sha256": "4f78ca196104110e2ed7dc45773d23083f88e3ba92257123d00948988c19e4ee",
+  "scope": "source-matched local startup suite; not whole-chain qualification"
+}

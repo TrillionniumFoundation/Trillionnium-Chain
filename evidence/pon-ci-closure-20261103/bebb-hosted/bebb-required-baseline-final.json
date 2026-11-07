@@ -1,0 +1,199 @@
+{
+  "schema": "bebb-required-baseline-final-readback-v1",
+  "observed_at": "2026-11-03 15:52:25 UTC",
+  "pr": 688,
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "head_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "actual_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "actual_merge_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "run": {
+    "id": 41658914621,
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+    "attempt": 1,
+    "updated_at": "2026-11-03T15:20:43Z",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41658914621"
+  },
+  "jobs": [
+    {
+      "id": 125996626120,
+      "name": "fuzz-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996626448,
+      "name": "repository-truth",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996626497,
+      "name": "prospective-merge (repository-truth)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996626500,
+      "name": "prospective Rust shard (quality)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996626554,
+      "name": "prospective Rust shard (runtime)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996626558,
+      "name": "protocol-contract",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996626572,
+      "name": "rust-baseline shard (runtime)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996626896,
+      "name": "cross-arch-cost (x64)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996626905,
+      "name": "cross-arch-cost (arm64)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996626942,
+      "name": "external-evidence-contract",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996626973,
+      "name": "rust-baseline shard (quality)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996627147,
+      "name": "prospective-merge (external-evidence-contract)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996627268,
+      "name": "prospective-merge (fuzz-smoke)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996627277,
+      "name": "W1 actual reuse V3 (x64, head)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996627308,
+      "name": "prospective-merge (protocol-contract)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 125996627378,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996627586,
+      "name": "W1 actual reuse V3 (arm64, head)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 125996627713,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 126005122190,
+      "name": "cross-arch-cost-consistency",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 126006932356,
+      "name": "prospective-merge (rust-baseline)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 126007432645,
+      "name": "rust-baseline",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "completed_jobs": 21,
+  "success_jobs": 11,
+  "failure_jobs": 10,
+  "known_business_or_build_failures": [
+    {
+      "job": 125996626500,
+      "scope": "prospective-merge quality",
+      "cause": "strict Clippy redundant_closure_call, pq_rollback_witness.rs:56:41; invocation ingress/pq_network.rs:689-717",
+      "evidence": "bebb-quality-prospective-merge-job125996626500.log"
+    },
+    {
+      "job": 125996626973,
+      "scope": "HEAD quality",
+      "cause": "same strict Clippy lint",
+      "evidence": "bebb-quality-head-job125996626973.log"
+    },
+    {
+      "job": 125996626554,
+      "scope": "prospective-merge runtime",
+      "cause": "sequence short-TTL fixture observed no completed real manifest request; sequence_tests.rs:398; 171 pass / 1 fail",
+      "evidence": "bebb-runtime-prospective-merge-job125996626554.log"
+    },
+    {
+      "job": 125996626572,
+      "scope": "HEAD runtime",
+      "cause": "sequence superseded-endpoint announce returned errno 11 WouldBlock; sequence_tests.rs:446; 171 pass / 1 fail",
+      "evidence": "bebb-runtime-head-job125996626572.log"
+    },
+    {
+      "job": 125996626558,
+      "scope": "HEAD protocol",
+      "cause": "original 4s 16-attacker pressure confirmation 0/1 after 7 ACKs; CONFIRMATION_TARGET",
+      "artifact": 13241257458,
+      "artifact_sha256": "ef3c8d00849af52a6b851a9c7562d266b2a2c863e7c4257f188082352c5e9201"
+    },
+    {
+      "job": 125996626905,
+      "scope": "ARM cross-arch",
+      "cause": "original 4s 16-attacker pressure confirmation 0/1 after 7 ACKs; CONFIRMATION_TARGET",
+      "artifact": 13240649901,
+      "artifact_sha256": "16fa3bc828df4ebb521063f1e62b829ab0a85e66a4dddd9e28ab15761300bce8"
+    }
+  ],
+  "unknowns": [
+    "Cross-arch x64 and prospective-merge protocol exact first failing assertion/report not independently retrieved in this narrow readback.",
+    "Full Node runtime was not reached in either baseline runtime shard after Cell library failure.",
+    "ARM original CPU is audited separately by root; no inferred numerator or phase attribution here.",
+    "New local Cell fixture candidate results do not replace these hosted bebb results."
+  ],
+  "no_rerun": true,
+  "no_workflow_or_ref_mutation": true,
+  "source_reset_note": "Before current recovery, local large ZIP/compact copies were lost on executor reset. Original artifact locators/digests and decoded job logs were retained; this readback does not claim lost files exist."
+}

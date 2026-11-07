@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 14 tests
+test account_archive_prototype::native_primitive_tests::decode_cache_tests::native_hot_decode_cache_keeps_graph_state_trigger_and_cancellation_fences ... ok
+test account_archive_prototype::native_primitive_tests::decode_cache_tests::native_hot_decode_cache_observes_foreign_sql_types_bytes_deletion_and_rollback ... ok
+test account_archive_prototype::native_primitive_tests::native_borrowed_accounts_preserve_arrays_numbers_and_field_failures ... ok
+test account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation ... ignored, explicit release branch hashing observation; not Node or WAN throughput
+test account_archive_prototype::native_primitive_tests::native_branch_single_buffer_matches_original_wire ... ok
+test account_archive_prototype::native_primitive_tests::native_branch_single_buffer_preserves_every_lift_depth ... ok
+test account_archive_prototype::native_primitive_tests::native_cached_node_statements_read_actual_rows_and_trigger_effects ... ok
+test account_archive_prototype::native_primitive_tests::native_complete_account_checks_keep_branch_bytes_errors_and_progress ... ok
+test account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost ... ignored, explicit release account-verification comparison; no full Node cost claim
+test account_archive_prototype::native_primitive_tests::native_hot_graph_reuses_only_decode_math_and_still_reads_every_node ... ok
+test account_archive_prototype::native_primitive_tests::native_leaf_decoder_preserves_complete_original_grammar ... ok
+test account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost ... ignored, explicit same-binary codegen observation; not Node or network throughput
+test account_archive_prototype::native_primitive_tests::shared_branch_kernel_matches_storage_local_vectors ... ok
+test account_archive_prototype::native_primitive_tests::shared_branch_kernel_preserves_complete_account_roots ... ok
+
+test result: ok. 11 passed; 0 failed; 3 ignored; 0 measured; 1065 filtered out; finished in 0.39s
+

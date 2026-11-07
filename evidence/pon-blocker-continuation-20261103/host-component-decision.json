@@ -1,0 +1,226 @@
+{
+  "schema": "pon-host-prepared-component-decision-v1",
+  "planned_rounds": 16,
+  "observed_rounds": 16,
+  "samples": 64,
+  "complete_calls": 16384,
+  "fresh_file_opens": 114688,
+  "median_thread_cpu_ratio": 0.9029464037047589,
+  "empirical_p95_thread_cpu_ratio": 1.4171393114151023,
+  "predeclared_median_maximum": 0.95,
+  "predeclared_p95_maximum": 1.05,
+  "timing_rule_met": false,
+  "rounds": [
+    {
+      "round": 0,
+      "thread_cpu_ratio": 0.9041601877743491,
+      "wall_ratio": 0.9042268125593494,
+      "reference": {
+        "thread_cpu_ns": 7274263,
+        "wall_ns": 7271555
+      },
+      "candidate": {
+        "thread_cpu_ns": 6577099,
+        "wall_ns": 6575135
+      }
+    },
+    {
+      "round": 1,
+      "thread_cpu_ratio": 1.4171393114151023,
+      "wall_ratio": 1.4171902126736111,
+      "reference": {
+        "thread_cpu_ns": 7005614,
+        "wall_ns": 7004160
+      },
+      "candidate": {
+        "thread_cpu_ns": 9927931,
+        "wall_ns": 9926227
+      }
+    },
+    {
+      "round": 2,
+      "thread_cpu_ratio": 0.871811918189929,
+      "wall_ratio": 0.8717771765235065,
+      "reference": {
+        "thread_cpu_ns": 6750807,
+        "wall_ns": 6749594
+      },
+      "candidate": {
+        "thread_cpu_ns": 5885434,
+        "wall_ns": 5884142
+      }
+    },
+    {
+      "round": 3,
+      "thread_cpu_ratio": 0.8131353959068797,
+      "wall_ratio": 0.8131673820691747,
+      "reference": {
+        "thread_cpu_ns": 7597822,
+        "wall_ns": 7595724
+      },
+      "candidate": {
+        "thread_cpu_ns": 6178058,
+        "wall_ns": 6176595
+      }
+    },
+    {
+      "round": 4,
+      "thread_cpu_ratio": 0.9371045735768968,
+      "wall_ratio": 0.9371913927718756,
+      "reference": {
+        "thread_cpu_ns": 8334199,
+        "wall_ns": 8331788
+      },
+      "candidate": {
+        "thread_cpu_ns": 7810016,
+        "wall_ns": 7808480
+      }
+    },
+    {
+      "round": 5,
+      "thread_cpu_ratio": 0.9017326196351686,
+      "wall_ratio": 0.9017034028275454,
+      "reference": {
+        "thread_cpu_ns": 8422795,
+        "wall_ns": 8421085
+      },
+      "candidate": {
+        "thread_cpu_ns": 7595109,
+        "wall_ns": 7593321
+      }
+    },
+    {
+      "round": 6,
+      "thread_cpu_ratio": 0.9826895506356225,
+      "wall_ratio": 0.9826412586923235,
+      "reference": {
+        "thread_cpu_ns": 7818399,
+        "wall_ns": 7816811
+      },
+      "candidate": {
+        "thread_cpu_ns": 7683059,
+        "wall_ns": 7681121
+      }
+    },
+    {
+      "round": 7,
+      "thread_cpu_ratio": 0.9367267594060313,
+      "wall_ratio": 0.9366939229581348,
+      "reference": {
+        "thread_cpu_ns": 7204420,
+        "wall_ns": 7202863
+      },
+      "candidate": {
+        "thread_cpu_ns": 6748573,
+        "wall_ns": 6746878
+      }
+    },
+    {
+      "round": 8,
+      "thread_cpu_ratio": 1.3574933838104675,
+      "wall_ratio": 1.3574530926177546,
+      "reference": {
+        "thread_cpu_ns": 6771647,
+        "wall_ns": 6770203
+      },
+      "candidate": {
+        "thread_cpu_ns": 9192466,
+        "wall_ns": 9190233
+      }
+    },
+    {
+      "round": 9,
+      "thread_cpu_ratio": 0.9264945712440883,
+      "wall_ratio": 0.9264937431810083,
+      "reference": {
+        "thread_cpu_ns": 7732803,
+        "wall_ns": 7731165
+      },
+      "candidate": {
+        "thread_cpu_ns": 7164400,
+        "wall_ns": 7162876
+      }
+    },
+    {
+      "round": 10,
+      "thread_cpu_ratio": 0.8636999512370971,
+      "wall_ratio": 0.8636862722865115,
+      "reference": {
+        "thread_cpu_ns": 7692323,
+        "wall_ns": 7690414
+      },
+      "candidate": {
+        "thread_cpu_ns": 6643859,
+        "wall_ns": 6642105
+      }
+    },
+    {
+      "round": 11,
+      "thread_cpu_ratio": 0.7813133122342357,
+      "wall_ratio": 0.7812601297844937,
+      "reference": {
+        "thread_cpu_ns": 8115039,
+        "wall_ns": 8113450
+      },
+      "candidate": {
+        "thread_cpu_ns": 6340388,
+        "wall_ns": 6338715
+      }
+    },
+    {
+      "round": 12,
+      "thread_cpu_ratio": 0.8612659958612434,
+      "wall_ratio": 0.861286416712264,
+      "reference": {
+        "thread_cpu_ns": 7436533,
+        "wall_ns": 7434636
+      },
+      "candidate": {
+        "thread_cpu_ns": 6404833,
+        "wall_ns": 6403351
+      }
+    },
+    {
+      "round": 13,
+      "thread_cpu_ratio": 0.8973561364567864,
+      "wall_ratio": 0.8973493768078057,
+      "reference": {
+        "thread_cpu_ns": 7514760,
+        "wall_ns": 7513252
+      },
+      "candidate": {
+        "thread_cpu_ns": 6743416,
+        "wall_ns": 6742012
+      }
+    },
+    {
+      "round": 14,
+      "thread_cpu_ratio": 0.8575132270508354,
+      "wall_ratio": 0.8574713276062889,
+      "reference": {
+        "thread_cpu_ns": 7781024,
+        "wall_ns": 7779347
+      },
+      "candidate": {
+        "thread_cpu_ns": 6672331,
+        "wall_ns": 6670567
+      }
+    },
+    {
+      "round": 15,
+      "thread_cpu_ratio": 1.0448631695443507,
+      "wall_ratio": 1.0449464272437299,
+      "reference": {
+        "thread_cpu_ns": 8139416,
+        "wall_ns": 8137065
+      },
+      "candidate": {
+        "thread_cpu_ns": 8504576,
+        "wall_ns": 8502797
+      }
+    }
+  ],
+  "whole_host_qualified": false,
+  "public_service_qualified": false,
+  "scope": "One local same-executable component observation. All original fresh reads complete; two procfs plus five ordinary files, not original kernel Host limits. No confidence/tail guarantee or end-to-end inference."
+}

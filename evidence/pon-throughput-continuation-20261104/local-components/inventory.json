@@ -1,0 +1,58 @@
+{
+  "schema": "trnm-throughput-local-component-inventory-v1",
+  "scope": "Uncommitted component input evidence only. Not a final complete-source native, Host, service or public throughput acceptance. Root digest measurements used a binary whose optional SQLite IO boundary was explicitly unqualified; the exercised selectors perform pure arithmetic. State benchmark initial metadata corrections are separate and raw observations are retained.",
+  "files": [
+    {
+      "path": "graph-controls.log",
+      "bytes": 2283,
+      "sha256": "93e7a88f6af67c816d3214db0f9046a84b25ca89caa574a807c35db29a9f581a"
+    },
+    {
+      "path": "graph-root-cost.log",
+      "bytes": 939,
+      "sha256": "bd7acccc5a972cfae8e0e07fbd6d5f6d001915a743d735bde89c45071f78682c"
+    },
+    {
+      "path": "root-digest-cost.jsonl",
+      "bytes": 97507,
+      "sha256": "860da28d8439b50919f78640dad97a438b3e2fdca39190b8f119d8774b0653bf"
+    },
+    {
+      "path": "graph-root-cost-summary.json",
+      "bytes": 3607,
+      "sha256": "c6cb2cbadb3d4a5f08fea99f76e10a5e46682feac7917ed0b030804b3a5d747a"
+    },
+    {
+      "path": "state-final-pon-commitment.log",
+      "bytes": 11272,
+      "sha256": "bb62f228690c268d6cfadbc653728bb672272b2260158bd8c2df6c2191bee85a"
+    },
+    {
+      "path": "state-final-unchanged-binding-cost.log",
+      "bytes": 8411,
+      "sha256": "cc89f3c1ee1152110a9b8a0ed6b176316283288f78599f08a0cb4fa08770bbda"
+    },
+    {
+      "path": "state-final-unchanged-binding-cost-summary.json",
+      "bytes": 4854,
+      "sha256": "fcf4d1596f427f34530f7227abec620640e6e3cb7203ac8fc1f2c59606b1ba32"
+    },
+    {
+      "path": "state-unchanged-binding-cost.log",
+      "bytes": 8123,
+      "sha256": "e79cf21bc6d473df129ec7e5fa88ae77b530a81d1b59b5ae53ca77bc9bbfc14a"
+    },
+    {
+      "path": "state-unchanged-binding-cost-summary.json",
+      "bytes": 3162,
+      "sha256": "770e8ed5f9745ce9c4355e85a1a2a6a9901de3bdaf36dba18e1202465a8ab655"
+    },
+    {
+      "path": "state-unchanged-binding-cost-corrected-summary.json",
+      "bytes": 4349,
+      "sha256": "67773545ffe7dd2b75aa54ee4bf8fecbc8a3471ad343d6e628828c4743e1bd2c"
+    }
+  ],
+  "node_owner_measured": false,
+  "complete_business_throughput_qualified": false
+}

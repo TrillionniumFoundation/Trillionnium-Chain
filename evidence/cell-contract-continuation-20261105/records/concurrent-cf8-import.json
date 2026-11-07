@@ -1,0 +1,299 @@
+{
+  "status": "CF8_CHECKOUT_READY",
+  "observed_at_utc": "2026-11-05T09:33:32.818823+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+  "head": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+  "head_tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c",
+  "root_tree_raw_sha1_verified": true,
+  "commits": [
+    {
+      "sha": "2534c56e2c15d2c31a1e829e369bee84aec4be2f",
+      "tree": "1f65a48a186125cf79e2a02866dbb38958e1d3f7",
+      "parents": [
+        "6ee529046d295e3175f09112492abee373f1f54c"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "c54e1e325b3174b0f671bb064ab8b07924cba62d",
+      "tree": "848872af917fc085696c94f98b35ab85b99af38b",
+      "parents": [
+        "6ee529046d295e3175f09112492abee373f1f54c"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "98897a742c5c8798239e760f4b776d034bbf5792",
+      "tree": "5a0be58db8d573df6cc465a0c7ff77766bf15ab0",
+      "parents": [
+        "0841750c6716189121d5e630de218dd5b02981b3",
+        "2534c56e2c15d2c31a1e829e369bee84aec4be2f"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "d992451cc8bfb3d69a1c9f1906bee6732255fad6",
+      "tree": "e5bfe7c1dabdae738173e0f6699cfaa3960cbbaf",
+      "parents": [
+        "dda4cc47362065819e9591f11f713933e7a853bf",
+        "c54e1e325b3174b0f671bb064ab8b07924cba62d"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "28b379ed75d4503da634ef71fb54ce51edb96d57",
+      "tree": "7f9d85e33a8ab7f5e3a96dfa2ea9ef47a4d397a9",
+      "parents": [
+        "d992451cc8bfb3d69a1c9f1906bee6732255fad6"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "eaacd1ef4245f48cae5f16cf03d2fd7c3d2cd4f5",
+      "tree": "4a3cef276946f1b5c3f472adbf98bf9e7790854d",
+      "parents": [
+        "dda4cc47362065819e9591f11f713933e7a853bf",
+        "98897a742c5c8798239e760f4b776d034bbf5792"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "413084b29b30ebbf1e7a1e97643b743ec5a751c8",
+      "tree": "93c52839f51f5dbb0d43fd160076d76a2194100b",
+      "parents": [
+        "28b379ed75d4503da634ef71fb54ce51edb96d57"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "cb8ed84404977320fdb09d75284f99149654107d",
+      "tree": "f436619ccda70416e6f60ece3316eeab57aa4d48",
+      "parents": [
+        "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+        "413084b29b30ebbf1e7a1e97643b743ec5a751c8"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "2a8fee974b41fab6e2c4e662dcce1807fcd19bdd",
+      "tree": "b9627a51026e8d16a206b3952c3cda1d058d40ec",
+      "parents": [
+        "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+        "eaacd1ef4245f48cae5f16cf03d2fd7c3d2cd4f5"
+      ],
+      "raw_sha1_verified": true
+    },
+    {
+      "sha": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+      "tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c",
+      "parents": [
+        "2a8fee974b41fab6e2c4e662dcce1807fcd19bdd",
+        "cb8ed84404977320fdb09d75284f99149654107d"
+      ],
+      "raw_sha1_verified": true
+    }
+  ],
+  "changed_blobs": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha": "91f62653605487caffb41699445db38280bc124c",
+      "mode": "100644",
+      "bytes": 91658,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "f039b0c2cc90465ed3b411613f713ff721d5eb4a",
+      "mode": "100644",
+      "bytes": 526370,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md",
+      "sha": "59f0d119455b016b631771cb9774a7bc1c4be98b",
+      "mode": "100644",
+      "bytes": 25457,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/README.md",
+      "sha": "b2b77ab07c3892535c3236e1132a993996566c47",
+      "mode": "100644",
+      "bytes": 11034,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/business-failure.json",
+      "sha": "d1d71857f9a5c30dbf56591227ea531046330ce7",
+      "mode": "100644",
+      "bytes": 6112,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/business-manifest.json",
+      "sha": "0b295eae20d08216bc67d7beb903973247bfca03",
+      "mode": "100644",
+      "bytes": 51328,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/execution-summary.json",
+      "sha": "55c4d23694676b104c4abe3a784a3c920b9a0702",
+      "mode": "100644",
+      "bytes": 37801,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/ghostdag-order-max6.json",
+      "sha": "c4b5c8b41c2ac2bb8ad083c5f6960438ad8049f7",
+      "mode": "100644",
+      "bytes": 7963,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/ghostdag-replay.json",
+      "sha": "5c5904768cef15da405e6076cbf08bae0e829b08",
+      "mode": "100644",
+      "bytes": 339,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/raw-records.tar.gz",
+      "sha": "fde2f27329ab0a853ba473065c786d12875f4c28",
+      "mode": "100644",
+      "bytes": 1044134,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "evidence/pon-architecture-continuation-20261105/records-index.json",
+      "sha": "3f60304212857b8b26c2cb6f29f5cb76edd13310",
+      "mode": "100644",
+      "bytes": 34017,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/architecture_compare.py",
+      "sha": "b5a260c4cc959b2463596cd78561b2e5ddc94e0d",
+      "mode": "100644",
+      "bytes": 18803,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/ghostdag_order_campaign.py",
+      "sha": "1b236a8200c01c7e713a7d20b24a06570a753678",
+      "mode": "100644",
+      "bytes": 8266,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/test_architecture_compare.py",
+      "sha": "8ec23ccc009ef8d04d16496897829f9526a3ba49",
+      "mode": "100644",
+      "bytes": 18680,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/ghostdag_order_reference.py",
+      "sha": "ff3c8476f014090ab937df5e6cf008f118b8501c",
+      "mode": "100644",
+      "bytes": 16019,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+      "sha": "dc39fbc8670075e4bbc8fde5e74f81b3fff41bf6",
+      "mode": "100644",
+      "bytes": 48419,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_ghostdag_order_reference.py",
+      "sha": "a469fa5192603b771eb773e89e1fbdd5a14cdf82",
+      "mode": "100644",
+      "bytes": 26240,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+      "sha": "acd88cc7888c116815181f34eb327247140a167f",
+      "mode": "100644",
+      "bytes": 30216,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "sha": "5257dd4a05f4222ec02835fed40da8c5c7486b3b",
+      "mode": "100644",
+      "bytes": 23895,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/llm_runtime_release.py",
+      "sha": "c1cc08ce8189364dfc45666e6af5793eac81f8fc",
+      "mode": "100644",
+      "bytes": 26363,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "scripts/test_llm_runtime_release.py",
+      "sha": "44871794d8b93fe7236cad99fa3c2477a82e6253",
+      "mode": "100644",
+      "bytes": 21407,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha": "2bba9433c7f87c6adb7262da09006f083f1c38c0",
+      "mode": "100644",
+      "bytes": 341973,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "sha": "80431c483d76b827df22eb543e78575a73a58cd5",
+      "mode": "100644",
+      "bytes": 36607,
+      "raw_sha1_verified": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "sha": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "mode": "100644",
+      "bytes": 8844,
+      "raw_sha1_verified": true
+    }
+  ],
+  "head_recursive_entries": 11167,
+  "available_unique_head_tree_blob_objects": 9945,
+  "missing_head_objects": [],
+  "base_is_ancestor": true,
+  "new_commit_graph_count": 10,
+  "new_commit_graph": [
+    "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb 2a8fee974b41fab6e2c4e662dcce1807fcd19bdd cb8ed84404977320fdb09d75284f99149654107d",
+    "2a8fee974b41fab6e2c4e662dcce1807fcd19bdd 657bf2a462ff13a6101ebcb4fbe0fb91c515c972 eaacd1ef4245f48cae5f16cf03d2fd7c3d2cd4f5",
+    "cb8ed84404977320fdb09d75284f99149654107d 657bf2a462ff13a6101ebcb4fbe0fb91c515c972 413084b29b30ebbf1e7a1e97643b743ec5a751c8",
+    "413084b29b30ebbf1e7a1e97643b743ec5a751c8 28b379ed75d4503da634ef71fb54ce51edb96d57",
+    "eaacd1ef4245f48cae5f16cf03d2fd7c3d2cd4f5 dda4cc47362065819e9591f11f713933e7a853bf 98897a742c5c8798239e760f4b776d034bbf5792",
+    "28b379ed75d4503da634ef71fb54ce51edb96d57 d992451cc8bfb3d69a1c9f1906bee6732255fad6",
+    "d992451cc8bfb3d69a1c9f1906bee6732255fad6 dda4cc47362065819e9591f11f713933e7a853bf c54e1e325b3174b0f671bb064ab8b07924cba62d",
+    "98897a742c5c8798239e760f4b776d034bbf5792 0841750c6716189121d5e630de218dd5b02981b3 2534c56e2c15d2c31a1e829e369bee84aec4be2f",
+    "c54e1e325b3174b0f671bb064ab8b07924cba62d 6ee529046d295e3175f09112492abee373f1f54c",
+    "2534c56e2c15d2c31a1e829e369bee84aec4be2f 6ee529046d295e3175f09112492abee373f1f54c"
+  ],
+  "isolated_index_read_tree_succeeded": true,
+  "isolated_index_entry_count": 10020,
+  "isolated_index_write_tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c",
+  "objects_imported_by_this_agent": false,
+  "object_availability_explanation": "The target commit and binary archive were initially absent in the repository and known alternates, then became readable through the existing shared alternate /workspace/scratch/aea25ba345a8/chain/.git/objects while this agent performed read-only checks. This agent did not fetch/import the objects or modify that repository. An isolated temporary index read-tree/write-tree verified the exact target tree; it did not touch the real index.",
+  "operations": {
+    "git_network_fetch": false,
+    "api_blob_download": false,
+    "real_index_writes": false,
+    "head_or_ref_writes": false,
+    "working_tree_writes": false,
+    "temporary_index_used": true
+  },
+  "scope": "Exact hash of 10 new commit objects, the target root tree, and all 24 changed blobs, including binary archive. Availability/type/size checked for every target tree and blob. This is object/checkout readiness only, not source tests or runtime/business acceptance. No previous green gate is inherited.",
+  "remote_metadata_file": "concurrent-cf8-remote.json"
+}

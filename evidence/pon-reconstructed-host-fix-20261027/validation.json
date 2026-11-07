@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-reconstructed-host-fix-validation-v1",
+  "baseline": "ac469237422d43805845e8b9a6839ad14e1028e7",
+  "original_lost_commit": "917b1e00044e816c3c56dbbfb9628239e9824218",
+  "byte_identical_to_original_lost_commit": false,
+  "host_controls": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "90e401",
+      "wall_time_seconds": 0.080785562,
+      "exit_code": 0,
+      "original_token_count": 70,
+      "output": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 25, \"branch\": \"fix/chain-recovered-host-20261027\", \"remote_policy_mutated\": false}\n...............\n----------------------------------------------------------------------\nRan 15 tests in 0.006s\n\nOK\n"
+    }
+  },
+  "ci_contract_controls": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "d96e62",
+      "wall_time_seconds": 5.154947107,
+      "exit_code": 0,
+      "original_token_count": 48,
+      "output": "...........................................................................................\n----------------------------------------------------------------------\nRan 91 tests in 5.150s\n\nOK\n"
+    }
+  },
+  "original_runner_controls": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "a451d1",
+      "wall_time_seconds": 0.000015113,
+      "exit_code": 0,
+      "original_token_count": 43,
+      "output": "........................................................................\n----------------------------------------------------------------------\nRan 86 tests in 7.945s\n\nOK\n"
+    }
+  },
+  "repository_check": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "25eb30",
+      "wall_time_seconds": 0.00001991,
+      "exit_code": 0,
+      "original_token_count": 77,
+      "output": "{\"activation\": false, \"head\": \"ac469237422d43805845e8b9a6839ad14e1028e7\", \"local_links\": 1271, \"normal_dependency_edges\": 19, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 955, \"source_state\": \"dirty-candidate\", \"tree\": \"aa000d8883cbffdf0ac4fbfb57b63394693c99c6\", \"workspace_packages\": 25}\n"
+    }
+  },
+  "hosted_systemd_executed": false,
+  "native_acceptance_executed": false,
+  "native_source_changed": false,
+  "activation": false
+}

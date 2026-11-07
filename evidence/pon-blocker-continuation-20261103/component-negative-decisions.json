@@ -1,0 +1,41 @@
+{
+  "schema": "pon-component-negative-decisions-v1",
+  "recorded_utc": "2026-11-03T13:03:29.460940+00:00",
+  "original_source": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+  "candidate_source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "761d8ed9fca6e6aa3b2746f5cb3251d90430a8179fae76fe6a62c1d5df7effb2",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs": "74a1c75fd15603725d7e470c3d9f60bd45103f77ff15af411d16b00a00e13c5b",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader_tests.rs": "98cdc05dbcf6855540a58ed26924df450fed6b1b97a41c8d3d81c760d9ac7272",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": "e9a62e3a987b2047ffd03ea4c6992d82e6d740b1668739d87a0a0b7947de0f3b"
+  },
+  "patch_sha256": {
+    "rejected-host-prepared-paths.patch": "80a277c4768059d33db175058adf584bb2cf3f7d9532e4385d04e7f904765bce",
+    "rejected-sibling-order-by.patch": "c9ce8ead70528bc0e11a44977faec3c9b0c55978f0c15491af6572d0bbdc89e5"
+  },
+  "host": {
+    "decision": "REJECTED; original production file restored exactly",
+    "reason": "Predeclared empirical p95 ratio exceeded 1.05; median passed but cannot override that condition.",
+    "component_test_executed": true,
+    "full_host_semantic_suite_executed_on_candidate": false,
+    "whole_host_or_public_service_qualification": false
+  },
+  "sibling_query": {
+    "decision": "REJECTED BEFORE RUNTIME; original three production/test files restored exactly",
+    "reason": "ORDER BY UNION initializes both SQLite coroutines before the first Rust Row. A left-side SQLite execution error can precede the original right missing/decode/edge verdict. Output ordinal alone does not preserve the original error precedence.",
+    "pinned_dependency": "libsqlite3-sys 0.37.0 / SQLite 3.51.3",
+    "normal_component_timing_executed": false,
+    "source_compiled": true,
+    "semantic_qualification": false,
+    "alternative_no_order_sentinel_design_qualified": false,
+    "no_fault_reproduction_or_traffic_executed": true
+  },
+  "patch_storage": {
+    "archive": "raw-validation.tar.gz.base64",
+    "member_names": [
+      "rejected-host-prepared-paths.patch",
+      "rejected-sibling-order-by.patch"
+    ],
+    "restore": "restore.py NEW_DIRECTORY",
+    "raw_bytes_unchanged": true
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "best_observed_cold_legal_method": "maintenance-limb",
+  "honest_preparation_cpu_ns": 2194575186,
+  "honest_preparation_wall_ns": 2263142856,
+  "input": {
+    "bytes": 454134,
+    "report": "/home/runner/work/_temp/pon-native-campaign-40615636719-1/run-3-raw/report.json",
+    "sha256": "cfd4767a9ad58751337812465d472efe8ffe6e23e3608d6734bb581ce05d8bb6"
+  },
+  "native_economics_complete": true,
+  "native_finite_experiment_criteria_met": false,
+  "phases": [
+    {
+      "confirmed_rounds": null,
+      "mode": "baseline",
+      "native_phase_criteria_met": null,
+      "observations_available": false,
+      "scheduled_confirmation_rounds": 3,
+      "startup_or_campaign_error": "actual public phase or Host failed; raw logs retained",
+      "state_backend": "authenticated-v1"
+    },
+    {
+      "confirmed_rounds": null,
+      "mode": "from-zero",
+      "native_phase_criteria_met": null,
+      "observations_available": false,
+      "scheduled_confirmation_rounds": 3,
+      "startup_or_campaign_error": "actual public phase or Host failed; raw logs retained",
+      "state_backend": "authenticated-v1"
+    },
+    {
+      "confirmed_rounds": null,
+      "mode": "late-product",
+      "native_phase_criteria_met": null,
+      "observations_available": false,
+      "scheduled_confirmation_rounds": 3,
+      "startup_or_campaign_error": "actual public phase or Host failed; raw logs retained",
+      "state_backend": "authenticated-v1"
+    }
+  ],
+  "schema": "pon-public-v3-multiprocess-phase-derivation-v2",
+  "scope": {
+    "acknowledgments_are_not_confirmations": true,
+    "business_tps_capacity": null,
+    "cpu_excludes_reactor_authentication": true,
+    "cpu_intervals_are_nested_not_additive": true,
+    "dispatch_cpu_scope_retained_per_observer_schema": true,
+    "fixed_confirmation_denominator_per_phase": 3,
+    "host_or_source_authentication_performed": false,
+    "production_qualification": false,
+    "reader_runs_native_admission": false,
+    "submit_phase_cpu_excludes_response_signing": true,
+    "submit_phase_cpu_excludes_scoped_workers": true,
+    "unknown_cpu_is_not_zero": true,
+    "v1_missing_phase_measurements_are_not_reconstructed": true
+  },
+  "state_backend": "authenticated-v1"
+}

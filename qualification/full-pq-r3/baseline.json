@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-pq-r3-reconstruction-start-v1",
+  "chain_remote_base": "da31aff73adadda492da2642bef1f8d3d74be530",
+  "hepta_remote_base": "6b172cd1980133d60a6aec69cd2e9ab6be70e098",
+  "source_date": "2026-10-30",
+  "prior_workspace_available": false,
+  "prior_temporary_bundles_available": false,
+  "prior_local_final_commits_not_recovered": [
+    "3251d21daf753ac56589925e80380e3eb724c5d4",
+    "2c40a9aca5d6c56736ca4a3520cf678800e632c3"
+  ],
+  "test_result_inheritance": "No prior final runtime success is inherited into the new source. Remote preserved observations remain historical scoped evidence.",
+  "work_scope": [
+    "real PQ authorization owners and callers",
+    "continuous PQ startup without circular genesis commitment",
+    "original-budget authenticated large-state capacity",
+    "strict wire activation, real rejection costs and current authority",
+    "separate quantum work and proof qualification"
+  ],
+  "production_activation": false,
+  "whole_chain_pq_qualified": false
+}

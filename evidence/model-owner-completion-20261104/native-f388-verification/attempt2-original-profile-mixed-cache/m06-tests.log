@@ -1,0 +1,10 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/f4976366a32a/chain/trillionnium/crates/trnm-mvcc-fee)
+error[E0463]: can't find crate for `trnm_mvcc_fee`
+ --> crates/trnm-mvcc-fee/tests/pon_commitment.rs:4:5
+  |
+4 | use trnm_mvcc_fee::{
+  |     ^^^^^^^^^^^^^ can't find crate
+
+For more information about this error, try `rustc --explain E0463`.
+error: could not compile `trnm-mvcc-fee` (test "pon_commitment") due to 1 previous error

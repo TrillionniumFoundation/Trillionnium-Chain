@@ -1,0 +1,105 @@
+{
+  "schema": "trnm-component-numerical-recheck-v1",
+  "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "scope": "Recomputed every archived row with exact arithmetic using the archived tap parameters. Four upstream crate archives were not independently re-downloaded in this run. This is not a QROM theorem or attack-cost bound.",
+  "rows": [
+    {
+      "circuit": "rv32im",
+      "po2": 13,
+      "toy_bits_display": 99.93121954634917,
+      "proven_bits_display": 47.77386317254559,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 14,
+      "toy_bits_display": 99.86556962343057,
+      "proven_bits_display": 47.75474082016456,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 18,
+      "toy_bits_display": 98.64242084639453,
+      "proven_bits_display": 45.301399529382365,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 20,
+      "toy_bits_display": 97.14198066803257,
+      "proven_bits_display": 41.56703968034242,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 22,
+      "toy_bits_display": 95.2995175344472,
+      "proven_bits_display": 37.58538512417749,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "rv32im",
+      "po2": 24,
+      "toy_bits_display": 93.34174450343718,
+      "proven_bits_display": 33.58653949720281,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "recursion",
+      "po2": 13,
+      "toy_bits_display": 99.99181581467484,
+      "proven_bits_display": 47.776928641419886,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "recursion",
+      "po2": 14,
+      "toy_bits_display": 99.9836779052625,
+      "proven_bits_display": 47.76687931752008,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "recursion",
+      "po2": 18,
+      "toy_bits_display": 99.75871562491838,
+      "proven_bits_display": 46.018377197726636,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "recursion",
+      "po2": 20,
+      "toy_bits_display": 99.21074830151106,
+      "proven_bits_display": 42.48516798527157,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "recursion",
+      "po2": 22,
+      "toy_bits_display": 98.0318313786382,
+      "proven_bits_display": 38.52003310814109,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    },
+    {
+      "circuit": "recursion",
+      "po2": 24,
+      "toy_bits_display": 96.33883821085949,
+      "proven_bits_display": 34.522240409848564,
+      "both_exact_rationals_match": true,
+      "meets_2_minus_128_research_budget": false
+    }
+  ],
+  "quantum_security_bits": null,
+  "production_qualified": false
+}

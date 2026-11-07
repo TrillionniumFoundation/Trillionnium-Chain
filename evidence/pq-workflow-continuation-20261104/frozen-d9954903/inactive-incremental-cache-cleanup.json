@@ -1,0 +1,53 @@
+{
+  "started_utc": "2026-11-05T01:37:47.608787+00:00",
+  "candidate": "/workspace/scratch/ddfe66a42a4c/chain/trillionnium/target/debug/incremental",
+  "scope": "only incremental contents",
+  "status": "CLEANED",
+  "disk_before": {
+    "total": 67586535424,
+    "used": 66534449152,
+    "free": 0
+  },
+  "deleted_entries": [
+    "trnm_crypto_primitives-3cg9pkk4yvybf",
+    "trnm_sqlite_io_boundary-1ad9mb97uz4va",
+    "trnm_service_settlement-2aw843r51dxn2",
+    "trnm_mvcc_fee-30wqy7nhcbzxr",
+    "trnm_transport-1drhta1uy1qe9",
+    "trnm_crypto_primitives-0i36n22l3c46l",
+    "trnm_verification_profiles-260fv11q4f14a",
+    "trnm_protocol-3n49sxd3qyd3n",
+    "trnm_data_availability-245q8kv2oywso",
+    "build_script_build-3qsnepyqw3vis",
+    "trnm_mvcc_fee-14df9tg44zwqx",
+    "trnm_task_kernel-13adr6i6e55m1",
+    "trnm_mempool-2iw2qmznfblk9"
+  ],
+  "marker_sha256": "6d9d1d216e0f83abc5e5662ca62c92b4f23009466b54fa27321a69acdb778bb2",
+  "candidate_before": {
+    "entries": 2695,
+    "allocated_bytes": 1022238720,
+    "logical_bytes": 1016753842
+  },
+  "active_before": [],
+  "locks_acquired": [
+    "flock LOCK_EX|LOCK_NB",
+    "lockf LOCK_EX|LOCK_NB"
+  ],
+  "active_under_lock": [],
+  "candidate_after": {
+    "entries": 0,
+    "allocated_bytes": 0,
+    "logical_bytes": 0
+  },
+  "preserved_lock": true,
+  "preserved_incremental_dir": true,
+  "preserved_deps_dir": true,
+  "finished_utc": "2026-11-05T01:37:47.773144+00:00",
+  "disk_after": {
+    "total": 67586535424,
+    "used": 65690013696,
+    "free": 0
+  },
+  "free_space_delta_bytes": 0
+}

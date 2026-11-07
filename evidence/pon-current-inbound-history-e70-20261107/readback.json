@@ -1,0 +1,1668 @@
+{
+  "artifacts": {
+    "campaign": {
+      "artifact_id": 13566067509,
+      "filename": "e70-native-campaign-original.zip",
+      "run_id": 42352433857,
+      "sha256": "1e3db14094e171bbba436afa70769c5df4b7beb57db6336687e7b51189f18733"
+    },
+    "f0": {
+      "artifact_id": 13565944759,
+      "filename": "e70-f0-original.zip",
+      "run_id": 42352433638,
+      "sha256": "85df3a7e3959ce6ff0f673837ca6ca6f0d6b92dfbfdeb062ea25f3d03baa2ae3"
+    },
+    "history": {
+      "artifact_id": 13568123690,
+      "filename": "e70-history-original.zip",
+      "run_id": 42352433738,
+      "sha256": "14bc8eb4d062ad5fbd8cb17d088dfaffae726e2a2dc6d18d0ea09467d1afd185"
+    }
+  },
+  "campaign": {
+    "binary": {
+      "actual_compiler_artifact_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+      "build_separate_from_measured_campaign": true,
+      "bytes": 11709336,
+      "execution": "original cargo test command using the checked build artifact",
+      "retained": "public_v3_multiprocess.bin",
+      "sha256_after": "614a485324b47e2a08e33db0cac916e29d44937c1e3bf8b2e4e8d8324bd2be12",
+      "sha256_before": "614a485324b47e2a08e33db0cac916e29d44937c1e3bf8b2e4e8d8324bd2be12"
+    },
+    "complete_success": false,
+    "expected_resources": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10
+    },
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "original_inputs": {
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "phase_seconds": 30,
+      "seed_blocks": 4,
+      "seed_transfers": 1024
+    },
+    "planned_complete_runs": 3,
+    "runs": [
+      {
+        "best_observed_cold_legal_method": "maintenance-limb",
+        "complete_success": false,
+        "economics_complete": true,
+        "finite_experiment_criteria_met": false,
+        "number": 1,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 18,
+            "full_work_failed": 0,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 24,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 1510,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 24,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 1431,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          }
+        ],
+        "process": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "elapsed_ns": 110765046114,
+          "returncode": 101
+        },
+        "report_sha256": "f5e94bb37d83d8ff3fc7c8e62e982db0832c9acdf2b2297419f9c772672a90ab",
+        "report_validation_failure": null,
+        "scope": "finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim"
+      },
+      {
+        "best_observed_cold_legal_method": "maintenance-limb",
+        "complete_success": false,
+        "economics_complete": true,
+        "finite_experiment_criteria_met": false,
+        "number": 2,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 18,
+            "full_work_failed": 0,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 24,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 1506,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 24,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 1426,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          }
+        ],
+        "process": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "elapsed_ns": 110497486002,
+          "returncode": 101
+        },
+        "report_sha256": "dc9f388450563aad6988ea90467989c9d44598b28733ea66c11b501e7b1d5aa5",
+        "report_validation_failure": null,
+        "scope": "finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim"
+      },
+      {
+        "best_observed_cold_legal_method": "maintenance-limb",
+        "complete_success": false,
+        "economics_complete": true,
+        "finite_experiment_criteria_met": false,
+        "number": 3,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "phases": [
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 0,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 17,
+            "full_work_failed": 0,
+            "genuine_budget_depletion_observed": false,
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 24,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 1529,
+            "genuine_budget_depletion_observed": false,
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          },
+          {
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_requested": 24,
+            "duration_seconds": 30,
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 1417,
+            "genuine_budget_depletion_observed": false,
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_client_state_equal": false
+          }
+        ],
+        "process": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "elapsed_ns": 110722814273,
+          "returncode": 101
+        },
+        "report_sha256": "c4f7e77e1e513a98fe8756921b86b515d4e69b9c9aeea6c4ef3af4d90025f269",
+        "report_validation_failure": null,
+        "scope": "finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim"
+      }
+    ],
+    "scope": "same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification",
+    "state_backend": "authenticated-v1"
+  },
+  "f0": {
+    "all_planned_rounds": [
+      {
+        "actual_call_duration_ns": 27382610173,
+        "actual_ended_ns": 28383077029,
+        "actual_started_ns": 1000466856,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 27383077029,
+        "end_lateness_from_four_second_deadline_ns": 23383077029,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 466856
+      },
+      {
+        "actual_call_duration_ns": 1624543990,
+        "actual_ended_ns": 30007634434,
+        "actual_started_ns": 28383090444,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 25007634434,
+        "end_lateness_from_four_second_deadline_ns": 21007634434,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": 23383090444
+      },
+      {
+        "actual_call_duration_ns": null,
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "baseline",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_call_duration_ns": 29039522326,
+        "actual_ended_ns": 30040784321,
+        "actual_started_ns": 1001261995,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29040784321,
+        "end_lateness_from_four_second_deadline_ns": 25040784321,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "valid-work-root",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 1261995
+      },
+      {
+        "actual_call_duration_ns": null,
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_call_duration_ns": null,
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      }
+    ],
+    "binary": {
+      "build_artifact": "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+      "bytes": 11709256,
+      "compiler_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "path": "/home/runner/work/_temp/pon-fixed-host-root-f0-42352433638-1/prepared/public_v3_multiprocess.bin",
+      "sha256": "4bc5e056c9234e831046bb45ef4d5e8e0f877635d5cc74dba8e49ee4eb9404fa"
+    },
+    "complete_success": false,
+    "controller_resources_complete": true,
+    "failure": "NATIVE_F0_FAILED",
+    "finalization": {
+      "all_services_known_empty": true,
+      "complete_success": false
+    },
+    "four_second_slo_successes": 0,
+    "inputs": {
+      "actor_call_cap": 480,
+      "attackers": 24,
+      "business_blocks": 21,
+      "confirmation_depth": 6,
+      "controller_resource_boundary_samples": 6,
+      "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+      "cpu_burst_ns": 2000000000,
+      "cpu_refill_ns_per_second": 250000000,
+      "f1_implemented": false,
+      "four_second_slo_ns": 4000000000,
+      "legacy_four_second_from_zero_epoch_changed": false,
+      "m06_workers": 1,
+      "phase_profile": "fixed-public-root-phase-external-actors-v1",
+      "phase_seconds": 30,
+      "planned_business_packets": 42,
+      "planned_complete_runs": 1,
+      "planned_confirmations": 6,
+      "planned_phases": [
+        "baseline",
+        "valid-work-root"
+      ],
+      "round_start_seconds": [
+        1,
+        5,
+        9
+      ],
+      "seed_blocks": 4,
+      "seed_transfers": 1024,
+      "slo_starts_at_scheduled_offset": true,
+      "start_reserve_ns": 100000000
+    },
+    "native_execution_observed": true,
+    "native_result_failure": "NATIVE_F0_FAILED",
+    "phases": [
+      {
+        "client_stages": {
+          "after": {
+            "account_graph": {
+              "calls": 96,
+              "cpu_known_calls": 96,
+              "cpu_ns": 4179403962,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18839053285
+            },
+            "activation": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 1591175958,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 7089119030
+            },
+            "admission": {
+              "calls": 11,
+              "cpu_known_calls": 11,
+              "cpu_ns": 3934777281,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17484355494
+            },
+            "complete_commitment": {
+              "calls": 142,
+              "cpu_known_calls": 142,
+              "cpu_ns": 135323213,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 442400310
+            },
+            "complete_state_root": {
+              "calls": 42,
+              "cpu_known_calls": 42,
+              "cpu_ns": 15165614,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 92297798
+            },
+            "delta": {
+              "calls": 320,
+              "cpu_known_calls": 320,
+              "cpu_ns": 122713839,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 589046240
+            },
+            "execute": {
+              "calls": 11,
+              "cpu_known_calls": 11,
+              "cpu_ns": 140399776,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 516883862
+            },
+            "execution_parent_binding": {
+              "calls": 11,
+              "cpu_known_calls": 11,
+              "cpu_ns": 2853175,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2868983
+            },
+            "packet": {
+              "calls": 331,
+              "cpu_known_calls": 331,
+              "cpu_ns": 13985557,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 14301990
+            },
+            "persisted_state_root": {
+              "calls": 112,
+              "cpu_known_calls": 112,
+              "cpu_ns": 23243689,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 248843985
+            },
+            "publish": {
+              "calls": 11,
+              "cpu_known_calls": 11,
+              "cpu_ns": 2062974613,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 9110469499
+            },
+            "read_active": {
+              "calls": 17,
+              "cpu_known_calls": 17,
+              "cpu_ns": 263035180,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1329532906
+            },
+            "record": {
+              "calls": 572,
+              "cpu_known_calls": 572,
+              "cpu_ns": 5562884,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 84226155
+            },
+            "state_at": {
+              "calls": 37,
+              "cpu_known_calls": 37,
+              "cpu_ns": 1067056728,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4849206208
+            },
+            "verify_history": {
+              "calls": 36,
+              "cpu_known_calls": 36,
+              "cpu_ns": 131124538,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 676149605
+            },
+            "verify_state": {
+              "calls": 131,
+              "cpu_known_calls": 131,
+              "cpu_ns": 4332942205,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19146241989
+            }
+          },
+          "before": {
+            "account_graph": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 70674930,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 293177756
+            },
+            "activation": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 106127459,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 403890470
+            },
+            "admission": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 404245264,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1683597107
+            },
+            "complete_commitment": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 55770083,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 207821638
+            },
+            "complete_state_root": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1660289,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1668674
+            },
+            "delta": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 22303511,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 97862891
+            },
+            "execute": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 125509183,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 501986810
+            },
+            "execution_parent_binding": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 566688,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 571586
+            },
+            "packet": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 5106735,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5188546
+            },
+            "persisted_state_root": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 2153118,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 150880755
+            },
+            "publish": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 209658134,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 811569938
+            },
+            "read_active": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 54265906,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 347230253
+            },
+            "record": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 1087721,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1236440
+            },
+            "state_at": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 58739289,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 351708606
+            },
+            "verify_history": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 15724378,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15737182
+            },
+            "verify_state": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 97753131,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 395748315
+            }
+          },
+          "delta": {
+            "account_graph": {
+              "calls": 62,
+              "cpu_known_calls": 62,
+              "cpu_ns": 4108729032,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18545875529
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 1485048499,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6685228560
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_known_calls": 7,
+              "cpu_ns": 3530532017,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15800758387
+            },
+            "complete_commitment": {
+              "calls": 91,
+              "cpu_known_calls": 91,
+              "cpu_ns": 79553130,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 234578672
+            },
+            "complete_state_root": {
+              "calls": 36,
+              "cpu_known_calls": 36,
+              "cpu_ns": 13505325,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 90629124
+            },
+            "delta": {
+              "calls": 234,
+              "cpu_known_calls": 234,
+              "cpu_ns": 100410328,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 491183349
+            },
+            "execute": {
+              "calls": 7,
+              "cpu_known_calls": 7,
+              "cpu_ns": 14890593,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 14897052
+            },
+            "execution_parent_binding": {
+              "calls": 7,
+              "cpu_known_calls": 7,
+              "cpu_ns": 2286487,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2297397
+            },
+            "packet": {
+              "calls": 241,
+              "cpu_known_calls": 241,
+              "cpu_ns": 8878822,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 9113444
+            },
+            "persisted_state_root": {
+              "calls": 71,
+              "cpu_known_calls": 71,
+              "cpu_ns": 21090571,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 97963230
+            },
+            "publish": {
+              "calls": 7,
+              "cpu_known_calls": 7,
+              "cpu_ns": 1853316479,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 8298899561
+            },
+            "read_active": {
+              "calls": 3,
+              "cpu_known_calls": 3,
+              "cpu_ns": 208769274,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 982302653
+            },
+            "record": {
+              "calls": 429,
+              "cpu_known_calls": 429,
+              "cpu_ns": 4475163,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 82989715
+            },
+            "state_at": {
+              "calls": 21,
+              "cpu_known_calls": 21,
+              "cpu_ns": 1008317439,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4497497602
+            },
+            "verify_history": {
+              "calls": 23,
+              "cpu_known_calls": 23,
+              "cpu_ns": 115400160,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 660412423
+            },
+            "verify_state": {
+              "calls": 84,
+              "cpu_known_calls": 84,
+              "cpu_ns": 4235189074,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18750493674
+            }
+          },
+          "nested_intervals_additive": false,
+          "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately"
+        },
+        "mode": "baseline"
+      },
+      {
+        "client_stages": {
+          "after": {
+            "account_graph": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 67806008,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 141348130
+            },
+            "activation": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 104960327,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 402149987
+            },
+            "admission": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 397876047,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1674668229
+            },
+            "complete_commitment": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 55003091,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 205060026
+            },
+            "complete_state_root": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1469220,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1476684
+            },
+            "delta": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 21530412,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 173838200
+            },
+            "execute": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 124679927,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 644193930
+            },
+            "execution_parent_binding": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 274533,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 278509
+            },
+            "packet": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 4830116,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4912065
+            },
+            "persisted_state_root": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1734962,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1780420
+            },
+            "publish": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 207207330,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 884922248
+            },
+            "read_active": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 52131390,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 52151249
+            },
+            "record": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 1063255,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1192989
+            },
+            "state_at": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 56431476,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 56455857
+            },
+            "verify_history": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 15846258,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 168077890
+            },
+            "verify_state": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 93002603,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 166559611
+            }
+          },
+          "before": {
+            "account_graph": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 67806008,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 141348130
+            },
+            "activation": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 104960327,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 402149987
+            },
+            "admission": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 397876047,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1674668229
+            },
+            "complete_commitment": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 55003091,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 205060026
+            },
+            "complete_state_root": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1469220,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1476684
+            },
+            "delta": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 21530412,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 173838200
+            },
+            "execute": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 124679927,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 644193930
+            },
+            "execution_parent_binding": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 274533,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 278509
+            },
+            "packet": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 4830116,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4912065
+            },
+            "persisted_state_root": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1734962,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1780420
+            },
+            "publish": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 207207330,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 884922248
+            },
+            "read_active": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 52131390,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 52151249
+            },
+            "record": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 1063255,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1192989
+            },
+            "state_at": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 56431476,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 56455857
+            },
+            "verify_history": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 15846258,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 168077890
+            },
+            "verify_state": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 93002603,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 166559611
+            }
+          },
+          "delta": {
+            "account_graph": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "activation": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "admission": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "complete_commitment": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "complete_state_root": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "delta": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "execute": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "execution_parent_binding": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "packet": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "persisted_state_root": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "publish": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "read_active": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "record": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "state_at": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "verify_history": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            },
+            "verify_state": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          "nested_intervals_additive": false,
+          "scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately"
+        },
+        "mode": "valid-work-root"
+      }
+    ],
+    "planned_business_packet_exposures": 42,
+    "planned_confirmations": 6,
+    "report_sha256": "a582e4143e317ea028cc20877c9be03ed75c9e415a05aaf4f419b73d153821a7",
+    "report_validation_failure": "BASELINE_MUST_PASS",
+    "state_backend": "authenticated-v1"
+  },
+  "history": {
+    "binary_bytes_retained_in_this_zip": false,
+    "binary_metadata": {
+      "ctime_ns": 1794038097566377985,
+      "device": 2049,
+      "inode": 9457742,
+      "mtime_ns": 1794038097564377965,
+      "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+      "sha256": "316022388b7c7c89d0b1a1765a758968d321b83376e3d162a6ff1095d52d59f6",
+      "size_bytes": 9812344
+    },
+    "compilation_in_native_measurement": false,
+    "config": {
+      "blocks": 4105,
+      "clock_scope": "10-second logical headers under observed wall clock; no real-time long-window claim",
+      "evaluation_policy": "native-public-evaluation-dev-v1",
+      "genesis": "13632417743090d77acfc37438d343953a79181379d57f8351e71c279f07d294",
+      "genesis_timestamp": 1793996984,
+      "hardness_accepted": false,
+      "network": "db825cdae2901b1e12c667e4055af38701474341ea4e15ada4636b4059df6c56",
+      "parameters": "fc18ded8144bf916b11ca45d84a3dbd417ceb8e495e398ed7833b4603ebe7769",
+      "production_activation": false,
+      "public_network_ready": false,
+      "renew_every": 900,
+      "task_profile": "signed-task-lifecycle-dev-v3"
+    },
+    "failures": [
+      "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+      "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+      "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+    ],
+    "legacy_reorg_observation": {
+      "after": {
+        "backend": "legacy",
+        "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+        "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+        "enabled": true,
+        "has_consensus_authority": false,
+        "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+        "roles": [
+          {
+            "collector_stage": "verify_state",
+            "complete_cpu_ns": null,
+            "complete_wall_ns": null,
+            "counter_saturated": false,
+            "known_cpu_ns_subtotal": null,
+            "per_outcome_counts": null,
+            "role": "staging_validation",
+            "totals": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "collector_stage": "read_active",
+            "complete_cpu_ns": null,
+            "complete_wall_ns": null,
+            "counter_saturated": false,
+            "known_cpu_ns_subtotal": null,
+            "per_outcome_counts": null,
+            "role": "active_tail_validation",
+            "totals": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          }
+        ],
+        "schema": "pon-native-legacy-reorg-observation-v1",
+        "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+        "sql_commit": {
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "has_consensus_authority": false,
+          "observation_failed": false,
+          "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+          "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+          "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+          "sites": [
+            {
+              "calls_in_flight": 0,
+              "site": "admission_persistence",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            },
+            {
+              "calls_in_flight": 0,
+              "site": "atomic",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            },
+            {
+              "calls_in_flight": 0,
+              "site": "reorg_step",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            },
+            {
+              "calls_in_flight": 0,
+              "site": "reorg_termination",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            }
+          ]
+        },
+        "stage_observation_failed": false,
+        "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+      },
+      "before": {
+        "backend": "legacy",
+        "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+        "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+        "enabled": true,
+        "has_consensus_authority": false,
+        "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+        "roles": [
+          {
+            "collector_stage": "verify_state",
+            "complete_cpu_ns": null,
+            "complete_wall_ns": null,
+            "counter_saturated": false,
+            "known_cpu_ns_subtotal": null,
+            "per_outcome_counts": null,
+            "role": "staging_validation",
+            "totals": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "collector_stage": "read_active",
+            "complete_cpu_ns": null,
+            "complete_wall_ns": null,
+            "counter_saturated": false,
+            "known_cpu_ns_subtotal": null,
+            "per_outcome_counts": null,
+            "role": "active_tail_validation",
+            "totals": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          }
+        ],
+        "schema": "pon-native-legacy-reorg-observation-v1",
+        "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+        "sql_commit": {
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "has_consensus_authority": false,
+          "observation_failed": false,
+          "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+          "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+          "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+          "sites": [
+            {
+              "calls_in_flight": 0,
+              "site": "admission_persistence",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            },
+            {
+              "calls_in_flight": 0,
+              "site": "atomic",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            },
+            {
+              "calls_in_flight": 0,
+              "site": "reorg_step",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            },
+            {
+              "calls_in_flight": 0,
+              "site": "reorg_termination",
+              "totals": {
+                "calls_abandoned": 0,
+                "calls_failed": 0,
+                "calls_returned": 0,
+                "calls_started": 0,
+                "calls_succeeded": 0,
+                "calls_unwinding": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": null,
+                "cpu_ns_known_sum": 0,
+                "cpu_unknown_calls": 0,
+                "wall_ns": null,
+                "wall_unknown_calls": 0
+              }
+            }
+          ]
+        },
+        "stage_observation_failed": false,
+        "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+      },
+      "delta_computed": false,
+      "enabled": true,
+      "production_activation": false,
+      "schema": "native-ancestry-legacy-reorg-observation-pair-v1",
+      "scope": "Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced."
+    },
+    "named_execution": null,
+    "native_execution_authenticated": false,
+    "packet_members": 4105,
+    "passed": false,
+    "process": {
+      "cleanup_errors": [],
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "exit_code": 101,
+      "failure": null,
+      "pid": 5329,
+      "started": true
+    },
+    "resource_text": "Command exited with non-zero status 101\n\tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\"\n\tUser time (seconds): 335.58\n\tSystem time (seconds): 465.67\n\tPercent of CPU this job got: 24%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 53:25.28\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 16596\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 171624\n\tVoluntary context switches: 4830660\n\tInvoluntary context switches: 101070\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 3216832\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 101\n",
+    "retained_databases": {
+      "confirmer": {
+        "active_rows": [
+          {
+            "generation": 0,
+            "height": 0,
+            "singleton": 1,
+            "state_slot": 0,
+            "tip": "13632417743090d77acfc37438d343953a79181379d57f8351e71c279f07d294"
+          }
+        ],
+        "bytes": 126537728,
+        "maximum_height": 2362,
+        "member": "history-native/long-history/confirmer/native.sqlite",
+        "minimum_height": 0,
+        "pending_reorg_rows": 0,
+        "retained_block_rows_including_genesis": 2363,
+        "scope": "Offline immutable read of retained SQLite main-file bytes; no replay or crash-recovery claim.",
+        "sha256": "325fb54c9c172095fae1152034d4079c28fe1449fa1abc82e8323cfc7e435440"
+      },
+      "validator": {
+        "active_rows": [
+          {
+            "generation": 4105,
+            "height": 4105,
+            "singleton": 1,
+            "state_slot": 0,
+            "tip": "d36d62758db50cdb3a27fd2ddbafb174f6860eb07bca32fb9a87bc44b86db215"
+          }
+        ],
+        "bytes": 220684288,
+        "maximum_height": 4105,
+        "member": "history-native/long-history/validator/native.sqlite",
+        "minimum_height": 0,
+        "pending_reorg_rows": 0,
+        "retained_block_rows_including_genesis": 4106,
+        "scope": "Offline immutable read of retained SQLite main-file bytes; no replay or crash-recovery claim.",
+        "sha256": "03dafcbc7c36d7e23ec72e7f27e32714f4b4e2dfc28661a8fdc52086dfaec477"
+      }
+    },
+    "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "server_exit": {
+      "configured_lifetime_seconds": 1800,
+      "loop_exit_before_internal_shutdown": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1800000085783,
+        "lifetime_reached_before_shutdown": true,
+        "reason": "lifetime_expired",
+        "stop_requested_before_shutdown": false
+      },
+      "production_activation": false,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+      "server_exit_error": null,
+      "server_exit_ok": true,
+      "service_elapsed_ns": 1800001114400,
+      "stop_requested_when_exited": true
+    },
+    "source": {
+      "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "tested_tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1026721261,
+        "tracked_entries": 10677,
+        "tracked_worktree_verified": true
+      },
+      "tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea"
+    },
+    "summary": {
+      "error": "IO: Connection refused (os error 111)",
+      "hardness_accepted": false,
+      "independent_accepted": false,
+      "passed": false,
+      "production_activation": false,
+      "public_network_ready": false,
+      "schema": "native-ancestry-long-sync-observation-v1"
+    },
+    "sync_exit": {
+      "elapsed_ns": 3205285317767,
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": null,
+        "completed_import_calls": 2362,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 5915641,
+        "last_history_rpc_elapsed_ns": 123832,
+        "last_import_call_expression_elapsed_ns": null,
+        "last_requested_after": "4ca9984bc0d619cad49a9655402b1c9989e666628e8d6f91bd9d691e03f1475c",
+        "last_successful_after": "4ca9984bc0d619cad49a9655402b1c9989e666628e8d6f91bd9d691e03f1475c",
+        "pinned_tip": "d36d62758db50cdb3a27fd2ddbafb174f6860eb07bca32fb9a87bc44b86db215",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "history-rpc"
+      },
+      "sync_error": "IO: Connection refused (os error 111)"
+    },
+    "whole_test_command_preserved": true
+  },
+  "schema": "pon-e70-inbound-history-failed-artifact-readback-v1",
+  "scope": "Read-only extraction of three original CI artifacts. Reader completion is not native acceptance, release qualification or production activation.",
+  "source": {
+    "head": "e70f13448aad715286fb8eb56fc802b09db643a3",
+    "tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea"
+  }
+}

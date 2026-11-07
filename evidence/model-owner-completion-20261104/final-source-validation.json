@@ -1,0 +1,244 @@
+{
+  "schema": "model-owner-final-source-validation-v1",
+  "source_parent": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "source_state": "composed-uncommitted-candidate-to-be-frozen",
+  "source_sha256": {
+    "scripts/ci/check_pq_research_integration.py": "825f15ad3047f0ae3b90e3ecf36b8dd15ceeea0bb1456bde3984a72cc5231fc2",
+    "scripts/ci/ci_job.sh": "851301316c46047547c5a71f4d4f1ed660fa0f33d155f5792f0a387db48b32ec",
+    "scripts/ci/llm_hosted_once.py": "8025eba157477e42d3efa9ba6276296b47f1e7a692d6fc44f870c853f39b3906",
+    "scripts/ci/test_llm_hosted_once.py": "9ab052552df9f2adc295ad847fc6dbd998818b705a794b06e6245a9aea3dd58e",
+    "scripts/llm_base_material.py": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+    "scripts/llm_cell_host_handoff.py": "3721be33cd7ccd6b6b31f040c9dc707790cc80ff34c25e90ac52e820f0c04f57",
+    "scripts/llm_cell_release.py": "77b61ea2e4a135eab5fa20ed3f26439295f6a9a76f10f04720aae11ee4225216",
+    "scripts/llm_inherited_runtime.py": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+    "scripts/llm_initial_trainable_setup_v2.py": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+    "scripts/llm_runtime_assessment.py": "10045ea089335c96d351dcdc710f47f3f7b31fbe49c0ca91675b92ae3526149c",
+    "scripts/llm_runtime_parent_step.py": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+    "scripts/llm_runtime_pilot.py": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+    "scripts/llm_runtime_trial_ledger.py": "fc61ecbfba09a3bccd7c1ba1c8862ff684e24a866cd6f8bf4e0e14b87ff7806f",
+    "scripts/test_llm_base_material.py": "eb66c8cd0f0ba2d33a4d1ba7d37f0ad1f0691352b542fd7ac6afd1c8a0bff5e9",
+    "scripts/test_llm_base_material_torch.py": "7740f63d1346a21f915a53152f3b873bb3a6f6a3e2375d994c3b9290bef08d5d",
+    "scripts/test_llm_base_source_closure.py": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c",
+    "scripts/test_llm_runtime_assessment.py": "4114a838513dbcb5cc78c477cfb6fae804157b5e0844e501d54c75d36ff1f4d5",
+    "scripts/test_llm_runtime_exit_worker_frontier.py": "40b2cc957177874535a5f8718e5f89f1cf32884678a269bb57677c46694b505f",
+    "scripts/test_llm_runtime_parent_step.py": "9d2cb839665253c218c2e3049c8a555c6518683f3febd9abffa70a5c7e6e6c16",
+    "scripts/test_llm_runtime_pilot.py": "aad1114afd858c9129e54d184d8b2431c2c695397883de2285644496eaf885f7",
+    "scripts/test_llm_runtime_rss_owner.py": "af8980e604fda8d1796c5fcbe19fd5ebaec6175ca889b62a6cdbd2b7f1a8c173",
+    "scripts/test_llm_runtime_trial_replay.py": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb"
+  },
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B scripts/test_llm_runtime_pilot.py -v",
+      "tests": 411,
+      "passed": 281,
+      "skipped": 130,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 12.487,
+      "log": "recovered-model-tests.log",
+      "log_sha256": "a3c2d667146eb99412017c631a417ca975421ee722bf1c1ac33f1018eba2f5b5"
+    },
+    {
+      "command": "python3 -B scripts/ci/test_repository.py",
+      "tests": 50,
+      "passed": 50,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 149.493,
+      "log": "recovered-repository-negative-tests.log",
+      "log_sha256": "b83a05d99143194019b8227b0ca092eed541b8f309ca737f41e2c23a33c9a909"
+    },
+    {
+      "command": "python3 -B scripts/ci/test_ci_contract.py",
+      "tests": 98,
+      "passed": 98,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 9.963,
+      "log": "recovered-ci-contract-tests.log",
+      "log_sha256": "94dc3d6408433ff37292d8e0706b6746fbf11e1c7d02c3c518fa28b5e48f342a"
+    },
+    {
+      "command": "python3 -B scripts/ci/test_ci_execution.py",
+      "tests": 67,
+      "passed": 67,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 33.762,
+      "log": "final-ci-execution-tests.log",
+      "log_sha256": "e23c84f70e3c1e6aba1e29ed1a5aee7095db4de2a75a54bea717ea68453111cc"
+    },
+    {
+      "command": "python3 scripts/ci/test_ci_source_integrity.py -v",
+      "tests": 34,
+      "passed": 34,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 9.023,
+      "log": "source-integrity-tests.log",
+      "log_sha256": "1c00960ea229e882ecdaee06aa038c662e8855e284779ce99c23694a9aff4381"
+    },
+    {
+      "command": "python3 scripts/ci/test_evidence_sources.py",
+      "tests": 38,
+      "passed": 38,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 4.367,
+      "log": "evidence-source-tests.log",
+      "log_sha256": "06b566ef5ea2fbcb76c085e407c5a028c2777975120f226d91016e5506aff5f7"
+    },
+    {
+      "command": "python3 scripts/ci/test_pq_research_integration.py",
+      "tests": 35,
+      "passed": 35,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 112.559,
+      "log": "pq-source-negative-tests.log",
+      "log_sha256": "7367d0db0f72fbd96ce91f35351b40bf952e127fad40c3c92ae3a39f4669cd47"
+    }
+  ],
+  "cargo": [
+    {
+      "name": "metadata",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "log_sha256": "11df55b30f1d981e9e6d7559e0e7cc3203ce328e51cc1cdd5bb5a637e7402ad8",
+      "workspace_packages": 26,
+      "resolved_packages": 175
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "m06": {
+    "passed": 229,
+    "failed": 0,
+    "ignored": 7,
+    "binaries": 25,
+    "source": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "commands": [
+      {
+        "name": "cargo-metadata",
+        "command": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "exit_code": 0,
+        "log_sha256": "11df55b30f1d981e9e6d7559e0e7cc3203ce328e51cc1cdd5bb5a637e7402ad8",
+        "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "native_source": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5"
+      },
+      {
+        "name": "cargo-fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "native_source": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5"
+      },
+      {
+        "name": "m06-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--all-targets",
+          "--all-features"
+        ],
+        "exit_code": 0,
+        "log_sha256": "3c8ffd7e9fc61335df062ba80beabeef59c07ed8ac44ad4266295edb6af9a57b",
+        "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "native_source": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "seconds": 31.69915260200014,
+        "log_sha256": "508d086b22a565cd97ce961c08204a3cc788dc8598f28a79753289045ea8ea05",
+        "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "native_source": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "composed_head": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c"
+      }
+    ],
+    "source_and_lock_unchanged_in_composed_candidate": true,
+    "scope": "M06 and its resolved build inputs; concurrent M09/node storage edits preserved, no claim of new full-workspace test execution"
+  },
+  "source_guard": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 464,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "interrupted_run": "environment-interruption.json",
+  "qualification": false,
+  "real_model_authority_initialized": false,
+  "real_model_trial_started": false,
+  "registration_published": false
+}

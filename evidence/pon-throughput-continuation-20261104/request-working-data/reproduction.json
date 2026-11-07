@@ -1,0 +1,2447 @@
+{
+  "schema": "trnm-request-working-data-reproduction-v1",
+  "date": "2026-11-04",
+  "base_commit": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+  "integration_parent_commit": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+  "concurrent_parent_tree": "8cf583a60f82b82a7136c346efff9de45b2bd52b",
+  "preserved_concurrent_commits": [
+    "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+    "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+    "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+    "03163dcb849a15cd267fcaf704a533a88cd54131",
+    "e94781d2323f5dc8987e1eb7ed2bef23ee8745c3",
+    "d4816ca5d1375347d8ed341a434158e350c29bbc"
+  ],
+  "composition": {
+    "parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+    "tree": "8cf583a60f82b82a7136c346efff9de45b2bd52b",
+    "preserved": [
+      "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+      "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+      "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "e94781d2323f5dc8987e1eb7ed2bef23ee8745c3",
+      "d4816ca5d1375347d8ed341a434158e350c29bbc"
+    ]
+  },
+  "integration_pr": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/688",
+  "scope": "Local native regression and source-control evidence. No original pressure campaign, throughput gain, whole-population p99, target-host isolation or qualification is inferred.",
+  "source_sha256": {
+    ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "0bc8164028072eb1328965466de6a21302c228c40500f121282488e0b1ac588a",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "aa6aa048c63cd5b6191ae9dbec364ff50ca765efffcdf8f71893131a0e5337c2",
+    ".github/workflows/pon-w1-transparent-profile.yml": "f8c204ebc79daf8db4a9b97cbba7d1c0c193a2f9ec6aeca9fa9bbb08faebfa80",
+    "config/pon/pq-cross-branch-corpus-v1.json": "ae7519c67e0636044cdeeacc32b4b002a2224d5e59ae283c58686fc8a4cb034a",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "c7107a08d439aa67015c549e7ef732619c0582ec01a2edd8665dbe0a11eacb6c",
+    "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md": "e91c81dddd72a1ce2ceb659b63951520c3f4b48298722c0c0bb1f7ec2736e00d",
+    "docs/development/specs/pon/CELL_RETENTION_V1.md": "78afb8a6e1e4e01a59ceb6b2d702c976d6156b6b63b97e40f87a0cae683feb2d",
+    "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md": "09f06a6cd9728a1a0c5d774891ff5aee8923be0eb36bd196eaa50ee4f82bdb5e",
+    "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md": "190eb8b9f5c1faf34f188181d4dd95621216a8c6db260ca342912e9d4576c526",
+    "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md": "f76629cc6e2b0b0ce57dcf35f51bf57d69ce2d53a634f73d192601de1746c06e",
+    "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md": "c7b401b9d4a4cc1e3d3368cb8ce3ef5dc6cfcabb5d54bedbe4ff79150ea592a7",
+    "formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md": "35f02dab716e65fc2535d10df3d441c80eaa28d19e2f4294eccd75bed9d5bc1c",
+    "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py": "28cfc2e50732e4dd64ec41244c4da10c8cd4e23e18eec744e738271dbed84a04",
+    "formal/pon-nakamoto-v1/model_release_root.py": "48cee9ebfb68a43a27ef5d447b2fef9fdc60aea864a6ad15baa38a98e6e76269",
+    "formal/pon-nakamoto-v1/pq_mtls_probe.c": "3d6542730f13a019b4d0d877965b3746337e5df656c81c12e5fa884d7660a670",
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": "d86400fd6610edaae50bd00467523067575f37af21b65810bdddf31bcbc507e9",
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "b188820f229ff0b094018747648443f48b1fe52e96fff9d91d6a9d1cfb106a4e",
+    "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+    "formal/pon-nakamoto-v1/test_model_release_root.py": "bb97f0681f2ac0d818136ca6a97edb3a44058abe03ff4615e036556ada8a5f2c",
+    "formal/pon-nakamoto-v1/test_pq_mtls_probe.py": "8bb8d8b52f559b22053fef04576cb6f7eac49508fb3f4e0de04f986ad4519758",
+    "formal/pon-nakamoto-v1/test_pq_tls.py": "898eb30795356a528bab6a09ed544b2d9e7bb5cedc26410c57ff87696ab2bb42",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "ea6d79e7e9ec58eb510e118699e502e44ab09c73ccd0658f720bf4d0ee900396",
+    "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py": "7952ce8d9ff3aa8b81140ac8f316bb98de83eff646879ca25cbe3951c689c078",
+    "formal/pon-nakamoto-v1/test_reversible_components.py": "9e16585a34932212305b78f8719013672f7c3eba781d2adb227612e87cb210ea",
+    "formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json": "2ebfd36fb7e75f1f63fb42f676eacbe2e097ee87c2108aafc85ea30ed913873d",
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md": "3847d020f801496213aae3eb87e91f7b5c6a2a1c5490cc742928e5a1c9ab313b",
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs": "69de1aad14105be128a2b7d927e845b70e8c42ab87ba1b2a2efe95d5f7e2fe21",
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": "2dcf608f5bc1cf4f7f06b8b096da4253c00b7504d898e587f2c0c82c47c0851c",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "729bdcda4a9f49d5757c2726cd98582ed420d6dd858f46ac453ed0625c7a593b",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml": "3bb0f3dbc88bcf0fe16fcc76f12044dc63e964697c15a49fa273fdd6ff738aff",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs": "dca14710abdfa7501b9dd0ffba0cb2b7192d3316c77945496dbda857da7794aa",
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs": "116aff0b93205156f19d540d2f2d91abe1bb5d72a11ec1351ab06a902a7c2962",
+    "scripts/ci/check_pq_research_integration.py": "9579adc1c9548068c90e1d1041b20de1236ab4bd2fa16d5a0429541d63eb7981",
+    "scripts/ci/ci_job.sh": "194cdcb1e7ca0e85416f45eeb5f2751a62d059db5a8dd8c29081bf4712afe76c",
+    "scripts/ci/prepare_pq_provider.sh": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+    "scripts/ci/test_pon_public_v3_phase_read.py": "c24498fce1f11e3b7365c0e1e5d782687852d906995697607e16d4b6dc09f4d6",
+    "scripts/ci/test_pq_research_integration.py": "64c680727dcecfece8cfde67a7ccf8051cb1ac8b837fc0cb264294c4f61476a6",
+    "scripts/ci/test_w1_profile_source_map.py": "4a80f4bf4554d3f4714de199c6d3133a946384aed54865869db6527c71d36d04",
+    "scripts/ci/test_w1_transparent_compare.py": "82bb6310bc6315da634d9c7a7d559036a7ed94884c121e72cdec17b00ba70c99",
+    "scripts/llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+    "scripts/llm_runtime_README.md": "2b18a3ff1aa6ae859c8d37339973b460ac2a8883fdbdb2d5505059b804e06596",
+    "scripts/llm_runtime_assessment.py": "133871703daf740c26cccb30e450cd90127d1ee206c75734929ddbf364602f5d",
+    "scripts/llm_runtime_pilot.py": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+    "scripts/llm_runtime_trial_ledger.py": "cd19645147730580b03cec8b40c7dacf6ebbb20285c6c1f98923bf450f83196b",
+    "scripts/pon_public_v3_phase_read.py": "e9cbf33ad25486391ff97ad9e8906db3f2b4917ac9ba5bab65a1164f561ed852",
+    "scripts/test_llm_parent_material.py": "8624e0871e5256c9c1e70488121d8902bf88f430683c0b6153c8361a993ac1dd",
+    "scripts/test_llm_runtime_artifact_loading.py": "a64f6a6f6f1d5a751abaa0fd2a92fe6c66e661e925c55ac3ad9201865f4f8312",
+    "scripts/test_llm_runtime_artifact_loading_torch.py": "4b20b87b4b14d42a8814761dd9a04a0b2acc4c057b3375d78c7e383af529e3d7",
+    "scripts/test_llm_runtime_assessment.py": "c259833462346225a54ecd09486dc58d2edd1efdcd505f688115a2321af7bc79",
+    "scripts/test_llm_runtime_pilot.py": "949b9e28d9cf838d6973deba6369ea6a5677dd8b077890f26da63f9fa879507b",
+    "scripts/test_llm_runtime_trial_ledger.py": "b46a261d90584542dc80ca261b45c0eb509fa0a4e87035a5d1d8804d31e32af9",
+    "scripts/test_llm_runtime_trial_review.py": "b38807379e878b9a818798837b5b6cd408822716d93c65bfc3ba34338af80848",
+    "scripts/w1_profile_source_map.py": "d951744c30a9057f5e1807934fdf9b14b98ca861aaed9a76099217279f48650f",
+    "scripts/w1_transparent_compare.py": "3cc93cf139a285895035a34a3147c44975131cac297509865c5d9b8a55c393ec",
+    "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-checkpoint-store/README.md": "b5d4290d0b375af5e62d7ab99f920a730051e0a423d3d4c76443ff6969228b27",
+    "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs": "459d5b0d193af13908b5890526f5dd8d13d9147027d3c863f3a08b55b9e8c87a",
+    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs": "5d0cc1610fc861abd34cabf35905bb644e047b4233b4b30d8fc8e63057051096",
+    "trillionnium/crates/trnm-checkpoint-store/src/main.rs": "ca8bfddb3ca1c511f44cb924ecc2bb7d14f57889d6a0af719d11089fad192b34",
+    "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs": "6efff90a74db75a1dfa6033bcc0e82458d5e7d1ef519ba0d77c351006658a7cd",
+    "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs": "5ba928366b521a9ef2d66983a6da12fc74131ff24206769da955610142530b6e",
+    "trillionnium/crates/trnm-data-availability/Cargo.toml": "c0fb9d251827ab1d17ef5f46dab00d87bc9d576dacc005e9245ccff0c6a652e9",
+    "trillionnium/crates/trnm-data-availability/examples/cell_residency_observer.rs": "a1ddd3a3ccf249dfc118d370bffcec99596794a0a5955a32e360f5ba4d5b224f",
+    "trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs": "d512066e66137410c10936440edebf79e2924b077c0145fc3b4c79a9d0d992ee",
+    "trillionnium/crates/trnm-data-availability/src/bin/cell_model/mod.rs": "a7866314425bb710e9154d2d9dc345f2f563ecad738204ab7de83358c15982d3",
+    "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs": "fa51ea286ba5bb8bcac8d9ad92a222aa38f5445901c349db60874c967725f9e4",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": "5540b646ba672b01b30f1199d68b29ee9630998a831af114559b4a48a0fe45d4",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs": "ec1cadfcdd2aa38338f150b0802442c340edf8cdf1c28986a149784ae45fb9bd",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs": "dc796abdbea0510d4f87e6a0cf016fb86979e5dfe6a11224cdba760fd1a65e8d",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta.rs": "16dda5a0daf6c621a55a8708300e72323b2fa81ca40b3a31045a29f9333e814e",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs": "7f39b5f775b685de77dce09ffab04d6652d1fbb024b66b256f4876d1485e58a2",
+    "trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs": "670169e5acb359c57e09c9871b24036a437780c9f95833f5170de086da797f27",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs": "fde191bd2ea52959e1e8c5c46baefbcbb38f5047d1f34a096757382c88fdddf6",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/diversity_tests.rs": "f9d7bab06bc1dcb4b2eee77dfd9700a1d66a5800c9143fc98fd890cdb0b9e6d6",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs": "4d6e989a92ceefedacfcf159db902de209e3427f5e35ac69bb81bb46282baee1",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs": "7095743b3b0bafc48a7f65f034206d43ef4c22ada61d37a9ea31c801b42fb7e1",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/selection.rs": "689d0d000ffec9c08562259fa7ac4d536e6e51f8c0d3089e2d8336a7bbded281",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "0d2931b9686a2d565dca8421138ef935521cac89a445f7def4f75de44aa1db53",
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915",
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root_tests.rs": "bda47be618bffcae5cd356fa0f137a0987677672116905974af2dcba9b0e9e9f",
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "bce2ff38dfece02d822fb6f9b6fecc1f805ca23bb0c17fa4adf5c6f0eaf5e324",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs": "c587408ba7829083b6c4e7ca0ce12993b7f2bf3be33da6010253c6cf801b388d",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs": "18e8ca37598dc84309df3da7793d76be5c023e94faf5e0354e0b735f9869da06",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/dedup_tests.rs": "e16d7990e283b18025cb73c817fa6eef57e630fddca9678a6d11fdab2b7ceb45",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs": "fc7b99c9bee90cda3a3abee0de2da1e41cd5976a5b5126591b66992cee159e6d",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs": "edd23400d74bc00689d174b4e1c5ea7309588c16bd6453122b4efced06608d6e",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs": "dcaf7365edb682743a607cf2a7714a7e5efc330c947814b087d96918ba48b42c",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs": "5fc4f71dc18329437a34e4418494de43350450ad7c9ed5d669ffec57e992a7a3",
+    "trillionnium/crates/trnm-data-availability/src/cell/release.rs": "7b39518e0c8d74a7e6ef1ccdcfb85d55e925961b27e0d35b8227d6f1541766a1",
+    "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs": "ca5792da0ec615e9083957acf9f3b8fc46cb337bc03148e770c4ba936b5b36b8",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs": "94c0d3651d8ca53190f2165cc74b36d71732f0a3155957d02bd7878a74ca9a7f",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency.rs": "83eac45643808a0fc579c7b8642f35af0e6d4d671564daa15162da5a2f37ee72",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency_tests.rs": "e372cfbeeeb4d8011a50923ff9e353f7dc79abf04f7428e638a4d2153d26cded",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "209b1321990a8e019889f2990c704290abf6616931694c6b1813c82fcc65635a",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs": "567acf8c513ec75eafa5fbc6be3bb5709a2b8b5eac5f8703b2c318dd553ae59a",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "9deb3a1a3377e027690b04d1e23ede55a9badd9586eec4b4678f50d3cba90baa",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs": "8faf68094fa1cb9cd6f382982cdcedcac1fd35aa10c7ca56a3bdf9794b385e9c",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_reader.rs": "da6a97dfcaaec98ae3cac0afec3e33c86f48d6bc36b0249070a1505fac817ca3",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs": "91f28421dcaff33c7cfe96f68955e0e8f4b35540afafd9d10079ae02b920e0a5",
+    "trillionnium/crates/trnm-data-availability/src/cell/tests.rs": "bc8efcdef90d2101cbcebd3e5b4e43c7b63caaaaff5b03ee6721bae8eb34e021",
+    "trillionnium/crates/trnm-data-availability/tests/cell_closure_cli.rs": "929d133cf1fa7779ecae6f0ae9883895af8a9069eb3cbad480e49b12e4b6f422",
+    "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs": "42a7b5748f5ca11e8d7612a55b825df765b9791a6a1228587b380e581337f256",
+    "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs": "89d11d24cab89ac60d5dce80b7c8357e87325d9fda08cd62baaace12755841b9",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs": "362b32b97cf780d83ab5a52de2048bac7542f677f0a63bfa9aedbaeb103643c3",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": "c2a19976f1157d8cf0fcd67905f3d55ae6c08b9c4ee48a3c6e9845097f10cc68",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/pq_storage.rs": "971a89aca3d61be6688df4ffff88a48f5c0f340e25bd9ab1c50369961e3f372c",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs": "bce7620bdf37faf6cd3bd21c07c3540c18e748a8d96a1f9468e76e7335335083",
+    "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs": "dd4fdbb63fee52a1ac47ef04635ba9abe6160405ae738ea84146186ef7ca813d",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "423106f416449786c63f6c31972178f2e3724733faac22c3a73e7e62c199f411",
+    "trillionnium/crates/trnm-pon-node/src/growth_cli.rs": "9dd965bf4fcbbf01e9dda01d96054771e5610804ed0e5122e8f9c4cd30e73e5f",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "9d088c2e9d58a435162867fadc9621c82ffe2d334cebd77a5879ae524c150f77",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "525cdca926a8396e65ed0862341fa2178ae7bbd1d53eee646b83821d44e61ddc",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "ec2674e91b92e06db9a094fe4ce795b441c6612390f28f2fe1ab9a8b187bcbe1",
+    "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs": "3113d4f450da9b19c8d9dccd9ea5d6098adbd5e0cedd5cf441f5b642696da686",
+    "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs": "1561b4ff2fd87ad760521624ecf00b4b017b2032e0399a913a433aa28d43b048",
+    "trillionnium/crates/trnm-pon-node/src/store/growth.rs": "53e00a0aea016728947a5bd9440aa6fbf97e8e80094b7cce353d6c0aa26f4298",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs": "72f5be79c3c3621152c094daa7c5ebd355dd5775805ffe58919d07521ec22acf",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+    "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs": "8a0ef781a87fdfb7334ac9a3e75de46a5c4ef7915e42bf4e3167a851b2b95d9f",
+    "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs": "39ca70a1262980a02931809f82ee3b08d4bf18bbbd9a8af62669ae003d26a298",
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml": "e047dcd8e97697fa2d90462b3a1c92d92151f14799c860ff11ee381c0204218b",
+    "trillionnium/crates/trnm-release-bundle/src/lib.rs": "ebe756fe5c54acc0be3ea88022383ab66169377a567799d6f7e46006cb477897",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "58427450f4411d37e0320adc2563a568979931b95b9b48274552b6555490f2a1",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": "def28d03d12e5c3fabbc0a2bae5c02ad057fb0d88b78fea7c1ccce42cccb95d7"
+  },
+  "deleted_source_paths": [],
+  "native_source_fence": {
+    "before": {
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_files": 1201,
+      "sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "after": {
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_files": 1201,
+      "sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "current_complete_path_set_and_bytes_equal": true,
+    "path_scope": "git ls-files --cached --others --exclude-standard under config/ and trillionnium/; suffix .rs/.toml/.json/.lock",
+    "digest_encoding": "SHA256 of UTF-8 json.dumps(path_to_sha256, sort_keys=True, separators=(comma, colon)); no trailing newline"
+  },
+  "initial_composition_inventory_check": {
+    "runs": [
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "exit": 1
+      }
+    ],
+    "exit": 1,
+    "wall_seconds": 0.29197666000254685,
+    "source_parent": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "repair_target_source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8",
+    "repair": "Regenerated embedded inventory for the three incoming native source files; no runtime semantics changed.",
+    "log_sha256": "c6ca96708b72b5aa0562dad709e2de8c8d88e0456e7e0551ec11d21a3f94160d"
+  },
+  "native_environment": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "rustc_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "host": "x86_64-unknown-linux-gnu",
+    "llvm": "22.1.2",
+    "openssl_version": "3.5.9",
+    "openssl_executable_sha256": "ec72bff5f6e4b2d9798e66b4ee338e81969ff6f8fa5a228bf312f1c57ff08818",
+    "original_workspace_profiles_preserved": true,
+    "offline_locked_builds": true,
+    "test_threads": 1,
+    "resource_limits_relaxed": false,
+    "graph": {
+      "workspace_members": 26,
+      "resolved_packages": 180,
+      "normalized_resolve_sha256": "526b285169876bcd080bb09b95161939bcfd60649260397ce24c866444ba05c4",
+      "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+      "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "features": "all-features",
+      "offline": true,
+      "locked": true,
+      "pre_composition_graph_equal": false,
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+      "recorded_concurrent_graph_deltas": [
+        "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+        "e94781d2323f5dc8987e1eb7ed2bef23ee8745c3"
+      ],
+      "metadata_json_equal_to_e947": true,
+      "recorded_concurrent_deltas": [
+        {
+          "schema": "trnm-recorded-concurrent-cargo-graph-delta-v1",
+          "source_commit": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+          "parent_commit": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+          "before": {
+            "cargo_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+            "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+            "normalized_resolve_sha256": "27157621f0ef9b19bd00ca6ddbb94fbfd4ea5cc1933aad3d1439c159362db9d8",
+            "workspace_members": 26,
+            "resolved_packages": 180,
+            "features": "all-features",
+            "offline": true,
+            "locked": true
+          },
+          "after": {
+            "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+            "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+            "normalized_resolve_sha256": "17476fb352202e086c2b4df334ee62bb598e2931ff35d19db0f9a95675d25f01",
+            "workspace_members": 26,
+            "resolved_packages": 180,
+            "features": "all-features",
+            "offline": true,
+            "locked": true
+          },
+          "added_dependencies": [
+            "trnm-crypto-primitives",
+            "trnm-protocol",
+            "zeroize"
+          ],
+          "changed_resolve_nodes": [
+            "trnm-release-bundle"
+          ],
+          "unchanged_package_identities": true,
+          "unchanged_node_features": true,
+          "m15_previous_reverse_dependencies": 0,
+          "normalization": "Compact sorted JSON; sort workspace member list first; replace absolute workspace root with literal $WORKSPACE; no newline"
+        },
+        {
+          "schema": "trnm-recorded-concurrent-cargo-graph-delta-v1",
+          "source_commit": "e94781d2323f5dc8987e1eb7ed2bef23ee8745c3",
+          "base_commit": "03163dcb849a15cd267fcaf704a533a88cd54131",
+          "before": {
+            "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+            "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+            "normalized_resolve_sha256": "17476fb352202e086c2b4df334ee62bb598e2931ff35d19db0f9a95675d25f01",
+            "workspace_members": 26,
+            "resolved_packages": 180,
+            "features": "all-features",
+            "offline": true,
+            "locked": true
+          },
+          "after": {
+            "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+            "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+            "normalized_resolve_sha256": "526b285169876bcd080bb09b95161939bcfd60649260397ce24c866444ba05c4",
+            "workspace_members": 26,
+            "resolved_packages": 180,
+            "features": "all-features",
+            "offline": true,
+            "locked": true
+          },
+          "changed_resolve_nodes": [
+            "trnm-data-availability"
+          ],
+          "dependency_kind_changes": {
+            "serde": {
+              "before": [
+                "dev"
+              ],
+              "after": [
+                "normal"
+              ]
+            },
+            "serde_json": {
+              "before": [
+                "dev"
+              ],
+              "after": [
+                "normal",
+                "dev"
+              ]
+            }
+          }
+        }
+      ],
+      "independently_verified_245_graph": {
+        "workspace_members": 26,
+        "resolved_packages": 180,
+        "normalized_resolve_sha256": "17476fb352202e086c2b4df334ee62bb598e2931ff35d19db0f9a95675d25f01",
+        "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+        "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+        "features": "all-features",
+        "offline": true,
+        "locked": true,
+        "pre_composition_graph_equal": false,
+        "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+        "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+        "recorded_concurrent_graph_delta": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+        "normalization": "Compact sorted JSON; sort workspace member list first; replace absolute workspace root with literal $WORKSPACE; no newline",
+        "recorded_concurrent_delta": {
+          "schema": "trnm-recorded-concurrent-cargo-graph-delta-v1",
+          "source_commit": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+          "parent_commit": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+          "before": {
+            "cargo_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+            "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+            "normalized_resolve_sha256": "27157621f0ef9b19bd00ca6ddbb94fbfd4ea5cc1933aad3d1439c159362db9d8",
+            "workspace_members": 26,
+            "resolved_packages": 180,
+            "features": "all-features",
+            "offline": true,
+            "locked": true
+          },
+          "after": {
+            "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+            "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+            "normalized_resolve_sha256": "17476fb352202e086c2b4df334ee62bb598e2931ff35d19db0f9a95675d25f01",
+            "workspace_members": 26,
+            "resolved_packages": 180,
+            "features": "all-features",
+            "offline": true,
+            "locked": true
+          },
+          "added_dependencies": [
+            "trnm-crypto-primitives",
+            "trnm-protocol",
+            "zeroize"
+          ],
+          "changed_resolve_nodes": [
+            "trnm-release-bundle"
+          ],
+          "unchanged_package_identities": true,
+          "unchanged_node_features": true,
+          "m15_previous_reverse_dependencies": 0,
+          "normalization": "Compact sorted JSON; sort workspace member list first; replace absolute workspace root with literal $WORKSPACE; no newline"
+        },
+        "verified_git_cargo_inputs": {
+          "trillionnium/Cargo.lock": {
+            "before_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+            "after_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+          },
+          "trillionnium/crates/trnm-release-bundle/Cargo.toml": {
+            "before_sha256": "74b2d0b2b8992b1ee53b9a86fc4438df565de4caef70e4010fff5d8d657a3cde",
+            "after_sha256": "e047dcd8e97697fa2d90462b3a1c92d92151f14799c860ff11ee381c0204218b"
+          }
+        },
+        "metadata_sha256": {
+          "superseded-bd2777/latest-metadata.json": "fc43407824c2178459c0edf61860cccb51d96b9b6fbba78a0a91fede8fc79448",
+          "superseded-245/latest-metadata.json": "cd4f37e7a2f966ff0374e1c9f34e92ae44be381f28e0aa5434b1cf84162b23ff"
+        },
+        "concurrent245_git_cargo_inputs_verified": true,
+        "package_identities_and_node_features_unchanged": true,
+        "only_release_bundle_dependency_edges_changed": true
+      },
+      "verified_e947_git_cargo_inputs": {
+        "trillionnium/crates/trnm-data-availability/Cargo.toml": {
+          "before_sha256": "81f73d9ffb4091abc54962fe22cf8ecd448fa748efd0c19cba5f3e8db93501a1",
+          "after_sha256": "c0fb9d251827ab1d17ef5f46dab00d87bc9d576dacc005e9245ccff0c6a652e9"
+        }
+      },
+      "e947_metadata_sha256": {
+        "superseded-031/latest-metadata.json": "cd4f37e7a2f966ff0374e1c9f34e92ae44be381f28e0aa5434b1cf84162b23ff",
+        "latest-metadata.json": "cdc0eb6b2a83b5163d707938261392a7afec1eb9d3c9e5ddc8f67c815939dee7"
+      },
+      "current_cargo_inputs_equal_e947": true,
+      "e947_package_identities_and_all_node_features_unchanged": true,
+      "e947_only_m09_dependency_kinds_changed": true
+    }
+  },
+  "baseline_native": {
+    "m06_m09": [
+      {
+        "component": "m06",
+        "command": [
+          "bash",
+          "run-native.sh",
+          "trnm_mvcc_fee-1d46ec2853299ff2",
+          "--test-threads=1"
+        ],
+        "exit": 0,
+        "wall_seconds": 33.908816227994976,
+        "elf_sha256": "38be5cf9cd4db460192cccd0c3d88219c6e8e633a2fb23360b25bc1da7bddb08",
+        "result_lines": [
+          "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 33.90s"
+        ]
+      },
+      {
+        "component": "m09",
+        "command": [
+          "bash",
+          "run-native.sh",
+          "trnm_data_availability-eeb68347d584a6fb",
+          "--test-threads=1"
+        ],
+        "exit": 0,
+        "wall_seconds": 21.13709385900438,
+        "elf_sha256": "96daf6020f9e58075ef3a8b6023f3ce66cad9214aee8c9aa34029a2163a1795f",
+        "result_lines": [
+          "test result: ok. 186 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.12s"
+        ]
+      }
+    ],
+    "node_selected": {
+      "base_head": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "elf_sha256": "45c49ce39cc927e4bd1de786a67050da7a19757af03de7d0c91fcbd8c5c557fe",
+      "runs": [
+        {
+          "label": "request-observer",
+          "selector": "request_observation::tests::",
+          "exit": 0,
+          "wall_seconds": 0.04248218300199369,
+          "result_lines": [
+            "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 1001 filtered out; finished in 0.04s"
+          ]
+        },
+        {
+          "label": "evaluation",
+          "selector": "evaluation_observation::tests::",
+          "exit": 0,
+          "wall_seconds": 0.43657889399764827,
+          "result_lines": [
+            "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1015 filtered out; finished in 0.43s"
+          ]
+        },
+        {
+          "label": "evaluation-round",
+          "selector": "evaluation_round_observation::tests::",
+          "exit": 0,
+          "wall_seconds": 0.07492853199801175,
+          "result_lines": [
+            "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1017 filtered out; finished in 0.07s"
+          ]
+        },
+        {
+          "label": "fact-authority",
+          "selector": "verifier_cache::tests::",
+          "exit": 0,
+          "wall_seconds": 1.1682299169988255,
+          "result_lines": [
+            "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 1015 filtered out; finished in 1.16s"
+          ]
+        }
+      ]
+    }
+  },
+  "pre_composition_native": {
+    "m06_m09": [
+      {
+        "crate": "trnm_mvcc_fee",
+        "command": [
+          "trnm_mvcc_fee-1d46ec2853299ff2",
+          "--test-threads=1"
+        ],
+        "elf_sha256": "38be5cf9cd4db460192cccd0c3d88219c6e8e633a2fb23360b25bc1da7bddb08",
+        "exit": 0,
+        "wall_seconds": 32.284539592998044,
+        "result_lines": [
+          "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 32.28s"
+        ]
+      },
+      {
+        "crate": "trnm_data_availability",
+        "command": [
+          "trnm_data_availability-eeb68347d584a6fb",
+          "--test-threads=1"
+        ],
+        "elf_sha256": "d6ad6829add8a54d42beb7d25c505231caa00ecf4742eae20e6cd076f270b3ea",
+        "exit": 0,
+        "wall_seconds": 23.469690268000704,
+        "result_lines": [
+          "test result: ok. 192 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.46s"
+        ]
+      }
+    ],
+    "node_selected": {
+      "elf_sha256": "e5f70f86ab56309981e3b3a55f98f71f108fd4a96d070e633696064cf7c0a446",
+      "runs": [
+        {
+          "label": "evaluation",
+          "selector": "store::evaluation_observation::tests::",
+          "command": [
+            "trnm_pon_node-05b4ed99663833c1",
+            "store::evaluation_observation::tests::",
+            "--test-threads=1"
+          ],
+          "exit": 0,
+          "wall_seconds": 28.531528528001218,
+          "result_lines": [
+            "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 1015 filtered out; finished in 28.53s"
+          ]
+        },
+        {
+          "label": "evaluation-round",
+          "selector": "store::evaluation_round_observation::tests::",
+          "command": [
+            "trnm_pon_node-05b4ed99663833c1",
+            "store::evaluation_round_observation::tests::",
+            "--test-threads=1"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.08487663399864687,
+          "result_lines": [
+            "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1021 filtered out; finished in 0.08s"
+          ]
+        },
+        {
+          "label": "request-observer",
+          "selector": "request_observation::tests::",
+          "command": [
+            "trnm_pon_node-05b4ed99663833c1",
+            "request_observation::tests::",
+            "--test-threads=1"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.03850055499788141,
+          "result_lines": [
+            "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 1005 filtered out; finished in 0.03s"
+          ]
+        },
+        {
+          "label": "fact-authority",
+          "selector": "verifier_cache::tests::",
+          "command": [
+            "trnm_pon_node-05b4ed99663833c1",
+            "verifier_cache::tests::",
+            "--test-threads=1"
+          ],
+          "exit": 0,
+          "wall_seconds": 1.278902993995871,
+          "result_lines": [
+            "test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 1019 filtered out; finished in 1.28s"
+          ]
+        },
+        {
+          "label": "canonical-commit",
+          "selector": "store::detached_admission::tests::",
+          "command": [
+            "trnm_pon_node-05b4ed99663833c1",
+            "store::detached_admission::tests::",
+            "--test-threads=1"
+          ],
+          "exit": 0,
+          "wall_seconds": 55.952548448003654,
+          "result_lines": [
+            "test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 1007 filtered out; finished in 55.94s"
+          ]
+        },
+        {
+          "label": "growth-invariants",
+          "selector": "store::growth::tests::",
+          "command": [
+            "trnm_pon_node-05b4ed99663833c1",
+            "store::growth::tests::",
+            "--test-threads=1"
+          ],
+          "exit": 0,
+          "wall_seconds": 8.55649127200013,
+          "result_lines": [
+            "test result: ok. 36 passed; 0 failed; 2 ignored; 0 measured; 985 filtered out; finished in 8.55s"
+          ]
+        }
+      ]
+    },
+    "integration": {
+      "node_binary_sha256": "62162b7800926d0235a201c684db5441038ce3baadabe3ba8a2fcc1bc3f9cc26",
+      "runs": [
+        {
+          "target": "native_growth_cli",
+          "command": [
+            "native_growth_cli-0911a103fa2186a7",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "403fb3af3c4ab0f877f822b11c3bd7464d4ea5911d25f1d5f7e73080a4ee487f",
+          "exit": 0,
+          "wall_seconds": 1.049241847002122,
+          "result_lines": [
+            "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.05s"
+          ]
+        },
+        {
+          "target": "evaluation_observation",
+          "command": [
+            "evaluation_observation-63252401d7084633",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "566d44ec0b3dddbe21641a25acafcccf8a37d9b010e19343e89858cfa5f8d93d",
+          "exit": 0,
+          "wall_seconds": 13.47997430399846,
+          "result_lines": [
+            "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.48s"
+          ]
+        },
+        {
+          "target": "evaluation_round_observation",
+          "command": [
+            "evaluation_round_observation-2a37a6d72296eb21",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "b7a1e8a3a9804958ab8e4a472c1851df798e92c63235d07e42b12fb1a9709421",
+          "exit": 0,
+          "wall_seconds": 1.7073368710043724,
+          "result_lines": [
+            "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.70s"
+          ]
+        }
+      ]
+    },
+    "source_base_commit": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+    "observed_test_counts": {
+      "passed": 394,
+      "failed": 0,
+      "ignored": 12
+    },
+    "scope": "Candidate before concurrent Cell/model-evaluation composition; not final-source validation."
+  },
+  "intermediate_5c_native": {
+    "source_parent": "5c070abeb61d0ea8702fa94fffe9330d1699119c",
+    "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8",
+    "m06_m09": [
+      {
+        "crate": "trnm_mvcc_fee",
+        "command": [
+          "trnm_mvcc_fee-bdc6c4d4701acaaf",
+          "--test-threads=1"
+        ],
+        "elf_sha256": "b3d279420327a05af70f95ef671bea2cae2297050d2bf1f7619a799d523c0e66",
+        "exit": 0,
+        "wall_seconds": 34.11768377900444,
+        "result_lines": [
+          "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 34.11s"
+        ]
+      },
+      {
+        "crate": "trnm_data_availability",
+        "command": [
+          "trnm_data_availability-501d97be04982b00",
+          "--test-threads=1"
+        ],
+        "elf_sha256": "cfd079dd4c6f7a5efa8252abb8857ebd9c3711b1ff1ecd652228c7752e50f10b",
+        "exit": 0,
+        "wall_seconds": 24.710172988001432,
+        "result_lines": [
+          "test result: ok. 211 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.70s"
+        ]
+      }
+    ],
+    "node_selected": {
+      "status": "BLOCKED_COMPILER_SIGKILL",
+      "library_suite_completed": false,
+      "elf_sha256": null,
+      "runs": [],
+      "tests_executed_on_composed_library_binary": null,
+      "build_exit": 101,
+      "attempts": [
+        {
+          "command_scope": "frozen-source Node library and three integration targets, original profiles, Cargo build jobs=2",
+          "result": "compiler terminated with SIGKILL; not a native test result",
+          "log_sha256": "f00170dc6807bde787d76638f6fc78cfd0709ae5d7c75198a2998f2077888e75",
+          "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8",
+          "retry": "same source/profile/feature/provider, lower Cargo compiler concurrency to one job"
+        },
+        {
+          "command_scope": "same frozen source/profile/feature/provider, Cargo build jobs=1",
+          "exit": 101,
+          "result": "compiler lib-test process terminated with SIGKILL",
+          "log_sha256": "6bbd862c08e747ec6a30ba4e2bf46a00d7615e51a779b974088c6e2f37e1bef4",
+          "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8",
+          "next_retry": "one permitted CPU affinity plus one Cargo job; no compiler optimization/feature/provider changes"
+        },
+        {
+          "command_scope": "same frozen source/profile/feature/provider, Cargo build jobs=1, one permitted CPU affinity",
+          "exit": 101,
+          "result": "compiler lib-test process terminated with SIGKILL",
+          "log_sha256": "709179febfedb9909fe2bfeb9bc4aef5fe6f388474eee69769280b471ffa557b",
+          "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8"
+        }
+      ],
+      "pre_composition_node_passes_not_transferred": true
+    },
+    "integration": {
+      "node_binary_sha256": "295382f5df482ae51582a21b5957ffe78e70cf8b6af975f314c6500e8155349d",
+      "scope": "Three successfully built integration targets; library-test build outcome recorded separately.",
+      "runs": [
+        {
+          "target": "native_growth_cli",
+          "command": [
+            "native_growth_cli-0911a103fa2186a7",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "8f6f267b3207f6691c0860c265698def1ef637664cd92bcedfe101292dae10e3",
+          "exit": 0,
+          "wall_seconds": 8.715240555997298,
+          "result_lines": [
+            "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.65s"
+          ]
+        },
+        {
+          "target": "evaluation_observation",
+          "command": [
+            "evaluation_observation-63252401d7084633",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "2325adc4fbffaec264f214a3aab45ad675dc1765287a205c8e1a3b7bb9003d39",
+          "exit": 0,
+          "wall_seconds": 47.55708989700361,
+          "result_lines": [
+            "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 47.52s"
+          ]
+        },
+        {
+          "target": "evaluation_round_observation",
+          "command": [
+            "evaluation_round_observation-2a37a6d72296eb21",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "e883656d74b600287611a840d5d4dd3245a11d512c4e4393504730677141cad2",
+          "exit": 0,
+          "wall_seconds": 8.263625851999677,
+          "result_lines": [
+            "test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 8.21s"
+          ]
+        }
+      ]
+    },
+    "observed_test_counts": {
+      "passed": 331,
+      "failed": 0,
+      "ignored": 8
+    },
+    "cell_doc": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--doc"
+      ],
+      "exit": 0,
+      "wall_seconds": 161.63966783799697,
+      "observed_test_counts": {
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0
+      },
+      "result_lines": [
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s"
+      ],
+      "log_sha256": "9c8b6fba552978d0c72c52f7180146c3defed93632fa2e1464f6514c9276f14e"
+    },
+    "retained_build_interruptions": [
+      {
+        "command_scope": "frozen-source Node library and three integration targets, original profiles, Cargo build jobs=2",
+        "result": "compiler terminated with SIGKILL; not a native test result",
+        "log_sha256": "f00170dc6807bde787d76638f6fc78cfd0709ae5d7c75198a2998f2077888e75",
+        "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8",
+        "retry": "same source/profile/feature/provider, lower Cargo compiler concurrency to one job"
+      },
+      {
+        "command_scope": "same frozen source/profile/feature/provider, Cargo build jobs=1",
+        "exit": 101,
+        "result": "compiler lib-test process terminated with SIGKILL",
+        "log_sha256": "6bbd862c08e747ec6a30ba4e2bf46a00d7615e51a779b974088c6e2f37e1bef4",
+        "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8",
+        "next_retry": "one permitted CPU affinity plus one Cargo job; no compiler optimization/feature/provider changes"
+      },
+      {
+        "command_scope": "same frozen source/profile/feature/provider, Cargo build jobs=1, one permitted CPU affinity",
+        "exit": 101,
+        "result": "compiler lib-test process terminated with SIGKILL",
+        "log_sha256": "709179febfedb9909fe2bfeb9bc4aef5fe6f388474eee69769280b471ffa557b",
+        "source_fence_sha256": "b99a1e826e3ecc41fa5c21d48e2df2eb4bc65078a1d4961ce7e1c9e76c594ab8"
+      }
+    ],
+    "compiler_affinity": {
+      "allowed": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "selected": [
+        0
+      ],
+      "scope": "compiler process tree only; test execution uses the ordinary environment",
+      "cargo_jobs": 1,
+      "compiler_flags_changed": false
+    },
+    "compiler_concurrency_retry": {
+      "initial_jobs": 2,
+      "retry_jobs": 1,
+      "runtime_budgets_changed": false,
+      "profiles_features_provider_changed": false
+    },
+    "graph": {
+      "workspace_members": 26,
+      "resolved_packages": 180,
+      "normalized_resolve_sha256": "27157621f0ef9b19bd00ca6ddbb94fbfd4ea5cc1933aad3d1439c159362db9d8",
+      "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+      "cargo_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "features": "all-features",
+      "offline": true,
+      "locked": true,
+      "pre_composition_graph_equal": true
+    },
+    "scope": "Intermediate 5c composition only. The 331 native and eight doc passes do not validate later compositions. Node library compilation was blocked on all three attempts; zero old Node passes transferred."
+  },
+  "superseded_d073_composition": {
+    "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19",
+    "source_fence_unchanged": true,
+    "node_build_failure": {
+      "command_scope": "d073 final-source Node library and three integration targets, original Cargo profiles, all features, verified OpenSSL 3.5.9, Cargo build jobs=1",
+      "exit": 101,
+      "result": "ordinary trnm-pon-node library compiler terminated with SIGKILL before library-test and integration artifacts were produced",
+      "log_sha256": "d6e0a7ece763c96d536dc8031630ec60cdec09d1556bb5e1850c155431fa44fc",
+      "compiler_artifact_manifest_sha256": "dcac47a9b8303116541113239d6ffe9d0b4ed9776ae65f9173d421af4a26b70f",
+      "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19"
+    },
+    "m06-m09": {
+      "status": "PASS",
+      "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19",
+      "build_manifest_sha256": "48826fa92b5451ff5cd2c7956e182d86b94f91c6756ea884274fc976a81a1312",
+      "runs": [
+        {
+          "crate": "trnm_mvcc_fee",
+          "command": [
+            "trnm_mvcc_fee-bdc6c4d4701acaaf",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "6a6d3ba5fbfc0807f638ebd80c891f131c1820a02029c9454da203ae3f715c43",
+          "exit": 0,
+          "wall_seconds": 77.26432975699572,
+          "result_lines": [
+            "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 76.99s"
+          ]
+        },
+        {
+          "crate": "trnm_data_availability",
+          "command": [
+            "trnm_data_availability-501d97be04982b00",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "cfd079dd4c6f7a5efa8252abb8857ebd9c3711b1ff1ecd652228c7752e50f10b",
+          "exit": 0,
+          "wall_seconds": 71.63742253099917,
+          "result_lines": [
+            "test result: ok. 211 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 71.48s"
+          ]
+        }
+      ]
+    },
+    "node": {
+      "status": "BLOCKED_COMPILER_SIGKILL",
+      "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19",
+      "library_suite_completed": false,
+      "elf_sha256": null,
+      "runs": [],
+      "tests_executed_on_final_source_binary": null,
+      "build_exit": 101,
+      "attempts": [
+        {
+          "command_scope": "d073 final-source Node library and three integration targets, original Cargo profiles, all features, verified OpenSSL 3.5.9, Cargo build jobs=1",
+          "exit": 101,
+          "result": "ordinary trnm-pon-node library compiler terminated with SIGKILL before library-test and integration artifacts were produced",
+          "log_sha256": "d6e0a7ece763c96d536dc8031630ec60cdec09d1556bb5e1850c155431fa44fc",
+          "compiler_artifact_manifest_sha256": "dcac47a9b8303116541113239d6ffe9d0b4ed9776ae65f9173d421af4a26b70f",
+          "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+          "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19"
+        }
+      ],
+      "prior_source_passes_not_transferred": true,
+      "scope": "Six selected Node unit test suites"
+    },
+    "integration": {
+      "status": "BLOCKED_COMPILER_SIGKILL",
+      "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19",
+      "library_suite_completed": false,
+      "elf_sha256": null,
+      "runs": [],
+      "tests_executed_on_final_source_binary": null,
+      "build_exit": 101,
+      "attempts": [
+        {
+          "command_scope": "d073 final-source Node library and three integration targets, original Cargo profiles, all features, verified OpenSSL 3.5.9, Cargo build jobs=1",
+          "exit": 101,
+          "result": "ordinary trnm-pon-node library compiler terminated with SIGKILL before library-test and integration artifacts were produced",
+          "log_sha256": "d6e0a7ece763c96d536dc8031630ec60cdec09d1556bb5e1850c155431fa44fc",
+          "compiler_artifact_manifest_sha256": "dcac47a9b8303116541113239d6ffe9d0b4ed9776ae65f9173d421af4a26b70f",
+          "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+          "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19"
+        }
+      ],
+      "prior_source_passes_not_transferred": true,
+      "scope": "native_growth_cli, evaluation_observation, evaluation_round_observation"
+    },
+    "source-checks": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.5697800929992809
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.19926178800233174
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pon_public_v3_phase_read.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 1.1416738339976291
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 24.04802300099982
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 8.327055695001036
+        },
+        {
+          "argv": [
+            "bash",
+            "run-native.sh",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 40.47330754699942
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 74.75930621600128
+    },
+    "clippy": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "wall_seconds": 248.81224467800348,
+      "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "source_fence_sha256": "95b29e02b3d36d2163e8d51de718335cf79c413dd623d8568d93486c41149e19"
+    },
+    "graph": {
+      "workspace_members": 26,
+      "resolved_packages": 180,
+      "normalized_resolve_sha256": "27157621f0ef9b19bd00ca6ddbb94fbfd4ea5cc1933aad3d1439c159362db9d8",
+      "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+      "cargo_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "features": "all-features",
+      "offline": true,
+      "locked": true,
+      "pre_composition_graph_equal": true,
+      "source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb"
+    },
+    "scope": "Superseded d073 composition only. Retain its own failed Node build and any completed checks; none is transferred to the final composition."
+  },
+  "superseded_bd2777_composition": {
+    "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+    "source_tree": "2cba5b274d0d09074a5716c802bc58e5c3735678",
+    "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70",
+    "source_fence_unchanged": true,
+    "m06-m09": {
+      "status": "PASS",
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70",
+      "build_manifest_sha256": "f23b9bd943aebe886a847bf3be6bfe5a5a50fa00b634cf1a3ed4994e25da7143",
+      "runs": [
+        {
+          "crate": "trnm_mvcc_fee",
+          "command": [
+            "trnm_mvcc_fee-bdc6c4d4701acaaf",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "6a6d3ba5fbfc0807f638ebd80c891f131c1820a02029c9454da203ae3f715c43",
+          "exit": 0,
+          "wall_seconds": 76.25643137600127,
+          "result_lines": [
+            "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 76.10s"
+          ]
+        },
+        {
+          "crate": "trnm_data_availability",
+          "command": [
+            "trnm_data_availability-501d97be04982b00",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "cfd079dd4c6f7a5efa8252abb8857ebd9c3711b1ff1ecd652228c7752e50f10b",
+          "exit": 0,
+          "wall_seconds": 26.093344534005155,
+          "result_lines": [
+            "test result: ok. 211 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.99s"
+          ]
+        }
+      ]
+    },
+    "quorum": {
+      "status": "PASS",
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70",
+      "runs": [
+        {
+          "target": "evaluation_quorum_v2",
+          "command": [
+            "evaluation_quorum_v2-8f89c890289ba966",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "bcf6ca145479013d8a2b983f8652949b699dc8a263303829017d2d9267eaa399",
+          "exit": 0,
+          "wall_seconds": 0.21084984600020107,
+          "result_lines": [
+            "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s"
+          ]
+        }
+      ]
+    },
+    "node": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No Node library or integration executable was built or executed on the bd2777 final composition. The preceding d073 composition compiler was terminated with SIGKILL; its diagnostic and all earlier outcomes are retained separately. No prior executable or pass count is transferred."
+    },
+    "integration": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No Node library or integration executable was built or executed on the bd2777 final composition. The preceding d073 composition compiler was terminated with SIGKILL; its diagnostic and all earlier outcomes are retained separately. No prior executable or pass count is transferred."
+    },
+    "source-checks": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 2.4787251809975714
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.4381346529989969
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pon_public_v3_phase_read.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 1.1707933229990886
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 86.78080598999804
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 2.957120933002443
+        },
+        {
+          "argv": [
+            "bash",
+            "run-native.sh",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 15.540079325000988
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 109.36583921699639,
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70"
+    },
+    "clippy": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "wall_seconds": 169.73547870200127,
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70"
+    },
+    "graph": {
+      "workspace_members": 26,
+      "resolved_packages": 180,
+      "normalized_resolve_sha256": "27157621f0ef9b19bd00ca6ddbb94fbfd4ea5cc1933aad3d1439c159362db9d8",
+      "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+      "cargo_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "features": "all-features",
+      "offline": true,
+      "locked": true,
+      "pre_composition_graph_equal": true,
+      "source_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "source_fence_sha256": "6093513bb5792168c7f5015caff6594d0244de0b74b38002c236655f696f7b70",
+      "metadata_json_equal_to_d073": true
+    },
+    "build_manifests": {
+      "latest-cell-build": {
+        "stdout.jsonl": "f23b9bd943aebe886a847bf3be6bfe5a5a50fa00b634cf1a3ed4994e25da7143",
+        "stderr.log": "82ae3d11951cdce211c8d18f82f5fe318cf079f4337d72dd208aa14ff24dff60"
+      },
+      "latest-quorum-build": {
+        "stdout.jsonl": "dfd63e0c716d239b727e9cba3186bd623249ae96741a38e1810d535956685f9a",
+        "stderr.log": "1943a0b5d06b0ed0e21e65257f9791ec9196eac270a96be73c6fb82825f6c86c"
+      }
+    },
+    "observed_test_counts": {
+      "passed": 327,
+      "failed": 0,
+      "ignored": 7
+    },
+    "scope": "Superseded bd2777 composition only. Its 327 M06/Cell/quorum passes and seven ignored tests do not validate the concurrent245 dependency graph. Node and its integration suites were unvalidated."
+  },
+  "superseded_245_composition": {
+    "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+    "source_tree": "3081dfefa8b56506a61770d6de3adc49f55cba2c",
+    "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+    "source_fence_unchanged": true,
+    "m06-m09": {
+      "status": "PASS",
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "build_command": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--lib",
+        "--test",
+        "evaluation_quorum_v2",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_scope": "One Cargo invocation builds both library suites and evaluation_quorum_v2; the two build manifest stems are aliases of that same invocation.",
+      "runs": [
+        {
+          "crate": "trnm_mvcc_fee",
+          "command": [
+            "trnm_mvcc_fee-bdc6c4d4701acaaf",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "6a6d3ba5fbfc0807f638ebd80c891f131c1820a02029c9454da203ae3f715c43",
+          "exit": 0,
+          "wall_seconds": 37.94330255500245,
+          "result_lines": [
+            "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 37.83s"
+          ]
+        },
+        {
+          "crate": "trnm_data_availability",
+          "command": [
+            "trnm_data_availability-501d97be04982b00",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "cfd079dd4c6f7a5efa8252abb8857ebd9c3711b1ff1ecd652228c7752e50f10b",
+          "exit": 0,
+          "wall_seconds": 25.604323505001958,
+          "result_lines": [
+            "test result: ok. 211 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.52s"
+          ]
+        }
+      ]
+    },
+    "quorum": {
+      "status": "PASS",
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "build_command": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--lib",
+        "--test",
+        "evaluation_quorum_v2",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_scope": "One Cargo invocation builds both library suites and evaluation_quorum_v2; the two build manifest stems are aliases of that same invocation.",
+      "runs": [
+        {
+          "target": "evaluation_quorum_v2",
+          "command": [
+            "evaluation_quorum_v2-9f54e065eaab983b",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "0ee4c8d68292ecf98564711095a9728fefc2280696ab612129408879294493c3",
+          "exit": 0,
+          "wall_seconds": 0.21396624200133374,
+          "result_lines": [
+            "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s"
+          ]
+        }
+      ]
+    },
+    "node": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No Node library or integration executable was built or executed on this final composition. Prior compiler SIGKILL observations and their source identities are retained separately. No prior executable or pass count is transferred."
+    },
+    "integration": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No Node library or integration executable was built or executed on this final composition. Prior compiler SIGKILL observations and their source identities are retained separately. No prior executable or pass count is transferred."
+    },
+    "source-checks": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 6.520261883997591
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 3.985715385999356
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pon_public_v3_phase_read.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 39.55109349099803
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 77.11137829899963
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 5.443343320999702
+        },
+        {
+          "argv": [
+            "bash",
+            "run-native.sh",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 17.88384839599894
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 150.49579934699432,
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877"
+    },
+    "clippy": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 101,
+      "wall_seconds": 1133.3046818389994,
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "status": "BLOCKED_COMPILER_SIGKILL",
+      "reason": "Node library-test clippy-driver was terminated with SIGKILL; workspace Clippy did not complete. This is not a warning or native test result.",
+      "log_sha256": "0efbf76068ad4ad8897e1e4ebb9a2e843c81a4600b59247e2961f2c4ca8fe8ea"
+    },
+    "graph": {
+      "workspace_members": 26,
+      "resolved_packages": 180,
+      "normalized_resolve_sha256": "17476fb352202e086c2b4df334ee62bb598e2931ff35d19db0f9a95675d25f01",
+      "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+      "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "features": "all-features",
+      "offline": true,
+      "locked": true,
+      "pre_composition_graph_equal": false,
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "recorded_concurrent_graph_delta": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "normalization": "Compact sorted JSON; sort workspace member list first; replace absolute workspace root with literal $WORKSPACE; no newline"
+    },
+    "build_manifests": {
+      "latest-cell-build": {
+        "stdout.jsonl": "edeb5392b248491175f5d3fd9cb5146be59b3697fcacb5da4a3ac6009e105186",
+        "stderr.log": "bbf103a10709c4ad69c051fc356f75268623d1d9fd7d42d4a1636ebde4d779b4"
+      },
+      "latest-quorum-build": {
+        "stdout.jsonl": "edeb5392b248491175f5d3fd9cb5146be59b3697fcacb5da4a3ac6009e105186",
+        "stderr.log": "bbf103a10709c4ad69c051fc356f75268623d1d9fd7d42d4a1636ebde4d779b4"
+      }
+    },
+    "observed_test_counts": {
+      "passed": 327,
+      "failed": 0,
+      "ignored": 7
+    },
+    "retained_clippy_compiler_failure": {
+      "status": "BLOCKED_COMPILER_SIGKILL",
+      "exit": 101,
+      "log_sha256": "0efbf76068ad4ad8897e1e4ebb9a2e843c81a4600b59247e2961f2c4ca8fe8ea",
+      "source_parent": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "source_fence_sha256": "f4d530570a65339da883d179d9fbd1abd877f0ad3e0f6251f191071e65e4a877",
+      "scope": "Retained full Clippy invocation failed during Node library-test compilation; not a successful lint run or a final-composition observation."
+    },
+    "scope": "Superseded concurrent245 composition only. Retain its own 327 native passes, seven ignored tests, source checks and failed full Clippy invocation. Node/integration remained unvalidated; no results transfer to the publication composition."
+  },
+  "superseded_031_composition": {
+    "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+    "source_tree": "8f54d5101e3cf46be2f8ca882e882517d5493332",
+    "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+    "source_fence_unchanged": true,
+    "m06-m09": {
+      "status": "PASS",
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+      "build_command": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--lib",
+        "--test",
+        "evaluation_quorum_v2",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_scope": "One Cargo invocation builds both library suites and evaluation_quorum_v2; the two build manifest stems alias that same invocation.",
+      "runs": [
+        {
+          "crate": "trnm_mvcc_fee",
+          "command": [
+            "trnm_mvcc_fee-bdc6c4d4701acaaf",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "6a6d3ba5fbfc0807f638ebd80c891f131c1820a02029c9454da203ae3f715c43",
+          "exit": 0,
+          "wall_seconds": 34.87277073600126,
+          "result_lines": [
+            "test result: ok. 113 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 34.77s"
+          ]
+        },
+        {
+          "crate": "trnm_data_availability",
+          "command": [
+            "trnm_data_availability-501d97be04982b00",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "cfd079dd4c6f7a5efa8252abb8857ebd9c3711b1ff1ecd652228c7752e50f10b",
+          "exit": 0,
+          "wall_seconds": 23.37424518899934,
+          "result_lines": [
+            "test result: ok. 211 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.27s"
+          ]
+        }
+      ]
+    },
+    "quorum": {
+      "status": "PASS",
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+      "build_command": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--lib",
+        "--test",
+        "evaluation_quorum_v2",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_scope": "One Cargo invocation builds both library suites and evaluation_quorum_v2; the two build manifest stems alias that same invocation.",
+      "runs": [
+        {
+          "target": "evaluation_quorum_v2",
+          "command": [
+            "evaluation_quorum_v2-9f54e065eaab983b",
+            "--test-threads=1"
+          ],
+          "elf_sha256": "0ee4c8d68292ecf98564711095a9728fefc2280696ab612129408879294493c3",
+          "exit": 0,
+          "wall_seconds": 0.2218818809997174,
+          "result_lines": [
+            "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s"
+          ]
+        }
+      ]
+    },
+    "node": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No Node library or integration executable was built or executed on this final composition. Prior compiler SIGKILL observations are retained separately; no previous executable or pass count is transferred."
+    },
+    "integration": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No Node library or integration executable was built or executed on this final composition. Prior compiler SIGKILL observations are retained separately; no previous executable or pass count is transferred."
+    },
+    "source-checks": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.2583227990035084
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.0699175049958285
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pon_public_v3_phase_read.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.6551641640035086
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 20.008739450997382
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 2.808016991999466
+        },
+        {
+          "argv": [
+            "bash",
+            "run-native.sh",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 13.912795974996698
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 37.713100583001506,
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0"
+    },
+    "clippy": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "Workspace all-targets Clippy was not rerun on this final composition after its Node library-test driver was terminated with SIGKILL on the separately retained 245146c composition."
+    },
+    "graph": {
+      "workspace_members": 26,
+      "resolved_packages": 180,
+      "normalized_resolve_sha256": "17476fb352202e086c2b4df334ee62bb598e2931ff35d19db0f9a95675d25f01",
+      "normalized_members_sha256": "700c9ef3580b82c4b94d23697a8ce8641ae4f4e540c5fd4d42633638ee85de59",
+      "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "features": "all-features",
+      "offline": true,
+      "locked": true,
+      "pre_composition_graph_equal": false,
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "source_fence_sha256": "76047afc98ae620704c36382377534452f10c63e147cd9276a95a036e98f02f0",
+      "recorded_concurrent_graph_delta": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "normalization": "Compact sorted JSON; sort workspace member list first; replace absolute workspace root with literal $WORKSPACE; no newline",
+      "metadata_json_equal_to_245": true
+    },
+    "repository": {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit": 0,
+      "wall_seconds": 61.32114251800522,
+      "source_parent": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "log_sha256": "4d57ada77a31cc5bbe56c18b0569ece443785cae459c4d757155d57fc1b76dae",
+      "local_links": 2530
+    },
+    "observed_test_counts": {
+      "passed": 327,
+      "failed": 0,
+      "ignored": 7
+    },
+    "scope": "Superseded031 composition only. Its 327 native passes, seven ignored tests and source/link checks do not validate the later Cell storage implementation or promoted normal dependency closure. Node/integration/Clippy were unvalidated."
+  },
+  "final_source_validation_status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+  "final_source_builds": {
+    "node_and_integration": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "build_succeeded": null,
+      "compiler_sigkill_reported": null,
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "m06_m09": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "build_succeeded": null,
+      "compiler_sigkill_reported": null,
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "m06_quorum": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "build_succeeded": null,
+      "compiler_sigkill_reported": null,
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    }
+  },
+  "final_source_native": {
+    "m06_m09": {
+      "receipt": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+        "runs": [],
+        "elf_sha256": null,
+        "reason": "No execution of this suite on the final storage/model composition. Earlier native runs and compiler interruptions retain their original source identities; no prior executable or passing count is transferred."
+      },
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "observed_test_counts": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "runs_without_terminal_test_summary": 0,
+      "executable_bindings": [],
+      "build": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "build_succeeded": null,
+        "compiler_sigkill_reported": null,
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+      },
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "m06_quorum": {
+      "receipt": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+        "runs": [],
+        "elf_sha256": null,
+        "reason": "No execution of this suite on the final storage/model composition. Earlier native runs and compiler interruptions retain their original source identities; no prior executable or passing count is transferred."
+      },
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "observed_test_counts": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "runs_without_terminal_test_summary": 0,
+      "executable_bindings": [],
+      "build": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "build_succeeded": null,
+        "compiler_sigkill_reported": null,
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+      },
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "node_selected": {
+      "receipt": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+        "runs": [],
+        "elf_sha256": null,
+        "reason": "No execution of this suite on the final storage/model composition. Earlier native runs and compiler interruptions retain their original source identities; no prior executable or passing count is transferred."
+      },
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "observed_test_counts": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "runs_without_terminal_test_summary": 0,
+      "executable_bindings": [],
+      "build": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "build_succeeded": null,
+        "compiler_sigkill_reported": null,
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+      },
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    },
+    "integration": {
+      "receipt": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+        "runs": [],
+        "elf_sha256": null,
+        "reason": "No execution of this suite on the final storage/model composition. Earlier native runs and compiler interruptions retain their original source identities; no prior executable or passing count is transferred."
+      },
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "observed_test_counts": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "runs_without_terminal_test_summary": 0,
+      "executable_bindings": [],
+      "build": {
+        "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+        "build_succeeded": null,
+        "compiler_sigkill_reported": null,
+        "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+        "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+      },
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10"
+    }
+  },
+  "request_reader_controls": {
+    "all_tests": 41,
+    "all_controls_log_sha256": "87c118845ddb959ffc2bd82fdf20a045c92bc9e9f95c30c9ba7e4e13b0b338f0",
+    "integrated_root_log_sha256": "c0a6c29b3c9642c3ca937d2a5cf974f3d456c23d3ebdefc5c9c88693db6bc814",
+    "baseline_candidate_regressions": {
+      "baseline": {
+        "tests_run": 6,
+        "failures": 4,
+        "errors": 4,
+        "successful": false
+      },
+      "candidate": {
+        "tests_run": 6,
+        "failures": 0,
+        "errors": 0,
+        "successful": true
+      },
+      "selectors": [
+        "test_per_request_queue_p99_is_order_statistic_not_waiter_total",
+        "test_unfinished_elapsed_does_not_enter_terminal_tail_or_erase_failure",
+        "test_missing_terminal_clock_cannot_produce_all_terminal_p99",
+        "test_phase_tails_preserve_unknown_outcomes_and_inclusive_costs",
+        "test_current_derivation_separates_unobserved_startup_rounds_and_preserves_v2",
+        "test_duplicate_nested_observation_cannot_overwrite_failure_or_missing_duration"
+      ],
+      "baseline_head": "93e207c8d2ccb8509f78566223abc371b9d8118b",
+      "baseline_reader_sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+      "candidate_reader_sha256": "e9cbf33ad25486391ff97ad9e8906db3f2b4917ac9ba5bab65a1164f561ed852",
+      "scope": "Synthetic consumer counterexamples only; no native execution or performance acceptance."
+    },
+    "historical_campaign_reader_controls": {
+      "passed": 19,
+      "exit": 0,
+      "log_sha256": "f0411e2bed12e21482e5392870ebb87418627c6471d82b6f6fb1612313d03db0",
+      "artifact": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963",
+      "expected_manifest_sha256": "12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3",
+      "expected_head": "9e705ccf75b7318dcc4bda4815956f58beb10e72",
+      "expected_tree": "521ae87a28060d545979069b189eebbc74a71fd8",
+      "retained_subset": true,
+      "scope": "Actual retained historical input; parser counterexamples, not new execution.",
+      "prior_missing_arguments_invocation": {
+        "exit": 2,
+        "scope": "CLI invocation refused before test execution",
+        "log_sha256": "54eef03bb802037a377e534dbd17513feb2cf700b9effe451ad42e0465b31c7d"
+      }
+    }
+  },
+  "cell_old_source_counterexamples": [
+    {
+      "test": "expired_cached_chunk_deadline_refuses_before_sql_or_hash",
+      "baseline_exit": 101,
+      "baseline_log_sha256": "ad78fe64da23e282d54088de349db6ce85c882d8b5dd363352883fd30ed0ab15",
+      "baseline_result": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 190 filtered out; finished in 0.01s"
+      ]
+    },
+    {
+      "test": "expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged",
+      "baseline_exit": 101,
+      "baseline_log_sha256": "329be919de35948f9593e13682d46d190eb7a687b24584631ddcf5f00de20fe4",
+      "baseline_result": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 190 filtered out; finished in 0.01s"
+      ]
+    },
+    {
+      "test": "expired_manifest_fetch_refuses_local_hit_and_put_before_decode",
+      "baseline_exit": 101,
+      "baseline_log_sha256": "e755e6f9b1ab47993f269df4e35e9157e21f5af976e52612fc7debbf8111c1fe",
+      "baseline_result": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 190 filtered out; finished in 0.02s"
+      ]
+    },
+    {
+      "test": "exhausted_serving_budget_refuses_before_fresh_payload_lookup",
+      "baseline_exit": 101,
+      "baseline_log_sha256": "12afe1cec5cc0d8a0d965046a9d213d21eff5042ec3dc288a51f482913629aa8",
+      "baseline_result": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 190 filtered out; finished in 0.01s"
+      ]
+    },
+    {
+      "test": "zero_serving_byte_budget_admits_no_socket_or_payload_worker",
+      "baseline_exit": 101,
+      "baseline_log_sha256": "2345cef7d96a371360242f64b3c47bb98bd6fcdcc6b309e0187829b8ec55c3ec",
+      "baseline_result": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 190 filtered out; finished in 0.04s"
+      ]
+    },
+    {
+      "test": "positive_exhaustion_stops_intake_and_joins_admitted_half_request",
+      "baseline_exit": 101,
+      "baseline_log_sha256": "457ed410810c275ac51f2b02fe5fd3fcacb17988a4fd2d13d57273a3ed222e30",
+      "baseline_failure": "FAILED; actual accepted_connections=3, expected=2; actual 9-byte response and EOF barrier; no shutdown; max_connections=20"
+    }
+  ],
+  "retained_initial_growth_failures": {
+    "elf_sha256": "cf240259bdcefc03d11ced1a3ed2615fb467a1628ca14e1214353fd250cdbebf",
+    "runs": [
+      {
+        "label": "evaluation",
+        "selector": "store::evaluation_observation::tests::",
+        "command": [
+          "trnm_pon_node-185b7dcb53943bc2",
+          "store::evaluation_observation::tests::",
+          "--test-threads=1"
+        ],
+        "exit": 101,
+        "wall_seconds": 25.879359286998806,
+        "result_lines": [
+          "test result: FAILED. 5 passed; 3 failed; 0 ignored; 0 measured; 1015 filtered out; finished in 25.87s"
+        ]
+      }
+    ],
+    "failure_log_sha256": "8c68df5937f9f210fed198851253779b219d4c4c9045a9e4102fb0d52bcaf95d",
+    "diagnosis": [
+      "Two generic Value rewrites reordered typed StoredState fields and were rejected by GROWTH_RECORD_ENCODING before the intended commitment check.",
+      "A no-op data=data UPDATE did not produce an observable foreign SQLite commit."
+    ],
+    "repair": [
+      "Replace exactly one canonical working entry within original typed record bytes; require the original exact GROWTH_EXECUTION:StateWitness(Commitment) rejection.",
+      "Perform two actual external autocommit changes, restoring exact original bytes; verify data_version changed and require exact GROWTH_STORAGE_EPOCH_CHANGED, including across a held snapshot."
+    ],
+    "runtime_changed_by_fixture_repair": false,
+    "runtime_prefix_sha256": "acdc479fce78810b857c351018e9cd909346c7df36d9485d4b22f1be2926936b"
+  },
+  "retained_historical_campaign_replay": {
+    "schema": "request-metrics-retained-native-compatibility-v1",
+    "source": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/original-three-campaign-selected-records.json.gz",
+    "source_sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+    "scope": "Replay of retained c5dd selected original complete raw reports; no new native execution, host authentication, performance gain or qualification",
+    "runs": [
+      {
+        "run": 1,
+        "raw_report_sha256": "9299fdabcc3b00fb84c73cc2c0672c92461e48da8afa19e8424c1444f13b5e3d",
+        "historical_schema": "pon-public-v3-multiprocess-phase-derivation-v2",
+        "exact_historical_reproduction": true,
+        "current_schema": "pon-public-v3-multiprocess-phase-derivation-v3",
+        "phases": [
+          {
+            "mode": "baseline",
+            "observations_available": true,
+            "records": 23,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 2,
+            "unobserved": 1,
+            "confirmed": 1,
+            "phase_terminal_records": 228,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 92,
+            "wait_unfinished_records": 0
+          },
+          {
+            "mode": "from-zero",
+            "observations_available": true,
+            "records": 1529,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 1,
+            "unobserved": 2,
+            "confirmed": 0,
+            "phase_terminal_records": 10578,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 6076,
+            "wait_unfinished_records": 0
+          },
+          {
+            "mode": "late-product",
+            "observations_available": true,
+            "records": 1380,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 1,
+            "unobserved": 2,
+            "confirmed": 0,
+            "phase_terminal_records": 9540,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 5474,
+            "wait_unfinished_records": 0
+          }
+        ],
+        "native_finite_experiment_criteria_met": false
+      },
+      {
+        "run": 2,
+        "raw_report_sha256": "7aa80c0c8bad9dc2e3f9385c44057d5bd6dc761fc9fbb0dab6d553e54d017b67",
+        "historical_schema": "pon-public-v3-multiprocess-phase-derivation-v2",
+        "exact_historical_reproduction": true,
+        "current_schema": "pon-public-v3-multiprocess-phase-derivation-v3",
+        "phases": [
+          {
+            "mode": "baseline",
+            "observations_available": true,
+            "records": 23,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 2,
+            "unobserved": 1,
+            "confirmed": 1,
+            "phase_terminal_records": 228,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 92,
+            "wait_unfinished_records": 0
+          },
+          {
+            "mode": "from-zero",
+            "observations_available": true,
+            "records": 1510,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 1,
+            "unobserved": 2,
+            "confirmed": 0,
+            "phase_terminal_records": 10460,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 6003,
+            "wait_unfinished_records": 0
+          },
+          {
+            "mode": "late-product",
+            "observations_available": true,
+            "records": 1378,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 1,
+            "unobserved": 2,
+            "confirmed": 0,
+            "phase_terminal_records": 9531,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 5470,
+            "wait_unfinished_records": 0
+          }
+        ],
+        "native_finite_experiment_criteria_met": false
+      },
+      {
+        "run": 3,
+        "raw_report_sha256": "c026338fdd191a9dbe380a9bdea14cfc56004675b3dfef810d256f0b54ea6cdc",
+        "historical_schema": "pon-public-v3-multiprocess-phase-derivation-v2",
+        "exact_historical_reproduction": true,
+        "current_schema": "pon-public-v3-multiprocess-phase-derivation-v3",
+        "phases": [
+          {
+            "mode": "baseline",
+            "observations_available": true,
+            "records": 23,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 2,
+            "unobserved": 1,
+            "confirmed": 1,
+            "phase_terminal_records": 228,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 92,
+            "wait_unfinished_records": 0
+          },
+          {
+            "mode": "from-zero",
+            "observations_available": true,
+            "records": 1543,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 1,
+            "unobserved": 2,
+            "confirmed": 0,
+            "phase_terminal_records": 10693,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 6133,
+            "wait_unfinished_records": 0
+          },
+          {
+            "mode": "late-product",
+            "observations_available": true,
+            "records": 1371,
+            "native_phase_criteria_met": false,
+            "scheduled": 3,
+            "observed": 1,
+            "unobserved": 2,
+            "confirmed": 0,
+            "phase_terminal_records": 9481,
+            "phase_unfinished_records": 0,
+            "wait_terminal_records": 5440,
+            "wait_unfinished_records": 0
+          }
+        ],
+        "native_finite_experiment_criteria_met": false
+      }
+    ]
+  },
+  "pre_final_source_checks": {
+    "final-format": {
+      "label": "format",
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "wall_seconds": 36.959429971000645,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final-pin_integrity": {
+      "label": "pin_integrity",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit": 0,
+      "wall_seconds": 39.84771652799827,
+      "log_sha256": "59d16a9a386474754dfd9075492bfddb93485ada19f1a176bd4d956a6adb1886"
+    },
+    "final-pin_contract": {
+      "label": "pin_contract",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.4350292739982251,
+      "log_sha256": "7f3ab3235b0200793bb914e20effac1654dc2050685f9c46d074f0d912994926"
+    },
+    "candidate-source_integrity": {
+      "label": "source_integrity",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit": 0,
+      "wall_seconds": 2.7325003869991633,
+      "log_sha256": "2be979e3ff842c4856dae7f9b3acd42388bd4a5ec8d4dd95e64af5b6fc7d89d9"
+    },
+    "final-clippy": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "wall_seconds": 579.162105397998,
+      "log_sha256": "338d6d9f21fb1e85eae71fc21cfcb10db4cc537f2dcfff317073a0319edf394c"
+    },
+    "final-repository": {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit": 0,
+      "wall_seconds": 55.51484991500183,
+      "log_sha256": "2cf9d7d497e356f8d5cef5f74a93dc4c8a8ea4b2b18b07beb9ccdac1989d10c9"
+    },
+    "composed-clippy": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "wall_seconds": 666.1516420240005,
+      "log_sha256": "a75b344db0351f5f8f70c3579210acb9dc0faa968fddc7e501ef49fc347536fe"
+    },
+    "composed-cell-doc": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--doc"
+      ],
+      "exit": 0,
+      "wall_seconds": 161.63966783799697,
+      "log_sha256": "9c8b6fba552978d0c72c52f7180146c3defed93632fa2e1464f6514c9276f14e"
+    },
+    "composed-source-checks": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit": 0
+        },
+        {
+          "argv": [
+            "bash",
+            "run-native.sh",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 14.637716507000732,
+      "log_sha256": "dd4a2c0c487123822e3d256561703a66893cabf999df1829012eb0b65311c2cb"
+    },
+    "composed-python": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pon_public_v3_phase_read.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 5.583518614002969
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 108.71444660999987
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 7.139047587996174
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 121.46047306700348,
+      "log_sha256": "43b8e5b9af758ead105f489491d4b88414e5b790dc5e6b92e1e10ed7ea18325f"
+    }
+  },
+  "final_source_checks": {
+    "latest-source-checks": {
+      "runs": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.21614452700305264
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.08465273899491876
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pon_public_v3_phase_read.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 0.6279168860055506
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 28.911349164998683
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py"
+          ],
+          "exit": 0,
+          "wall_seconds": 3.823330957995495
+        },
+        {
+          "argv": [
+            "bash",
+            "run-native.sh",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "wall_seconds": 15.433305780003138
+        }
+      ],
+      "exit": 0,
+      "wall_seconds": 49.0969081200019,
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+      "log_sha256": "e07479c3c9c710a1c92ed79d1d152b293f04eebfacacbc0bc34a13b1906c04e6"
+    },
+    "latest-cell-check": {
+      "argv": [
+        "bash",
+        "run-native.sh",
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "cargo",
+        "check",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-features",
+        "--all-targets"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.49375172800500877,
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+      "scope": "M09 all-targets typechecking only; no native test execution or runtime count credit",
+      "log_sha256": "114ce07a093184439c71d9db313466bf5b5d797e22cb1fd3e49722e3d1bcedef",
+      "observation_scope": "M09 cargo check --all-features --all-targets only; typechecking does not execute native tests, supply a test-pass count or validate Node/Clippy."
+    },
+    "latest-clippy": {
+      "status": "BLOCKED_UNVALIDATED_FINAL_COMPOSITION",
+      "source_parent": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "source_fence_sha256": "9c44a0c0c2456963e8c48cdac8a4fb723a9115f2e5e43d23ec674b3800784e10",
+      "runs": [],
+      "elf_sha256": null,
+      "reason": "No execution of this suite on the final storage/model composition. Earlier native runs and compiler interruptions retain their original source identities; no prior executable or passing count is transferred.",
+      "log_sha256": null
+    }
+  },
+  "measurement_limits": [
+    "Nineteen native phases and four individual waits; inclusive parents/children are not additive.",
+    "Context includes parent work; commit includes fences and persistence, while activation is recorded separately in submit_result.",
+    "No isolated server ingress timer, pure parent-query/fsync timer, or accept-to-independent-confirmation wall interval.",
+    "Client response and server ACK are not independent confirmation. Errors can follow an already durable prefix.",
+    "Calling-thread CPU excludes scoped workers; observer-local clocks cannot be directly joined.",
+    "Lost records, unfinished intervals, missing clocks and three scheduled confirmation rounds retain their denominators."
+  ],
+  "unclosed_acceptance": [
+    "Original four-second confirmation with sixteen hostile producers.",
+    "Original 4,105-block History campaign.",
+    "Universal all-business scaling only with touched keys and proof depth; complete bounded working roots and ancestry still require validation.",
+    "Growth parallel M06 preparation: current Node, executor and public profile require one worker; child CPU accounting and canonical-only witness access need explicit integration.",
+    "Target-host CPU, memory and bandwidth isolation; cooperative deadlines do not preempt entered native calls.",
+    "Funded runtime FinalUse factory, external monotonic recovery, independent model evaluation and whole-PQ qualification."
+  ],
+  "qualification_promoted": false,
+  "production_activation": false
+}

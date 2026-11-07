@@ -1,0 +1,12 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "scope": "Original raw patches and test logs retain byte-identical contextual/trailing blank lines. No formatter/check configuration was changed. Source/doc/config formatting is checked separately.",
+  "stdout_sha256": "2db4b5e95ed81ce3848098c88bc35f6fbc16f86d910dae7b2be2a8213d36844e",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

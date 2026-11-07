@@ -1,0 +1,116 @@
+{
+  "bash_scripts_checked": 44,
+  "embedded_python_blocks_compiled": 7,
+  "expected_registry_counts_awaiting_actual_native_list": {
+    "native_authenticated": 103,
+    "post_write": 35,
+    "pre_write": 12
+  },
+  "head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "new_direct_append_controls": 2,
+  "new_m06_controls": 5,
+  "new_scope_controls": 22,
+  "old_pq_49_roster_preserved": true,
+  "old_steps_parameters_and_deadlines_preserved": true,
+  "original_workspace_expected_selected_count": 73,
+  "result": "PASS",
+  "scope": "workflow YAML, shell, embedded Python and source-name static checks only; synthetic reader controls are not native execution",
+  "synthetic_reader_cases": [
+    {
+      "case": "synthetic-complete-shape",
+      "exit_code": 0,
+      "expected_accept": true
+    },
+    {
+      "case": "replaced-required-prewrite-0",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-1",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-2",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-3",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-4",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-5",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-6",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-7",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-8",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-9",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-10",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-11",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "duplicate-name",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "missing-old-nonpost",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "duplicate-summary",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "ignored-cost",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-current-accounts",
+      "exit_code": 1,
+      "expected_accept": false
+    }
+  ],
+  "workflow_sha256": {
+    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "60a7a7c63dfd67193b6723b279e163f3d3ad13a12bfc88ee892fd0c479715df9",
+    ".github/workflows/pon-pq-system-continuation.yml": "f96895a19a3f877c5b28059ac6afbdb3b1049a038f016c198b6ab6add8222fc0",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "c20f6b4e9b9034125d8ab191a963ba31f65cf315fd626b6b3d8e583397efc233"
+  },
+  "yaml_files": 3
+}

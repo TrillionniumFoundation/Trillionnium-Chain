@@ -1,0 +1,57 @@
+{
+  "schema": "host-native-probe-source-subset-v1",
+  "sourceCommit": "03b67a955b8fcb6b6c920be584eaad5c0a71d34d",
+  "sourceTree": "17502e548cb6fd393a7139a7342db52093371d88",
+  "files": [
+    {
+      "path": "scripts/llm_runtime_host_scope.py",
+      "bytes": 38542,
+      "sha256": "5b1afc3740489af4c22ec3e080d72615e002ea2147d5a0755b6685ed9b381f77",
+      "gitBlob": "12fa18be2bcdcc95d9d416d89b499d3f6f78b57b"
+    },
+    {
+      "path": "scripts/llm_runtime_host_scope_io.py",
+      "bytes": 6545,
+      "sha256": "b7d34c569f674ac67158ce25c96fa9a4a3145abd35cbff5496b4b3721eeb356f",
+      "gitBlob": "9058801c589177bcf3a6e28841fe74075e724449"
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_owned.py",
+      "bytes": 20637,
+      "sha256": "2c7836dada8f9a428e50c899b189167d598c650b3c676b00d26bd9c864bfd252",
+      "gitBlob": "812bcf8c8569e905abeb7689de71286b6c2cd6ff"
+    },
+    {
+      "path": "scripts/llm_runtime_exit_observation.py",
+      "bytes": 10742,
+      "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+      "gitBlob": "6773513937f5d9b9f60f53acc8aee086b64292da"
+    },
+    {
+      "path": "scripts/llm_runtime_kernel_spawn.c",
+      "bytes": 4180,
+      "sha256": "ca954a7521f4b34185f63965353ecb67b7305471c0b855115bcb39eb06d2d762",
+      "gitBlob": "8916ea57ca030161681b6f66a65cf7eda36d565a"
+    },
+    {
+      "path": "scripts/llm_runtime_pilot.py",
+      "bytes": 110375,
+      "sha256": "a175de7764eb406ed0969fd6d2d1c752750a3fcc9f87dc6601aba6eec87029b6",
+      "gitBlob": "85909e9d54124a3701fdb54a144b08551d8dccf3"
+    },
+    {
+      "path": "scripts/llm_runtime_evidence_pipe.py",
+      "bytes": 9540,
+      "sha256": "f91c14223f7128dc307e82c580ff0d09b57ef7521badb5796f37ec4827a3bed5",
+      "gitBlob": "32a4c0cadceaa40bda10da3ba44ac8a3a3d7671e"
+    },
+    {
+      "path": "scripts/llm_runtime_evidence_frames.py",
+      "bytes": 11704,
+      "sha256": "8f291b3e413275d32f175c0a2a7d98210d279b83f5f3a65e24bcca9c57cb9449",
+      "gitBlob": "c073014e2ff2dd9ac2d9dd1c87b56e65ef886991"
+    }
+  ],
+  "subsetOnly": true,
+  "noSourceExecutionDuringPreparation": true
+}

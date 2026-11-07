@@ -1,0 +1,33 @@
+{
+  "schema": "history-exact-source-native-control-v1",
+  "argv": [
+    "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+    "ingress::public_v3::tests::live_cpu_",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+  "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+  "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+  "started_utc": "2026-10-28T00:32:58.675246+00:00",
+  "outer_observer_timeout_seconds": 120,
+  "exit_code": 0,
+  "elapsed_seconds": 0.03220068199880188,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 557,
+    "sha256": "2899e9ede771b60ae1e1883af3903e141e7617018ac6eba285872802e4f2902d"
+  },
+  "stderr.txt": {
+    "bytes": 209,
+    "sha256": "873cd415a0c50b37f975174c86959e94e25d4c9a6743b0dbe299a7f0c25d6b3b"
+  },
+  "harness_results": [
+    {
+      "outcome": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

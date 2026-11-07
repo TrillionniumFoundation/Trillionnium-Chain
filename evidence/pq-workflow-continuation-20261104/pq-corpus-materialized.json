@@ -1,0 +1,15 @@
+{
+  "name": "pq-corpus-materialized",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "env_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit_code": 1,
+  "wall_seconds": 0.364339,
+  "log": "pq-corpus-materialized.log",
+  "log_sha256": "33aa5b9daa6b884820d66d65b7ae7426dbfaa1b0de0da81360fc80ad8553eaa7"
+}

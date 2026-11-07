@@ -1,0 +1,82 @@
+{
+  "schema": "trnm-cell-final-integration-scope-v1",
+  "historical_checkpoint": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+  "historical_results_record": "delivery-results.json",
+  "historical_results_record_sha256": "0ab961a90d5fffc1b643080860eb5a10e8c34958ad1ba76ef8fae1f2140bd2b4",
+  "historical_native_result_source": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+  "historical_composed_controls_and_clippy_source": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "incoming_parent": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+  "incoming": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "intended_ordered_parents": [
+    "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "dfbec36ca8126a8d388218c4fada512e1deabf71"
+  ],
+  "containing_commit_identity": "Read the exact candidate and tested commit from the corresponding source recorder; this record does not transfer any runtime result to a later evidence successor.",
+  "historical_native_tree": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+  "incoming_native_tree": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+  "native_identical_to_N": false,
+  "evidence_only_relative_to_D": false,
+  "historical_results_relabelled": false,
+  "source_subtrees_equal_incoming": {
+    "trillionnium": {
+      "indexed": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+      "incoming": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+      "equal": true
+    },
+    "scripts": {
+      "indexed": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "incoming": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "equal": true
+    },
+    "config": {
+      "indexed": "336034cf62f8d3bb9973906bda437daad63b524d",
+      "incoming": "336034cf62f8d3bb9973906bda437daad63b524d",
+      "equal": true
+    },
+    "formal": {
+      "indexed": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "incoming": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "equal": true
+    },
+    ".github": {
+      "indexed": "dba2d8a9e7a57ee320dc042ffbfb0f8faf0a536c",
+      "incoming": "dba2d8a9e7a57ee320dc042ffbfb0f8faf0a536c",
+      "equal": true
+    }
+  },
+  "pre_scope_preservation_record": "final-integration-preservation.json",
+  "incoming_corpus_pin_count": 464,
+  "source_guard_test_count": 43,
+  "other_control_tests_unchanged": 72,
+  "full_five_suite_count_not_freshly_executed": 115,
+  "new_native_tests_executed_by_this_task_on_incoming": 0,
+  "strict_clippy_on_incoming": "NOT_RUN",
+  "selected_node_on_N": "NOT_RUN_BUILD_FAILED_RESOURCE",
+  "combined_native_acceptance": "HOLD",
+  "fresh_static_gate_plan": {
+    "source_mode": "head",
+    "negative_source_integrity_tests": 43,
+    "checks": [
+      "cargo fmt --all -- --check",
+      "generated source inventory",
+      "464 exact source pins",
+      "CI contract",
+      "repository structure and Markdown links",
+      "locked offline Cargo metadata"
+    ],
+    "execution_results": "Do not infer a result from this plan; use an actual exact-commit recorder receipt."
+  },
+  "production_activation": false,
+  "CURRENT_or_FinalUse_granted": false,
+  "integration_checkpoint_commit": "b72d44476a12ed1b0dbf0891556adf280eba661b",
+  "integration_checkpoint_tree": "6b2d72dd73957f521c4952d2ece9f53d485a7059",
+  "scope_note": "This source-composition record describes E. Subsequent evidence/documentation corrections retain those exact native/source subtrees; their own outcomes require separate exact-commit receipts.",
+  "completed_static_result": {
+    "commit": "d6be11987b44deb0028382bd9f791dc1c4efc37f",
+    "tree": "4604138f131fed7a68e417c9c3e1a5f074638c23",
+    "result": "PASS",
+    "record": "integration-f/result.json",
+    "raw_receipt": "integration-f/final-integration-repair-source-checks.json",
+    "native_acceptance": "HOLD"
+  }
+}

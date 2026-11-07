@@ -1,0 +1,72 @@
+{
+  "schema": "native-test-execution-v1",
+  "source_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "source_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+  "cwd": "/workspace/scratch/abae1861b451/chain-frontier",
+  "worktree_clean_before": false,
+  "worktree_clean_after": false,
+  "test_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/workspace/scratch/abae1861b451/chain-frontier/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_pon_node-bc529951eafca1c3"
+    ],
+    "executable": "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+    "fresh": false
+  },
+  "binary_sha256": "b440cf0aba50cc7f7b30257d2245f6968614202142dd785f1be391802a6c4bad",
+  "binary_unchanged": true,
+  "command": [
+    "/workspace/scratch/abae1861b451/frontier-target/debug/deps/trnm_pon_node-bc529951eafca1c3",
+    "store::native_authenticated::post_write_readback::tests::frontier::",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 731005851,
+  "user_cpu_s": 0.615772,
+  "system_cpu_s": 0.045968999999999996,
+  "max_rss_kib": 21664,
+  "native_summaries": [
+    [
+      "ok",
+      "4",
+      "0",
+      "0",
+      "0",
+      "935"
+    ]
+  ],
+  "physical_host_qualification": false,
+  "expected_count": 4,
+  "executed_count": 4,
+  "harness_accepted": true,
+  "performance_or_throughput_claim": false,
+  "stdout.log_sha256": "dc84c0010b9081f78ca19c775405e4e4ce3ca56c6c08759fbf3368ccd591d645",
+  "stderr.log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

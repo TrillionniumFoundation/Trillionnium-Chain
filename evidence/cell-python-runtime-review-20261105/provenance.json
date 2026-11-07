@@ -1,0 +1,45 @@
+{
+  "files": {
+    "bytecode-source.json": {
+      "original_receipt_sha256": "9b4efa11e96858250ba925005f17ede82d81fac006ebcd473b3f9efb5ba46971",
+      "transformation": "none; exact retained bytes"
+    },
+    "import_review.py": {
+      "original_runner_sha256": "5d6541a7aba4644a2d7dbc3bdf9cb1c7d740437b1353b95a9d2f5c9c8be0139f",
+      "transformation": "Portable checkout arguments and create-only external output; no automatic helper source copy; test operations unchanged"
+    },
+    "metadata-green.json": {
+      "original_receipt_sha256": "f23feedaac1516eaacdc6b99e551b21db44efc4b6c660378123d54af2c8b0513",
+      "transformation": "none; exact retained bytes"
+    },
+    "original-red-observations.json": {
+      "original_receipt_sha256": "e1eff3deada47ee77d2b773abf8868a91258fbe32b4ea342b041049e03efbadb",
+      "transformation": "none; exact retained bytes"
+    },
+    "project-shadow.json": {
+      "original_receipt_sha256": "5767ac0565f6625de0d247c39fb69530ccb6d72c18538c27fcc891fcdfca78b6",
+      "transformation": "none; exact retained bytes"
+    },
+    "ready-field-shape.json": {
+      "original_receipt_sha256": "d1819ae19294b6570449b270d0bdf9c316b56735f7101e3252caed85bfaef30e",
+      "transformation": "none; exact retained bytes"
+    },
+    "startup-underscore-pth.json": {
+      "original_receipt_sha256": "e538ff35585a7324c0f9d136dc381964ac314c90f7e7e7f7e0ddfa582ece5892",
+      "transformation": "Only stderr path prefixes replaced by <CHAIN> and <TEMP>; observation values unchanged"
+    },
+    "startup-zip.json": {
+      "original_receipt_sha256": "bbc65d9d37e23fd4aebc0e6eb6f0677babc083f76ede30ee47eaf428a1724ea7",
+      "transformation": "none; exact retained bytes"
+    },
+    "underscore_pth_review.py": {
+      "original_runner_sha256": "4ff3c3c0ce40b982822d439b0ad4854922f87fc4f073d9f6f16fc15e094fbf8d",
+      "transformation": "Portable checkout arguments, create-only external output and stderr pathname redaction; canary operations unchanged"
+    },
+    "withdrawn-alternate-venv.json": {
+      "original_receipt_sha256": "8a6ee5669b676071f56a8f074cff5851c17c06cc7b9ddb000245c53b538c9798",
+      "transformation": "none; exact retained bytes"
+    }
+  },
+  "scope": "Packaging of previously observed review evidence; not a new test or model acceptance run"
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "trnm-research-runner-provenance-v1",
+  "original_execution": {
+    "entry_point": "original-runner.py",
+    "original_filename": "research_review_run.py",
+    "sha256": "ce8a5d9237291e3cab4408217c34ca97273892f25496ae53b48f3e9ac004fab8",
+    "actual_checkout": "dbc24913e9c23f2359dd22ff9b01243877a6dd4d",
+    "result_sha256": "b26149241dddcb84a756a3135137854a88af8a8ca0315908887e864805aa3adc",
+    "source_mapping_sha256": "46ade59255295c494c9cfaee0ae5399a0317bcf846830009e5431382674e12ea",
+    "mapped_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+    "mapped_read_inputs": 52
+  },
+  "portable_reproduction": {
+    "entry_point": "reproduce.py",
+    "sha256": "d4dfb08a649287cef40a444416eb4be35fe6ffeda6990326cad6518fc4db40cc",
+    "written_after_original_execution": true,
+    "research_suites_executed_with_this_entry_point_in_this_review": false,
+    "checks_performed": [
+      "AST parse",
+      "--help exit 0",
+      "existing --output rejected with exit 2 before tests"
+    ],
+    "example": "python3 reproduce.py --root /path/to/chain --output /path/to/new-run",
+    "output_is_create_only": true
+  },
+  "scope": "The portable runner is a future reproduction entry point. It did not generate the archived original result. Input equivalence does not change the execution checkout or establish native/runtime/production qualification."
+}

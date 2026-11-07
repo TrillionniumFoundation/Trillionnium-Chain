@@ -1,0 +1,11 @@
+{
+  "admit_called": false,
+  "factory_called": false,
+  "membership": "0::/user.slice/user-1000.slice/session-108532.scope\n",
+  "pid": 1311262,
+  "preflight_only": true,
+  "preparation_profile": "FRESH_U_CHILD_GROUPS_ONLY_V1",
+  "python": "3.12.3",
+  "source": "03b67a955b8fcb6b6c920be584eaad5c0a71d34d",
+  "source_subset_sha256": "eed36395892893ff43e07c5012d0876b8743b5251e0f7c15ab3065a2b8822894"
+}

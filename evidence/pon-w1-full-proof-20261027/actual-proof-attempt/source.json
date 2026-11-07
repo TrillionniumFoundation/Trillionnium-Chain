@@ -1,0 +1,23 @@
+{
+  "binary_path": "/workspace/scratch/56818e4fba76/target-w1/release/trnm-w1-zk-host",
+  "binary_sha256": "de867e2b77079b8d73b890823d3b3cc23f6b6d810660a5291216b32d886b43d5",
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "RAYON_NUM_THREADS": "2",
+    "RISC0_HOME": null
+  },
+  "local_r0vm_path": "/workspace/scratch/56818e4fba76/toolchains/risc0-prover-3.0.3/r0vm",
+  "local_r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+  "machine": {
+    "machine": "x86_64",
+    "nodename": "5d1a583e6a57",
+    "release": "6.18.55",
+    "sysname": "Linux",
+    "version": "#1 SMP Wed Oct 14 19:45:18 UTC 2026"
+  },
+  "planned_proof_trials": 1,
+  "runner_sha256": "a2df8dafcb7aabfb181e5f2b65866a72b7fee2a90b10220bbd0f8ff9ff440864",
+  "source_commit": "65c97a95cab4702a368855397c65413e2a754b97",
+  "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tracked_dirty": false
+}

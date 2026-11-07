@@ -1,0 +1,200 @@
+{
+  "schema": "trnm-interrupted-composed-build-independent-readback-v1",
+  "observed_utc": "2026-11-03T20:06:34.785169+00:00",
+  "scope": "Read-only inspection of retained composed-8a74-final-build files; no native process rerun or source mutation",
+  "artifact_directory": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build",
+  "source_label": "8a74 composed candidate; separate from prior 3898 build and later b280 j1 invocation",
+  "status": "UNKNOWN_NO_TERMINAL_RESULT",
+  "build_exit": null,
+  "build_passed": null,
+  "build_failed": null,
+  "reported_executor_error": "executor key changed during session recovery",
+  "reported_error_source": {
+    "kind": "retained subsequent invocation receipt",
+    "file": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-b280-j1-build/invocation.json",
+      "exists": true,
+      "bytes": 523,
+      "sha256": "c790da0f5976e80e1139ab4fd4b0d4ff611ee73b51e54a9c5e2c639bea13a19d",
+      "mtime_ns": 1793736245241267439,
+      "mtime_utc": "2026-11-03T20:04:05.241267+00:00",
+      "device": 27,
+      "inode": 1625273,
+      "stable_during_read": true
+    },
+    "recovery_from": "composed-8a74-final-build session 55201 lost without terminal result; executor key changed during session recovery"
+  },
+  "cause_limits": "Cargo logs do not identify the executor failure cause. This readback does not infer OOM, compiler failure, process success, or execution of later checks.",
+  "preflight": {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "wall_ns": 52783327,
+    "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "files": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/build.stderr",
+      "exists": true,
+      "bytes": 117,
+      "sha256": "3592f1a7c5a7a4f4ff73de96dac554df609b75afa5e200ad7aa87e087ff00a57",
+      "mtime_ns": 1793735240109825717,
+      "mtime_utc": "2026-11-03T19:47:20.109826+00:00",
+      "device": 27,
+      "inode": 1616583,
+      "stable_during_read": true
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/build.stdout",
+      "exists": true,
+      "bytes": 109169,
+      "sha256": "422a6623ea10e35972b0a04ba28c49b139734785dadc5d4ad3c739a9bede1138",
+      "mtime_ns": 1793735240109825717,
+      "mtime_utc": "2026-11-03T19:47:20.109826+00:00",
+      "device": 27,
+      "inode": 1616582,
+      "stable_during_read": true
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/native-source.before.json",
+      "exists": true,
+      "bytes": 173233,
+      "sha256": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188",
+      "mtime_ns": 1793735239743571455,
+      "mtime_utc": "2026-11-03T19:47:19.743572+00:00",
+      "device": 27,
+      "inode": 1616412,
+      "stable_during_read": true
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/preflight.json",
+      "exists": true,
+      "bytes": 308,
+      "sha256": "3cc1d2907829c83cbc12b62978f848d18b7cf5992d910455c94f3162d34e088c",
+      "mtime_ns": 1793735239799126033,
+      "mtime_utc": "2026-11-03T19:47:19.799126+00:00",
+      "device": 27,
+      "inode": 1616581,
+      "stable_during_read": true
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/preflight.stderr",
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mtime_ns": 1793735239743571455,
+      "mtime_utc": "2026-11-03T19:47:19.743572+00:00",
+      "device": 27,
+      "inode": 1616580,
+      "stable_during_read": true
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/preflight.stdout",
+      "exists": true,
+      "bytes": 170,
+      "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+      "mtime_ns": 1793735239789818607,
+      "mtime_utc": "2026-11-03T19:47:19.789819+00:00",
+      "device": 27,
+      "inode": 1616579,
+      "stable_during_read": true
+    }
+  ],
+  "cargo_stdout": {
+    "lines": 139,
+    "invalid_json_line_numbers": [],
+    "build_finished_messages": [],
+    "compiler_message_count": 0,
+    "compiler_artifact_count": 120,
+    "executable_artifact_count": 0,
+    "last_message_reason": "compiler-artifact",
+    "last_target": "trnm_transport"
+  },
+  "cargo_stderr_complete": "   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node)\n",
+  "expected_terminal_artifacts": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/build.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/artifacts.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/native-source.after.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/result.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/fmt.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/fmt.stdout",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/fmt.stderr",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/clippy.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/clippy.stdout",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/clippy.stderr",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/native-source.final.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-final-build/verification.json",
+      "exists": false,
+      "symlink": false
+    }
+  ],
+  "driver_file": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/composed-8a74-build-driver.py",
+    "exists": true,
+    "bytes": 3452,
+    "sha256": "518fc9608b46bbb916f1039057b56b3353ed4e106033a243d29e22a0366bb26c",
+    "mtime_ns": 1793735239672791568,
+    "mtime_utc": "2026-11-03T19:47:19.672791+00:00",
+    "device": 27,
+    "inode": 1615905,
+    "stable_during_read": true
+  },
+  "driver_order": "preflight -> build -> artifacts/source-after/result -> fmt -> clippy -> source-final/verification -> selected tests -> full Node",
+  "native_source_before_paths": 1190,
+  "later_b280_invocation_is_separate": true,
+  "native_execution_observed_for_this_attempt": false,
+  "actual_fixed_host_qualified": false,
+  "performance_acceptance": false,
+  "whole_chain_qualified": false,
+  "rerun_performed_by_readback": false,
+  "all_blockers_closed": false
+}

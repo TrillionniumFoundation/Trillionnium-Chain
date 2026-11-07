@@ -1,0 +1,22 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "composition-reader-controls",
+  "command": [
+    "python3",
+    "-c",
+    "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\",\"test_ci_source_integrity\",\"test_pq_research_integration\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:55:59.254612+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 49485937191,
+  "finished_at": "2026-11-04T13:56:48.740829+00:00",
+  "log_bytes": 814,
+  "log_sha256": "ee68d5bac1abdd14175b3a786f2202d3b1b82b75d4708bcd46956b74f50bf9c4",
+  "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "final_dirty_paths": []
+}

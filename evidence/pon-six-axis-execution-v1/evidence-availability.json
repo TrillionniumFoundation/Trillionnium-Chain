@@ -1,0 +1,230 @@
+{
+  "schema": "pon-six-axis-evidence-availability-v1",
+  "created_utc": "2026-11-05T03:35:32.874338+00:00",
+  "status": "RECOVERED_SMALL_RECORDS_BINARY_BYTES_UNAVAILABLE",
+  "event": "During final integration previous scratch and RAM paths became unavailable. The exact reset cause is not established. Original receipts remain at their original source/time; recovery does not relabel them as executions on a new host.",
+  "prior_paths_available": false,
+  "source_recovery": {
+    "repository_head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "evidence_checkpoint": "ac4246dbd916f1a292dcc34fb76e715ab268c992",
+    "method": "Fresh complete Git clone plus exact immutable commit fetch. Candidate16 original files are retained in ac424; current source/Markdown integration is separately verified.",
+    "new_checkout": "/workspace/scratch/fee7901564fd-recovered/chain",
+    "native_build_or_test_rerun": false
+  },
+  "committed_recovered_small_records": {
+    "file": "recovered-validation.json",
+    "record_count": 37,
+    "original_bytes_total": 250821,
+    "serialized_bytes": 268570,
+    "sha256": "e1ff341f41f2a7080219933b0f8339fcfba0462bf27a20aa986418cbd1ded301",
+    "all_original_hashes_verified": true,
+    "scope_groups": {
+      "after385": "Five actual native component command receipts and logs; original source and profiles retained.",
+      "historical95": "Original negative pair, paired fixed results and earlier failed/interrupted logs; not combined with after385.",
+      "node": "Six failed-command raw logs plus the exact final production-library wrapper receipt and extra-env record; complete original ledger is node-validation.json.",
+      "compositionffb": "Five pre-reset static checks, their raw logs and exact summary; final post-reset repository checker recorded separately."
+    }
+  },
+  "original_node_wrapper_receipts": {
+    "exact_original_raw_receipts_recovered": 1,
+    "total_original_attempts": 7,
+    "available_exact_receipt": "node-2d529-integration-public_v3_request_accounting-attempt1.json",
+    "other_six_original_raw_receipts_currently_available": false,
+    "parsed_metadata_preserved_in": "node-validation.json",
+    "parsed_objects_are_not_original_raw_receipt_bytes": true
+  },
+  "unavailable_successful_node_clippy_raw_log": {
+    "bytes": 181,
+    "sha256": "2acceebb2cefc84b425a73b6b0e727e986be08b7f870ea5fb11eae9b209671cf",
+    "result_and_parsed_receipt_retained_in": "node-validation.json",
+    "raw_bytes_currently_available": false
+  },
+  "unavailable_component_and_cache_artifacts": [
+    {
+      "kind": "original_test_ELF",
+      "name": "M09",
+      "expected_bytes": 74812296,
+      "expected_sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298",
+      "historical_paths": [
+        "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_data_availability-860e4d3b2378d360"
+      ],
+      "current_status": "BINARY_BYTES_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_data_availability-860e4d3b2378d360",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "preserved_test_ELF_gzip",
+      "name": "M09",
+      "expected_bytes": 18503521,
+      "expected_sha256": "3cceb95a69bc997c8c7feab1ce85f3b7e6f06f2dcaa924f0bf2a2cd0879e7243",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-elf-preservation/trnm_data_availability-860e4d3b2378d360.gz",
+        "/workspace/scratch/fee7901564fd/validation-node/preserved-elf/trnm_data_availability-860e4d3b2378d360.gz"
+      ],
+      "current_status": "BINARY_BYTES_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-elf-preservation/trnm_data_availability-860e4d3b2378d360.gz",
+          "exists": false
+        },
+        {
+          "path": "/workspace/scratch/fee7901564fd/validation-node/preserved-elf/trnm_data_availability-860e4d3b2378d360.gz",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "original_test_ELF",
+      "name": "M06",
+      "expected_bytes": 77077400,
+      "expected_sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4",
+      "historical_paths": [
+        "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_mvcc_fee-d84608d7777c78ee"
+      ],
+      "current_status": "BINARY_BYTES_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_mvcc_fee-d84608d7777c78ee",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "preserved_test_ELF_gzip",
+      "name": "M06",
+      "expected_bytes": 18878848,
+      "expected_sha256": "c2001b47680a86e0f0bbd9df6f26dcd662a678417fba9898cba85e6f183d80b8",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-elf-preservation/trnm_mvcc_fee-d84608d7777c78ee.gz",
+        "/workspace/scratch/fee7901564fd/validation-node/preserved-elf/trnm_mvcc_fee-d84608d7777c78ee.gz"
+      ],
+      "current_status": "BINARY_BYTES_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-elf-preservation/trnm_mvcc_fee-d84608d7777c78ee.gz",
+          "exists": false
+        },
+        {
+          "path": "/workspace/scratch/fee7901564fd/validation-node/preserved-elf/trnm_mvcc_fee-d84608d7777c78ee.gz",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "inactive_target_tar_gzip",
+      "expected_bytes": 304082890,
+      "expected_sha256": "567e5d7abb6525082ef3aaa334f401e73d4a2b31767d1ed5795fb8e57540f07b",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-inactive-target-preservation/target-cell.tar.gz"
+      ],
+      "current_status": "ARCHIVE_BYTES_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-inactive-target-preservation/target-cell.tar.gz",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "full_inactive_target_manifest",
+      "expected_bytes": 1854485,
+      "expected_sha256": "3c96ad95732e370bcfef1f8c8979498ae8aab74648af2051e1ddf716030319af",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-inactive-target-preservation/manifest.json"
+      ],
+      "current_status": "RAW_MANIFEST_BYTES_NOT_STORED_AND_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-inactive-target-preservation/manifest.json",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "native_source_before_full_manifest",
+      "expected_bytes": 278127,
+      "expected_sha256": "bc3f3fdc1c58bcd71e68847feb8f20ec80a5a02e826649b4ecea841a41b37694",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-inactive-target-preservation/native-source-before.json"
+      ],
+      "current_status": "RAW_MANIFEST_BYTES_NOT_STORED_AND_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-inactive-target-preservation/native-source-before.json",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "second_directory_timestamp_exception_record",
+      "expected_bytes": 64502,
+      "expected_sha256": "88af291d8d4aebf9df53b51ad200beeea5cbf4c4b81ec8f9fbb65af8682c64c7",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-inactive-target-preservation/directory-timestamp-exception.json",
+        "/workspace/scratch/fee7901564fd/validation-node/inactive-target-preservation/directory-timestamp-exception.json"
+      ],
+      "current_status": "EXACT_RAW_BYTES_NOT_STORED_AND_NOT_RECOVERED",
+      "note": "Earlier complete post-abort diff is recovered under a different verified SHA; it is not substituted for this record.",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-inactive-target-preservation/directory-timestamp-exception.json",
+          "exists": false
+        },
+        {
+          "path": "/workspace/scratch/fee7901564fd/validation-node/inactive-target-preservation/directory-timestamp-exception.json",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    },
+    {
+      "kind": "historical_restore_instructions",
+      "expected_bytes": 1873,
+      "expected_sha256": "00ca26cdf275854818d47cd84eca8716c593219d30f473908d3df660721a4fa6",
+      "historical_paths": [
+        "/dev/shm/fee7901564fd-inactive-target-preservation/RESTORE_AFTER_DIRECTORY_TIMESTAMP_EXCEPTION.txt",
+        "/workspace/scratch/fee7901564fd/validation-node/inactive-target-preservation/RESTORE.txt"
+      ],
+      "current_status": "EXACT_RAW_BYTES_NOT_STORED_AND_NOT_RECOVERED",
+      "current_path_observations": [
+        {
+          "path": "/dev/shm/fee7901564fd-inactive-target-preservation/RESTORE_AFTER_DIRECTORY_TIMESTAMP_EXCEPTION.txt",
+          "exists": false
+        },
+        {
+          "path": "/workspace/scratch/fee7901564fd/validation-node/inactive-target-preservation/RESTORE.txt",
+          "exists": false
+        }
+      ],
+      "original_bytes_currently_verified_present": false
+    }
+  ],
+  "successful_component_elf_bytes_currently_available": false,
+  "successful_component_gzip_bytes_currently_available": false,
+  "inactive_target_archive_currently_available": false,
+  "archive_sha_is_not_current_availability_proof": true,
+  "additional_missing_originals": [
+    "Original complete Node before-source snapshots and raw f73311c4c6995330cefc4facfad64f9c44a7ec8b9ca5fdb8e37390a7d98bb996 after-source comparison bytes; their parsed structures/digests remain separate.",
+    "Original unpacked Cargo cache, compiler objects and provider installation paths; rebuilding is required before further native execution.",
+    "Any other original raw file not explicitly recovered or committed is not claimed currently available."
+  ],
+  "historical_archive_verification_receipts": [
+    "elf-preservation.json",
+    "build-cache-preservation.json"
+  ],
+  "original_native_results_or_failure_counts_rewritten": false,
+  "tests_rerun_to_recover_evidence": false,
+  "performance_samples_before_reset": 0,
+  "performance_samples_after_reset": 0
+}

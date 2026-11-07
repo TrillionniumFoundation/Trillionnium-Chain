@@ -1,0 +1,214 @@
+{
+  "baseline": {
+    "history_calls": 14,
+    "history_network_wall_ns": 308889425,
+    "client_import_calls": 14,
+    "client_import_wall_ns": 23368586812,
+    "client_import_thread_cpu_ns": 5401201965,
+    "all_client_import_cpu_known": true,
+    "client_import_successes": 14,
+    "client_import_records": [
+      {
+        "started_ns": 2824416335,
+        "ended_ns": 4398686430,
+        "wall_ns": 1574270059,
+        "thread_cpu_ns": 291259811,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 4410486298,
+        "ended_ns": 5596653770,
+        "wall_ns": 1186167456,
+        "thread_cpu_ns": 273143160,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 5609341390,
+        "ended_ns": 6717074557,
+        "wall_ns": 1107733149,
+        "thread_cpu_ns": 272658136,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 6803132387,
+        "ended_ns": 7915843918,
+        "wall_ns": 1112711497,
+        "thread_cpu_ns": 274692885,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 7993670678,
+        "ended_ns": 9115199191,
+        "wall_ns": 1121528493,
+        "thread_cpu_ns": 275233242,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 9127631565,
+        "ended_ns": 10326495876,
+        "wall_ns": 1198864299,
+        "thread_cpu_ns": 278340620,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 10337455610,
+        "ended_ns": 14897659111,
+        "wall_ns": 4560203471,
+        "thread_cpu_ns": 1048608122,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 17028595704,
+        "ended_ns": 18214803631,
+        "wall_ns": 1186207863,
+        "thread_cpu_ns": 278724878,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 18227270744,
+        "ended_ns": 19405304456,
+        "wall_ns": 1178033689,
+        "thread_cpu_ns": 269088972,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 19417557491,
+        "ended_ns": 20595159946,
+        "wall_ns": 1177602434,
+        "thread_cpu_ns": 269165779,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 20607734821,
+        "ended_ns": 21796720392,
+        "wall_ns": 1188985543,
+        "thread_cpu_ns": 276098104,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 21809168754,
+        "ended_ns": 22914200018,
+        "wall_ns": 1105031223,
+        "thread_cpu_ns": 273248560,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 22926139178,
+        "ended_ns": 24109466772,
+        "wall_ns": 1183327564,
+        "thread_cpu_ns": 273495772,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 24121776641,
+        "ended_ns": 28609696754,
+        "wall_ns": 4487920072,
+        "thread_cpu_ns": 1047443924,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      }
+    ]
+  },
+  "valid-work-root": {
+    "history_calls": 5,
+    "history_network_wall_ns": 328417233,
+    "client_import_calls": 5,
+    "client_import_wall_ns": 15374301136,
+    "client_import_thread_cpu_ns": 1585730854,
+    "all_client_import_cpu_known": true,
+    "client_import_successes": 4,
+    "client_import_records": [
+      {
+        "started_ns": 14355470911,
+        "ended_ns": 17952313948,
+        "wall_ns": 3596842997,
+        "thread_cpu_ns": 341662550,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 17969045796,
+        "ended_ns": 21059896864,
+        "wall_ns": 3090851096,
+        "thread_cpu_ns": 320636650,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 21159574784,
+        "ended_ns": 24250615162,
+        "wall_ns": 3091040378,
+        "thread_cpu_ns": 316555151,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 24263261087,
+        "ended_ns": 27260168633,
+        "wall_ns": 2996907521,
+        "thread_cpu_ns": 322736963,
+        "thread_cpu_observation_available": true,
+        "succeeded": true,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      },
+      {
+        "started_ns": 27453430194,
+        "ended_ns": 30052089360,
+        "wall_ns": 2598659144,
+        "thread_cpu_ns": 284139540,
+        "thread_cpu_observation_available": true,
+        "succeeded": false,
+        "error": "PUBLIC_REQUEST_DEADLINE",
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+      }
+    ]
+  }
+}

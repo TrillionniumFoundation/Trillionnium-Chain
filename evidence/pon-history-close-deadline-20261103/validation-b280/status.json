@@ -1,0 +1,393 @@
+{
+  "schema": "pon-history-concurrent-native-validation-v1",
+  "tested_source": "b28098c092dca72165c0d26054fce95a8636d777",
+  "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+  "source_before": {
+    "base": null,
+    "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 872904508,
+    "tracked_entries": 7563,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": null,
+    "candidate": "b28098c092dca72165c0d26054fce95a8636d777",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "tested_tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 872904508,
+    "tracked_entries": 7563,
+    "tracked_worktree_verified": true
+  },
+  "fresh_release_compilation": true,
+  "binary_before": {
+    "schema": "pon-history-functional-test-binary-v1",
+    "source": {
+      "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+      "status": "",
+      "lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+    },
+    "path": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+    "size": 81358936,
+    "sha256": "9e51ef0a2fd597fd2e21d73f739b2e7da362ecdd9dd33099c699b18ff4bf450e",
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "compiler_artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node#0.1.0",
+      "manifest_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "filenames": [
+        "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7"
+      ],
+      "executable": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+      "fresh": false
+    },
+    "original_test_profile_qualification": false,
+    "service_or_work_security_acceptance": false
+  },
+  "binary_after": {
+    "schema": "pon-history-functional-test-binary-v1",
+    "source": {
+      "commit": "b28098c092dca72165c0d26054fce95a8636d777",
+      "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+      "status": "",
+      "lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+    },
+    "path": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+    "size": 81358936,
+    "sha256": "9e51ef0a2fd597fd2e21d73f739b2e7da362ecdd9dd33099c699b18ff4bf450e",
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "compiler_artifact": {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node#0.1.0",
+      "manifest_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/workspace/scratch/76b6e0e6eb14/pon-consensus/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "filenames": [
+        "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7"
+      ],
+      "executable": "/workspace/scratch/76b6e0e6eb14/history-original-target/release/deps/trnm_pon_node-48752e02a575b1b7",
+      "fresh": false
+    },
+    "original_test_profile_qualification": false,
+    "service_or_work_security_acceptance": false
+  },
+  "native_controls": {
+    "passed": 14,
+    "failed": 0,
+    "ignored": 0,
+    "executions": [
+      {
+        "record": "80-b280-deadline-controls.json",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+          "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+          "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen"
+        ]
+      },
+      {
+        "record": "81-b280-history-shared-refill.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+        ]
+      },
+      {
+        "record": "82-b280-history-observer.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation"
+        ]
+      },
+      {
+        "record": "83-b280-history-exact-completion.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1"
+        ]
+      },
+      {
+        "record": "84-b280-history-resource-restart.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart"
+        ]
+      },
+      {
+        "record": "85-b280-pq-local-cas.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport"
+        ]
+      },
+      {
+        "record": "86-b280-pq-exact-retry.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress"
+        ]
+      },
+      {
+        "record": "87-b280-store-owner-cas.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse"
+        ]
+      },
+      {
+        "record": "88-b280-new-cas-control.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "pq_rollback_witness::tests::service_expiry_after_update_before_commit_keeps_original_checkpoint"
+        ]
+      },
+      {
+        "record": "89-b280-new-cas-control.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "pq_rollback_witness::tests::authenticated_late_current_receipt_cannot_supply_live_authority"
+        ]
+      },
+      {
+        "record": "90-b280-new-cas-control.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "pq_rollback_witness::tests::late_committed_cas_cannot_write_past_original_connection_deadline"
+        ]
+      },
+      {
+        "record": "91-b280-new-cas-control.json",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "selectors": [
+          "store::pq_rollback_witness::tests::witness_commit_crossing_original_deadline_still_aligns_local_commit"
+        ]
+      }
+    ]
+  },
+  "python_controls": {
+    "host_fixture_unique_controls": 78,
+    "host_aggregate_record": "69-b280-controller-controls.json",
+    "earlier_subset_executions_not_additional_unique_controls": 41,
+    "source_pin_controls": 34,
+    "negative_source_integrity_controls": 34
+  },
+  "source_checks": {
+    "strict_clippy": "PASS --workspace --all-targets --all-features -- -D warnings",
+    "formatter": "PASS",
+    "repository": {
+      "activation": false,
+      "head": "b28098c092dca72165c0d26054fce95a8636d777",
+      "local_links": 1852,
+      "normal_dependency_edges": 24,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1080,
+      "source_state": "committed-clean",
+      "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+      "workspace_packages": 26
+    },
+    "source_pins_verified": 376,
+    "embedded_inventory_paths": 1158,
+    "locked_main_graph": [
+      26,
+      138
+    ],
+    "locked_fuzz_graph": [
+      1,
+      106
+    ]
+  },
+  "scope_limits": [
+    "Release profile functional regression only; original test profile differs",
+    "Host setup and systemd calls are mocked in local controller tests",
+    "Real pidfd, flock and owned-child controls do not qualify the actual fixed Host",
+    "No original complete workspace, ARM CPU or public confirmation acceptance",
+    "Repeated controls across source identities are not independent experiments"
+  ],
+  "pq_claim_guard": {
+    "gates": {
+      "authorization": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+          "scripts/ci/pq_authority_surface_scan.py",
+          "scripts/ci/test_pq_authority_surface_scan.py",
+          "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "capacity_and_invalid_input": {
+        "source_paths": [
+          "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "config/pon/post-quantum-transition-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "independent_end_to_end": {
+        "source_paths": [
+          "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+          "config/pon/pq-cross-branch-corpus-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "migration_and_rollback": {
+        "source_paths": [
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+          "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+          "scripts/ci/pq_external_rollback_oracle.py",
+          "scripts/ci/test_pq_external_rollback_oracle.py",
+          "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+          "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "proof_pq128": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "quantum_mining_fork_choice": {
+        "source_paths": [
+          "config/pon/devnet-v1.json",
+          "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+          "scripts/ci/pq_quantum_daa_scenarios.py",
+          "scripts/ci/test_pq_quantum_daa_scenarios.py",
+          "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      }
+    },
+    "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+    "pq_128_qualified": false,
+    "production_activation": false,
+    "schema": "trnm-whole-chain-pq-claim-guard-v1",
+    "status": "HOLD",
+    "whole_chain_pq_qualified": false
+  },
+  "original_test_profile_qualified": false,
+  "hosted_positive_fixtures_qualified": false,
+  "original_public_service_qualified": false,
+  "work_profile_qualified": false,
+  "all_blockers_closed": false,
+  "public_readiness": false,
+  "finalized": false,
+  "execution_authority": false,
+  "activation_authority": false
+}

@@ -1,0 +1,68 @@
+{
+  "observation": {
+    "schema": "trnm-ci-original-public-host-observation-v1",
+    "phase": "read-only-feasibility",
+    "observed_utc": "2026-11-04T12:25:41.983087+00:00",
+    "service": "not-started",
+    "pid": 5,
+    "uid": 0,
+    "gid": 0,
+    "cwd": "/workspace/scratch/e537ad232c79/acceptance",
+    "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "parent": null,
+    "boot_id": "d06d842a-529c-4a31-a50d-fbf604d8d349",
+    "thread_cgroup": "0::/",
+    "thread_privileges": {
+      "CapBnd": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "cgroup_controllers": "cpuset cpu io memory hugetlb pids",
+    "limits": {
+      "cpu.max": null,
+      "cpu.max.burst": null,
+      "memory.max": null,
+      "memory.swap.max": null,
+      "pids.max": null
+    },
+    "counters": {
+      "cpu.stat": null,
+      "memory.current": null,
+      "memory.events": null,
+      "pids.current": null,
+      "cgroup.events": null
+    },
+    "installed_unit_sha256": null,
+    "read_errors": {
+      "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+      "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'"
+    },
+    "host_readiness_only": true,
+    "consensus_or_model_authority": false
+  },
+  "outside_errors": [
+    "FIXED_PARENT_IDENTITY",
+    "KERNEL_OBSERVATION_UNAVAILABLE",
+    "ORIGINAL_FINITE_LIMITS",
+    "REVIEWED_UNIT_BYTES"
+  ],
+  "inside_errors": [
+    "ACTUAL_SERVICE_MEMBERSHIP",
+    "FIXED_PARENT_IDENTITY",
+    "KERNEL_OBSERVATION_UNAVAILABLE",
+    "ORIGINAL_FINITE_LIMITS",
+    "REVIEWED_UNIT_BYTES"
+  ],
+  "native_tests_executed": false,
+  "service_started": false,
+  "host_configuration_modified": false
+}

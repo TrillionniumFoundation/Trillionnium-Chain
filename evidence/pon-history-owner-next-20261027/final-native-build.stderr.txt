@@ -1,0 +1,11 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-protocol)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/56818e4fba76/chain-history-next/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 26s

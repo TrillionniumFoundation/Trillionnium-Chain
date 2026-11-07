@@ -1,0 +1,58 @@
+{
+  "actual_python_process": {
+    "cpu_seconds": 2.8380317600000002,
+    "maximum_resident_set": 54324,
+    "maximum_resident_set_unit": "KiB",
+    "measurement_scope": "model execution and compressed row serialization; excludes final receipt serialization",
+    "peak_memory_scope": "whole Python producer process including startup",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "quantum_hardware_seconds": null,
+    "w1_native_execution_seconds": null,
+    "wall_seconds": 3.1514696809999805
+  },
+  "campaign": "campaign/report.json",
+  "campaign_manifest_sha256": "36d17ae14f4d3264b1c871c18dd9cb47812cc90d64ebe351040dbee531ff36c3",
+  "checks": {
+    "quantum_daa_tests": {
+      "command": "python3 formal/pon-nakamoto-v1/test_quantum_daa_model.py",
+      "exit_code": 0,
+      "log": "tests.log",
+      "tests": 18
+    },
+    "readback": {
+      "command": "python3 formal/pon-nakamoto-v1/experiments/quantum_daa_campaign.py --verify /workspace/scratch/56818e4fba76/quantum-daa-c9bec058e",
+      "exit_code": 0,
+      "log": "readback.log",
+      "rows": 109190
+    },
+    "repository_check": {
+      "ci_files_changed_by_this_package": false,
+      "command": "python3 scripts/ci/check_repository.py",
+      "error": "CI contract: work-cost and DAA reader controls must execute once in their original lane",
+      "exit_code": 2,
+      "log": "repository-check.log",
+      "status": "FAILED_RETAINED"
+    },
+    "source_integrity_negative_tests": {
+      "command": "python3 scripts/ci/test_ci_source_integrity.py",
+      "exit_code": 0,
+      "log": "source-integrity.log",
+      "tests": 34
+    }
+  },
+  "execution_date_utc": "2026-10-27",
+  "native_packets_generated": 0,
+  "production_consensus_activation": false,
+  "quantum_circuit_executed": false,
+  "quantum_cost_measured": false,
+  "release_ready": false,
+  "rust_graph_lockfile_tests_clippy_fmt": "not run by this formal-only package; root integration owns full native gates",
+  "schema": "trnm-quantum-daa-local-execution-v1",
+  "security_theorem": false,
+  "single_operator": true,
+  "source_baseline": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "source_commit": "c9bec058eed88708944b29e7b9332c9617849015",
+  "source_run_scope": "source commit above; subsequent evidence-only commit was not substituted for it",
+  "w1_cost_measured": false
+}

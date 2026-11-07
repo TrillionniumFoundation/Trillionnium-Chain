@@ -1,0 +1,332 @@
+{
+  "schema": "parent-carry-hold-cost-readback-v1",
+  "operation": "read existing raw records only; no new native execution",
+  "runs": {
+    "f56": {
+      "raw_cost_sha256": "00ec88a443c3ea22e346b64b78e013a4cd638596a0a44dbf1a5f3f2dbdad9466",
+      "metadata": {
+        "binary_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+        "compiled_sources": [
+          {
+            "path": "native_authenticated.rs",
+            "sha256": "cc437eeb283e1b4da1552eceacee744f70046eca0b67dac3046fc3ce19fe1650"
+          },
+          {
+            "path": "post_write_readback.rs",
+            "sha256": "b733ff3386da5068fb66fcdcca72ac8fb494cd0f928229e7f212a5451b814df3"
+          },
+          {
+            "path": "pre_write.rs",
+            "sha256": "87f6e70aa956ad409991391f3624f31b4e5e1b0421cc33106facc84c7949465e"
+          },
+          {
+            "path": "native_store.rs",
+            "sha256": "bb6d86968a6d52bca9b381d61c8552141f674af2ac06e751255ab214c4a5eeee"
+          },
+          {
+            "path": "account_archive_prototype.rs",
+            "sha256": "0ce80d608fd15e6e0242894c1e635416177ffd2570509320802951ef4bb46af1"
+          },
+          {
+            "path": "transaction_scope.rs",
+            "sha256": "e0f042bf3103c2da92f737e935bcb6354736b2070ddd74a48854a1c36f34939e"
+          },
+          {
+            "path": "pre_write_tests.rs",
+            "sha256": "5d1808cc774f404931945f84b92c3e825dd359989305b28338ec5f44dc25ae4c"
+          }
+        ],
+        "excluded": "transaction fixture cleanup/ROLLBACK, independent full W1 replay during timed call, Host admission, ingress, actual COMMIT, network, independent client confirmation",
+        "fixture_scope": "real signed ordinary maintenance packets and prior successful Node admits; generation/W1 work measured separately",
+        "four_second_gate_measured": false,
+        "groups": 3,
+        "kind": "metadata",
+        "order": "ABBA, BAAB, ABBA after one warmup per arm",
+        "p95_or_p99_qualification": false,
+        "progress_callback": "count actual native checkpoints; no synthetic Host claim",
+        "public_tps_measured": false,
+        "samples_per_arm": 6,
+        "schema": "native-publish-continuation-real-sql-abba-v1",
+        "timed_scope": "actual publish plus final unchanged-writer/schema check; includes source qualification, full parent graph, current State commitments, fixed SQL INSERTs and actual readback, child/history validation"
+      },
+      "rows": [
+        {
+          "funded_accounts": 64,
+          "actual_accounts": 68,
+          "changed": false,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            4815061,
+            4503657
+          ],
+          "cpu_change_percent": -6.467290860904984,
+          "lower_median_wall_ns_reference_candidate": [
+            4813554,
+            4502303
+          ],
+          "wall_change_percent": -6.466137078757194,
+          "callback_counts_reference_candidate": [
+            [
+              313
+            ],
+            [
+              178
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        },
+        {
+          "funded_accounts": 64,
+          "actual_accounts": 68,
+          "changed": true,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            5868209,
+            7957110
+          ],
+          "cpu_change_percent": 35.596908699059625,
+          "lower_median_wall_ns_reference_candidate": [
+            5866444,
+            7955110
+          ],
+          "wall_change_percent": 35.60361268257226,
+          "callback_counts_reference_candidate": [
+            [
+              339
+            ],
+            [
+              249
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        },
+        {
+          "funded_accounts": 1024,
+          "actual_accounts": 1028,
+          "changed": false,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            30917453,
+            21398808
+          ],
+          "cpu_change_percent": -30.78728703816579,
+          "lower_median_wall_ns_reference_candidate": [
+            30915445,
+            21396401
+          ],
+          "wall_change_percent": -30.790577331168933,
+          "callback_counts_reference_candidate": [
+            [
+              4217
+            ],
+            [
+              2162
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        },
+        {
+          "funded_accounts": 1024,
+          "actual_accounts": 1028,
+          "changed": true,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            25664611,
+            23492646
+          ],
+          "cpu_change_percent": -8.462879098381816,
+          "lower_median_wall_ns_reference_candidate": [
+            25662577,
+            23490395
+          ],
+          "wall_change_percent": -8.4643954502309,
+          "callback_counts_reference_candidate": [
+            [
+              4263
+            ],
+            [
+              2485
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        }
+      ],
+      "all_56_samples_sql_bytes_equal": true
+    },
+    "0e9d": {
+      "raw_cost_sha256": "873ec5f8b484b5189087b025ecc5233304a885ea7ac1b595d8ce106d3d993067",
+      "metadata": {
+        "binary_sha256": "65d283d519c942230a44b99db1b05308f226d5bca9706f8a1db059a7b852e144",
+        "compiled_sources": [
+          {
+            "path": "native_authenticated.rs",
+            "sha256": "cc437eeb283e1b4da1552eceacee744f70046eca0b67dac3046fc3ce19fe1650"
+          },
+          {
+            "path": "post_write_readback.rs",
+            "sha256": "b733ff3386da5068fb66fcdcca72ac8fb494cd0f928229e7f212a5451b814df3"
+          },
+          {
+            "path": "pre_write.rs",
+            "sha256": "140e86198f4950d72d45fbc6b40aba989350e995cd49e94a1e79f5419b2237e2"
+          },
+          {
+            "path": "native_store.rs",
+            "sha256": "bb6d86968a6d52bca9b381d61c8552141f674af2ac06e751255ab214c4a5eeee"
+          },
+          {
+            "path": "account_archive_prototype.rs",
+            "sha256": "0ce80d608fd15e6e0242894c1e635416177ffd2570509320802951ef4bb46af1"
+          },
+          {
+            "path": "transaction_scope.rs",
+            "sha256": "e0f042bf3103c2da92f737e935bcb6354736b2070ddd74a48854a1c36f34939e"
+          },
+          {
+            "path": "pre_write_tests.rs",
+            "sha256": "f579f4509f3d1a7f4e9cbdd060e4da3a4beacfc40998a18d5b05d38d033544c7"
+          }
+        ],
+        "excluded": "transaction fixture cleanup/ROLLBACK, independent full W1 replay during timed call, Host admission, ingress, actual COMMIT, network, independent client confirmation",
+        "fixture_scope": "real signed ordinary maintenance packets and prior successful Node admits; generation/W1 work measured separately",
+        "four_second_gate_measured": false,
+        "groups": 3,
+        "kind": "metadata",
+        "order": "ABBA, BAAB, ABBA after one warmup per arm",
+        "p95_or_p99_qualification": false,
+        "progress_callback": "count actual native checkpoints; no synthetic Host claim",
+        "public_tps_measured": false,
+        "samples_per_arm": 6,
+        "schema": "native-publish-continuation-real-sql-abba-v1",
+        "timed_scope": "actual publish plus final unchanged-writer/schema check; includes source qualification, full parent graph, current State commitments, fixed SQL INSERTs and actual readback, child/history validation"
+      },
+      "rows": [
+        {
+          "funded_accounts": 64,
+          "actual_accounts": 68,
+          "changed": false,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            3979406,
+            3543857
+          ],
+          "cpu_change_percent": -10.945075722356556,
+          "lower_median_wall_ns_reference_candidate": [
+            3978402,
+            3542353
+          ],
+          "wall_change_percent": -10.960405710634568,
+          "callback_counts_reference_candidate": [
+            [
+              313
+            ],
+            [
+              178
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        },
+        {
+          "funded_accounts": 64,
+          "actual_accounts": 68,
+          "changed": true,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            4648422,
+            5149859
+          ],
+          "cpu_change_percent": 10.787252104047361,
+          "lower_median_wall_ns_reference_candidate": [
+            4647214,
+            5148360
+          ],
+          "wall_change_percent": 10.783794333551233,
+          "callback_counts_reference_candidate": [
+            [
+              339
+            ],
+            [
+              249
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        },
+        {
+          "funded_accounts": 1024,
+          "actual_accounts": 1028,
+          "changed": false,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            25370513,
+            17474534
+          ],
+          "cpu_change_percent": -31.122661965881417,
+          "lower_median_wall_ns_reference_candidate": [
+            25368457,
+            17558033
+          ],
+          "wall_change_percent": -30.78793479634966,
+          "callback_counts_reference_candidate": [
+            [
+              4217
+            ],
+            [
+              2162
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        },
+        {
+          "funded_accounts": 1024,
+          "actual_accounts": 1028,
+          "changed": true,
+          "samples_per_arm": [
+            6,
+            6
+          ],
+          "lower_median_cpu_ns_reference_candidate": [
+            25324404,
+            20006194
+          ],
+          "cpu_change_percent": -21.000336276423326,
+          "lower_median_wall_ns_reference_candidate": [
+            25322018,
+            20004001
+          ],
+          "wall_change_percent": -21.001552877815666,
+          "callback_counts_reference_candidate": [
+            [
+              4263
+            ],
+            [
+              2485
+            ]
+          ],
+          "all_sql_bytes_equal": true
+        }
+      ],
+      "all_56_samples_sql_bytes_equal": true
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "source_parent": "9f04640877078204d367f753eba684d94e705a74",
+  "parent_tree": "e14998899cb4cc212b54fc3fc4bd3d6668b0e035",
+  "branch": "docs/chain-pq-proof-scope-20261103",
+  "files": [
+    {
+      "path": "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+      "before_blob": "a03e07f47f017522c71251ec8214cba077e7b199",
+      "after_blob": "10ba17f811da67dc4716b33d2c08eff35a3e6c9f",
+      "sha256": "1c4d880c5615a9f58546e16b95f54c88ccbaa26fa0ce613cc8df6d7a8890a563",
+      "bytes": 6970
+    },
+    {
+      "path": "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md",
+      "before_blob": "587f555ef12b690863ef0076c6853e723e411d38",
+      "after_blob": "d200a232d4cc65f3066aba61a294f3ef1ed8a1e3",
+      "sha256": "68576eeeb2b260451a18c5dbfc46c9577f00954377f9a8da195f6c9060a9169a",
+      "bytes": 13897
+    }
+  ],
+  "corpus": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "before_blob": "effab1486891185e51d6da5ac946e23e38c77d24",
+    "after_blob": "c47f214feae0bacefc8a10369f4f52b63a47da5b",
+    "pins": 376,
+    "changed_pins": [
+      "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md",
+      "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md"
+    ],
+    "unchanged_pins": 374,
+    "other_fields_unchanged": true
+  },
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md",
+    "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md"
+  ]
+}

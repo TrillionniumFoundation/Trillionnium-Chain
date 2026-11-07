@@ -1,0 +1,156 @@
+{
+  "actual_original_deadline_seconds": 10,
+  "affected_regressions": {
+    "error": "REMOTE_RETRYABLE:BUSY:Duplicate",
+    "exact_failure_nonce": null,
+    "failed": 1,
+    "failed_test": "store::authenticated_replay_tests::authenticated_replay_signed_socket_whole_request_history_cost_observation",
+    "ignored": 3,
+    "last_reported_success_checkpoint": 64,
+    "passed": 373,
+    "planned": 377,
+    "planned_signed_head_requests": 256
+  },
+  "all_honest_service_qualified": false,
+  "detached_controls": {
+    "authenticated_backend_second_half_executed": false,
+    "error": "PUBLIC_MUTATION_CPU_BUDGET",
+    "failed": 1,
+    "fixture": "validated custom genesis with 2100 seeded 4080-byte strings and one signed admitted parent; not natural growth from default genesis",
+    "ignored": 1,
+    "large_parent_canonical_bytes": 8625548,
+    "owner_cpu_ns": 3008232223,
+    "paired_held_baseline_causal_comparison_completed": false,
+    "passed": 11,
+    "planned": 13,
+    "spawned_workers": 0
+  },
+  "exact_original_signed_frame_recovery": {
+    "original_observed_deadline_ns": 10002575139,
+    "passed": 1,
+    "planned": 1
+  },
+  "files": [
+    {
+      "bytes": 663,
+      "original_bytes": 1245,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/signed-actual-deadline-recovery-dcdf0503a/stdout",
+      "original_sha256": "432ea6e157d7bbe2e2864395b45364b3e71174cafbb669ae8c3b7e8bd48d203a",
+      "path": "signed-actual-deadline-recovery-dcdf0503a/stdout.gz",
+      "sha256": "a057a23135f653c4ef3f1ae4889f4bc04c4add1acedab2ebddc009170921e1f8"
+    },
+    {
+      "bytes": 20,
+      "original_bytes": 0,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/signed-actual-deadline-recovery-dcdf0503a/stderr",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "signed-actual-deadline-recovery-dcdf0503a/stderr.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "bytes": 895,
+      "original_bytes": 895,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/signed-actual-deadline-recovery-dcdf0503a/process.json",
+      "original_sha256": "37c6efa6a1f7514e7c9117b2a4ac330b471bea3c35a2813e07caeb07680beb39",
+      "path": "signed-actual-deadline-recovery-dcdf0503a/process.json",
+      "sha256": "37c6efa6a1f7514e7c9117b2a4ac330b471bea3c35a2813e07caeb07680beb39"
+    },
+    {
+      "bytes": 831,
+      "original_bytes": 1732,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/withheld-actual-deadline-counterexample-dcdf0503a/stdout",
+      "original_sha256": "f8684aec9d7300d2944eaaedb7709917291774dbefd195a8179a74fe139ce2f6",
+      "path": "withheld-actual-deadline-counterexample-dcdf0503a/stdout.gz",
+      "sha256": "ee942a563a111b92741dac3bb27d2dc57f03b942f2c91c75107f6e5772ec1850"
+    },
+    {
+      "bytes": 289,
+      "original_bytes": 387,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/withheld-actual-deadline-counterexample-dcdf0503a/stderr",
+      "original_sha256": "6140c6eddb605e97183575807c66d897899191341de4869a63b266059b3cfcbd",
+      "path": "withheld-actual-deadline-counterexample-dcdf0503a/stderr.gz",
+      "sha256": "79ea09f7ec6e530b686f381224784bc8228965e9a3c298d40a0fa17ac38b33ec"
+    },
+    {
+      "bytes": 910,
+      "original_bytes": 910,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/withheld-actual-deadline-counterexample-dcdf0503a/process.json",
+      "original_sha256": "0d87732165da118462b81fece8a89f8221984d30234c78831e4ad3a1eb0e4e71",
+      "path": "withheld-actual-deadline-counterexample-dcdf0503a/process.json",
+      "sha256": "0d87732165da118462b81fece8a89f8221984d30234c78831e4ad3a1eb0e4e71"
+    },
+    {
+      "bytes": 1328,
+      "original_bytes": 2993,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/detached-tests-dcdf0503a/stdout",
+      "original_sha256": "9ddb959d71376ff939b5665a58be0183e18b54653532a9541cc72e6745aa4c30",
+      "path": "detached-tests-dcdf0503a/stdout.gz",
+      "sha256": "d772bd654d24c494d77d6306bee26cb932aa0ab4520608530554c8e543c637e9"
+    },
+    {
+      "bytes": 366,
+      "original_bytes": 478,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/detached-tests-dcdf0503a/stderr",
+      "original_sha256": "37c9ef6b0be4b2c57279dbc98e561d30ca43dc98e0eb38417d163f04b767c009",
+      "path": "detached-tests-dcdf0503a/stderr.gz",
+      "sha256": "1e7d094ff5bff3aecebe69f30b12f35f8a6be3ed3844a7972e5591ff5424ed3b"
+    },
+    {
+      "bytes": 852,
+      "original_bytes": 852,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/detached-tests-dcdf0503a/process.json",
+      "original_sha256": "36f92b5b9d30e0d2cb4206097003a9698960d8642fee9140be609f6ba8f0cf14",
+      "path": "detached-tests-dcdf0503a/process.json",
+      "sha256": "36f92b5b9d30e0d2cb4206097003a9698960d8642fee9140be609f6ba8f0cf14"
+    },
+    {
+      "bytes": 49241,
+      "original_bytes": 772475,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/affected-regressions-dcdf0503a/stdout",
+      "original_sha256": "3802523384429aa057d95bc81bd22ed4091561000824b94ecc9db73b26bfd83f",
+      "path": "affected-regressions-dcdf0503a/stdout.gz",
+      "sha256": "16c2fc939cc16f65969c5efba61464e00ddcf466d12d1fb0fd5aed0b31064946"
+    },
+    {
+      "bytes": 3102,
+      "original_bytes": 12568,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/affected-regressions-dcdf0503a/stderr",
+      "original_sha256": "6281f424b43ef60f55155e707313d7e94ff0cfcdc1a1b84a27c06890c6bbe44e",
+      "path": "affected-regressions-dcdf0503a/stderr.gz",
+      "sha256": "a3ace5762a1297431380fd9922b611ffeeb36b36e9b2c1e21b99a323cb7d182c"
+    },
+    {
+      "bytes": 1210,
+      "original_bytes": 1210,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/affected-regressions-dcdf0503a/process.json",
+      "original_sha256": "893353c7d7bf3ac6508c74e6c56e7a018d7c08d4feb8c6efc379252211a15b88",
+      "path": "affected-regressions-dcdf0503a/process.json",
+      "sha256": "893353c7d7bf3ac6508c74e6c56e7a018d7c08d4feb8c6efc379252211a15b88"
+    },
+    {
+      "bytes": 335,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/compiled-source-dcdf0503a.json",
+      "path": "compiled-source-dcdf0503a.json",
+      "sha256": "12831a2bde2b108698004751fc13ee2ed751d9abe3b1bc88dc2cd011b980ee2a"
+    },
+    {
+      "bytes": 3270,
+      "original_path": "/workspace/scratch/56818e4fba76/history-validation/m06-precommit/committed-source-dcdf0503a.json",
+      "path": "committed-source-dcdf0503a.json",
+      "sha256": "4c1769c9d79c3cbb7a3d2d8567b861aff570b8d589234462cf19409d884782e8"
+    }
+  ],
+  "integration_status": "BLOCKED; source and ancestry excluded from main candidate; only observation bytes copied",
+  "requester_withheld_honest_client": {
+    "error": "REORG_IN_PROGRESS",
+    "failed": 1,
+    "new_cpu_domains": 0,
+    "original_observed_deadline_ns": 10003487495,
+    "passed": 0,
+    "planned": 1
+  },
+  "schema": "isolated-m06-final-observation-copy-v1",
+  "source_commit": "dcdf0503a1c52c4423963e9acba176f13fea2913",
+  "typed_deadline_error_injected": false,
+  "wan_qualified": false
+}

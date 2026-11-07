@@ -1,0 +1,114 @@
+{
+  "schema": "diagnostic-observability-source-identities-v1",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 64625,
+          "sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+          "git_blob": "435baefdf9d38fb4959f006bfe6dd9f1c3476214"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 64625,
+          "sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+          "git_blob": "435baefdf9d38fb4959f006bfe6dd9f1c3476214"
+        }
+      ],
+      "bytes_equal_across_c5dd_and_b4b": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 318291,
+          "sha256": "2f695c8b6a28315c52ab1a198399b4f1fdf235fc1881621023cec62ddcb3c41e",
+          "git_blob": "42b6f2d836464b8d0dd719d2d1b58579819ef8ec"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 318291,
+          "sha256": "2f695c8b6a28315c52ab1a198399b4f1fdf235fc1881621023cec62ddcb3c41e",
+          "git_blob": "42b6f2d836464b8d0dd719d2d1b58579819ef8ec"
+        }
+      ],
+      "bytes_equal_across_c5dd_and_b4b": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 33545,
+          "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904",
+          "git_blob": "c61b1df8d82ca63a08c652d3320112981967dd7f"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 33545,
+          "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904",
+          "git_blob": "c61b1df8d82ca63a08c652d3320112981967dd7f"
+        }
+      ],
+      "bytes_equal_across_c5dd_and_b4b": true
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 49098,
+          "sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+          "git_blob": "1bf297a56a211a051826f7097c590df6e65bc7c9"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 49098,
+          "sha256": "0e7f29dabe06d93f81bf75d9df92af553e5e4e61a58308fc59e42c356a5744ca",
+          "git_blob": "1bf297a56a211a051826f7097c590df6e65bc7c9"
+        }
+      ],
+      "bytes_equal_across_c5dd_and_b4b": true
+    },
+    {
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 7277,
+          "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b",
+          "git_blob": "6b2ea6dc2205e5cab740cef2f14b11df409e348a"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 7277,
+          "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b",
+          "git_blob": "6b2ea6dc2205e5cab740cef2f14b11df409e348a"
+        }
+      ],
+      "bytes_equal_across_c5dd_and_b4b": true
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "identities": [
+        {
+          "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+          "bytes": 48636,
+          "sha256": "ace05c98205adcdf1d1e1c6343c9b9100789bdf0517cf42d840a887e8ec56017",
+          "git_blob": "2ae1b4b2b348e164a9094148af2a25279ff68f02"
+        },
+        {
+          "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+          "bytes": 48636,
+          "sha256": "ace05c98205adcdf1d1e1c6343c9b9100789bdf0517cf42d840a887e8ec56017",
+          "git_blob": "2ae1b4b2b348e164a9094148af2a25279ff68f02"
+        }
+      ],
+      "bytes_equal_across_c5dd_and_b4b": true
+    }
+  ],
+  "scope": "Exact Git source objects only. No claim that different executed whole commits or ELF identities are interchangeable."
+}

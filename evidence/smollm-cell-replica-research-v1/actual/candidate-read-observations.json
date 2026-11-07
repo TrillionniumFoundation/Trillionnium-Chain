@@ -1,0 +1,1218 @@
+[
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 788366819,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "16a3b7fab750193b3e6d0191e58b401542b587f2103e9b001deab4b2ac4cf0ba",
+      "input_tokens": 51,
+      "logits_sha256": "084de36842cf72146e61f25ecbd02550669299940f09f38ea66d957dad326f06",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-0",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162611216384,
+        155035828224
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 6984 greater than 4630?",
+      "request_id": "public-next-task-0"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 676231489,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "4cb7cefbeb4e998ca81b03d0271a6e495b3c52005b53985b4b45674da10c5aa7",
+      "input_tokens": 51,
+      "logits_sha256": "9e5e29cd133bf31de286ac78e82dff04d5f80134bd94d9b112d79f395aa582ca",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-1",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162413182976,
+        154847199232
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 1719 greater than 5315?",
+      "request_id": "public-next-task-1"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 530279170,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "87dc125d5bf7589af86b0f7f496485c1b87ca99953de3bb80d87b9e4204d9e54",
+      "input_tokens": 51,
+      "logits_sha256": "4682a80b56092ff778020c75f4f528c6c60160f0cbc15ff7574f54a71de6ec51",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-2",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162027094016,
+        154451247104
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7629 greater than 3580?",
+      "request_id": "public-next-task-2"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 727604908,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "d3262fa3699aac9c9118adb17966c0699daf9ac22379dd03ec819384cde75b98",
+      "input_tokens": 51,
+      "logits_sha256": "791228272f3435e5ae808342cb5032cfaf52833e972f135fab94ee89b6855e5d",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-3",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        161381072896,
+        153679822848
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 2551 greater than 4882?",
+      "request_id": "public-next-task-3"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 1023930469,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "73c3f1c48e777ec286aa5b5f5c3780e3b55dc931b0e727a41e02c68cd1c9186a",
+      "input_tokens": 51,
+      "logits_sha256": "7c39e919eb632f03e6a40dd617036da20c2bd11e315b4a62e7be90937f10fd1b",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-4",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162882338816,
+        155525529600
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 1814 greater than 1753?",
+      "request_id": "public-next-task-4"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 586868437,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "043561613b4d8ad914cd1ae47ee54cc0b8e69740b1c34086ed4e5d3786f10c18",
+      "input_tokens": 51,
+      "logits_sha256": "9fa428ba15ea4a2e7e1c4e9921e6329d4bcb7a6ddab40f1f0d6ef8b29275f959",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-5",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162192801792,
+        154504839168
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 4635 greater than 8674?",
+      "request_id": "public-next-task-5"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 599441184,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "786e6d3ed608095b67d87318c7b0fdaf67744d0ada4ce0f1d0f794f372f889ce",
+      "input_tokens": 51,
+      "logits_sha256": "f20ef3689c0b76b09f90db8fa4ac9ef888352b656a88f8df60bc50f6b423ccf8",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-6",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162342912000,
+        154522337280
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 8379 greater than 5322?",
+      "request_id": "public-next-task-6"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 1424185010,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "840e2e121ea6d69a43e7563c2960414e67df03cc8ad9047d7dec61867c1ae63e",
+      "input_tokens": 51,
+      "logits_sha256": "4ae2600a427b0b5c071106b6ebc63b5e6dc1d9dc573a25ebb76700f6be5e8cb0",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-7",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162120990720,
+        153805717504
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5202 greater than 9142?",
+      "request_id": "public-next-task-7"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 769599167,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "2400128a6f36991fd52e07494634df11e0ea2446a99e792f35159e6e0d465170",
+      "input_tokens": 51,
+      "logits_sha256": "2e6a0ef27f54d6629691be5a182b041b0a1728ad6aa2565273f7850a21f260c3",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-8",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162673573888,
+        155093090304
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 3825 greater than 1976?",
+      "request_id": "public-next-task-8"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 2035763850,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "bd1e6ab1945551d01d326ff61fcb6cb0693b5b5049c62c85cefd609153c1cf84",
+      "input_tokens": 51,
+      "logits_sha256": "632ece93f2c96e5cabbad6c80b31461fbca341ba730e6ec4613ed4d48161ba3e",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-9",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162387394560,
+        154122911744
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5813 greater than 8234?",
+      "request_id": "public-next-task-9"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 1082055432,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "dc15a1663915ecf5a9eac4a17e704ae1d3acb0864607d07490991914288ea31d",
+      "input_tokens": 51,
+      "logits_sha256": "ea04656fc93cfb39d02f784b10c29698970b75b0668be973bf72754907392e2a",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-10",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162148974592,
+        154247888896
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 8832 greater than 5909?",
+      "request_id": "public-next-task-10"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 713956898,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "a4eabdf96b079bb413b2ef9d2ff0351ca67ccc467e033256333120f94564f5e6",
+      "input_tokens": 51,
+      "logits_sha256": "76b987b918f3d0bb88c393ee0f7d0a5b5c54234ee67988b433925b7dc0662ddf",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-11",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162429976576,
+        154623311872
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 4274 greater than 4898?",
+      "request_id": "public-next-task-11"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 591531277,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "2863bf8c96e7e6589f303f821e34f4b1303ba75887538bbbb5d1a68b02ccb856",
+      "input_tokens": 51,
+      "logits_sha256": "e54e4f60d1b8aa1e416631434ec4788344a75e3fb3c9f1d0c821badc5ecb3751",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-12",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162275966976,
+        154714259456
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 3852 greater than 1289?",
+      "request_id": "public-next-task-12"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 1194968127,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "ea48a6abee0e7add8966123205978e8a858989cad54bd15a98f3646c95953141",
+      "input_tokens": 51,
+      "logits_sha256": "c75e62a56055ac7513a8dbecf285b7ee602fc60309b70dbdca273b87eaf0e6b5",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-13",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162329853952,
+        154672660480
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 3559 greater than 7422?",
+      "request_id": "public-next-task-13"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 724147022,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "d197491ba182e17615b2ef823e461d62e7e9ba38b5ea0dc68beb8666706cceda",
+      "input_tokens": 51,
+      "logits_sha256": "72aefb792d6f1a7c9b153975279e99ff039cbf5613026bdd73eba32c69ea59a2",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-14",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162326511616,
+        154128236544
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 9027 greater than 4144?",
+      "request_id": "public-next-task-14"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 1468500860,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "6a36405a6852ab39c7cec9c12f9333a0ab7bcf47b872bd3befbe675e43e98707",
+      "input_tokens": 50,
+      "logits_sha256": "d5ea2a18f7f68a52e95de734560a78d466bc78f30f86d1a8b0ed1b02e7a2b0cb",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-15",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162117222400,
+        154584465408
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 797 greater than 3307?",
+      "request_id": "public-next-task-15"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 567270175,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "11501d5b50a449a618796af78be15e18b4ffdb9e2c6e92ed8f12c82b8bfeb171",
+      "input_tokens": 50,
+      "logits_sha256": "1be84e199b3a447e712abad5e924c66a3fdea77c74d350fa22e5fc30c6a47705",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-16",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162536308736,
+        154054737920
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 5844 greater than 833?",
+      "request_id": "public-next-task-16"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 980359966,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "06a70ef7e3c96a47720f97137c13802acfdba492bf20e5277c14e2558b901490",
+      "input_tokens": 50,
+      "logits_sha256": "a1f432091834e37609ab8ff75915a16c55d16823b4ca0b8217ce1d5acce1d825",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-17",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162399731712,
+        154777321472
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 621 greater than 6687?",
+      "request_id": "public-next-task-17"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 677784501,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "8cd85e226de514537de6454733e5c07aecd06ebe5a1088bfc91b3f076c280365",
+      "input_tokens": 51,
+      "logits_sha256": "2903af344d5b6a93ee0b7642291a67c05e3bd7383397630b770a7613fcf80d24",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-18",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162290434048,
+        154763427840
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 4026 greater than 2031?",
+      "request_id": "public-next-task-18"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 1222282079,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "ccd62c1e88d95fab0eea6730c124191bb08b101c1ab0f0fe72dfed9dd32eb280",
+      "input_tokens": 51,
+      "logits_sha256": "5558f94a41109648882e2368d56b65832106c606396e6d08af5db088706d9ee1",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-19",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162435809280,
+        155168718848
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 1378 greater than 7881?",
+      "request_id": "public-next-task-19"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 847547204,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "a76de331167f7b00d007bc8d0315fc2d5d4679fae298650f34e320db224417d1",
+      "input_tokens": 51,
+      "logits_sha256": "2103791876a94010d07041c9cc11247ad6f781fbead2abc28bb46faf0b643d19",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-20",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162027290624,
+        154496024576
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 6084 greater than 3636?",
+      "request_id": "public-next-task-20"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 579459907,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "07caff15b372bb4c3d617cfb7bb2bceeae00847b21d5205834821d858a93fa2f",
+      "input_tokens": 51,
+      "logits_sha256": "93f5033fab3ac391759e71347a2fabbbdbbbe9ae657acf6a162a7f0cb608ec88",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-21",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162271920128,
+        154492715008
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 8598 greater than 9464?",
+      "request_id": "public-next-task-21"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 576255568,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "36e47f749c838f5cd37a1754bbeabf846f4a9095a395bc92554dbd1402d76fe6",
+      "input_tokens": 51,
+      "logits_sha256": "645f79e3a7ed09f3624e4c063d00c287a3a91147647a4d0d13f680d247f8c61c",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-22",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        161542176768,
+        153879150592
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7652 greater than 1421?",
+      "request_id": "public-next-task-22"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 677032559,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "d8e33c41c00894a95fbf4665d62a4972844f6354f4263509f928620a4d67c735",
+      "input_tokens": 51,
+      "logits_sha256": "389bcbc60288c4397345bfe50109b62314696d5b3ae5803464469ae70599ab8c",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-23",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162131869696,
+        154374406144
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 6033 greater than 8500?",
+      "request_id": "public-next-task-23"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 924015314,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "ae8291b490cd8a59eed9bcfb76a7bd7eb8c8d2e2820a0ebf41d906a277b711bf",
+      "input_tokens": 51,
+      "logits_sha256": "6f5939bd6639e09b05bc5db2149a6f9535ac3af10652567eaa451287ab55d0e6",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-24",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        161897873408,
+        154497777664
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7985 greater than 3780?",
+      "request_id": "public-next-task-24"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 527909677,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "3a155764922d0cf17304a07461b92a40ac43e6a0c4d0f04b73f2b19b09c6716f",
+      "input_tokens": 51,
+      "logits_sha256": "69d20b1a6529cda240798bcc84dc5a31d7463fd9b3c1add25eba553bbf02a6f9",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-25",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162256961536,
+        154625753088
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 3353 greater than 7908?",
+      "request_id": "public-next-task-25"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 574870014,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "fa4d2b68f1d25e7ad3295ce70b539a4f34d46a6a9fef81d7733d6330af136c17",
+      "input_tokens": 51,
+      "logits_sha256": "c41866129b55fc4fa421af3b951c67e99fdf7bec5031812e6423559951a68e2b",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-26",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        163267084288,
+        155583266816
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 1895 greater than 1671?",
+      "request_id": "public-next-task-26"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 707881082,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "76875f3c809ce01e9a53610ac269e5c3714d2974e96f3f713fd97e3cd49f7fbc",
+      "input_tokens": 51,
+      "logits_sha256": "e79f027c8a7a46aedcf1239a96d6ff5dae6078a5d37b84e652cefec692515bb1",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-27",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162626109440,
+        154308804608
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5496 greater than 7257?",
+      "request_id": "public-next-task-27"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 643230190,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "2a954adc3697b654e51336cf9412e4a89d06b38d2727577ebe2e701f91924cb1",
+      "input_tokens": 51,
+      "logits_sha256": "8ca91649325011ce0fcff700b7b3c87ecc35db6b33ffcd9ea12abce8048a7ed9",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-28",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162448523264,
+        154718076928
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 8675 greater than 1491?",
+      "request_id": "public-next-task-28"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 568596453,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "7bc0bba72fba4fe6a1a49041504184f7cb57598b2ed49c9a733bc742f35e8396",
+      "input_tokens": 51,
+      "logits_sha256": "3d1d71d130cf854dd4a9d4203ac26c39bfd2133daf759ef6faa3ec992bc4fb87",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-29",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        161596112896,
+        153636044800
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 2875 greater than 6162?",
+      "request_id": "public-next-task-29"
+    }
+  },
+  {
+    "correct": false,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 902363064,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "acf03fefd2d437b4e50a4b122159f4f454b032f397360155518d961e61b1187b",
+      "input_tokens": 51,
+      "logits_sha256": "fbf469cae03bd4d69fa868858cd14fda291c44be11acfaf3987c74650bd913c3",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-30",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        161666744320,
+        154146701312
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 7905 greater than 1664?",
+      "request_id": "public-next-task-30"
+    }
+  },
+  {
+    "correct": true,
+    "observation": {
+      "action_ids": [
+        "no",
+        "yes"
+      ],
+      "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+      "authority": {
+        "hepta_final_use": false,
+        "independent_accepted": false,
+        "installation_authorized": false,
+        "prospective_accepted": false,
+        "public_reward_eligible": false,
+        "selection_authorized": false
+      },
+      "contract": "7e667c2fea63f72c1182c7a5c38618e7123df74328ddd79a0c96abed9b5a10d3",
+      "execution_ns": 874659362,
+      "file_sha256": "4e3dfd7f06b3e7d76caf5576ec5d80ad2e792907f35f6012db9220f5c8f92358",
+      "input_sha256": "f3dda0a565be79822c871c6305496ba68d6f39b6466cd06df71d2dc7d4912109",
+      "input_tokens": 51,
+      "logits_sha256": "058efed6aa2515aa71749de936f66b6f716776885b424eeb8d61acbf163fec7e",
+      "observed_rss_bytes": 1137758208,
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "request_id": "public-next-task-31",
+      "schema": "hepta-smollm-neural-read-worker-v1",
+      "scores_q32": [
+        162042675200,
+        154401816576
+      ]
+    },
+    "predicted": "no",
+    "request": {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 6006 greater than 8027?",
+      "request_id": "public-next-task-31"
+    }
+  }
+]

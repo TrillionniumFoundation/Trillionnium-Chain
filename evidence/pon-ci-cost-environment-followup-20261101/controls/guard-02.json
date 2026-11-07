@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_cross_arch_cost.py"
+  ],
+  "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+  "exit_code": 0,
+  "started_utc": "2026-11-01T08:26:37.841030+00:00",
+  "wall_ns": 1018154910,
+  "stdout": "guard-02.stdout",
+  "stderr": "guard-02.stderr"
+}

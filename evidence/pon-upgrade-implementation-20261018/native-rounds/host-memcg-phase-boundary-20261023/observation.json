@@ -1,0 +1,85 @@
+{
+  "schema": "host-memcg-phase-boundary-evidence-v1",
+  "nativeSource": "e6b2999abb57b46d7c95c7714bd64bc50f8ac183",
+  "nativeFreezeSha256": "8db5639a4ba8750f51f406d7b49f670cd57bb4f811a754c6bf9e6c4a8072ff3b",
+  "nativeManifestSha256": "ef1685f1fe9f55213b926a3dab0f150cb16228f64e04c5f308ba9479cc924eaa",
+  "nativeOutcomeSha256": "19fd7ece344cf546ff2598a20a294c149a53da2b5808cd433602c328c1d7c378",
+  "firstRead": {
+    "field": "memory.current",
+    "operation": "operation-56556eb2efe04c0b9c13dd815cb9f2c9",
+    "original_reason": "host-operation-not-pristine",
+    "raw": "258048\n",
+    "raw_characters": 7,
+    "raw_sha256_utf8": "41d230675defb670f46c4acc99b47fad81118a144d68f78bc23aa18229c55dc9",
+    "raw_truncated_in_message": false,
+    "read_again": false,
+    "role": "operation",
+    "schema": "host-pristine-first-read-v1",
+    "stored_fd": 17,
+    "stored_identity": [
+      31,
+      33392017,
+      16893
+    ],
+    "unit": "trnm-host-63f769650f2f43489bc39388c40613b6.scope"
+  },
+  "nativeObservation": "UNKNOWN",
+  "actualExitStatus": "UNKNOWN",
+  "wholeProbeCompletion": "NOT_PROVEN",
+  "exports": 12,
+  "officialSources": [
+    {
+      "path": "official-source/linux-v7.0-mm-memcontrol.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v7.0/mm/memcontrol.c",
+      "status": 200,
+      "bytes": 149827,
+      "sha256": "44a1e8bf48a9118eed05039bcf5aa4b297d7ec8047c363686f8b9b030a76b9b7",
+      "elapsedSeconds": 5.029606504016556
+    },
+    {
+      "path": "official-source/linux-v7.0-cgroup.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v7.0/kernel/cgroup/cgroup.c",
+      "status": 200,
+      "bytes": 203911,
+      "sha256": "b40c3181443e3b323b71d2b89230d36534b4ba51896f28e16d1d0f0436c0fa23",
+      "elapsedSeconds": 4.474541661009425
+    },
+    {
+      "path": "official-source/systemd-v255-cgroup.c",
+      "url": "https://raw.githubusercontent.com/systemd/systemd/v255/src/core/cgroup.c",
+      "status": 200,
+      "bytes": 180761,
+      "sha256": "ac2af6fb199b8e831c93654e4c2ba2c5d39c788508ad3eaff2c2230ccd7cc344",
+      "elapsedSeconds": 8.473824070999399
+    },
+    {
+      "path": "official-source/systemd-v255-scope.c",
+      "url": "https://raw.githubusercontent.com/systemd/systemd/v255/src/core/scope.c",
+      "status": 200,
+      "bytes": 25949,
+      "sha256": "b743da9a7511066758ff15c487992baca80d0df3d95f5957fbbee78aaf6ec788",
+      "elapsedSeconds": 2.169654506025836
+    },
+    {
+      "path": "official-source/upstream-3e38e0aaca9e.patch",
+      "url": "https://github.com/torvalds/linux/commit/3e38e0aaca9e.patch",
+      "status": 200,
+      "bytes": 3648,
+      "sha256": "b251c2a6483157222f1ba64ca2b9015bf3dec14ff1e4c7e88cfc96730baaa101",
+      "elapsedSeconds": 10.232730846008053
+    },
+    {
+      "path": "official-source/ubuntu-resolute-38-memcontrol.c",
+      "url": "https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/resolute/plain/mm/memcontrol.c?h=Ubuntu-7.0.0-38.38",
+      "status": 200,
+      "bytes": 150118,
+      "sha256": "86c42ee35418374b0f5b4581a64e0b0390c98b1460416c3e8b9027e7871ba9a1",
+      "elapsedSeconds": 23.758018938999157
+    }
+  ],
+  "causalMechanism": "Child memcg accounted statistics allocations use parent active memcg; C/A creation below U can charge U before any C/A task birth.",
+  "exact258048Composition": "NOT_PROVEN: no allocation trace/config provenance captured; no numerical baseline deduction or bookkeeping exemption.",
+  "ubuntuQualification": "Official Ubuntu-7.0.0-38.38 implementation corroborates family behavior; deployed HWE source/config byte identity NOT_PROVEN.",
+  "oldCapUnit": "Never reused; no further read, stop, delete, reset, kill or retry.",
+  "newSliceScope": "Same original owner; fresh U leaf fact and once-only consumption only; native qualification, C/A birth, retirement, WholeU, baseline funding and settlement OPEN."
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "trnm-pq-validation-evidence-files-v1",
+  "source_commit": "45962558a7133375b16c0ac2600f2edb4a115585",
+  "source_tree": "8d1d6c4e18e395dfc842c3401844a8ddcd4c01d9",
+  "scope": "Original X230 Linux locked graph, format, native no-run build and strict Clippy; no runtime test claim.",
+  "files": [
+    {
+      "path": "compiler.json",
+      "bytes": 2061,
+      "sha256": "058ab004aa4a328c210781e04912fd6d77e4e4d2e27a43f40ed88f05723ef7f0"
+    },
+    {
+      "path": "compiler.log",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "locked-fetch.json",
+      "bytes": 2132,
+      "sha256": "d76be335da741ffa58310359de48131cfe05b1bebecd58d304a1fde7fd79388b"
+    },
+    {
+      "path": "locked-fetch.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "locked-linux.json",
+      "bytes": 2454,
+      "sha256": "b2e4e199605007aadca57d2db337ee59b3f589cb50bf8135d10d947581e020ac"
+    },
+    {
+      "path": "locked-linux.log",
+      "bytes": 639484,
+      "sha256": "8a884a92502b0221d8747625e8ffae679ea289f98d81dee4cdffa3245b71bbb9"
+    },
+    {
+      "path": "format.json",
+      "bytes": 2331,
+      "sha256": "cabaf4a5b53abcf321ca901ec45734195dc03488e5636ac278ad07a916769b37"
+    },
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-build.json",
+      "bytes": 2451,
+      "sha256": "19b1922b33552c49dca8e70d89557c7001344feeb04488e3917abb244705d220"
+    },
+    {
+      "path": "native-build.log",
+      "bytes": 107849,
+      "sha256": "bc73d181a59723bcb778468342401c7521bd6cc96894ddeb5d3763db73571a61"
+    },
+    {
+      "path": "strict-clippy.json",
+      "bytes": 2457,
+      "sha256": "b83c7f64e94d40bdb5238b7a60da5620fb1ddf67bd2a6eabad45843a6f46fa3e"
+    },
+    {
+      "path": "strict-clippy.log",
+      "bytes": 3083,
+      "sha256": "df5a41b7d79de4fd770b83b97d918e2629804ba186b9908c8875a65c84f40b4c"
+    },
+    {
+      "path": "pq-provider/provider.json",
+      "bytes": 2843,
+      "sha256": "41a90fe4ba6fbcd7c0e90caaf26df7b46518c621f9aa06c07e7f777367a2f30e"
+    },
+    {
+      "path": "pq-provider/build-and-smoke.log",
+      "bytes": 1244404,
+      "sha256": "f26c3bea532be3c3013820ea4d0835c7877b82fa8f80995268e05149705b5ad2"
+    },
+    {
+      "path": "binary-identity.json",
+      "bytes": 563,
+      "sha256": "cf4edffd2c1ecefd97eeef1ef7a3702ee1b52cb3fabb4abd441b85ec04551a4c"
+    },
+    {
+      "path": "build-job-status.json",
+      "bytes": 481,
+      "sha256": "4f91f6503005f4b5b273578f2b1f1ab4d9f54c035f135851a3ff02230cfa4e52"
+    },
+    {
+      "path": "build-job.stdout.log",
+      "bytes": 1354,
+      "sha256": "c00b34a6ce76fe0343efc141b45d91845da1e899a5ea7ea81ca1fa76fa3664c6"
+    },
+    {
+      "path": "build-job.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "whole_chain_quantum_security_qualified": false
+}

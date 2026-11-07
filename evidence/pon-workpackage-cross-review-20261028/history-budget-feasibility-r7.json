@@ -1,0 +1,281 @@
+{
+  "schema": "pure-pon-history-budget-feasibility-readonly-v1",
+  "reviewer": "/root/history_budget_feasibility_r7",
+  "recorded_utc": "2026-10-28T02:34:17.221861+00:00",
+  "pinned_source": "131f673d9563e72aca7139f3239856957d118d49",
+  "pinned_tree": "b8bdd87dca3cd6288c38f63848b24b1a2df6a09d",
+  "source_files": [
+    {
+      "path": "config/systemd/trnmponpublic.slice",
+      "bytes": 325,
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "git_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "bytes": 5452,
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "scripts/ci/run_native_phase_host.py",
+      "bytes": 18895,
+      "sha256": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "git_blob": "be4c1726ff0c2fa19616c42b9a6fa819b08a7d96",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "bytes": 26392,
+      "sha256": "405a28c6dedbfa1bdc4fb54ae35d649f88003d5304032180fced08c2a3e91753",
+      "git_blob": "06dc190f7dee41c8bd39f1da874b64e4ac55befa",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "bytes": 76292,
+      "sha256": "c2bb367b7c540344c1db5145008c999a942c0c66630b217a92ec6c0031e822ea",
+      "git_blob": "32463cc08d29919b66460238614f81cd4125f796",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "bytes": 40864,
+      "sha256": "36d4eace1f9620abb43878328f583c986467c29278419af0fbe612bd52669b07",
+      "git_blob": "1076f990e4bbc21452b0823d833220924f3db629",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 309944,
+      "sha256": "488981844f2d3728c59785d43bdd8f7ea9defbda167c58490cc653421b9049a0",
+      "git_blob": "59f51dcadb5a0a575eaa14734edbce74accade09",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs",
+      "bytes": 10769,
+      "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9",
+      "git_blob": "70bcc1ba0554e0853f2dd7b28df860cd9090ff7d",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "bytes": 110341,
+      "sha256": "c0fe8ea6171bd7008bd6143c0b894ee5f646bf410d467068464a6f311fe48f35",
+      "git_blob": "326aeb117d2c07f5825fd4d8948dad52d12cb7e7",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+      "bytes": 18547,
+      "sha256": "5e634e177e65f7255d793a148623d7ab41557505b76e456874498d35c5ec5e4c",
+      "git_blob": "8a231b3f02a20e6eb47e27753b2e00b8161d48c8",
+      "current_file_equals_pinned_source": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 72052,
+      "sha256": "3ed29941eb0b9959bdeb0cd4e59d2565bbd4b82b70c9cc94d0cd46065c16b874",
+      "git_blob": "1c76bfa6039823196f936d668fa1148570487762",
+      "current_file_equals_pinned_source": true
+    }
+  ],
+  "source_mutated": false,
+  "rust_cargo_bazel_or_native_executed": false,
+  "observational_scope": "read-only source and retained original logs; no generated traffic, no executed attacker, no kernel or quota mutation",
+  "fixed_profile": {
+    "public_cpu_max": "25000 100000",
+    "public_cpu_max_burst": 0,
+    "cpu_rate_cpu_seconds_per_wall_second": 0.25,
+    "public_memory_bytes": 2147483648,
+    "swap_bytes": 0,
+    "pids": 256,
+    "controller_cpu_max": "400000 100000",
+    "controller_memory_bytes": 17179869184,
+    "attack_processes": 24,
+    "phase_seconds": 30,
+    "confirmation_rounds": 3,
+    "scheduled_round_start_seconds": [
+      1,
+      5,
+      9
+    ],
+    "receiver_initial_credit_ns": 2000000000,
+    "refill_ns_per_wall_second": 250000000,
+    "start_reserve_ns": 100000000,
+    "paid_worker_limit": 2,
+    "per_live_operation_reorg_reserve_ns": 25000000
+  },
+  "exact_account_identity": "remaining_paid_credit_ns = initial_credit_ns + credited_refill_ns - paid_cpu_debit_ns - settlement_discard_ns; stored_credit_ns = remaining_paid_credit_ns - booked_reservation_ns - termination_reserved_ns",
+  "actual_depletion_predicate": {
+    "flow_known_and_balance_identity_verified": true,
+    "initial_credit_equals_burst": true,
+    "remaining_paid_credit_strictly_below_ns": 100000000,
+    "paid_cpu_debit_strictly_above_ns": 1900000000,
+    "clock_failures_required": 0,
+    "accounting_unavailable_required": false,
+    "source_sampler_period_ms": 50,
+    "confirmation_overlap_criterion": "At least one original confirmation round fully contains the complete observation interval of a qualifying paid-depletion sample; all 3 rounds must confirm within the original pressure window and observe hostile-work rejections."
+  },
+  "conditional_analysis": {
+    "steady_rate_bound": "For actual fair-scheduled threads all remaining inside the fixed parent and correct nonoverlapping CPU attribution, paid receiver CPU is a subset of total parent CPU. Long-run paid rate is at most approximately 0.25 CPU-sec/sec, equal to refill; unpaid reactor/History-client/control/observation work reduces attainable paid rate. This is not an instantaneous strict Q*t bound.",
+    "why_not_an_impossibility_proof": [
+      "Refill is lazy and occurs before debit, with a burst cap; discard can precede reporting CPU already consumed.",
+      "Long nonpreemptive checkpoint/settlement intervals can create true late debit/debt even at quota-equal-refill average.",
+      "Linux period-boundary and retained per-CPU runtime effects permit brief deviations from nominal average.",
+      "Clock/accounting failures remain unknown and cannot qualify depletion.",
+      "The deployed scheduler/cgroup containment and every actual debit must be measured; constants alone do not prove enforcement."
+    ],
+    "algebraic_example_not_attack": {
+      "actual_native_execution": false,
+      "state_at_t0_cpu_seconds": {
+        "initial": 2.0,
+        "booked_reserve": 0.1,
+        "stored": 1.9,
+        "cap": 1.9
+      },
+      "assumptions": "One legal 2.0 CPU-second operation has no intermediate CPU debit before t=8.0 wall seconds under an ideal 0.25-core allocation; no other paid debit/termination reserve; actual checkpoint placement/reachability is not established.",
+      "refill_at_t8_before_debit_cpu_seconds": {
+        "offered": 2.0,
+        "credited": 0.0,
+        "discarded": 2.0
+      },
+      "after_actual_late_debit_cpu_seconds": {
+        "paid": 2.0,
+        "stored": -0.1,
+        "remaining_including_booked": 0.0
+      },
+      "deduction": "This accounting schedule satisfies the numeric depletion inequalities even though average CPU never exceeds refill; it refutes an unconditional impossibility inference, not demonstrates a feasible current attack."
+    },
+    "rate_design_equation": "With promptly accounted paid rate c, refill r<c and initial 2.0 CPU seconds, reaching below 0.1 requires more than 1.9/(c-r) seconds, excluding discard/overrun. At c=.25, r=.125 this exceeds 15.2 seconds, potentially after the t=1/5/9 rounds; this is design arithmetic, not empirical throughput."
+  },
+  "old_observations": {
+    "e25_original_campaign": {
+      "phases_started": 0,
+      "phase_launches_rejected": 9,
+      "service_requests_observed": 0,
+      "budget_depletion": null,
+      "host_qualification": null,
+      "cause_scope": "All original launcher logs reject the combined cwd/uid guard before Host setup; original logs do not distinguish the two conditions. Rust launcher lacks explicit repository cwd. No root-identity inference is made."
+    },
+    "e25_longsync_original_logs": [
+      {
+        "job_id": 122586300668,
+        "source_head": "e25ae09220661985ef578edae5a337caca94f832",
+        "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-job-122586300668.log",
+        "bytes": 98176,
+        "sha256": "7c8bcb29184faccece22e7423e27cbe87cdd2c832923fd086ffad22f7ea6db33",
+        "selected_lines": [
+          {
+            "line": 773,
+            "text": "2026-10-28T02:09:15.7655961Z {\"error\":\"PUBLIC_HOST_KERNEL_PARENT\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+          },
+          {
+            "line": 776,
+            "text": "2026-10-28T02:09:15.7664366Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          },
+          {
+            "line": 783,
+            "text": "2026-10-28T02:09:15.7666737Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 303.63s"
+          }
+        ]
+      },
+      {
+        "job_id": 122586300741,
+        "source_head": "e25ae09220661985ef578edae5a337caca94f832",
+        "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-job-122586300741.log",
+        "bytes": 97520,
+        "sha256": "d5c7a30ee38d6a1fe04ff7b3513eac69db6d136d2490bdfd9c9a1cf9df54bb5e",
+        "selected_lines": [
+          {
+            "line": 754,
+            "text": "2026-10-28T02:08:10.0901752Z {\"error\":\"PUBLIC_HOST_KERNEL_PARENT\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+          },
+          {
+            "line": 757,
+            "text": "2026-10-28T02:08:10.0909398Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          },
+          {
+            "line": 764,
+            "text": "2026-10-28T02:08:10.0911437Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 260.73s"
+          }
+        ]
+      },
+      {
+        "job_id": 122586300857,
+        "source_head": "e25ae09220661985ef578edae5a337caca94f832",
+        "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-job-122586300857.log",
+        "bytes": 95551,
+        "sha256": "38a5ad550e1524457e1b3e6950a9968dcd6cd4b7a154cee99873c58fc8c42a97",
+        "selected_lines": [
+          {
+            "line": 730,
+            "text": "2026-10-28T02:12:30.0447693Z {\"error\":\"PUBLIC_HOST_KERNEL_PARENT\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+          },
+          {
+            "line": 733,
+            "text": "2026-10-28T02:12:30.0455166Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          },
+          {
+            "line": 740,
+            "text": "2026-10-28T02:12:30.0457086Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 476.42s"
+          }
+        ]
+      },
+      {
+        "job_id": 122586300903,
+        "source_head": "e25ae09220661985ef578edae5a337caca94f832",
+        "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-job-122586300903.log",
+        "bytes": 96072,
+        "sha256": "551e247c33b897bfe6a159c4a0b970efac4f8649047a8d2187e93ac5683c6605",
+        "selected_lines": [
+          {
+            "line": 730,
+            "text": "2026-10-28T02:12:18.2557675Z {\"error\":\"PUBLIC_HOST_KERNEL_PARENT\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}"
+          },
+          {
+            "line": 733,
+            "text": "2026-10-28T02:12:18.2563959Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          },
+          {
+            "line": 740,
+            "text": "2026-10-28T02:12:18.2566094Z test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 479.68s"
+          }
+        ]
+      }
+    ]
+  },
+  "current_131_snapshot": {
+    "source": "/root/ci_readback_r7 API observation at 2026-10-28 02:31 UTC",
+    "workflow_run": 40620917256,
+    "job": 122594446727,
+    "api_step": "Run three original campaigns under verified actual limits",
+    "host_or_service_raw_receipt_observed_by_this_reviewer": false,
+    "cannot_infer_host_pass_depletion_or_service_success": true
+  },
+  "primary_references": [
+    {
+      "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+      "tool_ref": "turn169view0 / turn170view1",
+      "relevant_topics": [
+        "hierarchical descendants inherit restrictions",
+        "cpu.max quota/period",
+        "fair-class scheduler scope"
+      ]
+    },
+    {
+      "url": "https://docs.kernel.org/scheduler/sched-bwc.html",
+      "tool_ref": "turn169view1 / turn170view0",
+      "relevant_topics": [
+        "CPU bandwidth quota/period",
+        "cpu-local unused runtime can briefly exceed quota",
+        "long-run bounded average"
+      ]
+    }
+  ],
+  "verdict": "CONFIGURATION_CONDITION_NEEDS_EXPLICIT_TEST_DESIGN; ACTUAL_PAID_DEPLETION_AND_HONEST_OVERLAP_NOT_ESTABLISHED_BY_THIS_REVIEW",
+  "acceptance_granted": false
+}

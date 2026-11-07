@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/workspace/scratch/79360d3567d1/validated-bin/w1-verify-v2",
+    "--native",
+    "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+    "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin"
+  ],
+  "returncode": 0,
+  "wall_seconds": 2.3408884919999764,
+  "median_native_replay_ns": 600329.0,
+  "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd",
+  "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+  "new_proofs_generated": 0,
+  "scope": "separate native pre-proof control on shared host; not part of later proof-pipeline cost"
+}

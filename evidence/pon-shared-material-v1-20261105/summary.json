@@ -1,0 +1,1966 @@
+{
+  "cell_runs": [
+    {
+      "arithmetic": "full-limb",
+      "attempts_by_tile": [
+        4,
+        2,
+        3,
+        1,
+        4
+      ],
+      "baseline": {
+        "cold_preparation_plus_execution_ns": 1272525,
+        "cost_scope": "one complete batch; model/input decode excluded from warm runs; reusable model preprocessing reported",
+        "first_execution_ns": 353074,
+        "implementation": "numpy-int64-cached-base-plus-delta-selected-expert",
+        "logical_multiply_adds": 98688,
+        "numpy_version": "2.3.5",
+        "preparation_ns": 919451,
+        "repetitions": 100,
+        "scalar_predict_rows_ns": 13284329,
+        "warm_median_ns": 116216,
+        "warm_min_ns": 103266,
+        "warm_p95_ns": 213403,
+        "warmup_runs": 8
+      },
+      "costs": {
+        "all_local_pipe_bytes": 1667784,
+        "cache_credit": "repeated challenge cycles recompute the same output; no extra useful-output credit",
+        "canonical_matrices_bytes": 163840,
+        "distinct_application_batches": 1,
+        "mining_and_proof_and_full_verification_included": true,
+        "native_child_cpu_ns": 38766000,
+        "native_process_wall_ns": 64900262,
+        "native_wall_to_one_ordinary_cold_batch_ratio": 51.001168542857705,
+        "native_wall_to_one_ordinary_warm_batch_ratio": 558.445153851449,
+        "proof_bytes": 245940,
+        "same_inputs_cycles": 1,
+        "transmission_scope": "actual local stdin/stdout/stderr; proof and product bytes also itemized; no WAN latency/bandwidth assumption",
+        "typed_product_bytes": 81920
+      },
+      "manifest_sha256": "53ad89f740120e4d669570cb3fd62f6bcf3643f242f83f69531d3a09e5deb4d1",
+      "name": "cell-frozen-t0-full-limb",
+      "native_cpu_ns": {
+        "input_read_parse": 750268,
+        "native_verifier_subtotal": 3020261,
+        "producer_subtotal": 8564184,
+        "record_build_subtotal": 7865545,
+        "reference_verifier_subtotal": 4374276,
+        "run_through_before_summary": 30666583,
+        "search": 6392028,
+        "serialization_output_subtotal": 5506760,
+        "setup": 2172156,
+        "typed_copy_subtotal": 8202
+      },
+      "output_label_correct": 25,
+      "output_sha256": "f7f2ef71c1505eb9b75a6f7d370a8f3b146448a4c3807d8f44ca3c05cdf80234",
+      "phases_ns": {
+        "all_baseline_diagnostics": 30800751,
+        "direct_product_consumption": 2273880,
+        "independent_scalar_and_numpy_validation": 23926525,
+        "input_validation_and_optional_source_replay": 1482468007,
+        "material_preparation": 16576189,
+        "native_runs_and_evidence_checks": 137250115,
+        "total_experiment_before_final_report_write": 1732453371
+      },
+      "product_sha256_by_tile": [
+        "a004db8da7859f4e681d909e1f738f66b511a2088f62d43d6fcdd8c9b37d6c08",
+        "a2f2e37bd4c5f36281557526179d1efddb4635dff02f90c72cc267793792a715",
+        "6bff3e386fcc0cbf24d80e9026dc0f7de6579ff543fe58e6eadf7cbce92ad4eb",
+        "d9015e699fe60ffc538a8e3b1f1a5bb8b43b60c794ce779bbf549050ab34b87d",
+        "7ee161ec12846cdf9f3c757f9225bb917e9439fa3f791ba45df6764e2efa2295"
+      ],
+      "proof_sha256_by_tile": [
+        "f907b75ea3d384b52d81f963c946417c98f4ebac40d2b87f98ac677f426d53ea",
+        "8b964b17a15a240e5fc68039df2f7d58bd5059b3be90e6e51ffc5d27e56e6e7f",
+        "beaec8e95bb1d422fa03348c28ab1402b22d97f29a0f52cd7bb39bae07513aa5",
+        "37b4dabe46f9e66c07cae3fa4f25930e6d318959f689a7d342d08e4e26db6c11",
+        "8d1e55706e369c4bf6443ce84dc04818a22b030af99cd1df037a9063e362c88c"
+      ],
+      "raw_report_sha256": "87148b5dc0f7f9dc879b045eba16de60fddcea973c0bb948842abc51892e84ce",
+      "routes_count": [
+        16,
+        17,
+        31
+      ],
+      "samples": 64,
+      "status": "complete",
+      "target_index": 0,
+      "total_attempts": 14
+    },
+    {
+      "arithmetic": "transposed",
+      "attempts_by_tile": [
+        4,
+        2,
+        3,
+        1,
+        4
+      ],
+      "baseline": {
+        "cold_preparation_plus_execution_ns": 1336177,
+        "cost_scope": "one complete batch; model/input decode excluded from warm runs; reusable model preprocessing reported",
+        "first_execution_ns": 498679,
+        "implementation": "numpy-int64-cached-base-plus-delta-selected-expert",
+        "logical_multiply_adds": 98688,
+        "numpy_version": "2.3.5",
+        "preparation_ns": 837498,
+        "repetitions": 100,
+        "scalar_predict_rows_ns": 9316196,
+        "warm_median_ns": 82855,
+        "warm_min_ns": 81672,
+        "warm_p95_ns": 131848,
+        "warmup_runs": 8
+      },
+      "costs": {
+        "all_local_pipe_bytes": 1667805,
+        "cache_credit": "repeated challenge cycles recompute the same output; no extra useful-output credit",
+        "canonical_matrices_bytes": 163840,
+        "distinct_application_batches": 1,
+        "mining_and_proof_and_full_verification_included": true,
+        "native_child_cpu_ns": 37936000,
+        "native_process_wall_ns": 46146573,
+        "native_wall_to_one_ordinary_cold_batch_ratio": 34.53627251479407,
+        "native_wall_to_one_ordinary_warm_batch_ratio": 556.955802305232,
+        "proof_bytes": 245940,
+        "same_inputs_cycles": 1,
+        "transmission_scope": "actual local stdin/stdout/stderr; proof and product bytes also itemized; no WAN latency/bandwidth assumption",
+        "typed_product_bytes": 81920
+      },
+      "manifest_sha256": "ddeffaad283fdef619c48690034df6bbae358b7e95fc688e4ea8b8c43f0e28f7",
+      "name": "cell-frozen-t0-transposed",
+      "native_cpu_ns": {
+        "input_read_parse": 615968,
+        "native_verifier_subtotal": 3002704,
+        "producer_subtotal": 8100689,
+        "record_build_subtotal": 9875944,
+        "reference_verifier_subtotal": 5736394,
+        "run_through_before_summary": 31422937,
+        "search": 6499043,
+        "serialization_output_subtotal": 3532048,
+        "setup": 1601646,
+        "typed_copy_subtotal": 7090
+      },
+      "output_label_correct": 25,
+      "output_sha256": "f7f2ef71c1505eb9b75a6f7d370a8f3b146448a4c3807d8f44ca3c05cdf80234",
+      "phases_ns": {
+        "all_baseline_diagnostics": 21094070,
+        "direct_product_consumption": 1667926,
+        "independent_scalar_and_numpy_validation": 28148357,
+        "input_validation_and_optional_source_replay": 1501207452,
+        "material_preparation": 15875740,
+        "native_runs_and_evidence_checks": 102897775,
+        "total_experiment_before_final_report_write": 1698532524
+      },
+      "product_sha256_by_tile": [
+        "a004db8da7859f4e681d909e1f738f66b511a2088f62d43d6fcdd8c9b37d6c08",
+        "a2f2e37bd4c5f36281557526179d1efddb4635dff02f90c72cc267793792a715",
+        "6bff3e386fcc0cbf24d80e9026dc0f7de6579ff543fe58e6eadf7cbce92ad4eb",
+        "d9015e699fe60ffc538a8e3b1f1a5bb8b43b60c794ce779bbf549050ab34b87d",
+        "7ee161ec12846cdf9f3c757f9225bb917e9439fa3f791ba45df6764e2efa2295"
+      ],
+      "proof_sha256_by_tile": [
+        "f907b75ea3d384b52d81f963c946417c98f4ebac40d2b87f98ac677f426d53ea",
+        "8b964b17a15a240e5fc68039df2f7d58bd5059b3be90e6e51ffc5d27e56e6e7f",
+        "beaec8e95bb1d422fa03348c28ab1402b22d97f29a0f52cd7bb39bae07513aa5",
+        "37b4dabe46f9e66c07cae3fa4f25930e6d318959f689a7d342d08e4e26db6c11",
+        "8d1e55706e369c4bf6443ce84dc04818a22b030af99cd1df037a9063e362c88c"
+      ],
+      "raw_report_sha256": "f3415ef69884ec306e262f94c897e62fb5f95c4bcac4758130cae34c6ae3089c",
+      "routes_count": [
+        16,
+        17,
+        31
+      ],
+      "samples": 64,
+      "status": "complete",
+      "target_index": 0,
+      "total_attempts": 14
+    },
+    {
+      "arithmetic": "full-limb",
+      "attempts_by_tile": [
+        11,
+        2,
+        19,
+        13,
+        13
+      ],
+      "baseline": {
+        "cold_preparation_plus_execution_ns": 970659,
+        "cost_scope": "one complete batch; model/input decode excluded from warm runs; reusable model preprocessing reported",
+        "first_execution_ns": 354383,
+        "implementation": "numpy-int64-cached-base-plus-delta-selected-expert",
+        "logical_multiply_adds": 98688,
+        "numpy_version": "2.3.5",
+        "preparation_ns": 616276,
+        "repetitions": 100,
+        "scalar_predict_rows_ns": 11948802,
+        "warm_median_ns": 123701,
+        "warm_min_ns": 82454,
+        "warm_p95_ns": 174001,
+        "warmup_runs": 8
+      },
+      "costs": {
+        "all_local_pipe_bytes": 1682959,
+        "cache_credit": "repeated challenge cycles recompute the same output; no extra useful-output credit",
+        "canonical_matrices_bytes": 163840,
+        "distinct_application_batches": 1,
+        "mining_and_proof_and_full_verification_included": true,
+        "native_child_cpu_ns": 41915000,
+        "native_process_wall_ns": 46169631,
+        "native_wall_to_one_ordinary_cold_batch_ratio": 47.56524278866213,
+        "native_wall_to_one_ordinary_warm_batch_ratio": 373.2357135350563,
+        "proof_bytes": 245940,
+        "same_inputs_cycles": 1,
+        "transmission_scope": "actual local stdin/stdout/stderr; proof and product bytes also itemized; no WAN latency/bandwidth assumption",
+        "typed_product_bytes": 81920
+      },
+      "manifest_sha256": "256367d508b0a2e8401b075dc69cd8ab128815ecb965cf6ddb13683e7b3daf4b",
+      "name": "cell-frozen-t1-full-limb",
+      "native_cpu_ns": {
+        "input_read_parse": 771490,
+        "native_verifier_subtotal": 2425283,
+        "producer_subtotal": 20138667,
+        "record_build_subtotal": 5851612,
+        "reference_verifier_subtotal": 3263032,
+        "run_through_before_summary": 36027550,
+        "search": 18715566,
+        "serialization_output_subtotal": 3174460,
+        "setup": 1423101,
+        "typed_copy_subtotal": 4886
+      },
+      "output_label_correct": 25,
+      "output_sha256": "f7f2ef71c1505eb9b75a6f7d370a8f3b146448a4c3807d8f44ca3c05cdf80234",
+      "phases_ns": {
+        "all_baseline_diagnostics": 27061636,
+        "direct_product_consumption": 1173783,
+        "independent_scalar_and_numpy_validation": 16261931,
+        "input_validation_and_optional_source_replay": 1420100059,
+        "material_preparation": 14518631,
+        "native_runs_and_evidence_checks": 110325234,
+        "total_experiment_before_final_report_write": 1616559611
+      },
+      "product_sha256_by_tile": [
+        "a004db8da7859f4e681d909e1f738f66b511a2088f62d43d6fcdd8c9b37d6c08",
+        "a2f2e37bd4c5f36281557526179d1efddb4635dff02f90c72cc267793792a715",
+        "6bff3e386fcc0cbf24d80e9026dc0f7de6579ff543fe58e6eadf7cbce92ad4eb",
+        "d9015e699fe60ffc538a8e3b1f1a5bb8b43b60c794ce779bbf549050ab34b87d",
+        "7ee161ec12846cdf9f3c757f9225bb917e9439fa3f791ba45df6764e2efa2295"
+      ],
+      "proof_sha256_by_tile": [
+        "290cb09e009e47b263a202a2b41b5778fad1db20d703e4b8cb360c65a6e24c4e",
+        "68c40f9df58e5213e3847e3cb5e0041a2131b007a557d3fb108859f75a67d85a",
+        "a4ac63e0b0b952000d88affa39ef753dc85fe6b35d6135f93c90b9b87f34827a",
+        "04a2f747cb2dc6e949fc1a429c301e754b7d07ff083218f4d8a00a0acfe8f01e",
+        "074c99318ce67fa1b6acdd871c5a414cd335be880e487de9846501d0c2abcbd4"
+      ],
+      "raw_report_sha256": "896b0134fa2a3fe9dbf9d746ef57b1827786c74176b694a9d5b0bf25db29bdd0",
+      "routes_count": [
+        16,
+        17,
+        31
+      ],
+      "samples": 64,
+      "status": "complete",
+      "target_index": 1,
+      "total_attempts": 58
+    },
+    {
+      "arithmetic": "transposed",
+      "attempts_by_tile": [
+        11,
+        2,
+        19,
+        13,
+        13
+      ],
+      "baseline": {
+        "cold_preparation_plus_execution_ns": 1330154,
+        "cost_scope": "one complete batch; model/input decode excluded from warm runs; reusable model preprocessing reported",
+        "first_execution_ns": 435336,
+        "implementation": "numpy-int64-cached-base-plus-delta-selected-expert",
+        "logical_multiply_adds": 98688,
+        "numpy_version": "2.3.5",
+        "preparation_ns": 894818,
+        "repetitions": 100,
+        "scalar_predict_rows_ns": 10997269,
+        "warm_median_ns": 108516,
+        "warm_min_ns": 98621,
+        "warm_p95_ns": 143930,
+        "warmup_runs": 8
+      },
+      "costs": {
+        "all_local_pipe_bytes": 1683001,
+        "cache_credit": "repeated challenge cycles recompute the same output; no extra useful-output credit",
+        "canonical_matrices_bytes": 163840,
+        "distinct_application_batches": 1,
+        "mining_and_proof_and_full_verification_included": true,
+        "native_child_cpu_ns": 60270000,
+        "native_process_wall_ns": 66316464,
+        "native_wall_to_one_ordinary_cold_batch_ratio": 49.85623018086628,
+        "native_wall_to_one_ordinary_warm_batch_ratio": 611.1215304655535,
+        "proof_bytes": 245940,
+        "same_inputs_cycles": 1,
+        "transmission_scope": "actual local stdin/stdout/stderr; proof and product bytes also itemized; no WAN latency/bandwidth assumption",
+        "typed_product_bytes": 81920
+      },
+      "manifest_sha256": "484833296125d39f5c17170e140b035aa334c5435f7c2f626d0f6a4869efe461",
+      "name": "cell-frozen-t1-transposed",
+      "native_cpu_ns": {
+        "input_read_parse": 758101,
+        "native_verifier_subtotal": 2966121,
+        "producer_subtotal": 34049594,
+        "record_build_subtotal": 7307107,
+        "reference_verifier_subtotal": 4076796,
+        "run_through_before_summary": 53071222,
+        "search": 32598511,
+        "serialization_output_subtotal": 3539987,
+        "setup": 1451083,
+        "typed_copy_subtotal": 6528
+      },
+      "output_label_correct": 25,
+      "output_sha256": "f7f2ef71c1505eb9b75a6f7d370a8f3b146448a4c3807d8f44ca3c05cdf80234",
+      "phases_ns": {
+        "all_baseline_diagnostics": 24722038,
+        "direct_product_consumption": 1550492,
+        "independent_scalar_and_numpy_validation": 19500833,
+        "input_validation_and_optional_source_replay": 1666110058,
+        "material_preparation": 16465521,
+        "native_runs_and_evidence_checks": 145353520,
+        "total_experiment_before_final_report_write": 1908967534
+      },
+      "product_sha256_by_tile": [
+        "a004db8da7859f4e681d909e1f738f66b511a2088f62d43d6fcdd8c9b37d6c08",
+        "a2f2e37bd4c5f36281557526179d1efddb4635dff02f90c72cc267793792a715",
+        "6bff3e386fcc0cbf24d80e9026dc0f7de6579ff543fe58e6eadf7cbce92ad4eb",
+        "d9015e699fe60ffc538a8e3b1f1a5bb8b43b60c794ce779bbf549050ab34b87d",
+        "7ee161ec12846cdf9f3c757f9225bb917e9439fa3f791ba45df6764e2efa2295"
+      ],
+      "proof_sha256_by_tile": [
+        "290cb09e009e47b263a202a2b41b5778fad1db20d703e4b8cb360c65a6e24c4e",
+        "68c40f9df58e5213e3847e3cb5e0041a2131b007a557d3fb108859f75a67d85a",
+        "a4ac63e0b0b952000d88affa39ef753dc85fe6b35d6135f93c90b9b87f34827a",
+        "04a2f747cb2dc6e949fc1a429c301e754b7d07ff083218f4d8a00a0acfe8f01e",
+        "074c99318ce67fa1b6acdd871c5a414cd335be880e487de9846501d0c2abcbd4"
+      ],
+      "raw_report_sha256": "5003c5c64166dc68831278ae74f60d4f95d531e78054372aed686d78bdcdeb52",
+      "routes_count": [
+        16,
+        17,
+        31
+      ],
+      "samples": 64,
+      "status": "complete",
+      "target_index": 1,
+      "total_attempts": 58
+    }
+  ],
+  "common_cell_execution_parameters": {
+    "attack_controls": false,
+    "baseline_repetitions": 100,
+    "cycles": 1,
+    "max_attempts": 4096,
+    "seed": "8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c",
+    "tile_seed_derivation": "H(shared-cell-seed-v1,seed,task)",
+    "timeout_scope": "per native child exchange, not an application batch deadline",
+    "timeout_seconds_per_tile": 60.0
+  },
+  "composed_candidate_commit": "ec2a6b96b27876a8a89bee3c10a0abafba1acf9d",
+  "composed_candidate_scope": "shared experiment code unchanged from 59321c3; concurrent Cell code retained, no claim that its native tests ran in this campaign",
+  "composed_repository_source_check": {
+    "activation": false,
+    "head": "ec2a6b96b27876a8a89bee3c10a0abafba1acf9d",
+    "local_links": 2953,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1145,
+    "source_state": "committed-clean",
+    "tree": "784674db86a6baa223e49cf24ff923b9f3d529b8",
+    "workspace_packages": 26
+  },
+  "concurrent_cell_candidate_preserved": "55257c61c46a2687669a0ed6b317b7263db0bd5a",
+  "cost_overlap_notes": [
+    "producer_subtotal equals setup plus search; do not sum them again",
+    "native internal run time overlaps its detailed subtotals and excludes final summary/exit",
+    "native child wall includes process and local diagnostic output but not the entire consumer workflow",
+    "complete experiment wall includes source replay, repeated baseline diagnostics and independent correctness checks; it is not production single-inference latency",
+    "local pipe bytes contain diagnostic hex and repeated candidate/winner records; canonical proof/product byte counts are not additional traffic",
+    "security ratio excludes reference/cache/serialization/supervisor/network cost; those remain separate",
+    "repeated cycles and arithmetic arms consume the same batch and earn no additional useful-output credit"
+  ],
+  "development_failures_retained": [
+    "pre-patch receipt-report image binding accepted absent/invalid image IDs; fixed tests retained",
+    "security manifest float decoder rejected a valid 60.0 timeout; fixed before source freeze",
+    "receipt observer regression hit the unchanged 1 GiB disk guard on both original and patched code; later 26 tests passed at the original guard",
+    "earlier offline v2 dependency resolution failed; normal locked resolution subsequently passed",
+    "pre-freeze t0/full-limb smoke succeeded and is retained separately from the four frozen primary observations"
+  ],
+  "frozen_source_checks": {
+    "checks": [
+      {
+        "command": [
+          "cargo",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml"
+        ],
+        "log": "frozen-source-locked-graph.log",
+        "log_sha256": "319e0f68b0baab1c87f85d345fe61174fb10c37b90eeab06d80bb0bcd9f96dd9",
+        "name": "locked-graph",
+        "returncode": 0,
+        "wall_ns": 351379120
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--example",
+          "pon_shared_material_v1"
+        ],
+        "log": "frozen-source-native-example-tests.log",
+        "log_sha256": "04b51ee112d76c835e2c99c842e9b54de9c7c6cacc0e096615c84bc847029063",
+        "name": "native-example-tests",
+        "returncode": 0,
+        "wall_ns": 250981984
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--lib"
+        ],
+        "log": "frozen-source-crypto-retained-tests.log",
+        "log_sha256": "0ea96c8ec5a29fd0206e23fda75666a7f9af9baf8c9f16511b300975f01b0b20",
+        "name": "crypto-retained-tests",
+        "returncode": 0,
+        "wall_ns": 1007796469
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--example",
+          "pon_shared_material_v1",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "log": "frozen-source-native-strict-clippy.log",
+        "log_sha256": "92e06e4842c2fa9a2139c34892b15d58451290c4ed4fe3a60c23f8f551bc9ec1",
+        "name": "native-strict-clippy",
+        "returncode": 0,
+        "wall_ns": 403598344
+      },
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--check"
+        ],
+        "log": "frozen-source-workspace-rustfmt.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "workspace-rustfmt",
+        "returncode": 0,
+        "wall_ns": 16141286179
+      },
+      {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_shared_cell_operator_v1.py",
+          "-v"
+        ],
+        "log": "frozen-source-cell-operator-tests.log",
+        "log_sha256": "baa422d33d83da95becf27cfce2396f384bc9f2fdb465a7689808141fb09074d",
+        "name": "cell-operator-tests",
+        "returncode": 0,
+        "wall_ns": 1743943836
+      },
+      {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_w1_staged_observer.py",
+          "-v"
+        ],
+        "log": "frozen-source-receipt-observer-tests.log",
+        "log_sha256": "8cc2ad155fbdbb3c8f3b2054dcef4049f770536f00df8c3936369226fde79e24",
+        "name": "receipt-observer-tests",
+        "returncode": 0,
+        "wall_ns": 3563913424
+      },
+      {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_pq_research_integration.py",
+          "-v"
+        ],
+        "log": "frozen-source-pq-source-negative-tests.log",
+        "log_sha256": "ff77cb9e01955c4bc0e7c7e7ed00aa628eea657e56b52afcc7b4621ae163d170",
+        "name": "pq-source-negative-tests",
+        "returncode": 0,
+        "wall_ns": 31666199873
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "log": "frozen-source-pq-source-check.log",
+        "log_sha256": "b0e1e130d1ed02cdf87d85f91fc203502be49e21e7cf52643832a92b3c999dd3",
+        "name": "pq-source-check",
+        "returncode": 0,
+        "wall_ns": 198309531
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "log": "frozen-source-distributed-inventory.log",
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "name": "distributed-inventory",
+        "returncode": 0,
+        "wall_ns": 79308975
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "log": "frozen-source-diff-whitespace.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "diff-whitespace",
+        "returncode": 0,
+        "wall_ns": 18806878
+      }
+    ],
+    "source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f"
+  },
+  "geometry": {
+    "all_five_operator_multiply_adds": 246720,
+    "inner_coordinates_zero_padded": 63,
+    "ordinary_cached_selected_expert_multiply_adds": 98688,
+    "ordinary_required_density_fraction": [
+      98688,
+      1310720
+    ],
+    "output_rows_zero_padded": 49,
+    "packed_operator_density_fraction": [
+      246720,
+      1310720
+    ],
+    "request_columns_zero_padded": 0,
+    "structural_padding_multiply_adds": 1064000,
+    "unmerged_base_delta_extra_multiply_adds": 49344,
+    "unselected_expert_multiply_adds": 98688,
+    "w1_product_multiply_adds_per_batch": 1310720
+  },
+  "historical_v2_preflight": {
+    "compilation_started": false,
+    "current_source": {
+      "data": {
+        "current_git_status_clean_observed": true,
+        "current_raw_source_verification_run": false,
+        "head": {
+          "argv": [
+            "git",
+            "rev-parse",
+            "HEAD"
+          ],
+          "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+          "finished": {
+            "unix_ns": 1793855262175545951,
+            "utc": "2026-11-05T05:07:42.175546+00:00"
+          },
+          "returncode": 0,
+          "started": {
+            "unix_ns": 1793855262173539341,
+            "utc": "2026-11-05T05:07:42.173539+00:00"
+          },
+          "stderr": "",
+          "stdout": "90fa328265b73adc87b4ece23e2c797cd8982982\n",
+          "succeeded": true
+        },
+        "historical_checks_are_current_clean_source_attestation": false,
+        "historical_frozen_source_checks_sha256": "3c22b441101f4a5094e5a71df74202acf4d2f06a3898fdb529999924efc964bc",
+        "historical_frozen_source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f",
+        "merge_head": {
+          "argv": [
+            "git",
+            "rev-parse",
+            "-q",
+            "--verify",
+            "MERGE_HEAD"
+          ],
+          "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+          "finished": {
+            "unix_ns": 1793855262202409179,
+            "utc": "2026-11-05T05:07:42.202409+00:00"
+          },
+          "returncode": 1,
+          "started": {
+            "unix_ns": 1793855262200580878,
+            "utc": "2026-11-05T05:07:42.200581+00:00"
+          },
+          "stderr": "",
+          "stdout": "",
+          "succeeded": false
+        },
+        "merge_pending_observed": false,
+        "snapshot_is_atomic": false,
+        "status": {
+          "argv": [
+            "git",
+            "status",
+            "--porcelain",
+            "--untracked-files=normal"
+          ],
+          "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+          "finished": {
+            "unix_ns": 1793855262200546436,
+            "utc": "2026-11-05T05:07:42.200547+00:00"
+          },
+          "returncode": 0,
+          "started": {
+            "unix_ns": 1793855262175554083,
+            "utc": "2026-11-05T05:07:42.175554+00:00"
+          },
+          "stderr": "",
+          "stdout": "",
+          "succeeded": true
+        }
+      },
+      "finished": {
+        "unix_ns": 1793855262202679097,
+        "utc": "2026-11-05T05:07:42.202679+00:00"
+      },
+      "observation_succeeded": true,
+      "sources": [
+        "/workspace/scratch/8de1bcb09af8/chain",
+        "/workspace/scratch/8de1bcb09af8/frozen-source-checks.json"
+      ],
+      "started": {
+        "unix_ns": 1793855262173536056,
+        "utc": "2026-11-05T05:07:42.173536+00:00"
+      }
+    },
+    "dependency_download_performed": false,
+    "finished": {
+      "unix_ns": 1793855262914498039,
+      "utc": "2026-11-05T05:07:42.914498+00:00"
+    },
+    "fixtures": [
+      {
+        "data": {
+          "bytes": 49506,
+          "cryptographic_receipt_verification_performed": false,
+          "declared_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+          "exists": true,
+          "expected_bytes": 49506,
+          "matches_retained_input_declaration": true,
+          "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+        },
+        "finished": {
+          "unix_ns": 1793855262905683738,
+          "utc": "2026-11-05T05:07:42.905684+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+          "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/input-declaration.json"
+        ],
+        "started": {
+          "unix_ns": 1793855262905357726,
+          "utc": "2026-11-05T05:07:42.905358+00:00"
+        }
+      },
+      {
+        "data": {
+          "bytes": 64,
+          "cryptographic_receipt_verification_performed": false,
+          "declared_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+          "exists": true,
+          "expected_bytes": 64,
+          "matches_retained_input_declaration": true,
+          "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+        },
+        "finished": {
+          "unix_ns": 1793855262905732983,
+          "utc": "2026-11-05T05:07:42.905733+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+          "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/input-declaration.json"
+        ],
+        "started": {
+          "unix_ns": 1793855262905702036,
+          "utc": "2026-11-05T05:07:42.905702+00:00"
+        }
+      }
+    ],
+    "full_v2_proof_observed": false,
+    "inspector": {
+      "path": "/workspace/scratch/8de1bcb09af8/proof-audit/inspect_v2_current_preflight.py",
+      "sha256": "42c765d983ba492abcba792fac688c5c08153d8215857693178b5ffa3a24af56"
+    },
+    "installation_space_preconditions": {
+      "cargo_build_working_set_bytes": null,
+      "expanded_guest_toolchain_bytes": null,
+      "floor_plus_both_retained_archives_bytes": 1637386523,
+      "original_disk_floor_must_remain_satisfied": true,
+      "pinned_backend_archive_bytes": 72795381,
+      "pinned_guest_archive_bytes": 490849318,
+      "scope": "Archive lower bound excludes extraction, build caches, binaries, logs and checkpoints. Do not download or build while the original free-space floor is unsatisfied.",
+      "sufficient_installation_space_established": false
+    },
+    "locked_metadata": {
+      "data": {
+        "locked_metadata_succeeded": true,
+        "metadata_rerun_by_this_inspector": false,
+        "original_command_start_time_available_in_record": false,
+        "raw_log_exists": true,
+        "raw_log_sha256": "9e9902addbfe0fea389b661b1a7ee6366340e6c1e9a16a29b67299b52dc7e0c0",
+        "record": {
+          "command": [
+            "cargo",
+            "metadata",
+            "--locked",
+            "--format-version",
+            "1",
+            "--manifest-path",
+            "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml"
+          ],
+          "lockfile_relaxed": false,
+          "proof_started": false,
+          "returncode": 0,
+          "wall_ns": 14181737157
+        },
+        "record_sha256": "f6c25ed27e6e08ce56f1d8352b5a1d94313fdea3c7b3830de8e42317a5257e13",
+        "timestamp_scope": "Current read of retained real command evidence; not its original execution time."
+      },
+      "finished": {
+        "unix_ns": 1793855262173507372,
+        "utc": "2026-11-05T05:07:42.173507+00:00"
+      },
+      "observation_succeeded": true,
+      "sources": [
+        "/workspace/scratch/8de1bcb09af8/frozen-v2-locked-dependency-resolution.json",
+        "/workspace/scratch/8de1bcb09af8/frozen-v2-locked-dependency-resolution.log"
+      ],
+      "started": {
+        "unix_ns": 1793855262170968278,
+        "utc": "2026-11-05T05:07:42.170968+00:00"
+      }
+    },
+    "memory": {
+      "coordinator_has_separate_ram_admission_guard": false,
+      "cpu.max": {
+        "data": {
+          "exists": true,
+          "value": "800000 100000"
+        },
+        "finished": {
+          "unix_ns": 1793855262914397568,
+          "utc": "2026-11-05T05:07:42.914398+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/sys/fs/cgroup/cpu.max"
+        ],
+        "started": {
+          "unix_ns": 1793855262914382836,
+          "utc": "2026-11-05T05:07:42.914383+00:00"
+        }
+      },
+      "memory.current": {
+        "data": {
+          "exists": true,
+          "value": "8582311936"
+        },
+        "finished": {
+          "unix_ns": 1793855262914253821,
+          "utc": "2026-11-05T05:07:42.914254+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/sys/fs/cgroup/memory.current"
+        ],
+        "started": {
+          "unix_ns": 1793855262914201321,
+          "utc": "2026-11-05T05:07:42.914201+00:00"
+        }
+      },
+      "memory.events": {
+        "data": {
+          "exists": true,
+          "value": "low 0\nhigh 0\nmax 7867034\noom 5\noom_kill 5\noom_group_kill 0"
+        },
+        "finished": {
+          "unix_ns": 1793855262914375134,
+          "utc": "2026-11-05T05:07:42.914375+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/sys/fs/cgroup/memory.events"
+        ],
+        "started": {
+          "unix_ns": 1793855262914359771,
+          "utc": "2026-11-05T05:07:42.914360+00:00"
+        }
+      },
+      "memory.max": {
+        "data": {
+          "exists": true,
+          "value": "8589934592"
+        },
+        "finished": {
+          "unix_ns": 1793855262914314622,
+          "utc": "2026-11-05T05:07:42.914315+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/sys/fs/cgroup/memory.max"
+        ],
+        "started": {
+          "unix_ns": 1793855262914266720,
+          "utc": "2026-11-05T05:07:42.914267+00:00"
+        }
+      },
+      "memory.peak": {
+        "data": {
+          "exists": true,
+          "value": "8595808256"
+        },
+        "finished": {
+          "unix_ns": 1793855262914351368,
+          "utc": "2026-11-05T05:07:42.914351+00:00"
+        },
+        "observation_succeeded": true,
+        "sources": [
+          "/sys/fs/cgroup/memory.peak"
+        ],
+        "started": {
+          "unix_ns": 1793855262914330186,
+          "utc": "2026-11-05T05:07:42.914330+00:00"
+        }
+      },
+      "oom_events_attributed_to_this_task": false,
+      "scope": "Shared cgroup, not this task allocation or an aggregate proof-only resource measurement."
+    },
+    "new_proof_generated": false,
+    "official_pins": {
+      "data": {
+        "archive_pins": [
+          {
+            "data": {
+              "download_performed_now": false,
+              "record_sha256": "db0b388aa4db2d7f7e1330e4824e7803e60fbcb7b31e9537f7742c9ad959bf38",
+              "remote_availability_checked_now": false,
+              "retained_record": {
+                "bytes": 490849318,
+                "expected_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+                "sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+                "url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+                "wall_seconds": 20.850651948999996
+              }
+            },
+            "finished": {
+              "unix_ns": 1793855262904712502,
+              "utc": "2026-11-05T05:07:42.904712+00:00"
+            },
+            "observation_succeeded": true,
+            "sources": [
+              "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/risc0-rust-1.88.0.tar.gz.json"
+            ],
+            "started": {
+              "unix_ns": 1793855262904587493,
+              "utc": "2026-11-05T05:07:42.904588+00:00"
+            }
+          },
+          {
+            "data": {
+              "download_performed_now": false,
+              "record_sha256": "7bc677770f6cfc28418ae6f47bc04a852fe8fe6ff76e75e81b1ff6d2c4220461",
+              "remote_availability_checked_now": false,
+              "retained_record": {
+                "bytes": 72795381,
+                "expected_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+                "sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+                "url": "https://github.com/risc0/risc0/releases/download/v3.0.3/cargo-risczero-x86_64-unknown-linux-gnu.tgz",
+                "wall_seconds": 11.558085705999986
+              }
+            },
+            "finished": {
+              "unix_ns": 1793855262904765391,
+              "utc": "2026-11-05T05:07:42.904765+00:00"
+            },
+            "observation_succeeded": true,
+            "sources": [
+              "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/cargo-risczero-v3.0.3.tgz.json"
+            ],
+            "started": {
+              "unix_ns": 1793855262904726102,
+              "utc": "2026-11-05T05:07:42.904726+00:00"
+            }
+          }
+        ],
+        "guest_rust_version": "1.88.0",
+        "historical_binaries_recovered_now": false,
+        "host_guest_sdk_version": "3.0.3",
+        "host_rust_version": "1.95.0",
+        "independent_verifier_sdk_version": "3.0.6",
+        "r0vm_historical_bytes": 108764424,
+        "r0vm_pin_found_in_actual_runner_source": true,
+        "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6"
+      },
+      "finished": {
+        "unix_ns": 1793855262905084563,
+        "utc": "2026-11-05T05:07:42.905085+00:00"
+      },
+      "observation_succeeded": true,
+      "sources": [
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105",
+        "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs"
+      ],
+      "started": {
+        "unix_ns": 1793855262904572861,
+        "utc": "2026-11-05T05:07:42.904573+00:00"
+      }
+    },
+    "original_execution_budget": {
+      "budget_changed": false,
+      "checkpoint_disk_cap_bytes": 268435456,
+      "free_disk_floor_bytes": 1073741824,
+      "per_new_segment_wall_seconds": 300,
+      "prepare_wall_seconds": 180,
+      "rayon_num_threads": 8,
+      "receipt_controls_expected_negative": 57,
+      "receipt_controls_expected_positive": 1,
+      "receipt_controls_expected_total": 58,
+      "receipt_controls_separate_total_wall_seconds": 120,
+      "receipt_controls_source_path": "/workspace/scratch/8de1bcb09af8/chain/scripts/w1_v2_receipt_controls.py",
+      "source_path": "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "total_wall_seconds": 7200
+    },
+    "original_guard_lowered": false,
+    "proof_started": false,
+    "repo": "/workspace/scratch/8de1bcb09af8/chain",
+    "reproduction": {
+      "build_commands": [
+        [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "build",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+          "-p",
+          "trnm-w1-zk-host-v2",
+          "--bin",
+          "w1-staged-prover-v2"
+        ],
+        [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "build",
+          "--locked",
+          "--release",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+          "--bin",
+          "w1-verify-v2"
+        ]
+      ],
+      "build_environment_after_pinned_installation": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/8de1bcb09af8/v2-runtime/target",
+        "RISC0_BUILD_LOCKED": "1",
+        "RISC0_HOME": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0"
+      },
+      "commands_executed_by_inspector": false,
+      "inspector_command": [
+        "python3",
+        "/workspace/scratch/8de1bcb09af8/proof-audit/inspect_v2_current_preflight.py"
+      ],
+      "inspector_output_create_new_only": true,
+      "planned_runtime_paths_currently_installed": false,
+      "preflight_and_clean_frozen_source_required_before_build_and_proof": true,
+      "proof_command_after_all_prerequisites": [
+        "python3",
+        "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+        "--runner",
+        "/workspace/scratch/8de1bcb09af8/v2-runtime/target/release/w1-staged-prover-v2",
+        "--r0vm",
+        "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/bin/r0vm",
+        "--fresh-verifier",
+        "/workspace/scratch/8de1bcb09af8/v2-runtime/target/release/w1-verify-v2",
+        "--statement-version",
+        "2",
+        "--prepare-input",
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-complete-succinct-20261028/full-proof/input.bin",
+        "--expected-artifacts",
+        "/workspace/scratch/8de1bcb09af8/chain/evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+        "--checkpoint",
+        "/workspace/scratch/8de1bcb09af8/v2-full-checkpoint",
+        "--out",
+        "/workspace/scratch/8de1bcb09af8/v2-full-observation",
+        "--total-wall-seconds",
+        "7200",
+        "--local-bytes-per-second",
+        "1000000"
+      ],
+      "proof_environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "RAYON_NUM_THREADS": "8"
+      }
+    },
+    "resource_guard": {
+      "data": {
+        "actual_condition": "free >= 1024**3 and size[\"allocated_bytes\"] <= 256 * 1024**2",
+        "checkpoint_cap_satisfied": true,
+        "checkpoint_disk_cap_bytes": 268435456,
+        "checkpoint_exists": false,
+        "checkpoint_footprint": {
+          "allocated_bytes": 0,
+          "files": 0,
+          "logical_bytes": 0
+        },
+        "checkpoint_path": "/workspace/scratch/8de1bcb09af8/v2-full-checkpoint",
+        "condition_evaluation_uses_actual_coordinator_ast": true,
+        "condition_function": "main.<locals>.stage",
+        "condition_line": 254,
+        "coordinator_sha256": "d2605dcdca2fe01b199dda2c97b1763f3deefc07050979d0901fb3ddb11a72c9",
+        "disk_floor_satisfied": false,
+        "disk_free_bytes": 0,
+        "disk_sample_path": "/workspace/scratch/8de1bcb09af8",
+        "disk_sample_time": {
+          "unix_ns": 1793855262913460443,
+          "utc": "2026-11-05T05:07:42.913460+00:00"
+        },
+        "footprint_uses_actual_coordinator_function": true,
+        "free_disk_floor_bytes": 1073741824,
+        "interpretation": "Read-only evaluation of actual stage admission condition; not an invoked proof stage or a failed cryptographic proof.",
+        "original_disk_guard_satisfied": false,
+        "stage_invoked": false,
+        "stage_receipt_created": false
+      },
+      "finished": {
+        "unix_ns": 1793855262914177245,
+        "utc": "2026-11-05T05:07:42.914177+00:00"
+      },
+      "observation_succeeded": true,
+      "sources": [
+        "/workspace/scratch/8de1bcb09af8/chain/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+        "/workspace/scratch/8de1bcb09af8",
+        "/workspace/scratch/8de1bcb09af8/v2-full-checkpoint"
+      ],
+      "started": {
+        "unix_ns": 1793855262905751010,
+        "utc": "2026-11-05T05:07:42.905751+00:00"
+      }
+    },
+    "saved_receipt_controls_run": false,
+    "schema": "TRNM-W1-V2-CURRENT-READONLY-PREFLIGHT1",
+    "stage_receipt_created": false,
+    "started": {
+      "unix_ns": 1793855262170773043,
+      "utc": "2026-11-05T05:07:42.170773+00:00"
+    },
+    "tool_inventory": {
+      "data": {
+        "configured_risc0_home": "/root/.risc0",
+        "configured_risc0_home_exists": false,
+        "configured_risc0_toolchain_directory_exists": false,
+        "executable_matches": {
+          "rustc": [
+            "/root/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/rustc",
+            "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+          ]
+        },
+        "filename_scan": {
+          "argv": [
+            "rg",
+            "--files",
+            "--hidden",
+            "--no-ignore",
+            "-g",
+            "r0vm",
+            "-g",
+            "w1-staged-prover-v2",
+            "-g",
+            "w1-verify-v2",
+            "-g",
+            "cargo-risczero",
+            "-g",
+            "rzup",
+            "-g",
+            "rustc",
+            "/root",
+            "/workspace/scratch",
+            "/opt",
+            "/tmp"
+          ],
+          "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+          "finished": {
+            "unix_ns": 1793855262867031386,
+            "utc": "2026-11-05T05:07:42.867031+00:00"
+          },
+          "returncode": 0,
+          "started": {
+            "unix_ns": 1793855262202698606,
+            "utc": "2026-11-05T05:07:42.202698+00:00"
+          },
+          "stderr": "",
+          "stdout": "/root/.cargo/registry/index/index.crates.io-1949cf8c6b5b557f/.cache/rz/up/rzup\n/root/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/rustc\n/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc\n",
+          "succeeded": true
+        },
+        "guest_candidate_executed_or_authenticated": false,
+        "host_cargo_absolute_exists": true,
+        "host_toolchains": {
+          "argv": [
+            "/root/.cargo/bin/rustup",
+            "toolchain",
+            "list"
+          ],
+          "cwd": "/workspace/scratch/8de1bcb09af8/chain",
+          "finished": {
+            "unix_ns": 1793855262903972324,
+            "utc": "2026-11-05T05:07:42.903972+00:00"
+          },
+          "returncode": 0,
+          "started": {
+            "unix_ns": 1793855262867222024,
+            "utc": "2026-11-05T05:07:42.867222+00:00"
+          },
+          "stderr": "",
+          "stdout": "1.95.0-x86_64-unknown-linux-gnu (active, default)\n1.96.0-x86_64-unknown-linux-gnu\n",
+          "succeeded": true
+        },
+        "path_lookup": {
+          "cargo": null,
+          "cargo-risczero": null,
+          "r0vm": null,
+          "rustc": null,
+          "rustup": null,
+          "rzup": null
+        },
+        "r0vm_executable_found": false,
+        "risc0_guest_rustc_candidate_found": false,
+        "risc0_guest_rustc_candidates": [],
+        "scan_complete_without_reported_errors": true,
+        "scope": "Executable filename inventory of listed roots and configured toolchain directory; no download or installation.",
+        "v2_fresh_verifier_executable_found": false,
+        "v2_staged_runner_executable_found": false
+      },
+      "finished": {
+        "unix_ns": 1793855262904544608,
+        "utc": "2026-11-05T05:07:42.904545+00:00"
+      },
+      "observation_succeeded": true,
+      "sources": [
+        "/root/.cargo/bin",
+        "/root/.rustup/toolchains",
+        "/root/.risc0",
+        "/workspace/scratch",
+        "/opt",
+        "/tmp"
+      ],
+      "started": {
+        "unix_ns": 1793855262202691005,
+        "utc": "2026-11-05T05:07:42.202691+00:00"
+      }
+    }
+  },
+  "host": {
+    "cgroup_observations": {
+      "/proc/self/cgroup": "0::/",
+      "/sys/fs/cgroup/cpu.max": "800000 100000",
+      "/sys/fs/cgroup/cpu.stat": "usage_usec 24049748058\nuser_usec 18470338048\nsystem_usec 5579410009\nnice_usec 0\nnr_periods 52554\nnr_throttled 9622\nthrottled_usec 698275627\nnr_bursts 0\nburst_usec 0",
+      "/sys/fs/cgroup/cpuset.cpus.effective": "0-8",
+      "/sys/fs/cgroup/memory.current": "8588922880",
+      "/sys/fs/cgroup/memory.max": "8589934592"
+    },
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "cpu_count": 9,
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "isolation": "uncontrolled-shared-host; observations are not a performance qualification",
+    "numpy_version": "2.3.5",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "python": "3.12.14",
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "host_snapshot_scope": "representative last-run snapshot; each raw manifest retains its own observed counters",
+  "integrated_repository_source_check": {
+    "activation": false,
+    "head": "90fa328265b73adc87b4ece23e2c797cd8982982",
+    "local_links": 2947,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1138,
+    "source_state": "committed-clean",
+    "tree": "82e01abcfd5125f708f96b775cf222076a6fd6c9",
+    "workspace_packages": 26
+  },
+  "intermediate_doc_only_integration_commit": "90fa328265b73adc87b4ece23e2c797cd8982982",
+  "measurement_scope": "finite offline fixed batch; uncontrolled shared host; no production performance qualification",
+  "model_loop": {
+    "end_to_end_seconds": 7.244869708999431,
+    "evaluations": [
+      {
+        "composed_correct": 165,
+        "evaluation_partition": "evaluation_a",
+        "samples": 347,
+        "strong_reference": "best_single",
+        "strong_reference_correct": 164,
+        "whole_gain": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 29,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 2,
+          "mean_gain_denominator": 39229344,
+          "mean_gain_numerator": 2689,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "score": 0,
+          "wins": 2
+        }
+      },
+      {
+        "composed_correct": 147,
+        "evaluation_partition": "evaluation_b",
+        "samples": 281,
+        "strong_reference": "best_single",
+        "strong_reference_correct": 151,
+        "whole_gain": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 28,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 3,
+          "mean_gain_denominator": 960792,
+          "mean_gain_numerator": -14477,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "score": 0,
+          "wins": 1
+        }
+      },
+      {
+        "composed_correct": 155,
+        "evaluation_partition": "consumer",
+        "samples": 251,
+        "strong_reference": "best_single",
+        "strong_reference_correct": 154,
+        "whole_gain": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 29,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 1,
+          "mean_gain_denominator": 12615,
+          "mean_gain_numerator": 14,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "score": 0,
+          "wins": 1
+        }
+      }
+    ],
+    "file_counts": {
+      "calibration": 28,
+      "consumer": 29,
+      "evaluation_a": 29,
+      "evaluation_b": 28,
+      "train": 163
+    },
+    "settlement": {
+      "asset": "test-unit-no-market-value",
+      "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+      "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+      "future_window_accepted": false,
+      "independent_evaluators": false,
+      "model_reward": 0,
+      "observed_evaluation_recomputed": true,
+      "ordinary_hepta_entry": false,
+      "outcome": "not_adopted",
+      "production_activation": false,
+      "reason": "preregistered statistical gate not met",
+      "schema": "pon-observed-artifact-settlement-v1",
+      "source_model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671"
+    },
+    "task_counts": {
+      "calibration": 228,
+      "consumer": 251,
+      "evaluation_a": 347,
+      "evaluation_b": 281,
+      "train": 1119
+    },
+    "training_is_real_parameter_optimization": true,
+    "training_report_sha256": "133835f4e47f4fdbea05dfe81cc984fa9d95011db0fc7be67a4fbe10121985d4"
+  },
+  "model_provenance": {
+    "batch_offset": 0,
+    "batch_size": 64,
+    "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+    "evaluation_bundle_sha256": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+    "independent_administration": false,
+    "model_artifact": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+    "model_sha256": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd",
+    "ordinary_hepta_product_entry": false,
+    "partition": "consumer",
+    "production_activation": false,
+    "prospective_evaluation": false,
+    "public_reward_eligible": false,
+    "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+    "selected_tasks": {
+      "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+      "groups": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+        "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+      ],
+      "rows": 64,
+      "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+      "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+    },
+    "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+    "source_replayed": true,
+    "tasks_file_sha256": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10",
+    "whole_partition": {
+      "content_root": "e9aceda8a0b6c30b309748c84e94d0fabb205929f02d34ac6228916393d9e3d5",
+      "groups": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+        "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+        "trillionnium/crates/trnm-task-kernel/src/archive.rs",
+        "trillionnium/crates/trnm-task-kernel/src/error.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+        "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+        "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+        "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+        "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+        "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs"
+      ],
+      "rows": 251,
+      "task_id_root": "c38b32f84fc09a9880fedf8dfb0ef0742f2876fc8b7529eeafd8dd9329ea448e",
+      "tasks_digest": "60dc37bacae2cce4b039e64fb380d735b904616cf46453501b7b3825673a2df2"
+    }
+  },
+  "native_binary_bytes": 817128,
+  "native_binary_sha256": "ad4ddcb32a0128ce5b26b5c66628d851c593e916d88bfab3163a8169f7059ee1",
+  "observation_date_utc": "2026-11-05",
+  "ordinary_control": "numpy-int64-cached-base-plus-delta-selected-expert",
+  "qualifications": {
+    "cheapest_attack": false,
+    "cheapest_legal_work": false,
+    "complete_integer_operator_consumption_observed": true,
+    "durable_service_recovery": false,
+    "full_v2_proof": false,
+    "independent_future_model_benefit": false,
+    "ordinary_hepta_entry": false,
+    "original_public_service_budget": false,
+    "production_activation": false,
+    "production_payment": false
+  },
+  "repository_source_check": {
+    "activation": false,
+    "head": "59321c326313b78640b2df11122e00b3c7cfd71f",
+    "local_links": 2929,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1138,
+    "source_state": "committed-clean",
+    "tree": "8164d7eda29de5ca93a08b1fb6a8691a7f9c242c",
+    "workspace_packages": 26
+  },
+  "schema": "pon-shared-material-observation-v1",
+  "security_runs": [
+    {
+      "all_attack_outcomes": "Transcript",
+      "all_planned_tiles_completed": true,
+      "cache_attack_verify_calls": 100,
+      "cheapest_work_qualified": false,
+      "child_cpu_ns": 229462000,
+      "cycles_per_tile": 4,
+      "legal_attempts": 42,
+      "legal_prepare_calls": 5,
+      "name": "security-frozen-t0",
+      "physical_recovery_qualified": false,
+      "planned_tiles": 5,
+      "public_service_qualified": false,
+      "raw_attack_verify_calls": 40,
+      "raw_native_to_attacker_cpu_ratio": 15.14962290841101,
+      "raw_report_sha256": "129b37277dc57accd4718a20af6aac699b6d7ab850e336d008b16415d62d6e39",
+      "scalar_attack_verify_calls": 40,
+      "status": "complete",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "totals": {
+        "attacker_cpu_ns": 1160063,
+        "attempts": 78,
+        "cache_cpu_ns": {
+          "after-churn": 11057227,
+          "after-owner-recreation": 10069845,
+          "churn-other": 9811542,
+          "cold": 12790427,
+          "warm": 607925
+        },
+        "cache_reset_cpu_ns": 34499,
+        "cache_setup_cpu_ns": 21171,
+        "candidates": 40,
+        "raw_native_rejection_cpu_ns": 17574517,
+        "scalar_rejection_cpu_ns": 26765173,
+        "searches": 40,
+        "setups": 20
+      },
+      "whole_tiles_wall_ns": 364553026
+    },
+    {
+      "all_attack_outcomes": "Transcript",
+      "all_planned_tiles_completed": true,
+      "cache_attack_verify_calls": 100,
+      "cheapest_work_qualified": false,
+      "child_cpu_ns": 498179000,
+      "cycles_per_tile": 4,
+      "legal_attempts": 624,
+      "legal_prepare_calls": 5,
+      "name": "security-frozen-t1",
+      "physical_recovery_qualified": false,
+      "planned_tiles": 5,
+      "public_service_qualified": false,
+      "raw_attack_verify_calls": 40,
+      "raw_native_to_attacker_cpu_ratio": 9.07022231488134,
+      "raw_report_sha256": "fa9a355969fe5ae12c45543a6ceabed8ed7ed36d7a1b93b3d03ea4543b443f1e",
+      "scalar_attack_verify_calls": 40,
+      "status": "complete",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "totals": {
+        "attacker_cpu_ns": 2139263,
+        "attempts": 1192,
+        "cache_cpu_ns": {
+          "after-churn": 9693565,
+          "after-owner-recreation": 9697198,
+          "churn-other": 10072829,
+          "cold": 11975132,
+          "warm": 626492
+        },
+        "cache_reset_cpu_ns": 23515,
+        "cache_setup_cpu_ns": 21754,
+        "candidates": 40,
+        "raw_native_rejection_cpu_ns": 19403591,
+        "scalar_rejection_cpu_ns": 25722874,
+        "searches": 40,
+        "setups": 20
+      },
+      "whole_tiles_wall_ns": 1006991355
+    }
+  ],
+  "source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f",
+  "source_corpus_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "source_tree": "8164d7eda29de5ca93a08b1fb6a8691a7f9c242c",
+  "target_values": [
+    {
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "target_index": 0
+    },
+    {
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "target_index": 1
+    }
+  ],
+  "tiles": [
+    {
+      "a_sha256": "36cb735c1ccd75efd0cede11f0c7f6a13b66dea839ae9870b680f1b62c838df8",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "1ffcf581b49a192f46f28eb76d9e7ade0e5fb6c61bd1c6221a2d01753a0e0b91",
+      "feature_count": 64,
+      "feature_start": 0,
+      "index": 0,
+      "material_bytes": 32768,
+      "material_sha256": "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+      "nonzero_a_cells": 944,
+      "nonzero_b_cells": 482,
+      "signed_decode_bounds": [
+        6427,
+        4722,
+        4933,
+        22469,
+        30659,
+        22042,
+        26882,
+        24960,
+        28020,
+        26348,
+        23048,
+        26318,
+        30480,
+        25570,
+        29341
+      ],
+      "task": "f40e7ae27d720f33957aaa3308d1770826a85b88346194bfcc23296fb14c4280"
+    },
+    {
+      "a_sha256": "3ad759118301ed5f992da8c0f6cc90122d9d2fb81a6ce4521b122c800d53e568",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "9158886ae833036cf84bd42bf29a8ea517a3521e1f00893b5dc35217496b3615",
+      "feature_count": 64,
+      "feature_start": 64,
+      "index": 1,
+      "material_bytes": 32768,
+      "material_sha256": "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+      "nonzero_a_cells": 933,
+      "nonzero_b_cells": 401,
+      "signed_decode_bounds": [
+        3257,
+        3304,
+        2829,
+        20888,
+        21881,
+        19108,
+        19653,
+        23102,
+        20525,
+        22505,
+        23881,
+        21821,
+        25215,
+        24331,
+        20902
+      ],
+      "task": "509fb5fc0308dc7da848b258feb19c1430a530d05dc790280f68a0b5ec25d59b"
+    },
+    {
+      "a_sha256": "dcd3e37c5dbbed8e32ce1414af12b6e7cfd5c082914dab15160656c6b52f44b9",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "fe989300efde02f93b84bc5558ec1df2845c45ed9e09e2d55ee844f4f6e5de42",
+      "feature_count": 64,
+      "feature_start": 128,
+      "index": 2,
+      "material_bytes": 32768,
+      "material_sha256": "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+      "nonzero_a_cells": 942,
+      "nonzero_b_cells": 363,
+      "signed_decode_bounds": [
+        2027,
+        2669,
+        2324,
+        19992,
+        18569,
+        18493,
+        22874,
+        16995,
+        20027,
+        20990,
+        18917,
+        17104,
+        24155,
+        22243,
+        20234
+      ],
+      "task": "58cd9bedcf419ce687205826b1c00546059f740c638ea51afad6a857409e99c7"
+    },
+    {
+      "a_sha256": "8dc64d6a4fd3df8a2d9541825adbb39f60898a00d40d23765f0d02bcbfb6bc8b",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "ff326787bf66da5bfeabcff60212976c069eab60c0770cbee25c3e9ee5df0657",
+      "feature_count": 64,
+      "feature_start": 192,
+      "index": 3,
+      "material_bytes": 32768,
+      "material_sha256": "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+      "nonzero_a_cells": 936,
+      "nonzero_b_cells": 426,
+      "signed_decode_bounds": [
+        5082,
+        4106,
+        4174,
+        18040,
+        21209,
+        19865,
+        25741,
+        24717,
+        19952,
+        25607,
+        27152,
+        19875,
+        24785,
+        26300,
+        20943
+      ],
+      "task": "50c2f2fea8b88a17cc9260487acb6e3547849e9d35f6bc25a63a3824ea54e663"
+    },
+    {
+      "a_sha256": "403cb6486d396b4c48efb955b49b7d0b68051e5948ed35f81c4f4aed067b3a0a",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "f1afafb9023b7628be8a2aa2cf2b28fb7dca01dbe2225b5234920eab76a3433d",
+      "feature_count": 1,
+      "feature_start": 256,
+      "index": 4,
+      "material_bytes": 32768,
+      "material_sha256": "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b",
+      "nonzero_a_cells": 15,
+      "nonzero_b_cells": 64,
+      "signed_decode_bounds": [
+        56,
+        192,
+        136,
+        512,
+        1384,
+        1896,
+        1512,
+        16,
+        1496,
+        760,
+        464,
+        1224,
+        968,
+        664,
+        1624
+      ],
+      "task": "48388860dda726d35b2ae8a2df910092f4eff5b26c47607d3c5cfec738f79059"
+    }
+  ],
+  "v2_locked_dependencies": {
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml"
+    ],
+    "lockfile_relaxed": false,
+    "proof_started": false,
+    "returncode": 0,
+    "wall_ns": 14181737157
+  },
+  "v2_setup_followup": {
+    "acquisition": {
+      "all_archives_verified": true,
+      "finished_unix_ns": 1793856024083245771,
+      "lockfile_relaxed": false,
+      "original_proof_disk_floor_bytes": 1073741824,
+      "proof_started": false,
+      "results": [
+        {
+          "end_free_disk_bytes": 4636127232,
+          "expected_bytes": 490849318,
+          "expected_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+          "file": "risc0-rust-1.88.0.tar.gz",
+          "finished_unix_ns": 1793856009263059483,
+          "process_cpu_ns": 4057733115,
+          "received_bytes": 490849318,
+          "received_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+          "response_status": 200,
+          "start_free_disk_bytes": 4372324352,
+          "started_unix_ns": 1793855984229948647,
+          "status": "downloaded-and-pin-verified",
+          "url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+          "wall_ns": 25033099550
+        },
+        {
+          "end_free_disk_bytes": 3981094912,
+          "expected_bytes": 72795381,
+          "expected_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+          "file": "cargo-risczero-3.0.3.tgz",
+          "finished_unix_ns": 1793856024083022926,
+          "process_cpu_ns": 536352615,
+          "received_bytes": 72795381,
+          "received_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+          "response_status": 200,
+          "start_free_disk_bytes": 4636123136,
+          "started_unix_ns": 1793856009263346055,
+          "status": "downloaded-and-pin-verified",
+          "url": "https://github.com/risc0/risc0/releases/download/v3.0.3/cargo-risczero-x86_64-unknown-linux-gnu.tgz",
+          "wall_ns": 14819668088
+        }
+      ],
+      "schema": "pon-v2-pinned-runtime-acquisition-v1",
+      "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+      "started_unix_ns": 1793855984229587223
+    },
+    "both_official_archives_verified": true,
+    "build_admission": {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+        "--wall-seconds",
+        "900",
+        "--out",
+        "/workspace/scratch/8de1bcb09af8/v2-runtime/build-host",
+        "--",
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--locked",
+        "--release",
+        "--jobs",
+        "1",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--bin",
+        "w1-staged-prover-v2"
+      ],
+      "declared_environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/8de1bcb09af8/v2-runtime/target",
+        "PATH": "/workspace/scratch/8de1bcb09af8/v2-runtime/bin:/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu:/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "RISC0_BUILD_LOCKED": "1",
+        "RISC0_HOME": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0",
+        "RUSTUP_TOOLCHAIN": "1.95.0"
+      },
+      "original_proof_disk_floor_bytes": 1073741824,
+      "proof_started": false,
+      "schema": "pon-v2-build-setup-v1",
+      "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+      "start_free_disk_bytes": 773115904,
+      "started_unix_ns": 1793856285509713771,
+      "status": "not-started-disk-floor"
+    },
+    "build_started": false,
+    "declared_proof_budget_unchanged": true,
+    "fresh_verifier_built": false,
+    "full_v2_proof_observed": false,
+    "guest_compiler_version": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\nbinary: rustc\ncommit-hash: de85b1d3d7f48a865174798819d943994ed23a37\ncommit-date: 2025-06-26\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0-dev\nLLVM version: 20.1.5\n",
+    "guest_toolchain_installed_and_version_checked": true,
+    "installation": {
+      "checks": [
+        {
+          "command": [
+            "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc",
+            "-Vv"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\nbinary: rustc\ncommit-hash: de85b1d3d7f48a865174798819d943994ed23a37\ncommit-date: 2025-06-26\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0-dev\nLLVM version: 20.1.5\n"
+        },
+        {
+          "command": [
+            "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc",
+            "--print",
+            "target-libdir",
+            "--target",
+            "riscv32im-risc0-zkvm-elf"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/lib/rustlib/riscv32im-risc0-zkvm-elf/lib\n"
+        },
+        {
+          "command": [
+            "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu/r0vm",
+            "--version"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "risc0-r0vm 3.0.3\n"
+        }
+      ],
+      "free_disk_bytes": 1210310656,
+      "installations": [
+        {
+          "archive": "risc0-rust-1.88.0.tar.gz",
+          "archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+          "destination": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+          "expanded_regular_bytes": 1518201915,
+          "free_disk_after_bytes": 1348661248,
+          "free_disk_before_bytes": 3168120832,
+          "status": "extracted"
+        },
+        {
+          "archive": "cargo-risczero-3.0.3.tgz",
+          "archive_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+          "destination": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu",
+          "expanded_regular_bytes": 123785448,
+          "free_disk_after_bytes": 1210335232,
+          "free_disk_before_bytes": 1337712640,
+          "status": "extracted"
+        }
+      ],
+      "original_disk_floor_bytes": 1073741824,
+      "private_cargo_wrapper": {
+        "path": "/workspace/scratch/8de1bcb09af8/v2-runtime/bin/cargo",
+        "purpose": "propagate one build job through SDK CARGO environment sanitation; preserve all other arguments and full guest build",
+        "sha256": "b8996b2a8c912c268f6db052cadb5e42e397dd9c69ef6bd0542f3574dae18926"
+      },
+      "process_cpu_ns": 20788449934,
+      "proof_started": false,
+      "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+      "schema": "pon-v2-pinned-runtime-install-v1",
+      "status": "installed-and-version-checked",
+      "wall_ns": 21452705903
+    },
+    "meaning": "This is an observed build-setup admission refusal, not an executed cryptographic proof failure. Earlier absent-tool and zero-free-space observations remain historical records.",
+    "normal_locked_dependencies_resolved": true,
+    "proof_started": false,
+    "r0vm_installed_and_sha256_checked": true,
+    "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+    "records": [
+      {
+        "bytes": 940,
+        "path": "v2-runtime/predeclared.json",
+        "sha256": "a0f7ade61ad22d6a6786d081ad9193b1d81b335e8b7f01f8ca5d9921599ac54c"
+      },
+      {
+        "bytes": 1853,
+        "path": "v2-runtime/acquisition.json",
+        "sha256": "5026994a3b9bd13d991c8fde9b5cf1c40741d74da5360cd40870480ca4252cfb"
+      },
+      {
+        "bytes": 686,
+        "path": "v2-runtime/risc0-rust-1.88.0.tar.gz.result.json",
+        "sha256": "596965e4b843f9bbb2469949c4dbe1b5e556601774a85feebd1cd2dcdcdbdc78"
+      },
+      {
+        "bytes": 678,
+        "path": "v2-runtime/cargo-risczero-3.0.3.tgz.result.json",
+        "sha256": "b09fb8a155e2736bd07b4c991aaad332daa7af7a8f63eff89be20c0e696f1e50"
+      },
+      {
+        "bytes": 1722,
+        "path": "v2-runtime/guest-archive-layout.json",
+        "sha256": "23fb2ee4864bd7d3f55e6c25c7e9e354b84874f685cf8c4503977763ffc0df83"
+      },
+      {
+        "bytes": 2744,
+        "path": "v2-runtime/install.json",
+        "sha256": "7cf810498810e543acbc442a4c2d482f919c1e7841f3b9d5a734028a96cdaa52"
+      },
+      {
+        "bytes": 528,
+        "path": "v2-runtime/archive-cache-cleanup.json",
+        "sha256": "59e41ce3bb92aadbb75453bda218f8188f40111e629d8f7c3f5683b7168e5c1e"
+      },
+      {
+        "bytes": 1681,
+        "path": "v2-runtime/build-host-predeclared.json",
+        "sha256": "f6845e692a9ec1acd25816f2e10aa2082af5445d95254708e160be0e1b1b552c"
+      },
+      {
+        "bytes": 1719,
+        "path": "v2-runtime/build-host-launch.json",
+        "sha256": "d285a46b1bf8af0e0512c77ae98134d6b23e0662e28271566aae67f96e17adca"
+      }
+    ],
+    "runner_built": false,
+    "saved_receipt_controls_run": false,
+    "schema": "pon-v2-setup-followup-v1",
+    "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+    "status": "pinned-tools-restored-build-not-started-disk-floor"
+  }
+}

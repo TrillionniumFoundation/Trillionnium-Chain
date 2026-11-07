@@ -1,0 +1,37 @@
+{
+  "schema": "pon-node-full-library-observation-v1",
+  "source_commit": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+  "source_tree": "f59e2f42ce5fb6740806ef99d60e3396397de10a",
+  "delivery_parent": "f9977c5d6d1b57880967ef36dcd1570010cbbe4f",
+  "command": "cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked -p trnm-pon-node --lib",
+  "features": "default (no pq-native-openssl)",
+  "profile": "original repository test profile",
+  "cargo_build_jobs": 1,
+  "exit_code": 101,
+  "passed": 1074,
+  "failed": 4,
+  "ignored": 28,
+  "filtered_out": 0,
+  "seconds": 856.13,
+  "elf_sha256": "2a0a3379bf5885e7ea6353e76d8395c65804109bf4249db97a362d335088bbe0",
+  "logs": {
+    "node-current-full.txt": {
+      "bytes": 143083,
+      "sha256": "100dcb506d1358291dde24380afebc03e47f02bea386ca5e83e385fecf4e6e1f"
+    },
+    "node-pq-submit-current.txt": {
+      "bytes": 2757,
+      "sha256": "376f0069f81ff18c99c4c49bec3f119675d5fd617c69d07638f96fd7e4c7bda9"
+    },
+    "node-current-guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics.txt": {
+      "bytes": 2788,
+      "sha256": "16ab92bdf7f2ee53a457e184884c774368f022fa68991fc744e96b333ea06a30"
+    },
+    "node-current-guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart.txt": {
+      "bytes": 2799,
+      "sha256": "2a6ba030a9e8f0d8874ee2dcbc3fa46458105f425c8fff58b859bac19147e433"
+    }
+  },
+  "archive_sha256": "0bce6de249eeeaf5b23195ab1b778c8a984935f342df372cfcb36fd03a70d91a",
+  "complete_gate_pass": false
+}

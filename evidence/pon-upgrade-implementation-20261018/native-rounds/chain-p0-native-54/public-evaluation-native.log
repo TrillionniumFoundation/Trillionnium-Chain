@@ -1,0 +1,33 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 3.60s
+     Running tests/accepted_task_observation.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/accepted_task_observation-6f323ed67670d2a7)
+
+running 4 tests
+test altered_current_task_bytes_cannot_become_a_settlement_observation ... ok
+test exact_acceptance_survives_restart_and_cli_readback_without_mutation ... ok
+test receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding ... ok
+test settlement_in_another_packet_never_rescues_a_reorged_exact_packet ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.05s
+
+     Running tests/evaluation_quorum_cli.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/evaluation_quorum_cli-99e86fa2916e5200)
+
+running 1 test
+test explicit_cli_profile_has_distinct_context_and_cannot_reopen_a_legacy_store ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.56s
+
+     Running tests/public_evaluation.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/public_evaluation-40ab714e8b80610d)
+
+running 8 tests
+test appeals_preserve_closed_score_and_require_exact_result_binding ... ok
+test complete_native_evaluation_gates_release_and_mature_reward_and_preserves_appeal ... ok
+test actual_store_reopen_and_heavier_fork_remove_native_evaluation_state ... ok
+test every_arrival_order_closes_identically_and_missing_is_abort ... ok
+test independently_verified_conflict_blocks_adoption_and_next_round_eligibility ... ok
+test premature_wrong_salt_direct_votes_and_historical_profiles_are_refused ... ok
+test scattered_evidence_is_context_count_and_size_bound_and_active_cleanup_is_safe ... ok
+test completed_round_accepts_all_sixteen_appeals_and_both_late_conflict_phases_under_four_kib ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.05s
+

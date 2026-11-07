@@ -1,0 +1,74 @@
+{
+  "head": "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+  "tree": "0fe4e15495f0ce643db9f222ca087e518618df7b",
+  "command": [
+    "cargo",
+    "test",
+    "--release",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+    "--",
+    "--exact",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "seconds": 227.59418484102935,
+  "log_sha256": "6c79d58850ed5fe9ccd6618e15a1f0d946d448e95ce0b4f003ddf093b276d447",
+  "outer_summaries": [
+    [
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "export_directory": "/tmp/trnm-pn-convergence-20261023/evidence-root/chain-final-scale-export",
+  "export_files": [
+    {
+      "path": "native.json",
+      "bytes": 7908,
+      "sha256": "0c06acb0d9beedd59598905365ba3f79e8696e3d9cf9b6b921f7993aa4e7b4c8"
+    },
+    {
+      "path": "native.sqlite",
+      "bytes": 25837568,
+      "sha256": "f039c687af9c62f812967aff2e1fd3aa9f800141a92a05b0d93e8bcd5d520dd3"
+    },
+    {
+      "path": "packets/335581912d722e1fa61963e85308a5d22903fd6d953aa83f1dd62343ba1769a9.pnp2",
+      "bytes": 52716,
+      "sha256": "a73c9f384406ab60d3f17c377b62625f9507c79e31a49171a050eba446f62fe7"
+    },
+    {
+      "path": "packets/4c7b6d62d22945ee69c39cf7f8b049bcb7154cbbd482c2dcfb6f8cb08aa65c0a.pnp2",
+      "bytes": 50701,
+      "sha256": "796dfcc49596a7fa72583972b5d7c7ac1481499c2647c84c227a5c955e36b7cb"
+    },
+    {
+      "path": "packets/9c5d534004de03df5c544882f49dd80602ff9fe6665e6c2a8db337b46a03a8f6.pnp2",
+      "bytes": 50701,
+      "sha256": "0a946caf0dcad832dbecf6571bcc74be5cd4f469d0ed8614e929e7ea3dfef08c"
+    },
+    {
+      "path": "packets/a412cb97cdbe08f61196684547d7fe3a4c5800cc998a94eeb35f7336b97f9c40.pnp2",
+      "bytes": 80928,
+      "sha256": "c4981b632ca40e73f527027350bf433019c33da2df261749a0f3881f76b87565"
+    },
+    {
+      "path": "packets/b24d939328a444d995d388e523cc9d4b2c132d57fc2fe59d31fbe83ff30ae089.pnp2",
+      "bytes": 50701,
+      "sha256": "d83918ebc8d703d760dfec00bd842d304c9909a45db8191f5debce6507a8b375"
+    },
+    {
+      "path": "settings.json",
+      "bytes": 6493154,
+      "sha256": "3add992778aac985e1d9e38489b3989227b59b20a86355a346ea1e935a7a4355"
+    }
+  ],
+  "nonzero_explicit_gate_pass": true
+}

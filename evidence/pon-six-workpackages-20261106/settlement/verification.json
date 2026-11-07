@@ -1,0 +1,240 @@
+{
+  "schema": "trnm.native-cell.owner-replay-verification.v1",
+  "base_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "scope": "Uncommitted named-source native component verification; not final committed whole-repository qualification.",
+  "result": "SCOPED_OWNER_REPLAY_FIX_PASS",
+  "test_command_attempts": 3,
+  "native_executed_attempts": 2,
+  "dependency_aborted_attempts": 1,
+  "attempts": [
+    {
+      "attempt_id": "red-original-production",
+      "expectation": "Four new foreign-owner controls must fail at runtime against unchanged original production.",
+      "result": "EXPECTED_RUNTIME_RED",
+      "receipt": "red-command.json",
+      "log": "red-native.log",
+      "preflight": "red-preflight.log",
+      "source": "red-source.json",
+      "native_tests": {
+        "passed": 0,
+        "failed": 4,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 1149,
+        "execution_seconds": 2.37
+      },
+      "denominator_limit": "Each test stops at its first Legacy backend foreign-owner assertion. Other planned backend/scenario branches were not executed in RED.",
+      "qualification_warning": "Retained build warning: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute. No Host/resource claim is made from this RED run."
+    },
+    {
+      "attempt_id": "green-attempt-1-dependency",
+      "expectation": "Full original storage_service suite plus five new controls, all features.",
+      "result": "DEPENDENCY_RESOLUTION_FAILED_BEFORE_NATIVE_EXECUTION",
+      "receipt": "green-attempt-1-dependency-command.json",
+      "log": "green-attempt-1-dependency-native.log",
+      "preflight": "green-attempt-1-dependency-preflight.log",
+      "source_before": "green-attempt-1-dependency-source-before.json",
+      "source_after": "green-attempt-1-dependency-source-after.json",
+      "native_tests": null,
+      "failure": "Offline cache lacked foreign-types v0.3.2; zero native tests started."
+    },
+    {
+      "attempt_id": "green-attempt-2",
+      "expectation": "Full original storage_service suite plus five new controls, all features.",
+      "result": "PASS",
+      "receipt": "green-attempt-2-command.json",
+      "log": "green-attempt-2-native.log",
+      "preflight": "green-attempt-2-preflight.log",
+      "source_before": "green-attempt-2-source-before.json",
+      "source_after": "green-attempt-2-source-after.json",
+      "native_tests": {
+        "passed": 20,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 1152,
+        "execution_seconds": 11.72,
+        "original_controls": 15,
+        "new_controls": 5
+      },
+      "all_features": true,
+      "sources_unchanged_during_command": true,
+      "wall_time_scope": "Receipt wall time includes shared target lock wait and first all-feature compilation; it is not service latency.",
+      "passed_test_names": [
+        "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention",
+        "store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation",
+        "store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+        "store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline",
+        "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+        "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+        "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+        "store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+        "store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect",
+        "store::storage_service::tests::release::native_release_complete_tasks_reopen_and_shared_members_keep_original_effects",
+        "store::storage_service::tests::release::native_release_interrupted_members_need_distinct_repairs_without_redispatch",
+        "store::storage_service::tests::release::native_release_outer_history_cannot_invent_missing_member_intents",
+        "store::storage_service::tests::release::native_release_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+        "store::storage_service::tests::release::native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_distinct",
+        "store::storage_service::tests::release::native_release_scope_alias_and_late_funding_errors_precede_every_reservation",
+        "store::storage_service::tests::replay_owner::native_cell_cancelled_native_funding_reconciles_old_effects_without_new_dispatch",
+        "store::storage_service::tests::replay_owner::native_cell_completed_repair_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::replay_owner::native_cell_completed_retain_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::replay_owner::native_cell_pending_repair_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::replay_owner::native_cell_pending_retain_refuses_foreign_owner_and_recovers_orphaned_effect"
+      ]
+    }
+  ],
+  "new_control_backends": [
+    "Legacy",
+    "AuthenticatedV1",
+    "PermanentAccountGrowthV2"
+  ],
+  "new_control_execution_scope": "All five new test functions completed each of the three backend loops in GREEN. Pending states model an explicit handoff boundary with real physical bytes; no power-loss experiment is claimed.",
+  "current_named_source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": "d84b85453d2fdadf0238d2ecc163a2bb5e58d0dc3fb90b22c907df002dfadb1f",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs": "4ba6765f5d7468e156af78398d31aa2db103b60f1e9a2dca1fca8700d2fd8ed3",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+    "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "7dd1731e34c57eaadaa1c323872f548d545cc6157de0fba8d852b606a60d1260",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "test_executable_observed_after_completion": {
+    "path": "/workspace/scratch/62902f6722b7/target/debug/deps/trnm_pon_node-dad62fae90286334",
+    "bytes": 444599800,
+    "sha256": "8fb45ba903d7f57ebf7402841dd7e37590c66f680d21133a5bc9eb58eff25160",
+    "scope": "Post-run file observation of executable path printed by Cargo, not a loader attestation or final committed integration identity."
+  },
+  "original_acceptance": {
+    "readback": "original-acceptance/readback.json",
+    "source_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+    "history_status": "HOLD",
+    "public_service_status": "HOLD",
+    "pressure_confirmed": 0,
+    "pressure_required": 1,
+    "pressure_workers": 16,
+    "pressure_window_seconds": 4,
+    "pressure_attack_calls": 257,
+    "history_generated_blocks": 4105,
+    "history_successful_import_returns": 2331,
+    "history_original_server_lifetime_seconds": 1800,
+    "retained_raw_text_members": 192,
+    "inventoried_original_zip_members": 4422,
+    "binary_sqlite_packet_bytes_retained_in_this_package": false,
+    "native_reexecution_by_readback": false
+  },
+  "retained_artifacts": {
+    "green-attempt-1-dependency-command.json": {
+      "bytes": 718,
+      "sha256": "b910139f3a26021b620384a835c180822f3fd0fb257fbf954c8be61751bd6a92"
+    },
+    "green-attempt-1-dependency-native.log": {
+      "bytes": 127,
+      "sha256": "3a394785649db52ecb4966cc9fa60499798dfb35daf8e36d3b18428b3acb4483"
+    },
+    "green-attempt-1-dependency-preflight.log": {
+      "bytes": 166,
+      "sha256": "160ea403692186d011c9c0f3ce8f198e26f14596e3ac3e6250c57004405a813c"
+    },
+    "green-attempt-1-dependency-source-after.json": {
+      "bytes": 1279,
+      "sha256": "f08614b4f847f220a7241aebd4c446fe6466ef95815e920ea22002faeb7f3a05"
+    },
+    "green-attempt-1-dependency-source-before.json": {
+      "bytes": 1279,
+      "sha256": "f08614b4f847f220a7241aebd4c446fe6466ef95815e920ea22002faeb7f3a05"
+    },
+    "green-attempt-2-command.json": {
+      "bytes": 719,
+      "sha256": "e4d3529b5d38de3717fa1af3fd686ca6225c2e85d9fa8ec7411b9929cefab3b3"
+    },
+    "green-attempt-2-native.log": {
+      "bytes": 4409,
+      "sha256": "3ab8e177a585c728b296aa111e89566f9fdec08eee3ae6c43839a8b5a1d91634"
+    },
+    "green-attempt-2-preflight.log": {
+      "bytes": 166,
+      "sha256": "160ea403692186d011c9c0f3ce8f198e26f14596e3ac3e6250c57004405a813c"
+    },
+    "green-attempt-2-source-after.json": {
+      "bytes": 1279,
+      "sha256": "f08614b4f847f220a7241aebd4c446fe6466ef95815e920ea22002faeb7f3a05"
+    },
+    "green-attempt-2-source-before.json": {
+      "bytes": 1279,
+      "sha256": "f08614b4f847f220a7241aebd4c446fe6466ef95815e920ea22002faeb7f3a05"
+    },
+    "original-acceptance/history-head-original-zip-inventory.json": {
+      "bytes": 840108,
+      "sha256": "c6523b7c1d2e7e5fd4d5a8f46ed4691e6f85f520864b2849629dbd4b710ac2e8"
+    },
+    "original-acceptance/history-head-raw-text.tar.gz": {
+      "bytes": 18057,
+      "sha256": "4e80358bea22a218007bef5948268fe213b2524403167fa60c7bb1e2f2557931"
+    },
+    "original-acceptance/readback.json": {
+      "bytes": 29754,
+      "sha256": "eb6a49e095640d36d6f83491eb5a4db1a2ef36b86826060a3d2c6137a8d8afd3"
+    },
+    "original-acceptance/service-head-original-zip-inventory.json": {
+      "bytes": 57529,
+      "sha256": "c9b93d1b302cb41e7b20e8c33a45106a6440e1207b3e60d063909efb04c4f100"
+    },
+    "original-acceptance/service-head-raw-text.tar.gz": {
+      "bytes": 1893296,
+      "sha256": "63dc1a96dd3627c2275969a70337b738a6ccafb79769797312f0251b2039c248"
+    },
+    "red-command.json": {
+      "bytes": 507,
+      "sha256": "639716a399149c3fa5ce18800208a068bdca8c02c89f03027a5bf207b16ef677"
+    },
+    "red-native.log": {
+      "bytes": 11775,
+      "sha256": "4ea18ba1f5aa7af8fcf8b4cb89b381bba68d8453f04c34a45637a5ee49e268d7"
+    },
+    "red-owned-source.patch": {
+      "bytes": 556,
+      "sha256": "9532521bba4a751748c23a1b9122b18405612873a10f3a6c27a8c434efef247e"
+    },
+    "red-preflight.log": {
+      "bytes": 166,
+      "sha256": "160ea403692186d011c9c0f3ce8f198e26f14596e3ac3e6250c57004405a813c"
+    },
+    "red-regression-source.rs.txt": {
+      "bytes": 14600,
+      "sha256": "63cc3fb2aaa00cd8099183f556c9c2183515ed0bca04045aa524e5667aa01039"
+    },
+    "red-source.json": {
+      "bytes": 1321,
+      "sha256": "d125c80edc204e35f8260ef1b0d1055e1f0c0861606dd55d0678509d6f885446"
+    },
+    "red-test-registration.rs.txt": {
+      "bytes": 28011,
+      "sha256": "4ba6765f5d7468e156af78398d31aa2db103b60f1e9a2dca1fca8700d2fd8ed3"
+    }
+  },
+  "readiness_claims": {
+    "public_task_supply_after_all_publishers_exit": false,
+    "independent_real_network_funding_and_settlement": false,
+    "permanent_material_availability": false,
+    "independent_operator_acceptance": false,
+    "original_resource_adversarial_confirmation": false,
+    "global_resource_completeness": false,
+    "production_activation": false
+  },
+  "evidence_integrity_checks": {
+    "retained_artifact_size_and_sha256_verified": 22,
+    "raw_archive_members_against_original_zip_inventory": {
+      "history-head": {
+        "original_zip_members": 4140,
+        "raw_members_size_and_sha256_verified": 31
+      },
+      "service-head": {
+        "original_zip_members": 282,
+        "raw_members_size_and_sha256_verified": 161
+      }
+    },
+    "scope": "Read-only digest comparison; no original native acceptance rerun."
+  }
+}

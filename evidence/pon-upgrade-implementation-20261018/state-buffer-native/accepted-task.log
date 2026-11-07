@@ -1,0 +1,12 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 1m 03s
+     Running tests/accepted_task_observation.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/debug/deps/accepted_task_observation-6f323ed67670d2a7)
+
+running 4 tests
+test altered_current_task_bytes_cannot_become_a_settlement_observation ... ok
+test exact_acceptance_survives_restart_and_cli_readback_without_mutation ... ok
+test receipt_only_and_ambiguous_multi_accept_packets_have_no_upgrade_binding ... ok
+test settlement_in_another_packet_never_rescues_a_reorged_exact_packet ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.14s
+

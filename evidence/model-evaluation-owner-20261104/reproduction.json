@@ -1,0 +1,760 @@
+{
+  "schema": "model-evaluation-owner-local-reproduction-v1",
+  "date": "2026-11-04",
+  "scope": "same-operator-public-pilot-component-hardening-no-independent-evaluation-or-deployment-qualification",
+  "baseline_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+  "integration_parent": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+  "source_sha256": {
+    "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+    "config/pon/pq-cross-branch-corpus-v1.json": "6262c0ae93325a359250c16c51df6452c3f4a76f1927ef615b695a5ef459b7dc",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "786b7ac18407daf5356ad282a0010351f85a7b01f2b68216c0eeb38d40fd2f61",
+    "formal/pon-nakamoto-v1/llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+    "scripts/ci/model-runtime-cpu-requirements.txt": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+    "scripts/llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+    "scripts/llm_runtime_README.md": "2b18a3ff1aa6ae859c8d37339973b460ac2a8883fdbdb2d5505059b804e06596",
+    "scripts/llm_runtime_assessment.py": "133871703daf740c26cccb30e450cd90127d1ee206c75734929ddbf364602f5d",
+    "scripts/llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+    "scripts/llm_runtime_pilot.py": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+    "scripts/llm_runtime_trial_ledger.py": "cd19645147730580b03cec8b40c7dacf6ebbb20285c6c1f98923bf450f83196b",
+    "scripts/test_llm_runtime_artifact_loading_torch.py": "4b20b87b4b14d42a8814761dd9a04a0b2acc4c057b3375d78c7e383af529e3d7",
+    "scripts/test_llm_runtime_assessment.py": "c259833462346225a54ecd09486dc58d2edd1efdcd505f688115a2321af7bc79",
+    "scripts/test_llm_runtime_decode.py": "c81071202df3d10633c40269e9cdb8ccf8f5d7c4f3e0e96e8acdd48c1a912674",
+    "scripts/test_llm_runtime_exit_observation.py": "ba05aae19a7fdab880d437ecb047cc9c0009eaf535af582c0ddafd18db52fa4a",
+    "scripts/test_llm_runtime_pilot.py": "949b9e28d9cf838d6973deba6369ea6a5677dd8b077890f26da63f9fa879507b",
+    "scripts/test_llm_runtime_trial_ledger.py": "b46a261d90584542dc80ca261b45c0eb509fa0a4e87035a5d1d8804d31e32af9",
+    "scripts/test_llm_runtime_trial_review.py": "b38807379e878b9a818798837b5b6cd408822716d93c65bfc3ba34338af80848",
+    "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": "c2a19976f1157d8cf0fcd67905f3d55ae6c08b9c4ee48a3c6e9845097f10cc68",
+    "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs": "dd4fdbb63fee52a1ac47ef04635ba9abe6160405ae738ea84146186ef7ca813d"
+  },
+  "observations": [
+    {
+      "name": "local-trial-ledger",
+      "command": [
+        "python3",
+        "scripts/test_llm_runtime_trial_ledger.py",
+        "-v"
+      ],
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "log": {
+        "name": "trial-ledger-final.log",
+        "sha256": "783cb8f724f7eae5325d67686e99e49ece99d8b96ac937c887fb8813076881ee",
+        "bytes": 3200,
+        "publication": "hash-and-small-failure-excerpts-only"
+      }
+    },
+    {
+      "name": "additional-ledger-review",
+      "command": [
+        "python3",
+        "scripts/test_llm_runtime_trial_review.py",
+        "-v"
+      ],
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "log": {
+        "name": "trial-review-final.log",
+        "sha256": "a5644c3f5bc5690124e71b6f0a99e449d1101fbbdd1da1e4d6215a036cdf72ff",
+        "bytes": 1617,
+        "publication": "hash-and-small-failure-excerpts-only"
+      }
+    },
+    {
+      "name": "local-cost-assessment",
+      "command": [
+        "python3",
+        "scripts/test_llm_runtime_assessment.py",
+        "-v"
+      ],
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "log": {
+        "name": "assessment-final.log",
+        "sha256": "f0dcffb7d348f6b73fe76bde55a42a67d245b500cf5d4be8c4f95c76332d1dae",
+        "bytes": 2433,
+        "publication": "hash-and-small-failure-excerpts-only"
+      }
+    },
+    {
+      "name": "actual-torch-artifact-loader",
+      "command": [
+        "/workspace/scratch/f4976366a32a/torch-env/bin/python",
+        "scripts/test_llm_runtime_artifact_loading_torch.py",
+        "-v"
+      ],
+      "environment": {
+        "HF_HUB_OFFLINE": "1",
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "TRANSFORMERS_OFFLINE": "1",
+        "TRNM_ACTUAL_DECODER_TENSOR_TESTS": "1"
+      },
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "reported_seconds": "3.938",
+      "wait4_peak_rss_bytes": 171659264,
+      "wait4_cpu_ns": 3113207000,
+      "oom_delta": 0,
+      "oom_kill_delta": 0,
+      "sampled_rss_complete": false,
+      "log": {
+        "name": "final-torch-artifact-loader.log",
+        "sha256": "2a6d135a85f01e1b8d06e1fcf616503993e519dbc0aa179c75b735c1b2096cd3",
+        "bytes": 2273,
+        "publication": "hash-and-small-failure-excerpts-only"
+      }
+    },
+    {
+      "name": "actual-torch-decoder",
+      "command": [
+        "/workspace/scratch/f4976366a32a/torch-env/bin/python",
+        "scripts/test_llm_runtime_decode.py",
+        "-v"
+      ],
+      "environment": {
+        "HF_HUB_OFFLINE": "1",
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "TRANSFORMERS_OFFLINE": "1",
+        "TRNM_ACTUAL_DECODER_TENSOR_TESTS": "1"
+      },
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "reported_seconds": "12.872",
+      "wait4_peak_rss_bytes": 165142528,
+      "wait4_cpu_ns": 6024658000,
+      "oom_delta": 0,
+      "oom_kill_delta": 0,
+      "sampled_rss_complete": false,
+      "log": {
+        "name": "final-torch-decoder.log",
+        "sha256": "ed65b897a9f4912fd3f364222d67070c2612c5c8e09cd9cdf1ec40ef0fdc56f7",
+        "bytes": 1846,
+        "publication": "hash-and-small-failure-excerpts-only"
+      }
+    },
+    {
+      "name": "default-pilot-aggregate",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_llm_runtime_pilot.py"
+      ],
+      "result": "FAILED",
+      "total": 349,
+      "passed": 224,
+      "failed": 2,
+      "skipped": 123,
+      "exit_code": 1,
+      "log": {
+        "name": "pilot-final-exact.log",
+        "sha256": "53bfb16679907e8678405741a4cc9130d716097ade8d776ad19d4ebd16474e2a",
+        "bytes": 1931,
+        "publication": "hash-and-small-failure-excerpts-only"
+      },
+      "failure_output": "sssssssssssssssssssssssssssssssssssssssssss.................................................................ssssssssssssssssssssssssssssssssssssssss.............F....F.s.sssssssssssssssssssssssssssssssssssssss............................................................................................................................................\n======================================================================\nFAIL: test_recheck_refusal_redacts_unknown_forged_and_private_error_messages (test_llm_runtime_exit_observation.ExitObservationTests.test_recheck_refusal_redacts_unknown_forged_and_private_error_messages) (fault='ExitObservationError', code=None)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/workspace/scratch/f4976366a32a/chain/scripts/test_llm_runtime_exit_observation.py\", line 357, in test_recheck_refusal_redacts_unknown_forged_and_private_error_messages\n    self.assertEqual(record['error'],type(fault).__name__)\nAssertionError: 'exit-cleanup-deadline' != 'ExitObservationError'\n- exit-cleanup-deadline\n+ ExitObservationError\n\n\n======================================================================\nFAIL: test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative (test_llm_runtime_exit_observation.ExitObservationTests.test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative) (mode='valid')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/workspace/scratch/f4976366a32a/chain/scripts/test_llm_runtime_exit_observation.py\", line 296, in test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative\n    self.assertEqual(result['outcome'], outcome)\nAssertionError: 'failed' != 'success'\n- failed\n+ success\n\n\n----------------------------------------------------------------------\nRan 349 tests in 26.152s\n\nFAILED (failures=2, skipped=123)\n",
+      "targeted_passes_do_not_replace_this_result": true
+    },
+    {
+      "name": "two-targeted-exit-observation-methods",
+      "result": "PASS",
+      "original_deadline_ns": 100000000,
+      "source_unchanged": true,
+      "original_failure_cause_proven": false,
+      "runs": [
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-m",
+            "unittest",
+            "-v",
+            "test_llm_runtime_exit_observation.ExitObservationTests.test_recheck_refusal_redacts_unknown_forged_and_private_error_messages"
+          ],
+          "environment_overrides": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONPATH": "/workspace/scratch/f4976366a32a/chain/scripts"
+          },
+          "attempt": 1,
+          "exit_code": 0,
+          "output": "test_recheck_refusal_redacts_unknown_forged_and_private_error_messages (test_llm_runtime_exit_observation.ExitObservationTests.test_recheck_refusal_redacts_unknown_forged_and_private_error_messages) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.019s\n\nOK\n"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-m",
+            "unittest",
+            "-v",
+            "test_llm_runtime_exit_observation.ExitObservationTests.test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative"
+          ],
+          "environment_overrides": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONPATH": "/workspace/scratch/f4976366a32a/chain/scripts"
+          },
+          "attempt": 1,
+          "exit_code": 0,
+          "output": "test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative (test_llm_runtime_exit_observation.ExitObservationTests.test_v2_terminal_wait4_caps_invalid_and_unknown_remain_authoritative) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.022s\n\nOK\n"
+        }
+      ],
+      "receipt": {
+        "name": "exit-observation-targeted-once.json",
+        "sha256": "4b400d4e3a8dc9ee7b50ddd24c21d6db6e9c09b5b8e5669f0970312087f733f9",
+        "bytes": 6029,
+        "publication": "hash-and-small-failure-excerpts-only"
+      },
+      "attempts_per_method_after_original_failure": 1
+    },
+    {
+      "name": "native-classic-closure-baseline-counterexample",
+      "old_production_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-features",
+        "--test",
+        "evaluation_quorum_v2",
+        "classic_retained_closure",
+        "--",
+        "--nocapture"
+      ],
+      "passed": 0,
+      "failed": 3,
+      "exit_code": 101,
+      "log": {
+        "name": "native-closure-red.log",
+        "sha256": "ce088a423e233b375ae34fdde10b3dd4c746ad46a1d0b20ab4121cc68b051d7f",
+        "bytes": 13176,
+        "publication": "hash-and-small-failure-excerpts-only"
+      },
+      "test_revision_note": "Original red assertions precede added positive compact-record compatibility cases; the three original assertions remain in the final test source.",
+      "failure_excerpt": "\n\nthread 'classic_retained_closure_rejects_substituted_summary_at_use_and_restore' (1625) panicked at crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs:447:9:\nassertion `left == right` failed: schema: substitute must not authorize adoption\n  left: Ok(())\n right: Err(\"PUBLIC_EVAL_CLOSED_BINDING\")\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score' (1624) panicked at crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs:486:9:\nassertion `left == right` failed: aborted status\n  left: Ok(Object {\"appeals\": Object {}, \"closed\": Object {\"candidate\": String(\"0606060606060606060606060606060606060606060606060606060606060606\"), \"closed_height\": Number(48), \"conflict_count_before_close\": Number(0), \"independent_governance_accepted\": Bool(false), \"missing_reveal_count\": Number(1), \"objective_model_quality\": Bool(false), \"records_digest\": String(\"ac04d7968e507a914bc41b36aaa05f107d0a8905f20c03d6b2fa9213cc194050\"), \"round\": String(\"b55cec7553cb46433421709d06cbdf449825e689653ddcdc99dae8278fe554f6\"), \"schema\": String(\"pon-native-closed-evaluation-v2\"), \"score\": Null, \"status\": String(\"complete-scored\")}, \"commits\": Object {\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\": String(\"2e83a7d1306b8900ebaa428631c7e1e99b0091cb335727cfa39e663ce9f6da1d\"), \"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21\": String(\"daebbd99957fd40dae876c5710c2a3d604c548c4a16918e90bf5900663cbb658\")}, \"conflicts\": Object {}, \"plan\": Object {\"adoption_start\": Number(56), \"artifact\": String(\"0707070707070707070707070707070707070707070707070707070707070707\"), \"candidate\": String(\"0606060606060606060606060606060606060606060606060606060606060606\"), \"candidate_end\": Number(15), \"commit_end\": Number(31), \"components_root\": String(\"0808080808080808080808080808080808080808080808080808080808080808\"), \"family\": String(\"0303030303030303030303030303030303030303030303030303030303030303\"), \"independent_governance_accepted\": Bool(false), \"max_score\": Number(1000000), \"model_and_task_contract\": String(\"0404040404040404040404040404040404040404040404040404040404040404\"), \"network\": String(\"0101010101010101010101010101010101010101010101010101010101010101\"), \"objective_model_quality\": Bool(false), \"parameters\": String(\"0202020202020202020202020202020202020202020202020202020202020202\"), \"parent\": String(\"0909090909090909090909090909090909090909090909090909090909090909\"), \"reveal_end\": Number(47), \"roster\": Array [String(\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\"), String(\"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21\"), String(\"9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc\")], \"schema\": String(\"pon-native-frozen-evaluation-v1\"), \"start\": Number(0)}, \"record_counts\": Object {\"appeals\": Number(0), \"commits\": Number(2), \"conflicts\": Number(0), \"reveals\": Number(2)}, \"reveals\": Object {\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\": Object {\"evidence\": String(\"0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e\"), \"salt\": String(\"0101010101010101010101010101010101010101010101010101010101010101\"), \"score\": Number(17)}, \"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21\": Object {\"evidence\": String(\"0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e\"), \"salt\": String(\"0303030303030303030303030303030303030303030303030303030303030303\"), \"score\": Number(17)}}, \"round\": String(\"b55cec7553cb46433421709d06cbdf449825e689653ddcdc99dae8278fe554f6\"), \"storage_revision\": Number(2)})\n right: Err(\"PUBLIC_EVAL_CLOSED_BINDING\")\ntest classic_retained_closure_rejects_substituted_summary_at_use_and_restore ... FAILED\ntest classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score ... FAILED\n\nthread 'classic_retained_closure_preserves_legal_appeals_and_late_conflicts' (1623) panicked at crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs:555:5:\nassertion `left == right` failed\n  left: Ok(Object {\"appeals\": Object {\"54148345fd6d7a4639bf9d162aa6b64b716bb22af3a0128abb036adda0593956\": Object {\"claim\": String(\"0101010101010101010101010101010101010101010101010101010101010101\"), \"effect\": String(\"record-only; closed score and past reward unchanged\"), \"evidence\": String(\"0202020202020202020202020202020202020202020202020202020202020202\"), \"height\": Number(49), \"result\": String(\"af27ac8753be75e5c4692f3ceb889024a3523f76ed15a5aa0b30621c29ea3dde\"), \"signer\": String(\"bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8\")}}, \"closed\": Object {\"candidate\": String(\"0606060606060606060606060606060606060606060606060606060606060606\"), \"closed_height\": Number(48), \"conflict_count_before_close\": Number(0), \"independent_governance_accepted\": Bool(false), \"missing_reveal_count\": Number(0), \"objective_model_quality\": Bool(false), \"records_digest\": String(\"5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b\"), \"round\": String(\"b55cec7553cb46433421709d06cbdf449825e689653ddcdc99dae8278fe554f6\"), \"schema\": String(\"pon-native-closed-evaluation-v2\"), \"score\": Number(17), \"status\": String(\"complete-scored\")}, \"commits\": Object {\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\": String(\"2e83a7d1306b8900ebaa428631c7e1e99b0091cb335727cfa39e663ce9f6da1d\"), \"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21\": String(\"daebbd99957fd40dae876c5710c2a3d604c548c4a16918e90bf5900663cbb658\"), \"9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc\": String(\"f591fae43e2fc0362d10190172ab4a393572d52fdf4acb1a874acfc12d9afbc5\")}, \"conflicts\": Object {\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9:14\": Object {\"effect\": String(\"current adoption blocked; next-round identity excluded; historical closure unchanged\"), \"records\": Array [String(\"504e5831010101010101010101010101010101010101010101010101010101010101010179d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e90100000000000000d00700000000000040420f00000000000e60000606060606060606060606060606060606060606060606060606060606060606b55cec7553cb46433421709d06cbdf449825e689653ddcdc99dae8278fe554f62e83a7d1306b8900ebaa428631c7e1e99b0091cb335727cfa39e663ce9f6da1d8035b8b0e8e25d653bc71c7c65656afcb024a358cc2ac10212b5297d44433054e475ed04cf0ba7d36ddeb16e01e42d08e2290b097ae7d8061741a20b5cf33105\"), String(\"504e5831010101010101010101010101010101010101010101010101010101010101010179d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e90100000000000000d00700000000000040420f00000000000e60000606060606060606060606060606060606060606060606060606060606060606b55cec7553cb46433421709d06cbdf449825e689653ddcdc99dae8278fe554f62f83a7d1306b8900ebaa428631c7e1e99b0091cb335727cfa39e663ce9f6da1d6c7cb583860f2b6daa97ab15eb75bddd94e1ffe03661774c72c0503e62e97f7cbaceb8520b9ee41ebaf62e34f54848c49798d5dc87bc0bd7426e3391e91a5b0b\")], \"signer\": String(\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\")}}, \"plan\": Object {\"adoption_start\": Number(56), \"artifact\": String(\"0707070707070707070707070707070707070707070707070707070707070707\"), \"candidate\": String(\"0606060606060606060606060606060606060606060606060606060606060606\"), \"candidate_end\": Number(15), \"commit_end\": Number(31), \"components_root\": String(\"0808080808080808080808080808080808080808080808080808080808080808\"), \"family\": String(\"0303030303030303030303030303030303030303030303030303030303030303\"), \"independent_governance_accepted\": Bool(false), \"max_score\": Number(1000000), \"model_and_task_contract\": String(\"0404040404040404040404040404040404040404040404040404040404040404\"), \"network\": String(\"0101010101010101010101010101010101010101010101010101010101010101\"), \"objective_model_quality\": Bool(false), \"parameters\": String(\"0202020202020202020202020202020202020202020202020202020202020202\"), \"parent\": String(\"0909090909090909090909090909090909090909090909090909090909090909\"), \"reveal_end\": Number(47), \"roster\": Array [String(\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\"), String(\"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21\"), String(\"9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc\")], \"schema\": String(\"pon-native-frozen-evaluation-v1\"), \"start\": Number(0)}, \"record_counts\": Object {\"appeals\": Number(1), \"commits\": Number(3), \"conflicts\": Number(1), \"reveals\": Number(3)}, \"reveals\": Object {\"79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9\": Object {\"evidence\": String(\"0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e\"), \"salt\": String(\"0101010101010101010101010101010101010101010101010101010101010101\"), \"score\": Number(17)}, \"79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21\": Object {\"evidence\": String(\"0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e\"), \"salt\": String(\"0303030303030303030303030303030303030303030303030303030303030303\"), \"score\": Number(17)}, \"9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc\": Object {\"evidence\": String(\"0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e\"), \"salt\": String(\"0202020202020202020202020202020202020202020202020202020202020202\"), \"score\": Number(17)}}, \"round\": String(\"b55cec7553cb46433421709d06cbdf449825e689653ddcdc99dae8278fe554f6\"), \"storage_revision\": Number(2)})\n right: Err(\"PUBLIC_EVAL_CLOSED_BINDING\")\ntest classic_retained_closure_preserves_legal_appeals_and_late_conflicts ... FAILED\n\nfailures:\n\nfailures:\n    classic_retained_closure_preserves_legal_appeals_and_late_conflicts\n    classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score\n    classic_retained_closure_rejects_substituted_summary_at_use_and_restore\n\ntest result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.01s\n\nerror: test failed, to rerun pass `-p trnm-mvcc-fee --test evaluation_quorum_v2`\n"
+    },
+    {
+      "name": "native-M06-all-targets-all-features",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features"
+      ],
+      "passed": 223,
+      "failed": 0,
+      "ignored": 7,
+      "completed_binary_summaries": 25,
+      "exit_code": 0,
+      "log": {
+        "name": "native-closure-final.log",
+        "sha256": "65d87803fe348bc0ca142117629c31bb413036b062751b2fd328479d7afe96d4",
+        "bytes": 30472,
+        "publication": "hash-and-small-failure-excerpts-only"
+      },
+      "source_sha256": {
+        "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": "c2a19976f1157d8cf0fcd67905f3d55ae6c08b9c4ee48a3c6e9845097f10cc68",
+        "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs": "dd4fdbb63fee52a1ac47ef04635ba9abe6160405ae738ea84146186ef7ca813d"
+      }
+    },
+    {
+      "name": "native-M06-strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "result": "PASS",
+      "exit_code": 0,
+      "log": {
+        "name": "native-closure-clippy.log",
+        "sha256": "b1726ca49d1157943ec6880fc5664bec771c8013cf7382c4d83b31e2d5a85c85",
+        "bytes": 2427,
+        "publication": "hash-and-small-failure-excerpts-only"
+      }
+    },
+    {
+      "name": "integrated-workspace-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "name": "integrated-locked-offline-cargo-graph",
+      "command": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--locked",
+        "--offline"
+      ],
+      "result": "PASS",
+      "workspace_packages": 26,
+      "resolved_packages": 180,
+      "M06_reachable_package_count": 138,
+      "M06_resolved_graph_identical_to_native_test_graph": true,
+      "native_test_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "integrated_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "integration_lock_change_scope": "concurrent release-bundle dependencies; M06 graph unchanged"
+    }
+  ],
+  "native_environment": {
+    "wrapper": "/workspace/scratch/7318d5f890d1/runtime93/run-throughput-runtime93.sh",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f4976366a32a/target-native-closure",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "rust": "1.95.0",
+    "provider": "OpenSSL 3.5.9",
+    "OPENSSL_INCLUDE_DIR": "/workspace/scratch/7318d5f890d1/runtime93/provider/trnm-pq-provider-3.5.9.FzmBhGf2/install/include",
+    "OPENSSL_LIB_DIR": "/workspace/scratch/7318d5f890d1/runtime93/provider/trnm-pq-provider-3.5.9.FzmBhGf2/install/lib",
+    "TRNM_PQ_OPENSSL_SHA256": "ec72bff5f6e4b2d9798e66b4ee338e81969ff6f8fa5a228bf312f1c57ff08818",
+    "completed_compiler_cache_removed_after_tests": true
+  },
+  "torch_environment": {
+    "all_31_locked_distributions_matched": true,
+    "versions": {
+      "accelerate": "1.15.0",
+      "certifi": "2026.10.23",
+      "cffi": "2.0.0",
+      "charset-normalizer": "3.5.2",
+      "cryptography": "50.0.2",
+      "filelock": "4.2.4",
+      "fsspec": "2026.9.0",
+      "hf-xet": "1.7.0",
+      "huggingface-hub": "0.36.2",
+      "idna": "3.20",
+      "jinja2": "3.1.6",
+      "markupsafe": "3.0.4",
+      "mpmath": "1.3.0",
+      "networkx": "3.7",
+      "numpy": "1.26.4",
+      "packaging": "26.3",
+      "peft": "0.18.0",
+      "psutil": "7.2.2",
+      "pycparser": "2.23",
+      "pyyaml": "6.0.3",
+      "regex": "2026.9.29",
+      "requests": "2.34.2",
+      "safetensors": "0.7.0",
+      "setuptools": "84.2.1",
+      "sympy": "1.14.0",
+      "tokenizers": "0.22.2",
+      "torch": "2.9.1+cpu",
+      "tqdm": "4.70.1",
+      "transformers": "4.57.3",
+      "typing-extensions": "4.16.0",
+      "urllib3": "2.8.0"
+    },
+    "torch_cpu_wheel_sha256": "7417d8c565f219d3455654cb431c6d892a3eb40246055e14d645422de13b9ea1",
+    "scope": "tiny-real-CPU-Torch-loader-and-decoder-components-no-pretrained-model-or-FinalUse",
+    "source_sha256_before": {
+      "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "formal/pon-nakamoto-v1/llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "formal/pon-nakamoto-v1/test_llm_adapter_contract.py": "a1e9ca018f5e37b4e2e94d6ea2861f25bcc0304be17e47df1776597c97320219",
+      "scripts/ci/model-runtime-cpu-requirements.txt": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+      "scripts/llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "scripts/llm_runtime_assessment.py": "133871703daf740c26cccb30e450cd90127d1ee206c75734929ddbf364602f5d",
+      "scripts/llm_runtime_pilot.py": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+      "scripts/llm_runtime_trial_ledger.py": "cd19645147730580b03cec8b40c7dacf6ebbb20285c6c1f98923bf450f83196b",
+      "scripts/test_llm_runtime_artifact_loading.py": "a64f6a6f6f1d5a751abaa0fd2a92fe6c66e661e925c55ac3ad9201865f4f8312",
+      "scripts/test_llm_runtime_artifact_loading_torch.py": "4b20b87b4b14d42a8814761dd9a04a0b2acc4c057b3375d78c7e383af529e3d7",
+      "scripts/test_llm_runtime_decode.py": "c81071202df3d10633c40269e9cdb8ccf8f5d7c4f3e0e96e8acdd48c1a912674"
+    },
+    "source_sha256_after": {
+      "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "formal/pon-nakamoto-v1/llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "formal/pon-nakamoto-v1/test_llm_adapter_contract.py": "a1e9ca018f5e37b4e2e94d6ea2861f25bcc0304be17e47df1776597c97320219",
+      "scripts/ci/model-runtime-cpu-requirements.txt": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+      "scripts/llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "scripts/llm_runtime_assessment.py": "133871703daf740c26cccb30e450cd90127d1ee206c75734929ddbf364602f5d",
+      "scripts/llm_runtime_pilot.py": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+      "scripts/llm_runtime_trial_ledger.py": "cd19645147730580b03cec8b40c7dacf6ebbb20285c6c1f98923bf450f83196b",
+      "scripts/test_llm_runtime_artifact_loading.py": "a64f6a6f6f1d5a751abaa0fd2a92fe6c66e661e925c55ac3ad9201865f4f8312",
+      "scripts/test_llm_runtime_artifact_loading_torch.py": "4b20b87b4b14d42a8814761dd9a04a0b2acc4c057b3375d78c7e383af529e3d7",
+      "scripts/test_llm_runtime_decode.py": "c81071202df3d10633c40269e9cdb8ccf8f5d7c4f3e0e96e8acdd48c1a912674"
+    },
+    "source_unchanged": true,
+    "resource_observation_note": "Use waited_child_peak_rss_bytes from os.wait4 for observed per-process peak. /proc samples are incomplete lower bounds; a zero sampled maximum means no positive RSS observation and is not measured zero memory. Component test observer limits do not change the pretrained pilot caps.",
+    "component_receipt": {
+      "name": "final-torch-component-receipt.json",
+      "sha256": "3e2c2edd6163dca0b9cfc390c3d2ce19a6ff18a801aabb05cb0757a8976a294a",
+      "bytes": 7533,
+      "publication": "hash-and-small-failure-excerpts-only"
+    },
+    "environment_retention": "Retained isolated dependency environment at time of source-gate preparation."
+  },
+  "pretrained_pilot": {
+    "outcome": "not-run-insufficient-shared-resource-capacity",
+    "scope": "same-operator-public-controlled-pilot-preparation-only",
+    "pretrained_model_executed": false,
+    "trial_initialized": false,
+    "trial_reserved": false,
+    "spent_attempts_by_this_preparation": 0,
+    "completed_phases": [],
+    "material_files_verified": 7,
+    "material_manifest_sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+    "material_snapshot": "e04953cee0b571cc23ddcf2665e9e1d7ba03b7bd07d98c198a7f156957dfd317",
+    "dependencies_lock_match": true,
+    "source_sha256": {
+      "llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "llm_runtime_assessment.py": "133871703daf740c26cccb30e450cd90127d1ee206c75734929ddbf364602f5d",
+      "llm_runtime_pilot.py": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+      "llm_runtime_trial_ledger.py": "cd19645147730580b03cec8b40c7dacf6ebbb20285c6c1f98923bf450f83196b"
+    },
+    "required_semantics_unchanged": {
+      "backend": "cpu",
+      "exit_observation_profile": "strict-v1",
+      "inference_rss_bytes": 8589934592,
+      "inference_wall_seconds": 600,
+      "max_attempts": 1,
+      "planned_phase_count": 12,
+      "steps": 10,
+      "threads": 4,
+      "training_rss_bytes": 17179869184,
+      "training_wall_seconds": 1800
+    },
+    "cgroup_memory_current": 8589934592,
+    "cgroup_memory_max": 8589934592,
+    "disk_available_bytes": 2538500096,
+    "blocked_reason": "Latest read-only capacity refresh: disk improved, but the shared 8-GiB cgroup is full. Non-shmem file pages plus reclaimable slab offer only an optimistic 1272458056-byte shared reclaim ceiling, not dedicated headroom. This is below the 2152240128-byte parameter/gradient/Adam-state floor and cannot cover additional activations, temporaries, imports, mappings and ten-step shape-recording profiler retention. Shared cgroup OOM counters grew during the observation window; no model or trial was started by this task.",
+    "qualification": false,
+    "latest_observed_at_ns": 1793798047621188895,
+    "capacity_refresh": {
+      "schema": "shared-capacity-read-only-refresh-v1",
+      "scope": "current-shared-container-capacity-only-no-model-execution-no-ledger-debit",
+      "adequate_dedicated_headroom_exists": false,
+      "headroom_estimate": {
+        "current_unallocated_cgroup_bytes": 0,
+        "dedicated_or_reserved_bytes": 0,
+        "non_shmem_file_bytes": 965804032,
+        "optimistic_shared_reclaim_ceiling_bytes": 1272458056,
+        "scope": "Non-atomic instantaneous counters; free+all non-shmem file+all reclaimable slab is an optimistic shared upper estimate, not a reservation or assured reclaim.",
+        "slab_reclaimable_bytes": 306654024
+      },
+      "full_tune_memory_analysis": {
+        "fp32_parameters_bytes": 538060032,
+        "installed_torch_profiler_source_sha256": "2c35f649219fb912728819b7dc0be5a5f1bd54c1efcd9502b62d976aeb278d22",
+        "known_extra_needs": [
+          "Torch/Transformers/PEFT imports and thread stacks",
+          "BF16 source mappings and FP32 conversion/material hashing buffers",
+          "forward/backward activations and loss/logits",
+          "AdamW temporaries and allocation caching",
+          "10-step CPU profiler with record_shapes=True and with_flops=True",
+          "full-tune save and later strict artifact parsing, immutable bytes and owned Torch copy buffers"
+        ],
+        "parameters_gradients_adam_two_states_floor_bytes": 2152240128,
+        "planning_headroom_bytes_range_not_measured": [
+          4294967296,
+          6442450944
+        ],
+        "planning_range_scope": "Conservative feasibility allowance only, not a measured peak or guarantee. Includes substantial runtime/profiler/temporary-buffer allowance beyond the 2.00-GiB optimizer floor; preserve the original 16-GiB training cap.",
+        "same_source_full_pretrained_peak_observed": false,
+        "source_observation": "The checked train() has AdamW defaults and retains a shape-recording CPU profiler across all ten steps. Installed pinned Torch profiler documentation states shape recording can retain tensor references and cause extra copies."
+      },
+      "memory_events_delta": {
+        "high": 0,
+        "low": 0,
+        "max": 1040829,
+        "oom": 2,
+        "oom_group_kill": 0,
+        "oom_kill": 1
+      },
+      "pressure_scope": "PSI files unavailable, not zero pressure. Event/reclaim deltas describe shared cgroup activity and are not attributed to this task.",
+      "matches_final_component_tests": true,
+      "receipt_sha256": "8be542752fb389deae09edc03cb1d7b5dfd61a700acdca7aa86b07a85f438ae5"
+    }
+  },
+  "material_pins": {
+    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "weight_bytes": 269060552,
+    "weight_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+  },
+  "retained_successful_counterexample": "Restoring both an old SQLite image and its old local checkpoint can replay a reservation; no independent monotonic authority is provided.",
+  "qualification": {
+    "independent_evaluator": false,
+    "unseen_future_tasks": false,
+    "family_wide_global_trial_control": false,
+    "complete_release_evaluation": false,
+    "complete_economic_cost": false,
+    "model_behavioral_safety": false,
+    "current_generation_FinalUse_integration": false,
+    "no_update": false,
+    "adoption": false,
+    "reward": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false
+  },
+  "remaining_axes": [
+    "external monotonic trial custody, verified related identities, multi-host/family enrollment and unseen future-task multiplicity control",
+    "actually independent evaluator administration, data custody and exercised disputes",
+    "measured complete release composition, routing/cohort regressions, latency/RSS and cold/warm loads",
+    "complete lifecycle cost observation, tariffs/horizon, minimum net benefit, valid no-update and enforced frequency/storage constraints",
+    "trained-model trigger/poison probes, isolation, canaries, revocation and rollback drills",
+    "actual full Torch model plus CURRENT/generation and held FinalUse deployment authorization"
+  ],
+  "final_source_gates": {
+    "schema": "integrated-source-gates-receipt-v1",
+    "python_version": "3.12.14",
+    "git_head_start": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+    "git_head_end": "8e3df70c1e57a45bb5bbcd6092665dee116695ea",
+    "source_changes_during_gates": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md",
+      "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+      "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+      "scripts/ci/ci_job.sh"
+    ],
+    "all_commands_passed": true,
+    "no_retries": true,
+    "runs": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "attempt": 1,
+        "log": "preflight-integrated.log",
+        "started_utc": "2026-11-04T13:11:54Z",
+        "entry_script_sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+        "exit_code": 0,
+        "elapsed_ns": 312563889,
+        "finished_utc": "2026-11-04T13:11:54Z",
+        "log_sha256": "efc825bdb497a4b9af8e09bff13eb614e03fb4cc5306faf6074ad3d0f7d28173",
+        "log_bytes": 166,
+        "unittest_counts": [],
+        "terminal_results": [],
+        "entry_script_unchanged": true
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "scripts/ci/test_repository.py"
+        ],
+        "attempt": 1,
+        "log": "repository-integrated.log",
+        "started_utc": "2026-11-04T13:11:54Z",
+        "entry_script_sha256": "95ca70a3491a111ef97b97ce3bfb25324221433ea8fd854e83372b4b6ad0d605",
+        "exit_code": 0,
+        "elapsed_ns": 608259910215,
+        "finished_utc": "2026-11-04T13:22:02Z",
+        "log_sha256": "9eca463ea530156765a66a3e03db154714468ef17e65a1aa6f2ba397867c9357",
+        "log_bytes": 5345,
+        "unittest_counts": [
+          {
+            "tests": 50,
+            "reported_seconds": "608.048"
+          }
+        ],
+        "terminal_results": [
+          "OK"
+        ],
+        "entry_script_unchanged": true
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "attempt": 1,
+        "log": "ci-source-integrity-integrated.log",
+        "started_utc": "2026-11-04T13:22:02Z",
+        "entry_script_sha256": "8341e6186ea07caa97265481cb7b2f6e947ad528ce229dcab2babfdec4ba7b82",
+        "exit_code": 0,
+        "elapsed_ns": 5002692801,
+        "finished_utc": "2026-11-04T13:22:07Z",
+        "log_sha256": "e03dcae3aa5adc343bc32ca335f79b3b2513050dfd5e38e54497324803a860ad",
+        "log_bytes": 5509,
+        "unittest_counts": [
+          {
+            "tests": 34,
+            "reported_seconds": "4.760"
+          }
+        ],
+        "terminal_results": [
+          "OK"
+        ],
+        "entry_script_unchanged": true
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "attempt": 1,
+        "log": "pq-research-integration-integrated.log",
+        "started_utc": "2026-11-04T13:22:07Z",
+        "entry_script_sha256": "8616da271f3c52ca049e6bed4098a52fd9acff7da45efe77da06969195f5497f",
+        "exit_code": 0,
+        "elapsed_ns": 24627421443,
+        "finished_utc": "2026-11-04T13:22:32Z",
+        "log_sha256": "da6985a072731593dc361a1beed11b18d48d3194e546441bb3c0774010f11e18",
+        "log_bytes": 135,
+        "unittest_counts": [
+          {
+            "tests": 35,
+            "reported_seconds": "24.435"
+          }
+        ],
+        "terminal_results": [
+          "OK"
+        ],
+        "entry_script_unchanged": true
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "formal/pon-nakamoto-v1/test_reference.py"
+        ],
+        "attempt": 1,
+        "log": "reference-integrated.log",
+        "started_utc": "2026-11-04T13:22:32Z",
+        "entry_script_sha256": "ef7989fb5eee5b9e2fe44fce7e39880300c47fdb2b54d80a2d35260dd93ad252",
+        "exit_code": 0,
+        "elapsed_ns": 141054260,
+        "finished_utc": "2026-11-04T13:22:32Z",
+        "log_sha256": "a12d77a73a77ae16ceaf113cadf903a5981b0df4a91146197ef09d9a9c5ac473",
+        "log_bytes": 2944,
+        "unittest_counts": [
+          {
+            "tests": 29,
+            "reported_seconds": "0.006"
+          }
+        ],
+        "terminal_results": [
+          "OK"
+        ],
+        "entry_script_unchanged": true
+      }
+    ],
+    "total_tests_passed": 148,
+    "receipt_sha256": "d347e8a5bc6456416262f5a4b30e3cc1b38eb83a7fbdca67e271ade562ae9345",
+    "snapshot_sha256": "378173f87caa0967b782f9c92aa08329e16f536ce0e027785b87aa7dfee4947b",
+    "snapshot_scope": "Repository mutants ran on the captured245146 source plus this increment; later quantum imports were excluded. Runtime, M06, Cargo.lock and all gate entry scripts matched. The captured work-profile change is the deliberate active test mutant. Later c156 admission/reversible research was preserved and is not included in the 50-mutant result.",
+    "snapshot_differences_from_initial_non_evidence_manifest": [
+      {
+        "path": "config/pon/work-profile-v1.json",
+        "initial_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+        "snapshot_sha256": "5863844edc6f17c4c6bbc933db9fadba839a2a40c1b3fe5a05338e67a5e137b8"
+      }
+    ],
+    "publication_parent": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+    "earlier_static_source_result": {
+      "activation": false,
+      "head": "245146c7d2e6f7dfcda463f6a7dd342d4d7ca818",
+      "local_links": 2477,
+      "normal_dependency_edges": 25,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1102,
+      "source_state": "dirty-candidate",
+      "tree": "3081dfefa8b56506a61770d6de3adc49f55cba2c",
+      "workspace_packages": 26
+    },
+    "earlier_static_corpus_result": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 410,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "publication_worktree_static_check": {
+      "activation": false,
+      "head": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+      "local_links": 2518,
+      "normal_dependency_edges": 25,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1102,
+      "source_state": "dirty-candidate",
+      "tree": "6ee8553bf3960ff31268a65bfc0c54970dfc12fb",
+      "workspace_packages": 26
+    },
+    "publication_corpus_check": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 411,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "publication_corpus_negative": {
+      "passed": 35,
+      "failed": 0,
+      "exit_code": 0,
+      "log_sha256": "d212066c762ee6fb0d96c069cabe6a6d6a4db5cffde20dc5ff0b4c753f4152d5",
+      "scope": "Rerun after c156 changed source pins; does not replace original snapshot tests."
+    },
+    "final_plan_merge_note": "Restored the current parent plan verbatim plus our one 34-line subsection; removed a duplicated concurrent quantum subsection before publication. No runtime, M06, lock, or gate source changed."
+  }
+}

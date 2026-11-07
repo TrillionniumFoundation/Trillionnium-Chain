@@ -1,0 +1,129 @@
+{
+  "schema": "original-r14-readback-source-binding-v1",
+  "original_native_commit": "131f673d9563e72aca7139f3239856957d118d49",
+  "original_native_tree": "b8bdd87dca3cd6288c38f63848b24b1a2df6a09d",
+  "analysis_base_commit": "56462db5fae46830581a01a52deaca1e40ba8203",
+  "analysis_base_tree": "2ade68d837ca664a384b283ae83c419e28be0d04",
+  "paths": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "source_bytes": 110341,
+      "source_sha256": "c0fe8ea6171bd7008bd6143c0b894ee5f646bf410d467068464a6f311fe48f35",
+      "source_blob": "326aeb117d2c07f5825fd4d8948dad52d12cb7e7",
+      "analysis_source_sha256": "c0fe8ea6171bd7008bd6143c0b894ee5f646bf410d467068464a6f311fe48f35",
+      "analysis_source_blob": "326aeb117d2c07f5825fd4d8948dad52d12cb7e7",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_work.rs",
+      "source_bytes": 5775,
+      "source_sha256": "bf719eed6c8de43e9fadc033520b11d5e52178d22aa4ab9b114037ef232ba1df",
+      "source_blob": "01779c93ddc8ca61923588f534a3bf88c9e5ad9f",
+      "analysis_source_sha256": "bf719eed6c8de43e9fadc033520b11d5e52178d22aa4ab9b114037ef232ba1df",
+      "analysis_source_blob": "01779c93ddc8ca61923588f534a3bf88c9e5ad9f",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "source_bytes": 309944,
+      "source_sha256": "488981844f2d3728c59785d43bdd8f7ea9defbda167c58490cc653421b9049a0",
+      "source_blob": "59f51dcadb5a0a575eaa14734edbce74accade09",
+      "analysis_source_sha256": "488981844f2d3728c59785d43bdd8f7ea9defbda167c58490cc653421b9049a0",
+      "analysis_source_blob": "59f51dcadb5a0a575eaa14734edbce74accade09",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "source_bytes": 76292,
+      "source_sha256": "c2bb367b7c540344c1db5145008c999a942c0c66630b217a92ec6c0031e822ea",
+      "source_blob": "32463cc08d29919b66460238614f81cd4125f796",
+      "analysis_source_sha256": "c2bb367b7c540344c1db5145008c999a942c0c66630b217a92ec6c0031e822ea",
+      "analysis_source_blob": "32463cc08d29919b66460238614f81cd4125f796",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "source_bytes": 202781,
+      "source_sha256": "19c8310ae5247294702bb9c31f294fa1d13071ac3f00aa28f9d136546ec63a61",
+      "source_blob": "8b07b468b8b79b51f49583f9da3ea122231db9fb",
+      "analysis_source_sha256": "19c8310ae5247294702bb9c31f294fa1d13071ac3f00aa28f9d136546ec63a61",
+      "analysis_source_blob": "8b07b468b8b79b51f49583f9da3ea122231db9fb",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_bytes": 309904,
+      "source_sha256": "94ea1964fee65b392f3e3551f9a7bc2bec4e33b91a9f7cba5912f3961d30099b",
+      "source_blob": "51f73baed12ba839c965a2e3cb2ffbbd9c6fc131",
+      "analysis_source_sha256": "94ea1964fee65b392f3e3551f9a7bc2bec4e33b91a9f7cba5912f3961d30099b",
+      "analysis_source_blob": "51f73baed12ba839c965a2e3cb2ffbbd9c6fc131",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "source_bytes": 19777,
+      "source_sha256": "56c605a436514e2887c924316be99d1b453784115832ab55019124831a34e10a",
+      "source_blob": "126395ab2e84daa57387e657f3c46a7f90fe4f62",
+      "analysis_source_sha256": "56c605a436514e2887c924316be99d1b453784115832ab55019124831a34e10a",
+      "analysis_source_blob": "126395ab2e84daa57387e657f3c46a7f90fe4f62",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "source_bytes": 72052,
+      "source_sha256": "3ed29941eb0b9959bdeb0cd4e59d2565bbd4b82b70c9cc94d0cd46065c16b874",
+      "source_blob": "1c76bfa6039823196f936d668fa1148570487762",
+      "analysis_source_sha256": "3ed29941eb0b9959bdeb0cd4e59d2565bbd4b82b70c9cc94d0cd46065c16b874",
+      "analysis_source_blob": "1c76bfa6039823196f936d668fa1148570487762",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "source_bytes": 26392,
+      "source_sha256": "405a28c6dedbfa1bdc4fb54ae35d649f88003d5304032180fced08c2a3e91753",
+      "source_blob": "06dc190f7dee41c8bd39f1da874b64e4ac55befa",
+      "analysis_source_sha256": "405a28c6dedbfa1bdc4fb54ae35d649f88003d5304032180fced08c2a3e91753",
+      "analysis_source_blob": "06dc190f7dee41c8bd39f1da874b64e4ac55befa",
+      "byte_equal": true
+    },
+    {
+      "path": "scripts/ci/run_native_phase_host.py",
+      "source_bytes": 18895,
+      "source_sha256": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "source_blob": "be4c1726ff0c2fa19616c42b9a6fa819b08a7d96",
+      "analysis_source_sha256": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "analysis_source_blob": "be4c1726ff0c2fa19616c42b9a6fa819b08a7d96",
+      "byte_equal": true
+    },
+    {
+      "path": "config/systemd/trnmponpublic.slice",
+      "source_bytes": 325,
+      "source_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "source_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "analysis_source_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "analysis_source_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "byte_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "source_bytes": 40864,
+      "source_sha256": "36d4eace1f9620abb43878328f583c986467c29278419af0fbe612bd52669b07",
+      "source_blob": "1076f990e4bbc21452b0823d833220924f3db629",
+      "analysis_source_sha256": "36d4eace1f9620abb43878328f583c986467c29278419af0fbe612bd52669b07",
+      "analysis_source_blob": "1076f990e4bbc21452b0823d833220924f3db629",
+      "byte_equal": true
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "source_bytes": 5452,
+      "source_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "source_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "analysis_source_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "analysis_source_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "byte_equal": true
+    }
+  ],
+  "history_checkpoint_patch_not_projected_onto_original_measurements": true,
+  "runtime_or_profile_changed_in_this_diagnostic": false,
+  "work_package_2b_closed": false
+}

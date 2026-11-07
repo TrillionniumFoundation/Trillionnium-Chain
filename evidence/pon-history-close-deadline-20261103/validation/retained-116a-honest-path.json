@@ -1,0 +1,1888 @@
+{
+  "schema": "pon-retained-honest-path-observation-v1",
+  "artifact_role": "Reviewed derived historical observation; not a new native execution or qualification result.",
+  "archive": {
+    "filename": "116a-protocol-contract-retained.zip",
+    "size_bytes": 5528489,
+    "sha256": "a1c2bd158d07392b2997b551199fbb692a3b473d3f1d2affdf43d39f457bf06d",
+    "matches_task_supplied_sha256": true,
+    "read_method": "Only the four listed JSON members were parsed with Python zipfile. No archive executable, script, workload or database was executed or extracted."
+  },
+  "ci_context_supplied_to_task": {
+    "github_run_id": "41686753154",
+    "github_job_id": "126096954170",
+    "artifact_id": "13257623485",
+    "provenance": "Parent task description; these identifiers are not supplied by the selected source/manifest/report/host-child fields.",
+    "run_job_artifact_binding_verified_from_selected_members": false,
+    "independently_authenticated_ci_execution": null
+  },
+  "selected_archive_members": {
+    "source": {
+      "member_path": "source.json",
+      "uncompressed_size_bytes": 421,
+      "sha256": "ff0143f61b2174f56b7dd7a762ef076b4e6716f4f6c4b7fe49d2fecb84bf34ca"
+    },
+    "manifest": {
+      "member_path": "from-zero-native/manifest.json",
+      "uncompressed_size_bytes": 45318,
+      "sha256": "fcb86337d2a64a21cb46788bb4dea131cb956001a4bbb6e29fc1ea7db052492d"
+    },
+    "confirmation": {
+      "member_path": "from-zero-native/confirmation/report.json",
+      "uncompressed_size_bytes": 7935490,
+      "sha256": "7623033e80bc67c12e189c9b9beb9d48382817635a7962a2ab70d42265b0202b"
+    },
+    "host_child": {
+      "member_path": "from-zero-native-host/child-result.json",
+      "uncompressed_size_bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321"
+    }
+  },
+  "source_identity": {
+    "evidence_ref": {
+      "member_path": "source.json",
+      "json_pointer": ""
+    },
+    "reported": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+      "tested_tree": "e07dee8cad7727845063ced35933c9408341945d",
+      "candidate": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 7533,
+      "tracked_bytes": 872290011,
+      "tests_executed_by_identity_check": false
+    },
+    "manifest_before": {
+      "evidence_ref": {
+        "member_path": "from-zero-native/manifest.json",
+        "json_pointer": "/source_before"
+      },
+      "commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+      "tree": "e07dee8cad7727845063ced35933c9408341945d",
+      "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+    },
+    "manifest_after": {
+      "evidence_ref": {
+        "member_path": "from-zero-native/manifest.json",
+        "json_pointer": "/source_after"
+      },
+      "commit": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+      "tree": "e07dee8cad7727845063ced35933c9408341945d",
+      "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+    },
+    "derived_source_before_and_after_match_source_json": true,
+    "qualification_scope": "These observations belong only to the recorded historical source and configuration. They do not qualify a current or later source, a composed tree, or another executable."
+  },
+  "manifest_outcome": {
+    "evidence_ref": {
+      "member_path": "from-zero-native/manifest.json",
+      "json_pointer": ""
+    },
+    "reported": {
+      "schema": "trnm-from-zero-native-execution-v3",
+      "source_recompiled": true,
+      "all_named_tests_passed": true,
+      "format_passed": true,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "passed": false,
+      "execution_finished": false
+    },
+    "derived_named_test_counts": {
+      "recorded_run_entries": 5,
+      "reported_executed_tests": 5,
+      "run_entries_reported_passed": 5,
+      "named_execution_entries_reported_PASS": 5
+    },
+    "named_execution_metadata_only": [
+      {
+        "evidence_ref": {
+          "member_path": "from-zero-native/manifest.json",
+          "json_pointer": "/runs/0"
+        },
+        "passed": true,
+        "named_execution": {
+          "result": "PASS",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false
+        }
+      },
+      {
+        "evidence_ref": {
+          "member_path": "from-zero-native/manifest.json",
+          "json_pointer": "/runs/1"
+        },
+        "passed": true,
+        "named_execution": {
+          "result": "PASS",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false
+        }
+      },
+      {
+        "evidence_ref": {
+          "member_path": "from-zero-native/manifest.json",
+          "json_pointer": "/runs/2"
+        },
+        "passed": true,
+        "named_execution": {
+          "result": "PASS",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false
+        }
+      },
+      {
+        "evidence_ref": {
+          "member_path": "from-zero-native/manifest.json",
+          "json_pointer": "/runs/3"
+        },
+        "passed": true,
+        "named_execution": {
+          "result": "PASS",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false
+        }
+      },
+      {
+        "evidence_ref": {
+          "member_path": "from-zero-native/manifest.json",
+          "json_pointer": "/runs/4"
+        },
+        "passed": true,
+        "named_execution": {
+          "result": "PASS",
+          "executed_tests": 1,
+          "scope": "named-libtest-execution-only"
+        },
+        "process": {
+          "exit_code": 0,
+          "timed_out": false
+        }
+      }
+    ],
+    "scope_note": "Named-test execution and pass counts do not override manifest passed=false or execution_finished=false. Test identities, commands and non-honest workload material are not copied into this draft."
+  },
+  "confirmation_report_outcome": {
+    "evidence_ref": {
+      "member_path": "from-zero-native/confirmation/report.json",
+      "json_pointer": ""
+    },
+    "reported": {
+      "schema": "public-v3-signed-confirmation-pressure-v1",
+      "finite_target_met": false,
+      "invariant_target_met": true,
+      "same_packet_sequence_in_both_runs": true,
+      "public_network_ready": false,
+      "production_activation": false,
+      "work_profile_qualified": false
+    }
+  },
+  "honest_path_phases": {
+    "baseline": {
+      "evidence_ref": {
+        "member_path": "from-zero-native/confirmation/report.json",
+        "json_pointer": "/phases/0"
+      },
+      "reported_outcome": {
+        "requested_window_ns": 4000000000,
+        "business_started_ns": 124888,
+        "client_confirmation_latency_ns": 2790815017,
+        "client_confirmed_before_original_window_end": true,
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 2790939905,
+        "finite_business_target_met": true,
+        "invariant_target_met": true,
+        "full_native_state_equal": true,
+        "receiver_matches_valid_honest_prefix": true,
+        "verification_errors": [],
+        "independent_replay_and_confirmation_cpu_ns": 474832491,
+        "independent_replay_and_confirmation_wall_ns": 2556953761,
+        "independent_operator_accepted": false,
+        "public_network_ready": false,
+        "production_activation": false,
+        "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit"
+      },
+      "honest_submissions": {
+        "evidence_ref": {
+          "member_path": "from-zero-native/confirmation/report.json",
+          "json_pointer": "/phases/0/honest_submissions"
+        },
+        "derived_counts": {
+          "recorded_calls": 7,
+          "status_counts": {
+            "ok": 7
+          },
+          "ok_calls_returned_within_original_window": 7,
+          "calls_recorded_returned_after_window": 0,
+          "calls_recorded_returned_after_deadline": 0
+        },
+        "selected_call_records": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/0"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 517499,
+            "ended_ns": 115607287,
+            "elapsed_wall_ns": 115091421,
+            "client_thread_cpu_ns": 863023,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/1"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 116154640,
+            "ended_ns": 134015061,
+            "elapsed_wall_ns": 17861873,
+            "client_thread_cpu_ns": 793882,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/2"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 134482975,
+            "ended_ns": 151259725,
+            "elapsed_wall_ns": 16778433,
+            "client_thread_cpu_ns": 765238,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/3"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 151716342,
+            "ended_ns": 168787565,
+            "elapsed_wall_ns": 17072886,
+            "client_thread_cpu_ns": 722033,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/4"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 169242589,
+            "ended_ns": 199078867,
+            "elapsed_wall_ns": 29837480,
+            "client_thread_cpu_ns": 769274,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/5"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 199558959,
+            "ended_ns": 216491904,
+            "elapsed_wall_ns": 16934698,
+            "client_thread_cpu_ns": 738598,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_submissions/6"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 216941571,
+            "ended_ns": 233763949,
+            "elapsed_wall_ns": 16824261,
+            "client_thread_cpu_ns": 708065,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          }
+        ],
+        "failed_client_observations": []
+      },
+      "honest_history": {
+        "evidence_ref": {
+          "member_path": "from-zero-native/confirmation/report.json",
+          "json_pointer": "/phases/0/honest_history"
+        },
+        "derived_counts": {
+          "recorded_calls": 7,
+          "status_counts": {
+            "ok": 7
+          },
+          "ok_calls_returned_within_original_window": 7,
+          "calls_recorded_returned_after_window": 0,
+          "calls_recorded_returned_after_deadline": 0
+        },
+        "selected_call_records": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/0"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 233991191,
+            "ended_ns": 287742899,
+            "elapsed_wall_ns": 53752619,
+            "client_thread_cpu_ns": 744718,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/1"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 896632239,
+            "ended_ns": 908833886,
+            "elapsed_wall_ns": 12202849,
+            "client_thread_cpu_ns": 624118,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/2"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1254648182,
+            "ended_ns": 1266776228,
+            "elapsed_wall_ns": 12129048,
+            "client_thread_cpu_ns": 667373,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/3"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1491875251,
+            "ended_ns": 1503934143,
+            "elapsed_wall_ns": 12060014,
+            "client_thread_cpu_ns": 755664,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/4"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1790765340,
+            "ended_ns": 1802906596,
+            "elapsed_wall_ns": 12142398,
+            "client_thread_cpu_ns": 694613,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/5"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 2090944478,
+            "ended_ns": 2102660445,
+            "elapsed_wall_ns": 11717058,
+            "client_thread_cpu_ns": 731748,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/honest_history/6"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 2391626824,
+            "ended_ns": 2403842392,
+            "elapsed_wall_ns": 12216700,
+            "client_thread_cpu_ns": 714402,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          }
+        ],
+        "failed_client_observations": []
+      },
+      "independent_history_replay": {
+        "evidence_ref": {
+          "member_path": "from-zero-native/confirmation/report.json",
+          "json_pointer": "/phases/0/independent_history_page_replay"
+        },
+        "derived_counts": {
+          "recorded_pages": 7,
+          "accepted_pages": 7,
+          "rejected_pages": 0,
+          "pages_with_non_null_replay_error": 0
+        },
+        "selected_page_records": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/0"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 0,
+            "history_request_ended_ns": 287742899,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 287762869,
+            "replay_ended_ns": 896566701,
+            "replay_thread_cpu_ns": 71736633,
+            "replay_wall_ns": 608803832,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/0/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 959274,
+                "ended_ns": 400603994,
+                "wall_ns": 399644720,
+                "thread_cpu_ns": 11587010,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/0/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 302986,
+                "ended_ns": 957361,
+                "wall_ns": 654375,
+                "thread_cpu_ns": 238736,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/0/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 608331011,
+                "ended_ns": 608711103,
+                "wall_ns": 380092,
+                "thread_cpu_ns": 90235,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/0/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 233572,
+                "ended_ns": 608721248,
+                "wall_ns": 608487676,
+                "thread_cpu_ns": 71420382,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/0/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 401016615,
+                "ended_ns": 401019940,
+                "wall_ns": 3325,
+                "thread_cpu_ns": 3185,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/1"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 1,
+            "history_request_ended_ns": 908833886,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 908851923,
+            "replay_ended_ns": 1254586990,
+            "replay_thread_cpu_ns": 61612515,
+            "replay_wall_ns": 345735067,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/1/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 739022,
+                "ended_ns": 17734591,
+                "wall_ns": 16995569,
+                "thread_cpu_ns": 569927,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/1/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 269786,
+                "ended_ns": 737500,
+                "wall_ns": 467714,
+                "thread_cpu_ns": 166567,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/1/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 345113471,
+                "ended_ns": 345614946,
+                "wall_ns": 501475,
+                "thread_cpu_ns": 127359,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/1/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 204237,
+                "ended_ns": 345631881,
+                "wall_ns": 345427644,
+                "thread_cpu_ns": 61305098,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/1/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 18144818,
+                "ended_ns": 18147963,
+                "wall_ns": 3145,
+                "thread_cpu_ns": 3125,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/2"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 2,
+            "history_request_ended_ns": 1266776228,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 1266794025,
+            "replay_ended_ns": 1491820338,
+            "replay_thread_cpu_ns": 61056079,
+            "replay_wall_ns": 225026313,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/2/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 3731414,
+                "ended_ns": 3795771,
+                "wall_ns": 64357,
+                "thread_cpu_ns": 64276,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/2/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 266281,
+                "ended_ns": 3729902,
+                "wall_ns": 3463621,
+                "thread_cpu_ns": 173007,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/2/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 224525290,
+                "ended_ns": 224934656,
+                "wall_ns": 409366,
+                "thread_cpu_ns": 134280,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/2/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 196706,
+                "ended_ns": 224947245,
+                "wall_ns": 224750539,
+                "thread_cpu_ns": 60780479,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/2/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 4159238,
+                "ended_ns": 4162373,
+                "wall_ns": 3135,
+                "thread_cpu_ns": 3145,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/3"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 3,
+            "history_request_ended_ns": 1503934143,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 1503949546,
+            "replay_ended_ns": 1790704559,
+            "replay_thread_cpu_ns": 62937840,
+            "replay_wall_ns": 286755013,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/3/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 792482,
+                "ended_ns": 852783,
+                "wall_ns": 60301,
+                "thread_cpu_ns": 60230,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/3/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 272951,
+                "ended_ns": 790910,
+                "wall_ns": 517959,
+                "thread_cpu_ns": 161831,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/3/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 286282492,
+                "ended_ns": 286674151,
+                "wall_ns": 391659,
+                "thread_cpu_ns": 86901,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/3/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 206801,
+                "ended_ns": 286685077,
+                "wall_ns": 286478276,
+                "thread_cpu_ns": 62661039,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/3/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 1226906,
+                "ended_ns": 1229690,
+                "wall_ns": 2784,
+                "thread_cpu_ns": 2774,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/4"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 4,
+            "history_request_ended_ns": 1802906596,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 1802922350,
+            "replay_ended_ns": 2090886471,
+            "replay_thread_cpu_ns": 63306078,
+            "replay_wall_ns": 287964121,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/4/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 746483,
+                "ended_ns": 806944,
+                "wall_ns": 60461,
+                "thread_cpu_ns": 60350,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/4/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 280723,
+                "ended_ns": 745041,
+                "wall_ns": 464318,
+                "thread_cpu_ns": 180598,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/4/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 287458301,
+                "ended_ns": 287884402,
+                "wall_ns": 426101,
+                "thread_cpu_ns": 102654,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/4/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 211809,
+                "ended_ns": 287894467,
+                "wall_ns": 287682658,
+                "thread_cpu_ns": 63024569,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/4/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 1169260,
+                "ended_ns": 1172224,
+                "wall_ns": 2964,
+                "thread_cpu_ns": 2974,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/5"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 5,
+            "history_request_ended_ns": 2102660445,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 2102677310,
+            "replay_ended_ns": 2391568967,
+            "replay_thread_cpu_ns": 65001456,
+            "replay_wall_ns": 288891657,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/5/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 847545,
+                "ended_ns": 911561,
+                "wall_ns": 64016,
+                "thread_cpu_ns": 63926,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/5/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 269966,
+                "ended_ns": 846032,
+                "wall_ns": 576066,
+                "thread_cpu_ns": 189163,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/5/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 288410643,
+                "ended_ns": 288813098,
+                "wall_ns": 402455,
+                "thread_cpu_ns": 84525,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/5/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 202274,
+                "ended_ns": 288822142,
+                "wall_ns": 288619868,
+                "thread_cpu_ns": 64729541,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/5/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 1289029,
+                "ended_ns": 1291943,
+                "wall_ns": 2914,
+                "thread_cpu_ns": 2904,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/0/independent_history_page_replay/6"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2403842392,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 2403858326,
+            "replay_ended_ns": 2790078138,
+            "replay_thread_cpu_ns": 82904694,
+            "replay_wall_ns": 386219812,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/6/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 882748,
+                "ended_ns": 943429,
+                "wall_ns": 60681,
+                "thread_cpu_ns": 60580,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/6/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 251338,
+                "ended_ns": 881355,
+                "wall_ns": 630017,
+                "thread_cpu_ns": 150423,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/6/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 385782054,
+                "ended_ns": 386143247,
+                "wall_ns": 361193,
+                "thread_cpu_ns": 76954,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/6/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 184607,
+                "ended_ns": 386152180,
+                "wall_ns": 385967573,
+                "thread_cpu_ns": 82652338,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/0/independent_history_page_replay/6/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 1295228,
+                "ended_ns": 1297982,
+                "wall_ns": 2754,
+                "thread_cpu_ns": 2754,
+                "error_code": null
+              }
+            ]
+          }
+        ]
+      },
+      "confirmation": {
+        "evidence_refs": {
+          "final_stage": {
+            "member_path": "from-zero-native/confirmation/report.json",
+            "json_pointer": "/phases/0/independent_final_confirmation_stage"
+          },
+          "client_observation": {
+            "member_path": "from-zero-native/confirmation/report.json",
+            "json_pointer": "/phases/0/independent_client_confirmation"
+          },
+          "confirmed_transaction_count": {
+            "member_path": "from-zero-native/confirmation/report.json",
+            "json_pointer": "/phases/0/client_confirmed_transactions"
+          }
+        },
+        "derived_counts": {
+          "non_null_final_stage_records": 1,
+          "non_null_client_confirmation_records": 1,
+          "returned_final_confirmation_observations": 1,
+          "reported_confirmed_transactions": 1
+        },
+        "final_stage": {
+          "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+          "confirmation_started_ns": 2790135024,
+          "confirmation_ended_ns": 2790937031,
+          "confirmation_thread_cpu_ns": 802744,
+          "confirmation_wall_ns": 802007,
+          "observation_returned": true
+        },
+        "client_observation": {
+          "confirmed": true,
+          "depth": 6,
+          "finalized": false,
+          "execution_authority": false,
+          "included_height": 1,
+          "observed_height": 7
+        }
+      }
+    },
+    "paired": {
+      "evidence_ref": {
+        "member_path": "from-zero-native/confirmation/report.json",
+        "json_pointer": "/phases/1"
+      },
+      "reported_outcome": {
+        "requested_window_ns": 4000000000,
+        "business_started_ns": 68140335,
+        "client_confirmation_latency_ns": null,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "invariant_target_met": true,
+        "full_native_state_equal": false,
+        "receiver_matches_valid_honest_prefix": true,
+        "verification_errors": [],
+        "independent_replay_and_confirmation_cpu_ns": 141523340,
+        "independent_replay_and_confirmation_wall_ns": 2136745437,
+        "independent_operator_accepted": false,
+        "public_network_ready": false,
+        "production_activation": false,
+        "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit"
+      },
+      "honest_submissions": {
+        "evidence_ref": {
+          "member_path": "from-zero-native/confirmation/report.json",
+          "json_pointer": "/phases/1/honest_submissions"
+        },
+        "derived_counts": {
+          "recorded_calls": 7,
+          "status_counts": {
+            "ok": 7
+          },
+          "ok_calls_returned_within_original_window": 7,
+          "calls_recorded_returned_after_window": 0,
+          "calls_recorded_returned_after_deadline": 0
+        },
+        "selected_call_records": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/0"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 68515299,
+            "ended_ns": 357264942,
+            "elapsed_wall_ns": 288751585,
+            "client_thread_cpu_ns": 933577,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/1"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 357640077,
+            "ended_ns": 564095281,
+            "elapsed_wall_ns": 206456757,
+            "client_thread_cpu_ns": 712690,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/2"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 564514351,
+            "ended_ns": 859966788,
+            "elapsed_wall_ns": 295453869,
+            "client_thread_cpu_ns": 721733,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/3"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 860461743,
+            "ended_ns": 1155956785,
+            "elapsed_wall_ns": 295496254,
+            "client_thread_cpu_ns": 819821,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/4"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1156365570,
+            "ended_ns": 1362315131,
+            "elapsed_wall_ns": 205951284,
+            "client_thread_cpu_ns": 702684,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/5"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1362680170,
+            "ended_ns": 1684877435,
+            "elapsed_wall_ns": 322198597,
+            "client_thread_cpu_ns": 708893,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_submissions/6"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1685249375,
+            "ended_ns": 1864860293,
+            "elapsed_wall_ns": 179612541,
+            "client_thread_cpu_ns": 677186,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          }
+        ],
+        "failed_client_observations": []
+      },
+      "honest_history": {
+        "evidence_ref": {
+          "member_path": "from-zero-native/confirmation/report.json",
+          "json_pointer": "/phases/1/honest_history"
+        },
+        "derived_counts": {
+          "recorded_calls": 3,
+          "status_counts": {
+            "error": 1,
+            "ok": 2
+          },
+          "ok_calls_returned_within_original_window": 2,
+          "calls_recorded_returned_after_window": 1,
+          "calls_recorded_returned_after_deadline": 0
+        },
+        "selected_call_records": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_history/0"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 1865026473,
+            "ended_ns": 1959535619,
+            "elapsed_wall_ns": 94510097,
+            "client_thread_cpu_ns": 662226,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_history/1"
+            },
+            "status": "ok",
+            "error": null,
+            "started_ns": 3157285685,
+            "ended_ns": 3264561712,
+            "elapsed_wall_ns": 107277159,
+            "client_thread_cpu_ns": 715926,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": false,
+            "metrics": {
+              "failed_stage": null
+            }
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_history/2"
+            },
+            "status": "error",
+            "error": "IO: Resource temporarily unavailable (os error 11)",
+            "started_ns": 3960836210,
+            "ended_ns": 4001761594,
+            "elapsed_wall_ns": 40926405,
+            "client_thread_cpu_ns": 157024,
+            "client_cpu_scope": "identity creation, negotiation, ticket search, request encoding, I/O and reply validation on this calling thread; excludes receiver and final diagnostic JSON",
+            "returned_after_deadline": false,
+            "returned_after_window": true,
+            "metrics": {
+              "failed_stage": "challenge"
+            }
+          }
+        ],
+        "failed_client_observations": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/honest_history/2"
+            },
+            "client_observation": {
+              "status": "error",
+              "error": "IO: Resource temporarily unavailable (os error 11)",
+              "started_ns": 3960836210,
+              "ended_ns": 4001761594,
+              "elapsed_wall_ns": 40926405,
+              "returned_after_deadline": false,
+              "returned_after_window": true
+            },
+            "observed_failed_stage": "challenge",
+            "os_errno_number_extracted_from_error_text": 11,
+            "server_root_cause": null,
+            "attribution_limit": "This is a client-side I/O observation and client stage label. It does not establish a server-side root cause."
+          }
+        ]
+      },
+      "independent_history_replay": {
+        "evidence_ref": {
+          "member_path": "from-zero-native/confirmation/report.json",
+          "json_pointer": "/phases/1/independent_history_page_replay"
+        },
+        "derived_counts": {
+          "recorded_pages": 2,
+          "accepted_pages": 2,
+          "rejected_pages": 0,
+          "pages_with_non_null_replay_error": 0
+        },
+        "selected_page_records": [
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/independent_history_page_replay/0"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 0,
+            "history_request_ended_ns": 1959535619,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 1959550962,
+            "replay_ended_ns": 3157216110,
+            "replay_thread_cpu_ns": 72129508,
+            "replay_wall_ns": 1197665148,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/0/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 970079,
+                "ended_ns": 402228262,
+                "wall_ns": 401258183,
+                "thread_cpu_ns": 4383691,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/0/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 314723,
+                "ended_ns": 968597,
+                "wall_ns": 653874,
+                "thread_cpu_ns": 224774,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/0/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 1196385934,
+                "ended_ns": 1197569234,
+                "wall_ns": 1183300,
+                "thread_cpu_ns": 101622,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/0/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 242484,
+                "ended_ns": 1197582704,
+                "wall_ns": 1197340220,
+                "thread_cpu_ns": 71804525,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/0/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 402785821,
+                "ended_ns": 402789797,
+                "wall_ns": 3976,
+                "thread_cpu_ns": 3805,
+                "error_code": null
+              }
+            ]
+          },
+          {
+            "evidence_ref": {
+              "member_path": "from-zero-native/confirmation/report.json",
+              "json_pointer": "/phases/1/independent_history_page_replay/1"
+            },
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 1,
+            "history_request_ended_ns": 3264561712,
+            "replay_accepted": true,
+            "replay_error": null,
+            "replay_started_ns": 3264581061,
+            "replay_ended_ns": 3960781077,
+            "replay_thread_cpu_ns": 67689977,
+            "replay_wall_ns": 696200016,
+            "native_import_scope": {
+              "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+              "cpu_intervals_are_nested_not_additive": true,
+              "host_checks_are_nested_not_additive": true,
+              "host_cpu_includes_each_calling_thread": true,
+              "host_cpu_is_full_worker_cpu": false,
+              "phase_cpu_excludes_scoped_workers": true,
+              "observation_has_consensus_authority": false,
+              "measurement_failures": 0
+            },
+            "selected_native_import_phase_records": [
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/phases/11"
+                },
+                "phase": "cpu_wait",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 88509676,
+                "ended_ns": 88653252,
+                "wall_ns": 143576,
+                "thread_cpu_ns": 143333,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/phases/14"
+                },
+                "phase": "history_epoch_open",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 358329,
+                "ended_ns": 88506962,
+                "wall_ns": 88148633,
+                "thread_cpu_ns": 282370,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/phases/15"
+                },
+                "phase": "history_epoch_close",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 695717610,
+                "ended_ns": 696099825,
+                "wall_ns": 382215,
+                "thread_cpu_ns": 81781,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/phases/16"
+                },
+                "phase": "history_import",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 270907,
+                "ended_ns": 696130301,
+                "wall_ns": 695859394,
+                "thread_cpu_ns": 67349480,
+                "error_code": null
+              },
+              {
+                "evidence_ref": {
+                  "member_path": "from-zero-native/confirmation/report.json",
+                  "json_pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/phases/17"
+                },
+                "phase": "cpu_settle",
+                "parent_phase": null,
+                "started": true,
+                "completed": true,
+                "accepted": true,
+                "started_ns": 89232022,
+                "ended_ns": 89236098,
+                "wall_ns": 4076,
+                "thread_cpu_ns": 3896,
+                "error_code": null
+              }
+            ]
+          }
+        ]
+      },
+      "confirmation": {
+        "evidence_refs": {
+          "final_stage": {
+            "member_path": "from-zero-native/confirmation/report.json",
+            "json_pointer": "/phases/1/independent_final_confirmation_stage"
+          },
+          "client_observation": {
+            "member_path": "from-zero-native/confirmation/report.json",
+            "json_pointer": "/phases/1/independent_client_confirmation"
+          },
+          "confirmed_transaction_count": {
+            "member_path": "from-zero-native/confirmation/report.json",
+            "json_pointer": "/phases/1/client_confirmed_transactions"
+          }
+        },
+        "derived_counts": {
+          "non_null_final_stage_records": 0,
+          "non_null_client_confirmation_records": 0,
+          "returned_final_confirmation_observations": 0,
+          "reported_confirmed_transactions": 0
+        },
+        "final_stage": null,
+        "client_observation": null
+      }
+    }
+  },
+  "host_child": {
+    "evidence_ref": {
+      "member_path": "from-zero-native-host/child-result.json",
+      "json_pointer": ""
+    },
+    "reported": {
+      "schema": "trnm-ci-original-public-host-child-v1",
+      "host_errors": [],
+      "host_readiness_only": true,
+      "native_child_exit": 1,
+      "consensus_or_model_authority": false
+    },
+    "scope_note": "An empty host_errors list is Host-readiness evidence only; it does not override the child exit or the business confirmation result."
+  },
+  "finite_scope_limits": [
+    "The report describes one host and one operator with a separate native verifying client. This is not independently operated WAN evidence.",
+    "Both recorded phases request the original 4000000000-nanosecond window. No post-window drain is credited as timely business confirmation.",
+    "The paired phase records seven successful honest submissions, two successful History calls and two accepted page replays, followed by one failed History call and zero confirmed transactions. This is incomplete finite-window acquisition/replay and confirmation, not proof of any server root cause.",
+    "Client errno 11 and failed_stage=challenge identify a client-side observation. The selected evidence does not establish why the server did or did not make progress.",
+    "Client/importer/confirmation calling-thread CPU is not total receiver CPU or complete worker CPU. Host spans sum the actual invoking threads' measured intervals, not full worker execution.",
+    "Native import and Host timing intervals can be nested. Their CPU or wall times must not be added as disjoint work or converted into an exact causal attribution.",
+    "Observer-local monotonic timestamps do not establish a shared clock across client, server, Host or another run.",
+    "Zero confirmations and null confirmation objects are retained. Null observations are not substituted with zero latency, success, finality, execution authority or proof of no durable state change.",
+    "Invariant success and matching the valid honest prefix remain separate from full-state equality and finite business success.",
+    "Historical named-test passes, archive hashes and source identities do not supply current-source qualification, independent security review, work-hardness acceptance or production activation."
+  ],
+  "selection_policy": {
+    "copied_data": "Whitelisted source and manifest metadata, Host-readiness fields, honest client outcomes/timings, honest replay timing fields and confirmation outcomes only.",
+    "count_semantics": "Counts are derived from retained records. Window/deadline counts use the recorded returned_after_window and returned_after_deadline flags. A non-null observation count does not assert an unrecorded attempt.",
+    "null_and_missing_semantics": "Existing nulls are retained. Missing selected fields are listed below and are not filled with fabricated observations. Null server_root_cause/authenticated-execution fields explicitly denote claims not established by this selection."
+  },
+  "missing_selected_fields": [],
+  "external_api_binding": {
+    "api": "GitHub workflow run artifacts",
+    "readback_date_utc": "2026-11-03",
+    "artifact": {
+      "id": 13257623485,
+      "name": "head-protocol-contract-116a3caf6046dd0db3caf1d0797e636c35c877b8-1",
+      "size_in_bytes": 5528489,
+      "digest": "sha256:a1c2bd158d07392b2997b551199fbb692a3b473d3f1d2affdf43d39f457bf06d",
+      "workflow_run": {
+        "id": 41686753154,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "116a3caf6046dd0db3caf1d0797e636c35c877b8"
+      }
+    },
+    "zip_digest_and_size_match": true,
+    "job_binding_verified_from_this_api": false
+  },
+  "root_review": {
+    "all_four_selected_member_sizes_and_digests_recomputed": true,
+    "source_and_manifest_identity_checked": true,
+    "both_phases_confirmation_and_submission_outcomes_checked": true,
+    "archive_contents_executed": false
+  }
+}

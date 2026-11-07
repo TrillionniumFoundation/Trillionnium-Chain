@@ -1,0 +1,102 @@
+{
+  "schema": "trnm-quantum-resource-exact-budget-evidence-v1",
+  "baseline_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "status": "RESEARCH_ONLY_ARITHMETIC_REPAIR",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "source_baseline_blobs": {
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568",
+    "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py": "4880a5f3d04f620559a7f2fa90cde73f1a47e4ed"
+  },
+  "validation": {
+    "red": {
+      "tests": 3,
+      "passed": 1,
+      "failures": 2,
+      "exit_code": 1
+    },
+    "green": {
+      "tests": 25,
+      "passed": 25,
+      "failures": 0,
+      "exit_code": 0
+    },
+    "existing_example_reports_exactly_equal": true
+  },
+  "source_contract": {
+    "manifest_blob": "32714148c0c737c0f8532c4777013953420201e8",
+    "baseline_pin_count": 468,
+    "changed_files_previously_pinned": false,
+    "changed_files_previously_required": false,
+    "frozen_full_source_check": "NOT_RUN_IN_THIS_ISOLATED_DIRECTORY",
+    "combined_quantum_suites": "NOT_RUN_IN_THIS_ISOLATED_DIRECTORY"
+  },
+  "claims": {
+    "physical_calibration": false,
+    "full_w1_proof": false,
+    "quantum_work_lower_bound": false,
+    "qrom_security_proof": false,
+    "production_activation": false
+  },
+  "files": {
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": {
+      "bytes": 27502,
+      "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+      "git_blob": "e903407e792b77db97878e29e8c04b1d8994ae0e"
+    },
+    "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py": {
+      "bytes": 18007,
+      "sha256": "0c930e1f86fd4a3f8534a14fe418c83dfd5099b114272eb5de3e9866f95f54ef",
+      "git_blob": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/README.md": {
+      "bytes": 3821,
+      "sha256": "8a7857156246492706b6e566453712e554d5903eda3c7a2c7b2f4ce6c848fe8f",
+      "git_blob": "f130942020b22e0843cab83f9efc20e4366cfc8b"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/before-fix.json": {
+      "bytes": 4170,
+      "sha256": "f6a3ce21e9ab10df4df276c795433acc7c91b58c014b06081f70c42093e16a9f",
+      "git_blob": "55ac6ed3817054c98e701b017007ffc889360095"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/red-result.json": {
+      "bytes": 1320,
+      "sha256": "01c556b128bcb60f1dc7292619b606f5855f1a46ae80b3633a5d37a7b3b4d80b",
+      "git_blob": "b09d24405feee9e7262fbdc8717a3e916e9b0b37"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/red.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/red.stderr.log": {
+      "bytes": 2063,
+      "sha256": "3f75db524bcf988df692e1624716af0df9a6525a66f8a5673da9f5057523b9a8",
+      "git_blob": "c6242e89a31dccf4fee72b089513d2ce95040bcc"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/green-result.json": {
+      "bytes": 1024,
+      "sha256": "65c5edfc848898eda3cb08d3afa25ab082aadc85967d5882e0811e5f7344f61f",
+      "git_blob": "b903b5d708f75589c12f0de460265501c44924de"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/green.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/green.stderr.log": {
+      "bytes": 4273,
+      "sha256": "ca437260b76d24fc695ae218e3c63e61f174b7472c8009b487f8e731c045efa5",
+      "git_blob": "56d792525abf9114f1b1cdd48646d7541db32152"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/format-presentation-result.json": {
+      "bytes": 464,
+      "sha256": "1c6c1435369fe6ffcc9b84e0c5ed905067498af37ea0d5d61907fc83843b4181",
+      "git_blob": "4f597455e528df47407f39b50f31b8038ede4f59"
+    },
+    "evidence/pon-quantum-exact-resource-budget-20261105/exact-budget.patch": {
+      "bytes": 7749,
+      "sha256": "c2e1c0b22fb0089fd769baf5214aefb9e39fe62df92c505eb9a0e34b33837332",
+      "git_blob": "a779c1bf0718b91803ddbffeb9471f0bb9b30480"
+    }
+  }
+}

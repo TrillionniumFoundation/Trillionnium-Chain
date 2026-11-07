@@ -1,0 +1,26 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "publication-source-bundle",
+  "command": [
+    "git",
+    "bundle",
+    "create",
+    "/dev/shm/trnm-final-checks/publication-source.bundle",
+    "HEAD",
+    "^0ba09db0cf1c684013a896dd83f29c327f58521e",
+    "^1c885019fdf1cc2f33af8da0780da603fff1c353"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T15:09:06.786357+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 77046779,
+  "finished_at": "2026-11-04T15:09:06.863599+00:00",
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "final_dirty_paths": []
+}

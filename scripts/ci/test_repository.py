@@ -53,7 +53,7 @@ class RepositoryMutants(unittest.TestCase):
         def transform(text):
             data=json.loads(text);mutate(data);return json.dumps(data)
         self.reject_text(relative,transform)
-    def test_actual_source(self):self.assertEqual(check(self.root)['workspace_packages'],24)
+    def test_actual_source(self):self.assertEqual(check(self.root)['workspace_packages'],len(json.loads((self.root/'config/portability-inventory-v1.json').read_text())['packages']))
     def test_duplicate_package(self):
         self.reject_json('config/portability-inventory-v1.json',lambda d:d['packages'].append(copy.deepcopy(d['packages'][0])))
     def test_omitted_package(self):

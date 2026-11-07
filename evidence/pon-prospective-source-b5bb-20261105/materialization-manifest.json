@@ -1,0 +1,18 @@
+{
+  "merge": "f135eb867d10ead2058073f78d9d82af2e174f29",
+  "candidate": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "tracked_entries": 9587,
+  "tracked_bytes": 954728186,
+  "all_selected_blobs_already_local": true,
+  "ls_tree_sha256": "8b8f98576110301875708858d18a8668cf4b5ad3c544a7fc499b1d75cbb0bb06",
+  "borrowed_objects_read_only": "/workspace/scratch/822cc50e24f0/round2-chain-green/.git/objects",
+  "checkout": "/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/checkout",
+  "git_version": "git version 2.51.1",
+  "materialization_exit_code": 0,
+  "materialization_wall_seconds": 4.510954044999835,
+  "materialization_and_outer_checker_git_no_lazy_fetch": "1",
+  "selected_objects_verified_local_before_checkout": true,
+  "os_network_isolation_claimed": false
+}

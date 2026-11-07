@@ -1,0 +1,130 @@
+{
+  "schema": "unchanged-snapshot-local-cost-summary-v2",
+  "commands": [
+    {
+      "command": "bash /workspace/scratch/7318d5f890d1/run-throughput.sh cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --lib pon_commitment:: -- --show-output --test-threads=1",
+      "exit_status": 0,
+      "log": "state-final-pon-commitment.log"
+    },
+    {
+      "command": "bash /workspace/scratch/7318d5f890d1/run-throughput.sh cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --lib pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost -- --exact --ignored --show-output --test-threads=1",
+      "exit_status": 0,
+      "log": "state-final-unchanged-binding-cost.log"
+    }
+  ],
+  "suite": {
+    "passed": 36,
+    "failed": 0,
+    "ignored": 6,
+    "filtered": 78,
+    "test_seconds": 18.64
+  },
+  "benchmark": {
+    "passed": 1,
+    "failed": 0,
+    "filtered": 119,
+    "test_seconds": 13.58
+  },
+  "checkout_baseline": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+  "source_dirty": true,
+  "source_file_sha256": {
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": "8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/unchanged_snapshot_tests.rs": "109ee5f1194df9b78d7fd39f667ab8965a35247b761502be72bac0c2295b0be8"
+  },
+  "source_binding_note": "Hashes identify these two component source files only; this is uncommitted component diagnostic evidence, not final whole-source or public-service acceptance.",
+  "profile": {
+    "cargo_profile": "test",
+    "trnm_mvcc_fee_opt_level": 1,
+    "trnm_protocol_opt_level": 3,
+    "sha2_opt_level": 3,
+    "debug_assertions": true,
+    "overflow_checks": true
+  },
+  "candidate_strategy": "stop candidate comparison on first key/value mismatch, then original full preparation validates every actual row; a successful candidate still completely validates and compares actual State",
+  "public_tps_measured": false,
+  "node_owner_measured": false,
+  "physical_memory_bound": false,
+  "rows": [
+    {
+      "keys": 128,
+      "value_width": 64,
+      "case": "unchanged",
+      "original_median_ms_per_binding": 0.106900875,
+      "changed_median_ms_per_binding": 0.062932,
+      "ratio_new_over_original": 0.5886949007667149,
+      "change_percent": -41.1305099233285
+    },
+    {
+      "keys": 128,
+      "value_width": 64,
+      "case": "same_root_hint_first_value_changed",
+      "original_median_ms_per_binding": 0.1563794375,
+      "changed_median_ms_per_binding": 0.153167125,
+      "ratio_new_over_original": 0.9794582168131919,
+      "change_percent": -2.0541783186808105
+    },
+    {
+      "keys": 128,
+      "value_width": 64,
+      "case": "same_root_hint_last_value_changed",
+      "original_median_ms_per_binding": 0.1572094375,
+      "changed_median_ms_per_binding": 0.2278204375,
+      "ratio_new_over_original": 1.4491524244528895,
+      "change_percent": 44.91524244528895
+    },
+    {
+      "keys": 1024,
+      "value_width": 512,
+      "case": "unchanged",
+      "original_median_ms_per_binding": 3.2218769375,
+      "changed_median_ms_per_binding": 2.4858749375,
+      "ratio_new_over_original": 0.7715611073056388,
+      "change_percent": -22.843889269436126
+    },
+    {
+      "keys": 1024,
+      "value_width": 512,
+      "case": "same_root_hint_first_value_changed",
+      "original_median_ms_per_binding": 3.2498728125,
+      "changed_median_ms_per_binding": 3.3140456875,
+      "ratio_new_over_original": 1.01974627276279,
+      "change_percent": 1.9746272762789951
+    },
+    {
+      "keys": 1024,
+      "value_width": 512,
+      "case": "same_root_hint_last_value_changed",
+      "original_median_ms_per_binding": 2.9274214375,
+      "changed_median_ms_per_binding": 5.4268950625,
+      "ratio_new_over_original": 1.8538140743870943,
+      "change_percent": 85.38140743870943
+    },
+    {
+      "keys": 4096,
+      "value_width": 512,
+      "case": "unchanged",
+      "original_median_ms_per_binding": 18.7052256875,
+      "changed_median_ms_per_binding": 13.5779768125,
+      "ratio_new_over_original": 0.7258921672125909,
+      "change_percent": -27.410783278740915
+    },
+    {
+      "keys": 4096,
+      "value_width": 512,
+      "case": "same_root_hint_first_value_changed",
+      "original_median_ms_per_binding": 18.3374496875,
+      "changed_median_ms_per_binding": 19.937733875,
+      "ratio_new_over_original": 1.0872686341215079,
+      "change_percent": 8.726863412150788
+    },
+    {
+      "keys": 4096,
+      "value_width": 512,
+      "case": "same_root_hint_last_value_changed",
+      "original_median_ms_per_binding": 15.5852966875,
+      "changed_median_ms_per_binding": 28.0512660625,
+      "ratio_new_over_original": 1.7998544798315057,
+      "change_percent": 79.98544798315056
+    }
+  ]
+}

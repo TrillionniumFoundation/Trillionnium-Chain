@@ -1,0 +1,359 @@
+{
+  "source_before": {
+    "head": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+    "tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+    "status": ""
+  },
+  "source_after": {
+    "head": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+    "tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+    "status": ""
+  },
+  "source_unchanged": true,
+  "checks": [
+    {
+      "name": "grouped-python",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped*.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "wall_ns": 615737836,
+      "log_sha256": "d281b7f49d832bbc8c7a7a09bdb010ed1edde708b259e81c754eca447663a112",
+      "log_bytes": 5894,
+      "python_test_counts": [
+        "32"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "retained-w1-consumer",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_shared_cell_operator_v1.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "wall_ns": 1127590110,
+      "log_sha256": "a5ab27cd3eb6cf6f22005118a523810ee1b25212bc74ab89abe49d034de1749c",
+      "log_bytes": 1568,
+      "python_test_counts": [
+        "9"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "ci-source-negatives",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 6066216924,
+      "log_sha256": "5ca51dd8714b52774c78488a3c334e037361affb24a05db4fd210c56e2f5a86b",
+      "log_bytes": 6898,
+      "python_test_counts": [
+        "43"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "pq-source-negatives",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 26292197162,
+      "log_sha256": "dd52a3c2b701bb1f13279263e8238be84cb3a98735f5dedc5dbea61f689b7c02",
+      "log_bytes": 135,
+      "python_test_counts": [
+        "35"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 12096976483,
+      "log_sha256": "8c1113fce88a6a99cb6493333d5574275353be0810ac4efef16da89bf0a5d245",
+      "log_bytes": 16318,
+      "python_test_counts": [
+        "98"
+      ],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "retained-native",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--release",
+        "--jobs",
+        "2",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets"
+      ],
+      "returncode": 0,
+      "wall_ns": 2330680465,
+      "log_sha256": "96b67b59b432755eca277780ee85713c7578e7ac5f32963834d97ed9ccba7aba",
+      "log_bytes": 25410,
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        "test result: ok. 146 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "name": "strict-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--release",
+        "--jobs",
+        "2",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "wall_ns": 262857347,
+      "log_sha256": "c663462ee6e8bd687c13f4f43386d516f3f0bb8fc1cb3522d98b83bf3664d8fd",
+      "log_bytes": 62,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "workspace-format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_ns": 14179906171,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "pq-source-check",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 200527347,
+      "log_sha256": "23a26b73df914feceee0d882fa6d4e22d8dc4824e200a335bb4344383b894013",
+      "log_bytes": 557,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_ns": 63411530,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "log_bytes": 35,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 0,
+      "wall_ns": 47691392285,
+      "log_sha256": "974c0f6957cba8fa32effd0649938de906056c0c69ddb82938b66b8cb1d9ff6d",
+      "log_bytes": 307,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "locked-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "wall_ns": 196131124,
+      "log_sha256": "b8287f6b202e61e452ceb24de8b207ad29766d820ab917e7ba4a2b6193a7cfd2",
+      "log_bytes": 833239,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_ns": 8200407,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    },
+    {
+      "name": "source-identity",
+      "argv": [
+        "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "e0fc4df37bed96050db2a07d91d427829921e5fa",
+        "--output",
+        "/workspace/scratch/78dc81ff67a6/measurements/validation-e0fc4df/raw-source-identity.json"
+      ],
+      "returncode": 0,
+      "wall_ns": 1294134164,
+      "log_sha256": "0dcf75eae7c105453ee6cd2b4ad626aa0a099ae5b6444c047ad932f947225006",
+      "log_bytes": 422,
+      "python_test_counts": [],
+      "rust_test_summaries": []
+    }
+  ],
+  "scope": "M01 all default-feature native targets, grouped and retained W1 Python, CI/source/graph/format/link checks; not full workspace or public-service execution",
+  "schema": "pon-routed-grouped-validation-v0",
+  "build": {
+    "source": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+    "argv": [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--jobs",
+      "2",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--example",
+      "pon_routed_int257_grouped"
+    ],
+    "returncode": 0,
+    "wall_ns": 1259787925,
+    "log_sha256": "6c006a12c00c8f03e28d73ea67e9a29fd108a94b9ff806c2bc8a172cc564b457",
+    "runner_sha256": "e4e3218a3176f3e6fe55166a35abffb5de884d5b72fd124b985763131bf1984a"
+  },
+  "ci_cloud_jobs_claimed": false,
+  "test_counts": {
+    "grouped-python": 32,
+    "retained-w1-consumer": 9,
+    "ci-source-negatives": 43,
+    "pq-source-negatives": 35,
+    "ci-contract": 98,
+    "retained-native": 202
+  },
+  "current_source_registration_result": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 502,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "repository_result": {
+    "activation": false,
+    "head": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+    "local_links": 3056,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1153,
+    "source_state": "committed-clean",
+    "tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+    "workspace_packages": 26
+  },
+  "locked_graph_summary": {
+    "packages": 175,
+    "workspace_members": 26,
+    "cargo_lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "raw_graph_log_sha256": "b8287f6b202e61e452ceb24de8b207ad29766d820ab917e7ba4a2b6193a7cfd2"
+  },
+  "prior_clean_validation": {
+    "source": {
+      "head": "d95f8c5cdadec3530408292f2ab7e160fa3b0f62",
+      "tree": "8147ca49ddcbd8289b1476fb8ff840d68affcb9f",
+      "status": ""
+    },
+    "all_checks_passed": true,
+    "record_sha256": "c79c4bbcd06184f548a0be5414d678b255f0156bbad7e14a19f4c4e69e952b53",
+    "status": "earlier local source; not the published-source receipt"
+  }
+}

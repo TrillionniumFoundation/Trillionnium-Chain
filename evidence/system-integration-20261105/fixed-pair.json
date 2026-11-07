@@ -1,0 +1,451 @@
+{
+  "schema": "trnm-hepta-fixed-integration-pair-v1",
+  "created_utc": "2026-11-05T10:01:48.623840+00:00",
+  "status": "HOLD_NO_GO",
+  "purpose": "Immutable candidate source identity and provenance; not a release qualification receipt",
+  "chain": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "commit": "619c5f80856fb15bb6896d8008df91f58c215229",
+    "tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+    "pull_request": 688,
+    "checks": {
+      "clean-source": {
+        "exit_code": 0,
+        "source_kind": "committed-clean-head",
+        "receipt": "frozen-source-619/raw.zip::frozen-619/clean-source.json",
+        "local_receipt_identity": {
+          "bytes": 1881,
+          "sha256": "3b50c879f9f3de5931d4749c27547c687afd249eaebc86b644ae1bcf68b648ad"
+        },
+        "scope": "Source identity, source controls, inventory or repository only",
+        "result": {
+          "base": null,
+          "candidate": "619c5f80856fb15bb6896d8008df91f58c215229",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "619c5f80856fb15bb6896d8008df91f58c215229",
+          "tested_tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 965549861,
+          "tracked_entries": 10034,
+          "tracked_worktree_verified": true
+        }
+      },
+      "complete-source-checker": {
+        "exit_code": 0,
+        "source_kind": "committed-clean-head",
+        "receipt": "frozen-source-619/raw.zip::frozen-619/complete-source-checker.json",
+        "local_receipt_identity": {
+          "bytes": 1863,
+          "sha256": "722b7c0da42fffc599f2567a54f52345a0174e4a4b1b29b8c62317eb9c867814"
+        },
+        "scope": "Source identity, source controls, inventory or repository only",
+        "result": {
+          "canonical_default_provider_contract_checked": true,
+          "canonical_pnq2_contract_checked": true,
+          "continuous_npq6_combination_accepted": false,
+          "cryptographic_acceptance": false,
+          "exact_source_blobs": 505,
+          "legacy_qtx1_optional_adapter_contract_checked": true,
+          "native_transfer_account_contract_checked": true,
+          "native_transport_contract_checked": true,
+          "node_activated": false,
+          "production_confidentiality_accepted": false,
+          "schema": "trnm-pq-cross-branch-check-v1",
+          "status": "HOLD_NO_GO",
+          "upstream_heads": 6,
+          "whole_native_authorization_migrated": false
+        }
+      },
+      "source-suite": {
+        "exit_code": 0,
+        "source_kind": "committed-clean-head",
+        "receipt": "frozen-source-619/raw.zip::frozen-619/source-suite.json",
+        "local_receipt_identity": {
+          "bytes": 1397,
+          "sha256": "45c082bef1efddb2f58318eb8fabcff973b0154b4ea37e1d2216ef90bd1a2016"
+        },
+        "scope": "Source identity, source controls, inventory or repository only"
+      },
+      "distributed-inventory": {
+        "exit_code": 0,
+        "source_kind": "committed-clean-head",
+        "receipt": "frozen-source-619/raw.zip::frozen-619/distributed-inventory.json",
+        "local_receipt_identity": {
+          "bytes": 1242,
+          "sha256": "c7b26d8d4bb95b1ea4e661881ebe17d617a43a84ca9a834118c68b8a354f04da"
+        },
+        "scope": "Source identity, source controls, inventory or repository only"
+      },
+      "repository-check": {
+        "exit_code": 0,
+        "source_kind": "committed-clean-head",
+        "receipt": "frozen-source-619/raw.zip::frozen-619/repository-check.json",
+        "local_receipt_identity": {
+          "bytes": 1572,
+          "sha256": "45e8516090decfdb3ac3368a387819a1578f9585dd977997df8064553dc51d25"
+        },
+        "scope": "Source identity, source controls, inventory or repository only",
+        "result": {
+          "activation": false,
+          "head": "619c5f80856fb15bb6896d8008df91f58c215229",
+          "local_links": 3056,
+          "normal_dependency_edges": 25,
+          "result": "PASS",
+          "runtime_implemented": false,
+          "rust_files": 1153,
+          "source_state": "committed-clean",
+          "tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+          "workspace_packages": 26
+        }
+      }
+    },
+    "configuration_files": [
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "trillionnium/Cargo.lock",
+        "bytes": 40044,
+        "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "git_blob_sha": "ce7b3d41c35e691bb4c21c3b6dc5be6b2bd8155e"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "trillionnium/Cargo.toml",
+        "bytes": 2204,
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+        "git_blob_sha": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "rust-toolchain.toml",
+        "bytes": 86,
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+        "git_blob_sha": "8770b1d875864c5356dc4abad904b69ec484817f"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "config/consensus-mainline.json",
+        "bytes": 806,
+        "sha256": "a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3",
+        "git_blob_sha": "b193c404177350c5e1443104f02bb0ac114f6aeb"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "config/pon/devnet-v1.json",
+        "bytes": 1964,
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "git_blob_sha": "a60f403b2f0e7343aed61170ca2aef875a787790"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "config/pon/post-quantum-transition-v1.json",
+        "bytes": 3462,
+        "sha256": "96758f0820cd5689d3a600a1e2cbddcebfd4bb265ab46bd3613832501f3330b3",
+        "git_blob_sha": "b42b8ce2b02351b65351776bf83f848b556e8e57"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "config/portability-inventory-v1.json",
+        "bytes": 30218,
+        "sha256": "e766e17c0b85a79066f09ba609beca4439e91bc66b3039fa7b10f3b00fa0b390",
+        "git_blob_sha": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3"
+      },
+      {
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json",
+        "bytes": 94118,
+        "sha256": "4b74e8c1239ca41f5948c5c76c5693504150b603da96d3929eb11f00b9971214",
+        "git_blob_sha": "ae5ef9f99d7a9b785f846f93f5115c8b1743fc0b"
+      }
+    ],
+    "source_suite": {
+      "tests": 37,
+      "passed": 37,
+      "skipped": 0
+    },
+    "source_evidence_archive": {
+      "path": "frozen-source-619/raw.zip",
+      "bytes": 127888,
+      "members": 39,
+      "sha256": "4855257a035cca0dee08db2661800227f85c00327d23c2a593eeb12c9bbdbfe8"
+    }
+  },
+  "hepta": {
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "commit": "f55752abbf516febfa0db89cb833dcf1fd1a2221",
+    "tree": "039577d88899ddc1725f44dbf508e69d58506fe3",
+    "pull_request": 4812,
+    "checks": {
+      "tracked_real_bytes": {
+        "status": "PASS",
+        "tracked_entries": 11710,
+        "verified_entries": 11710,
+        "bytes_hashed": 181087282,
+        "actual_git_modes": {
+          "100644": 11558,
+          "100755": 151,
+          "120000": 1
+        },
+        "actual_inventory_sha256": "bcf8d3ac16ddc4e6bbb99319d72401d48187be64b7eebc7bb05a036008be98be",
+        "index_matches_committed_tree": true,
+        "head_and_index_stable": true,
+        "all_successful_paths_restatted_after_hashing": true,
+        "scope": "Real filesystem bytes/types/Git executable modes and symlink target bytes; no build or runtime qualification"
+      },
+      "published-lane-a-verify": {
+        "exit_code": 0,
+        "scope": "Python source/registration validation only; not native or system qualification",
+        "private_receipt_identity": {
+          "bytes": 448,
+          "sha256": "8c0c882d5da78e03003fa6581279acc0ad8da7176f1ce253c06b7a5fcd85a2fc"
+        }
+      },
+      "published-lane-a-self-test": {
+        "exit_code": 0,
+        "scope": "Python source/registration validation only; not native or system qualification",
+        "private_receipt_identity": {
+          "bytes": 452,
+          "sha256": "dd3c06dfd250ec1fcd8da68633e65c01c68d8cd2086da822cb505b13d27575fd"
+        }
+      },
+      "published-source-registry": {
+        "exit_code": 0,
+        "scope": "Python source/registration validation only; not native or system qualification",
+        "private_receipt_identity": {
+          "bytes": 578,
+          "sha256": "37295ea3b9725602418838b44fe0ddb36c88d975551219b3cd6c973c2e1b70c9"
+        }
+      },
+      "published-lane-a-source-receipt-check": {
+        "exit_code": 0,
+        "scope": "Python source/registration validation only; not native or system qualification",
+        "private_receipt_identity": {
+          "bytes": 627,
+          "sha256": "9dae648ffe4a171762f0b54b166812865334274516f78b4a8fb68b0f80a5aa5f"
+        }
+      }
+    },
+    "configuration_files": [
+      {
+        "path": "codex-rs/Cargo.toml",
+        "sha256": "0a5c94692252cc1b0511be6c053201596788f24da3406b9a741cddb195681c69",
+        "git_blob_sha": "02a140c213aa7ac9f621915f1ef5ef084d915069",
+        "unchanged_from_new_base": true,
+        "changed_in_remote_advance": false
+      },
+      {
+        "path": "codex-rs/Cargo.lock",
+        "sha256": "0f458d7746a0ca0b95bedc5404fd3347c1b0a7508f1c387f3b1f3f71ced08663",
+        "git_blob_sha": "181d14a3124d94fb1f2c880da93f1c09a1f5cf76",
+        "unchanged_from_new_base": true,
+        "changed_in_remote_advance": false
+      },
+      {
+        "path": "codex-rs/rust-toolchain.toml",
+        "sha256": "e8b379eaa492bf59d35187de269afd1c4f55d85e0322f6fea32803a3fec1a380",
+        "git_blob_sha": "917d2492264a35bc9c0feaef41878d8825870866",
+        "unchanged_from_new_base": true,
+        "changed_in_remote_advance": false
+      },
+      {
+        "path": "MODULE.bazel.lock",
+        "sha256": "35abb11a7e60e5bd2e1d287a27ca0cfbd4d858da732b136c2a10d5a0751a9c75",
+        "git_blob_sha": "e756a391f64d45dcf9544fd3ca01a03f334299e8",
+        "unchanged_from_new_base": true,
+        "changed_in_remote_advance": false
+      }
+    ],
+    "private_evidence_commit": "c90d13228514440e82d4bbb0da2bdaf13d145c8a",
+    "private_evidence_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/tree/c90d13228514440e82d4bbb0da2bdaf13d145c8a/evidence/pq-sealed-composition-20261105"
+  },
+  "release_binary_set": null,
+  "release_binary_set_status": "NOT_BUILT_FOR_FIXED_PAIR",
+  "fixed_pair_native_execution": {
+    "status": "NOT_RUN",
+    "child_started": false,
+    "exit_code": null,
+    "ordinary_entry_call_passed": false
+  },
+  "earlier_native_results_transfer_to_fixed_pair": false,
+  "historical_evidence": {
+    "directory": "observations-through-2a8",
+    "raw_zip_sha256": "20802bdb7828a6b634763a223d33a665cafde6ca486d87f83be8a44b7097d71b",
+    "raw_zip_bytes": 7018417,
+    "complete_operator_source": "6ee529046d295e3175f09112492abee373f1f54c",
+    "complete_operator_binary": {
+      "build_command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_shared_material_v1"
+      ],
+      "build_exit_code": 0,
+      "bytes": 817128,
+      "sha256": "ad4ddcb32a0128ce5b26b5c66628d851c593e916d88bfab3163a8169f7059ee1"
+    },
+    "complete_operator": [
+      {
+        "case": "cell-t0-full-limb",
+        "source_commit": "6ee529046d295e3175f09112492abee373f1f54c",
+        "native_child_wall_ms": 36.153159,
+        "native_child_cpu_ms": 32.592,
+        "ordinary_warm_median_ms": 0.116765,
+        "ordinary_cold_ms": 1.341258,
+        "native_wall_to_warm_ratio": 309.62325183059994,
+        "native_wall_to_cold_ratio": 26.95466420330764,
+        "diagnostic_experiment_wall_ms": 1756.819425,
+        "full_phases_and_samples": "observations-through-2a8/raw.zip"
+      },
+      {
+        "case": "cell-t0-transposed",
+        "source_commit": "6ee529046d295e3175f09112492abee373f1f54c",
+        "native_child_wall_ms": 155.605182,
+        "native_child_cpu_ms": 43.824,
+        "ordinary_warm_median_ms": 0.120639,
+        "ordinary_cold_ms": 1.965537,
+        "native_wall_to_warm_ratio": 1289.8414443090544,
+        "native_wall_to_cold_ratio": 79.16675290264187,
+        "diagnostic_experiment_wall_ms": 1888.111975,
+        "full_phases_and_samples": "observations-through-2a8/raw.zip"
+      },
+      {
+        "case": "cell-t1-full-limb",
+        "source_commit": "6ee529046d295e3175f09112492abee373f1f54c",
+        "native_child_wall_ms": 60.379635,
+        "native_child_cpu_ms": 54.996,
+        "ordinary_warm_median_ms": 0.092985,
+        "ordinary_cold_ms": 1.041195,
+        "native_wall_to_warm_ratio": 649.3481206646234,
+        "native_wall_to_cold_ratio": 57.990707792488436,
+        "diagnostic_experiment_wall_ms": 1560.487609,
+        "full_phases_and_samples": "observations-through-2a8/raw.zip"
+      },
+      {
+        "case": "cell-t1-transposed",
+        "source_commit": "6ee529046d295e3175f09112492abee373f1f54c",
+        "native_child_wall_ms": 62.079166,
+        "native_child_cpu_ms": 57.86,
+        "ordinary_warm_median_ms": 0.08335,
+        "ordinary_cold_ms": 1.96213,
+        "native_wall_to_warm_ratio": 744.8010317936413,
+        "native_wall_to_cold_ratio": 31.638661046923495,
+        "diagnostic_experiment_wall_ms": 2038.839319,
+        "full_phases_and_samples": "observations-through-2a8/raw.zip"
+      }
+    ],
+    "same_material_attack": {
+      "campaigns": 2,
+      "constructed_candidates": 80,
+      "native_rejection_calls": 80,
+      "scalar_reference_rejection_calls": 80,
+      "cache_rejection_calls": 200,
+      "total_rejection_calls": 360,
+      "all_calls_rejected": true,
+      "independent_attack_count": null,
+      "raw_native_to_attacker_cpu_ratios": [
+        14.641114435610882,
+        6.040417218831688
+      ],
+      "cheapest_attacker_qualified": false,
+      "physical_recovery_qualified": false
+    },
+    "offline_settlement": {
+      "asset": "test-unit-no-market-value",
+      "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+      "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+      "future_window_accepted": false,
+      "independent_evaluators": false,
+      "model_reward": 0,
+      "observed_evaluation_recomputed": true,
+      "ordinary_hepta_entry": false,
+      "outcome": "not_adopted",
+      "production_activation": false,
+      "reason": "preregistered statistical gate not met",
+      "schema": "pon-observed-artifact-settlement-v1",
+      "source_model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671"
+    },
+    "native_chain_gate": {
+      "commit": "eaacd1ef4245f48cae5f16cf03d2fd7c3d2cd4f5",
+      "native_tests_passed": 141,
+      "strict_workspace_clippy": "PASS",
+      "features": "all targets and all features for Clippy",
+      "final_fixed_pair_native_pass": false
+    },
+    "native_hepta_gate": {
+      "source_tree": "285b7510cf7f247b84a4c55fa349af77810a3b4b",
+      "tests_passed": 218,
+      "failed": 0,
+      "skipped": 0,
+      "packages": [
+        "codex-hepta-intelligence-eval",
+        "codex-hepta-intelligence"
+      ],
+      "final_fixed_pair_native_pass": false
+    }
+  },
+  "acceptance_gates": [
+    {
+      "id": "P0-1",
+      "name": "Unique integrated combination",
+      "status": "HOLD",
+      "progress": "One immutable candidate source pair is published, including current owner/Growth/recovery/qualification changes and exact lock/configuration identities.",
+      "remaining": "Build and identify the final pair binaries; execute the real ordinary entry and complete acceptance on that same combination."
+    },
+    {
+      "id": "P0-2",
+      "name": "Complete PQ effect authority",
+      "status": "HOLD",
+      "progress": "Complete sealed decisions are required and rechecked at use; current owner and Snapshot V3/PQ Frontier V4 recovery are preserved.",
+      "remaining": "Execute accounts, governance, release, recovery, CURRENT, FinalUse and consumption under the current root; reject wrong domain, old generation, downgrade, database rollback and concurrent copies end to end."
+    },
+    {
+      "id": "P0-3",
+      "name": "Original business liveness",
+      "status": "HOLD",
+      "progress": "History/readback and Growth/owner integration are retained; three authenticated-read source dependencies are now mandatory and pinned.",
+      "remaining": "Pass the original no-attack baseline, original four-second/16-hostile campaign and separate fixed-Host F0 without altered denominators or resource budgets."
+    },
+    {
+      "id": "P0-4",
+      "name": "PoN cost and usefulness",
+      "status": "HOLD",
+      "progress": "Four actual same-material operator observations, two adversarial campaigns, optimized ordinary baselines, preprocessing and raw failures are retained at 6ee529.",
+      "remaining": "Qualify competitive legitimate solvers, forged transcripts, preprocessing reuse and stale work against preregistered complete security/benefit budgets; rerun on the final artifact and measure missing physical/WAN costs."
+    },
+    {
+      "id": "P1-1",
+      "name": "Real evolution loop",
+      "status": "HOLD",
+      "progress": "Sealed qualification consumers and retained no-update evidence are integrated; one frozen offline recomputation returns not_adopted and zero reward.",
+      "remaining": "Execute independently administered evaluation, complete release, ordinary installation, next task, settlement and recovery; qualify future-window and full-combination benefit while allowing legitimate no update."
+    },
+    {
+      "id": "P1-2",
+      "name": "Model archive service",
+      "status": "HOLD",
+      "progress": "The native ELF dependency/interpreter checker now validates actual file structure, type/profile and loader executability; historical negative observations are retained.",
+      "remaining": "Qualify complete model closure, real model loader, independent copies/erasure coding, funding, renewal, repair and GC under author outage, node loss, restart and WAN faults."
+    },
+    {
+      "id": "RELEASE",
+      "name": "Independent system acceptance",
+      "status": "HOLD",
+      "progress": "Source identities and evidence are reviewable; existing candidate PRs remain Draft and no activation is authorized.",
+      "remaining": "Independent administrative operators must accept fixed release artifacts across cryptography, consensus, economics, malicious loads, physical power loss and long runs, then provide an explicit production activation basis."
+    }
+  ],
+  "original_fixed_host_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+  "original_fixed_host_available_in_this_execution": false,
+  "independent_system_acceptance": false,
+  "production_activation": false,
+  "branch_continuation_policy": "Preserve concurrent branch descendants; this manifest remains bound to the two source commits above. Evidence-only publication heads are not runtime qualification inputs.",
+  "resource_observation": "Historical guard stops remain unchanged. Root-only small-file materialization separately records f_bfree and f_bavail; it grants no native/resource-budget acceptance."
+}

@@ -1,0 +1,21 @@
+{
+  "name": "source-integrity",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "test_ci_source_integrity",
+    "test_record_pq_native_command",
+    "-v"
+  ],
+  "env_overrides": {
+    "PYTHONPATH": "scripts/ci",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "cwd": "repository root",
+  "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "exit_code": 0,
+  "wall_seconds": 3.940667,
+  "log": "source-integrity.log",
+  "log_sha256": "79e1d5fc6f7744e72ad6dd06d6022d5eeeb92c29916a9ca8d465da98da1d140c"
+}

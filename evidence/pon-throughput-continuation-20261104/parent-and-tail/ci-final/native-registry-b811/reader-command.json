@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "check_registry.py"
+  ],
+  "cwd": "this evidence directory",
+  "scope": "Offline registry/source receipt/workflow readback only; no native execution",
+  "started_at": "2026-11-04T08:50:21.836526+00:00",
+  "finished_at": "2026-11-04T08:50:21.874352+00:00",
+  "exit_code": 0,
+  "stdout_sha256": "57e220ce811bb41be273d241390d3000e8921ca0fc82cb0ad4ab4472d3191f65",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

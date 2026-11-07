@@ -1,0 +1,61 @@
+{
+  "scope": "Read-only POSIX_FADV_DONTNEED solely on regular existing files under the exact inactive owned target recorded in both completed RED command receipts; no deletion, inode, binary, source, evidence, permission or quota changes. Kernel advice is not guaranteed reclaim; memory snapshots include concurrent workloads.",
+  "target": "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target",
+  "ownership_receipts": [
+    "native-red/result.json",
+    "native-red-rustup/result.json"
+  ],
+  "before": {
+    "host_available": 8007385088,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 7304413184,
+    "events": "low 0\nhigh 0\nmax 189053\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 189053,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "effective_available": 2135322624,
+    "hard_cgroup_headroom": 1285521408,
+    "reclaimable_inactive_file_estimate": 849801216,
+    "memory_stat_inputs": {
+      "file": 5155532800,
+      "shmem": 147456,
+      "file_dirty": 169066496,
+      "file_writeback": 0,
+      "inactive_file": 849801216
+    }
+  },
+  "advised_files": 950,
+  "advised_bytes": 460169423,
+  "metadata_unchanged": true,
+  "errors": [],
+  "exclusive_nonblocking_cargo_lock": true,
+  "after": {
+    "host_available": 7990136832,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 7307972608,
+    "events": "low 0\nhigh 0\nmax 189053\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 189053,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "effective_available": 2142470144,
+    "hard_cgroup_headroom": 1281961984,
+    "reclaimable_inactive_file_estimate": 860508160,
+    "memory_stat_inputs": {
+      "file": 5166288896,
+      "shmem": 147456,
+      "file_dirty": 176357376,
+      "file_writeback": 0,
+      "inactive_file": 860508160
+    }
+  }
+}

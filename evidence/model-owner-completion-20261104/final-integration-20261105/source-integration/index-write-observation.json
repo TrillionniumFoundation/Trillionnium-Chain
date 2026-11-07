@@ -1,0 +1,18 @@
+{
+  "schema": "model-owner-final-index-write-observation-v1",
+  "command": [
+    "git",
+    "add",
+    "evidence/model-owner-completion-20261104/final-integration-20261105"
+  ],
+  "exit_code": 128,
+  "stderr": "fatal: sha1 file '/workspace/scratch/79360d3567d1/chain/.git/worktrees/chain/index.lock' write error. Out of diskspace\n",
+  "subsequent_observation": {
+    "index_bytes": 1474987,
+    "index_lock_exists": false,
+    "free_bytes": 16777216,
+    "available_bytes": 0
+  },
+  "recovery": "Freed only reappeared task-owned reproducible Torch/native caches after no-consumer verification; retained source, observations and original artifacts. Then restaged the same prepared files.",
+  "qualification": false
+}

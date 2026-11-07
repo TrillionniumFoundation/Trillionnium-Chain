@@ -1,0 +1,40 @@
+{
+  "schema": "policy-reader-source-observation-v1",
+  "parent": "8a35529679c3d176fd7586ab1ecf4e004f25af79",
+  "parent_tree": "86775ecad039c09476ee3fd627c106c813209f9c",
+  "worktree_not_yet_committed": true,
+  "native_execution_performed": false,
+  "profiles_file_changed": false,
+  "paths": [
+    {
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "bytes": 7277,
+      "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b",
+      "git_blob": "6b2ea6dc2205e5cab740cef2f14b11df409e348a"
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "bytes": 27381,
+      "sha256": "26774427c956090510bcfe6fa871a62763d256c23b91f3dc9fa3ef9d0b37d66c",
+      "git_blob": "c056584a4d77e609693a4192fae6c2369621bc31"
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_policy_read.py",
+      "bytes": 10031,
+      "sha256": "510b27e6972ba677a9e0af242eef417ab74446acf103ec7b0c0ae1228523d453",
+      "git_blob": "577b910e688302090d4f0f96524d2abd75495f8b"
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "bytes": 31040,
+      "sha256": "bd17692e232fd279f34e5aa2342f0abf7cd662d0009883f9d815369743d9b1a4",
+      "git_blob": "d51da6f2a071a93066343cc095141c5f4abb3102"
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "bytes": 21934,
+      "sha256": "2bbdf5611a4aa30abd04a8c0900bbea7c195af0b379fd1295c7d9ceb12646040",
+      "git_blob": "c23226bd7158d718c3061e59b820e6ce949a13c4"
+    }
+  ]
+}

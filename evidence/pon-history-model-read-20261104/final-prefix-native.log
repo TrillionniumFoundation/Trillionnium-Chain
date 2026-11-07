@@ -1,0 +1,13 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/e56a2df1ab66/chain/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.01s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_mvcc_fee-48fd410c9e830723)
+
+running 5 tests
+test pon_executor::prefix_scan_tests::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets ... ok
+test pon_executor::prefix_scan_tests::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries ... ok
+test pon_executor::prefix_scan_tests::prefix_scan_does_not_replace_point_read_or_write_conflict_checks ... ok
+test pon_executor::prefix_scan_tests::prefix_scan_overlays_writes_and_retains_the_original_snapshot ... ok
+test pon_executor::prefix_scan_tests::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+

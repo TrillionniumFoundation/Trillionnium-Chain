@@ -1,0 +1,17 @@
+{"event":"role-resumed","payload_summary":null,"receipt_digest":"be18c7a9f14f8459bb4fb073b3900a29f0234a8c85830c7a8fe28fca7f808920","sequence":3}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"bcc061d754b57d76fb8b7f6b0bf6488ba9b1800b8f056968cf57138882f66ed0","sequence":4}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"78db66381ed00437259fc1638b983dcc19a4016b595bac37d86d457f84f4897c","sequence":5}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"df81b03e3b1089cbb2fedb72a88914abc1bd2cd72432038e71c3ac2212336c9a","sequence":6}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"82a6ed384200b5d3248683902b1f898d321e0aa2eceb2da0662a165226be5fa0","sequence":7}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"688d65ba33d337396a3b89c0f402f10e266033f85480669095d5cf9569bda661","sequence":8}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"a68b5c40ea2e1064729bc5f21ae41e9fa89b920b4b58961757a6d57ffe520c1a","sequence":9}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"42956fde131c368bf2849fc09418d73d1353605cb26859ebdb821f7bfe3c6cca","sequence":10}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"b66324bf832944bc68b2d4a0a9c2f4f5ebdaf91e641d36b00726ec9d9089e049","sequence":11}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"8b35c78b5d46f9714abe665f77c8c69ab8cca3464091a2b313eae8fe9f2a6cdc","sequence":12}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"798d6d50364fa87d4beb7b582d2dc7dbfc40876af4d436355bc9718d48187901","sequence":13}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"afe902623aa735545ab492fc1efb5cd2f3f4e829c6b277d8b6379d801bab2d49","sequence":14}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"03dc693157d09cc9e9c99054654f40917ef31952095eacd979de364edc2aa771","sequence":15}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"eb266486e02e8bd467699d7bb6c4357a0ead76ba9cd77903e65afbe3457e20c6","sequence":16}
+{"event":"submit-attempt","payload_summary":null,"receipt_digest":"6504bcf5824314ae69ebee3d542561b49436267a75e49d77a0c4682fc69b2574","sequence":17}
+{"event":"producer-block","payload_summary":null,"receipt_digest":"022f8f9b361e6ee535c04d280b5173e02f38b207ab0b8c09df9c16e7678d4a54","sequence":18}
+{"event":"producer-complete","payload_summary":{"data_blocks":2,"drain_blocks":6,"duration_scope":"current process segment only","elapsed_ns":2437127910,"gpu_used":false,"state":{"authenticated_audit_rows":0,"authenticated_outbox_pending":0,"authenticated_outbox_sessions":0,"authenticated_pending":0,"authenticated_sessions":0,"chainwork_hex":"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010","events":8,"generation":8,"genesis":"495be1fad42de4281eeaee2068131c4471fa710eaa89c6da6506c2e3a91a3568","height":8,"network":"a645d56ac4d4a08e850f62ef61719ad64ee7a8a818863c478aef334ebc4e350d","parameters":"30a7c2938769909a029187540a6ce7ef5fb91b2c0922084ab5953202de488bd2","production_activation":false,"state_keys":38,"state_root":"fd604bdea50513bc84bce40b008ffd58e42c7129503575bdaacfb9be740eb103","stored_blocks":9,"tip":"feaa4d2eb671d67c181d3bc439313fa0377e26a92e3bcef917aaef0bc23aa685"},"submitted_transfers":8,"task_height_limit":1000},"receipt_digest":"b17cb4f71309f79dd3824380e344d5d7d917ec3c9bd1e3a01247ca0599d9aa17","sequence":19}

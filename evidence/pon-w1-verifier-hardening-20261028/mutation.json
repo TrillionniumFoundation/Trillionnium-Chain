@@ -1,0 +1,13 @@
+{
+  "schema": "TRNM-W1-CONTROL-ID-MUTATION1",
+  "started_utc": "2026-10-28T00:44:29Z",
+  "source_asset": "/tmp/w1-staged-full-20261028-r3/lift-0000.bin",
+  "source_sha256": "d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3",
+  "mutation_sha256": "7018d8968b3ce0155d24d4d2876487d9f42e5d29ee9f6a7c552d33cedceae0c2",
+  "serialized_seal_words": 55667,
+  "control_id_byte_offset": 222676,
+  "diff_count": 1,
+  "mutation": "XOR first metadata control_id byte with 1; proof seal and inclusion proof untouched",
+  "original_full_execution_and_journal_unchanged": true,
+  "complete_w1_claim": false
+}

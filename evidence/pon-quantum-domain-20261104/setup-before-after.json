@@ -1,0 +1,369 @@
+{
+  "after": {
+    "exit_code": 0,
+    "git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "observations": [
+      {
+        "candidate_checks_completed": 1,
+        "domain_ids": [
+          "f1ee4ebb1bd4e8d828c101b7150bc8204c891a17285e4c958f1e45e71e9ec8ba"
+        ],
+        "domain_setup_processor_seconds_charged": 2.0,
+        "domain_setup_seconds_charged": 2.0,
+        "domains_created": 1,
+        "parameters": {
+          "classical_block_rate_at_initial_target": 0,
+          "classical_proof_seconds": 0.1,
+          "classical_shares": [
+            0.5,
+            0.5
+          ],
+          "confirmation_depth": 6,
+          "confirmation_work_multiplier": 6,
+          "cpu_limit_seconds": 10.0,
+          "duration_seconds": 4,
+          "half_life": 160,
+          "max_blocks": 4000,
+          "max_events": 20000,
+          "max_pending_events": 20000,
+          "max_trace_rows": 80000,
+          "name": "frozen_setup_interruption",
+          "policy": "periodic-target",
+          "private_censors_probe": true,
+          "private_release_max_wait_seconds": null,
+          "private_release_min_blocks": 1,
+          "private_release_policy": "scheduled",
+          "private_release_seconds": null,
+          "private_release_work_lead": 1,
+          "private_timestamp_schedule": [],
+          "private_timestamp_step": 5,
+          "probe_arrival_seconds": 1.0,
+          "profile": "conditional-w1-lottery-dev-profile-v1",
+          "propagation_seconds": 0.5,
+          "quantum_candidate_check_seconds": 0.5,
+          "quantum_clock_rounding": "nearest",
+          "quantum_domain_marked_count": 0,
+          "quantum_domain_setup_seconds": 2,
+          "quantum_domain_size": 16,
+          "quantum_domain_trials_before_refresh": 0,
+          "quantum_fixed_iterations": 0,
+          "quantum_initial_factor": 1.0,
+          "quantum_iteration_candidates": [],
+          "quantum_iteration_seconds": 0.15,
+          "quantum_max_iterations": 1000000,
+          "quantum_measure_seconds": 0.5,
+          "quantum_prepare_seconds": 0,
+          "quantum_processors": 1,
+          "quantum_proof_seconds": 1.0,
+          "quantum_strategy": "honest-tip",
+          "quantum_timestamp_mode": "wall",
+          "quantum_trial_policy": "first-peak",
+          "seed": 1,
+          "shocks": [
+            {
+              "at_seconds": 0.5,
+              "classical_factor": 1,
+              "quantum_factor": 0
+            },
+            {
+              "at_seconds": 1,
+              "classical_factor": 1,
+              "quantum_factor": 1
+            }
+          ]
+        },
+        "searches_cancelled": 1,
+        "searches_completed": 1,
+        "searches_started": 3,
+        "started_setup_seconds": [
+          2,
+          1.5,
+          0.0
+        ],
+        "termination": "horizon",
+        "trace_file": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-after-p1.jsonl",
+        "trace_rows": 10,
+        "trace_sha256": "9c42f80540ef397ed338aad5756fd60d41f25eb99465e11015007a8609cdf77c"
+      },
+      {
+        "candidate_checks_completed": 4,
+        "domain_ids": [
+          "f1ee4ebb1bd4e8d828c101b7150bc8204c891a17285e4c958f1e45e71e9ec8ba"
+        ],
+        "domain_setup_processor_seconds_charged": 8.0,
+        "domain_setup_seconds_charged": 2.0,
+        "domains_created": 1,
+        "parameters": {
+          "classical_block_rate_at_initial_target": 0,
+          "classical_proof_seconds": 0.1,
+          "classical_shares": [
+            0.5,
+            0.5
+          ],
+          "confirmation_depth": 6,
+          "confirmation_work_multiplier": 6,
+          "cpu_limit_seconds": 10.0,
+          "duration_seconds": 4,
+          "half_life": 160,
+          "max_blocks": 4000,
+          "max_events": 20000,
+          "max_pending_events": 20000,
+          "max_trace_rows": 80000,
+          "name": "frozen_setup_interruption",
+          "policy": "periodic-target",
+          "private_censors_probe": true,
+          "private_release_max_wait_seconds": null,
+          "private_release_min_blocks": 1,
+          "private_release_policy": "scheduled",
+          "private_release_seconds": null,
+          "private_release_work_lead": 1,
+          "private_timestamp_schedule": [],
+          "private_timestamp_step": 5,
+          "probe_arrival_seconds": 1.0,
+          "profile": "conditional-w1-lottery-dev-profile-v1",
+          "propagation_seconds": 0.5,
+          "quantum_candidate_check_seconds": 0.5,
+          "quantum_clock_rounding": "nearest",
+          "quantum_domain_marked_count": 0,
+          "quantum_domain_setup_seconds": 2,
+          "quantum_domain_size": 16,
+          "quantum_domain_trials_before_refresh": 0,
+          "quantum_fixed_iterations": 0,
+          "quantum_initial_factor": 1.0,
+          "quantum_iteration_candidates": [],
+          "quantum_iteration_seconds": 0.15,
+          "quantum_max_iterations": 1000000,
+          "quantum_measure_seconds": 0.5,
+          "quantum_prepare_seconds": 0,
+          "quantum_processors": 4,
+          "quantum_proof_seconds": 1.0,
+          "quantum_strategy": "honest-tip",
+          "quantum_timestamp_mode": "wall",
+          "quantum_trial_policy": "first-peak",
+          "seed": 1,
+          "shocks": [
+            {
+              "at_seconds": 0.5,
+              "classical_factor": 1,
+              "quantum_factor": 0
+            },
+            {
+              "at_seconds": 1,
+              "classical_factor": 1,
+              "quantum_factor": 1
+            }
+          ]
+        },
+        "searches_cancelled": 1,
+        "searches_completed": 1,
+        "searches_started": 3,
+        "started_setup_seconds": [
+          2,
+          1.5,
+          0.0
+        ],
+        "termination": "horizon",
+        "trace_file": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-after-p4.jsonl",
+        "trace_rows": 10,
+        "trace_sha256": "9c42f80540ef397ed338aad5756fd60d41f25eb99465e11015007a8609cdf77c"
+      }
+    ],
+    "source_sha256": {
+      "formal/pon-nakamoto-v1/quantum_adversarial_search.py": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+      "formal/pon-nakamoto-v1/quantum_daa_model.py": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+      "formal/pon-nakamoto-v1/quantum_network_sim.py": "c9a94eb87a54dfd2bae641a79d72e55a6b12010a7a9dc82c2ecd1c286780d38a",
+      "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71"
+    },
+    "wall_seconds": 0.37256086700017477
+  },
+  "before": {
+    "exit_code": 0,
+    "git_head": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+    "observations": [
+      {
+        "candidate_checks_completed": 3,
+        "domain_ids": [
+          "f1ee4ebb1bd4e8d828c101b7150bc8204c891a17285e4c958f1e45e71e9ec8ba"
+        ],
+        "domain_setup_processor_seconds_charged": 0.5,
+        "domain_setup_seconds_charged": 0.5,
+        "domains_created": 1,
+        "parameters": {
+          "classical_block_rate_at_initial_target": 0,
+          "classical_proof_seconds": 0.1,
+          "classical_shares": [
+            0.5,
+            0.5
+          ],
+          "confirmation_depth": 6,
+          "confirmation_work_multiplier": 6,
+          "cpu_limit_seconds": 10.0,
+          "duration_seconds": 4,
+          "half_life": 160,
+          "max_blocks": 4000,
+          "max_events": 20000,
+          "max_pending_events": 20000,
+          "max_trace_rows": 80000,
+          "name": "frozen_setup_interruption",
+          "policy": "periodic-target",
+          "private_censors_probe": true,
+          "private_release_max_wait_seconds": null,
+          "private_release_min_blocks": 1,
+          "private_release_policy": "scheduled",
+          "private_release_seconds": null,
+          "private_release_work_lead": 1,
+          "private_timestamp_schedule": [],
+          "private_timestamp_step": 5,
+          "probe_arrival_seconds": 1.0,
+          "profile": "conditional-w1-lottery-dev-profile-v1",
+          "propagation_seconds": 0.5,
+          "quantum_candidate_check_seconds": 0.5,
+          "quantum_clock_rounding": "nearest",
+          "quantum_domain_marked_count": 0,
+          "quantum_domain_setup_seconds": 2,
+          "quantum_domain_size": 16,
+          "quantum_domain_trials_before_refresh": 0,
+          "quantum_fixed_iterations": 0,
+          "quantum_initial_factor": 1.0,
+          "quantum_iteration_candidates": [],
+          "quantum_iteration_seconds": 0.15,
+          "quantum_max_iterations": 1000000,
+          "quantum_measure_seconds": 0.5,
+          "quantum_prepare_seconds": 0,
+          "quantum_processors": 1,
+          "quantum_proof_seconds": 1.0,
+          "quantum_strategy": "honest-tip",
+          "quantum_timestamp_mode": "wall",
+          "quantum_trial_policy": "first-peak",
+          "seed": 1,
+          "shocks": [
+            {
+              "at_seconds": 0.5,
+              "classical_factor": 1,
+              "quantum_factor": 0
+            },
+            {
+              "at_seconds": 1,
+              "classical_factor": 1,
+              "quantum_factor": 1
+            }
+          ]
+        },
+        "searches_cancelled": 1,
+        "searches_completed": 3,
+        "searches_started": 5,
+        "started_setup_seconds": [
+          2,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "termination": "horizon",
+        "trace_file": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-before-p1.jsonl",
+        "trace_rows": 14,
+        "trace_sha256": "bf755b38df1db1a4ee3282edae1bf9e50cb5321ed8f3cad7bbcba8a910891b5c"
+      },
+      {
+        "candidate_checks_completed": 12,
+        "domain_ids": [
+          "f1ee4ebb1bd4e8d828c101b7150bc8204c891a17285e4c958f1e45e71e9ec8ba"
+        ],
+        "domain_setup_processor_seconds_charged": 2.0,
+        "domain_setup_seconds_charged": 0.5,
+        "domains_created": 1,
+        "parameters": {
+          "classical_block_rate_at_initial_target": 0,
+          "classical_proof_seconds": 0.1,
+          "classical_shares": [
+            0.5,
+            0.5
+          ],
+          "confirmation_depth": 6,
+          "confirmation_work_multiplier": 6,
+          "cpu_limit_seconds": 10.0,
+          "duration_seconds": 4,
+          "half_life": 160,
+          "max_blocks": 4000,
+          "max_events": 20000,
+          "max_pending_events": 20000,
+          "max_trace_rows": 80000,
+          "name": "frozen_setup_interruption",
+          "policy": "periodic-target",
+          "private_censors_probe": true,
+          "private_release_max_wait_seconds": null,
+          "private_release_min_blocks": 1,
+          "private_release_policy": "scheduled",
+          "private_release_seconds": null,
+          "private_release_work_lead": 1,
+          "private_timestamp_schedule": [],
+          "private_timestamp_step": 5,
+          "probe_arrival_seconds": 1.0,
+          "profile": "conditional-w1-lottery-dev-profile-v1",
+          "propagation_seconds": 0.5,
+          "quantum_candidate_check_seconds": 0.5,
+          "quantum_clock_rounding": "nearest",
+          "quantum_domain_marked_count": 0,
+          "quantum_domain_setup_seconds": 2,
+          "quantum_domain_size": 16,
+          "quantum_domain_trials_before_refresh": 0,
+          "quantum_fixed_iterations": 0,
+          "quantum_initial_factor": 1.0,
+          "quantum_iteration_candidates": [],
+          "quantum_iteration_seconds": 0.15,
+          "quantum_max_iterations": 1000000,
+          "quantum_measure_seconds": 0.5,
+          "quantum_prepare_seconds": 0,
+          "quantum_processors": 4,
+          "quantum_proof_seconds": 1.0,
+          "quantum_strategy": "honest-tip",
+          "quantum_timestamp_mode": "wall",
+          "quantum_trial_policy": "first-peak",
+          "seed": 1,
+          "shocks": [
+            {
+              "at_seconds": 0.5,
+              "classical_factor": 1,
+              "quantum_factor": 0
+            },
+            {
+              "at_seconds": 1,
+              "classical_factor": 1,
+              "quantum_factor": 1
+            }
+          ]
+        },
+        "searches_cancelled": 1,
+        "searches_completed": 3,
+        "searches_started": 5,
+        "started_setup_seconds": [
+          2,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "termination": "horizon",
+        "trace_file": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-before-p4.jsonl",
+        "trace_rows": 14,
+        "trace_sha256": "bf755b38df1db1a4ee3282edae1bf9e50cb5321ed8f3cad7bbcba8a910891b5c"
+      }
+    ],
+    "source_sha256": {
+      "formal/pon-nakamoto-v1/quantum_adversarial_search.py": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+      "formal/pon-nakamoto-v1/quantum_daa_model.py": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+      "formal/pon-nakamoto-v1/quantum_network_sim.py": "3aba236791b94b7493b1f12ffcde286fb23131b6f146e4623ba9a791a47240a4",
+      "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71"
+    },
+    "wall_seconds": 0.369017347999943
+  },
+  "created_utc": "2026-11-05T00:31:00.362473+00:00",
+  "native_node_executed": false,
+  "quantum_hardware_executed": false,
+  "same_seed_parameters_and_dependencies": true,
+  "schema": "frozen-event-setup-before-after-v1",
+  "scope": "classical setup accounting during interruption in the abstract synchronous event model",
+  "security_theorem": false,
+  "witness_program": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-witness-program.py",
+  "witness_program_sha256": "97fc066f1b4b6b78f2d268c90e87df622d28d8c1546d9db45a3a81cf2e0eccef"
+}

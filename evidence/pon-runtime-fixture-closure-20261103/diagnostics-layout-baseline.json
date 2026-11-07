@@ -1,0 +1,114 @@
+{
+  "schema": "trnm-layout-baseline-result-v1",
+  "completed_utc": "2026-11-03T20:44:48.419392+00:00",
+  "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "plan_sha256": "ebbceef95940a539e61f8c95508ba52a9121e61665764a4dac0945d97fe02c26",
+  "completed": true,
+  "measured_type": {
+    "schema": "trnm-public-request-observation-layout-v1",
+    "type_path": "trnm_pon_node::ingress::public_v3::PublicRequestObservation",
+    "size_bytes": 2376,
+    "align_bytes": 8
+  },
+  "compiler_artifact_profile": {
+    "opt_level": "3",
+    "debuginfo": 2,
+    "debug_assertions": true,
+    "overflow_checks": true,
+    "test": false
+  },
+  "compiler_artifact_features": [
+    "default",
+    "pq-native-openssl"
+  ],
+  "compile": {
+    "argv": [
+      "/workspace/scratch/b5a148b09b11/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--edition=2021",
+      "--crate-name",
+      "public_request_observation_layout",
+      "--crate-type",
+      "bin",
+      "-C",
+      "opt-level=3",
+      "-C",
+      "debuginfo=2",
+      "-C",
+      "debug-assertions=yes",
+      "-C",
+      "overflow-checks=yes",
+      "--error-format=json",
+      "-L",
+      "dependency=/workspace/scratch/b5a148b09b11/target/debug/deps",
+      "--extern",
+      "trnm_pon_node=/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+      "-L",
+      "native=/workspace/scratch/b5a148b09b11/target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+      "-L",
+      "native=/workspace/scratch/b5a148b09b11/provider/trnm-pq-provider-3.5.9.Dd13QuZx/install/lib",
+      "-L",
+      "native=/workspace/scratch/b5a148b09b11/target/debug/build/trnm-sqlite-io-boundary-1f7024ebc7559ac9/out",
+      "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-baseline/layout_probe.rs",
+      "-o",
+      "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-baseline/layout-probe"
+    ],
+    "cwd": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-baseline",
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 359216216,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "probe_execution": {
+    "argv": [
+      "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-baseline/layout-probe"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 1559221,
+    "stdout_sha256": "a6f78d858e4949328dc553993f22ebf015d4c1a3d169d6e140a3bfd2188dd04c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rlib_path": "/workspace/scratch/b5a148b09b11/target/debug/deps/libtrnm_pon_node-8f385318f2b1b47b.rlib",
+  "rlib_before": {
+    "device": 27,
+    "inode": 1890160,
+    "size": 238244138,
+    "mtime_ns": 1793736464597209402,
+    "sha256": "665e7fcd001ba1049f3d15a7b064d45bfec4d99ae3ec877d6c39093fed7c1534"
+  },
+  "rlib_after": {
+    "device": 27,
+    "inode": 1890160,
+    "size": 238244138,
+    "mtime_ns": 1793736464597209402,
+    "sha256": "665e7fcd001ba1049f3d15a7b064d45bfec4d99ae3ec877d6c39093fed7c1534"
+  },
+  "probe_elf_path": "/workspace/scratch/b5a148b09b11/next-validation/error-diagnostics-review/layout-baseline/layout-probe",
+  "probe_elf_before": {
+    "device": 27,
+    "inode": 1625874,
+    "size": 4339992,
+    "mtime_ns": 1793738688238087920,
+    "sha256": "d002dc2568a6abe1ba13ca504d463f68818d1248223aef5309198b04b70b9360"
+  },
+  "probe_elf_after": {
+    "device": 27,
+    "inode": 1625874,
+    "size": 4339992,
+    "mtime_ns": 1793738688238087920,
+    "sha256": "d002dc2568a6abe1ba13ca504d463f68818d1248223aef5309198b04b70b9360"
+  },
+  "helper_source_sha256": "c0d25acbbdc7618a2c22fd2a637c5b7dab20e0b652e89deefad33144e3b9c47f",
+  "compiler_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "source_unchanged": true,
+  "native_test_bodies_executed": 0,
+  "candidate_layout_measured": false,
+  "task_cell_layout_measured": false,
+  "limits": [
+    "Only the public observation record type is actually measured.",
+    "This baseline does not measure private TaskProgress/Cell or future candidate layout.",
+    "No memory-pressure, runtime performance or service-acceptance claim is made.",
+    "Use this exact helper against the later exact candidate non-test rlib to measure the public record delta."
+  ]
+}

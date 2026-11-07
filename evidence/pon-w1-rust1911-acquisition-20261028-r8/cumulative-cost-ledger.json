@@ -1,0 +1,31 @@
+{
+  "schema": "TRNM-W1-BATCH-CUMULATIVE-COST-AFTER-OFFICIAL-COMPILER-ACQUISITION1",
+  "scope": "Named batch setup and all three actual failed Phase0 builds; not original complete leaf proof or end-to-end project cost",
+  "prior_named_wall_sum_seconds": 35.57529841098585,
+  "prior_known_named_cpu_sum_seconds": 20.84003,
+  "new_guard_observations": [
+    {
+      "stage": "exact-official-compiler-fetch",
+      "path": "fetch/result.json",
+      "sha256": "5c757d8b8bb46b1832761f0e88be79af85fdfa32785a37cec09cc3566e7d827f",
+      "wall_seconds": 8.505442487003165,
+      "child_cpu_seconds": 1.3286479999999998
+    },
+    {
+      "stage": "complete-local-install-and-version-target-checks",
+      "path": "install/result.json",
+      "sha256": "4133aab9841a32198cba529bd96dde78496ec696e74ef5ca4fee8db1a11b591e",
+      "wall_seconds": 14.510658653991413,
+      "child_cpu_seconds": 14.181002999999999
+    }
+  ],
+  "measured_named_wall_sum_seconds": 58.59139955198043,
+  "known_named_cpu_sum_seconds": 36.349681,
+  "avoid_double_counting": "Acquisition process self/child CPU is inside each supervisor child total; do not add it again.",
+  "unmeasured_costs": "Retains all three actual failed Phase0 attempts, resolver downgrade and reversal, dependency download, compiler adoption, metadata reads and own compiler reclaim. Guard own CPU, reclaimed-tree CPU, uninstrumented source inspections/control CPU are not captured and are not represented as zero. Guard development controls and original complete leaf proof costs remain separate raw evidence; no compiler acquisition or build costs are treated as proof speed measurements.",
+  "earlier_source_and_guard_controls": "Retained in the prior Phase0/MSRV/security packets and source-review; they are not proof performance measurements. Known-broken early guard namespace measurements remain historical raw observations, not validated additive CPU accounting.",
+  "attempt4": "Rejected before execution; zero actual build starts, not a passed build.",
+  "free_bytes_at_readback": 1875226624,
+  "unix_ns": 1793162676334861535,
+  "next_build_attempt_started": false
+}

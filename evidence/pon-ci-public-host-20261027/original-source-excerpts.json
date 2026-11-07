@@ -1,0 +1,60 @@
+[
+  {
+    "source_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "git_blob": "7c62c50f008286e5a06b61e7fa53b1dd21924814",
+    "excerpts": [
+      {
+        "first_line": 2284,
+        "last_line": 2318,
+        "text": "/// The caller supplies one original business deadline, shared across pages.\n/// Busy/expiry does not classify a proof as invalid or undo a durable commit.\npub fn receive_public_page_from_before(\n    node: &mut Node,\n    source: SocketAddr,\n    page: Page,\n    tip: Hash,\n    after: Hash,\n    clock: u64,\n    deadline: Instant,\n) -> Result<Hash> {\n    // The ORIGINAL fixed administrator-owned Host parent is required even\n    // for a loopback source: a caller's socket address is not provenance.\n    let kernel = crate::host_kernel_parent::require_host_kernel_budget(\n        source,\n        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),\n    )?\n    .ok_or(\"PUBLIC_HOST_KERNEL_REQUIRED\")?;\n    kernel.verify()?;\n    let native = history_import::receive(\n        history_import::Owner::Exclusive(node),\n        page,\n        tip,\n        after,\n        clock,\n        history_import::Control {\n            deadline,\n            resource: &|| kernel.verify(),\n        },\n    );\n    // Do not convert an already committed block into an invalid work proof\n    // when the last local Host owner observation fails.\n    kernel.verify()?;\n    native\n}\n"
+      }
+    ]
+  },
+  {
+    "source_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+    "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+    "git_blob": "06dc190f7dee41c8bd39f1da874b64e4ac55befa",
+    "excerpts": [
+      {
+        "first_line": 257,
+        "last_line": 275,
+        "text": "        fn open(path: &str) -> Result<Self> {\n            let user_path = Path::new(path);\n            if !user_path.is_absolute() {\n                return Err(\"PUBLIC_HOST_KERNEL_PARENT\".into());\n            }\n            let parent = fs::canonicalize(user_path)\n                .map_err(|_| crate::Error::from(\"PUBLIC_HOST_KERNEL_PARENT\"))?;\n            // A strict systemd-owned *single parent*, not the common cgroup\n            // root, any child/service, or a caller-created user.slice.\n            if !approved_parent_path(&parent) || parent != user_path {\n                return Err(\"PUBLIC_HOST_KERNEL_PARENT\".into());\n            }\n            if !Path::new(\"/sys/fs/cgroup/cgroup.controllers\").is_file() {\n                return Err(\"PUBLIC_HOST_KERNEL_UNSUPPORTED\".into());\n            }\n            let meta = fs::symlink_metadata(&parent)?;\n            if !meta.is_dir() || meta.uid() != 0 || meta.permissions().mode() & 0o022 != 0 {\n                return Err(\"PUBLIC_HOST_KERNEL_PARENT\".into());\n            }\n"
+      },
+      {
+        "first_line": 611,
+        "last_line": 623,
+        "text": "/// Single protocol-neutral, administrator-provisioned host resource parent.\n/// The public V3 library and development CLI use the EXACT same eligibility.\npub const FIXED_PUBLIC_KERNEL_PARENT: &str = \"/sys/fs/cgroup/trnmponpublic.slice\";\n/// Direct library callers cannot bypass the CLI's kernel-parent requirement.\n/// A loopback test service needs no administrator privileges; an externally\n/// reachable service must already be placed under the one fixed parent.\npub fn require_for_listener(\n    address: std::net::SocketAddr,\n) -> crate::Result<Option<HostKernelBudget>> {\n    require_host_kernel_budget(\n        address,\n        (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),\n    )\n"
+      }
+    ]
+  },
+  {
+    "source_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+    "git_blob": "3cf1abe11d637902f1a1c46935c606ac71709abf",
+    "excerpts": [
+      {
+        "first_line": 1400,
+        "last_line": 1454,
+        "text": "    let mut history_calls = Vec::new();\n    let mut confirmation = None;\n    let mut verification_errors = Vec::new();\n    let replay_started = Instant::now();\n    let replay_cpu = ThreadCpuStamp::start();\n    let mut after = settings.genesis();\n    let mut confirmation_ended_ns = None;\n    while next_packet == packets.len() && Instant::now() < end && history_calls.len() < 16 {\n        let row = client.call_before(\n            \"confirmation_honest_history\",\n            74,\n            Request::History {\n                tip: hex::encode(tip),\n                after: hex::encode(after),\n            },\n            Some(end),\n        );\n        if row[\"status\"] == \"ok\" && row[\"returned_after_window\"] == false {\n            let imported =\n                serde_json::from_value::<ingress::Page>(row[\"response\"][\"value\"].clone())\n                    .map_err(|error| error.to_string())\n                    .and_then(|page| {\n                        ingress::receive_public_page_from_before(\n                            &mut verifier,\n                            client.address,\n                            page,\n                            tip,\n                            after,\n                            ingress::now().unwrap(),\n                            end,\n                        )\n                        .map_err(|error| error.to_string())\n                    });\n            match imported {\n                Ok(next) => {\n                    after = next;\n                    if after == tip {\n                        match verifier.confirmation(transaction, included, ingress::now().unwrap())\n                        {\n                            Ok(observation) => {\n                                confirmation = Some(observation);\n                                confirmation_ended_ns = Some(ns(epoch));\n                            }\n                            Err(error) => verification_errors.push(error.to_string()),\n                        }\n                    }\n                }\n                Err(error) => verification_errors.push(error),\n            }\n        }\n        history_calls.push(row);\n        if confirmation.is_some() {\n            break;\n        }\n    }\n"
+      },
+      {
+        "first_line": 1545,
+        "last_line": 1555,
+        "text": "        || (completed_before_business > 0\n            && overlapping_false_calls > 0\n            && completed_at_confirmation > completed_before_business);\n    let finite_business_target_met =\n        client_confirmed_in_window && overlap_demonstrated && verification_errors.is_empty();\n    let mut report = json!({\"mode\": if pressured { \"from-zero-pressure\" } else { \"attack-free-baseline\" },\n        \"target\": hex::encode(target), \"task\": hex::encode(packets[0].header.work_task),\n        \"initial_tip\": hex::encode(initial.0),\n        \"initial_state_root\": hex::encode(trnm_mvcc_fee::pon_executor::root(&initial.2).unwrap()),\n        \"requested_window_ns\": PRESSURE_MS * 1_000_000, \"workers\": workers,\n        \"initial_meter\": initial_meter, \"final_meter\": domain.observe().unwrap(),\n"
+      }
+    ]
+  },
+  {
+    "source_commit": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+    "path": ".github/workflows/trnm-required-baseline.yml",
+    "git_blob": "74d7d55a1eeed449fd158a622b61b856bf471e00",
+    "excerpts": [
+      {
+        "first_line": 80,
+        "last_line": 114,
+        "text": "      - name: Set isolated Cargo paths after runner allocation\n        shell: bash\n        run: |\n          set -euo pipefail\n          printf 'CARGO_HOME=%s/cargo-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"\n          printf 'CARGO_TARGET_DIR=%s/target-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"\n          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\n      - name: Install pinned native release compiler\n        run: rustup toolchain install 1.95.0 --profile minimal\n      - name: Install matching native formatter\n        run: rustup component add --toolchain 1.95.0 rustfmt\n      - name: Execute native release setup and repeated-search costs\n        run: python3 scripts/ci/run_cross_arch_cost.py --arch \"${{ matrix.arch }}\"\n      - name: Execute native zero-matrix locality costs\n        if: always()\n        run: python3 scripts/ci/run_cross_arch_cost.py --arch \"${{ matrix.arch }}\" --suite zero-locality --zero-version 2\n      - name: Execute native one-zero rank-one locality costs\n        if: always()\n        run: python3 scripts/ci/run_cross_arch_cost.py --arch \"${{ matrix.arch }}\" --suite one-zero-locality\n      - name: Execute native fixed maintenance producer and preparation costs\n        if: always()\n        run: python3 scripts/ci/run_cross_arch_cost.py --arch \"${{ matrix.arch }}\" --suite maintenance-paired\n      - name: Execute native legal and late-rejection verifier costs\n        if: always()\n        run: python3 scripts/pon_work_rejection_report.py --run --out \"$TRNM_CI_RECEIPT_DIR/work-rejection\"\n      - name: Execute exact native from-zero service controls\n        if: always()\n        run: python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\n      - name: Verify source remained unchanged\n        if: always()\n        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\"\n      - name: Retain native cost successes and failures\n        if: always()\n        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n        with:\n"
+      }
+    ]
+  }
+]

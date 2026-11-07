@@ -1,0 +1,640 @@
+{
+  "schema": "chain-runtime-source-combination-facts-v1",
+  "recorded_at_utc": "2026-11-05T09:13:34Z",
+  "evidence_kind": "source_inspection_and_validation_receipt_readback",
+  "scope": "Current continuation; this document is not a runtime execution-source manifest or an activation receipt.",
+  "chain": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+    "commit_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "local_head_and_tree_verified": true,
+    "worktree_clean_at_recording": true,
+    "final_validation": {
+      "status": "completed_with_failures_and_successful_scale_diagnostic",
+      "result": "not_all_validation_gates_passed",
+      "native_execution_result": "full_node_suite_failed_new_feature_tests_passed",
+      "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "record_reference": {
+        "owner": "parent_final_validation",
+        "record_directory_at_recording": "/workspace/scratch/add353b13222/validation",
+        "existing_receipt_basenames": [
+          "node-build-final-debug0.json",
+          "node-all-lib-final.json",
+          "isolated-owner-epoch.json",
+          "isolated-witness-deadline.json",
+          "new-proof-tests.json",
+          "new-timestamp-tests.json",
+          "new-canonical-test.json",
+          "new-epoch-tests.json",
+          "new-cpu-test.json",
+          "clippy-final.json",
+          "reader-tests-final.json",
+          "from-zero-reader-tests-final.json",
+          "source-integrity-tests-final.json",
+          "graph-repository-final.json",
+          "m06-all-targets-final.json",
+          "original-from-zero-native.json",
+          "growth-scale-final.json",
+          "growth-scale-diagnostic-retry.json",
+          "growth-scale-original-reader.json",
+          "growth-scale-retry-reader.json"
+        ],
+        "receipt_results_consumed_by_this_document": true,
+        "native_test_receipt": "node-all-lib-final.json",
+        "published_record_path": null,
+        "all_listed_receipt_source_identities_and_log_hashes_verified": true
+      },
+      "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+      "node_build": {
+        "passed": true,
+        "receipt": "node-build-final-debug0.json",
+        "profile_override": "profile.test.package.trnm-pon-node.debug=0",
+        "compilation_is_not_test_execution": true
+      },
+      "node_full_suite": {
+        "receipt": "node-all-lib-final.json",
+        "passed": 1083,
+        "failed": 5,
+        "ignored": 28,
+        "exit_code": 101,
+        "failure_names": [
+          "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+          "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+          "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+          "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+          "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable"
+        ]
+      },
+      "isolated_same_binary_diagnostics": {
+        "same_binary_argv_verified": true,
+        "supersedes_full_suite_failure": false,
+        "runs": [
+          {
+            "receipt": "isolated-owner-epoch.json",
+            "test": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0
+          },
+          {
+            "receipt": "isolated-witness-deadline.json",
+            "test": "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0
+          }
+        ]
+      },
+      "new_feature_rust_tests": {
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0,
+        "groups": [
+          {
+            "scope": "multiproof",
+            "receipt": "new-proof-tests.json",
+            "passed": 3
+          },
+          {
+            "scope": "header_timestamp",
+            "receipt": "new-timestamp-tests.json",
+            "passed": 2
+          },
+          {
+            "scope": "canonical_dependencies",
+            "receipt": "new-canonical-test.json",
+            "passed": 1
+          },
+          {
+            "scope": "read_epoch",
+            "receipt": "new-epoch-tests.json",
+            "passed": 6
+          },
+          {
+            "scope": "cpu_observation",
+            "receipt": "new-cpu-test.json",
+            "passed": 1
+          }
+        ]
+      },
+      "other_test_results": [
+        {
+          "scope": "public_v3_reader",
+          "receipt": "reader-tests-final.json",
+          "passed": 51,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "scope": "from_zero_reader",
+          "receipt": "from-zero-reader-tests-final.json",
+          "passed": 140,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "scope": "source_integrity",
+          "receipt": "source-integrity-tests-final.json",
+          "passed": 43,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "scope": "ci_roster",
+          "receipt": "graph-repository-final.json",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "scope": "m06_all_targets",
+          "receipt": "m06-all-targets-final.json",
+          "passed": 253,
+          "failed": 0,
+          "ignored": 8
+        }
+      ],
+      "static_gates": {
+        "clippy": {
+          "passed": true,
+          "receipt": "clippy-final.json",
+          "scope": "workspace, all targets, all features, warnings denied"
+        },
+        "repository_gates": {
+          "passed": true,
+          "receipt": "graph-repository-final.json",
+          "scope": "cargo metadata, formatting, distributed source inventory, CI contract, repository checks and CI roster"
+        }
+      },
+      "original_from_zero": {
+        "receipt": "original-from-zero-native.json",
+        "planned_named_tests": 5,
+        "named_test_passes": 5,
+        "named_test_failures": 0,
+        "process_timeouts": 0,
+        "outer_exit_code": 1,
+        "overall_passed": false,
+        "failure": "CONFIRMATION_TARGET",
+        "report_acceptance_stages_reached": 3,
+        "raw_reports_present": 3,
+        "retained_receiver_records": 644,
+        "baseline_records": 95,
+        "pressure_records": 549,
+        "independent_confirmation": [
+          {
+            "phase": "baseline",
+            "confirmed_transactions": 0,
+            "required_transactions": 1,
+            "native_execution_count": null,
+            "chain_inclusion_count": null,
+            "native_execution_and_chain_inclusion_status": "not_separately_observed",
+            "confirmation_latency_ns": null,
+            "confirmation_p99_ns": null,
+            "confirmation_tps": null
+          },
+          {
+            "phase": "pressure",
+            "confirmed_transactions": 0,
+            "required_transactions": 1,
+            "native_execution_count": null,
+            "chain_inclusion_count": null,
+            "native_execution_and_chain_inclusion_status": "not_separately_observed",
+            "confirmation_latency_ns": null,
+            "confirmation_p99_ns": null,
+            "confirmation_tps": null
+          }
+        ],
+        "cpu_coverage": {
+          "v2_records": 449,
+          "missing_extension_records": 195,
+          "legacy_v1_records": 0,
+          "whole_request_cpu_observed": false,
+          "positive_post_disconnect_cpu_cohort_observed": false
+        },
+        "detailed_audits": [
+          "from_zero_native_audit.json",
+          "from_zero_cpu_coverage.json"
+        ]
+      },
+      "scale_observation": {
+        "scope": "Original failed campaign and one same-source/binary/original-grid diagnostic retry, retained separately.",
+        "original_failure_preserved": true,
+        "original_run": {
+          "receipt": "growth-scale-final.json",
+          "planned_cohorts": 9,
+          "completed_cohorts": 2,
+          "completed_coordinates": [
+            {
+              "accounts": 64,
+              "warmup_history_blocks": 0
+            },
+            {
+              "accounts": 64,
+              "warmup_history_blocks": 16
+            }
+          ],
+          "failed_coordinate": {
+            "accounts": 64,
+            "warmup_history_blocks": 128,
+            "last_retained_event": "warmup_started",
+            "index": 104
+          },
+          "unstarted_cohorts": 6,
+          "exit_code": 101,
+          "overall_passed": false,
+          "failure_cause": "not_established",
+          "whole_campaign_p99_ns": null,
+          "confirmation_tps": null,
+          "performance_acceptance_established": false,
+          "reader": {
+            "receipt": "growth-scale-original-reader.json",
+            "exit_code": 1,
+            "result": "REFUSED",
+            "error": "exact cohort file set"
+          },
+          "retained_diagnostic": "Third-cohort stderr JSON output is truncated; it does not establish the root cause."
+        },
+        "diagnostic_retry": {
+          "receipt": "growth-scale-diagnostic-retry.json",
+          "diagnostic_retry_count": 1,
+          "same_source_as_original": true,
+          "same_native_binary_argv_as_original": true,
+          "same_native_test_arguments_as_original": true,
+          "same_original_cohort_grid": true,
+          "planned_cohorts": 9,
+          "completed_cohorts": 9,
+          "run_completed": true,
+          "measured_native_blocks": 72,
+          "returned_native_stages": 153,
+          "returned_native_outcomes": {
+            "accepted": 144,
+            "rejected": 9
+          },
+          "cancelled_admissions": 9,
+          "cold_reopens": 9,
+          "exit_code": 0,
+          "reader": {
+            "receipt": "growth-scale-retry-reader.json",
+            "exit_code": 0,
+            "result": "COMPLETE_LOCAL_OBSERVATION",
+            "retained_file_hashes_verified": 10
+          },
+          "local_observation_complete": true,
+          "supersedes_original_failure": false,
+          "p99_ns": null,
+          "confirmation_tps": null,
+          "throughput_qualified": false,
+          "native_stage_cpu_measurements_available": false,
+          "native_stage_timing_scope": "wall only; no thread or process CPU measurement"
+        },
+        "whole_campaign_p99_ns": null,
+        "confirmation_tps": null,
+        "performance_acceptance_established": false
+      }
+    }
+  },
+  "runtime": {
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+    "tree": "253d7584783cf658b9d5192d1106aa4c08fe031f",
+    "commit_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+    "observed_pr": 4812,
+    "selection_status": "observed_only",
+    "materialized_for_this_continuation": false,
+    "executed": false,
+    "execution_scope": "this_continuation",
+    "full_current_runtime_raw_source_verified": false
+  },
+  "current_cross_repository_execution": {
+    "executed": false,
+    "configuration": null,
+    "status": "not_run",
+    "qualification": "not_established",
+    "historical_results_transferred": false
+  },
+  "runtime_workflow_defaults": {
+    "source": "runtime_workflow",
+    "execution_source_profile": "hepta-integrated-chain-execution-v4",
+    "roles": [
+      {
+        "role": "chain",
+        "variable": "CHAIN_SHA",
+        "commit": "c16507147b65285ea94dead22d3b93c5db7295af"
+      },
+      {
+        "role": "chain-answer-eos",
+        "variable": "RESEARCH_CHAIN_SHA",
+        "commit": "c16507147b65285ea94dead22d3b93c5db7295af"
+      },
+      {
+        "role": "chain-observed",
+        "variable": "OBSERVATION_CHAIN_SHA",
+        "commit": "c16507147b65285ea94dead22d3b93c5db7295af"
+      }
+    ],
+    "observed_not_executed_here": true
+  },
+  "historical_v10": {
+    "profile": "hepta-integrated-chain-execution-v10",
+    "chain": {
+      "commit": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+      "tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+      "commit_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/04be5f02c84cf5cb626a53f34bc03a5bd6ff5137"
+    },
+    "runtime": {
+      "commit": "d7c32f38ae1c3890e73ff48ef8ee725ba4e80c58",
+      "tree": "b79a4a4677b672a89cce53c9abe6f6c71810ee88",
+      "commit_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/d7c32f38ae1c3890e73ff48ef8ee725ba4e80c58"
+    },
+    "manifest": {
+      "path": "codex-rs/hepta-learning-artifacts/profiles/smollm2-public-initial-v2.execution-sources-v10.json",
+      "sha256": "97e5311a86a0dc6fcd62a29ca9cd8a323c9b34a6991790ae347cfbb57bf796ed",
+      "file_count": 51,
+      "file_count_is_test_count": false,
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/d7c32f38ae1c3890e73ff48ef8ee725ba4e80c58/codex-rs/hepta-learning-artifacts/profiles/smollm2-public-initial-v2.execution-sources-v10.json"
+    },
+    "evidence_status": "historical_only",
+    "reported_overall_gate_status": "all_nine_hold",
+    "reported_growth_pq_configuration": "separate_configurations",
+    "manifest_modified_by_this_record": false,
+    "results_reused_for_current_sources": false,
+    "report_source": "historical_v10_report"
+  },
+  "composition_interfaces": [
+    {
+      "id": "header_timestamp",
+      "source_status": "implemented",
+      "final_native_verification": "passed_2_dedicated_tests",
+      "fact": "The shared Growth execution_block helper supplies Some(header.ledger.timestamp) to M06 for construction, admission and retained/cold replay.",
+      "test_scope": "Real PQ M06 expiry at the input boundary plus classic Growth outputs/admission/replay; not PQ Growth wire or public integration.",
+      "sources": [
+        "growth_execution",
+        "timestamp_tests"
+      ],
+      "verification_receipt": "new-timestamp-tests.json"
+    },
+    {
+      "id": "sealed_configuration",
+      "source_status": "unresolved",
+      "fact": "The Growth builder changes parameters and chain context after a PQ Profile has sealed the config digest and context; direct composition fails PQ2_CONFIG_CHANGED.",
+      "sources": [
+        "growth_profile",
+        "pq_authority"
+      ]
+    },
+    {
+      "id": "transaction_codec_and_account_witness_set",
+      "source_status": "unresolved",
+      "fact": "PNP2 encode/decode requires the classical Envelope and 159..2048 bytes per transaction; requested() also derives account witnesses through the classical decoder.",
+      "sources": [
+        "growth_packet",
+        "growth_execution"
+      ]
+    },
+    {
+      "id": "account_authority_partition",
+      "source_status": "unresolved",
+      "fact": "Growth builds a touched-account view plus complete working state; PQ validate_state expects complete account-to-authority/history closure and rejects orphan pq-* rows. Permanent account leaves contain balance and nonce only.",
+      "working_byte_limit": 262144,
+      "canonical_spki_json_bytes": 3950,
+      "maximum_permanent_accounts": 1000000,
+      "implication": "Keeping all authority history in working is not an account-scalable PQ touched-set solution.",
+      "sources": [
+        "growth_execution",
+        "pq_authority",
+        "growth_limits",
+        "account_leaf"
+      ]
+    },
+    {
+      "id": "backend_and_recovery_owner",
+      "source_status": "unresolved",
+      "fact": "PermanentAccountGrowthV2 is separate from PqNetworkV2/PqContinuousV3/PqWitnessV4; PQ account settings require a PQ network owner and the current Growth opener does not provide it.",
+      "sources": [
+        "backend_selection",
+        "growth_execution"
+      ]
+    },
+    {
+      "id": "public_profile",
+      "source_status": "unresolved",
+      "fact": "NativeGrowthV1 requires a non-PQ identity and permits operations 6/7/8; a PQ identity selects PqHistoryV4, operations 2/3. The client also binds PQ identity to PqHistoryV4. The Growth resource identity explicitly excludes a pool, history walker and automatic parent recovery.",
+      "sources": [
+        "growth_public",
+        "public_client"
+      ]
+    }
+  ],
+  "checkpoint_preservation_boundary": {
+    "source_status": "growth_complete_export_not_implemented",
+    "existing_node_guard": "GROWTH_COMPLETE_STATE_UNAVAILABLE",
+    "legacy_checkpoint_contract": {
+      "header_id": "pon_wire::Header.block_id(trace)",
+      "state_root": "root_for_config(complete_state)",
+      "maximum_inventory_rows": 65536,
+      "maximum_import_accounts": 64
+    },
+    "growth_checkpoint_contract": {
+      "header_id": "GrowthHeader.block_id(trace)",
+      "state_root": "GrowthStateCommitmentV2",
+      "maximum_permanent_accounts": 1000000
+    },
+    "guard_removal_is_integration": false,
+    "working_partition_is_complete_state": false,
+    "preservation_requirement": "Any complete inspection/export must retain zero-balance accounts, nonce floors and every working row; a Growth export would not by itself satisfy the existing legacy migration type.",
+    "sources": [
+      "node_migration_inventory",
+      "legacy_inventory",
+      "legacy_migration",
+      "growth_header",
+      "growth_limits"
+    ]
+  },
+  "runtime_source_registry_boundary": {
+    "source": "runtime_source_registry",
+    "registered_v10_still_pins_historical_chain": true,
+    "v10_specific_guards": [
+      "source-head candidate_plan",
+      "native Cargo input paths",
+      "hidden-index and ignored-input checks",
+      "bytecode prohibition",
+      "no-ext-diff and no-textconv",
+      "merged-profile allowlist"
+    ],
+    "appending_registry_entry_alone_preserves_all_guards": false
+  },
+  "qualification": {
+    "unified_pq_growth_public_ordinary_recovery": "hold_not_demonstrated",
+    "new_confirmed_tps_claim": false,
+    "production_activation": false,
+    "installation_authorized": false
+  },
+  "source_index_scope": "Selected inspected files only; not a replacement for complete raw tracked-source before/after verification.",
+  "sources": {
+    "growth_execution": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "bytes": 32770,
+      "sha256": "6324f70d7420b7468e8125db96be4c3562f3be7e833126e8c601d4890720ff2b",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "growth_packet": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/packet.rs",
+      "bytes": 5348,
+      "sha256": "7883d1b6d2e5399b1f307f4e20bf524766e655970c94445e6d990ad5578d421d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/store/growth/packet.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "growth_profile": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs",
+      "bytes": 4873,
+      "sha256": "c4197341c2d9a96b603e07e9bd43525c3b88ed6265d381ad223662b456925257",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "timestamp_tests": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "bytes": 8070,
+      "sha256": "ca7d50ecec37c1a437dab85be856dbcbbbad108c3d959c60f068621437adaca8",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "backend_selection": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 339547,
+      "sha256": "bc422b56e6fccab72d29ceeaec8978716d8c2e4e99813c296ced6cc6a8957a1f",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "growth_public": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "bytes": 9197,
+      "sha256": "1a4814c8fa97b66eb75d5a5decda4f64b68b4ff600105c696d577e9d37899b19",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "public_client": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 386697,
+      "sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "node_migration_inventory": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs",
+      "bytes": 3032,
+      "sha256": "2a3de2babfe42317cf4e90f89aa805738294084b8380ff326c1197d0cf248adb",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "pq_authority": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "bytes": 40434,
+      "sha256": "57300f960b5af116d9d2a6e4e02062ab82cb692f9b5148abcaea181f9f660d51",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "growth_limits": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs",
+      "bytes": 17240,
+      "sha256": "3a8b51a0dc5944101ff1e263e41f55cf71508cf4c4f9a2e4fccbb2f008124f6b",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "legacy_inventory": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_v1.rs",
+      "bytes": 7148,
+      "sha256": "6f6df98a497091adef6dde2560d2ba61896f0398dfff2fb5c0a3a40e205e4fdc",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration_inventory_v1.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "legacy_migration": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "bytes": 22190,
+      "sha256": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "growth_header": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+      "bytes": 3760,
+      "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "account_leaf": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "bytes": 48813,
+      "sha256": "73a8dceef766adc49bd3b56c70d7909f964e2f5073dc6993f4013d24db5a54e1",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/657bf2a462ff13a6101ebcb4fbe0fb91c515c972/trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "inspection": "local_committed_bytes",
+      "remote_url_resolution": "not_checked"
+    },
+    "runtime_workflow": {
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+      "path": ".github/workflows/hepta-neural-study-v1.yml",
+      "git_blob_sha": "87b4482f5d4ae73d662f796b92e92036adce6fdf",
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/.github/workflows/hepta-neural-study-v1.yml",
+      "inspection": "remote_exact_ref_file_read"
+    },
+    "runtime_source_registry": {
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+      "path": "scripts/hepta_smollm_execution_source_v1.py",
+      "git_blob_sha": "929b46d50bb22e708b1c3b4a69d518233b04d7ac",
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/scripts/hepta_smollm_execution_source_v1.py",
+      "inspection": "remote_exact_ref_file_read"
+    },
+    "historical_v10_report": {
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+      "path": "qualification/learning-generations/hepta-pair-v10-source-20261105/README.md",
+      "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/qualification/learning-generations/hepta-pair-v10-source-20261105/README.md",
+      "inspection": "previous_exact_ref_read_in_this_continuation"
+    }
+  },
+  "validation_updated_at_utc": "2026-11-05T10:26:11Z"
+}

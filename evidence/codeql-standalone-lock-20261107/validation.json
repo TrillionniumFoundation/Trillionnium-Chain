@@ -1,0 +1,111 @@
+{
+  "all_package_name_version_source_checksum_tuples_match_parent": true,
+  "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "construction": "Seed from unchanged parent Cargo.lock, let Cargo metadata --offline prune to standalone primitive graph, then repeat locked/offline metadata",
+  "dirty_status_sha256": "e3de06fa9dca7fad8f48ce973212249f0098deb531896d8944e2182541d05b0a",
+  "ignore_rules_changed": false,
+  "locked_offline_metadata_exit": 0,
+  "locked_offline_metadata_packages": 12,
+  "locked_offline_metadata_preserved_lock_bytes": true,
+  "native_campaign_rerun": false,
+  "new_head_codeql_complete": false,
+  "observed_dirty_path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock",
+  "original_campaign_archive_sha256": "419a6e3324adf6b34505b13fcd1700b9850fe2ccc5d9f2d61aea40249e91f20d",
+  "original_diagnostic_commit": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+  "original_five_harness_hashes": {
+    "Cargo.lock": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21",
+    "Cargo.toml": "a22fc89e5a26a1e5379fad4afde15a06efa2c48ed32fb5e453b1720c6c526fd5",
+    "crypto/Cargo.toml": "7c59607ea68664bec9245ee662e128a3af603a11e04b52033182cfc4dbfacf77",
+    "crypto/src/lib.rs": "e4d4d573fdcd69cca8ab2b1343973aa6410bbacbdff249ea20d82cb65d22e527",
+    "protocol/Cargo.toml": "714b29344d26bc65a2193cb3628b6bd1b5f0cb0e478ebe6351ae9d36d8239132"
+  },
+  "original_five_harness_hashes_still_match": true,
+  "original_lockfile_matched": false,
+  "original_manifest_sha256": "1d15d9a8b662e11164b9ad5a2e4a2e98e54b9ef1289ff1109793c20d7770c604",
+  "original_workspace_graph_verified": false,
+  "package_identities": [
+    {
+      "checksum": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+      "name": "block-buffer",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.10.4"
+    },
+    {
+      "checksum": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600",
+      "name": "cfg-if",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.0.5"
+    },
+    {
+      "checksum": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+      "name": "cpufeatures",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.2.17"
+    },
+    {
+      "checksum": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+      "name": "crypto-common",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.1.7"
+    },
+    {
+      "checksum": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+      "name": "digest",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.10.7"
+    },
+    {
+      "checksum": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+      "name": "generic-array",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.14.7"
+    },
+    {
+      "checksum": "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70",
+      "name": "hex",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.4.3"
+    },
+    {
+      "checksum": "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a",
+      "name": "libc",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.2.191"
+    },
+    {
+      "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+      "name": "sha2",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.10.9"
+    },
+    {
+      "checksum": null,
+      "name": "trnm-w1-cost-primitive-validation",
+      "source": null,
+      "version": "0.0.0"
+    },
+    {
+      "checksum": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20",
+      "name": "typenum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.20.1"
+    },
+    {
+      "checksum": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+      "name": "version_check",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.9.5"
+    }
+  ],
+  "production_activation": false,
+  "purpose": "New standalone Cargo analysis binding, not recovered historical CI output or the 2026-11-01 input set",
+  "recorded_at_utc": "2026-11-07T11:17:57.078913+00:00",
+  "schema": "trnm-codeql-standalone-lock-binding-v1",
+  "source_cleanup_added": false,
+  "source_guard_changed": false,
+  "source_parent": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+  "standalone_lock_bytes": 2611,
+  "standalone_lock_sha256": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60",
+  "standalone_packages": 12,
+  "standalone_registry_packages": 11
+}

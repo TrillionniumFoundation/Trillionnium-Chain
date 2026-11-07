@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_required_native_test.py",
+    "/workspace/scratch/7318d5f890d1/throughput-validation/final-69d2-native/tcp-3.stdout",
+    "--test",
+    "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work"
+  ],
+  "child_system_seconds": 0.011822999999999917,
+  "child_user_seconds": 0.015315999999998553,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:54:05.990188+00:00",
+  "label": "tcp-3-reader",
+  "max_child_rss_kib": 90852,
+  "started_at": "2026-11-04T08:54:05.962759+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "5126db646946f201bc08f6208937f70782b5559adb3c59d7fa352205151ce527",
+  "wall_ns": 27439998
+}

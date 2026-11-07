@@ -1,0 +1,23 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--release",
+    "--offline",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "returncode": 101,
+  "seconds": 48.00765824317932,
+  "stopped_for_disk": false,
+  "free_bytes": 1995517952,
+  "log_sha256": "e050cddf8ca1a210a8af2899b58686e4d1ca459e070b7ba146292499dc634563"
+}

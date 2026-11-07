@@ -1,0 +1,31 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "composition-cargo-graph",
+  "command": [
+    "bash",
+    "/workspace/scratch/e537ad232c79/run-native.sh",
+    "cargo",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1",
+    "--no-deps"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:01:07.314919+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 44601580,
+  "finished_at": "2026-11-04T14:01:07.359784+00:00",
+  "log_bytes": 160060,
+  "log_sha256": "deeba8e89bc92b879cfd9407561765d88c74a77b1aa97075652cb1af0a8de7ee",
+  "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "final_dirty_paths": []
+}

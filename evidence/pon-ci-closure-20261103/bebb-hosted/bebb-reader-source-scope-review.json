@@ -1,0 +1,320 @@
+{
+  "schema": "bebb-reader-source-scope-delta-review-v1",
+  "reviewed_at": "2026-11-03T16:09:34.338526+00:00",
+  "result": "PASS_METADATA_ONLY_SCOPE_CLARIFICATION",
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "actual_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "reader": {
+    "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/extract_service_outcomes.py",
+    "bytes": 17366,
+    "sha256": "f71e712546284f23f38cdcfec57caeecd55a4f31ce9d489e3fb64e9863bded8d"
+  },
+  "report": {
+    "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/root/bebb-original-service-outcomes.json",
+    "bytes": 1109752,
+    "sha256": "a05a5e46beb60ae4fa8f3d70a925713b8123f4ba4f021f1fe9d98e3d9b25e8ec"
+  },
+  "prior_review": {
+    "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/bebb-reader-independent-final-review.json",
+    "bytes": 11190,
+    "sha256": "e6c0272212a99a25c302042527dd6b44518322524e637dff8cda07efa5a0a9d2"
+  },
+  "original_finding_review": {
+    "path": "/workspace/scratch/abae1861b451/recovered-ci/bebb/acceptance/bebb-reader-independent-audit.json",
+    "bytes": 30014,
+    "sha256": "92c17065b39dab4efbc9f0fc1cc5cafa32e6240abf7b6649a4f95895619cfa70"
+  },
+  "metadata_projection": {
+    "old_report_sha256": "e66b8f048673667431ebea14a4fed0cb1c4eeb4fd13bdf9655c1608e2dbc209e",
+    "new_report_without_new_metadata_sha256": "e66b8f048673667431ebea14a4fed0cb1c4eeb4fd13bdf9655c1608e2dbc209e",
+    "exact_original_report_bytes_recovered": true,
+    "numeric_or_native_observation_changes": false
+  },
+  "new_cpu_field_rows_checked": 1112,
+  "call_groups": [
+    {
+      "group": "head/original/attack-free-baseline/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/original/attack-free-baseline/history",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/original/attack-free-baseline/attacks",
+      "calls": 0,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/original/from-zero-pressure/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/original/from-zero-pressure/history",
+      "calls": 2,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/original/from-zero-pressure/attacks",
+      "calls": 213,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/fresh/attack-free-baseline/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/fresh/attack-free-baseline/history",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/fresh/attack-free-baseline/attacks",
+      "calls": 0,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/fresh/from-zero-pressure/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/fresh/from-zero-pressure/history",
+      "calls": 1,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "head/fresh/from-zero-pressure/attacks",
+      "calls": 194,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/original/attack-free-baseline/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/original/attack-free-baseline/history",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/original/attack-free-baseline/attacks",
+      "calls": 0,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/original/from-zero-pressure/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/original/from-zero-pressure/history",
+      "calls": 3,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/original/from-zero-pressure/attacks",
+      "calls": 247,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/fresh/attack-free-baseline/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/fresh/attack-free-baseline/history",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/fresh/attack-free-baseline/attacks",
+      "calls": 0,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/fresh/from-zero-pressure/submissions",
+      "calls": 7,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/fresh/from-zero-pressure/history",
+      "calls": 2,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "prospective-merge/fresh/from-zero-pressure/attacks",
+      "calls": 212,
+      "cpu_field": "client_thread_cpu_ns"
+    },
+    {
+      "group": "F0//baseline/submissions",
+      "calls": 14,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "F0//baseline/history",
+      "calls": 9,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "F0//valid-work-root/submissions",
+      "calls": 15,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "F0//valid-work-root/history",
+      "calls": 0,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/1/baseline/submissions",
+      "calls": 10,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/1/baseline/history",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/1/from-zero/submissions",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/1/from-zero/history",
+      "calls": 4,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/1/late-product/submissions",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/1/late-product/history",
+      "calls": 4,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/2/baseline/submissions",
+      "calls": 10,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/2/baseline/history",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/2/from-zero/submissions",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/2/from-zero/history",
+      "calls": 4,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/2/late-product/submissions",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/2/late-product/history",
+      "calls": 3,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/3/baseline/submissions",
+      "calls": 10,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/3/baseline/history",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/3/from-zero/submissions",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/3/from-zero/history",
+      "calls": 4,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/3/late-product/submissions",
+      "calls": 7,
+      "cpu_field": "calling_process_cpu_ns"
+    },
+    {
+      "group": "original_thirty_second_campaign/3/late-product/history",
+      "calls": 4,
+      "cpu_field": "calling_process_cpu_ns"
+    }
+  ],
+  "unknown_clock_field_precedence_control": {
+    "rows": 3,
+    "missing_or_null_thread_cpu_preserved": true,
+    "no_process_fallback_when_thread_clock_unknown": true,
+    "native_tests_executed": 0
+  },
+  "F0_scope_checks": [
+    {
+      "mode": "baseline",
+      "owner": "client_native_history_arithmetic",
+      "original_client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+      "reader_scope": "Client snapshot includes imports plus subsequent confirmation/internal reads, but excludes final standalone read_active. Do not divide graph snapshot CPU by native import CPU. Nested stages must not be summed."
+    },
+    {
+      "mode": "baseline",
+      "owner": "native_history_arithmetic",
+      "original_client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+      "reader_scope": "Client snapshot includes imports plus subsequent confirmation/internal reads, but excludes final standalone read_active. Do not divide graph snapshot CPU by native import CPU. Nested stages must not be summed."
+    },
+    {
+      "mode": "valid-work-root",
+      "owner": "client_native_history_arithmetic",
+      "original_client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+      "reader_scope": "Client snapshot includes imports plus subsequent confirmation/internal reads, but excludes final standalone read_active. Do not divide graph snapshot CPU by native import CPU. Nested stages must not be summed."
+    },
+    {
+      "mode": "valid-work-root",
+      "owner": "native_history_arithmetic",
+      "original_client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+      "reader_scope": "Client snapshot includes imports plus subsequent confirmation/internal reads, but excludes final standalone read_active. Do not divide graph snapshot CPU by native import CPU. Nested stages must not be summed."
+    }
+  ],
+  "native_source_boundaries": {
+    "source": {
+      "path": "/workspace/scratch/abae1861b451/chain-recovered/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "bytes": 111313,
+      "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+    },
+    "git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+    "locations": {
+      "let client_native_history_before = verifier.native_history_arithmetic_observation();": 845,
+      "let client_native_history_after = verifier.native_history_arithmetic_observation();": 1160,
+      "let checked = verifier.read_active().unwrap();": 1184
+    },
+    "after_snapshot_precedes_final_standalone_read_active": true,
+    "source_head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588"
+  },
+  "prior_scope_clarification": "Earlier read_active wording refers only to reads internal to the recorded import/confirmation scope. The final independent verifier.read_active executes after the snapshot and is excluded. Prior receipts are preserved.",
+  "evidence_copies_match": true,
+  "raw_native_execution_repeated": false,
+  "original_86_import_reaudit_repeated": false,
+  "parent_readers_or_reports_modified_by_auditor": false,
+  "production_activation": false
+}

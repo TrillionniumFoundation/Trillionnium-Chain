@@ -1,0 +1,23 @@
+{
+  "source": "4370f250236d89fb86dab215f862fe7e4d91c648",
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "timeout_seconds": 300,
+  "started_utc": "2026-10-28T02:25:06.531757+00:00",
+  "completed": true,
+  "returncode": 0,
+  "wall_seconds": 52.08796502300538,
+  "source_unchanged": true,
+  "files": {
+    "stdout.txt": {
+      "bytes": 306,
+      "sha256": "05bc496ce566e473ebbab5043471a049189b50aa5a32077ddd01e959ce39cd38"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

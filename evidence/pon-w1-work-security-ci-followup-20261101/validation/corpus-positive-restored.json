@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "scope": "exact 346 pinned blobs; missing sparse files restored from original Git index objects before rerun",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "ended_unix_ns": 1793524963016440214
+}

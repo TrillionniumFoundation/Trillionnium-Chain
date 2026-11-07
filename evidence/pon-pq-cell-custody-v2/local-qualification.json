@@ -1,0 +1,46 @@
+{
+  "schema": "trnm-pq-cell-custody-local-qualification-v2",
+  "parent_commit": "53e3e526fcffa88886665203ea86aaa0b025a636",
+  "measured_stacked_head_before_publication": "1529958bacf107f3f95bd7dcdf83d9a62ad09984",
+  "parent_pq_envelope_blob": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+  "source_git_blobs": {
+    "pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+    "pq_cell_custody.py": "5dabec97985cebe3de8feff51089267bd8650aea",
+    "test_pq_cell_custody.py": "4a93c30e57087fb50737a13bf53d8d680676d463"
+  },
+  "source_sha256": {
+    "pq_envelope.py": "d3fdc1faef02d7911f8e073c73fb82e2236093a0bd98395805cba22dde7bfbbb",
+    "pq_cell_custody.py": "09ce81a7a004f2c6c1087a4b4fc7c7cc9cca8f1ad4f4cd2d037df0b7b36b7990",
+    "test_pq_cell_custody.py": "e0f66901f68d3e7fa71ecfff7c5cf2a942b6e47678d259a94d5e4c4e7e5c35ea"
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_cell_custody.py"
+  ],
+  "python": "3.13.5",
+  "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "filesystem": "overlayfs",
+  "test_count": 15,
+  "failures": 0,
+  "returncode": 0,
+  "result": "PASS",
+  "raw_log": "local-unittest-v2.log",
+  "raw_log_sha256": "f98f60a274d1e1f87ef77cbe4ade14e64e96c0d4a7d7cf56c975e89bdf9e0aa3",
+  "observed_scope": "offline original TPQ1 + PCA1 release-signer catalog binding + PCQ1/PCR1 retrieval with local replay journal",
+  "nonclaims": [
+    "no active ledger PQ migration",
+    "no fully verified PCB1 evaluation caller",
+    "no independent source-consent owner",
+    "no native custody P2P service",
+    "no public retention or storage availability",
+    "no chain-wide replay nullifier",
+    "no quantum PoN work-security theorem"
+  ],
+  "product_authority": false,
+  "independent_accepted": false,
+  "production_activation": false
+}

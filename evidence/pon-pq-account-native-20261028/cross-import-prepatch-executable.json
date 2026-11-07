@@ -1,0 +1,11 @@
+{
+  "schema": "pq-prepatch-executable-checkpoint-v1",
+  "run_record": "cross-import-prepatch.record.json",
+  "observed_utc": "2026-10-28T00:42:26.560508+00:00",
+  "path": "/tmp/chain-pq-target-56818e4fba76/debug/deps/pq_account_owner-430c9bf424187cfd",
+  "copy": "/tmp/pq-account-prepatch-7acad34a4",
+  "bytes": 57134400,
+  "sha256": "9b24e8aa4db6e02f6190f905ee0dc4e2206b5235f9da2120186cdc14fe7a2b94",
+  "mtime_ns": 1793148005337621644,
+  "copied_after_run_before_next_build": true
+}

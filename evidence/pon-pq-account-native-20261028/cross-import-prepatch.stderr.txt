@@ -1,0 +1,8 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 51.30s
+     Running tests/pq_account_owner.rs (/tmp/chain-pq-target-56818e4fba76/debug/deps/pq_account_owner-430c9bf424187cfd)
+
+thread 'qtx1_from_another_import_context_refuses_even_if_declared_network_reused' (257) panicked at crates/trnm-mvcc-fee/tests/pq_account_owner.rs:544:5:
+valid QTX1 was replayed into another imported genesis
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-mvcc-fee --test pq_account_owner`

@@ -1,0 +1,669 @@
+{
+  "all_services_known_empty": true,
+  "complete_success": false,
+  "completed_utc": "2026-11-05T04:02:34.720850+00:00",
+  "denominator": {
+    "all_planned_business_packets": [
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 0,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 1,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 2,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 3,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 4,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 5,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 6,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 7,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 8,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 9,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 10,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 11,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 12,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 13,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 14,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 15,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 16,
+        "phase": "baseline",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 17,
+        "phase": "baseline",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 18,
+        "phase": "baseline",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 19,
+        "phase": "baseline",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 20,
+        "phase": "baseline",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 0,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 1,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 2,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 3,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 4,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 5,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 1,
+        "packet_index": 6,
+        "phase": "valid-work-root",
+        "timely_network_ack": true
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 7,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 8,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 9,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 10,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 11,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 12,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 13,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 14,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 15,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 16,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 17,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 18,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 19,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      },
+      {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 0,
+        "packet_index": 20,
+        "phase": "valid-work-root",
+        "timely_network_ack": false
+      }
+    ],
+    "all_planned_rounds": [
+      {
+        "actual_ended_ns": 15102383267,
+        "actual_started_ns": 1001387691,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 14102383267,
+        "end_lateness_from_four_second_deadline_ns": 10102383267,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 1387691
+      },
+      {
+        "actual_ended_ns": 28812108308,
+        "actual_started_ns": 15102405166,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 23812108308,
+        "end_lateness_from_four_second_deadline_ns": 19812108308,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": 10102405166
+      },
+      {
+        "actual_ended_ns": 30004374319,
+        "actual_started_ns": 28812126962,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 21004374319,
+        "end_lateness_from_four_second_deadline_ns": 17004374319,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "baseline",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": 19812126962
+      },
+      {
+        "actual_ended_ns": 30053569951,
+        "actual_started_ns": 1050950036,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29053569951,
+        "end_lateness_from_four_second_deadline_ns": 25053569951,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "phase": "valid-work-root",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 50950036
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "phase": "valid-work-root",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      }
+    ],
+    "controller_resource_failure": null,
+    "controller_resource_summary": {
+      "complete": true,
+      "observed_boundary_samples": 6,
+      "per_actor_rss_qualified": false,
+      "phases": [
+        {
+          "cpu_usage_delta_usec": 1514680,
+          "expected_phase_actors": 0,
+          "observations": [
+            {
+              "cpu_usage_usec": 3522062,
+              "ended_monotonic_ns": 308383654644,
+              "live_actors": 0,
+              "memory_current_bytes": 45162496,
+              "memory_peak_lifetime_bytes": 56913920,
+              "stage": "before_launch",
+              "started_monotonic_ns": 308383496217
+            },
+            {
+              "cpu_usage_usec": 3878241,
+              "ended_monotonic_ns": 313796086962,
+              "live_actors": 0,
+              "memory_current_bytes": 70602752,
+              "memory_peak_lifetime_bytes": 72155136,
+              "stage": "actors_ready",
+              "started_monotonic_ns": 313795929651
+            },
+            {
+              "cpu_usage_usec": 5036742,
+              "ended_monotonic_ns": 344239517514,
+              "live_actors": 0,
+              "memory_current_bytes": 54444032,
+              "memory_peak_lifetime_bytes": 74649600,
+              "stage": "after_reap",
+              "started_monotonic_ns": 344239347768
+            }
+          ],
+          "phase": "baseline"
+        },
+        {
+          "cpu_usage_delta_usec": 2630428,
+          "expected_phase_actors": 24,
+          "observations": [
+            {
+              "cpu_usage_usec": 5047329,
+              "ended_monotonic_ns": 344258149752,
+              "live_actors": 0,
+              "memory_current_bytes": 60661760,
+              "memory_peak_lifetime_bytes": 74649600,
+              "stage": "before_launch",
+              "started_monotonic_ns": 344257988982
+            },
+            {
+              "cpu_usage_usec": 5457938,
+              "ended_monotonic_ns": 349539255692,
+              "live_actors": 24,
+              "memory_current_bytes": 115572736,
+              "memory_peak_lifetime_bytes": 115646464,
+              "stage": "actors_ready",
+              "started_monotonic_ns": 349535375084
+            },
+            {
+              "cpu_usage_usec": 7677757,
+              "ended_monotonic_ns": 381355649899,
+              "live_actors": 0,
+              "memory_current_bytes": 98586624,
+              "memory_peak_lifetime_bytes": 127893504,
+              "stage": "after_reap",
+              "started_monotonic_ns": 381355485015
+            }
+          ],
+          "phase": "valid-work-root"
+        }
+      ],
+      "planned_boundary_samples": 6,
+      "planned_phases": 2,
+      "schema": "fixed-host-root-controller-resources-v1",
+      "scope": "whole original controller cgroup and all descendants; includes controller, broker, launcher and external producer processes; excludes separately systemd-owned public phase; not per-actor RSS"
+    },
+    "controller_resources_complete": true,
+    "four_second_slo_successes": 0,
+    "native_complete_success": false,
+    "native_result_failure": "NATIVE_F0_FAILED",
+    "native_result_observed": true,
+    "native_result_sha256": "9a545b0104f29438163f1707abb143c3896ee6d0f73083de4fbd3cfecef67181",
+    "planned_business_packet_exposures": 42,
+    "planned_confirmations": 6,
+    "report_failure": null,
+    "report_observed": true,
+    "report_sha256": "e56674a91e022b7b1a234f0b0ab67fed77aa581c482f6c87d8cd5dc261932872"
+  },
+  "head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "job_id": "fixed-host-root-f0",
+  "run_attempt": "1",
+  "run_id": "41964674522",
+  "schema": "fixed-host-root-f0-finalization-v1",
+  "scope": "finite same-host diagnostic; no independent-WAN or production qualification",
+  "services": [
+    {
+      "after": {
+        "group": {
+          "empty": true,
+          "evidence": "exact cgroup path absent after same-boot ownership validation",
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service"
+        },
+        "manager": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "Description": "trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service",
+          "Group": "",
+          "Id": "trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service",
+          "InvocationID": "",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "Restart": "no",
+          "Slice": "",
+          "SubState": "dead",
+          "Transient": "no",
+          "User": "",
+          "WorkingDirectory": ""
+        }
+      },
+      "before": {
+        "group": {
+          "empty": true,
+          "evidence": "exact cgroup path absent after same-boot ownership validation",
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service"
+        },
+        "manager": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "Description": "trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service",
+          "Group": "",
+          "Id": "trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service",
+          "InvocationID": "",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "Restart": "no",
+          "Slice": "",
+          "SubState": "dead",
+          "Transient": "no",
+          "User": "",
+          "WorkingDirectory": ""
+        }
+      },
+      "cleanup_attempted": false,
+      "failure": null,
+      "known_empty": true,
+      "observed_empty_at_readback": true,
+      "ownership_validated": true,
+      "phase": "controller",
+      "remaining": "observed-empty",
+      "service": "trnm-fixed-root-f0-41964674522-1-fixed-host-root-f0.service",
+      "stop_step": null
+    },
+    {
+      "after": {
+        "group": {
+          "empty": true,
+          "evidence": "exact cgroup path absent after same-boot ownership validation",
+          "exists": false,
+          "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service"
+        },
+        "manager": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "Description": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service",
+          "Group": "",
+          "Id": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service",
+          "InvocationID": "",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "Restart": "no",
+          "Slice": "",
+          "SubState": "dead",
+          "Transient": "no",
+          "User": "",
+          "WorkingDirectory": ""
+        }
+      },
+      "before": {
+        "group": {
+          "empty": true,
+          "evidence": "exact cgroup path absent after same-boot ownership validation",
+          "exists": false,
+          "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service"
+        },
+        "manager": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "Description": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service",
+          "Group": "",
+          "Id": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service",
+          "InvocationID": "",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "Restart": "no",
+          "Slice": "",
+          "SubState": "dead",
+          "Transient": "no",
+          "User": "",
+          "WorkingDirectory": ""
+        }
+      },
+      "cleanup_attempted": false,
+      "controller_terminal_before_phase_observation": true,
+      "failure": null,
+      "known_empty": true,
+      "observed_empty_at_readback": true,
+      "ownership_validated": true,
+      "phase": "baseline",
+      "remaining": "observed-empty",
+      "service": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-baseline-5267.service",
+      "stop_step": null
+    },
+    {
+      "after": {
+        "group": {
+          "empty": true,
+          "evidence": "exact cgroup path absent after same-boot ownership validation",
+          "exists": false,
+          "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service"
+        },
+        "manager": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "Description": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service",
+          "Group": "",
+          "Id": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service",
+          "InvocationID": "",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "Restart": "no",
+          "Slice": "",
+          "SubState": "dead",
+          "Transient": "no",
+          "User": "",
+          "WorkingDirectory": ""
+        }
+      },
+      "before": {
+        "group": {
+          "empty": true,
+          "evidence": "exact cgroup path absent after same-boot ownership validation",
+          "exists": false,
+          "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service"
+        },
+        "manager": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "Description": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service",
+          "Group": "",
+          "Id": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service",
+          "InvocationID": "",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "Restart": "no",
+          "Slice": "",
+          "SubState": "dead",
+          "Transient": "no",
+          "User": "",
+          "WorkingDirectory": ""
+        }
+      },
+      "cleanup_attempted": false,
+      "controller_terminal_before_phase_observation": true,
+      "failure": null,
+      "known_empty": true,
+      "observed_empty_at_readback": true,
+      "ownership_validated": true,
+      "phase": "valid-work-root",
+      "remaining": "observed-empty",
+      "service": "trnm-fixed-root-41964674522-1-fixed-host-root-f0-valid-work-root-5386.service",
+      "stop_step": null
+    }
+  ],
+  "started_utc": "2026-11-05T04:02:34.500078+00:00",
+  "tree": "8be28a72673ce318d60a464898ab610d9ba39216"
+}

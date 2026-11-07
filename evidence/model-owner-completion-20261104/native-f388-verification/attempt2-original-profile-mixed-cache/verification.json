@@ -1,0 +1,222 @@
+{
+  "build_jobs": "1",
+  "build_test_profile": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1"
+  },
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "cargo_home": "/workspace/scratch/79360d3567d1/cargo",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "log_sha256": "c80be5137b34f4c61fc58aa63f2de478f8f95fa312a71e71e542806625a76833",
+      "memory": {
+        "anon": 2258149376,
+        "file": 4758396928,
+        "memory.current": "8581939200",
+        "memory.max": "8589934592",
+        "memory.peak": "8600031232"
+      },
+      "name": "preflight",
+      "provider_after": {
+        "executable_path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "executable_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "openssl_dir": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+        "openssl_static": true,
+        "provider_env_sha256": "9fbd3481edcdc453d263c1c645e0b189074dd12d601f42ae21758cbc9be1f513",
+        "static_libraries": {
+          "libcrypto.a": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08",
+          "libssl.a": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+        }
+      },
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "seconds": 0.06645601300078852,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "log_sha256": "11df55b30f1d981e9e6d7559e0e7cc3203ce328e51cc1cdd5bb5a637e7402ad8",
+      "memory": {
+        "anon": 2263982080,
+        "file": 4727803904,
+        "memory.current": "8556032000",
+        "memory.max": "8589934592",
+        "memory.peak": "8600031232"
+      },
+      "name": "cargo-metadata",
+      "provider_after": {
+        "executable_path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "executable_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "openssl_dir": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+        "openssl_static": true,
+        "provider_env_sha256": "9fbd3481edcdc453d263c1c645e0b189074dd12d601f42ae21758cbc9be1f513",
+        "static_libraries": {
+          "libcrypto.a": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08",
+          "libssl.a": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+        }
+      },
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "seconds": 0.21588214199982758,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "memory": {
+        "anon": 2305458176,
+        "file": 4624375808,
+        "memory.current": "8477360128",
+        "memory.max": "8589934592",
+        "memory.peak": "8600031232"
+      },
+      "name": "cargo-fmt",
+      "provider_after": {
+        "executable_path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "executable_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "openssl_dir": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+        "openssl_static": true,
+        "provider_env_sha256": "9fbd3481edcdc453d263c1c645e0b189074dd12d601f42ae21758cbc9be1f513",
+        "static_libraries": {
+          "libcrypto.a": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08",
+          "libssl.a": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+        }
+      },
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "seconds": 14.751367637999465,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features"
+      ],
+      "exit_code": 101,
+      "log_sha256": "7420c8c2e72cff7b092b71c2518f9e71ec33a90d036b9e08fd7bf566d15e845e",
+      "memory": {
+        "anon": 2338791424,
+        "file": 4648321024,
+        "memory.current": "8495181824",
+        "memory.max": "8589934592",
+        "memory.peak": "8600031232"
+      },
+      "name": "m06-tests",
+      "provider_after": {
+        "executable_path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "executable_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "openssl_dir": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+        "openssl_static": true,
+        "provider_env_sha256": "9fbd3481edcdc453d263c1c645e0b189074dd12d601f42ae21758cbc9be1f513",
+        "static_libraries": {
+          "libcrypto.a": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08",
+          "libssl.a": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+        }
+      },
+      "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "seconds": 43.20151774399983,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "controller_sha256": "2f7bdea72e688bc97be90c893af24223844b66ad6de705e2406470a04b617af4",
+  "custom_rustflags": false,
+  "expected_retained_test_inventory": {
+    "summaries": 25,
+    "totals": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 7,
+      "measured": 0,
+      "passed": 229
+    }
+  },
+  "finished_utc_ns": 1793844254902872666,
+  "initial_memory": {
+    "anon": 2260578304,
+    "file": 4761952256,
+    "memory.current": "8587579392",
+    "memory.max": "8589934592",
+    "memory.peak": "8600031232"
+  },
+  "native_test_summary_count": 0,
+  "native_test_totals": {
+    "failed": 0,
+    "filtered_out": 0,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 0
+  },
+  "prior_229_pass_record": "retained historical observation; not substituted for this source",
+  "provider_before": {
+    "executable_path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+    "executable_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+    "openssl_dir": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+    "openssl_static": true,
+    "provider_env_sha256": "9fbd3481edcdc453d263c1c645e0b189074dd12d601f42ae21758cbc9be1f513",
+    "static_libraries": {
+      "libcrypto.a": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08",
+      "libssl.a": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+    }
+  },
+  "provider_env_sha256": "9fbd3481edcdc453d263c1c645e0b189074dd12d601f42ae21758cbc9be1f513",
+  "provider_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+  "provider_version": "3.5.9",
+  "qualification": false,
+  "requested_remote_input": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+  "resolved_packages": 175,
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "schema": "model-owner-native-exact-source-revalidation-v1",
+  "source_after_last_command": {
+    "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+    "crypto_tree": "16d11ce003347979c7ee1dc82935fd9ad8aecb4a",
+    "formal_tree": "46e1ddcc659b210167dca26eded36464267cfa52",
+    "m06_tree": "6f6798fd16b7bd0db860356b1a2cf23cd5aa7ba8",
+    "native_tree": "f63047de809c20a530ef903c10667995e0f33f6a",
+    "tree": "05427bab302258016b930e703e7338ca277271c7"
+  },
+  "source_before": {
+    "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+    "crypto_tree": "16d11ce003347979c7ee1dc82935fd9ad8aecb4a",
+    "formal_tree": "46e1ddcc659b210167dca26eded36464267cfa52",
+    "m06_tree": "6f6798fd16b7bd0db860356b1a2cf23cd5aa7ba8",
+    "native_tree": "f63047de809c20a530ef903c10667995e0f33f6a",
+    "tree": "05427bab302258016b930e703e7338ca277271c7"
+  },
+  "started_utc_ns": 1793844196105806601,
+  "status": "FAILED_TEST_TRANSCRIPT",
+  "target_dir": "/workspace/scratch/f4976366a32a/native-target",
+  "test_transcript_complete": false,
+  "workspace_members": 26
+}

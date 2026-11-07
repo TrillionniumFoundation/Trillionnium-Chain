@@ -1,0 +1,10 @@
+[package]
+name = "trnm-w1-cost-primitive-validation"
+version = "0.0.0"
+edition = "2021"
+publish = false
+[lib]
+name = "trnm_crypto_primitives"
+[dependencies]
+sha2 = "=0.10.9"
+hex = "=0.4.3"

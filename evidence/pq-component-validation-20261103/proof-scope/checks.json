@@ -1,0 +1,112 @@
+{
+  "parent": "9f04640877078204d367f753eba684d94e705a74",
+  "patch_files": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "2511f3205595d73438688b886fd551d75bfecf851677122cb99ac863cf3792c6",
+    "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md": "68576eeeb2b260451a18c5dbfc46c9577f00954377f9a8da195f6c9060a9169a",
+    "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md": "1c4d880c5615a9f58546e16b95f54c88ccbaa26fa0ce613cc8df6d7a8890a563"
+  },
+  "patch_unchanged": true,
+  "commands": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.226,
+      "stdout_sha256": "5faf39c62b3a214f26e9cab379843e14dcc3e6d68117efea4476f020a9ed2b6b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "claim-guard",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.195,
+      "stdout_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "source-corpus",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1.265,
+      "stdout_sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "claim-guard-tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 1.149,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "de41f2c5a4b2fd098c869db42290b8ac3d5414cf597ff0d83725bba837d39949"
+    },
+    {
+      "name": "source-corpus-tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 96.726,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "9174772584b18d1ec69c549d7354006eb147dc2f2e7a3eecfcfc688e0fbda65c"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.105,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "link-checker-inventory",
+      "argv": [
+        "rg",
+        "--files",
+        "scripts",
+        "-g",
+        "*link*",
+        "-g",
+        "*doc*",
+        "-g",
+        "*inventory*"
+      ],
+      "exit_code": 0,
+      "seconds": 0.063,
+      "stdout_sha256": "523affb0050abcc56bb0122fedfe48725061cba1c9e72dec970598ec0792cf1f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_planned_completed": true,
+  "all_succeeded": true
+}

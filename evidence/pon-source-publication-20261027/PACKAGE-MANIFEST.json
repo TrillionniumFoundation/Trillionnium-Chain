@@ -1,0 +1,142 @@
+{
+  "actual_remote_readback_count": 39,
+  "blocked_M06_mapped_snapshot_only": "024f4806d3baf28cb48b876ea5e5f1a6cd302a5c",
+  "blocked_M06_original_snapshot_only": "08d647017c38eb0213f8d60db938222df4f59195",
+  "byte_exact_source_copies": [
+    {
+      "bytes": 30104,
+      "copy_verification": "byte-exact source artifact",
+      "path": "original-commits.json",
+      "sha256": "ba79f97ce853aa1b574aad3756b3f706e43270019b0b8d37967973962dc0950e"
+    },
+    {
+      "bytes": 24149,
+      "copy_verification": "byte-exact source artifact",
+      "path": "original-to-remote-commit-map.jsonl",
+      "sha256": "4d8c7ebdef15b50732239a53ed496a003ea67cb1c4460bdb5f26ae9ddb1349d9"
+    },
+    {
+      "bytes": 20760,
+      "copy_verification": "byte-exact source artifact",
+      "path": "readback-batch003-summary.json",
+      "sha256": "23f053ca483105c94976673cd78ed4e71cb033e499c9963951cc29bdfc027c23"
+    },
+    {
+      "bytes": 23603,
+      "copy_verification": "byte-exact source artifact",
+      "path": "readback-batch005-summary.json",
+      "sha256": "c0cff8f5492ff8413a6df22a2067b289d1eba1962ba0935924c8714effba7231"
+    },
+    {
+      "bytes": 7699,
+      "copy_verification": "byte-exact source artifact",
+      "path": "integrated-side-heads.json",
+      "sha256": "c9a5e500e474da09a7abbbe34f85184436fd1995be6ada37612f3280fe2b2bbe"
+    },
+    {
+      "bytes": 1591,
+      "copy_verification": "byte-exact source artifact",
+      "path": "integrated-side-heads-compact.json",
+      "sha256": "20264f05bd7d60cd1428416be5e71ae737a064663ac25f365a284b786da9921b"
+    },
+    {
+      "bytes": 3468,
+      "copy_verification": "byte-exact source artifact",
+      "path": "side-head-delta-comparison.json",
+      "sha256": "0e5aad1e7580b21e439ac0905fb1afa894c2d00ed37fea822db830553db497b7"
+    },
+    {
+      "bytes": 59372,
+      "copy_verification": "byte-exact source artifact",
+      "path": "pr323-prepublication-readback.json",
+      "sha256": "52c907d0ecde53a224d484c95b3cae123e524f6550012e0c0e48c83bd9d516c6"
+    },
+    {
+      "bytes": 3823,
+      "copy_verification": "byte-exact source artifact",
+      "path": "verified-remote-boundaries.json",
+      "sha256": "fe7fef56ab44a451a45214c4a9a83cacb9e675b9ed1964137a692622f4a4bc51"
+    }
+  ],
+  "files": [
+    {
+      "bytes": 5073,
+      "path": "README.md",
+      "sha256": "272dc608a79cb999da33f41ab0d8559b4ab5485072031a1ccf1970d073c4fb49"
+    },
+    {
+      "bytes": 1591,
+      "path": "integrated-side-heads-compact.json",
+      "sha256": "20264f05bd7d60cd1428416be5e71ae737a064663ac25f365a284b786da9921b"
+    },
+    {
+      "bytes": 7699,
+      "path": "integrated-side-heads.json",
+      "sha256": "c9a5e500e474da09a7abbbe34f85184436fd1995be6ada37612f3280fe2b2bbe"
+    },
+    {
+      "bytes": 30104,
+      "path": "original-commits.json",
+      "sha256": "ba79f97ce853aa1b574aad3756b3f706e43270019b0b8d37967973962dc0950e"
+    },
+    {
+      "bytes": 24149,
+      "path": "original-to-remote-commit-map.jsonl",
+      "sha256": "4d8c7ebdef15b50732239a53ed496a003ea67cb1c4460bdb5f26ae9ddb1349d9"
+    },
+    {
+      "bytes": 59372,
+      "path": "pr323-prepublication-readback.json",
+      "sha256": "52c907d0ecde53a224d484c95b3cae123e524f6550012e0c0e48c83bd9d516c6"
+    },
+    {
+      "bytes": 20760,
+      "path": "readback-batch003-summary.json",
+      "sha256": "23f053ca483105c94976673cd78ed4e71cb033e499c9963951cc29bdfc027c23"
+    },
+    {
+      "bytes": 23603,
+      "path": "readback-batch005-summary.json",
+      "sha256": "c0cff8f5492ff8413a6df22a2067b289d1eba1962ba0935924c8714effba7231"
+    },
+    {
+      "bytes": 31394,
+      "path": "remote-commit-readbacks-index.json",
+      "sha256": "7f535741ff57741c157394f156e5b355b8a2a4cc4d8d06a35f8e90b91f5b0445"
+    },
+    {
+      "bytes": 18008,
+      "path": "remote-commit-readbacks.tar.gz",
+      "sha256": "545b54e56302f851e9456f984708b76793e6e58c967ce53e49d387225263a0d2"
+    },
+    {
+      "bytes": 3468,
+      "path": "side-head-delta-comparison.json",
+      "sha256": "0e5aad1e7580b21e439ac0905fb1afa894c2d00ed37fea822db830553db497b7"
+    },
+    {
+      "bytes": 3823,
+      "path": "verified-remote-boundaries.json",
+      "sha256": "fe7fef56ab44a451a45214c4a9a83cacb9e675b9ed1964137a692622f4a4bc51"
+    }
+  ],
+  "future_reachability_merge_included": false,
+  "later_M06_successors_included": false,
+  "manifest_self_included": false,
+  "metadata_commit_self_included": false,
+  "original_commit_count": 39,
+  "readback_archive": {
+    "file": "remote-commit-readbacks.tar.gz",
+    "gzip_mtime": 0,
+    "members": 39,
+    "original_response_wrapper_bytes_preserved": true,
+    "uncompressed_tar_bytes": 296960,
+    "uncompressed_tar_sha256": "a6e861d49d0d75570e960ebf03a7e4fe21fdc27577f4bc223abe63473d5bfe3d"
+  },
+  "remote_queries_or_mutations_during_packaging": false,
+  "schema": "trnm-source-publication-evidence-package-v1",
+  "scope_mapped_remote_integration_commit": "ecdaf1679e9c2e1ea725d4ebf355fd9bdaee82a9",
+  "scope_original_integration_commit": "86c2e3a68d28d6b4e583555f16c649d7d3c24cd3",
+  "scope_tree": "9f57f975d74537af5032859a59f7fdb0e02a7b59",
+  "verification_scope": "Exact original commit bytes and Git object hashes; observed mapped remote SHA, original tree and ordered parent mapping; finite source provenance."
+}
