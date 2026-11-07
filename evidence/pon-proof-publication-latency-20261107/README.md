@@ -92,3 +92,31 @@ python3 scripts/ci/test_w1_full_v2_disposition.py
 详细数学推导、尾概率/抽样条件、容量/凑批界限、平衡 join 的关系义务及最新一手文献见
 [完整延迟合同](../../docs/development/specs/pon/PROOF_PUBLICATION_LATENCY_V1.md)。下一道
 实际门仍是相同完整关系、相同声明资源下的新证明与 winner/receiver 全路径观测。
+
+## 5. 精确提交验证与原始失败保留
+
+实现提交为 `baa64498b8bb47198c99f8e9382cb36829f594f4`，tree 为
+`d7929f82e8e563298adc0aebc673ccac0cd11b47`。该 clean 提交上的前后完整 tracked-source
+验证输出逐字节一致。随后发布仅增加本文验证记录、原始日志归档和 SDK 来源说明，
+不改变被测 Python/CI/Rust 字节。
+
+[Python validation](python-validation.json) 保留 **254 项通过**：新门槛 27、新阶段回读
+11、原 v2 回读 11、CI 合同 102、PQ 源码负例 37、仓库负例 50、项目边界 16。
+仓库检查另核对 26 packages、25 条正常依赖边、1169 个 Rust 文件及 3489 个本地链接；
+分布式源码清单、562 个固定 blob、shell 解析和拒绝资格提升检查通过。
+
+[Rust validation](rust-validation.json) 在同一提交上通过 locked/offline metadata、
+all-features metadata、完整 formatting 和 workspace/all-targets/all-features Clippy
+（`-D warnings`）。默认图 175 packages，完整 features 图 180 nodes；均 26 workspace
+members。1198 个 Rust/manifest/lock 文件指纹不变。没有执行 native 测试、原业务
+campaign 或新 W1 proof；这些成功不替代其原有独立门。
+
+[完整归档索引](validation-index.json) 绑定 [原始日志归档](validation-raw.tar.gz) 的
+每个成员。最初的工具链分派失败和 offline cache 缺包失败都保留；最终使用已有且与
+Cargo.lock 全部 154 个 registry SHA256 匹配的本地缓存，以原 flags 完成检查。
+没有变更依赖版本或 Cargo.lock。
+
+Python 收集器的首版汇总误把两份命令元数据作前后 identity 比较，产生 false 汇总；
+所有实际检查命令仍退出 0，原 source-checker stdout 中的完整 identity 逐字节相同。
+原误报、所有 stdout 哈希、独立 identity 副本和机械重算说明均在归档中保留。
+修正只恢复正确的日志比较，没有重标测试结果或科学观察。

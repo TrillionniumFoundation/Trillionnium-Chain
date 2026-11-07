@@ -282,6 +282,14 @@ complete relation and fixed resource budget; then compare every attempt and
 the whole receiver endpoint. Dedicated trace/hash AIR or another zkVM remains
 a separate backend-equivalence and soundness exercise.
 
+The host client is pinned to SDK 3.0.3. Its official
+[API client](https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/host/api/client.rs)
+calls `self.connect()` on each lift/join, and the
+[parent process connector](https://github.com/risc0/risc0/blob/v3.0.3/risc0/zkvm/src/host/api/mod.rs)
+spawns a backend and waits for its exit for each connection. Thus constructing
+one client outside the loop does not itself establish persistent backend reuse.
+This identifies a concrete profiling target, not a measured startup saving.
+
 ## 7. Asynchronous placement and current research
 
 The [asynchronous settlement boundary](ASYNC_PROOF_SETTLEMENT_BOUNDARY_V1.md)
