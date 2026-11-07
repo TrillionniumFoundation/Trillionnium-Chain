@@ -1,0 +1,171 @@
+{
+  "schema": "trnm-quantum-cost-closure-qualification-v1",
+  "status": "DRAFT_HOLD",
+  "source_validation_result": "PASS",
+  "source_base": "2d4ff4b6c0af18f324e056b4e0d5343c97850b85",
+  "tested_commit": "acafa39a507632b6a8947915124a5e9f680f3448",
+  "pq_source_guard": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 688,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "tested_tree": "03c13a4c900b379a87a1fc359d1a82f093218c8e",
+  "preceding_failed_source_commit": "c7f0918da82041de62e693b4e6a814b4ca16fe4c",
+  "source_pin_correction_only_since_failed_freeze": true,
+  "audit_review_source_commit": "c7f0918da82041de62e693b4e6a814b4ca16fe4c",
+  "audited_implementation_and_test_bytes_unchanged_since_review": true,
+  "final_unit_test_counts": {
+    "quantum_w1_daa_retained_tests": 210,
+    "independent_network_tests": 7,
+    "negative_source_integrity_tests": 43,
+    "ci_contract_tests": 105,
+    "pq_integration_tests": 38
+  },
+  "counting_policy": "Final batch counts only. The seven new preprocessing tests are inside the 210. Eight byte cases and 32 accounting cases are controls, not extra independent replications. Earlier passes are retained but not added.",
+  "independent_formula_controls": 32,
+  "malformed_physical_controls_rejected": 10,
+  "preprocessing_byte_change_cases": 8,
+  "intentional_stale_checkpoint_controls": 5,
+  "timeout_replay": {
+    "release_count": 1,
+    "release_seconds": 0.6000000000000001,
+    "cancelled_search_seconds": 0.050000000000000044,
+    "fixture": "synthetic conditional lottery"
+  },
+  "cargo_graphs": {
+    "cargo-metadata-main": {
+      "packages": 181,
+      "workspace_members": 26,
+      "resolve_nodes": 181
+    },
+    "cargo-metadata-fuzz": {
+      "packages": 149,
+      "workspace_members": 1,
+      "resolve_nodes": 149
+    }
+  },
+  "cargo_environment": {
+    "CARGO_HOME": "/workspace/scratch/47c9de8f3380/cargo-home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/c2011df09976/rust-clippy-target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUSTC": "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null
+  },
+  "actual_openssl_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "ci_pinned_openssl_version": "3.5.9",
+  "actual_clippy_build_warnings": [
+    "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete"
+  ],
+  "limitations": [
+    "The system OpenSSL provider is 3.5.7, not the CI-pinned 3.5.9; no provider-parity claim.",
+    "Cargo reports the SQLite bounded-I/O loader witness UNQUALIFIED; no qualification rule was changed.",
+    "Debug symbols and incremental builds were disabled for bounded local lint storage. This is lint/format/graph validation, not native performance qualification.",
+    "Physical capacity inequalities check one declared schedule; they are not a gate netlist, routing or error-correction proof.",
+    "Prefix equality is a sufficient classical cache scope and does not establish a minimum attacker cost, saved time, energy or reuse frequency.",
+    "Existing full/restricted W1 constructions remain distinct from full-size quantum gate execution and fault-tolerant quantum hardware.",
+    "The literal accounting API has no finite-horizon parameter; these controls do not measure same-real-budget accepted-work production.",
+    "Native DAA reader/cost-binding continuations elsewhere require their own source-specific qualification."
+  ],
+  "claims": {
+    "quantum_hardware_executed": false,
+    "physical_resources_calibrated": false,
+    "preprocessing_amortization_measured": false,
+    "same_budget_advantage_proved": false,
+    "attacker_minimum_cost_proved": false,
+    "executable_profitable_w1_fork_attack_proved": false,
+    "whole_chain_quantum_security_qualified": false,
+    "native_consensus_changed": false,
+    "ci_provider_parity": false,
+    "sqlite_bounded_io_witness_qualified": false,
+    "production_activation": false
+  },
+  "changed_source_manifest": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "mode": "100644",
+      "git_blob": "895caab249345dd715e3929b38d8e2aa75769ae2",
+      "sha256": "c9fc78590293db1636387f557ae83cc11a50a527b4b128ad33a97fce0bf75cc6",
+      "bytes": 128465
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "mode": "100644",
+      "git_blob": "ebf335746b413b8fe2aa6ef6c1164d17d7e28e77",
+      "sha256": "a8a11d11e3c13dcc6f615e86962f9ae09c72a53977eccac6baa29d7644a6679a",
+      "bytes": 620442
+    },
+    "evidence/pon-quantum-cost-closure-20261106/README.md": {
+      "mode": "100644",
+      "git_blob": "fb74fbaf939ad8dbb78821cdc532010f233104f6",
+      "sha256": "5be4cb2003ce55e5a4105f1c02b03a709d1934918e3157e844d1bc762377765e",
+      "bytes": 4480
+    },
+    "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md": {
+      "mode": "100644",
+      "git_blob": "91dbae30cdad8ad73b7d60161c162babce3335d9",
+      "sha256": "506c8dbe514764e9bc5898748b17e3408caf9dc54c71ce5fd092797eef64a123",
+      "bytes": 51962
+    },
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": {
+      "mode": "100644",
+      "git_blob": "537665e2bfe07e91a492c8c93fd59ecafcee8174",
+      "sha256": "da012e601ab3f79144db6d63044836eb2005c88e78ea41b1108d14ad4d8eb2d9",
+      "bytes": 66248
+    },
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": {
+      "mode": "100644",
+      "git_blob": "134d54608dcc6c2563cd6ff1bbe4d1477ef56371",
+      "sha256": "0ac636241697c728d64fc4a4f1bb77c53d52a625a6532dfb32631b3f33f20902",
+      "bytes": 29696
+    },
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": {
+      "mode": "100644",
+      "git_blob": "5989f32df10eda6b5be848b348a9ecf3994d8b69",
+      "sha256": "859f5dfc0ce985939fb7e0627b6c4989d94f591a488b26b884537933f2e7d0dc",
+      "bytes": 59894
+    },
+    "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py": {
+      "mode": "100644",
+      "git_blob": "fbdd1eea871da71403a67d777c0bc8d34dddc7b4",
+      "sha256": "9743ef8ecf1220c19435f5871dc8cf21ae8fcb4476959a575519ab89643a9c61",
+      "bytes": 24930
+    },
+    "formal/pon-nakamoto-v1/test_w1_preprocessing_reuse.py": {
+      "mode": "100644",
+      "git_blob": "be3877e85c371e521f1a39da55d9ac100fcd2aea",
+      "sha256": "d056548a1b217db06b1ece21595f107187ed9a9afeefd15aae97dc2770e2082c",
+      "bytes": 8662
+    },
+    "formal/pon-nakamoto-v1/w1_preprocessing_reuse.py": {
+      "mode": "100644",
+      "git_blob": "557b05207000e549ec96162aa923ed11243b7425",
+      "sha256": "660cac37d0f3048f2a809b06e48fa3b24f171968cebf8f3493f3e2dc0ce17c3a",
+      "bytes": 4926
+    },
+    "scripts/ci/ci_job.sh": {
+      "mode": "100644",
+      "git_blob": "a564e9ed82e6bfb73229d6ab9978920cc3333e62",
+      "sha256": "b109066353473057b8d815b7f29b319905b342b0c84bff1dc7e6ca1b83b56c02",
+      "bytes": 25780
+    }
+  }
+}

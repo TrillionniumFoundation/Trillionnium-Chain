@@ -57,11 +57,65 @@ bug in the existing full/restricted oracle implementations.
 
 ## Validation and retained limitations
 
-The source commit is frozen before the final validation batch. A subsequent
-evidence-only commit records the exact tested commit/tree, logs, original
-failures, portable replay drivers and independent review. Working-tree runs
-are kept distinct from that frozen batch; repeated runs are not independent
-replications.
+Final validation ran against source commit
+`acafa39a507632b6a8947915124a5e9f680f3448`, tree
+`03c13a4c900b379a87a1fc359d1a82f093218c8e`. Every group verified all tracked
+source bytes before and after execution. This evidence-only successor records
+those results; it does not relabel the tests as having run on a later commit.
+
+| Final frozen check | Result |
+| --- | --- |
+| Quantum/W1/DAA retained unit tests, including the seven new preprocessing tests | 210 PASS |
+| Independent network controls | 7 PASS |
+| Negative source-integrity tests | 43 PASS |
+| CI contract tests | 105 PASS |
+| PQ research integration tests | 38 PASS |
+| Exact rational literal schedule controls | 32 PASS |
+| Malformed direct-count and width/depth controls | 10 rejected as required |
+| Preprocessing byte-change controls | 8 checked, including corrected parent coverage |
+| Source pins, inventory, repository/Markdown links | PASS |
+| Locked offline main/fuzz dependency graphs, Rust format, strict all-target/all-feature Clippy | PASS |
+
+The first frozen batch at `c7f0918da82041de62e693b4e6a814b4ca16fe4c`
+correctly failed the source-pin guard: adding the new CI invocation also
+required updating the existing CI-script pin. That failed batch is retained
+unaltered under `attempt-c7f0918` in the historical archive. The next source
+commit changes only that pin; the complete final batch was rerun.
+
+The independent review also caught a fixture mislabeled as a parent change:
+offset 66 changes `parameters`, whereas parent starts at offset 70. The same
+prefix block count had concealed the missing field coverage. The corrected
+test independently decodes wire fields. Nine original files and the failing
+label assertion are preserved with hashes. The initial two mistyped unittest
+selectors are retained as harness errors, not counted as discovered defects.
+Intentional stale-checkpoint and negative source-integrity failures are not
+mistaken for final validation failures.
+
+The local lint run used OpenSSL 3.5.7 (CI pins 3.5.9) and retained Cargo's
+SQLite bounded-I/O loader UNQUALIFIED warning. It disabled debug symbols and
+incremental compilation to bound storage. These checks establish no provider
+parity, native runtime performance or bounded-I/O qualification.
+The source-pin checker exits successfully while retaining its semantic
+`HOLD_NO_GO` status and false cryptographic/activation acceptance flags.
+
+### Evidence files
+
+- [Qualification and source manifest](qualification.json): exact source/tree,
+  final counts, environment and false qualification flags.
+- [Frozen validation archive](frozen-validation.tar.xz): command receipts,
+  raw logs, source checks and a parameterized replay driver.
+- [Historical observations archive](historical-observations.tar.xz): original
+  failures, portable controls, corrected-label lineage and the first freeze.
+- [Independent source review](final-independent-review.md) and
+  [evidence lineage review](evidence-lineage-review.md).
+- [Evidence manifest](evidence-manifest.json): SHA-256 of every delivered file
+  except the manifest itself, and every file inside both archives.
+
+Extract the archives into a temporary directory. The retained control drivers
+accept `--repo /path/to/checkout`. `run_frozen_validation.py --help` describes
+its repository, exact-head, evidence-root, Cargo cache/target and toolchain
+arguments. A group refuses to overwrite an existing result directory. Earlier
+passes and replayed cases are not added to the final independent-test counts.
 
 The existing full and prefix-restricted W1 constructions, reduced gate
 controls and native-shape symbolic/macro controls remain research evidence.
