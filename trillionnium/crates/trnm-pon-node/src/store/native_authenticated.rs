@@ -683,11 +683,22 @@ pub(super) fn verify_state_with_readback(
     let result = (|| {
         let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
         progress()?;
-        if let Some(scope) = readback.as_deref_mut() {
-            scope.current(db)?;
-        }
+        let current_scope = match readback.as_deref_mut() {
+            Some(scope) => scope.current(db)?,
+            None => false,
+        };
         let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
-        verify_record(db, settings, &record, progress, cache)?;
+        // Only a COMPLETED history can supply this exact immutable binding.
+        // The existing entry fence precedes the fresh Record read; no callback
+        // separates them. Keep genesis on its original full anchor path.
+        let binding_reused = current_scope
+            && record.parent.is_some()
+            && readback
+                .as_deref()
+                .is_some_and(|scope| scope.completed_record_matches(settings, &record));
+        if !binding_reused {
+            verify_record(db, settings, &record, progress, cache)?;
+        }
         let (current_commitment, current_accounts) = match cache {
             Some(cache) => cache.complete_with_current_accounts(settings, state)?,
             None => (complete(settings, state)?, None),
@@ -777,11 +788,21 @@ pub(super) fn verify_state_with_readback(
                 // Partial results never nominate a new parent, retain a new
                 // whole-Root receipt, replace the source or expand its frontier.
             } else {
-                scope.remember(
+                let unchanged = scope.remember(
                     db,
                     record,
                     scoped_graph.and_then(|graph| graph.into_pending()),
                 )?;
+                if binding_reused {
+                    // Even without a graph hit, borrowed Record material needs
+                    // the original final callback's unchanged-scope fence.
+                    if !unchanged {
+                        return verify_state_with_cache(
+                            db, settings, block, state, progress, cache,
+                        );
+                    }
+                    scope.consumed = true;
+                }
             }
         }
         Ok(())

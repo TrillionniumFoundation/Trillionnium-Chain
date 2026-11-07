@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pon_public_v3_phase_read as phases
 from read_native_cache_observation import read_bounded, strict_json
 
-SCHEMA = 'pon-throughput-cost-coverage-v1'
+SCHEMA = 'pon-throughput-cost-coverage-v2'
 MAX_REPORT_BYTES = 256 * 1024 * 1024
 MAX_RECORDS = 16384
 SOURCE_FIELDS = {'schema', 'kind', 'candidate', 'tested_commit', 'tested_tree',
@@ -157,6 +157,9 @@ def bounded_report_shape(report):
                 'bounded receiver record objects required')
         require(type(history) is list and len(history) <= 64
                 and all(type(row) is dict for row in history), 'bounded History call objects required')
+        rounds = phase.get('confirmations')
+        require(type(rounds) is list and len(rounds) <= phases.ROUNDS
+                and all(type(row) is dict for row in rounds), 'bounded confirmation round objects required')
         for row in history:
             require(row.get('client_import') is None or type(row['client_import']) is dict,
                     'original client import object required')
@@ -323,6 +326,130 @@ def host_costs(context):
                      'or peaks; no counter subtraction across phases or process restarts'}
 
 
+
+def finite_business_observation(original, derived, epoch):
+    """Read distinct independently confirmed transactions in the original window.
+
+    A retained native flag is not by itself a transaction observation. This
+    finite workload is deliberately sparse; its rate is never a capacity or
+    sustained-throughput claim. Failed and unobserved scheduled slots remain
+    separate, and all timing is local to this one original phase.
+    """
+    available = derived['observations_available']
+    window_ns = number(original['duration_seconds']) * 1_000_000_000 if available else None
+    rounds = original['confirmations'] if available else []
+    reasons = [] if rounds else ['no-retained-confirmation-rounds' if available
+                                 else 'phase-observations-unavailable']
+    observed_ids, confirmed_ids, records = set(), set(), []
+    observation_fields = ('transaction', 'included_block', 'observed_tip', 'confirmed',
+        'reorged', 'finalized', 'execution_authority', 'depth', 'included_height',
+        'observed_height', 'work_delta', 'required_work_delta')
+    for row in rounds:
+        index = number(row['round'])
+        claimed = row.get('confirmed_inside_pressure_window')
+        require(type(claimed) is bool, 'native confirmation flag boolean required')
+        scheduled = (1 + 4 * index) * 1_000_000_000
+        start, end = (optional_number(row.get(key)) for key in ('started_ns', 'ended_ns'))
+        if start is not None:
+            require(start >= scheduled, 'round begins before its original scheduled epoch')
+        if start is not None and end is not None:
+            require(end >= start, 'confirmation round clock rewind')
+        else:
+            reasons.append(f'round-{index}:missing-round-time')
+        transaction = row.get('transaction')
+        if transaction is None:
+            reasons.append(f'round-{index}:missing-transaction-id')
+        else:
+            observed_ids.add(digest(transaction))
+        verified = False
+        if claimed:
+            observation = row.get('observation')
+            require(observation is None or type(observation) is dict,
+                    'independent confirmation observation object required')
+            missing = [key for key in observation_fields
+                       if observation is None or observation.get(key) is None]
+            missing += [key for key in ('transaction', 'included_block', 'tip')
+                        if row.get(key) is None]
+            if missing:
+                reasons.append(f'round-{index}:missing-independent-confirmation-fields:'
+                               + ','.join(sorted(set(missing))))
+            else:
+                require(all(observation[key] is False for key in
+                            ('reorged', 'finalized', 'execution_authority'))
+                        and observation['confirmed'] is True
+                        and type(observation['depth']) is int and observation['depth'] == 6
+                        and number(observation['observed_height'])
+                            - number(observation['included_height']) == 6,
+                        'independent depth-six confirmation outcome mismatch')
+                for outer, inner in (('transaction', 'transaction'),
+                                     ('included_block', 'included_block'), ('tip', 'observed_tip')):
+                    require(digest(row[outer]) == digest(observation[inner]),
+                            'independent confirmation identity mismatch')
+                work = int(digest(observation['work_delta'], 128), 16)
+                required_work = int(digest(observation['required_work_delta'], 128), 16)
+                require(required_work > 0 and work >= required_work,
+                        'independent confirmation required work mismatch')
+                if start is not None and end is not None:
+                    require(end < window_ns, 'confirmed round outside its original pressure window')
+                    confirmed_ids.add(transaction)
+                    verified = True
+        records.append({'round': index, 'transaction': transaction, 'scheduled_ns': scheduled,
+            'started_ns': start, 'ended_ns': end, 'native_confirmed_inside_pressure_window': claimed,
+            'independent_confirmation_fields_verified': verified,
+            'round_wall_ns': end - start if start is not None and end is not None else None,
+            'start_delay_ns': start - scheduled if start is not None else None,
+            'scheduled_to_terminal_ns': end - scheduled if end is not None else None})
+    complete_identity = available and bool(rounds) and not reasons
+    confirmed = len(confirmed_ids) if complete_identity else None
+    failed_rounds = sum(not row['native_confirmed_inside_pressure_window'] for row in records)
+    return {'schema': 'pon-finite-confirmed-business-observation-v1', 'epoch': epoch,
+        'window_ns': window_ns, 'scheduled_confirmation_rounds': phases.ROUNDS,
+        'observed_confirmation_rounds': len(records),
+        'native_confirmed_rounds': sum(row['native_confirmed_inside_pressure_window'] for row in records)
+                                  if available else None,
+        'native_unconfirmed_rounds': failed_rounds if available else None,
+        'unobserved_scheduled_rounds': phases.ROUNDS - len(records),
+        'observed_round_nonconfirmation_fraction': {'numerator': failed_rounds,
+            'denominator': len(records)} if records else None,
+        'observed_transaction_ids': sorted(observed_ids),
+        'independently_checked_confirmed_transaction_ids': sorted(confirmed_ids),
+        'observed_unique_confirmed_transactions': confirmed,
+        'observed_confirmed_tps': confirmed * 1_000_000_000 / window_ns
+                                  if confirmed is not None else None,
+        'rate_unknown_reasons': sorted(set(reasons)), 'rounds': records,
+        'confirmed_round_wall_ns': phases.stats([row['round_wall_ns'] for row in records
+            if row['independent_confirmation_fields_verified']]),
+        'unconfirmed_round_wall_ns': phases.stats([row['round_wall_ns'] for row in records
+            if not row['native_confirmed_inside_pressure_window']]),
+        'all_observed_scheduled_to_terminal_ns': phases.stats(
+            [row['scheduled_to_terminal_ns'] for row in records]),
+        'request_attempts': {'submit': derived['submissions'], 'history': derived['history']}
+                            if available else None,
+        'scope': {'rate_is_capacity_estimate': False, 'production_qualification': False,
+            'acknowledgments_are_confirmations': False, 'repeated_transaction_ids_count_once': True,
+            'unobserved_slots_are_failed_samples': False, 'cross_phase_clocks_are_joined': False,
+            'statement': 'original sparse three-round, thirty-second phase only; unique retained '
+                         'independent transaction confirmations, including all failed and unobserved '
+                         'scheduled denominators; elapsed failure durations are not success latencies; '
+                         'reader validates retained fields, not signatures or execution attestation'}}
+
+
+def process_memory_costs(value):
+    """Retain the producer's point RSS and lifetime high-water scopes."""
+    if value is None:
+        return None
+    fields = ('rss_bytes', 'lifetime_peak_rss_bytes', 'kernel_rusage_self_peak_rss_bytes')
+    scope = ('Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, '
+             'not an isolated allocation or incremental memory bound')
+    require(type(value) is dict and set(value) == {*fields, 'scope'} and value['scope'] == scope,
+            'original process point and lifetime memory scope required')
+    measured = {key: optional_number(value[key]) for key in fields}
+    if measured['rss_bytes'] is not None and measured['lifetime_peak_rss_bytes'] is not None:
+        require(measured['rss_bytes'] <= measured['lifetime_peak_rss_bytes'],
+                'process RSS exceeds its recorded lifetime high-water mark')
+    return {**measured, 'scope': scope, 'per_request_peak_measured': False}
+
+
 def analyze(report, report_sha256):
     digest(report_sha256)
     bounded_report_shape(report)
@@ -337,6 +464,8 @@ def analyze(report, report_sha256):
                    'native_phase_criteria_met', 'startup_or_campaign_error',
                    'scheduled_confirmation_rounds', 'observed_confirmation_rounds',
                    'confirmed_rounds', 'unobserved_scheduled_rounds', 'confirmation_rounds')},
+               'business': finite_business_observation(original, derived, epoch),
+               'phase_process_memory': process_memory_costs(original.get('rss')),
                'phase_process_cpu_ns': optional_number(original.get('whole_parent_phase_cpu_ns')),
                'phase_process_wall_ns': optional_number(original.get('whole_parent_phase_wall_ns')),
                'setup_process_cpu_ns': optional_number(original.get('receiver_and_verifier_setup_cpu_ns')),

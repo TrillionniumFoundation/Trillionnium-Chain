@@ -13,6 +13,10 @@ use std::{
 };
 use trnm_mvcc_fee::pon_executor::{ExecutionWorkerAccounting, ExecutionWorkerInterval};
 
+#[path = "cpu_start_order.rs"]
+mod cpu_start_order;
+pub(super) use cpu_start_order::PendingCpuStart;
+
 // Local receiver policy, independent of the caller's ticket-search algorithm.
 pub(super) const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
 pub(super) const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
@@ -62,6 +66,9 @@ struct CpuFlow {
 #[cfg(test)]
 #[path = "scalar_cpu_flow_tests.rs"]
 mod flow_tests;
+#[cfg(test)]
+#[path = "scalar_cpu_node_scope_tests.rs"]
+mod node_scope_tests;
 impl CpuFlow {
     fn new(initial_credit_ns: i128) -> Self {
         Self {
@@ -171,6 +178,7 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
     termination_reserved_ns: u64,
+    cpu_starts: cpu_start_order::CpuStartOrder,
     // A full W1 success can protect only its existing public request. This is
     // scheduling state, not another bucket, start reserve or work authority.
     verified_completions: usize,
@@ -189,6 +197,7 @@ impl PaidMutationCpuBudget {
             in_flight: 0,
             unavailable: false,
             termination_reserved_ns: 0,
+            cpu_starts: cpu_start_order::CpuStartOrder::default(),
             verified_completions: 0,
             completion_work: Box::new([[0; 32]; COMPLETION_WORK_CAPACITY]),
             completion_work_len: 0,
@@ -292,8 +301,17 @@ impl PaidMutationCpuBudget {
             - i128::from(self.termination_reserved_ns)
     }
     pub(super) fn reserve(&mut self, now: Instant) -> Result<()> {
+        self.reserve_with_order(now, None)
+    }
+    fn reserve_with_order(&mut self, now: Instant, sequence: Option<u64>) -> Result<()> {
         self.refill(now);
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        // Starts from an unqueued local owner cannot overtake an already
+        // waiting public task. They retain the original immediate refusal API.
+        ensure(
+            self.cpu_starts.allows(sequence, now)?,
+            "PUBLIC_MUTATION_CPU_BUDGET",
+        )?;
         ensure(
             self.verified_completions == 0
                 && self.in_flight < MUTATION_CPU_WORKERS
@@ -308,7 +326,14 @@ impl PaidMutationCpuBudget {
                 .checked_add(MUTATION_CPU_START_RESERVE_NS)?;
             Some(())
         });
+        if let Some(sequence) = sequence {
+            self.cpu_starts.remove(sequence);
+        }
         Ok(())
+    }
+    #[cfg(test)]
+    pub(super) fn queued_start_count(&self) -> usize {
+        self.cpu_starts.len()
     }
     pub(super) fn completion_pending(&self) -> bool {
         self.verified_completions != 0
@@ -482,9 +507,38 @@ pub(super) struct LiveRequestCpuState {
     public_request: Option<PublicRequestDeadline>,
     verified_completion: bool,
     wait_inside_checkpoint: bool,
+    node_owner_scopes: u32,
     owner_thread: thread::ThreadId,
     termination_reserved: bool,
 }
+
+/// A same-thread scope that forbids suspending a paid checkpoint while the
+/// shared Node owner is held. It grants no CPU or State authority. Field owners
+/// must drop the Node mutex before this guard restores the enclosing policy.
+pub(crate) struct ServiceMutationCpuNoWaitGuard {
+    live: Arc<LiveRequestCpu>,
+    // A guard cannot restore another thread's owner scope.
+    _not_send_sync: std::marker::PhantomData<std::rc::Rc<()>>,
+}
+impl Drop for ServiceMutationCpuNoWaitGuard {
+    fn drop(&mut self) {
+        let restored = match self.live.state.lock() {
+            Ok(mut state) => {
+                if state.owner_thread != thread::current().id() || state.node_owner_scopes == 0 {
+                    false
+                } else {
+                    state.node_owner_scopes -= 1;
+                    true
+                }
+            }
+            Err(_) => false,
+        };
+        if !restored {
+            self.live.unknown();
+        }
+    }
+}
+
 #[derive(Clone)]
 struct PublicRequestDeadline {
     deadline: Instant,
@@ -508,6 +562,7 @@ impl LiveRequestCpu {
                 public_request: None,
                 verified_completion: false,
                 wait_inside_checkpoint: true,
+                node_owner_scopes: 0,
                 owner_thread: thread::current().id(),
                 termination_reserved: false,
             }),
@@ -694,13 +749,25 @@ impl LiveRequestCpu {
             let Some(request) = self.observe_sample(remove, enforce)? else {
                 return Ok(());
             };
-            // Shared History cannot suspend while owning the Node mutex.
-            // A long indivisible phase still fails under the original budget.
-            if !may_wait {
-                self.state
-                    .lock()
-                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
-                    .refused = true;
+            // Shared History and public admission/commit cannot suspend while
+            // owning the Node mutex. Recheck the actual live nesting here;
+            // callers cannot re-enable waiting with an enclosing policy flag.
+            let may_suspend = {
+                let mut state = match self.state.lock() {
+                    Ok(state) => state,
+                    Err(error) => {
+                        drop(error);
+                        self.unknown();
+                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                    }
+                };
+                let allowed = may_wait && state.node_owner_scopes == 0;
+                if !allowed {
+                    state.refused = true;
+                }
+                allowed
+            };
+            if !may_suspend {
                 return Err("PUBLIC_MUTATION_CPU_BUDGET".into());
             }
             // An exclusive embedding has no Node mutex. Keep its exact paid
@@ -824,7 +891,11 @@ impl LiveRequestCpu {
                 return None;
             }
         };
-        if state.unavailable || !state.threads.is_empty() || state.termination_reserved {
+        if state.unavailable
+            || !state.threads.is_empty()
+            || state.termination_reserved
+            || state.node_owner_scopes != 0
+        {
             drop(state);
             self.unknown();
             None
@@ -1156,6 +1227,38 @@ pub struct ServiceMutationCpuCheckpoint {
     live: Arc<LiveRequestCpu>,
 }
 impl ServiceMutationCpuCheckpoint {
+    /// Call immediately after acquiring the shared Node mutex and before any
+    /// native/progress callback. The enclosing owner must drop that mutex before
+    /// this guard. Unlocked proof and detached execution keep their old policy.
+    pub(crate) fn prevent_refill_wait_while_node_owned(
+        &self,
+    ) -> Result<ServiceMutationCpuNoWaitGuard> {
+        let mut state = match self.live.state.lock() {
+            Ok(state) => state,
+            Err(error) => {
+                drop(error);
+                self.live.unknown();
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+        };
+        let current = thread::current().id();
+        if state.owner_thread != current || !state.threads.contains_key(&current) {
+            drop(state);
+            self.live.unknown();
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        let Some(depth) = state.node_owner_scopes.checked_add(1) else {
+            drop(state);
+            self.live.unknown();
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        };
+        state.node_owner_scopes = depth;
+        drop(state);
+        Ok(ServiceMutationCpuNoWaitGuard {
+            live: self.live.clone(),
+            _not_send_sync: std::marker::PhantomData,
+        })
+    }
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
     }

@@ -27,6 +27,58 @@ impl PinnedNativeAccountQuery {
 }
 
 impl Node {
+    /// Keep the original explicit read transaction through every callback and
+    /// error exit. Row counters alone cannot detect COMMIT/ROLLBACK followed by
+    /// BEGIN, a savepoint ABA, or an automatic transaction rollback.
+    pub(super) fn with_account_query_snapshot<T>(
+        &self,
+        read: impl FnOnce(&Connection) -> Result<T>,
+    ) -> Result<T> {
+        let tx = self.db.unchecked_transaction()?;
+        let changes = tx.total_changes();
+        let result = {
+            let scope = trnm_sqlite_io_boundary::TransactionScope::capture(&tx)
+                .map_err(|error| Error::local_replay_source("NATIVE_ACCOUNT_PROOF_SCOPE", error))?;
+            let result = read(&tx);
+            let scope_error = scope
+                .unchanged()
+                .err()
+                .map(|error| Error::local_replay_source("NATIVE_ACCOUNT_PROOF_SCOPE", error))
+                .or_else(|| {
+                    tx.is_autocommit()
+                        .then(|| Error::from("NATIVE_ACCOUNT_PROOF_SCOPE").local_integrity())
+                });
+            match scope_error {
+                None => result,
+                Some(error) => {
+                    self.invalidate_commitment();
+                    // A cancellation or storage error cannot hide a replaced
+                    // snapshot. Retain the original typed cause for the caller.
+                    Err(match result {
+                        Ok(_) => error,
+                        Err(first) => {
+                            Error::local_replay_source("NATIVE_ACCOUNT_PROOF_SCOPE", first)
+                        }
+                    })
+                }
+            }
+        };
+        // Any callback write invalidates derived candidates, including on an
+        // ordinary cancellation. An unchanged transaction can still roll that
+        // write back, so keep the original error and its cancellation category.
+        let wrote = tx.total_changes() != changes;
+        if wrote {
+            self.invalidate_commitment();
+        }
+        let output = result?;
+        if wrote {
+            return Err(Error::from("NATIVE_ACCOUNT_PROOF_WRITE").local_integrity());
+        }
+        // Queries retain no commit authority, including for uncounted DDL.
+        tx.rollback()?;
+        Ok(output)
+    }
+
     fn account_query_context(&self) -> Context {
         Context {
             network: self.settings.network(),
@@ -73,23 +125,19 @@ impl Node {
         )?;
         progress(NativeAccountProofProgress::BeforeRead)?;
         self.namespace()?;
-        let tx = self.db.unchecked_transaction()?;
-        let changes = tx.total_changes();
-        self.storage_context()?;
-        let (checkpoint, record) = self.checked_account_query_checkpoint(&tx, block, progress)?;
-        let pin = PinnedNativeAccountQuery {
-            context: self.account_query_context(),
-            checkpoint,
-            record,
-            block_identity: native_authenticated::account_query_block_identity(&tx, block)?,
-        };
-        progress(NativeAccountProofProgress::BeforeOutput)?;
-        if tx.total_changes() != changes {
-            self.invalidate_commitment();
-            return Err(Error::from("NATIVE_ACCOUNT_PROOF_WRITE").local_integrity());
-        }
-        tx.rollback()?;
-        Ok(pin)
+        self.with_account_query_snapshot(|db| {
+            self.storage_context()?;
+            let (checkpoint, record) =
+                self.checked_account_query_checkpoint(db, block, progress)?;
+            let pin = PinnedNativeAccountQuery {
+                context: self.account_query_context(),
+                checkpoint,
+                record,
+                block_identity: native_authenticated::account_query_block_identity(db, block)?,
+            };
+            progress(NativeAccountProofProgress::BeforeOutput)?;
+            Ok(pin)
+        })
     }
 
     /// Prove requested accounts at a previously audited historical root without
@@ -128,43 +176,38 @@ impl Node {
         )?;
         progress(NativeAccountProofProgress::BeforeRead)?;
         self.namespace()?;
-        let tx = self.db.unchecked_transaction()?;
-        let changes = tx.total_changes();
-        self.storage_context()?;
-        let block = pin.record.block;
-        ensure(
-            native_authenticated::load(&tx, block)? == pin.record
-                && native_authenticated::account_query_block_identity(&tx, block)?
-                    == pin.block_identity,
-            "NATIVE_ACCOUNT_QUERY_PIN_CHANGED",
-        )
-        .map_err(Error::local_integrity)?;
-        let checkpoint = native_store::query_checkpoint(
-            &tx,
-            pin.context,
-            block,
-            pin.record.height,
-            pin.record.state.state_root,
-            &pin.record.accounts,
-        )?;
-        ensure(
-            checkpoint == pin.checkpoint,
-            "NATIVE_ACCOUNT_QUERY_PIN_CHANGED",
-        )
-        .map_err(Error::local_integrity)?;
-        let (proof, observation) =
-            multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
-                progress(NativeAccountProofProgress::Proof(point))
-                    .map_err(NativeAccountProofFailure::Control)
-            })
-            .map_err(NativeAccountProofFailure::into_error)?;
-        progress(NativeAccountProofProgress::BeforeOutput)?;
-        if tx.total_changes() != changes {
-            self.invalidate_commitment();
-            return Err(Error::from("NATIVE_ACCOUNT_PROOF_WRITE").local_integrity());
-        }
-        tx.rollback()?;
-        Ok((checkpoint, proof, observation))
+        self.with_account_query_snapshot(|db| {
+            self.storage_context()?;
+            let block = pin.record.block;
+            ensure(
+                native_authenticated::load(db, block)? == pin.record
+                    && native_authenticated::account_query_block_identity(db, block)?
+                        == pin.block_identity,
+                "NATIVE_ACCOUNT_QUERY_PIN_CHANGED",
+            )
+            .map_err(Error::local_integrity)?;
+            let checkpoint = native_store::query_checkpoint(
+                db,
+                pin.context,
+                block,
+                pin.record.height,
+                pin.record.state.state_root,
+                &pin.record.accounts,
+            )?;
+            ensure(
+                checkpoint == pin.checkpoint,
+                "NATIVE_ACCOUNT_QUERY_PIN_CHANGED",
+            )
+            .map_err(Error::local_integrity)?;
+            let (proof, observation) =
+                multiproof::from_native_database(db, &checkpoint, owners, &|point| {
+                    progress(NativeAccountProofProgress::Proof(point))
+                        .map_err(NativeAccountProofFailure::Control)
+                })
+                .map_err(NativeAccountProofFailure::into_error)?;
+            progress(NativeAccountProofProgress::BeforeOutput)?;
+            Ok((checkpoint, proof, observation))
+        })
     }
 }
 

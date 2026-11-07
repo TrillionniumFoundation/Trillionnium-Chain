@@ -30,7 +30,7 @@ class PhaseHostControls(unittest.TestCase):
             "controller_cgroup": "/system.slice/unique-campaign.service",
             "binary_sha256": host.digest(self.binary),
             "state_backend": "authenticated-v1",
-            "work_profile": "raw-r15",
+            "work_profile": "raw-r16",
             "mode": None,
             "method": 0,
             "seed": ["00"] * 4,

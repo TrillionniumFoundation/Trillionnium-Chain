@@ -88,17 +88,18 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 /// parent and the actual active tip nominated by the existing Node reader.
 /// Nomination is not proof.
 /// This is never retained by Node, serialized, cloned or used as commit/recovery
-/// authority. Every state-graph use still loads current SQL State/records/deltas and runs
+/// authority. Every state-graph use still loads current SQL State/records and runs
 /// the ORIGINAL complete(settings, current State) comparison before this graph
 /// result can match. Named records may share a successfully checked account
 /// graph only when its entire Root (node, digest, count and balance) matches in
 /// this unchanged writer. The current complete-State check uses the SAME account
 /// parser as graph verification, including nonce and zero-balance accounts; no
-/// working state, Record binding or database read is supplied by the receipt.
+/// working state or Record binding is supplied by a graph receipt.
 /// A completed tip-to-genesis history check may also retain the verified suffix
-/// of these same four named records. Only that history path may skip an already
-/// checked starting Record binding and suffix, after freshly reading the exact
-/// complete Record and checking the original immutable Settings borrow and
+/// of these same four named records. History and non-genesis State verification
+/// may reuse its already checked Record binding (History also its suffix), after
+/// freshly reading the exact complete Record and checking the original immutable
+/// Settings borrow and
 /// no-write epoch again. The completed history previously verified the actual
 /// block, parent and deltas in this same writer; no write may separate that
 /// material validation from reuse. Graph receipts alone grant no such access.
@@ -273,6 +274,21 @@ impl<'db> PostWriteReadback<'db> {
                 .any(|verified| verified.accounts == record.accounts))
     }
 
+    /// Pure material comparison, not a scope verdict. The State verifier uses
+    /// its existing current() fence before reading this exact Record and its
+    /// existing final graph/remember fence after the last callback. Both must
+    /// succeed before it can consume the binding; this adds no schema probe.
+    pub(super) fn completed_record_matches(&self, settings: &Settings, record: &Record) -> bool {
+        self.enabled
+            && std::ptr::eq(self.settings, settings)
+            && self.ids.contains(&Some(record.block))
+            && self
+                .histories
+                .iter()
+                .flatten()
+                .any(|verified| verified == record)
+    }
+
     pub(super) fn history_matches(
         &mut self,
         db: &Connection,
@@ -381,10 +397,12 @@ impl<'db> PostWriteReadback<'db> {
         db: &Connection,
         record: Record,
         pending: Option<Frontier>,
-    ) -> Result<()> {
+    ) -> Result<bool> {
         // Called only AFTER the original successful graph, its Exit and the
         // final caller callback. A mutation during that validation mints none.
-        if self.current(db)? {
+        // Return this existing fence's verdict for a borrowed Record binding.
+        let unchanged = self.current(db)?;
+        if unchanged {
             // Only an original named Record's COMPLETE successful graph can
             // seal the unique fixed-size frontier, after the final callback.
             // Fifth records and partial graphs cannot supply or replace it.
@@ -409,7 +427,7 @@ impl<'db> PostWriteReadback<'db> {
                 }
             }
         }
-        Ok(())
+        Ok(unchanged)
     }
 
     pub(super) fn finish<T>(&self, result: Result<T>) -> Result<T> {

@@ -113,7 +113,7 @@ def validate_job(job_path, binary):
     )
     require(
         value["state_backend"] in ("legacy-v2", "authenticated-v1")
-        and value["work_profile"] in ("raw-r15", "arithmetic-facts-v1"),
+        and value["work_profile"] in ("raw-r16", "arithmetic-facts-v1"),
         "ORIGINAL_PHASE_PROFILE",
     )
     require(

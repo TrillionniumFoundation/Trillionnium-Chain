@@ -6,6 +6,9 @@ use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
+#[path = "state_record_tests.rs"]
+mod state_binding;
+
 // The successful completed-hit path before start-binding reuse, taken from
 // 97aaf's verify_history_with_readback. This is a measurement reference only;
 // full misses and failure ordering use the original full verifier below.

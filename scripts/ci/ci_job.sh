@@ -165,6 +165,9 @@ case "${1:?required job}" in
     (
       trnm_model_receipt_root="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}"
       mkdir -p "$trnm_model_receipt_root"
+      # Export the selected fallback as well as an explicit caller destination.
+      # Native fixtures retain full failure reports through this child environment.
+      export TRNM_CI_RECEIPT_DIR="$trnm_model_receipt_root"
       export TRNM_MODEL_COMPOSITION_VECTORS="$trnm_model_receipt_root/model-composition"
       test ! -e "$TRNM_MODEL_COMPOSITION_VECTORS"
       test ! -L "$TRNM_MODEL_COMPOSITION_VECTORS"

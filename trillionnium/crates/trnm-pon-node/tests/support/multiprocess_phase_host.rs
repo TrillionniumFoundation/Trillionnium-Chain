@@ -172,7 +172,7 @@ pub(super) fn entry() {
         _ => panic!("explicit original backend required"),
     };
     let profile = match job.work_profile.as_str() {
-        "raw-r15" => support::WorkProfile::RawR15,
+        "raw-r16" => support::WorkProfile::RawR16,
         "arithmetic-facts-v1" => support::WorkProfile::ArithmeticFactsV1,
         _ => panic!("explicit original work profile required"),
     };
@@ -283,7 +283,7 @@ pub(super) fn run(
         binary_sha256: binary_sha(),
         state_backend: configuration.state_backend.label().to_owned(),
         work_profile: match configuration.work_profile {
-            support::WorkProfile::RawR15 => "raw-r15",
+            support::WorkProfile::RawR16 => "raw-r16",
             support::WorkProfile::ArithmeticFactsV1 => "arithmetic-facts-v1",
         }
         .to_owned(),

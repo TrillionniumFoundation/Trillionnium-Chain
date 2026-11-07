@@ -261,3 +261,299 @@ fn pinned_account_query_is_historical_content_not_active_or_cold_open_authority(
     drop(node);
     assert!(Node::open_with_authenticated_state(directory.path(), settings, 1).is_err());
 }
+
+#[derive(Clone, Copy, Debug)]
+enum QueryScopeEntry {
+    Strict,
+    Pin,
+    Pinned,
+}
+
+const QUERY_SCOPE_ENTRIES: [QueryScopeEntry; 3] = [
+    QueryScopeEntry::Strict,
+    QueryScopeEntry::Pin,
+    QueryScopeEntry::Pinned,
+];
+
+fn scoped_query(
+    node: &Node,
+    pin: &PinnedNativeAccountQuery,
+    entry: QueryScopeEntry,
+    progress: &impl Fn(NativeAccountProofProgress) -> Result<()>,
+) -> Result<()> {
+    match entry {
+        QueryScopeEntry::Strict => node
+            .authenticated_account_multiproof_with_progress(
+                node.settings.genesis(),
+                &owners(),
+                progress,
+            )
+            .map(|_| ()),
+        QueryScopeEntry::Pin => node
+            .pin_authenticated_account_query(node.settings.genesis(), progress)
+            .map(|_| ()),
+        QueryScopeEntry::Pinned => node
+            .authenticated_account_multiproof_at_pin(pin, &owners(), progress)
+            .map(|_| ()),
+    }
+}
+
+fn query_inside_point(entry: QueryScopeEntry) -> NativeAccountProofProgress {
+    match entry {
+        QueryScopeEntry::Strict | QueryScopeEntry::Pin => NativeAccountProofProgress::StateReplay,
+        QueryScopeEntry::Pinned => {
+            NativeAccountProofProgress::Proof(MultiproofProgress::ArchiveRead { index: 0 })
+        }
+    }
+}
+
+#[test]
+fn account_query_scope_rejects_commit_rollback_and_savepoint_aba() {
+    for entry in QUERY_SCOPE_ENTRIES {
+        for sql in [
+            "ROLLBACK; BEGIN",
+            "COMMIT; BEGIN",
+            "SAVEPOINT query_probe; RELEASE query_probe",
+            "SAVEPOINT query_probe; ROLLBACK TO query_probe; RELEASE query_probe",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let node = open(directory.path(), settings.clone(), true);
+            let pin = node
+                .pin_authenticated_account_query(settings.genesis(), &|_| Ok(()))
+                .unwrap();
+            let before = logical_rows(&node.db);
+            let changes = node.db.total_changes();
+            let reached = std::cell::Cell::new(false);
+            let error = scoped_query(&node, &pin, entry, &|point| {
+                if point == NativeAccountProofProgress::BeforeOutput {
+                    reached.set(true);
+                    assert!(!node.db.is_autocommit());
+                    node.db.execute_batch(sql)?;
+                    assert!(!node.db.is_autocommit());
+                    assert_eq!(node.db.total_changes(), changes);
+                }
+                Ok(())
+            })
+            .expect_err("the original read transaction cannot be replaced");
+            assert!(reached.get(), "{entry:?}, {sql}");
+            assert!(
+                error.to_string().starts_with("NATIVE_ACCOUNT_PROOF_SCOPE"),
+                "{entry:?}, {sql}: {error}"
+            );
+            assert!(error.requires_owner_stop());
+            assert!(node.db.is_autocommit());
+            assert_eq!(logical_rows(&node.db), before);
+            scoped_query(&node, &pin, entry, &|_| Ok(())).unwrap();
+        }
+    }
+}
+
+#[test]
+fn account_query_scope_rejects_an_actual_new_snapshot_without_local_row_writes() {
+    for entry in QUERY_SCOPE_ENTRIES {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = open(directory.path(), settings.clone(), true);
+        let pin = node
+            .pin_authenticated_account_query(settings.genesis(), &|_| Ok(()))
+            .unwrap();
+        let foreign = rusqlite::Connection::open(node.directory.join("native.sqlite")).unwrap();
+        let before = logical_rows(&node.db);
+        let generation = node.active().unwrap().1;
+        let changes = node.db.total_changes();
+        let reached = std::cell::Cell::new(false);
+        let error = scoped_query(&node, &pin, entry, &|point| {
+            if point == NativeAccountProofProgress::BeforeOutput {
+                reached.set(true);
+                assert_eq!(node.active()?.1, generation);
+                node.db.execute_batch("ROLLBACK")?;
+                foreign.execute("UPDATE active SET generation=generation+1", [])?;
+                node.db.execute_batch("BEGIN")?;
+                // This read really enters the foreign commit's NEW snapshot.
+                assert_eq!(node.active()?.1, generation + 1);
+                assert_eq!(node.db.total_changes(), changes);
+            }
+            Ok(())
+        })
+        .expect_err("a foreign committed generation cannot replace this read snapshot");
+        assert!(reached.get(), "{entry:?}");
+        assert!(error.to_string().starts_with("NATIVE_ACCOUNT_PROOF_SCOPE"));
+        assert!(error.requires_owner_stop());
+        assert!(node.db.is_autocommit());
+        // Refusal does not pretend to roll back another connection's commit.
+        assert_eq!(node.active().unwrap().1, generation + 1);
+        foreign
+            .execute("UPDATE active SET generation=generation-1", [])
+            .unwrap();
+        assert_eq!(logical_rows(&node.db), before);
+        scoped_query(&node, &pin, entry, &|_| Ok(())).unwrap();
+    }
+}
+
+#[test]
+fn account_query_scope_error_keeps_cancellation_after_early_or_final_replacement() {
+    for entry in QUERY_SCOPE_ENTRIES {
+        for stop in [
+            query_inside_point(entry),
+            NativeAccountProofProgress::BeforeOutput,
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(1)).unwrap();
+            let node = open(directory.path(), settings.clone(), true);
+            let pin = node
+                .pin_authenticated_account_query(settings.genesis(), &|_| Ok(()))
+                .unwrap();
+            let before = logical_rows(&node.db);
+            let reached = std::cell::Cell::new(false);
+            let error = scoped_query(&node, &pin, entry, &|point| {
+                if point == stop {
+                    reached.set(true);
+                    node.db.execute_batch("ROLLBACK; BEGIN")?;
+                    Err(Error::new(crate::ErrorCode::PublicRequestCancelled))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+            assert!(reached.get(), "{entry:?}, {stop:?}");
+            assert!(error.to_string().starts_with("NATIVE_ACCOUNT_PROOF_SCOPE"));
+            assert!(error.requires_owner_stop());
+            let first = std::error::Error::source(&error)
+                .and_then(|source| source.downcast_ref::<Error>())
+                .expect("the original typed cancellation remains the source");
+            assert_eq!(first.code(), Some(crate::ErrorCode::PublicRequestCancelled));
+            assert_eq!(first.kind(), crate::ErrorKind::Cancelled);
+            assert!(!first.requires_owner_stop());
+            assert!(node.db.is_autocommit());
+            assert_eq!(logical_rows(&node.db), before);
+        }
+    }
+}
+
+#[test]
+fn account_query_scope_rejects_automatic_rollback_with_unchanged_row_count() {
+    for entry in QUERY_SCOPE_ENTRIES {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = open(directory.path(), settings.clone(), true);
+        let pin = node
+            .pin_authenticated_account_query(settings.genesis(), &|_| Ok(()))
+            .unwrap();
+        let before = logical_rows(&node.db);
+        let changes = node.db.total_changes();
+        let reached = std::cell::Cell::new(false);
+        let error = scoped_query(&node, &pin, entry, &|point| {
+            if point == NativeAccountProofProgress::BeforeOutput {
+                reached.set(true);
+                assert!(!node.db.is_autocommit());
+                node.db
+                    .execute(
+                        "INSERT OR ROLLBACK INTO metadata(key,value) VALUES('schema',X'00')",
+                        [],
+                    )
+                    .expect_err("the existing schema key forces SQLite's implicit rollback");
+                assert!(node.db.is_autocommit());
+                assert_eq!(node.db.total_changes(), changes);
+            }
+            Ok(())
+        })
+        .unwrap_err();
+        assert!(reached.get(), "{entry:?}");
+        assert!(error.to_string().starts_with("NATIVE_ACCOUNT_PROOF_SCOPE"));
+        assert!(error.requires_owner_stop());
+        assert!(node.db.is_autocommit());
+        assert_eq!(logical_rows(&node.db), before);
+        scoped_query(&node, &pin, entry, &|_| Ok(())).unwrap();
+    }
+}
+
+#[test]
+fn account_query_scope_keeps_foreign_controls_and_ordinary_cancellation_separate() {
+    for entry in QUERY_SCOPE_ENTRIES {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = open(directory.path(), settings.clone(), true);
+        let pin = node
+            .pin_authenticated_account_query(settings.genesis(), &|_| Ok(()))
+            .unwrap();
+        let foreign = rusqlite::Connection::open(node.directory.join("native.sqlite")).unwrap();
+        let before = logical_rows(&node.db);
+        let reached = std::cell::Cell::new(false);
+        scoped_query(&node, &pin, entry, &|point| {
+            if point == NativeAccountProofProgress::BeforeOutput {
+                reached.set(true);
+                foreign.execute_batch("BEGIN; SAVEPOINT other; RELEASE other; ROLLBACK")?;
+            }
+            Ok(())
+        })
+        .unwrap();
+        assert!(reached.get(), "{entry:?}");
+        for stop in [
+            query_inside_point(entry),
+            NativeAccountProofProgress::BeforeOutput,
+        ] {
+            let error = scoped_query(&node, &pin, entry, &|point| {
+                if point == stop {
+                    Err(Error::new(crate::ErrorCode::PublicRequestCancelled))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+            assert_eq!(error.code(), Some(crate::ErrorCode::PublicRequestCancelled));
+            assert_eq!(error.kind(), crate::ErrorKind::Cancelled);
+            assert!(!error.requires_owner_stop());
+            assert!(node.db.is_autocommit());
+            assert_eq!(logical_rows(&node.db), before);
+        }
+    }
+}
+
+#[test]
+fn account_query_scope_cancelled_row_writes_clear_candidates_and_keep_original_error() {
+    for entry in QUERY_SCOPE_ENTRIES {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = open(directory.path(), settings.clone(), true);
+        let pin = node
+            .pin_authenticated_account_query(settings.genesis(), &|_| Ok(()))
+            .unwrap();
+        let expected = node
+            .authenticated_account_multiproof(settings.genesis(), &owners())
+            .unwrap()
+            .1
+            .encode()
+            .unwrap();
+        node.read_active().unwrap();
+        assert!(node.derived_commitment_status().cache_root.is_some());
+        let before = logical_rows(&node.db);
+        let reached = std::cell::Cell::new(false);
+        let error = scoped_query(&node, &pin, entry, &|point| {
+            if point == NativeAccountProofProgress::BeforeOutput {
+                reached.set(true);
+                node.db
+                    .execute("UPDATE active SET generation=generation+1", [])?;
+                Err(Error::new(crate::ErrorCode::PublicRequestCancelled))
+            } else {
+                Ok(())
+            }
+        })
+        .unwrap_err();
+        assert!(reached.get(), "{entry:?}");
+        assert_eq!(error.code(), Some(crate::ErrorCode::PublicRequestCancelled));
+        assert_eq!(error.kind(), crate::ErrorKind::Cancelled);
+        assert!(!error.requires_owner_stop());
+        assert!(node.derived_commitment_status().cache_root.is_none());
+        assert!(node.db.is_autocommit());
+        assert_eq!(logical_rows(&node.db), before);
+        assert_eq!(
+            node.authenticated_account_multiproof(settings.genesis(), &owners())
+                .unwrap()
+                .1
+                .encode()
+                .unwrap(),
+            expected
+        );
+    }
+}

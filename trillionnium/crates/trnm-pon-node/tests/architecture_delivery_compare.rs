@@ -698,6 +698,45 @@ fn trial(
         "independent_operators": false, "work_profile_qualified": false, "production_activation": false})
 }
 
+fn retain_architecture_report(
+    output: &Path,
+    receipt_dir: Option<&Path>,
+    temporary_report_dir: Option<&Path>,
+    report: &Value,
+) -> std::io::Result<std::path::PathBuf> {
+    let raw = serde_json::to_vec_pretty(report)?;
+    let write_new = |path: &Path| -> std::io::Result<()> {
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)?;
+        file.write_all(&raw)?;
+        file.sync_all()
+    };
+    let original = output.join("report.json");
+    write_new(&original)?;
+    if let Some(receipts) = receipt_dir {
+        fs::create_dir_all(receipts)?;
+        let retained = receipts.join("architecture-delivery-comparison.json");
+        write_new(&retained)?;
+        return Ok(retained);
+    }
+    if let Some(directory) = temporary_report_dir {
+        // Retain only the completed JSON for direct local invocations. The
+        // temporary chains still clean up normally, including assertion unwind.
+        let mut retained = tempfile::Builder::new()
+            .prefix("trnm-architecture-delivery-")
+            .suffix(".json")
+            .tempfile_in(directory)?;
+        retained.write_all(&raw)?;
+        retained.as_file().sync_all()?;
+        let (file, path) = retained.keep().map_err(|error| error.error)?;
+        drop(file);
+        return Ok(path);
+    }
+    Ok(original)
+}
+
 #[test]
 fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract() {
     if current_elf_host::execute_in_fixed_host(
@@ -708,9 +747,13 @@ fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_con
         return;
     }
     let temporary = tempfile::tempdir().unwrap();
-    let output = std::env::var_os("TRNM_ARCHITECTURE_COMPARE_DIR")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| temporary.path().join("architecture-comparison"));
+    let (output, temporary_report_dir) = match std::env::var_os("TRNM_ARCHITECTURE_COMPARE_DIR") {
+        Some(path) => (std::path::PathBuf::from(path), None),
+        None => (
+            temporary.path().join("architecture-comparison"),
+            Some(std::env::temp_dir()),
+        ),
+    };
     fs::create_dir(&output).unwrap();
     let settings = Settings::development(Some(1_750_000_000)).unwrap();
     let mut samples = Vec::new();
@@ -777,26 +820,20 @@ fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_con
         "confirmation_contract": "client full native replay, depth6 AND required-work6; probabilistic unqualified-risk profile; never BFT finality",
         "all_finite_business_targets_met": all_business, "architecture_winner_declared": false,
         "protocol_switch_qualified": false, "independent_accepted": false, "wan_tested": false, "production_activation": false});
-    fs::write(
-        output.join("report.json"),
-        serde_json::to_vec_pretty(&report).unwrap(),
+    // Publication happens after every original timing/CPU observation and before
+    // the original invariant assertion. Never overwrite a prior receipt. Direct
+    // local runs retain the complete JSON even without an exported destination.
+    let receipt_dir = std::env::var_os("TRNM_CI_RECEIPT_DIR").map(std::path::PathBuf::from);
+    let retained_report = retain_architecture_report(
+        &output,
+        receipt_dir.as_deref(),
+        temporary_report_dir.as_deref(),
+        &report,
     )
     .unwrap();
-    // Keep the complete failing sample report in the existing CI artifact
-    // directory. The default TempDir is removed when this test exits, and
-    // a console-only report_path cannot be independently replayed.
-    if let Some(receipt_dir) = std::env::var_os("TRNM_CI_RECEIPT_DIR") {
-        let receipt_dir = std::path::PathBuf::from(receipt_dir);
-        fs::create_dir_all(&receipt_dir).unwrap();
-        fs::copy(
-            output.join("report.json"),
-            receipt_dir.join("architecture-delivery-comparison.json"),
-        )
-        .unwrap();
-    }
     println!(
         "{}",
-        json!({"schema": report["schema"], "samples": 18, "all_finite_business_targets_met": all_business, "report_path": output.join("report.json")})
+        json!({"schema": report["schema"], "samples": 18, "all_finite_business_targets_met": all_business, "report_path": retained_report})
     );
     // Emit bounded failure details after every original timing/CPU observation
     // and the complete report write. Preserve the original predicate below.
@@ -836,6 +873,93 @@ fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_con
             .iter()
             .all(|sample| sample["cold_reopen_equal"] == true && sample["errors"] == json!([])),
         "retained native delivery/replay invariants failed"
+    );
+}
+
+#[test]
+fn architecture_report_retains_failure_and_unknown_cost_after_fixture_unwind() {
+    // File-retention control only: no native workload or service qualification.
+    let report = json!({"schema": "synthetic-report-retention-control-v1",
+        "all_finite_business_targets_met": false, "samples": [{
+            "errors": ["original failure"], "whole_trial_process_cpu_ns": null,
+            "native_state_equal": false}]});
+    let expected = serde_json::to_vec_pretty(&report).unwrap();
+    for use_receipts in [false, true] {
+        let retained = tempfile::tempdir().unwrap();
+        let fixture = tempfile::tempdir().unwrap();
+        let output = fixture.path().join("architecture-comparison");
+        fs::create_dir(&output).unwrap();
+        let path = retain_architecture_report(
+            &output,
+            use_receipts.then_some(retained.path()),
+            (!use_receipts).then_some(retained.path()),
+            &report,
+        )
+        .unwrap();
+        let failure = std::panic::catch_unwind(move || {
+            let _fixture = fixture;
+            panic!("synthetic failure after complete report publication");
+        });
+        assert!(failure.is_err());
+        assert!(!output.exists());
+        assert_eq!(fs::read(&path).unwrap(), expected);
+        let observed: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+        assert_eq!(
+            observed["samples"][0]["errors"],
+            json!(["original failure"])
+        );
+        assert!(observed["samples"][0]["whole_trial_process_cpu_ns"].is_null());
+        assert_eq!(observed["all_finite_business_targets_met"], false);
+    }
+}
+
+#[test]
+fn architecture_report_refuses_to_overwrite_an_original_receipt() {
+    let root = tempfile::tempdir().unwrap();
+    let output = root.path().join("output");
+    let receipts = root.path().join("receipts");
+    fs::create_dir(&output).unwrap();
+    fs::create_dir(&receipts).unwrap();
+    let prior = b"original failed report bytes";
+    let retained = receipts.join("architecture-delivery-comparison.json");
+    fs::write(&retained, prior).unwrap();
+    let report = json!({"synthetic": true, "succeeded": false});
+    let error = retain_architecture_report(&output, Some(&receipts), None, &report).unwrap_err();
+    assert_eq!(error.kind(), std::io::ErrorKind::AlreadyExists);
+    assert_eq!(fs::read(retained).unwrap(), prior);
+    let original = fs::read(output.join("report.json")).unwrap();
+    assert_eq!(original, serde_json::to_vec_pretty(&report).unwrap());
+    let error = retain_architecture_report(&output, None, None, &json!({})).unwrap_err();
+    assert_eq!(error.kind(), std::io::ErrorKind::AlreadyExists);
+    assert_eq!(fs::read(output.join("report.json")).unwrap(), original);
+}
+
+#[test]
+fn architecture_report_fallback_is_unique_and_explicit_output_stays_in_place() {
+    let root = tempfile::tempdir().unwrap();
+    let mut retained = Vec::new();
+    for sample in 0..2 {
+        let fixture = tempfile::tempdir().unwrap();
+        let output = fixture.path().join("output");
+        fs::create_dir(&output).unwrap();
+        let report = json!({"synthetic": true, "sample": sample});
+        let path = retain_architecture_report(&output, None, Some(root.path()), &report).unwrap();
+        drop(fixture);
+        assert_eq!(
+            fs::read(&path).unwrap(),
+            serde_json::to_vec_pretty(&report).unwrap()
+        );
+        retained.push(path);
+    }
+    assert_ne!(retained[0], retained[1]);
+    let explicit = root.path().join("explicit");
+    fs::create_dir(&explicit).unwrap();
+    let report = json!({"synthetic": true, "sample": null});
+    let path = retain_architecture_report(&explicit, None, None, &report).unwrap();
+    assert_eq!(path, explicit.join("report.json"));
+    assert_eq!(
+        fs::read(path).unwrap(),
+        serde_json::to_vec_pretty(&report).unwrap()
     );
 }
 

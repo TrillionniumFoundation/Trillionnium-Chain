@@ -346,5 +346,169 @@ class CoverageControls(unittest.TestCase):
             self.analyze(value)
 
 
+
+def confirmation_round(index, *, transaction=None, confirmed=True, end_ns=None):
+    """Synthetic complete native-confirmation shape, never executed work."""
+    transaction = transaction or f'{index + 1:064x}'
+    included, tip = f'{index + 10:064x}', f'{index + 20:064x}'
+    start = (1 + 4 * index) * 1_000_000_000
+    observation = dict(transaction=transaction, included_block=included, observed_tip=tip,
+        confirmed=True, reorged=False, finalized=False, execution_authority=False,
+        depth=6, included_height=1 + 7 * index, observed_height=7 + 7 * index,
+        work_delta=f'{6:0128x}', required_work_delta=f'{6:0128x}') if confirmed else None
+    return dict(round=index, started_ns=start,
+        ended_ns=start + 1_000_000_000 if end_ns is None else end_ns,
+        transaction=transaction, included_block=included, tip=tip,
+        confirmed_inside_pressure_window=confirmed, observation=observation)
+
+
+def with_confirmation_rounds(value, rows):
+    phase = value['phases'][0]
+    phase['confirmations'] = rows
+    phase['all_signed_rounds_confirmed_in_window'] = (
+        len(rows) == reader.phases.ROUNDS
+        and all(row['confirmed_inside_pressure_window'] is True for row in rows))
+    return value
+
+
+class FiniteBusinessControls(unittest.TestCase):
+    def analyze(self, value=None):
+        value = report() if value is None else value
+        return reader.analyze(value, hashlib.sha256(encoded(value)).hexdigest())
+
+    def test_unique_confirmations_keep_failed_unobserved_and_retry_denominators(self):
+        value = with_confirmation_rounds(report(), [
+            confirmation_round(0), confirmation_round(1, confirmed=False)])
+        retry = copy.deepcopy(value['phases'][0]['history'][0])
+        retry.update(status='refused', response={'value': {'error': 'SYNTHETIC_RETRY'}})
+        retry.pop('client_import')
+        value['phases'][0]['submissions'] = [copy.deepcopy(retry), copy.deepcopy(retry)]
+        output = self.analyze(value)
+        self.assertEqual(output['schema'], 'pon-throughput-cost-coverage-v2')
+        business = output['phases'][0]['business']
+        self.assertEqual(business['native_confirmed_rounds'], 1)
+        self.assertEqual(business['native_unconfirmed_rounds'], 1)
+        self.assertEqual(business['unobserved_scheduled_rounds'], 1)
+        self.assertEqual(business['observed_unique_confirmed_transactions'], 1)
+        self.assertEqual(business['window_ns'], 30_000_000_000)
+        self.assertAlmostEqual(business['observed_confirmed_tps'], 1 / 30)
+        self.assertEqual(business['observed_round_nonconfirmation_fraction'],
+                         {'numerator': 1, 'denominator': 2})
+        self.assertEqual(business['request_attempts']['submit']['attempts'], 2)
+        self.assertEqual(business['request_attempts']['submit']['acknowledged_on_time'], 0)
+        self.assertFalse(business['scope']['rate_is_capacity_estimate'])
+        self.assertFalse(business['scope']['unobserved_slots_are_failed_samples'])
+        self.assertIsNone(output['scope']['business_tps_capacity'])
+
+    def test_repeated_transaction_ids_do_not_turn_rounds_into_tps(self):
+        value = with_confirmation_rounds(report(), [
+            confirmation_round(index, transaction='ab' * 32) for index in range(3)])
+        business = self.analyze(value)['phases'][0]['business']
+        self.assertEqual(business['native_confirmed_rounds'], 3)
+        self.assertEqual(business['observed_unique_confirmed_transactions'], 1)
+        self.assertEqual(business['independently_checked_confirmed_transaction_ids'], ['ab' * 32])
+        self.assertAlmostEqual(business['observed_confirmed_tps'], 1 / 30)
+
+    def test_missing_transaction_or_independent_confirmation_is_unknown_not_ack_credit(self):
+        for mutation in ('transaction', 'observation', 'ack_only', 'round_time'):
+            value = with_confirmation_rounds(report(), [confirmation_round(0)])
+            row = value['phases'][0]['confirmations'][0]
+            if mutation == 'ack_only':
+                row['observation'] = {'status': 'ok', 'acknowledged': True}
+            elif mutation == 'round_time':
+                row['started_ns'] = None
+            else:
+                row[mutation] = None
+            with self.subTest(mutation=mutation):
+                business = self.analyze(value)['phases'][0]['business']
+                self.assertEqual(business['native_confirmed_rounds'], 1)
+                self.assertIsNone(business['observed_unique_confirmed_transactions'])
+                self.assertIsNone(business['observed_confirmed_tps'])
+                self.assertTrue(business['rate_unknown_reasons'])
+                self.assertFalse(business['rounds'][0]['independent_confirmation_fields_verified'])
+
+    def test_missing_failure_identity_and_no_observations_never_become_zero_tps(self):
+        value = with_confirmation_rounds(report(), [confirmation_round(0, confirmed=False)])
+        value['phases'][0]['confirmations'][0]['transaction'] = None
+        for sample in (value, report()):
+            with self.subTest(sample=sample['phases'][0]['confirmations']):
+                business = self.analyze(sample)['phases'][0]['business']
+                self.assertIsNone(business['observed_confirmed_tps'])
+                self.assertTrue(business['rate_unknown_reasons'])
+        value['phases'][0] = dict(mode='baseline', state_backend='authenticated-v1',
+            finite_phase_criteria_met=False, startup_or_campaign_error='SYNTHETIC_STARTUP_FAILURE')
+        business = self.analyze(value)['phases'][0]['business']
+        self.assertIsNone(business['window_ns'])
+        self.assertIsNone(business['observed_confirmed_tps'])
+        self.assertIsNone(business['native_unconfirmed_rounds'])
+        self.assertEqual(business['unobserved_scheduled_rounds'], 3)
+
+    def test_failed_late_round_keeps_full_elapsed_and_fixed_window(self):
+        value = with_confirmation_rounds(report(), [
+            confirmation_round(0, confirmed=False, end_ns=31_000_000_000)])
+        business = self.analyze(value)['phases'][0]['business']
+        self.assertEqual(business['window_ns'], 30_000_000_000)
+        self.assertEqual(business['observed_unique_confirmed_transactions'], 0)
+        self.assertEqual(business['observed_confirmed_tps'], 0)
+        self.assertEqual(business['unconfirmed_round_wall_ns']['max_ns'], 30_000_000_000)
+        self.assertEqual(business['all_observed_scheduled_to_terminal_ns']['max_ns'], 30_000_000_000)
+        self.assertEqual(business['confirmed_round_wall_ns']['known_count'], 0)
+        self.assertEqual(business['unobserved_scheduled_rounds'], 2)
+
+    def test_confirmation_identity_depth_work_flags_and_local_clock_are_checked(self):
+        for mutation in ('transaction', 'included_block', 'observed_tip', 'depth', 'height',
+                         'work', 'zero_required', 'reorg', 'finalized', 'authority',
+                         'outside_window', 'rewind', 'cross_epoch', 'boolean'):
+            value = with_confirmation_rounds(report(), [confirmation_round(0)])
+            row = value['phases'][0]['confirmations'][0]
+            observation = row['observation']
+            if mutation in ('transaction', 'included_block', 'observed_tip'):
+                observation[mutation] = 'ff' * 32
+            elif mutation == 'depth':
+                observation['depth'] = 5
+            elif mutation == 'height':
+                observation['observed_height'] = 6
+            elif mutation == 'work':
+                observation['work_delta'] = f'{5:0128x}'
+            elif mutation == 'zero_required':
+                observation['required_work_delta'] = '0' * 128
+            elif mutation in ('reorg', 'finalized', 'authority'):
+                observation[{'reorg': 'reorged', 'finalized': 'finalized',
+                             'authority': 'execution_authority'}[mutation]] = True
+            elif mutation == 'outside_window':
+                row['ended_ns'] = 30_000_000_000
+            elif mutation == 'rewind':
+                row['ended_ns'] = row['started_ns'] - 1
+            elif mutation == 'cross_epoch':
+                row['started_ns'] = 0
+            else:
+                row['confirmed_inside_pressure_window'] = 1
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.analyze(value)
+
+    def test_confirmation_shape_is_bounded_before_shared_analysis(self):
+        for rows in (None, [None], [confirmation_round(0)] * 4):
+            value = report()
+            value['phases'][0]['confirmations'] = rows
+            with self.subTest(rows=rows), self.assertRaisesRegex(ValueError, 'bounded confirmation'):
+                self.analyze(value)
+
+    def test_process_memory_retains_point_and_lifetime_scope_without_request_peak(self):
+        value = report()
+        value['phases'][0]['rss'] = dict(rss_bytes=128, lifetime_peak_rss_bytes=256,
+            kernel_rusage_self_peak_rss_bytes=None,
+            scope='Linux /proc/self magic self and kernel RUSAGE_SELF; peak is whole process lifetime, '
+                  'not an isolated allocation or incremental memory bound')
+        phase = self.analyze(value)['phases'][0]
+        self.assertEqual(phase['phase_process_memory']['rss_bytes'], 128)
+        self.assertEqual(phase['phase_process_memory']['lifetime_peak_rss_bytes'], 256)
+        self.assertIsNone(phase['phase_process_memory']['kernel_rusage_self_peak_rss_bytes'])
+        self.assertFalse(phase['phase_process_memory']['per_request_peak_measured'])
+        self.assertIsNone(phase['request_peak_rss_bytes'])
+        self.assertIsNone(self.analyze()['phases'][0]['phase_process_memory'])
+        value['phases'][0]['rss']['scope'] = 'per-request exact physical peak'
+        with self.assertRaisesRegex(ValueError, 'memory scope'):
+            self.analyze(value)
+
 if __name__ == '__main__':
     unittest.main()

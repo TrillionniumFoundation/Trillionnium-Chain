@@ -2205,27 +2205,18 @@ impl Node {
         }
         progress(NativeAccountProofProgress::BeforeRead)?;
         self.namespace()?;
-        let tx = self.db.unchecked_transaction()?;
-        let read_changes = tx.total_changes();
-        self.storage_context()?;
-        let (checkpoint, _) = self.checked_account_query_checkpoint(&tx, block, progress)?;
-        let (proof, observation) =
-            multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
-                progress(NativeAccountProofProgress::Proof(point))
-                    .map_err(NativeAccountProofFailure::Control)
-            })
-            .map_err(NativeAccountProofFailure::into_error)?;
-        progress(NativeAccountProofProgress::BeforeOutput)?;
-        // A completed read has no write authority. Count same-connection row
-        // writes, including a write that a callback subsequently restores.
-        // This is a local ownership fence, not an external-writer attestation.
-        if tx.total_changes() != read_changes {
-            self.invalidate_commitment();
-            return Err(Error::from("NATIVE_ACCOUNT_PROOF_WRITE").local_integrity());
-        }
-        // Never commit a query transaction (including uncounted schema changes).
-        tx.rollback()?;
-        Ok((checkpoint, proof, observation))
+        self.with_account_query_snapshot(|db| {
+            self.storage_context()?;
+            let (checkpoint, _) = self.checked_account_query_checkpoint(db, block, progress)?;
+            let (proof, observation) =
+                multiproof::from_native_database(db, &checkpoint, owners, &|point| {
+                    progress(NativeAccountProofProgress::Proof(point))
+                        .map_err(NativeAccountProofFailure::Control)
+                })
+                .map_err(NativeAccountProofFailure::into_error)?;
+            progress(NativeAccountProofProgress::BeforeOutput)?;
+            Ok((checkpoint, proof, observation))
+        })
     }
     fn decode_replay_row(row: ReplayRow) -> Result<PeerReplayStateV0> {
         let chain = IoDigest32V0::new(bytes32(row.0)?)

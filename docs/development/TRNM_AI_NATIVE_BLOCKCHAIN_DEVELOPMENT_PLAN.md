@@ -8239,3 +8239,47 @@ the original four-second/depth-six/resource envelope, Cell shared-resource
 isolation, complete cost coverage and service acceptance remain open. No
 merge, deployment, activation or change to existing services is authorized
 by the evidence publication.
+
+
+## 2026-11-06: six-priority continuation from 630cd5ee
+
+The implementation carrying this section continues draft PR #736 from
+630cd5ee1dc3db345d0c85c5a41c427013451fb3. Exact-source native qualification is
+pending at this implementation checkpoint. Prior failed or missing observations
+remain source-specific; no production, service, whole-chain PQ or capacity gate
+is promoted.
+
+- Ordinary admission/import now reuses a completed History receipt's exact
+  non-genesis Record binding during the same publication readback. Parent,
+  complete Record/state identity, immutable Settings borrow, the original four
+  nominations, transaction/write epoch and schema fences remain bound. First
+  History/genesis validation, complete current State, graph verification,
+  final callbacks, consumed-receipt checks and write fallback remain mandatory.
+- Exported strict/pinned account queries fence transaction replacement on both
+  successful and failing exits. Real writes invalidate cached candidates even
+  when cancelled; original cancellation classification and rollback remain.
+- Resource policy r16 orders CPU starts across listeners in one bounded shared
+  queue. Registration, cancellation, timeout and metadata retirement do not
+  mint or refund CPU credit. The original global budgets and deadlines remain.
+  This is ordering of admitted work, not an independent-user or Sybil claim.
+- Public mutation checkpoints refuse CPU-refill waits while holding the Node
+  owner. Node ownership is released before the previous unlocked waiting policy
+  is restored, including detached execution and error cleanup. Existing CPU
+  measurement, sticky refusals and deterministic state commit remain.
+- Existing bounded stateless PQ preparation and the independent Cell data plane
+  retain their owners and original validation. This continuation does not
+  qualify CPU/NIC/disk isolation of large-object transfer or public PQ Submit.
+- Completed architecture reports survive their fixture's cleanup, retain the
+  original failure and reject overwrite. The chosen receipt directory is
+  exported to native children. This does not reconstruct the earlier lost
+  report or certify an unfinished/killed process's absent report.
+- The v2 business-cost reader counts unique independently confirmed transactions
+  within the original observed window, retains failed/late/unobserved attempts,
+  and labels missing pipeline CPU, network bytes and request peak memory as
+  unknown. Current launchers identify r16; historical r10-r15 sources and
+  observations keep their identities.
+
+The fixed quarter-CPU, 2-GiB, no-swap, 256-PID, four-second/depth-six service
+contract is unchanged. ACK is not confirmation. Fresh native controls, full
+source checks, strict quality gates and original hosted service observations
+must be bound to this exact candidate before any acceptance decision.

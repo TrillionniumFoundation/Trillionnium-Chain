@@ -62,6 +62,51 @@ synthetic_growth_v2_native() {
 '''
 
 
+
+class RustBaselineReceiptRetentionTests(unittest.TestCase):
+    def test_fallback_receipt_root_reaches_child_and_preserves_original_failure(self):
+        # Real shell and child environment, synthetic Cargo exit only. This is
+        # not a native service or workspace-runtime acceptance observation.
+        script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        lane = script.split('  rust-baseline)\n', 1)[1]
+        prefix = lane.split('    (\n', 1)[1].split(
+            '      unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT\n', 1)[0]
+        prelude = """set -euo pipefail
+cargo() {
+  test "$1" = test
+  command python3 - <<'PY_RECEIPT_CONTROL'
+import json
+import os
+from pathlib import Path
+root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+value = {'receipt_root': str(root), 'scope': 'synthetic shell export control only'}
+(root / 'synthetic-retention-control.json').write_text(json.dumps(value))
+print(json.dumps(value))
+PY_RECEIPT_CONTROL
+  return 101
+}
+"""
+        for explicit in (False, True):
+            with self.subTest(explicit=explicit), tempfile.TemporaryDirectory(
+                    prefix='trnm-receipt-retention-') as directory:
+                root = Path(directory)
+                env = dict(os.environ, RUNNER_TEMP=str(root / 'runner temp with spaces'))
+                env.pop('TRNM_CI_RECEIPT_DIR', None)
+                if explicit:
+                    env['TRNM_CI_RECEIPT_DIR'] = str(root / 'explicit receipts with spaces')
+                result = subprocess.run(['bash', '-c', prelude + prefix +
+                    'touch "$trnm_model_receipt_root/incorrect-success"\n'],
+                    cwd=ROOT, env=env, capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 101, result.stderr)
+                receipts = (Path(env['TRNM_CI_RECEIPT_DIR']) if explicit else
+                            next((root / 'runner temp with spaces').glob('trnm-ci-*')))
+                retained = json.loads((receipts / 'synthetic-retention-control.json').read_text())
+                self.assertEqual(retained['receipt_root'], str(receipts))
+                self.assertTrue((receipts / 'workspace-tests.log').is_file())
+                self.assertIn(str(receipts), (receipts / 'workspace-tests.log').read_text())
+                self.assertFalse((receipts / 'incorrect-success').exists())
+
+
 class InlineSourcePinTests(unittest.TestCase):
     def test_actual_workflow_guards_bind_current_bytes(self):
         self.assertGreater(check_inline_source_pins(ROOT), 0)
