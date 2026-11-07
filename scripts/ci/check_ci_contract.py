@@ -135,6 +135,8 @@ EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_eval
                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
 MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v\n')
+DEMAND_UPGRADE_CONTROLS = ('    python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v\n'
+                         '    python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v\n')
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
                          '    python3 scripts/ci/test_pon_public_v3_policy_read.py\n'
@@ -298,6 +300,8 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_python_runtime_contract.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
+    python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v
+    python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
@@ -371,6 +375,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
             'five-lane reward budget controls must execute exactly once in protocol-contract')
+    require(reward_budgets + DEMAND_UPGRADE_CONTROLS in lanes['protocol-contract'] and
+            all(script.count(command) == 1 for command in DEMAND_UPGRADE_CONTROLS.splitlines(keepends=True)),
+            'demand evidence and continuous upgrade controls must execute exactly once after reward budgets in protocol-contract')
     require(code_lines(lanes['protocol-contract']).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1
             and code_lines(script).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1,
             'GSC2 synthetic readback counterexamples must execute exactly once in protocol-contract with the current source root')
