@@ -37,6 +37,8 @@ remain false. Native export/reconciliation, funded dispute enforcement, actual
 external customers/evaluators, persistent global evidence ownership and ordinary
 Hepta installation/next-task/rollback remain acceptance gates. Existing HOLD,
 work-security, service-capacity, PQ and independent-operation decisions remain.
+The [frozen implementation evidence](../../evidence/pon-demand-evaluation-upgrade-20261107/README.md)
+retains final-source command receipts, original failures and publication tree identities.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
