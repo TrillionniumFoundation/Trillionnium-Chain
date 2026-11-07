@@ -8349,3 +8349,53 @@ at a different source SHA.
   credential, force push, merge, production activation or qualification upgrade
   was performed. All physical-cost, cheapest-attacker, real quantum execution
   and general mixed-consensus gates remain HOLD.
+
+
+### 2026-11-07 continuing public competition and paid service architectures — Draft/HOLD
+
+Continue the existing quantum component lineage from
+`b45545e241c16ebc9ea0b22d8169d78123d8d166`, preserving its exact-source records and
+all prior failures. The [finite consensus contract](../../formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md)
+now adds two source-declared public arrival schedules inside the unchanged four-second
+research window. A separate public-view producer extends real public height 16 to
+17 and 18, while the receiver interleaves those complete native packets with private
+publication. Retain every honest and private proof attempt, including misses, the
+selected tip/work after each event, and authenticated reopen. Ever replacing the
+public branch and remaining selected at the horizon are separate events.
+
+The finite action envelope explicitly admits census and future-schedule advice;
+fixed-q samples remain separately non-anticipating. Actions are non-preemptive.
+The conditional error coupling covers private-machine faults given exact public
+identities, arrivals and receiver transitions; honest-production, receiver and
+network faults remain outside it. This is a bounded conditional process, not a
+stochastic continuously interacting network theorem or a native quantum execution.
+
+The [service and reuse contract](../../formal/pon-nakamoto-v1/MACHINE_SERVICE_AND_REUSE.md)
+adds three declared reset/readout service architectures, reserving auxiliary patches,
+ports, controllers and their complete allocation time. Its new 54-cell comparison
+retains the original 18-cell report separately. External calibration records are
+checked for source/architecture/model identity, validity and artifact coverage;
+passing those checks establishes provenance and coverage only, never measured
+physical bounds. Energy, capital and compiled-controller-memory fit remain unknown.
+A bounded classical LRU campaign starts each capacity empty, uses the same nonce-major
+schedule, and rebuilds complete noise, trace, ticket and proof for every candidate.
+Native proof byte identity, independent relation checks, failed attempts, evictions,
+cache payload and separately measured observer overhead remain explicit.
+
+Repair both retained M15 regression causes without relaxing release authorization
+or object identity: decode canonical v1 JSON role names through tagged replay while
+rejecting duplicate/alias keys; publish sealed objects using a same-number read-only
+descriptor while preserving timestamp, inode, seal and content checks. Stored v1
+bytes and signing domains are unchanged. New controls preserve real dual-quorum
+replay and reject successful metadata changes. Native rerun results are pending at
+this source preparation entry and must be attached with their actual frozen SHA.
+
+CI retains all original commands and adds six Python control suites, two explicit
+ignored native competition tests and exact named-test checks, plus fresh service
+and cache observations with the flushed stage journal. No original consensus rule,
+work weight, difficulty, resource budget or production qualification is changed.
+Development disk-full failures and their verified restorations remain evidence;
+complete frozen source checks run on a fully materialized checkout. Publication
+uses the user-authorized existing HeptaRuntime local GitHub channel, preserves the
+old connector failure, and requires exact object/ref readback with no force update.
+All four general safety gates remain HOLD until their missing evidence is supplied.

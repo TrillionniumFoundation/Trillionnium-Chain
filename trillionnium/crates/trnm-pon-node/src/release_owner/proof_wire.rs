@@ -1,6 +1,7 @@
 //! Exact typed M15 proofs. Candidate input cannot choose an observation time.
 use super::frontier::{invalid, Digest32, Result};
-use serde::{Deserialize, Serialize};
+use serde::de::{self, MapAccess, Visitor};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::BTreeMap;
 use std::io;
 use trnm_protocol::pq_frame::ML_DSA_65_SIGNATURE_BYTES;
@@ -54,6 +55,47 @@ pub(super) fn role(value: u8) -> Result<PqReleaseRoleV1> {
     }
 }
 
+// JSON emits integer map keys as strings. An internally tagged Publication or
+// Record buffers them through Serde's ContentDeserializer, which cannot apply
+// serde_json's usual string-to-integer map-key conversion. Decode the existing
+// canonical v1 names explicitly; never round-trip through Value (which would
+// discard duplicate keys). Serialization and signed/root bytes stay unchanged.
+fn deserialize_roles<'de, D>(deserializer: D) -> std::result::Result<BTreeMap<u8, Keys>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct Roles;
+    impl<'de> Visitor<'de> for Roles {
+        type Value = BTreeMap<u8, Keys>;
+
+        fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            formatter.write_str("canonical M15 role names 1, 2, 3 and 4")
+        }
+
+        fn visit_map<A>(self, mut map: A) -> std::result::Result<Self::Value, A::Error>
+        where
+            A: MapAccess<'de>,
+        {
+            let mut roles = BTreeMap::new();
+            while let Some(name) = map.next_key::<String>()? {
+                let id = match name.as_str() {
+                    "1" => 1,
+                    "2" => 2,
+                    "3" => 3,
+                    "4" => 4,
+                    _ => return Err(de::Error::custom("M15 noncanonical or unknown role name")),
+                };
+                if roles.contains_key(&id) {
+                    return Err(de::Error::custom("M15 duplicate role name"));
+                }
+                roles.insert(id, map.next_value::<Keys>()?);
+            }
+            Ok(roles)
+        }
+    }
+    deserializer.deserialize_map(Roles)
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct Root {
@@ -63,6 +105,7 @@ pub(super) struct Root {
     pub expires_at: u64,
     pub previous_root_digest: Digest32,
     pub offline_root: Keys,
+    #[serde(deserialize_with = "deserialize_roles")]
     pub roles: BTreeMap<u8, Keys>,
 }
 

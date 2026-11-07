@@ -1,6 +1,8 @@
 //! Explicit research harness: real PNW1/Node execution, conditional model clocks.
 //! The offline DAG census and prefix are retained advice, not free online mining.
 //! Neither these tests nor a selected q=0 path execute quantum hardware.
+mod competition;
+
 use crate::{consensus, development_public, maintenance, Node, Packet, Settings};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};

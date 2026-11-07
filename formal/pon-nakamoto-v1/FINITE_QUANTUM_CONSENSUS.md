@@ -177,6 +177,103 @@ calibration, compiled fault-tolerant implementation, energy/economic cost model,
 or a proof about arbitrary network behavior. The probability calculation is
 exact for the declared finite process, not for unmeasured hardware.
 
+## Continuing public-branch extension
+
+The separately versioned [competition model](w1_competing_consensus.py) and
+[native competition bridge](experiments/w1_native_competition.py) retain the v1
+fixed-tip records and add a finite continuing-public-branch experiment. They do
+not reinterpret an old fixed-tip certificate as one covering future mining.
+
+The native exporter produces two complete additional public blocks, at heights
+17 and 18, from the already admitted public height-16 tip. Its producer has an
+explicit **isolated public view**: private publication is not delivered to that
+producer before the four-second horizon. It follows its own admitted tip. This
+is a declared network-view condition, not a claim that an honest miner ignores
+a better branch it has received. The receiver is a separate authenticated Node
+and processes the public and private packets in the declared event order.
+
+Two schedules are fixed in source before those honest packets are generated:
+
+| Schedule | Public height 17 arrives | Public height 18 arrives |
+| --- | ---: | ---: |
+| `honest-before-private-publication` | 1 second | 3 seconds |
+| `honest-after-private-publication` | 2.5 seconds | 3.5 seconds |
+
+These are exact conditional arrival times. Actual CPU production clocks do not
+calibrate them. Every honest proof attempt, including target misses, is retained
+in a packet and an append-only JSONL ledger before the next attempt. The first
+successful nonce ends the bounded search; exhaustion leaves its attempts in the
+ledger and fails the experiment. Each native replay uses a fresh public producer
+and regenerates all its attempts. The reader scalar-replays the complete product
+and transcript even when the target test fails, and checks a bijection between
+the fixture attempts and the retained ledger. Stage timings, history replay and
+later evidence serialization have explicit cost scopes.
+
+The private nonce window, seed 9, at most two attempts, four-second deadline,
+proof/propagation charges and quantum lifecycle parameters are unchanged. The
+fixed policy reads the public work that has already arrived; it does not inspect
+future arrival times, the census or Bellman values when choosing an action.
+The action envelope can also wait for the next public arrival. It still permits
+only one terminal private-bundle publication. The public event stream continues
+through the horizon after the private miner stops, fails or publishes.
+The optimizing envelope sees both the census and the complete future public
+schedule, including block identities. Its value is a conditional clairvoyant
+envelope within the declared action class, not the value of a non-anticipating
+network miner. The separately sampled fixed policy does not use that advice.
+Private actions are non-preemptive. Search including any winning proof, and
+propagation, complete or meet the unchanged horizon before another private
+decision. Public arrivals during an action update the receiver on schedule and
+are visible at the next private decision. Mid-action measurement, abort/restart
+and switching to mine the public branch are outside this finite action class.
+
+The certificate separately evaluates two indicators:
+
+1. **Ever private replacement:** a complete private publication makes the receiver
+   select the divergent private branch at least once before the horizon.
+2. **Private active at horizon:** the receiver still selects that private branch
+   after every declared public arrival through the horizon.
+
+At equal exact times, public arrivals precede private-bundle admissions; within
+each branch, parents precede children. Every admission uses strictly greater
+native cumulative work. Equal work preserves the already selected tip, including
+a private tip selected earlier. The native replay checks every intermediate tip
+and work value, not just a terminal boolean, and reopens the authenticated
+receiver to verify its retained packets and selected state.
+
+Conditioned on this public schedule, its authenticated block identities and its
+isolated-view premise, receiver selection is a deterministic function of the
+private trajectory. The same finite graph induction above therefore applies to
+either event indicator. Exact public-event times do not reset attempt counts,
+and waits strictly advance time, so the graph remains acyclic. The independent
+checker regenerates every event and transition and checks fixed policies by
+forward probability flow. An incomplete graph again yields no bound.
+
+The private-machine coupling statement also remains conditional on the external
+public process being exactly as declared. The private fault union does **not**
+bound honest production faults, receiver service failures or uncertain network
+delays. Consequently `whole_network_machine_error_bound_composed=false` and
+`stochastic_continuing_honest_mining_covered=false` remain explicit. This finite
+schedule does not cover reactive globally informed honest miners, arbitrary
+timestamp strategies, arbitrary quantum algorithms, long DAA trajectories or
+settlement security. A temporary replacement alone cannot close those gates.
+
+After exporting the base native DAG into a fresh observation directory, the new
+sequence is:
+
+```bash
+cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture -- --exact --ignored --nocapture --test-threads=1
+python3 formal/pon-nakamoto-v1/experiments/w1_native_competition.py --observe "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples -- --exact --ignored --nocapture --test-threads=1
+```
+
+Both native tests must actually execute. A compilation result or default ignored
+test count is not a replay result. The native verifier holds the original raw
+input bytes before calling Python, binds the returned receipt to those bytes
+and the Python source/runtime, then checks inputs and consumed packet/ledger
+hashes again after replay. The two seeded implementations and observer-selected
+private-path controls are separately labelled, including an unsuccessful
+observer publication. No CPU replay is labelled QPU execution.
+
 ## Relation to primary literature
 
 [Cojocaru, Garay and Song, ASIACRYPT 2024](https://doi.org/10.1007/978-981-96-0947-5_3)

@@ -570,7 +570,16 @@ def analyze_finite_consensus(fixture, classical_costs, physical_model, physical_
     parameters = _parameters(classical_costs, physical_model, physical_qubit_budget, horizon_seconds,
                              iterations, max_attempts, predicate, max_states, lifecycle_model, execution_kind)
     model = FiniteModel(fixture, parameters)
-    report = _header(model, fixture)
+    return _analyze_model(model, _header(model, fixture), _fixed_action, _source_hashes)
+
+
+def _analyze_model(model, report, fixed_action, source_hashes, *, risk_bounds=None):
+    """Shared finite graph writer; callers supply versioned, closed semantics.
+
+    The independent checker below never invokes this optimizer. The v1 fixed
+    public-tip API retains its original semantics and output fields.
+    """
+    risk_bounds = _machine_risk if risk_bounds is None else risk_bounds
     nodes, values, visiting = {}, {}, set()
     edge_count = 0
 
@@ -620,7 +629,7 @@ def analyze_finite_consensus(fixture, classical_costs, physical_model, physical_
         def evaluate(state):
             key = digest(state)
             if key not in cache:
-                action = _fixed_action(model, state, count)
+                action = fixed_action(model, state, count)
                 edges = model.transition(state, action)
                 cache[key] = sum((rational(edge["probability"]) * (Fraction(edge["terminal_risk"])
                     if edge["next_state"] is None else evaluate(edge["next_state"])) for edge in edges), Fraction(0))
@@ -645,8 +654,8 @@ def analyze_finite_consensus(fixture, classical_costs, physical_model, physical_
                     "trajectory": trajectory, "sampled_execution": False}
     report.update(status="COMPLETE", state_count=len(nodes), nodes=nodes, risk_upper=ratio(maximum),
                   fixed_policy_risks=fixed, positive_path=positive, finite_model_certificate_complete=True)
-    report["conditional_machine_risk_bounds"] = _machine_risk(model, maximum, fixed)
-    require(_source_hashes() == model.source_hashes, "FINITE_SOURCE_CHANGED")
+    report["conditional_machine_risk_bounds"] = risk_bounds(model, maximum, fixed)
+    require(source_hashes() == model.source_hashes, "FINITE_SOURCE_CHANGED")
     report["certificate_sha256"] = digest(report)
     return report
 
@@ -669,12 +678,13 @@ def _machine_risk(model, maximum, fixed):
             "hardware_calibration_or_network_security_claimed": False}
 
 
-def _check_certificate(record, model, fixture):
+def _check_certificate(record, model, fixture, *, header=None, fixed_action=_fixed_action, risk_bounds=None):
     """Check coverage, kernels and Bellman inequalities without invoking solve()."""
-    require(type(record) is dict and record.get("schema") == SCHEMA, "FINITE_CERTIFICATE_SCHEMA")
+    header = _header(model, fixture) if header is None else header
+    risk_bounds = _machine_risk if risk_bounds is None else risk_bounds
+    require(type(record) is dict and record.get("schema") == header["schema"], "FINITE_CERTIFICATE_SCHEMA")
     without_hash = {key: value for key, value in record.items() if key != "certificate_sha256"}
     require(record.get("certificate_sha256") == digest(without_hash), "FINITE_CERTIFICATE_DIGEST")
-    header = _header(model, fixture)
     fields = {"certificate_sha256", "status", "state_count", "nodes", "risk_upper",
               "fixed_policy_risks", "positive_path", "finite_model_certificate_complete", "conditional_machine_risk_bounds"}
     if record.get("status") == "INCOMPLETE":
@@ -740,7 +750,7 @@ def _check_certificate(record, model, fixture):
     require(reachable == set(nodes), "CERTIFICATE_UNREACHABLE_STATES")
     require(record["risk_upper"] == nodes[digest(model.initial())]["value"], "CERTIFICATE_INITIAL_VALUE")
     require(canonical(record["conditional_machine_risk_bounds"]) == canonical(
-        _machine_risk(model, rational(record["risk_upper"]), record["fixed_policy_risks"])), "FINITE_MACHINE_COUPLING_BOUND")
+        risk_bounds(model, rational(record["risk_upper"]), record["fixed_policy_risks"])), "FINITE_MACHINE_COUPLING_BOUND")
     # Check each fixed policy independently by forward probability flow, rather
     # than reusing the generator's recursive value calculation.
     require(type(record["fixed_policy_risks"]) is dict
@@ -753,7 +763,7 @@ def _check_certificate(record, model, fixture):
             if not mass:
                 continue
             state = nodes[key]["state"]
-            action = _fixed_action(model, state, count)
+            action = fixed_action(model, state, count)
             for edge in model.transition(state, action):
                 amount = mass * rational(edge["probability"])
                 if edge["next_state"] is None:
@@ -797,10 +807,15 @@ def sample_finite_policy(record, fixture, *, iterations=0, seed=9):
     integer(iterations, "FINITE_SAMPLE_ITERATIONS", 0, MAX_EXACT_ITERATIONS)
     model = FiniteModel(fixture, record["parameters"])
     _check_certificate(record, model, fixture)
+    return _sample_model(record, model, iterations, seed, _fixed_action, _source_hashes)
+
+
+def _sample_model(record, model, iterations, seed, fixed_action, source_hashes):
+    """Sample an already independently checked closed model without its values."""
     require(record["status"] == "COMPLETE" and iterations in model.iterations, "FINITE_SAMPLE_POLICY")
     rng, state, trajectory = random.Random(seed), model.initial(), []
     while True:
-        action = _fixed_action(model, state, iterations)
+        action = fixed_action(model, state, iterations)
         edges = model.transition(state, action)
         denominator = lcm(*(rational(edge["probability"]).denominator for edge in edges))
         draw, running, selected = rng.randrange(denominator), 0, None
@@ -815,7 +830,7 @@ def sample_finite_policy(record, fixture, *, iterations=0, seed=9):
             break
         state = selected["next_state"]
     observation = selected["observation"]
-    require(_source_hashes() == model.source_hashes, "FINITE_SOURCE_CHANGED")
+    require(source_hashes() == model.source_hashes, "FINITE_SOURCE_CHANGED")
     return {"schema": "trnm-w1-finite-fixed-policy-sample-v1", "certificate_sha256": record["certificate_sha256"],
             "fixture_sha256": model.fixture_hash, "seed": seed, "iterations": iterations,
             "clock_model": record["scope"]["clock_model"],

@@ -163,6 +163,12 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             ("formal/pon-nakamoto-v1", "test_w1_finite_consensus.py"),
             ("formal/pon-nakamoto-v1/experiments", "test_w1_native_bridge.py"),
             ("formal/pon-nakamoto-v1/experiments", "test_w1_machine_frontier.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_competing_consensus.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_machine_architecture.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_preprocessing_cache.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_native_competition.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_service_architecture_frontier.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_preprocessing_cache_campaign.py"),
         )
         commands = [f"    python3 -m unittest discover -s {directory} -p '{name}' -v\n"
                     for directory, name in entries]
@@ -178,7 +184,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 with self.subTest(command=command), self.assertRaisesRegex(ValueError, 'four-gate W1'):
                     check_independent_conformance(changed, self.lanes)
 
-    def test_native_quantum_bridge_must_run_and_check_both_ignored_native_tests(self):
+    def test_native_quantum_bridge_must_run_and_check_all_four_ignored_native_tests(self):
         self.assertEqual(self.script.count(NATIVE_QUANTUM_BRIDGE), 1)
         for line in NATIVE_QUANTUM_BRIDGE.splitlines(keepends=True):
             with self.subTest(line=line):

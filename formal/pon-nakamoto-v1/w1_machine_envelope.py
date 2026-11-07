@@ -42,6 +42,7 @@ from w1_search_probability import (ProbabilityInterval, ProbabilityTrial,
                                     schedule_success_bounds)
 
 SCHEMA = "trnm-w1-machine-lifecycle-envelope-v1"
+RESERVED_SERVICE_SCHEMA = "trnm-w1-machine-reserved-service-envelope-v2"
 NOISE_CONTRACT = "history-conditional-fault-events-and-ideal-no-fault-coupling-v1"
 ROOT = Path(__file__).resolve().parents[2]
 SOURCES = CONSTRUCTED_SOURCES + (
@@ -282,17 +283,30 @@ def _time_round(row, model, distance):
 
 def build_machine_envelope(domains, schedule, processors, classical_costs, physical_model,
                             lifecycle_model, physical_qubit_budget, horizon_seconds,
-                            *, predicate="full", reserved_maximum_winners=1):
-    """Replay literal inputs and construct the complete declared lifecycle ledger."""
+                            *, predicate="full", reserved_maximum_winners=1,
+                            reserved_service_patches_per_processor=None):
+    """Replay literal inputs and construct the complete declared lifecycle ledger.
+
+    The optional v2 allocation reserves extra logical patches for an explicitly
+    declared physical service architecture. They are initialized each trial and
+    charged throughout every quantum phase, including controller waits, before
+    selecting the common distance. Their clock/error service is a caller premise,
+    not a compiled layout. Omitting this option preserves the original v1 shape;
+    even an explicit zero allocation uses the new v2 namespace.
+    """
     _validate(domains, schedule, processors, classical_costs, physical_model, lifecycle_model,
               physical_qubit_budget, predicate, horizon_seconds, reserved_maximum_winners)
+    reserved = reserved_service_patches_per_processor
+    if reserved is not None:
+        integer(reserved, "MACHINE_RESERVED_SERVICE_PATCHES", 0, 10**12)
     sources = _sources()
     checked = tuple(replay_domain(domain) for domain in domains)
     model, lifecycle = physical_model, lifecycle_model
     rows = _resource_rows(checked, processors, classical_costs, model, predicate)
     for row in rows:
         row["factory_t_cycles_per_distance"] = model.factory_t_cycles_per_distance
-    peak = max(row["logical_qubits"] for row in rows)
+    oracle_peak = max(row["logical_qubits"] for row in rows)
+    peak = bounded(oracle_peak + (0 if reserved is None else reserved))
     rounds = _planned_rounds(rows, schedule, processors, classical_costs, lifecycle, peak)
     events = {
         "initialization_patches": bounded(processors * peak * len(schedule)),
@@ -357,7 +371,7 @@ def build_machine_envelope(domains, schedule, processors, classical_costs, physi
     bounds = ideal["delivery_probability"]
     interval = ProbabilityInterval(Fraction(**bounds["lower"]), Fraction(**bounds["upper"]))
     record = {
-        "schema": SCHEMA, "source_sha256": sources,
+        "schema": SCHEMA if reserved is None else RESERVED_SERVICE_SCHEMA, "source_sha256": sources,
         "premises": {"schedule": [list(entry) for entry in schedule], "processors": processors,
                      "predicate": predicate, "classical_costs_ns": [asdict(costs) for costs in classical_costs],
                      "physical_model": asdict(model), "lifecycle_model": asdict(lifecycle),
@@ -411,6 +425,21 @@ def build_machine_envelope(domains, schedule, processors, classical_costs, physi
         "quantum_mining_qualified": False,
         "production_activation": False,
     }
+    if reserved is not None:
+        record["premises"]["reserved_service_patches_per_processor"] = reserved
+        record["envelope"].update({
+            "oracle_logical_patches_per_processor": oracle_peak,
+            "service_logical_patches_per_processor": reserved,
+            "oracle_data_physical_qubits_per_processor": bounded(
+                oracle_peak * model.data_physical_qubits_per_d2 * distance**2),
+            "service_physical_qubits_per_processor": bounded(
+                reserved * model.data_physical_qubits_per_d2 * distance**2),
+            "service_patches_initialized_and_charged_as_live_data": True,
+        })
+        record["assumptions"]["reserved_services"] = (
+            "all declared auxiliary service patches add to the peak width, per-trial initialization, "
+            "physical allocation and history-conditional live-patch fault union; service latency and "
+            "error contracts must cover their actual use; neither their layout nor controller is compiled")
     if _sources() != sources:
         raise ValueError("MACHINE_SOURCE_CHANGED")
     record["record_sha256"] = _hash(record)
@@ -427,7 +456,8 @@ def machine_action_clock(verified_record, domain_index, iterations, *, resident_
     prove that their cumulative event counts, template transfers, attempts and
     proofs/propagations are dominated by the full predeclared envelope.
     """
-    if type(verified_record) is not dict or verified_record.get("schema") != SCHEMA:
+    if (type(verified_record) is not dict
+            or verified_record.get("schema") not in (SCHEMA, RESERVED_SERVICE_SCHEMA)):
         raise ValueError("MACHINE_ACTION_RECORD")
     record = verified_record
     if (record.get("source_sha256") != _sources()
@@ -458,11 +488,18 @@ def machine_action_clock(verified_record, domain_index, iterations, *, resident_
 
 def verify_machine_envelope(record, domains):
     """Rebuild all source, census, circuit, event, clock and probability fields."""
-    if type(record) is not dict or record.get("schema") != SCHEMA:
+    if type(record) is not dict or record.get("schema") not in (SCHEMA, RESERVED_SERVICE_SCHEMA):
         raise ValueError("MACHINE_RECORD")
     premises = record.get("premises")
     keys = {"schedule", "processors", "predicate", "classical_costs_ns", "physical_model",
             "lifecycle_model", "physical_qubit_budget", "horizon_seconds", "reserved_maximum_winners"}
+    reserved = None
+    if record["schema"] == RESERVED_SERVICE_SCHEMA:
+        keys.add("reserved_service_patches_per_processor")
+        if type(premises) is not dict:
+            raise ValueError("MACHINE_PREMISES")
+        reserved = premises.get("reserved_service_patches_per_processor")
+        integer(reserved, "MACHINE_RESERVED_SERVICE_PATCHES", 0, 10**12)
     if type(premises) is not dict or set(premises) != keys:
         raise ValueError("MACHINE_PREMISES")
     schedule, costs = premises["schedule"], premises["classical_costs_ns"]
@@ -480,7 +517,8 @@ def verify_machine_envelope(record, domains):
         tuple(ClassicalCosts(**value) for value in costs), PhysicalModel(**premises["physical_model"]),
         LifecycleModel(**premises["lifecycle_model"]), premises["physical_qubit_budget"],
         premises["horizon_seconds"], predicate=premises["predicate"],
-        reserved_maximum_winners=premises["reserved_maximum_winners"])
+        reserved_maximum_winners=premises["reserved_maximum_winners"],
+        reserved_service_patches_per_processor=reserved)
     if canonical(record) != canonical(rebuilt):
         raise ValueError("MACHINE_REPLAY_MISMATCH")
     return rebuilt

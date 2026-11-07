@@ -172,6 +172,12 @@ FOUR_GATE_W1_COMMANDS = (
     "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_native_bridge.py' -v",
     "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_machine_frontier.py' -v",
     "python3 scripts/ci/test_pon_w1_observed_economics_v1.py",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_competing_consensus.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_machine_architecture.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_preprocessing_cache.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_native_competition.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_service_architecture_frontier.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_preprocessing_cache_campaign.py' -v",
 )
 NATIVE_QUANTUM_BRIDGE = '''      export TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR="$trnm_model_receipt_root/w1-quantum-native-bridge"
       test ! -e "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
@@ -185,6 +191,19 @@ NATIVE_QUANTUM_BRIDGE = '''      export TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR="$trn
       test ! -L "$trnm_model_receipt_root/w1-quantum-native-replay.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::replay_source_bound_native_search_samples -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-native-replay.log"
       python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-native-replay.log" --test quantum_native_bridge_tests::replay_source_bound_native_search_samples
+      test ! -e "$trnm_model_receipt_root/w1-quantum-competition-export.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-competition-export.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-competition-export.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-competition-export.log" --test quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_competition.py --observe "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-competition-replay.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-competition-replay.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-competition-replay.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-competition-replay.log" --test quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_competition.py --verify "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      python3 formal/pon-nakamoto-v1/experiments/w1_service_architecture_frontier.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --output "$trnm_model_receipt_root/w1-service-architecture-frontier.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_cache_campaign.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --observe "$trnm_model_receipt_root/w1-preprocessing-cache-campaign.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_cache_campaign.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --verify "$trnm_model_receipt_root/w1-preprocessing-cache-campaign.json"
       unset TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR
 '''
 LLM_RUNTIME_TESTS = (
@@ -421,7 +440,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             and script.count(NATIVE_QUANTUM_BRIDGE) == 1
             and all(code_lines(script).count(command) == 1
                     for command in code_lines(NATIVE_QUANTUM_BRIDGE)),
-            'native quantum bridge must explicitly execute both ignored controls and check their exact names')
+            'native quantum bridge must explicitly execute all four ignored controls and check their exact names')
     runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1
