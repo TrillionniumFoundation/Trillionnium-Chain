@@ -27,6 +27,8 @@
   "right": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
   "right_pins": 558,
   "source_base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "subsequent_merge_commit": "276a1e26f1989aef4b3d75263ff5b55e073b46e9",
+  "subsequent_merge_tree": "d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56",
   "subsequent_target": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
   "subsequent_target_pin_changes": [],
   "whole_chain_pq_qualified": false

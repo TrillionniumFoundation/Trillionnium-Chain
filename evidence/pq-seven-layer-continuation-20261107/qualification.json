@@ -398,8 +398,38 @@
     "runtime_and_formal_subtrees_byte_identical_to_tested_source": true
   },
   "publication_source_validation": {
-    "scope": "source-only; no later native execution is inferred",
-    "status": "not_yet_executed_in_this_commit"
+    "cargo_exit": 101,
+    "compiler_termination": "SIGKILL 9",
+    "failed_command": "strict-clippy",
+    "graphs": {
+      "all_features_workspace": {
+        "packages": 181,
+        "resolved_nodes": 181,
+        "workspace_members": 26
+      },
+      "default_workspace": {
+        "packages": 176,
+        "resolved_nodes": 176,
+        "workspace_members": 26
+      },
+      "standalone_primitive_analysis": {
+        "packages": 12,
+        "resolved_nodes": 12,
+        "workspace_members": 1
+      }
+    },
+    "native_observations_relabelled": false,
+    "new_native_execution": false,
+    "receipt": "publication-source/receipt.json",
+    "source_commands": 13,
+    "source_unittest_cases": 270,
+    "status": "SOURCE_PASS_STATIC_FAILURE",
+    "supplementary_failed": 1,
+    "supplementary_static_commands": 3,
+    "supplementary_succeeded": 2,
+    "termination_cause": "UNATTRIBUTED",
+    "tested_commit": "276a1e26f1989aef4b3d75263ff5b55e073b46e9",
+    "tested_tree": "d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56"
   },
   "quantum_mining_security_qualified": false,
   "quantum_phase": {
@@ -534,7 +564,8 @@
       "evidence/codeql-standalone-lock-20261107/validation.json",
       "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock"
     ],
-    "containing_commit": "recorded by Git; exact source-only receipt follows creation",
+    "containing_commit": "276a1e26f1989aef4b3d75263ff5b55e073b46e9",
+    "containing_tree": "d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56",
     "left_parent": "d1e6e279593b63049f538af081b0c0757a4f4506",
     "original_native_execution_relabelled": false,
     "right_parent": "adebe0bd78e6e1bdb55a599179ffe2313997170e",

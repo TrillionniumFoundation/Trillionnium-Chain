@@ -8378,3 +8378,20 @@ a new standalone primitive-harness Cargo lock and two explanatory evidence
 files. Its old harness inputs, campaign archive and qualification limits remain
 unchanged. No runtime/formal source or corpus pin changes again. Fresh final
 source-only checks remain required; e36 native execution is not relabelled.
+
+
+#### Final composed-source checks completed
+
+The exact `276a1e26f1989aef4b3d75263ff5b55e073b46e9` / tree
+`d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56` composition completed all thirteen
+source commands and 270 Python cases. Two supplementary metadata commands pass:
+the new standalone 12-package graph and workspace all-features 181-package graph.
+The separate strict workspace/all-target/all-feature Clippy attempt fails with
+Cargo exit 101 after compiler SIGKILL 9; cause remains UNATTRIBUTED, with no retry
+or inferred OOM/disk cause. The earlier e36 Clippy pass keeps its source scope.
+Default graph remains 176;
+both workspace graphs have 26 members. All sixteen source-before/after records
+bind 11,064 tracked entries / 1,114,540,546 bytes. The [source receipt and raw logs](../../evidence/pq-seven-layer-continuation-20261107/publication-source/README.md)
+remain distinct from e36 native execution and its failed terminal disposition.
+Runtime and formal subtree objects match e36 exactly; this evidence-only update
+does not create a new native run, PQ-128 qualification or production activation.

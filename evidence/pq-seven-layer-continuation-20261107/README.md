@@ -19,7 +19,7 @@ remains the plan; this directory is an evidence record.
 | Concurrent integration target | `3d1b6507671ec694ce58e86d4063a125c8deeb66` advances the reviewed `271a87f831aa7e08f3c2024f738504c1422122dd` by adding a CodeQL worktree-observation block and three historical evidence files, with no runtime-source change in that advance. Neither target is the frozen e36 validation source. |
 | Reviewed CodeQL compositions | The first two-file candidate and its 11-control result remain immutable evidence. The second candidate preserves the new target's exact observation block and adds one real-Git dirty-path control, for 12 controls. Both are separate from the four CodeQL controls included in the e36 source phase. |
 | CI policy and evidence merge | `d1e6e279593b63049f538af081b0c0757a4f4506` composes e36 with `3d1b6507671ec694ce58e86d4063a125c8deeb66`. Its Rust and formal subtrees remain byte-identical to e36. |
-| Subsequent analysis-input composition | The containing merge additionally preserves `adebe0bd78e6e1bdb55a599179ffe2313997170e`, which adds a standalone analysis lock and two explanatory evidence files. No runtime/formal source or pinned path changes again. The exact final code identity and source-only observations follow in a separate evidence increment; no native execution is relabelled. |
+| Subsequent analysis-input composition | `276a1e26f1989aef4b3d75263ff5b55e073b46e9` / tree `d2a3d83d2800c8e0829e3a951cb2f0f6aa233e56` additionally preserves `adebe0bd78e6e1bdb55a599179ffe2313997170e`. Its 13 source commands / 270 cases and two supplementary metadata commands pass; the separate Clippy attempt fails with compiler SIGKILL. Rust/formal subtrees remain identical to e36; no native execution is relabelled. |
 
 ## Updated seven-layer audit
 
@@ -242,10 +242,27 @@ adds a standalone primitive-harness Cargo lock and two evidence files. The
 historical five-file harness manifest and campaign archive remain unchanged;
 the new lock is subsequent analysis input, not recovered historical CI output.
 This composition preserves those exact files without changing the CodeQL source
-guard or any runtime/formal source. Its recorded twelve-package dependency
-check belongs to that upstream observation until separately executed here.
+guard or any runtime/formal source. The final composition separately executed the twelve-package locked/offline
+metadata check and preserved its own before/after source records.
+
+## Final composition source checks
+
+The [final source/static receipt](publication-source/README.md) binds the exact
+`276a1e26f1989aef4b3d75263ff5b55e073b46e9` composition: **13/13 source commands,
+270 Python cases, and 2/2 supplementary graph commands passed**. The additional
+strict Clippy command failed with Cargo exit 101 after compiler SIGKILL 9, cause
+unattributed; it was not retried. Every command, including that failed attempt,
+retained identical before/after source records. The new CodeQL suite has
+twelve cases; the earlier e36 262-case result keeps its separate source identity.
+The full Node result above remains e36 execution and FAIL. The containing
+evidence-only publication adds no native execution or security qualification.
 
 ## Sealed evidence and readback
+
+- [publication-source/receipt.json](publication-source/receipt.json) and its
+  [independent readback](publication-source/independent-readback.json) retain the
+  final source/static checks and exact source composition. Its separate archive
+  leaves the original four sealed archives below unchanged.
 
 - [qualification.json](qualification.json) records the source-scoped HOLD,
   exact command outcomes, failure/ignored boundaries and publication mapping.
