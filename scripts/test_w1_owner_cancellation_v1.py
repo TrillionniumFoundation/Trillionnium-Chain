@@ -1,11 +1,41 @@
 """Bounded owner-cancel contract controls. No proof/funding/cgroup kill is run."""
 import json
+import copy
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import w1_owner_cancellation_v1 as cancel
+import w1_owned_generation_runtime_v2 as runtime
+import w1_generation_target_v2 as target
+import test_w1_generation_target_v2 as target_controls
+
+
+def request_fixture(root):
+    """Synthetic funded-intent record only; no Node, M12 or cgroup execution."""
+    request = target_controls.add_339_real_file_pins(target_controls.short_process_request(root), root)
+    group = root / "synthetic-cgroup-readback"
+    group.mkdir()
+    (group / "cgroup.controllers").write_text("cpu memory\n")
+    request.update(containment="cgroup-v2", cgroup_parent=str(group))
+    c = {"provider_operation": request["operation"], "target_instance": request["target_instance"],
+         "original_deadline_ns": request["deadline_monotonic_ns"], "out": str(root),
+         "target": {"path": str(Path(target.__file__).resolve()), "sha256": target.file_sha(target.__file__)}}
+    config_path = root / "config.json"
+    config_path.write_bytes(runtime.canonical(c))
+    c["_config_path"] = str(config_path)
+    request["execution_source_commitment"] = runtime.sha(config_path)
+    normalized = {key: value for key, value in request.items() if key != "statement"}
+    funded = {"schema": "TRNM-W1-FUNDED-DISPATCH2", "provider_operation": request["operation"],
+              "statement": request["statement"], "original_deadline_ns": request["deadline_monotonic_ns"],
+              "winner_monotonic_ns": request["winner_monotonic_ns"],
+              "target_request_sha256": target.sha(target.canonical(request)),
+              "normalized_request_digest": target.sha(target.canonical(normalized))}
+    (root / "native-funded-intent.json").write_bytes(runtime.canonical(funded))
+    path = root / "request.json"
+    path.write_text(json.dumps(request, indent=2), encoding="utf-8")
+    return c, request, funded, path
 
 
 class OwnerCancellationTests(unittest.TestCase):
@@ -95,6 +125,63 @@ class OwnerCancellationTests(unittest.TestCase):
         self.assertFalse(state["wait_reaped"])
         with patch.object(Path, "read_text", side_effect=FileNotFoundError()):
             self.assertIsNone(cancel.process_state(target, selected)["wait_reaped"])
+
+    def test_original_large_request_uses_common_loader_and_keeps_exact_bindings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            c, request, funded, path = request_fixture(root)
+            self.assertGreater(path.stat().st_size, 65536)
+            self.assertGreater(len(target.canonical(request)), 65536)
+            with patch.object(target, "load_request", wraps=target.load_request) as loader:
+                actual = cancel.original_request(runtime, target, c, path, check_clock=True)
+                self.assertEqual(actual, request)
+                loader.assert_called_once_with(path, c["target_instance"], check_clock=True)
+            for key, replacement in (("schema", "v3"), ("operation", "fe" * 32),
+                                     ("target_instance", "replacement-target"), ("statement", "fa" * 32),
+                                     ("deadline_monotonic_ns", c["original_deadline_ns"] + 1),
+                                     ("target_backend_sha256", "fb" * 32),
+                                     ("execution_source_commitment", "fc" * 32)):
+                changed = copy.deepcopy(request)
+                changed[key] = replacement
+                path.write_bytes(target.canonical(changed))
+                with self.subTest(field=key), self.assertRaises(ValueError):
+                    cancel.original_request(runtime, target, c, path)
+            path.write_bytes(target.canonical(request))
+            for key in ("statement", "normalized_request_digest", "target_request_sha256", "provider_operation"):
+                changed = copy.deepcopy(funded)
+                changed[key] = "ff" * 32
+                (root / "native-funded-intent.json").write_bytes(runtime.canonical(changed))
+                with self.subTest(intent_field=key), self.assertRaisesRegex(ValueError, "funded statement/request"):
+                    cancel.original_request(runtime, target, c, path)
+            (root / "native-funded-intent.json").write_bytes(runtime.canonical(funded))
+            with Path(c["_config_path"]).open("ab") as stream:
+                stream.write(b" ")
+            with self.assertRaisesRegex(ValueError, "original config changed"):
+                cancel.original_request(runtime, target, c, path)
+            self.assertFalse((root / "invocations").exists())
+
+    def test_request_loader_refuses_ambiguity_but_reconcile_keeps_original_expired_clock(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            c, request, _, path = request_fixture(root)
+            with patch.object(target.time, "monotonic_ns", return_value=c["original_deadline_ns"] + 1):
+                self.assertEqual(cancel.original_request(runtime, target, c, path), request)
+                with self.assertRaisesRegex(ValueError, "original deadline expired"):
+                    cancel.original_request(runtime, target, c, path, check_clock=True)
+            # Only the input-reader boundary is exercised, never a cold owner
+            # operation or a claim that a fabricated cgroup has been reclaimed.
+            for raw in (b' ' * (target.MAX_REQUEST + 1), b'{"nested":{"k":1,"k":2}}',
+                        b'{"nested":[1e999]}', b'[]', b'null'):
+                path.write_bytes(raw)
+                with self.subTest(raw_prefix=raw[:40]), \
+                     patch.object(target, "load_request", wraps=target.load_request) as loader, \
+                     patch.object(target, "open_db") as opened, patch.object(target, "dispatch") as dispatched:
+                    with self.assertRaises(ValueError):
+                        cancel.original_request(runtime, target, c, path)
+                    loader.assert_called_once_with(path, c["target_instance"], check_clock=False)
+                    opened.assert_not_called()
+                    dispatched.assert_not_called()
+            self.assertFalse((root / "invocations").exists())
 
 
 if __name__ == "__main__":

@@ -2,11 +2,17 @@
 import copy
 import hashlib
 import io
+import json
 from pathlib import Path
 import tarfile
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 from w1_owned_generation_runtime_v2 import complete_controller, complete_worker_archive, archive_object, canonical
+import w1_owned_generation_runtime_v2 as runtime
+import w1_generation_target_v2 as target
+import test_w1_generation_target_v2 as target_controls
 
 
 def synthetic_controller():
@@ -103,6 +109,45 @@ class OwnerRuntimeTests(unittest.TestCase):
                 archive_object(path, "controller.json", hashlib.sha256(raw).hexdigest())
             with self.assertRaisesRegex(ValueError, "member path"):
                 archive_object(path, "../controller.json", hashlib.sha256(raw).hexdigest())
+
+    def test_local_generate_rejects_via_shared_loader_before_target_open_or_dispatch(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            request = root / "request.json"
+            config = {"target_instance": "actual-short-process-test"}
+            for raw in (b' ' * (target.MAX_REQUEST + 1), b'{"nested":{"k":1,"k":2}}',
+                        b'{"nested":[1e999]}', b'[]', b'null'):
+                request.write_bytes(raw)
+                with self.subTest(raw_prefix=raw[:40]), \
+                     patch.object(runtime, "load_target", return_value=target), \
+                     patch.object(target, "load_request", wraps=target.load_request) as loader, \
+                     patch.object(target, "open_db") as opened, patch.object(target, "dispatch") as dispatched:
+                    with self.assertRaises(ValueError):
+                        runtime.generate(config, SimpleNamespace(path=root), request)
+                    loader.assert_called_once_with(request, config["target_instance"])
+                    opened.assert_not_called()
+                    dispatched.assert_not_called()
+
+    def test_local_generate_parses_large_real_pins_but_keeps_containment_gate(self):
+        # Real pinned files and the real parser; the finite-process request is
+        # intentionally not an owned cgroup and must never enter generation.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            value = target_controls.add_339_real_file_pins(target_controls.short_process_request(root), root)
+            value["cgroup_parent"] = str(root)
+            request = root / "request.json"
+            request.write_text(json.dumps(value, indent=2), encoding="utf-8")
+            self.assertGreater(request.stat().st_size, 65536)
+            self.assertGreater(len(target.canonical(value)), 65536)
+            with patch.object(runtime, "load_target", return_value=target), \
+                 patch.object(target, "load_request", wraps=target.load_request) as loader, \
+                 patch.object(target, "open_db") as opened, patch.object(target, "dispatch") as dispatched:
+                with self.assertRaisesRegex(ValueError, "actual owned sub-cgroup"):
+                    runtime.generate({"target_instance": value["target_instance"]}, SimpleNamespace(path=root), request)
+                loader.assert_called_once_with(request, value["target_instance"])
+                opened.assert_not_called()
+                dispatched.assert_not_called()
+            self.assertFalse((root / "invocations").exists())
 
 
 if __name__ == "__main__":

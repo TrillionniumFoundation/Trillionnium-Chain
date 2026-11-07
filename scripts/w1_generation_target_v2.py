@@ -10,6 +10,7 @@ A remote clock cannot be substituted for it. Success never authorizes payment.
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -21,7 +22,9 @@ import time
 
 NAMESPACE = "trnm-w1-generation-posix-target-v2"
 APPLICATION_ID = 0x57475432
-MAX_REQUEST = 65536
+# Admission policy for the original UTF-8 file bytes, not a stored-schema or
+# canonical-BLOB limit. Existing V2 records and their digest encoding are intact.
+MAX_REQUEST = 128 * 1024
 MAX_RESULT = 65536
 FORBIDDEN_ENV = {"RISC0_DEV_MODE", "RISC0_PROVER", "BONSAI_API_URL", "BONSAI_API_KEY"}
 ENV_KEYS = {"PATH", "LANG", "LC_ALL", "TMPDIR", "RAYON_NUM_THREADS", "RUSTUP_HOME", "CARGO_HOME", "PYTHONDONTWRITEBYTECODE"}
@@ -132,19 +135,27 @@ def read_operation(c, operation):
 
 
 def request_check(r, target, check_clock=True):
+    check(type(r) is dict, "request JSON object required")
+    required = {"schema", "target_instance", "operation", "task_scope", "statement",
+                "provider_namespace", "execution_source_commitment", "target_backend_sha256",
+                "clock_domain", "winner_monotonic_ns", "deadline_monotonic_ns", "argv", "cwd",
+                "file_pins", "environment", "cpus", "total_threads", "containment", "cleanup_grace_ns"}
+    check(required <= r.keys(), "request required fields")
+    check(type(target) is str and 0 < len(target) <= 256, "target identity")
     check(r.get("schema") == NAMESPACE and r.get("target_instance") == target, "request namespace/target")
     for name in ("operation", "task_scope", "statement", "provider_namespace", "execution_source_commitment"):
         hex32(r[name])
     check(r["target_backend_sha256"] == file_sha(Path(__file__).resolve()), "target backend source pin")
     check(r["clock_domain"] == clock_domain(target), "cross-host or reboot clock continuity UNKNOWN")
-    check(isinstance(r["winner_monotonic_ns"], int) and isinstance(r["deadline_monotonic_ns"], int)
+    check(type(r["winner_monotonic_ns"]) is int and type(r["deadline_monotonic_ns"]) is int
           and 0 <= r["winner_monotonic_ns"] < r["deadline_monotonic_ns"], "original deadline")
     if check_clock:
         check(r["winner_monotonic_ns"] <= time.monotonic_ns() < r["deadline_monotonic_ns"], "original deadline expired")
     argv = r["argv"]
     check(isinstance(argv, list) and argv and len(argv) <= 128 and all(isinstance(x, str) and "\x00" not in x for x in argv), "argv")
     check(Path(argv[0]).is_absolute(), "executable must be absolute")
-    check(Path(r["cwd"]).is_absolute() and Path(r["cwd"]).is_dir(), "cwd")
+    check(type(r["cwd"]) is str and "\x00" not in r["cwd"]
+          and Path(r["cwd"]).is_absolute() and Path(r["cwd"]).is_dir(), "cwd")
     pins = r["file_pins"]
     check(isinstance(pins, dict) and str(Path(argv[0]).resolve()) in pins, "executable pin required")
     for path, digest in pins.items():
@@ -154,16 +165,50 @@ def request_check(r, target, check_clock=True):
     check(all(isinstance(v, str) and "\x00" not in v for v in env.values()), "environment values")
     check(not any(os.environ.get(k) is not None for k in FORBIDDEN_ENV), "forbidden proof environment")
     cpus = r["cpus"]
-    check(isinstance(cpus, list) and cpus and len(set(cpus)) == len(cpus) and all(type(v) is int and v >= 0 for v in cpus), "CPU affinity")
+    check(isinstance(cpus, list) and cpus and all(type(v) is int and v >= 0 for v in cpus)
+          and len(set(cpus)) == len(cpus), "CPU affinity")
     check(set(cpus) <= os.sched_getaffinity(0), "requested affinity unavailable")
     check(type(r["total_threads"]) is int and 1 <= r["total_threads"] <= len(cpus), "total thread budget")
     check(env.get("RAYON_NUM_THREADS") == str(r["total_threads"]), "Rayon budget binding")
     check(r["containment"] in ("cgroup-v2", "process-group-research"), "containment mode")
     if r["containment"] == "cgroup-v2":
+        check(type(r.get("cgroup_parent")) is str and "\x00" not in r["cgroup_parent"], "cgroup parent")
         parent = Path(r["cgroup_parent"]).resolve()
         check(parent.is_absolute() and (parent / "cgroup.controllers").is_file(), "delegated cgroup-v2 parent unavailable")
-    check(0 < r.get("cleanup_grace_ns", 0) <= 10_000_000_000, "cleanup grace limit")
+    check(type(r["cleanup_grace_ns"]) is int and 0 < r["cleanup_grace_ns"] <= 10_000_000_000,
+          "cleanup grace limit")
     return r
+
+
+def load_request(path, target, check_clock=True):
+    """Read one strictly bounded UTF-8 V2 admission request.
+
+    The raw file alone is capped. Do not re-encode it to decide admission size,
+    apply this limit to retained SQLite BLOBs, or change their canonical bytes.
+    Reconciliation may disable only the already-expired dispatch clock check.
+    """
+    with Path(path).open("rb") as stream:
+        raw = stream.read(MAX_REQUEST + 1)
+    check(len(raw) <= MAX_REQUEST, "request size")
+
+    def pairs(items):
+        value = {}
+        for key, item in items:
+            check(key not in value, "duplicate request JSON key")
+            value[key] = item
+        return value
+
+    def finite_float(text):
+        value = float(text)
+        check(math.isfinite(value), "nonfinite request JSON number")
+        return value
+
+    def constant(_):
+        raise ValueError("nonfinite request JSON number")
+
+    value = json.loads(raw.decode("utf-8"), object_pairs_hook=pairs,
+                       parse_float=finite_float, parse_constant=constant)
+    return request_check(value, target, check_clock=check_clock)
 
 
 def public_readback(c, operation, target):
@@ -179,9 +224,7 @@ def public_readback(c, operation, target):
 
 
 def dispatch(args):
-    raw = Path(args.request).read_bytes()
-    check(len(raw) <= MAX_REQUEST, "request size")
-    r = request_check(json.loads(raw), args.target)
+    r = load_request(args.request, args.target)
     raw = canonical(r)
     c, root = open_db(args.root, args.target, True)
     c.execute("BEGIN IMMEDIATE")
@@ -432,9 +475,7 @@ def main():
                   "target_backend_sha256": file_sha(Path(__file__).resolve()), "dispatch_performed": False,
                   "requires_persistent_target_root": True, "cross_host_deadline_bridge": "not-implemented"}
         if args.request:
-            raw = Path(args.request).read_bytes()
-            check(len(raw) <= MAX_REQUEST, "request size")
-            request_check(json.loads(raw), args.target)
+            load_request(args.request, args.target)
             result["request_valid_now"] = True
     elif args.command == "dispatch":
         check(args.request is not None, "request required")

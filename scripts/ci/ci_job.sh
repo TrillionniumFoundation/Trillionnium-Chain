@@ -76,9 +76,9 @@ from pathlib import Path
 import re, sys
 root = Path(sys.argv[1])
 expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
-            ("provider-contract", 11), ("generation-target", 7), ("owner-cancellation", 5),
+            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 7),
             ("source-builder", 8),
-            ("owned-runtime-reader", 5), ("kaggle-worker-contract", 12), ("winner-identity", 4))
+            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4))
 for name, count in expected:
     text = (root / (name + ".log")).read_text()
     if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]

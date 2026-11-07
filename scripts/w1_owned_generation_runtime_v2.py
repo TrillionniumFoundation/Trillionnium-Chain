@@ -561,7 +561,7 @@ def load_target(c):
 
 def generate(c, scope, request_path):
     target = load_target(c)
-    request = obj(request_path, 65536)
+    request = target.load_request(request_path, c["target_instance"])
     require(request["cgroup_parent"] == str(scope.path) and request["containment"] == "cgroup-v2",
             "generation must enter the actual owned sub-cgroup")
     require(request["deadline_monotonic_ns"] == c["original_deadline_ns"], "target original deadline changed")

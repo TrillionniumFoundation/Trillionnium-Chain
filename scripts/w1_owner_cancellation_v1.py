@@ -76,14 +76,25 @@ def process_state(target, selected):
             "execution_terminal": state == "Z", "wait_reaped": False if state == "Z" else None}
 
 
-def original_request(rt, target, c, path):
-    request = rt.obj(path, 65536)
+def original_request(rt, target, c, path, check_clock=False):
+    request = target.load_request(path, c["target_instance"], check_clock=check_clock)
     require(request["operation"] == c["provider_operation"] and request["target_instance"] == c["target_instance"],
             "original operation or target changed")
     require(request["deadline_monotonic_ns"] == c["original_deadline_ns"]
             and request["clock_domain"] == target.clock_domain(c["target_instance"])
             and request["containment"] == "cgroup-v2", "original local deadline/containment changed")
     require(request["target_backend_sha256"] == c["target"]["sha256"], "original target source changed")
+    require(request["execution_source_commitment"] == rt.sha(c["_config_path"]), "original config changed")
+    funded = rt.obj(Path(c["out"]) / "native-funded-intent.json")
+    normalized = {key: value for key, value in request.items() if key != "statement"}
+    require(funded["schema"] == "TRNM-W1-FUNDED-DISPATCH2"
+            and funded["provider_operation"] == request["operation"]
+            and funded["statement"] == request["statement"]
+            and funded["original_deadline_ns"] == request["deadline_monotonic_ns"]
+            and funded["winner_monotonic_ns"] == request["winner_monotonic_ns"]
+            and funded["target_request_sha256"] == target.sha(target.canonical(request))
+            and funded["normalized_request_digest"] == target.sha(target.canonical(normalized)),
+            "original funded statement/request binding changed")
     return request
 
 
@@ -160,7 +171,7 @@ def live_first_prover(rt, target, c, request, group, expected_group):
 def start(rt, target, c, request_path, directory):
     rt.original(c)
     scope = rt.Scope(c)
-    request = original_request(rt, target, c, request_path)
+    request = original_request(rt, target, c, request_path, check_clock=True)
     require(request["cgroup_parent"] == str(scope.path), "target must belong to this original owner job")
     require(not (Path(c["out"]) / "proof").exists(), "fresh proof directory already exists")
     db, _ = target.open_db(c["target_root"], c["target_instance"], True)

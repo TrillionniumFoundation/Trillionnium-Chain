@@ -7733,3 +7733,17 @@ Target 终态必须观察绑定 inode/device 的完整 child cgroup 子树与层
 此条仅记录代码与候选控制进展。新的提交仍须完成精确 committed-source 资格，随后才运行独立新 Node、原 operation、新 600 秒研究 deadline 下的真实昂贵取消及进程重启后的冷核对。当前没有据此宣称该重型试验、生产 owner 服务、原业务预算或完整密码学安全资格通过。
 
 冻结 source A d3037ca5dfb6f301757c159b7888dca9b0317be0 的两条完整 fresh pipeline 保持原源码、各自原 7200 秒研究 deadline、原 target 与资源；此刻仍在递归阶段，其终态与本候选资格分开记录。A 上一条原配额窄探测已实际以 DEADLINE_EXHAUSTED／124 退出：4 秒、0.25 CPU、2 GiB，native winner 成立但无完整证明／receiver ACK；该样本不替代 16 hostile／6 confirmations 的完整业务矩阵，也不把含清场的 7.402288287 秒称为证明生成时间。
+
+### 2026-11-07：C1 实际 owner 试验保留失败，统一本地 W1 请求容量
+
+C1 提交 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11` 的五角色开发资格已经实际闭合；原 native 汇总器因沿用 A 的 240 项预期而失败的原件仍然保留，后续精确枚举确认原 240 项全部保留，integration 原有三项新增测试使 C1 为 243 项。此项开发资格不等同于昂贵取消执行已经通过。
+
+随后唯一实际 owner 试验 `1a1b7db09a3-12894-c8e` 在原 600 秒研究期限内以 exit 101 结束；实际选择的 ignored 入口执行了 1 项、失败 1 项。目标请求含 339 个完整文件 pins，原始 UTF-8 为 68,909 bytes，紧凑 canonical 仍为 66,550 bytes，均超过旧本地 reader/target 的 65,536-byte 上限。helper 在派发前报 `bounded JSON`；原 target root、proof 目录和外层进程 cgroup 均观察为不存在，本次新增完整证明为 0，未形成 owner 取消成功事实。原请求 SHA256 为 `eff76555c5166818cbf7b833e12c43d315f6fd6bb684d8031f09e70982910071`，原 operation 为 `285bbcda30e7b735bdb828c1d2d838ab3f01501b00166a8074e271d83d0dc654`，原 deadline `1164217362239646` 没有重选。
+
+对已关闭原件的独立只读检查确认：M12 仅有 Prepare、Intent 各一条，完整 payload/statement/hash chain 一致；没有 BindJob、Cancel、Verified、Settlement 或 Payment。隔离研究 Node 仍只有原 Reserve，NativeTask 为 Reserved、remaining 1000。原 CPU/GPU/内存/receipt 资源 cap 全部保留，GPU 使用量仍未确证；没有资源 credit 或 provider 付款。这个失败操作及其资金、配置、请求、deadline、数据库原件均保留；后续修复只用于新 source qualification 和全新的 operation/Node/target/output。
+
+容量修复将 target、普通 generation runtime、owner cancellation helper 接入同一个严格请求 loader，明确把**本地入站 raw UTF-8 文件上限设为 128 KiB**，并限制一次最多读取上限加一字节。重复 JSON key、非有限值（含指数溢出）、非 UTF-8 和错误 shape 在派发前拒绝。全部 source pins 保留。原 V2 namespace、字段、canonical 排序/分隔符/UTF-8 编码、哈希算法、clock domain、SQLite application_id/user_version/SQL 及原 stored BLOB 读回保持不变；这是一项由新源码身份绑定的本地 admission 容量修复，没有新增 canonical BLOB 上限，也没有改变共识域或旧操作内容。
+
+六个 owned 文件的 desktop 候选短控已实际完成：target 13、owned runtime reader 7、owner helper 7，合计 27 项通过、0 skip、0 full proof。控制覆盖真实 339 文件 pins 的大请求、既有 preflight/dispatch/replay 路径中的有限非 proof 子进程、精确容量边界及有界读取、严格 JSON 与原身份替换拒绝。旧 68,909-byte 请求只作只读回归；新 target 的源码 pin 检查仍拒绝其旧执行身份，没有重派。候选 manifest SHA256 为 `befc16bb6c00b676356daa17a8fbea3bc839ca62e0ffb8e7157c4e06edb7f0f7`，原失败资金读回 SHA256 为 `93374756a3ca5e5e9b5ff18ec641a3c2304c1a8a64579c57179d2c089604de16`。
+
+本条记录形成时，新提交的完整精确资格和新的实际昂贵取消/独立冷恢复尚未完成。原业务的 4 秒、0.25 CPU、2 GiB 预算及完整密码学安全资格仍未通过；新的 600 秒研究试验不会替代这些门槛。
