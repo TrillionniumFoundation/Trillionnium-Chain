@@ -100,6 +100,21 @@ class DemandTests(unittest.TestCase):
             self.observe(bundle)
         self.assertEqual(before, self.book.snapshot())
 
+    def pending_bundle(self, *, provenance_until=20):
+        bundle = self.bundle()
+        for key in ('delivery', 'acceptance', 'evaluation', 'availability', 'adoption'):
+            bundle[key] = None
+        bundle['payments'] = []
+        sources = copy.deepcopy(bundle['funding']['body']['payload']['sources'])
+        for source in sources.values():
+            source['state'] = 'locked'
+        self.resign(bundle, 'funding', observed_at=20, valid_until=40, sources=sources)
+        if provenance_until is None:
+            bundle['provenance'] = None
+        else:
+            self.resign(bundle, 'provenance', valid_until=provenance_until)
+        return bundle
+
     def test_no_gain_keeps_completed_service_evaluation_and_da_fees(self):
         result = self.observe(self.bundle())
         self.assertEqual(result['status'], 'NoUpdate')
@@ -124,6 +139,40 @@ class DemandTests(unittest.TestCase):
         b = self.observe(self.bundle(number=2, outcome='positive-net'))
         self.assertEqual(a['paid']['evaluation'], b['paid']['evaluation'])
         self.assertFalse(b['conditional_fee_due']['improvement'])
+
+    def test_improvement_recipient_cannot_pay_reviewers_a_positive_vote_bonus(self):
+        for role in ('evaluation', 'audit', 'adoption'):
+            for outcome in ('no-gain', 'positive-net'):
+                with self.subTest(recipient=role, outcome=outcome):
+                    bundle = self.bundle(outcome=outcome, bonus=outcome == 'positive-net')
+                    beneficiary = self.keys[role]
+                    bundle['contract']['beneficiaries']['improvement'] = beneficiary
+                    contract = commitment('contract', bundle['contract'])
+
+                    def rebound(record):
+                        body = record['body']; payload = copy.deepcopy(body['payload'])
+                        if body['kind'] == 'request':
+                            payload['terms'] = contract
+                        elif body['kind'] == 'funding':
+                            payload['sources']['improvement']['beneficiary'] = beneficiary
+                        elif body['kind'] == 'payment' and payload['account'] == 'improvement':
+                            payload['beneficiary'] = beneficiary
+                        elif body['kind'] == 'adoption':
+                            payload['evaluation'] = commitment('evaluation', bundle['evaluation'])
+                        signer = next(r for r, key in self.keys.items() if key == body['signer'])
+                        return self.sign(body['kind'], payload, contract, signer)
+
+                    for field in ('request', 'funding', 'provenance', 'delivery', 'acceptance',
+                                  'dispute', 'evaluation', 'availability', 'adoption'):
+                        if bundle[field] is not None:
+                            bundle[field] = rebound(bundle[field])
+                    bundle['payments'] = [rebound(payment) for payment in bundle['payments']]
+                    self.assertEqual(bundle['contract']['fixed_net_fees']['evaluation'], 7)
+                    before = self.book.snapshot()
+                    with self.assertRaisesRegex(ValueError, 'DEMAND_IMPROVEMENT_BENEFICIARY'):
+                        self.book.observe(canonical(bundle), expected_contract=contract,
+                                          expected_anchor=self.anchor, height=100)
+                    self.assertEqual(self.book.snapshot(), before)
 
     def test_self_project_and_unknown_funding_do_not_become_external_revenue(self):
         for i, origin in enumerate(('self-or-related', 'project-budget', 'unknown'), 1):
@@ -292,6 +341,42 @@ class DemandTests(unittest.TestCase):
         for height, anchor in ((41, self.anchor), (30, ident('new-branch'))):
             self.assertEqual(self.book.queue_observation(height=height, expected_anchor=anchor)['mode'],
                              'existing-native-maintenance')
+
+    def test_queue_accepts_provenance_at_its_last_valid_height(self):
+        observed = self.observe(self.pending_bundle(), height=20)
+        self.assertEqual(observed['schema'], 'pon-demand-composition-observation-v2')
+        self.assertEqual(observed['provenance_valid_until'], 20)
+        self.assertEqual(observed['origin'], 'external-attested')
+        before = self.book.snapshot()
+        queued = self.book.queue_observation(height=20, expected_anchor=self.anchor)
+        self.assertEqual(queued['mode'], 'funded-external-attested')
+        self.assertFalse(queued['dispatch_authorized'])
+        self.assertEqual(self.book.snapshot(), before)
+
+    def test_queue_excludes_provenance_expired_after_the_observation(self):
+        bundle = self.pending_bundle()
+        observed = self.observe(bundle, height=20)
+        before = self.book.snapshot()
+        for height in (21, 30):
+            with self.subTest(height=height):
+                queued = self.book.queue_observation(height=height, expected_anchor=self.anchor)
+                self.assertEqual(queued['mode'], 'existing-native-maintenance')
+                self.assertEqual(queued['useful_output_credit'], 0)
+                self.assertFalse(queued['dispatch_authorized'])
+        self.assertEqual(self.book.snapshot(), before)
+        self.assertEqual(self.observe(bundle, height=20), observed)
+
+    def test_queue_missing_provenance_remains_unknown_with_original_funding_expiry(self):
+        observed = self.observe(self.pending_bundle(provenance_until=None), height=20)
+        self.assertIsNone(observed['provenance_valid_until'])
+        self.assertEqual(observed['origin'], 'unknown')
+        self.assertFalse(observed['independence_attested'])
+        for height in (30, 40):
+            queued = self.book.queue_observation(height=height, expected_anchor=self.anchor)
+            self.assertEqual(queued['mode'], 'funded-unknown')
+            self.assertFalse(queued['dispatch_authorized'])
+        self.assertEqual(self.book.queue_observation(height=41, expected_anchor=self.anchor)['mode'],
+                         'existing-native-maintenance')
 
     def test_independent_review_dispute_and_bonus_time_travel_counterexamples(self):
         for resolved_at, settled_at in ((0, 1), (95, 96)):
