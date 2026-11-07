@@ -38,6 +38,7 @@ pub use store::authenticated_migration::{
     PreservedTable, DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
 };
 pub use store::capacity_observation::CapacityObservation;
+pub use store::demand_evidence::{NativeTaskEvidenceRequestV1, NativeTaskEvidenceV1};
 pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
 pub use store::evaluation_round_observation::{
     EvaluationRoundAnchor, EvaluationRoundBaseAnchor, EvaluationRoundObservation,
@@ -329,6 +330,39 @@ impl Settings {
         model_profile: &str,
         windows: Option<trnm_mvcc_fee::model_task_windows_v1::PinnedTaskWindows<'_>>,
     ) -> Result<Self> {
+        Self::development_with_contract_selection(
+            genesis_timestamp,
+            policy,
+            task_profile,
+            model_profile,
+            windows,
+            false,
+        )
+    }
+    /// Fresh classical development context with complete funded Task terms.
+    /// This selects a new genesis; it does not migrate a running chain.
+    pub fn development_with_funded_service_contract_v1(
+        genesis_timestamp: Option<u64>,
+        policy: &str,
+        task_profile: &str,
+    ) -> Result<Self> {
+        Self::development_with_contract_selection(
+            genesis_timestamp,
+            policy,
+            task_profile,
+            "linear-expert-dev-v1",
+            None,
+            true,
+        )
+    }
+    fn development_with_contract_selection(
+        genesis_timestamp: Option<u64>,
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+        windows: Option<trnm_mvcc_fee::model_task_windows_v1::PinnedTaskWindows<'_>>,
+        funded_service_contract: bool,
+    ) -> Result<Self> {
         let mut app = Config::installed_with_model_profiles_and_task_windows(
             policy,
             task_profile,
@@ -408,6 +442,9 @@ impl Settings {
                     &serde_json::to_vec(model)?,
                 ],
             );
+        }
+        if funded_service_contract {
+            pon_executor::funded_service_v1::install(&mut app)?;
         }
         let (a, b) = maintenance();
         let task = pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))?;

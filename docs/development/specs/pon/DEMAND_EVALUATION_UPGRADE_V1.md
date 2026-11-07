@@ -286,11 +286,22 @@ their failure. Tests use synthetic keys, owner receipts and model observations.
 They are implementation evidence, not externally supplied customers, financial
 receipts, independent organizations or measured new model quality.
 
-Open acceptance work is concrete: implement the native owner export/reconciliation
-adapter without trusting arbitrary JSON; bind the full service contract to the
-admitted qualified task; enact the original-owner dispute policy; obtain audited
-control/funding evidence; run fresh cost-matched evaluation with real data owners;
-then observe ordinary Hepta canary/install/next-task/rollback. Persistent global
-deduplication, source/epoch/global reservation, reorg and independent custody need
-the existing durable owners and exact-source native tests. None can be replaced
-by a mock receipt or by relabeling a controlled positive fixture as real demand.
+The initial reference acceptance list is continued by the native
+[funded service Task](FUNDED_SERVICE_TASK_V1.md) and
+[owner evidence/reconciliation](NATIVE_TASK_EVIDENCE_V1.md) specifications. The
+new development Task context admits frozen contract commitments and enforces
+the payer's acceptance or frozen arbitrator's disposition through the original
+escrow. The native evidence adapter replays retained actual funding and payment
+histories rather than accepting caller JSON as native authority. Their exact
+source tests and limitations must be assessed separately from the Python tests
+above. Neither extension proves the off-chain contents of a commitment, adds a
+qualified-work registry membership rule, nor establishes customer independence.
+
+Audited control/funding evidence, fresh cost-matched evaluation with real data
+owners, and ordinary Hepta canary/install/next-task/rollback remain distinct
+business acceptance requirements. Persistent global dispatch deduplication,
+source/epoch/global reservation and independent custody still need their actual
+owners. Local histories can reject an old journal when a newer fence survives;
+they cannot authenticate a joint rollback of every owner and witness. None of
+these requirements can be replaced by a mock receipt or by relabeling a
+controlled positive fixture as real demand.

@@ -17,6 +17,35 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Native funded Task admission and owner reconciliation, 2026-11-07 America/New_York:**
+Continue the published demand/evaluation candidate through the user-selected
+HeptaRuntime local GitHub channel. The prior evidence continuation is retained in
+[PR #777](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/777),
+targeting the existing #688 integration branch. Extend the original M06 Task
+escrow with an explicitly selected fresh classical development context for
+[frozen service contracts and enforceable arbitration](specs/pon/FUNDED_SERVICE_TASK_V1.md).
+Request, model, input, output specification, work-reference, evaluation, fee and
+dispute terms are frozen before delivery; real payer acceptance or the frozen
+arbitrator settles or refunds through the original native monetary transition.
+Add typed M12 journal export and
+[Node-owned reconciliation](specs/pon/NATIVE_TASK_EVIDENCE_V1.md) of actual retained
+funding, delivery and exact replayed payments. Keep historical operation/cost and
+payment facts across restart and reorganization while rechecking their current
+branch status. Source commitments, local resource declarations and distinct
+account keys do not prove useful work, truthful physical cost or independent
+business control. Use the separate
+[V2 prospective operation owner](specs/pon/NATIVE_TASK_OPERATION_V2.md) for unknown
+outputs: immutable task/operation binding, one durable begin, original provider
+receipt replay, first-delivery identity and a Node-retained journal prefix.
+V1's already-known output subject must not be retrospectively described as a
+training authorization. Historical active snapshots require the original
+generation's actual activation event; retained side branches alone are insufficient.
+Run exact-source native integration, full Node qualification and the ordinary
+Hepta owner gates with retained failures. Real external funding/control evidence,
+independent future cost-matched evaluation and actual product adoption retain
+their separate acceptance gates. No default-chain or production activation is
+authorized by component test results.
+
 **Funded demand and continuous-upgrade evidence, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate at `3d1b6507671ec694ce58e86d4063a125c8deeb66`
 with the [demand/evaluation composition contract](specs/pon/DEMAND_EVALUATION_UPGRADE_V1.md).
