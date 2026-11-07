@@ -133,6 +133,18 @@ impl Setup {
         );
     }
 
+    // The initialization receipt is emitted before the serving loop. Keep
+    // the original client request deadline stopped until the first real accept
+    // attempt has run; this is an in-process signal, not a TCP readiness probe.
+    fn wait_accept_loop(&self, role: &'static str, ready: Receiver<()>) {
+        let result = ready.recv_timeout(self.deadline.saturating_duration_since(Instant::now()));
+        eprintln!(
+            "cell_sequence phase=accept_loop_ready role={role} setup_elapsed_ns={} outcome={result:?}",
+            self.started.elapsed().as_nanos()
+        );
+        assert!(result.is_ok(), "server accept loop must be ready before use");
+    }
+
     fn finish(&mut self) {
         let elapsed = self.started.elapsed();
         eprintln!(
@@ -302,6 +314,7 @@ impl Rendezvous {
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
         let (ready, initialized) = mpsc::sync_channel(1);
+        let (accept_ready, accepting) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
             let bounds = CellRendezvousLimitsV1 {
                 request_timeout: Duration::from_millis(250),
@@ -316,7 +329,14 @@ impl Rendezvous {
                 listener.set_nonblocking(true)?;
                 Ok(directory)
             })?;
-            serve_cell_rendezvous(&listener, &directory, &addresses, &stop, bounds)
+            super::transport::serve_cell_rendezvous_with_ready(
+                &listener,
+                &directory,
+                &addresses,
+                &stop,
+                bounds,
+                accepting,
+            )
         });
         let rendezvous = Self {
             address,
@@ -324,6 +344,7 @@ impl Rendezvous {
             handle: Some(handle),
         };
         setup.wait("rendezvous", initialized);
+        setup.wait_accept_loop("rendezvous_accept_loop", accept_ready);
         rendezvous
     }
 
