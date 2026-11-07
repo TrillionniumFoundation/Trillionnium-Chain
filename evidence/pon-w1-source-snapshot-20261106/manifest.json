@@ -1,8 +1,64 @@
 {
   "files": {
     "README.md": {
-      "bytes": 10962,
-      "sha256": "35bcaf35a1f4c24515cf73f217466b352a17ce9dc874eb07f2467d25c8f9bdef"
+      "bytes": 12436,
+      "sha256": "4cdb2daf2b00361fc89c6c0704c68834cf2a788792ab430d43740da7201f0c8a"
+    },
+    "combined/combined-composition-review.json": {
+      "bytes": 6571,
+      "sha256": "710bc9d45122cbb09d8d0817101ed2ecfdb02883c615acf7501ec4a829e747a7"
+    },
+    "combined/combined-identity-after.json": {
+      "bytes": 338,
+      "sha256": "24a44c5aea8c1ce099890d06926271d9dbe0e9ec6db7a839862419809214a9f4"
+    },
+    "combined/combined-identity-before.json": {
+      "bytes": 338,
+      "sha256": "24a44c5aea8c1ce099890d06926271d9dbe0e9ec6db7a839862419809214a9f4"
+    },
+    "combined/combined-source.json": {
+      "bytes": 423,
+      "sha256": "ae4fd2a9c725fa83d3a5cbfcebac38a1259cb0db92f525d62cd7357d75004562"
+    },
+    "combined/gates/results.json": {
+      "bytes": 3535,
+      "sha256": "02da9a59772407da2c1b49dc3433585c4516342c5de649d689885973874ada09"
+    },
+    "combined/gates/retained-raw.tar.gz": {
+      "bytes": 9360,
+      "sha256": "5533d32d07e8dc569ffdbc732b1155abaf7710d4b08916ecf6a666332aabdea3"
+    },
+    "combined/graph/commands.json": {
+      "bytes": 7246,
+      "sha256": "4bf303a42e29f3ac9d29c78672202142995f847ce92f20e130ec8c85cf9685be"
+    },
+    "combined/graph/fmt-workspace.stderr.log": {
+      "bytes": 437,
+      "sha256": "44d0bf02b0209346efe0f61589d002f859a4680e21230c2b3ff7c0aea1c40016"
+    },
+    "combined/graph/metadata-workspace-all-features.stderr.log": {
+      "bytes": 382,
+      "sha256": "2402e9de8158527c1a46d37c21ef5b104f9fd856dd69bee6e960dd6f4430f8ae"
+    },
+    "combined/graph/metadata-workspace-default.stderr.log": {
+      "bytes": 382,
+      "sha256": "2402e9de8158527c1a46d37c21ef5b104f9fd856dd69bee6e960dd6f4430f8ae"
+    },
+    "combined/graph/retained-raw.tar.gz": {
+      "bytes": 28670,
+      "sha256": "b8d23c475bd1f52ef317e59192772cbb8007035583427babc53c1115e9290e28"
+    },
+    "combined/graph/toolchain-observation.json": {
+      "bytes": 7748,
+      "sha256": "e7b5a6c4cd884f4ba5d0bb277d61bf3fd5223bd47b15662a353a9d9eddc44c74"
+    },
+    "combined/graph/validation-result.json": {
+      "bytes": 5136,
+      "sha256": "7da7cc8af1d0e85633fc25f33d0a9136fdb8c57e1d9668c680c0ff3ba618f0c8"
+    },
+    "combined/index.json": {
+      "bytes": 7028,
+      "sha256": "07d98146d682428338f41619c615a2db6e8ef5fd4f99a982377c9a922059bb71"
     },
     "optional-budget-launch.json": {
       "bytes": 780,

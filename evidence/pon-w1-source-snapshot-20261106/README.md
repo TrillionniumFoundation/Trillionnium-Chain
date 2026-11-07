@@ -178,6 +178,31 @@ requires each exactly once with an ordinary `ok` result, and includes all
 controls, expected failures, and failed required stages cannot satisfy that
 finalizer. The source-map byte comparison uses the new snapshot above.
 
+## Combined-source validation
+
+The [combined validation index](combined/index.json) preserves the exact
+local source commit, its GitHub publication with the identical tree, commands,
+raw observations, and lossless archives of the complete logs. On tree
+`15def345d2d033d9b57323d89ae6c5993c868fc3`, all **335 Python tests** passed:
+128 W1, 43 source-integrity, 104 CI-contract, 38 PQ-integration and 22
+whole-chain claim-guard tests. Repository validation passed with 3,585 local
+links, and the claim guard retained HOLD. These counts do not add the 15
+mapper or 23 report-gate controls a second time.
+
+All four Rust manifest format checks passed. The native-cost crate's locked,
+offline dependency graph resolved all 69 packages and 69 nodes. Both workspace
+graph attempts (default and all features) exited 101 because the selected
+offline cache lacks the newly locked `nix 0.30.1`; the original lock and raw
+errors are retained. No partial graph or different crate version substitutes
+for that missing result. Fresh Rust compilation, retained Rust execution and
+strict Clippy remain pending exact-source CI.
+
+The workspace format command's stderr reports rustup channel synchronization,
+component downloads and automatic installation of the selected toolchain.
+Cargo offline mode does not establish that rustup was offline; network
+requests were not independently traced. The raw stderr and an additive
+toolchain observation are retained without rewriting earlier records.
+
 ## Remaining claim boundary
 
 The [source composition record](source-composition.json) preserves integration
