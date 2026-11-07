@@ -7321,7 +7321,7 @@ mod tests {
         intake: ListenerIntake,
         observer: PublicRequestObserver,
         metrics: Mutex<PublicMetrics>,
-        stop: AtomicBool,
+        stop: Arc<AtomicBool>,
         server: PublicServer,
         settings: Settings,
     }
@@ -7349,19 +7349,43 @@ mod tests {
             let server = server();
             let settings = Settings::development(Some(1)).unwrap();
             let cookie = server.cookie(&settings, hello(1, 1), address).unwrap();
-            let pending = PendingOrder::next(&mut 0).unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            // Register this fixture with the same shared readiness owner as
+            // the reactor. Grant follows the consumed Challenge; constructing
+            // a detached order would omit the new scheduling ownership.
+            let pending = kind.map(|kind| {
+                let lease = conn.intake_lease.as_ref().unwrap();
+                let now = Instant::now();
+                let deadline = conn.deadline.min(conn.total_deadline);
+                let challenge = lease
+                    .register_ready(PendingKind::Challenge, cookie.op, deadline, &stop, now)
+                    .unwrap();
+                if kind == PendingKind::Challenge {
+                    challenge
+                } else {
+                    assert!(intake
+                        .try_ready_challenge(lease, challenge, cookie.op, now)
+                        .unwrap());
+                    lease
+                        .register_ready(PendingKind::Grant, cookie.op, deadline, &stop, now)
+                        .unwrap()
+                }
+            });
             let mut metrics = PublicMetrics::default();
             conn.stage = match kind {
                 Some(PendingKind::Challenge) => {
                     metrics.pending_challenge_entered = 1;
                     Stage::WaitChallenge {
                         hello: hello(1, 1),
-                        pending,
+                        pending: pending.unwrap(),
                     }
                 }
                 Some(PendingKind::Grant) => {
                     metrics.pending_grant_entered = 1;
-                    Stage::WaitGrant { cookie, pending }
+                    Stage::WaitGrant {
+                        cookie,
+                        pending: pending.unwrap(),
+                    }
                 }
                 None => Stage::Solution {
                     cookie,
@@ -7370,7 +7394,7 @@ mod tests {
             };
             let record = conn.observation.as_ref().unwrap();
             record.request(1, [3; 32]);
-            if let Some(kind) = kind {
+            if let Some((kind, pending)) = kind.zip(pending) {
                 record.pending_started(matches!(kind, PendingKind::Grant), pending.entered_at);
             }
             Self {
@@ -7379,7 +7403,7 @@ mod tests {
                 intake,
                 observer,
                 metrics: Mutex::new(metrics),
-                stop: AtomicBool::new(false),
+                stop,
                 server,
                 settings,
             }

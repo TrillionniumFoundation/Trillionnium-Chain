@@ -8585,3 +8585,128 @@ RustCrypto ML-DSA-65 and the exact OpenSSL 3.5.9 differential provider bytes.
 Hepta source/dependency pins, actual executable hashes and reobtained model bytes
 must be bound after their actual observations. The old 272,189,990-byte / 35-second
 cold cohort is not interchangeable with 272,190,131 bytes or the V13 replay profile.
+### 2026-11-06 continued execution: rank, batch, query preparation and next tasks
+
+This continuation preserves candidate `0ca272d09d1522b0ffd740e441b6d3de1ed81de6`,
+including the concurrent packaging compatibility and Rust shard corrections.
+All six requested workpackages remain subject to their original vetoes. The
+[continuation record](../../evidence/pon-six-workpackages-20261106/next/README.md)
+keeps component execution, final composition, original CI and performance
+measurements distinct. Development failures are retained, not retried away.
+
+The [V5 experiment](../../formal/pon-nakamoto-v1/W1_RANK_BATCH_V5.md) adds exact
+rank-at-most-eight AB preparation and a real four-worker speculative search.
+Both failed rank probes, dense fallback, every complete hit/miss, all issued
+post-winner work, buffer destruction and teardown are charged. The complete
+original 512-tile W1 trace and the default producer/verifier remain. The old
+Dense/Sparse preparation enum remains compatible; rank preparation is an
+explicit constructor. The comparison freezes seventeen existing/new arms,
+eleven materials, eight samples, two cost targets and horizons one/eight,
+plus first-hit/exhaustion controls: sixty-six separate shards. The original
+9 kernel controls and all 5 new rank controls remain mandatory by exact name.
+A separate x64/ARM head/prospective-merge lane retains the original per-command
+limits and all failures. Source registration is not a completed hardware run.
+
+The existing V3 head observations already include actual ARM64 and x64 on
+`0ca272d`, with thirty shards and eight samples on each architecture. They
+must not be described as unmeasured or relabelled V5. Their horizon streams
+are correlated. No finite best observed strategy establishes a global cost
+minimum, and uniform-ticket assumptions remain explicit. The complete W1 v2
+proof already uses FullLimb and its pinned SHA extension; AB preparation does
+not remove the guest's trace replay or recursive proof cost. The retained
+6,248-second success and 7,200-second failure remain, and full raw-input,
+encoder, routing and Cell-state proof obligations are still open.
+
+The SQL candidate reuses only seven fixed prepared programs in the existing
+bounded connection cache. Actual rows, full State, canonical/root checks,
+transaction ownership, progress and deadlines are still re-evaluated at each
+original boundary. The final component tests cover a real sibling-fork
+reorganization, warm reads, actual mutation/rollback, cache capacities 0/1/16,
+schema invalidation and cold reopening in both native backends. The fixed
+512-block observer compares the actual original implementation against the
+candidate, without disabling an existing cache. It is separate from the
+original 4,105-block/1,800-second and 30-second-request History gate.
+
+[SQLite build-fence recovery](../../evidence/pon-six-workpackages-20261106/next/sqlite/README.md)
+now registers common environment watches before an early refusal. Four real
+Cargo calls without cleaning the target correctly refuse, qualify, refuse
+and qualify. All original qualification checks remain. The local process
+controllers still refuse because this environment's PID view and `/proc`
+identities disagree; correcting the initial held-directory invocation to its
+original AS/FSIZE limits did not remove that refusal. These failures are not
+promoted to original public-process acceptance.
+
+The current original History artifacts show x64 3,322/4,105 successful import
+returns before service expiry, and ARM64 4,104/4,105 before the last request
+hits its original deadline. A separate read-only inventory finds all 4,105
+ARM block rows present but activation cancelled at cursor 3,407 and active
+still genesis. Returned-call counts do not prove durable activation. The
+latest original four-second pressure confirmation remains 0/1; F0 remains
+0/6 with all 42 planned packet exposures retained. Their different resource
+accounting scopes must not be added or called a complete global peak.
+
+Revision12 genesis maintenance already survives all optional publisher
+revocations without a lease renewal. Its useful-output credit is zero and
+its hardness/model-work qualification remains false. The useful Cell task,
+native coin locking/provider payment and independent long-term material
+custody composition are still missing. The storage-service journal's local
+reconciliation is not proof of that monetary settlement.
+
+The companion Hepta work targets the actual guarded-generation owner, whose
+isolated source is distinct from the #4963 runtime PR head. An explicit same-
+manifest next-task mode requires a different task and run, exact next owner
+epoch/generation, actual ACK/drain and its own signed FinalUse purpose. It
+preserves the complete manifest including adoption lineage. It neither
+publishes a candidate nor asserts that independent evaluation or no-update
+occurred. Native cold recovery, current selection, fresh ordinary task use
+and the original complete workspace gate retain their own evidence needs;
+no external effect, model adoption or real funding is inferred from an API.
+
+
+### 2026-11-07 — e0c10 candidate revision after observed build failure
+
+The first frozen integration source was
+`e0cb765b45475ccf2bbb2cfae5eb4dd4491182ac`, tree
+`92972a39bd51da13864cb5923747de7d99a423fa`. Its original native operation
+`1a1b3667e2b-fc05-82a5` terminated with failure: library compilation exited
+101 because the merged PQ R4 fixture called the removed `PendingOrder::next`.
+Zero of the original 89 native selectors executed; all 89 remain in that
+attempt's unexecuted denominator. The raw build log is retained with SHA-256
+`1478ecc82e16f0c370fe3548f0afb1b0be29f49663861ed6f6ff5fa246287254`.
+It is not a native pass, a timeout, or a replacement for the earlier 87/89 run.
+
+This revision integrates the exact concurrent baseline
+`a3e9002cd12ef90d62f8b252cad570e72dab6fa3` into a separate checkout. The R4
+fixture now obtains readiness orders from the same actual shared scheduler
+and retains the original connection/total deadline and stop owner. The Grant
+fixture consumes the required Challenge transition before registering Grant.
+No production deadline, attack load, assertion, or resource cap is relaxed.
+
+The W1 V5 record retains its old root-view cgroup fields and explicitly labels
+their scope. A bounded read-only snapshot additionally records current-runner
+membership, one unambiguous cgroup2 mount, and each visible ancestor's limits.
+Unresolved paths, shadow mounts, missing reads and context changes remain
+errors or partial observations. Namespace-external ancestors, effective quota,
+atomic identity and native-child placement are not established; this diagnostic
+snapshot grants no Host capability and does not alter original public Host
+capture/validation or the 66-shard experiment's budgets.
+
+Fresh model-material readback has identified 16 distinct physical files and
+91,512,155 bytes for the historical V13 residual-classifier/MiniLM material,
+including its pinned encoder and exact source cut. The complete manifest has
+SHA-256 `9a3251e2c379cdbb03c4964b548d6782bdedabe6c9b2f815813a9bb34abb7448`;
+the authority-boundary record has SHA-256
+`aa9ae892ff69ab97690f8825347e2cb85a8688eb6194cc8884990127bc6bb1bd`.
+This is content identity under DENY_ALL, not a live SourceOwner grant,
+ordinary-entry installation, adoption, restart/next-task use, or independent
+unseen-task gain. It does not substitute for the original 272,189,990-byte /
+35-second cold cohort, whose original material and invocation remain incomplete.
+
+The revised Chain source is frozen before a new original 89-selector run in
+its own fresh target. Added Host, crypto and successor-GC controls are recorded
+separately. Hepta must pin this exact published Chain revision through actual
+Cargo and Bazel resolution, and both repositories' actual native executable
+hashes must join the candidate descriptor after execution. Historical failures,
+UNKNOWN operations, all cost denominators and all false acceptance/activation
+flags remain. Independent custody, external W1/quantum acceptance, a positive
+model product loop and a paid long-duration storage loop are still open.

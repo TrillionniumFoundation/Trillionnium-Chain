@@ -15,6 +15,7 @@ on:
       - scripts/ci/check_required_native_test.py
       - scripts/ci/check_cpq1_parameter_observation.py
       - scripts/ci/test_cpq1_parameter_observation.py
+      - scripts/ci/check_sqlite_build_requalification.py
       - .github/workflows/pon-pq-system-continuation.yml
 permissions:
   contents: read
@@ -612,6 +613,14 @@ jobs:
             fi
           done
           test "$failed" = 0
+      - name: Require actual build-fence cache requalification
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$PQ_OUT/run-command.sh" sqlite-build-requalification python3 scripts/ci/check_sqlite_build_requalification.py \
+            --output "$PQ_OUT/sqlite-build-requalification" --target "$RUNNER_TEMP/sqlite-build-requalification-target" \
+            --rustc "$(rustup which --toolchain 1.95.0 rustc)" --cargo "$(rustup which --toolchain 1.95.0 cargo)"
       - name: Preserve native control records before the complete regression
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -339,10 +339,27 @@ fn reject_external_overrides() -> Result<LoaderPaths, String> {
             }
         }
     }
-    // Also watch absent common variables. This does not replace the owner
-    // requirement to use a fresh controlled build rather than a cached build
-    // whose dependency was compiled under a different environment.
+    paths.validate()?;
+    Ok(paths)
+}
+
+fn main() {
+    println!("cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)");
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=build_loader_paths.rs");
+    println!("cargo:rerun-if-changed=unix_layout_witness.c");
+    // Register common inputs before any fallible qualification, including the
+    // loader-path check. Otherwise an early refusal can remain cached after
+    // its cause changes, even though the later invocation uses valid inputs.
+    // Watches trigger re-evaluation; they do not qualify a dependency built
+    // under another environment or replace the fresh controlled-build owner.
     for name in [
+        "DEP_SQLITE3_INCLUDE",
+        "HOST",
+        "TARGET",
+        "CARGO_CFG_TARGET_OS",
+        "CARGO_CFG_TARGET_POINTER_WIDTH",
+        "CARGO_CFG_TARGET_ENDIAN",
         "LIBSQLITE3_SYS_USE_PKG_CONFIG",
         "RUSTC_WRAPPER",
         "RUSTC",
@@ -373,18 +390,6 @@ fn reject_external_overrides() -> Result<LoaderPaths, String> {
     ] {
         println!("cargo:rerun-if-env-changed={name}");
     }
-    paths.validate()?;
-    Ok(paths)
-}
-
-fn main() {
-    println!("cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)");
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=build_loader_paths.rs");
-    println!("cargo:rerun-if-changed=unix_layout_witness.c");
-    println!("cargo:rerun-if-env-changed=DEP_SQLITE3_INCLUDE");
-    println!("cargo:rerun-if-env-changed=HOST");
-    println!("cargo:rerun-if-env-changed=TARGET");
     if let Err(reason) = qualify_build() {
         // The crate is a default dependency of Node. An unqualified optional
         // boundary must not prevent an ordinary/default Node from building.

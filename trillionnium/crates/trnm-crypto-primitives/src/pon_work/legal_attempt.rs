@@ -10,6 +10,12 @@ use super::{
     PROOF_BYTES,
 };
 
+mod low_rank;
+
+/// Fixed diagnostic factorization limit. Detection, rejection and any dense
+/// fallback are all part of task preparation, never free eligibility advice.
+pub const LOW_RANK_BOUND: usize = 8;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Arithmetic {
     Transposed,
@@ -23,6 +29,17 @@ pub enum Arithmetic {
 pub enum Preparation {
     Dense,
     Sparse,
+}
+
+/// Actual fixed-product constructor selected by a paid preparation. These
+/// observations grant no work validity or protocol task eligibility.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PreparationUsed {
+    Dense,
+    Sparse,
+    LeftLowRank { rank: usize },
+    RightLowRank { rank: usize },
+    DenseAfterRankBound,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -54,6 +71,7 @@ pub struct Attempt {
 pub struct Task {
     prepared: PreparedTask,
     arithmetic: Arithmetic,
+    preparation_used: PreparationUsed,
 }
 
 impl Task {
@@ -73,13 +91,36 @@ impl Task {
         arithmetic: Arithmetic,
         preparation: Preparation,
     ) -> Result<Self, WorkError> {
+        let (prepared, preparation_used) = match preparation {
+            Preparation::Dense => (PreparedTask::new(a, b)?, PreparationUsed::Dense),
+            Preparation::Sparse => (sparse_preparation(a, b)?, PreparationUsed::Sparse),
+        };
         Ok(Self {
-            prepared: match preparation {
-                Preparation::Dense => PreparedTask::new(a, b)?,
-                Preparation::Sparse => sparse_preparation(a, b)?,
-            },
+            prepared,
             arithmetic,
+            preparation_used,
         })
+    }
+
+    /// Explicit new constructor, preserving the original two-arm preparation
+    /// API and every old experiment selector. Try exact left rank <= 8, then
+    /// right rank <= 8; pay ordinary dense preparation after both failed
+    /// probes. No tolerance, factor witness or challenge result is trusted.
+    pub fn with_rank_preparation(
+        a: &[u32],
+        b: &[u32],
+        arithmetic: Arithmetic,
+    ) -> Result<Self, WorkError> {
+        let (prepared, preparation_used) = low_rank::prepare(a, b)?;
+        Ok(Self {
+            prepared,
+            arithmetic,
+            preparation_used,
+        })
+    }
+
+    pub fn preparation_used(&self) -> PreparationUsed {
+        self.preparation_used
     }
 
     /// Fixed mathematical bytes for separately timed evidence reconstruction.
