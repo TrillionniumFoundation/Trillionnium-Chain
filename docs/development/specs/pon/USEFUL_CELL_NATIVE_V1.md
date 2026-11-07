@@ -87,10 +87,16 @@ committed. These are finite correctness controls, not independent quality or
 real production adoption observations.
 
 The [retained native record](../../../../evidence/pon-native-cell-v1-20261107/README.md)
-contains the final 12-test run, complete owner/claim/packet materials, 55 distinct
-W1 proofs and six fresh-process historical replays. It retains failed setup and
-Clippy observations and does not combine the separate private Hepta owner path
-into a public-proof-to-FinalUse claim.
+contains the 12-test run and complete owner/claim/packet materials: 11 distinct
+claim byte strings and 55 distinct W1 proofs. Its cold subset makes six fresh
+historical-verifier invocations across three new stores, over two distinct
+claims containing ten distinct W1 proofs. Legacy and authenticated history
+share one claim; repeated verification creates no new proof.
+The [recovered acc2 concurrent record](../../../../evidence/pon-cell-concurrent-revalidation-20261107/README.md)
+retains the subsequent native gates and cold subset on the combined source with
+identical case bytes. Earlier failed setup and Clippy observations remain
+retained. Neither record combines the separate private Hepta owner path into a
+public-proof-to-FinalUse claim.
 
 Implementation and controls:
 

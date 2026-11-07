@@ -6,6 +6,13 @@ This record accompanies the finite
 It preserves integration preparation and failed observations as well as successful
 controls. It does not establish production activation or a new consensus work rule.
 
+The [recovered concurrent record](../pon-cell-concurrent-revalidation-20261107/README.md)
+pins the combined acc2 source after the upstream candidate advanced. It retains
+the subsequent 12 native, 103 CI and 13 added push-source controls, distinct
+sparse/full-tree source scopes and actual acc2 publication. It explicitly
+separates restored original archives from new recovery checks and unavailable
+former local sidecars. Repeats do not increase unique test or proof counts.
+
 ## Actual validation
 
 | Scope | Observed result | Counting boundary |
@@ -27,8 +34,10 @@ do not claim that the two reference program identities are interchangeable.
 The complete local worktree at `1dcd925badfef079b4d75604480463672f0b4895`
 passed raw tracked-byte verification before and after the integration checks:
 10,983 entries and 1,033,245,605 bytes matched its Git tree. Repository/dependency
-and Markdown-link checks and the CI contract checker also passed. Later commits
-add retained evidence and explanatory links without changing the tested computation.
+and Markdown-link checks and the CI contract checker also passed. The following
+evidence commits preserved these results without changing the tested Cell
+computation. The later concurrent merge and its affected controls are recorded
+separately in the linked concurrent record.
 Raw source identity checks do not execute or certify the computation themselves.
 
 ## Original-source preparation and retained failures

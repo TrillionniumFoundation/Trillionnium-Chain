@@ -1,0 +1,148 @@
+[
+  {
+    "name": "head",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "seconds": 0.004277036990970373
+  },
+  {
+    "name": "tree",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "seconds": 0.004071899922564626
+  },
+  {
+    "name": "status",
+    "args": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "seconds": 0.019917866913601756
+  },
+  {
+    "name": "principal",
+    "args": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit_code": 0,
+    "seconds": 4.586875681066886
+  },
+  {
+    "name": "push-permission",
+    "args": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain",
+      "--jq",
+      ".permissions.push"
+    ],
+    "exit_code": 0,
+    "seconds": 2.3352503820788115
+  },
+  {
+    "name": "github-before",
+    "args": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-six-axis-performance-20261103",
+      "--jq",
+      ".object.sha"
+    ],
+    "exit_code": 0,
+    "seconds": 5.84220267389901
+  },
+  {
+    "name": "fetch-current",
+    "args": [
+      "git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!gh auth git-credential",
+      "fetch",
+      "--no-tags",
+      "--filter=blob:none",
+      "origin",
+      "refs/heads/fix/chain-six-axis-performance-20261103:refs/remotes/origin/cell-publication-latest"
+    ],
+    "exit_code": 0,
+    "seconds": 2.990709959063679
+  },
+  {
+    "name": "fetched-current",
+    "args": [
+      "git",
+      "rev-parse",
+      "refs/remotes/origin/cell-publication-latest"
+    ],
+    "exit_code": 0,
+    "seconds": 0.0035340208560228348
+  },
+  {
+    "name": "preserve-current-ancestry",
+    "args": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+    ],
+    "exit_code": 0,
+    "seconds": 0.048816188937053084
+  },
+  {
+    "name": "push",
+    "args": [
+      "git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!gh auth git-credential",
+      "push",
+      "--porcelain",
+      "origin",
+      "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030:refs/heads/fix/chain-six-axis-performance-20261103"
+    ],
+    "exit_code": 0,
+    "seconds": 15.663758591050282
+  },
+  {
+    "name": "github-after",
+    "args": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-six-axis-performance-20261103",
+      "--jq",
+      ".object.sha"
+    ],
+    "exit_code": 0,
+    "seconds": 10.407173505984247
+  },
+  {
+    "name": "github-commit-tree",
+    "args": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+      "--jq",
+      ".tree.sha"
+    ],
+    "exit_code": 0,
+    "seconds": 1.395588698098436
+  }
+]

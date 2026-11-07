@@ -43,13 +43,18 @@ From an extracted evidence directory and a built trnm-pon-node binary:
       --output /absolute/path/to/a-new-output-directory
 
 The output directory must not already exist. The script creates three independent
-stores, submits retained genuine parent/successor packets with the fixed fixture
-settings, and invokes cell-verify-historical in six fresh child processes.
+stores and invokes cell-verify-historical six times in fresh child processes,
+over two distinct claims containing ten distinct full W1 proofs. The legacy and
+authenticated history stores share one claim; their setup submits retained
+genuine parent/successor packets with the fixed fixture settings. The third
+store repeats the masked sampling/training claim at its unchanged parent.
 It never runs a prover and does not derive expected context from a claim.
 Logical time is used only while reconstructing ordinary fixture chain packets;
 Cell historical commands have no clock override and derive time from the verified
-parent. All six replay receipts match before/after active-tip changes. Raw child
-streams and commands from the actual successful run are in a4-cold-replay/.
+parent. The two history stores' receipts match before/after active-tip changes;
+the masked sampling/training store's two receipts also match. The cold subset
+does not replay the entire retained 11-claim/55-proof corpus. Raw child streams
+and commands from the actual successful run are in a4-cold-replay/.
 
 ## Boundaries
 

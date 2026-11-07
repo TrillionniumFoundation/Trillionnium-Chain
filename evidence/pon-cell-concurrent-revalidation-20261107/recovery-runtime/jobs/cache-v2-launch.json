@@ -1,0 +1,34 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-"
+    ],
+    "created_unix_ms": 1794068795755,
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107",
+    "env_keys": [
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/usr/bin/python3",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1b6d5516b-12894-72e",
+    "idempotency_key": "cell-public-evidence-cached-prepare-20261107-v2",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6d5516b-12894-72e",
+    "request_digest": "2ac8ef07d318d1a4f001164f71b37b3e2303806d7c21a35cc3f436bdb5b02d8c",
+    "request_fingerprint": 3082976761820533000,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b6d5516b-12894-72e"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b6d5516b-12894-72e"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

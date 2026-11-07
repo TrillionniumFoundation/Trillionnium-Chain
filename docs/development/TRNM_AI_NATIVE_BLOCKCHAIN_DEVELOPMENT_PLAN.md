@@ -117,6 +117,13 @@ public native proof; proof-to-owner composition remains an explicit open gate.
 The [integration record](../../evidence/pon-cell-integration-v1-20261107/README.md)
 retains original-source preparation, the unchanged V1/V2 replay, mandatory CI
 controls, raw source checks and failed observations without changing qualification.
+The [recovered concurrent record](../../evidence/pon-cell-concurrent-revalidation-20261107/README.md)
+pins combined source `acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030`, retains its
+affected native/CI controls and actual non-force candidate publication, and
+separates sparse build inputs from complete-tree checks. Its recovery disclosure
+distinguishes restored original archives from new checks and unavailable local
+sidecars. Native cold replay covers two claims/ten proofs across six verifier
+invocations and three stores; repeats change none of the open gates above.
 
 **Original business gates, continued 2026-11-07 America/New_York:**
 Continue the same integration branch after published
@@ -7680,3 +7687,12 @@ The second frozen repair `436ffaefca83292cecef149663d3bdc5a92e5764` again observ
 Retain the actual two-worker gate, then fill the original two channel slots and observe their original enqueue/dequeue counts before sending the final four bodies. Keep all eight authenticated requests, the original peak-equals-four, backpressure, cancellation, zero-work-start, native commit and absolute deadline assertions. A bounded seven-counter diagnostic runs only after the original test wait deadline; the original assert remains outside that diagnostic branch and still executes every loop. No production source or deadline is changed. Fresh complete selector and strict-tool validation follows on this frozen source; both unsuccessful repairs remain evidence.
 
 The original f97 History execution is now confirmed failed in all four lanes: x64 head/merge returned 4,028/2,792 imports before the original 1,800-second server lifetime expired, and both ARM lanes returned 4,104 before the final original 30-second import deadline. Import-return counts are not durable activation. Original three-campaign confirmation is 3/27, with 9 observed failures and 15 unobserved planned rounds; its actual public Host receipts preserve all original limits. No finite offered-population tail, PN1 identity-churn, WAN, anonymous fairness, hardness or economic qualification follows.
+
+
+### 2026-11-07 final R17 composition with concurrent Cell evidence
+
+The exact R17 test-repair source `2f66491d06453d9b5c9a1783f9441fb1d07619a3` completed the retained Public V3 selector with 249 passed, zero failed and one existing paired-PQ-cost benchmark ignored. All seven Legacy controls, strict workspace/all-target/all-feature Clippy, negative source controls and the three original locked dependency graphs passed. This is component validation, not original fixed-Host service acceptance.
+
+The live integration ref advanced to `04bbc81e4aad9b29fef29385d3262297e2cb17df` while PR metadata still recorded acc2. Its 174 changed paths are documentation and recovered Cell evidence only. Preserve that entire branch history with an ordinary merge into the R17 candidate, retain both sets of plan entries and check the complete merged source. All tracked paths outside documentation/evidence must remain byte-identical to the validated R17 source. Fresh native selector, Legacy, strict-tool and source checks are recorded against the resulting committed merge. No native acceptance, force push, main change or activation follows from composition.
+
+Original upstream publication stdout/stderr retain their exact whitespace. The whole staged-tree whitespace check reports those raw stream lines; it is retained as a failed diagnostic. Authored source/document whitespace is checked separately, and every unchanged upstream evidence/specification blob is compared with the original 04bbc81 commit before publication. No raw observation is reformatted to satisfy a style check.
