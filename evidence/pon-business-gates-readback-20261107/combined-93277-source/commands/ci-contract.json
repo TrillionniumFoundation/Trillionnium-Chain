@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:05:09.054879+00:00",
+  "exit_code": 0,
+  "log": "logs/ci-contract.log",
+  "log_bytes": 180,
+  "log_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+  "name": "ci-contract",
+  "pid": 1243018,
+  "start_utc": "2026-11-07T18:05:08.883948+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 170945664
+}

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/run-final-controls-v2.py",
+    "--expected-head",
+    "93277a001f4f8a42be65166f6513177b46cddf5b",
+    "--output",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/93277a001f4f8a42be65166f6513177b46cddf5b",
+    "--execute"
+  ],
+  "benchmarks": [],
+  "cpu_limits_or_runtime_spoof_added": false,
+  "cwd": "/home/qian-qi",
+  "environment_overrides": {
+    "CARGO_HOME": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/metadata-only-target",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PATH": "/home/qian-qi/.cargo/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.cargo/bin:/home/qian-qi/.local/bin:/opt/gradle/current/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/35.0.1:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "expected_head": "93277a001f4f8a42be65166f6513177b46cddf5b",
+  "native_build_commands": [],
+  "roster": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/prepared-test-roster.json",
+  "roster_sha256": "d39c7938b75bfbe929248530494d23b6d2c307f7a91579f47e21e46da17d691a",
+  "runner": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/run-final-controls-v2.py",
+  "runner_sha256": "4d2c809a85a1ee9f8b7152f8746fd1d00f224f8d736f46a9bb50428ca48ca57d",
+  "source_verifier_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "utc": "2026-11-07T18:05:02.645935+00:00"
+}

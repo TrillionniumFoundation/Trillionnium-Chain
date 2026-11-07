@@ -1,3 +1,15 @@
+**Combined-source control follow-up, 2026-11-07 UTC — HOLD:** The frozen
+93277a001f4f8a42be65166f6513177b46cddf5b source completed all 665 controls:
+663 passed, one failure and one error in the exact Host lock controls. Cell's
+202 controls passed; strict Clippy and the complete 1,573-test linked inventory
+also passed preparation, with no native bodies executed. Preserve
+[the complete attempt and reviewed lock-construction correction](../../evidence/pon-business-gates-readback-20261107/README.md).
+Canonicalize only a newly O_EXCL-created lock descriptor to the already required
+0444 mode; never repair existing locks or relax Host checks. One real-child
+umask regression raises the next original-source roster to 666. Its fresh
+execution and the original real CI business gates remain pending; no previous
+pressure, History, CPU-budget, missing-artifact or qualification failure closes.
+
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
 Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 23).

@@ -253,3 +253,49 @@ Copy provenance is retained in [RETAINED_COPY.json](RETAINED_COPY.json),
 and 887,995 bytes, omitting only two native binaries with their identities recorded.
 The [CI copy plan](ci-d26/COPY_PLAN.json) fixes the original bytes and compression
 identities. Existing raw failures are evidence, not replaceable expected-green output.
+
+## 8. First combined-source controls and canonical lock creation
+
+The first frozen combined head was
+93277a001f4f8a42be65166f6513177b46cddf5b, tree
+3e6cdf8a7532145069c9282f9b59d2fc8a8cd081. Its
+[source-control readback](combined-93277-readback/CORE.json) records the complete
+single attempt: 665 methods, 663 passed, one failure and one error, zero skips.
+All 202 Cell formal tests passed. In total, 16 of 17 suites passed. The original
+summary counts 587 methods in entirely successful suites; the Host suite's
+additional 76 successful methods are included in the 663 total.
+
+Both failures occurred in PublicFixtureLockControls, before the intended
+inode-replacement or cross-receipt-root lock condition: the exact owner/mode
+check refused FIXTURE_PARENT_LOCK_OWNER. The [original Host log](combined-93277-source/logs/06-test_from_zero_host_ci.log)
+and all 84 source-control files are retained unchanged. The before/after source
+receipts match across 12,390 tracked entries and 1,274,925,144 bytes.
+
+The same head's [native prepush receipt](combined-93277-prepush/manifest.json)
+passed strict workspace/all-targets/all-features Clippy and full Node --no-run.
+Actual linked inventory contains 67 test harnesses (library, binary unit harness,
+65 integration targets), 1,573 tests including 57 default-ignored tests, and
+12 nonignored Cell tests. The 1,516 default native bodies were not executed by
+this preparation. Compilation and inventory are not native test passes.
+
+Source inspection showed that the original privileged lock creator requested
+0444 through os.open, which remains subject to its process umask, while the
+existing validator requires exact 0444. The retained later live-process
+observation reported umask 0077; it is not an observation of the original
+already-exited control process. The [reviewed patch](host-lock-review/new-lock-canonical-mode.patch)
+makes only an exclusively created new descriptor canonical using fchmod(0444)
+and closes it in finally. Existing paths are never repaired or chmodded.
+All ownership, exact mode, inode, size, symlink, source/context, nonblocking flock
+and original 30-second checks remain.
+
+One added regression executes the real creator in real unprivileged child
+processes with child-only umasks 0077 and 0777, checks actual ownership and
+mode, and requires an existing 0400 file to remain unchanged and refused.
+The old inode-replacement fixture now keeps all non-inode fields equal explicitly.
+The source roster therefore grows from 78 to 79 Host methods and from 665 to 666
+total methods. These new-source results remain pending here; the failed 93277
+attempt is not reclassified or discarded.
+
+[COMBINED_93277_COPY.json](COMBINED_93277_COPY.json) records every copied byte,
+including the original source and native readers. No additional native body,
+benchmark or business-gate result is inferred from these observations.
