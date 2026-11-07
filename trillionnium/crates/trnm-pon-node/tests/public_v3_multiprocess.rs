@@ -318,7 +318,7 @@ fn paid_depletion(
         "separately_observed_public_settled_cpu_ns":metrics.mutation_cpu_charged_ns,
         "observed_terminal_mutation_cpu_refusals":metrics.mutation_cpu_refusals,
         "meter":meter,"clock_failures":metrics.mutation_cpu_clock_failures,
-        "domain_cpu_scope":"paid-envelope-v3 body digest/canonical decode, native dispatch and signed response owner CPU plus joined scoped-worker CPU; exact scheduling revision is bound by public_resource_policy; excludes reactor authentication/socket I/O, queue waiting and separate process clocks",
+        "domain_cpu_scope":"paid-envelope-v3 actual debited admission-wait thread CPU plus body digest/canonical decode, native dispatch and signed response owner CPU and joined scoped-worker CPU; exact scheduling revision is bound by public_resource_policy; excludes wall-clock sleep time, reactor authentication/socket I/O and separate process clocks",
         "balance_identity_has_work_or_execution_authority":false,
         "scope":"optional exact actual paid-credit identity; old threshold unchanged; terminal refusals separate because original FIFO waits for refill; no physical cost lower bound"})
 }

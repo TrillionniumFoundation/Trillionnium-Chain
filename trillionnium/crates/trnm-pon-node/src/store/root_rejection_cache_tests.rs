@@ -467,27 +467,43 @@ fn root_rejection_public_replays_keep_signed_root_full_work_and_actual_paid_cpu(
             policy,
         );
         let after = domain.observe_actual_flow().unwrap().unwrap();
+        let paid = after
+            .paid_cpu_debit_ns
+            .checked_sub(previous.paid_cpu_debit_ns);
+        let owner_paid = after
+            .settled_full_cpu_ns
+            .checked_sub(previous.settled_full_cpu_ns);
+        let wait_paid = after
+            .admission_wait_cpu_ns
+            .checked_sub(previous.admission_wait_cpu_ns);
         calls.push((
             result,
-            after
-                .paid_cpu_debit_ns
-                .checked_sub(previous.paid_cpu_debit_ns),
+            paid,
+            owner_paid,
             after.balance_identity_verified
                 && after.live_owners == 0
                 && after.booked_reservation_ns == 0
                 && after.unsettled_known_live_cpu_ns == 0
-                && after.paid_cpu_debit_ns == after.settled_full_cpu_ns,
+                && Some(after.paid_cpu_debit_ns)
+                    == after
+                        .admission_wait_cpu_ns
+                        .checked_add(after.settled_full_cpu_ns)
+                && paid
+                    == wait_paid
+                        .zip(owner_paid)
+                        .and_then(|(wait_ns, owner_ns)| wait_ns.checked_add(owner_ns)),
         ));
         previous = after;
     }
     stop.store(true, Ordering::Release);
     let service = worker.join().unwrap();
     service.unwrap();
-    for (reply, paid, settled) in calls {
+    for (reply, paid, owner_paid, settled) in calls {
         let reply = reply.unwrap(); // Client independently verifies signed reply.
         assert!(!reply.ok);
         assert_eq!(reply.value["error"], "ROOT");
         assert!(paid.is_some_and(|ns| ns > 0));
+        assert!(owner_paid.is_some_and(|ns| ns > 0));
         assert!(settled);
     }
     let captured = observer.snapshot();

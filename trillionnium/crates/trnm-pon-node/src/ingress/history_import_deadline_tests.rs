@@ -140,6 +140,7 @@ fn final_resource_expiry_keeps_committed_history_and_settled_cpu() {
 fn metered_expiry_preserves_native_errors_and_settles_the_original_account() {
     for native_error in [false, true] {
         let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        let before_observation = cpu.observe().unwrap();
         let before = cpu.observe_actual_flow().unwrap().unwrap();
         let resource_calls = AtomicUsize::new(0);
         let control = Control {
@@ -180,7 +181,7 @@ fn metered_expiry_preserves_native_errors_and_settles_the_original_account() {
         assert_eq!(after.booked_reservation_ns, 0);
         assert_eq!(after.unsettled_known_live_cpu_ns, 0);
         assert!(after.paid_cpu_debit_ns > before.paid_cpu_debit_ns);
-        assert_eq!(after.paid_cpu_debit_ns, after.settled_full_cpu_ns);
+        assert_history_cpu_delta(&before_observation, &before, &observation, &after, None);
         assert!(after.balance_identity_verified);
     }
 }
@@ -236,6 +237,8 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
     let before = node.read_active().unwrap();
     let owner = Mutex::new(node);
     let id = packet.id().unwrap();
+    let before_cpu = cpu.observe().unwrap();
+    let before_flow = cpu.observe_actual_flow().unwrap().unwrap();
     let end = Instant::now() + Duration::from_secs(5);
     let w1 = Arc::new(AtomicUsize::new(0));
     let admitted = Arc::new(AtomicUsize::new(0));
@@ -272,7 +275,13 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
     }
     let paid = cpu.observe_actual_flow().unwrap().unwrap();
     assert!(paid.paid_cpu_debit_ns > 0);
-    assert_eq!(paid.paid_cpu_debit_ns, paid.settled_full_cpu_ns);
+    assert_history_cpu_delta(
+        &before_cpu,
+        &before_flow,
+        &cpu.observe().unwrap(),
+        &paid,
+        None,
+    );
     assert_eq!(paid.booked_reservation_ns, 0);
     assert_eq!(paid.unsettled_known_live_cpu_ns, 0);
     assert!(paid.balance_identity_verified);
@@ -291,6 +300,8 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
             }
         }));
     });
+    let before_retry = cpu.observe().unwrap();
+    let before_retry_flow = cpu.observe_actual_flow().unwrap().unwrap();
     let retry = admit_shared_packet(
         &owner,
         packet.clone(),
@@ -306,6 +317,13 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
         1
     );
     let after_retry = cpu.observe_actual_flow().unwrap().unwrap();
+    assert_history_cpu_delta(
+        &before_retry,
+        &before_retry_flow,
+        &cpu.observe().unwrap(),
+        &after_retry,
+        None,
+    );
     assert!(after_retry.paid_cpu_debit_ns >= paid.paid_cpu_debit_ns);
     assert_eq!(after_retry.initial_credit_ns, paid.initial_credit_ns);
     assert_eq!(after_retry.booked_reservation_ns, 0);

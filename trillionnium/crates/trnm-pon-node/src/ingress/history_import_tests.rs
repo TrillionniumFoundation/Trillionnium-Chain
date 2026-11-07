@@ -1,4 +1,7 @@
 use super::*;
+use crate::ingress::public_v3::scalar_cpu::{
+    ServiceMutationCpuFlowObservation, ServiceMutationCpuObservation,
+};
 use std::{
     cell::RefCell,
     fs,
@@ -37,6 +40,81 @@ pub(super) fn cut(stage: &str) {
         loop {
             thread::park();
         }
+    }
+}
+
+fn assert_history_cpu_delta(
+    before: &ServiceMutationCpuObservation,
+    before_flow: &ServiceMutationCpuFlowObservation,
+    after: &ServiceMutationCpuObservation,
+    after_flow: &ServiceMutationCpuFlowObservation,
+    receipt: Option<&public_v3::ServiceMutationCpuSettlement>,
+) {
+    for (observation, flow) in [(before, before_flow), (after, after_flow)] {
+        assert!(!observation.accounting_unavailable);
+        assert_eq!(observation.in_flight, 0);
+        assert_eq!(observation.stored_credit_ns, flow.stored_credit_ns);
+        assert_eq!(flow.live_owners, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(flow.termination_reserved_ns, 0);
+        assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+        assert!(flow.balance_identity_verified);
+    }
+    assert_eq!(after_flow.initial_credit_ns, before_flow.initial_credit_ns);
+    let wait = after_flow
+        .admission_wait_cpu_ns
+        .checked_sub(before_flow.admission_wait_cpu_ns)
+        .unwrap();
+    let settled = after_flow
+        .settled_full_cpu_ns
+        .checked_sub(before_flow.settled_full_cpu_ns)
+        .unwrap();
+    let paid = after_flow
+        .paid_cpu_debit_ns
+        .checked_sub(before_flow.paid_cpu_debit_ns)
+        .unwrap();
+    assert_eq!(Some(paid), wait.checked_add(settled));
+    let refill = after_flow
+        .credited_refill_ns
+        .checked_sub(before_flow.credited_refill_ns)
+        .unwrap();
+    let discarded = after_flow
+        .settlement_discard_ns
+        .checked_sub(before_flow.settlement_discard_ns)
+        .unwrap();
+    // Read the original stored balance independently of the flow identity.
+    // Only actual credited refill enters it; discarded refill never did.
+    assert_eq!(
+        Some(after.stored_credit_ns),
+        before
+            .stored_credit_ns
+            .checked_add(i128::from(refill))
+            .and_then(|credit| credit.checked_sub(i128::from(wait)))
+            .and_then(|credit| credit.checked_sub(i128::from(settled)))
+            .and_then(|credit| credit.checked_sub(i128::from(discarded)))
+    );
+    if let Some(receipt) = receipt {
+        assert!(!receipt.accounting_unavailable);
+        let total = receipt.total_cpu_ns.unwrap();
+        let owner = receipt.owner_cpu_ns.unwrap();
+        let workers = receipt.scoped_worker_cpu_ns.unwrap();
+        let live = receipt.live_paid_cpu_ns.unwrap();
+        let residual = receipt.residual_cpu_ns.unwrap();
+        assert_eq!(Some(total), owner.checked_add(workers));
+        assert_eq!(Some(total), live.checked_add(residual));
+        assert_eq!(settled, total);
+        assert_eq!(
+            after_flow
+                .live_debited_cpu_ns
+                .checked_sub(before_flow.live_debited_cpu_ns),
+            Some(live)
+        );
+        assert_eq!(
+            after_flow
+                .settlement_residual_cpu_ns
+                .checked_sub(before_flow.settlement_residual_cpu_ns),
+            Some(residual)
+        );
     }
 }
 
@@ -398,6 +476,7 @@ fn history_w1_checks_host_once_at_every_native_boundary_without_refill() {
             // refill so each mathematical checkpoint must check Host once.
             let domain = public_v3::ServiceMutationCpuDomain::standalone();
             let initial = domain.observe().unwrap();
+            let flow_before = domain.observe_actual_flow().unwrap().unwrap();
             let calls = AtomicUsize::new(0);
             let resource = || {
                 calls.fetch_add(1, Ordering::SeqCst);
@@ -427,7 +506,14 @@ fn history_w1_checks_host_once_at_every_native_boundary_without_refill() {
             let flow = domain.observe_actual_flow().unwrap().unwrap();
             assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
             assert_eq!(flow.booked_reservation_ns, 0);
-            assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+            assert_eq!(flow.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+            assert_history_cpu_delta(
+                &initial,
+                &flow_before,
+                &domain.observe().unwrap(),
+                &flow,
+                Some(&receipt),
+            );
             assert!(flow.balance_identity_verified);
             println!(
                 "{}",
@@ -480,6 +566,7 @@ fn history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account()
         for cut in cuts.iter().copied().map(Some).chain([None]) {
             let domain = public_v3::ServiceMutationCpuDomain::standalone();
             let initial = domain.observe().unwrap();
+            let flow_before = domain.observe_actual_flow().unwrap().unwrap();
             let calls = AtomicUsize::new(0);
             let resource = || {
                 let index = calls.fetch_add(1, Ordering::SeqCst);
@@ -532,7 +619,14 @@ fn history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account()
             let flow = domain.observe_actual_flow().unwrap().unwrap();
             assert_eq!(flow.initial_credit_ns, i128::from(initial.burst_ns));
             assert_eq!(flow.booked_reservation_ns, 0);
-            assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+            assert_eq!(flow.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+            assert_history_cpu_delta(
+                &initial,
+                &flow_before,
+                &domain.observe().unwrap(),
+                &flow,
+                Some(&receipt),
+            );
             assert!(flow.balance_identity_verified);
         }
     }
@@ -1469,6 +1563,8 @@ fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_accoun
                 deadline: Instant::now() + Duration::from_secs(10),
                 resource: &resource,
             };
+            let cpu_before = original.observe().unwrap();
+            let flow_before = original.observe_actual_flow().unwrap().unwrap();
             let outcome = if shared {
                 receive(
                     Owner::Shared(&owner),
@@ -1512,7 +1608,7 @@ fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_accoun
             assert!(!observation.accounting_unavailable);
             let flow = original.observe_actual_flow().unwrap().unwrap();
             assert!(flow.paid_cpu_debit_ns > 0);
-            assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+            assert_history_cpu_delta(&cpu_before, &flow_before, &observation, &flow, None);
             assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
             assert_eq!(flow.booked_reservation_ns, 0);
             assert_eq!(flow.initial_credit_ns, 0);
@@ -1529,6 +1625,8 @@ fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_accoun
                 deadline: Instant::now() + Duration::from_secs(10),
                 resource: &|| Ok(()),
             };
+            let retry_before = original.observe().unwrap();
+            let retry_flow_before = original.observe_actual_flow().unwrap().unwrap();
             let outcome = if shared {
                 receive(
                     Owner::Shared(&owner),
@@ -1549,6 +1647,15 @@ fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_accoun
                 )
             };
             assert_eq!(outcome.unwrap(), id);
+            let retry_after = original.observe().unwrap();
+            let retry_flow_after = original.observe_actual_flow().unwrap().unwrap();
+            assert_history_cpu_delta(
+                &retry_before,
+                &retry_flow_before,
+                &retry_after,
+                &retry_flow_after,
+                None,
+            );
             let active = owner.lock().unwrap().read_active().unwrap();
             assert_eq!(active.0, id);
             let sender = format!(
@@ -1588,6 +1695,8 @@ fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
     // with actual remaining debt must retain its marker, even with known CPU.
     let close = scoped(&mut Owner::Shared(&writer), &control, |_owner, cpu| {
         assert!(cpu.shares_domain_with(&domain));
+        let initial = cpu.observe()?;
+        let flow_before = cpu.observe_actual_flow()?.unwrap();
         let operation = begin_cpu(cpu, &control)?;
         operation.bind_history_request(control.deadline)?;
         let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
@@ -1623,7 +1732,14 @@ fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
         let flow = cpu.observe_actual_flow()?.unwrap();
         assert_eq!(flow.initial_credit_ns, 0);
         assert_eq!(flow.booked_reservation_ns, 0);
-        assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+        assert_eq!(flow.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+        assert_history_cpu_delta(
+            &initial,
+            &flow_before,
+            &cpu.observe()?,
+            &flow,
+            Some(&receipt),
+        );
         assert_eq!(flow.live_owners, 0);
         assert!(flow.balance_identity_verified);
         *observed.lock().unwrap() = Some((boundaries, receipt, flow));
