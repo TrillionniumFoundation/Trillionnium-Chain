@@ -8305,3 +8305,13 @@ These are engineering observations, not theorem certificates. Complete QROM,
 PQ authorization, quantum work/chain weight and production acceptance remain
 independent HOLD decisions. No main merge, self-approval, force push or
 production activation is performed.
+
+The hosted 7150 `repository-truth` failure was traced to the generated
+distributed-source inventory: the static repository check passed, but the
+inventory check found the two new QROM configuration files absent. The
+[original failure and exact delta](../../evidence/pon-w1-qrom-closure-20261107/repository-truth-7150-inventory-failure.json)
+are retained. A normal follow-up to the 5c3a3c5b continuation refreshes that
+generated file, adding exactly those two configurations and the new closure
+test roster (1,358 entries to 1,361). The unchanged generator's `--check`
+passes. This corrects the source packaging defect; it does not turn the old
+failed job or any other required check into a historical success.

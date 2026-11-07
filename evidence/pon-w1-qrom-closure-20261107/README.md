@@ -19,6 +19,8 @@ completed artifact calculations are separately named in the linked reports.
 | [hosted-7150-readback.json](hosted-7150-readback.json) | Actual hosted head and ordered prospective-merge source/status records |
 | [hosted-7150-qrom.tar.gz](hosted-7150-qrom.tar.gz) | All 52 downloaded files from the successful 7150 hosted QROM run |
 | [hosted-7150-all-checks-snapshot.json](hosted-7150-all-checks-snapshot.json) | Time-specific complete PR check snapshot, including failures and still-running checks |
+| [repository-truth-7150-inventory-failure.json](repository-truth-7150-inventory-failure.json) | Original required-check failure: two new QROM configs were absent from the generated distributed-source roster |
+| [inventory-refresh.json](inventory-refresh.json) | Exact three-entry follow-up repair, including the new closure roster, and successful unchanged generator check |
 | [native-selected](native-selected/) | Original selected outputs for actual receipt verification, native replay, official image and fixed release features; a partial checkpoint, not a full-workspace source certificate |
 | [independent-review](independent-review/) | Independent composition, joint-oracle, lifetime, named-runner and workflow probes with explicit reviewed source hashes |
 | [local-validation-initial-index.json](local-validation-initial-index.json) | Hash-indexed initial and final-stage local observations, including the preserved temporary extraction-harness failure |
