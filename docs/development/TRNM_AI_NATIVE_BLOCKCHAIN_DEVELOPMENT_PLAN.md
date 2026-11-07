@@ -8202,3 +8202,35 @@ strategy, equivalent real-time production budgets, or a mixed quantum/classical
 DAA and reorganization theorem. Fixed-context circuit construction already
 exists; physical execution, adaptive-domain binding, independent full-cost
 qualification and production acceptance remain separate open gates.
+
+### 2026-11-06 quantum cost followthrough — Draft/HOLD
+
+Continue the quantum/DAA work without changing native required work, fork
+choice or activation. The adaptive private-release implementation now uses one
+upward-rounded fractional deadline for scheduling and timeout admission, fixing
+the `0.5 + 0.1` timer that could be stranded by subtraction rounding. The
+synthetic success path shares the literal-domain kernel so `p=0` and `p=1`
+remain exact; interior probabilities still have their stated numerical scope.
+
+Direct physical estimates now share circuit count/depth/subtotal checks;
+normal JSON requests also reject impossible width/depth schedules. Gate counts
+and conservative depths describe the same declared schedule, not independent
+loose ceilings. Necessary capacity checks preserve serial aggregation at peak
+live width and do not certify a circuit or a fault-tolerant layout.
+
+[The preprocessing reuse diagnostic](../../formal/pon-nakamoto-v1/w1_preprocessing_reuse.py)
+adds byte-dependency controls for nonce, parent, target, timestamp, profile,
+growth witness, PNH1 task and PGH2 task. It separates `A B` input identity,
+task-commitment bytes, fixed-prefix checkpoints and complete challenge input,
+and checks resumed SHA computation. A reusable checkpoint does not imply a
+reusable complete challenge; equal challenge bytes do not alone bind changed
+relation parameters. The diagnostic measures no amortized hardware advantage.
+
+Keep the existing full and prefix-restricted fixed-context W1 constructions
+distinct from the still-open hardware, equal-real-time/resource work-production,
+profitable executable attack and quantum/classical consensus-security gates.
+The [research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) and
+[cost-closure evidence entry](../../evidence/pon-quantum-cost-closure-20261106/README.md)
+record this scope. No new test freeze or qualification is asserted here; the
+candidate remains **Draft/HOLD**, with production and whole-chain acceptance
+ungranted.

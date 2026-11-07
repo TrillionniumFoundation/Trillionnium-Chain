@@ -5,6 +5,51 @@ production DAA change, or mainnet readiness claim**. The source baseline is
 4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251 (PR #498). This work adds only formal
 research, fixtures, tests and receipts. Native node consensus remains unchanged.
 
+## 2026-11-06 followthrough: adaptive clocks, cost admission and reuse scopes
+
+This continuation remains **Draft/HOLD**. Source-specific checks and preserved
+failures belong to the [cost-closure evidence entry](../../evidence/pon-quantum-cost-closure-20261106/README.md);
+this section does not transfer historical test results to the new source.
+
+The executable adaptive private-release path now schedules and checks the same
+upward-rounded deadline from the exact represented binary64 start and wait.
+Previously, a wait starting at `0.5` with duration `0.1` could reach the rounded
+`0.6` event yet fail the subtraction-based timeout check and lose its timer.
+A horizon before the corrected deadline still leaves the private work
+unpublished. The synthetic Grover path also shares the literal-domain success
+kernel, keeping `p=0` exactly zero and `p=1` exactly one for supported iteration
+and processor counts; interior trigonometric probabilities remain approximate.
+
+Direct `physical_estimate()` calls now enforce the count/depth/subtotal
+consistency already required of circuit inputs. Complete requests and normal
+JSON admission also reject impossible gate-count/width/depth combinations,
+including 100 gates on one wire in one layer or a Toffoli on two wires.
+Counts and conservative depth bounds must describe the **same declared
+schedule**; unrelated loose count ceilings and independently tight depth
+ceilings are not this input contract. The necessary wire-capacity checks
+preserve valid serial aggregation with peak live width and the larger derived
+count range. They do not verify a netlist, register layout or physical machine.
+
+[The preprocessing diagnostic](w1_preprocessing_reuse.py) compares canonical
+framed bytes and checks actual SHA continuation against `hashlib`. Its eight
+[byte-change controls](test_w1_preprocessing_reuse.py) cover nonce, parent,
+target, timestamp, profile, growth witness, PNH1 task and PGH2 task changes.
+It distinguishes `A B` inputs `(A, B, N, q)`, task-commitment input bytes,
+matching fixed-prefix blocks and complete challenge input. A reusable
+five-block SHA checkpoint does not make the complete challenge reusable;
+identical challenge bytes alone do not establish later-intermediate reuse when
+relation parameters differ. Input equality is a sufficient reuse condition,
+not a lower bound excluding other caches or algorithms. No saved time, energy
+or real amortization frequency is measured here.
+
+Full and prefix-restricted fixed-context W1 constructions already exist, with
+explicit loading, reverse operations and their distinct marked predicates.
+The remaining gates are calibrated fault-tolerant hardware, measured work
+production under equal real-time/resource budgets, an executable profitable
+consensus attack or a mixed quantum/classical DAA and fork-choice security
+proof. These repairs and reuse controls close none of those gates; native
+consensus and production activation remain unchanged.
+
 ## 2026-11-06: measurement tails, declared depth and actual fork selection
 
 Continue from integrated source `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`.
