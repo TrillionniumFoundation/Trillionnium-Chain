@@ -26,6 +26,130 @@ fn node() -> (tempfile::TempDir, tempfile::TempDir, Node) {
     });
     (root, dir, node)
 }
+impl Node {
+    /// Shared guard fixture for private authentication-state fault tests. This
+    /// is not a qualified public task/view or an alternate production opener.
+    pub(crate) fn continuous_authentication_guard_fixture(
+    ) -> (tempfile::TempDir, tempfile::TempDir, Self) {
+        node()
+    }
+}
+
+#[test]
+fn continuous_clean_close_fences_new_listener_until_next_original_journal_event() {
+    let (_root, directory, node) = node();
+    node.require_continuous_public_authentication(false)
+        .unwrap();
+    let original = node.continuous_journal_head().unwrap();
+    let active = node.active().unwrap();
+    let closed = node.close_continuous_checkpoint().unwrap();
+    assert_eq!(
+        closed["schema"],
+        "restricted-continuous-clean-checkpoint-v2"
+    );
+    let clean = node.continuous_journal_head().unwrap();
+    assert_ne!(clean, original);
+    assert_eq!(node.active().unwrap(), active);
+    assert!(!directory.path().join("unavailable.json").exists());
+    assert_eq!(
+        node.require_continuous_public_authentication(false)
+            .unwrap_err()
+            .to_string(),
+        "OWNER_CONTINUOUS_NEXT_VIEW_REQUIRED"
+    );
+    assert_eq!(node.continuous_journal_head().unwrap(), clean);
+
+    // A real existing trusted-owner control event invalidates the earlier
+    // clean anchor. Merely presenting a new guest key or listener cannot.
+    let raw = br#"{"purpose":"read-head"}"#;
+    let step: crate::operator_continuous_controller::Step = serde_json::from_slice(raw).unwrap();
+    assert!(matches!(
+        step,
+        crate::operator_continuous_controller::Step::ReadHead {}
+    ));
+    let frame = node.begin_continuous_control_frame().unwrap();
+    node.public_head_metadata().unwrap();
+    assert!(frame.finish(raw));
+    assert_ne!(node.continuous_journal_head().unwrap(), clean);
+    node.require_continuous_public_authentication(false)
+        .unwrap();
+    assert!(!directory.path().join("unavailable.json").exists());
+}
+
+#[test]
+fn continuous_listener_start_checks_owner_and_journal_unavailable_independently() {
+    for journal_only in [false, true] {
+        let (_root, _directory, mut node) = node();
+        let owner = node.continuous_owner.as_mut().unwrap();
+        // Production aliases these handles. Retain the independent journal
+        // guard even if a future composition separates their observation.
+        owner.unavailable = Arc::new(AtomicBool::new(!journal_only));
+        if journal_only {
+            owner
+                .journal
+                .lock()
+                .unwrap()
+                .unavailable_handle()
+                .store(true, Ordering::Release);
+        }
+        let before = node.continuous_journal_head().unwrap();
+        assert_eq!(
+            node.require_continuous_public_authentication(false)
+                .unwrap_err()
+                .to_string(),
+            "OWNER_CONTINUOUS_UNKNOWN"
+        );
+        assert_eq!(node.continuous_journal_head().unwrap(), before);
+    }
+}
+
+#[test]
+fn continuous_checkpoint_waits_for_actual_local_helper_settlement_without_marking_unknown() {
+    let (_root, directory, node) = node();
+    let original_state = node.read_active().unwrap();
+    let original_head = node.continuous_journal_head().unwrap();
+    let domain = node.continuous_cpu_domain().unwrap();
+    assert_eq!(domain.public_listener_count().unwrap(), 0);
+    assert!(node
+        .continuous_owner
+        .as_ref()
+        .unwrap()
+        .slot()
+        .unwrap()
+        .is_none());
+    // The actual original begin/finish API models the local metered helper's
+    // interval before it has entered (or after it has left) a task scope.
+    // No synthetic failure flag or measured CPU value is supplied.
+    let operation = domain.begin().unwrap();
+    let mut value = 1u64;
+    for _ in 0..100_000 {
+        value = std::hint::black_box(value.wrapping_mul(6364136223846793005).wrapping_add(1));
+    }
+    std::hint::black_box(value);
+    let live = domain.observe().unwrap();
+    assert_eq!(live.in_flight, 1);
+    assert!(!live.accounting_unavailable);
+    assert_eq!(
+        node.close_continuous_checkpoint().unwrap_err().to_string(),
+        "OWNER_CONTINUOUS_SCOPE_BUSY"
+    );
+    assert_eq!(node.continuous_journal_head().unwrap(), original_head);
+    assert_eq!(node.read_active().unwrap(), original_state);
+    assert!(!directory.path().join("unavailable.json").exists());
+
+    let actual = operation.finish();
+    assert!(!actual.accounting_unavailable);
+    assert!(actual.owner_cpu_ns.unwrap() > 0);
+    assert!(domain.public_epoch_is_settled().unwrap());
+    let closed = node.close_continuous_checkpoint().unwrap();
+    assert_eq!(
+        closed["schema"],
+        "restricted-continuous-clean-checkpoint-v2"
+    );
+    assert_ne!(node.continuous_journal_head().unwrap(), original_head);
+    assert_eq!(node.read_active().unwrap(), original_state);
+    assert!(!directory.path().join("unavailable.json").exists());
+}
 fn same_packet_error(before: Error, after: Error) {
     use std::error::Error as _;
     assert_eq!(after.to_string(), before.to_string());

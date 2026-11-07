@@ -259,6 +259,74 @@ fn actual_two_listeners_use_shared_connection_slots_and_release_on_stop() {
 }
 
 #[test]
+fn foreign_startup_domain_refuses_before_unavailable_pool_snapshot() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development(None).unwrap();
+    let mut node = Node::open(dir.path(), settings, 2).unwrap();
+    let original = ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&original).unwrap();
+    // This deliberately unavailable snapshot distinguishes the early domain
+    // check from merely refusing the foreign listener after State access.
+    assert_eq!(
+        node.pool_status_snapshot().unwrap_err().to_string(),
+        "POOL_NOT_ENABLED"
+    );
+    let foreign = ServiceMutationCpuDomain::standalone();
+    let incoming = server(&foreign, 91);
+    let intake = incoming.listener_intake().unwrap();
+    let owner = Arc::new(Mutex::new(node));
+    let error = serve_public_protected_v3(
+        TcpListener::bind("127.0.0.1:0").unwrap(),
+        owner.clone(),
+        Duration::from_secs(1),
+        Arc::new(AtomicBool::new(false)),
+        incoming,
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "OWNER_PUBLIC_SERVICE_CPU_DOMAIN");
+    assert!(owner
+        .lock()
+        .unwrap()
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(*intake.listeners.lock().unwrap(), 0);
+}
+
+#[test]
+fn failed_first_listener_does_not_claim_an_unbound_node_domain() {
+    let dir = tempfile::tempdir().unwrap();
+    let node = Node::open(dir.path(), Settings::development(None).unwrap(), 2).unwrap();
+    let owner = Arc::new(Mutex::new(node));
+    let unsuccessful = ServiceMutationCpuDomain::standalone();
+    let incoming = server(&unsuccessful, 92);
+    let intake = incoming.listener_intake().unwrap();
+    let error = serve_public_protected_v3(
+        TcpListener::bind("127.0.0.1:0").unwrap(),
+        owner.clone(),
+        Duration::from_secs(1),
+        Arc::new(AtomicBool::new(false)),
+        incoming,
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "POOL_NOT_ENABLED");
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    assert_eq!(*intake.listeners.lock().unwrap(), 0);
+    let subsequent = ServiceMutationCpuDomain::standalone();
+    owner
+        .lock()
+        .unwrap()
+        .bind_public_service_cpu_domain(&subsequent)
+        .unwrap();
+    assert!(owner
+        .lock()
+        .unwrap()
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&subsequent));
+}
+
+#[test]
 fn one_plain_node_must_not_accept_independent_cpu_domains_through_two_real_listeners() {
     let dir = tempfile::tempdir().unwrap();
     let clock = super::super::now().unwrap();
@@ -603,7 +671,7 @@ fn public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy() {
             started.send(()).unwrap();
             let result =
                 OrdinaryPublicServiceCrashFence::begin(waiting_node, deadline, &waiting_stop)
-                    .and_then(|mut fence| fence.complete(true));
+                    .and_then(|mut fence| fence.complete());
             completed.send(()).unwrap();
             result
         });

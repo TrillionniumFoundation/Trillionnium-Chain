@@ -1,0 +1,43 @@
+{
+  "schema": "trnm-w1-r16-retained-boundaries-v1",
+  "source": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+  "base": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+  "checks": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "unchanged_from_integration_parent": true,
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "unchanged_from_integration_parent": true,
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    },
+    {
+      "path": "config/systemd/trnmponpublic.slice",
+      "unchanged_from_integration_parent": true,
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "unchanged_from_integration_parent": true,
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "unchanged_from_integration_parent": true,
+      "sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a"
+    },
+    {
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "unchanged_from_integration_parent": true,
+      "sha256": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053"
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "unchanged_from_integration_parent": true,
+      "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+    }
+  ],
+  "native_execution_or_qualification_claimed": false
+}
