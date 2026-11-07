@@ -87,7 +87,7 @@ impl PqTlsServer {
             observation.stage("ingress_admission");
             self.inner.charge_connection(node, deadline)?;
             observation.stage("tls_handshake");
-            let mut channel = io::Channel::accept(
+            let mut channel = io::Channel::accept_observed(
                 stream,
                 deadline,
                 &self.context,

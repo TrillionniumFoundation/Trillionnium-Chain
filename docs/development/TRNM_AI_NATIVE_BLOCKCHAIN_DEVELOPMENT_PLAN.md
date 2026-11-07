@@ -8182,3 +8182,8 @@ dispatch, retries or cleanup authority. Original listener, witness and request
 deadlines, metering, TLS negotiation and all signed/stored domains are unchanged.
 Exact-source native compilation and original-window execution are pending;
 source-integrity checks alone do not close either failed native control.
+
+The first diagnostic compile at `c37405fe2e0fdb51d97e6390143244d4053d571b`
+stopped with E0061 before executing either original CLI control. Its raw
+strict-Clippy failure is retained. A separate observed accept entry now leaves
+the existing five-argument frame-boundary test entry and test bytes intact.
