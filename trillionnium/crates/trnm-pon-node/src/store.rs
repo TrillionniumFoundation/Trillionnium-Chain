@@ -28,6 +28,8 @@ pub(crate) mod pq_network;
 pub(crate) mod pq_rollback_witness;
 #[cfg(test)]
 pub(crate) mod public_reader;
+#[cfg(test)]
+mod read_query_cache_tests;
 mod reorg_cancellation;
 #[cfg(test)]
 mod reorg_readback_tests;
@@ -2780,9 +2782,8 @@ impl Node {
         ] {
             let actual: Option<Vec<u8>> = self
                 .db
-                .query_row("SELECT value FROM metadata WHERE key=?", [key], |row| {
-                    fixed_blob::<32>(row, 0)
-                })
+                .prepare_cached("SELECT value FROM metadata WHERE key=?")?
+                .query_row([key], |row| fixed_blob::<32>(row, 0))
                 .optional()?;
             ensure(
                 actual.as_deref() == Some(expected.as_slice()),
@@ -2848,7 +2849,8 @@ impl Node {
         self.storage_context()?;
         let count: u64 = self
             .db
-            .query_row("SELECT COUNT(*) FROM active", [], |row| row.get(0))?;
+            .prepare_cached("SELECT COUNT(*) FROM active")?
+            .query_row([], |row| row.get(0))?;
         ensure(count == 1, "GENERATION").map_err(Error::local_integrity)?;
         let selected = self.active()?;
         let slot = self.slot()?;
@@ -2906,11 +2908,10 @@ impl Node {
         })
     }
     pub fn active(&self) -> Result<(Hash, u64)> {
-        let (tip, g) = self.db.query_row(
-            "SELECT tip,generation FROM active WHERE singleton=1",
-            [],
-            |r| Ok((fixed_blob::<32>(r, 0)?, r.get::<_, u64>(1)?)),
-        )?;
+        let (tip, g) = self
+            .db
+            .prepare_cached("SELECT tip,generation FROM active WHERE singleton=1")?
+            .query_row([], |r| Ok((fixed_blob::<32>(r, 0)?, r.get::<_, u64>(1)?)))?;
         Ok((bytes32(tip)?, g))
     }
     pub fn next_nonce(&self, sender: Hash) -> Result<u64> {
@@ -2949,9 +2950,8 @@ impl Node {
     fn slot(&self) -> Result<u64> {
         Ok(self
             .db
-            .query_row("SELECT state_slot FROM active WHERE singleton=1", [], |r| {
-                r.get(0)
-            })?)
+            .prepare_cached("SELECT state_slot FROM active WHERE singleton=1")?
+            .query_row([], |r| r.get(0))?)
     }
     fn slot_state(&self, slot: u64) -> Result<State> {
         self.slot_state_with_progress(slot, &mut || Ok(()))
@@ -2964,7 +2964,11 @@ impl Node {
         progress()?;
         // Validate stored dimensions before copying a cell into Rust. SQL types
         // are retained: TEXT is not a value BLOB, and a BLOB is not a key TEXT.
-        let mut stmt = self.db.prepare(
+        // Cache only the compiled statement in the connection's existing
+        // bounded cache. Every call still opens a new query, reads all actual
+        // rows, and repeats the original dimensions/canonical/root checks.
+        // No State, row, snapshot or validation verdict survives this call.
+        let mut stmt = self.db.prepare_cached(
             "SELECT CASE WHEN typeof(key)='text' THEN CAST(substr(CAST(key AS BLOB),1,161) AS TEXT) ELSE key END,
              CASE WHEN typeof(value)='blob' THEN substr(value,1,4097) ELSE value END,
              length(CAST(key AS BLOB)),length(CAST(value AS BLOB))
@@ -6041,7 +6045,9 @@ impl Node {
     ) -> Result<()> {
         let rows: Vec<ReorgRow> = self
             .db
-            .prepare("SELECT old_tip,new_tip,generation,cursor,done FROM reorg ORDER BY singleton")?
+            .prepare_cached(
+                "SELECT old_tip,new_tip,generation,cursor,done FROM reorg ORDER BY singleton",
+            )?
             .query_map([], |row| {
                 Ok((
                     row.get(0)?,
@@ -6136,11 +6142,12 @@ impl Node {
         let count = self.check_steps_with_progress(old, target, position, progress)?;
         for index in position..count {
             progress()?;
-            let (kind, bytes) = self.db.query_row(
-                "SELECT kind,block FROM steps WHERE ordinal=?",
-                [index],
-                |r| Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?)),
-            )?;
+            let (kind, bytes) = self
+                .db
+                .prepare_cached("SELECT kind,block FROM steps WHERE ordinal=?")?
+                .query_row([index], |r| {
+                    Ok((r.get::<_, u64>(0)?, r.get::<_, Vec<u8>>(1)?))
+                })?;
             let id = bytes32(bytes)?;
             self.atomic_reorg_with_readback(progress, |progress, original_owner| {
                 self.apply_delta_with_progress(id, g, kind == 0, progress)?;

@@ -1,6 +1,6 @@
-# Generate and upload real CodeQL SARIF for exact head and prospective-merge commits.
-# Per-language/source categories keep the two immutable analyses distinct.
-name: CodeQL exact-source analysis and SARIF upload
+# Generate exact-source local CodeQL SARIF for independent review.
+# The repository default Code Scanning setup owns official uploads; this workflow retains artifacts only.
+name: CodeQL exact-source SARIF retention
 on:
   push:
     branches:
@@ -24,7 +24,6 @@ jobs:
     permissions:
       contents: read
       actions: read
-      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -79,14 +78,7 @@ jobs:
                   raise SystemExit(f'CODEQL_SARIF_INVALID:{path.name}')
           print(f'CODEQL_SARIF_FILES={len(files)} CODEQL_LANGUAGE=${{ matrix.language }}')
           PY
-      - name: Upload exact-source SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
-        with:
-          sarif_file: ${{ steps.codeql.outputs.sarif-output }}
-          category: /language:${{ matrix.language }}/source:${{ matrix.source }}
-          ref: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
-          sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-      - name: Retain real local SARIF for independent review
+      - name: Retain exact-source local SARIF for independent review
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: codeql-sarif-${{ matrix.language }}-${{ matrix.source }}-${{ github.sha }}

@@ -7383,3 +7383,81 @@ These are component checks, not all-workspace unit-test or original-resource
 acceptance. The separate Hepta V13 publication is
 `fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
 HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.
+
+
+### 2026-11-06 continued execution: rank, batch, query preparation and next tasks
+
+This continuation preserves candidate `0ca272d09d1522b0ffd740e441b6d3de1ed81de6`,
+including the concurrent packaging compatibility and Rust shard corrections.
+All six requested workpackages remain subject to their original vetoes. The
+[continuation record](../../evidence/pon-six-workpackages-20261106/next/README.md)
+keeps component execution, final composition, original CI and performance
+measurements distinct. Development failures are retained, not retried away.
+
+The [V5 experiment](../../formal/pon-nakamoto-v1/W1_RANK_BATCH_V5.md) adds exact
+rank-at-most-eight AB preparation and a real four-worker speculative search.
+Both failed rank probes, dense fallback, every complete hit/miss, all issued
+post-winner work, buffer destruction and teardown are charged. The complete
+original 512-tile W1 trace and the default producer/verifier remain. The old
+Dense/Sparse preparation enum remains compatible; rank preparation is an
+explicit constructor. The comparison freezes seventeen existing/new arms,
+eleven materials, eight samples, two cost targets and horizons one/eight,
+plus first-hit/exhaustion controls: sixty-six separate shards. The original
+9 kernel controls and all 5 new rank controls remain mandatory by exact name.
+A separate x64/ARM head/prospective-merge lane retains the original per-command
+limits and all failures. Source registration is not a completed hardware run.
+
+The existing V3 head observations already include actual ARM64 and x64 on
+`0ca272d`, with thirty shards and eight samples on each architecture. They
+must not be described as unmeasured or relabelled V5. Their horizon streams
+are correlated. No finite best observed strategy establishes a global cost
+minimum, and uniform-ticket assumptions remain explicit. The complete W1 v2
+proof already uses FullLimb and its pinned SHA extension; AB preparation does
+not remove the guest's trace replay or recursive proof cost. The retained
+6,248-second success and 7,200-second failure remain, and full raw-input,
+encoder, routing and Cell-state proof obligations are still open.
+
+The SQL candidate reuses only seven fixed prepared programs in the existing
+bounded connection cache. Actual rows, full State, canonical/root checks,
+transaction ownership, progress and deadlines are still re-evaluated at each
+original boundary. The final component tests cover a real sibling-fork
+reorganization, warm reads, actual mutation/rollback, cache capacities 0/1/16,
+schema invalidation and cold reopening in both native backends. The fixed
+512-block observer compares the actual original implementation against the
+candidate, without disabling an existing cache. It is separate from the
+original 4,105-block/1,800-second and 30-second-request History gate.
+
+[SQLite build-fence recovery](../../evidence/pon-six-workpackages-20261106/next/sqlite/README.md)
+now registers common environment watches before an early refusal. Four real
+Cargo calls without cleaning the target correctly refuse, qualify, refuse
+and qualify. All original qualification checks remain. The local process
+controllers still refuse because this environment's PID view and `/proc`
+identities disagree; correcting the initial held-directory invocation to its
+original AS/FSIZE limits did not remove that refusal. These failures are not
+promoted to original public-process acceptance.
+
+The current original History artifacts show x64 3,322/4,105 successful import
+returns before service expiry, and ARM64 4,104/4,105 before the last request
+hits its original deadline. A separate read-only inventory finds all 4,105
+ARM block rows present but activation cancelled at cursor 3,407 and active
+still genesis. Returned-call counts do not prove durable activation. The
+latest original four-second pressure confirmation remains 0/1; F0 remains
+0/6 with all 42 planned packet exposures retained. Their different resource
+accounting scopes must not be added or called a complete global peak.
+
+Revision12 genesis maintenance already survives all optional publisher
+revocations without a lease renewal. Its useful-output credit is zero and
+its hardness/model-work qualification remains false. The useful Cell task,
+native coin locking/provider payment and independent long-term material
+custody composition are still missing. The storage-service journal's local
+reconciliation is not proof of that monetary settlement.
+
+The companion Hepta work targets the actual guarded-generation owner, whose
+isolated source is distinct from the #4963 runtime PR head. An explicit same-
+manifest next-task mode requires a different task and run, exact next owner
+epoch/generation, actual ACK/drain and its own signed FinalUse purpose. It
+preserves the complete manifest including adoption lineage. It neither
+publishes a candidate nor asserts that independent evaluation or no-update
+occurred. Native cold recovery, current selection, fresh ordinary task use
+and the original complete workspace gate retain their own evidence needs;
+no external effect, model adoption or real funding is inferred from an API.

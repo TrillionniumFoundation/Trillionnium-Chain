@@ -83,6 +83,26 @@ class RustShardTests(unittest.TestCase):
                     shards.recipes(self.root)
         (self.root / 'scripts/ci/ci_job.sh').write_text(self.full)
 
+    def test_native_release_moves_as_one_exact_block_after_quality_dependencies(self):
+        from check_ci_contract import NATIVE_RELEASE_BLOCK, RUST_DOCS, RUST_CLIPPY
+        self.assertTrue(self.scripts['quality'].endswith(
+            RUST_DOCS + RUST_CLIPPY + NATIVE_RELEASE_BLOCK))
+        self.assertNotIn('trnm_native_receipt_root=', self.scripts['runtime'])
+        self.assertIn('cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features',
+                      self.scripts['runtime'])
+        for script in self.scripts.values():
+            subprocess.run(['bash', '-n'], input=script, text=True, check=True)
+        # Old successful receipts cannot certify the new partition, even when
+        # the source identity and job status are otherwise valid.
+        old = self.scripts['quality'][:-len(NATIVE_RELEASE_BLOCK)]
+        path = self.paths['quality']
+        path.with_suffix('.sh').write_text(old)
+        row = json.loads(path.read_text())
+        row['command_sha256'] = shards.digest(old.encode())
+        path.write_text(json.dumps(row))
+        with self.assertRaises(ValueError):
+            self.validate()
+
     def test_two_complete_current_source_receipts_are_required(self):
         self.validate()
         for state in ('failure', 'cancelled', 'skipped', '', 'success '):
