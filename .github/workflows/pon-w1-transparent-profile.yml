@@ -14,6 +14,19 @@ on:
       - scripts/w1_profile_source_map.py
       - scripts/w1_security_budget.py
       - scripts/w1_v2_receipt_controls.py
+      - scripts/run_w1_receiver.py
+      - scripts/run_w1_postwin_proof.py
+      - scripts/run_w1_deployment_comparison.py
+      - scripts/build_w1_kaggle_source.py
+      - scripts/kaggle_generation_contract_v2.py
+      - scripts/test_kaggle_generation_contract_v2.py
+      - scripts/w1_generation_target_v2.py
+      - scripts/test_w1_generation_target_v2.py
+      - scripts/w1_owned_generation_runtime_v2.py
+      - scripts/test_w1_owned_generation_runtime_v2.py
+      - evidence/pon-w1-full-v2-20261105/**
+      - evidence/pon-w1-backend-sdk-20261107/**
+      - scripts/w1_kaggle_worker_template.py
       - scripts/ci/**
       - scripts/project-preflight.sh
       - evidence/pon-w1-complete-succinct-20261028/**
@@ -131,14 +144,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          w1_staged_tmp="$(mktemp -d /dev/shm/trnm-w1-staged-ci-XXXXXXXX)"
+          trap 'rm -rf -- "$w1_staged_tmp"' EXIT
+          export TMPDIR="$w1_staged_tmp"
           python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v 2>&1 | tee "$W1_PROFILE_OUT/staged-observer-tests.log"
           python3 - "$W1_PROFILE_OUT/staged-observer-tests.log" <<'PY'
           from pathlib import Path
           import re, sys
           text = Path(sys.argv[1]).read_text()
           counts = re.findall(r'^Ran ([0-9]+) tests in ', text, re.M)
-          if len(counts) != 1 or int(counts[0]) < 21 or not re.search(r'^OK$', text, re.M):
-              raise SystemExit('all 21 retained staged-observer controls must execute without skips')
+          if counts != ['32'] or not re.search(r'^OK$', text, re.M) or 'skipped=' in text:
+              raise SystemExit('all 32 retained staged-observer controls must execute without skips')
           PY
       - name: Execute exact-source component-budget rejection controls
         if: always() && steps.source.outcome == 'success'
@@ -227,6 +243,50 @@ jobs:
           cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest" 2>&1 | tee "$W1_PROFILE_OUT/v2-build.log"
           cp "$CARGO_TARGET_DIR/release/w1-verify-v2" "$W1_PROFILE_OUT/bin/w1-verify-v2"
           sha256sum "$W1_PROFILE_OUT/bin/w1-verify-v2" > "$W1_PROFILE_OUT/v2-binary.sha256"
+      - name: Execute seven actual full-v2 receiver and cancellation controls
+        if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'
+        id: real_receiver_controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_v2_fixture="$GITHUB_WORKSPACE/evidence/pon-w1-full-v2-20261105"
+          w1_v2_verifier="$W1_PROFILE_OUT/bin/w1-verify-v2"
+          w1_v2_verifier_sha="$(sha256sum "$w1_v2_verifier")"
+          w1_v2_verifier_sha="${w1_v2_verifier_sha%% *}"
+          python3 - "$w1_v2_fixture" <<'PY'
+          from pathlib import Path
+          import hashlib, sys
+          root = Path(sys.argv[1])
+          expected = {
+              "succinct.bin": (257014, "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"),
+              "input.bin": (49506, "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"),
+              "header.bin": (318, "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"),
+              "expected-artifacts.bin": (64, "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"),
+          }
+          for name, (size, digest) in expected.items():
+              raw = (root / name).read_bytes()
+              if len(raw) != size or hashlib.sha256(raw).hexdigest() != digest:
+                  raise SystemExit("historical full-v2 fixture changed: " + name)
+          if (root / "input.bin").read_bytes()[:318] != (root / "header.bin").read_bytes():
+              raise SystemExit("full-v2 input/header binding changed")
+          PY
+          python3 scripts/ci/test_w1_receiver_real.py \
+            --verifier "$w1_v2_verifier" --verifier-sha256 "$w1_v2_verifier_sha" \
+            --receipt "$w1_v2_fixture/succinct.bin" --input "$w1_v2_fixture/input.bin" \
+            --header "$w1_v2_fixture/header.bin" --expected-artifacts "$w1_v2_fixture/expected-artifacts.bin" \
+            --out "$W1_PROFILE_OUT/real-receiver-controls" 2>&1 | tee "$W1_PROFILE_OUT/real-receiver-controls.log"
+          python3 - "$W1_PROFILE_OUT/real-receiver-controls/summary.json" "$w1_v2_verifier_sha" <<'PY'
+          from pathlib import Path
+          import json, sys
+          report = json.loads(Path(sys.argv[1]).read_text())
+          counts = {"tests_run": 7, "failures": 0, "errors": 0, "skipped": 0, "fresh_proof_generations": 0}
+          if (report.get("schema") != "TRNM-W1-REAL-RECEIVER-CONTROLS1"
+                  or any(type(report.get(key)) is not int or report[key] != value for key, value in counts.items())
+                  or report.get("result") != "PASS" or report.get("actual_complete_receipt_used") is not True
+                  or report.get("verifier_sha256") != sys.argv[2]
+                  or report.get("receipt_sha256") != "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"):
+              raise SystemExit("all seven actual receiver controls must execute with the declared saved receipt and zero proof generation")
+          PY
       - name: Reproduce the component-budget report with its unqualified boundary
         if: always() && steps.source.outcome == 'success' && steps.hardened.outcome == 'success'
         id: component_budget

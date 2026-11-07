@@ -1,0 +1,215 @@
+{
+  "abba": {
+    "cost_comparison": {
+      "cold_process_benefit_observed": false,
+      "native": {
+        "cold_process_wall_seconds": {
+          "count": 20,
+          "maximum": 0.41125244088470936,
+          "median": 0.29983485804405063,
+          "minimum": 0.2953236128669232,
+          "p95_nearest_rank": 0.33132853591814637,
+          "p99_nearest_rank": 0.41125244088470936,
+          "scope": "descriptive repeated verification of this fixed claim on this host"
+        },
+        "verifier_inner_ns": {
+          "count": 20,
+          "maximum": 2801919,
+          "median": 2587105.5,
+          "minimum": 2291808,
+          "p95_nearest_rank": 2752356,
+          "p99_nearest_rank": 2801919,
+          "scope": "descriptive repeated verification of this fixed claim on this host"
+        },
+        "wait4_cpu_seconds": {
+          "count": 20,
+          "maximum": 0.005434,
+          "median": 0.005065,
+          "minimum": 0.0045379999999999995,
+          "p95_nearest_rank": 0.005246000000000001,
+          "p99_nearest_rank": 0.005434,
+          "scope": "descriptive repeated verification of this fixed claim on this host"
+        }
+      },
+      "payload_byte_benefit_observed": false,
+      "proof": {
+        "cold_process_wall_seconds": {
+          "count": 20,
+          "maximum": 0.5760569339618087,
+          "median": 0.30174568039365113,
+          "minimum": 0.29386101313866675,
+          "p95_nearest_rank": 0.3978869980201125,
+          "p99_nearest_rank": 0.5760569339618087,
+          "scope": "descriptive repeated verification of this fixed claim on this host"
+        },
+        "verifier_inner_ns": {
+          "count": 20,
+          "maximum": 38062633,
+          "median": 34720711.5,
+          "minimum": 33897761,
+          "p95_nearest_rank": 37913853,
+          "p99_nearest_rank": 38062633,
+          "scope": "descriptive repeated verification of this fixed claim on this host"
+        },
+        "wait4_cpu_seconds": {
+          "count": 20,
+          "maximum": 0.043543,
+          "median": 0.039011,
+          "minimum": 0.03813299999999999,
+          "p95_nearest_rank": 0.04214999999999999,
+          "p99_nearest_rank": 0.043543,
+          "scope": "descriptive repeated verification of this fixed claim on this host"
+        }
+      },
+      "proof_over_native_cold_wall_median": 1.0063729159513526,
+      "proof_over_native_inner_median": 13.420678631002872,
+      "receipt_over_native_payload_bytes": 5.191572738657941,
+      "verification_inner_benefit_observed": false
+    },
+    "fresh_proof_generations": 0,
+    "host_exclusive": false,
+    "identities": {
+      "expected_artifacts_bytes": 64,
+      "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "header_bytes": 318,
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "input_bytes": 49506,
+      "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+      "receipt_bytes": 257014,
+      "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "verifier_bytes": 19337648,
+      "verifier_sha256": "582b53d8607cca6ec228c18de8047e1d6564f0fd9cd3cdeafa06c66f460ad3d5"
+    },
+    "independent_receipts": 1,
+    "operation_complete": true,
+    "outer_clock_includes_supervision_polling": true,
+    "population_tail_established": false,
+    "rows": 40
+  },
+  "baseline_commit": "b6c730c2a81b932266c9a8b93858e2641aafd9f7",
+  "baseline_tree": "fa394c0870287c1e3a4408589a1e3b7677690b7f",
+  "fresh_full_trials_executed": 0,
+  "fresh_proof_generations_this_continuation": 0,
+  "gates": {
+    "complete_cryptographic_security_qualified": false,
+    "complete_process_resource_ownership_qualified": false,
+    "complete_winner_wan_admission_qualified": false,
+    "funded_expensive_generation_observed": false,
+    "funded_expensive_generation_paid": false,
+    "matched_fresh_backend_campaign_complete": false,
+    "original_business_budget_reproduced": false,
+    "production_activation": false,
+    "raw_payload_benefit_passed": false,
+    "verification_benefit_passed": false
+  },
+  "historical_complete_v2": {
+    "expected-artifacts.bin": {
+      "bytes": 64,
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    "guest.bin": {
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    "header.bin": {
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    "input.bin": {
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    "succinct.bin": {
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    }
+  },
+  "native_all_targets_all_features": {
+    "failed": 0,
+    "ignored": 0,
+    "openssl_version": "3.5.9",
+    "passed": 240,
+    "raw_test_summaries": [
+      "running 155 tests",
+      "test result: ok. 155 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.16s",
+      "running 5 tests",
+      "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s",
+      "running 4 tests",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+      "running 5 tests",
+      "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 4 tests",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s",
+      "running 3 tests",
+      "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+      "running 5 tests",
+      "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 2 tests",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+      "running 3 tests",
+      "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s",
+      "running 7 tests",
+      "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s",
+      "running 9 tests",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+      "running 9 tests",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 2 tests",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 9 tests",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 10 tests",
+      "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "running 2 tests",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+      "running 6 tests",
+      "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s",
+      "running 0 tests",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    ],
+    "strict_clippy_passed": true
+  },
+  "old_unpublished_c1_recovered": false,
+  "receiver_controls": {
+    "actual_complete_receipt_used": true,
+    "errors": 0,
+    "failures": 0,
+    "fresh_proof_generations": 0,
+    "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+    "result": "PASS",
+    "schema": "TRNM-W1-REAL-RECEIVER-CONTROLS1",
+    "skipped": 0,
+    "tests_run": 7,
+    "verifier_sha256": "582b53d8607cca6ec228c18de8047e1d6564f0fd9cd3cdeafa06c66f460ad3d5"
+  },
+  "research_followup": {
+    "interference_and_population_limits_retained": true,
+    "original_deadline_policy": "each new trial declares its own original <=7200-second deadline before native winner; never renew an existing operation deadline",
+    "planned_full_backend_arms": [
+      "funded balanced: 2 segment workers, 2 compression workers, 4 Rayon threads each",
+      "UNFUNDED sequential: 1 segment worker, sequential compression, 8 Rayon threads"
+    ],
+    "requested_cpu_quota_percent_per_arm": 800,
+    "requested_memory_bytes_per_arm": 8589934592,
+    "same_host_exclusive_resources_claimed": false,
+    "status": "NOT_RUN"
+  },
+  "schema": "TRNM-W1-RUNTIME-OBSERVATIONS1"
+}

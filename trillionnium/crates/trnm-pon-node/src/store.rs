@@ -3,6 +3,7 @@
 mod admission_header_tests;
 #[cfg(test)]
 mod append_readback_tests;
+pub mod async_w1_generation_v2;
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
 pub mod capacity_observation;

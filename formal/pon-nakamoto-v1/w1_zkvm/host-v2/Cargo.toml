@@ -19,6 +19,7 @@ trnm-w1-zk-relation = { path = "../relation" }
 [features]
 default = ["statement-v2"]
 statement-v2 = []
+retained-v2-guest = ["statement-v2", "trnm-w1-zk-methods/retained-v2-guest"]
 
 [[bin]]
 name = "w1-staged-prover-v2"

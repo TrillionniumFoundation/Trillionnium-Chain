@@ -1,0 +1,62 @@
+{
+  "canceled_signal": 15,
+  "cancellation_event": {
+    "first_canceled_signal": 15,
+    "handoffs": [
+      {
+        "deferred_events": [
+          {
+            "observed_monotonic_ns": 1149959104606310,
+            "phase": "comparison-row-publication",
+            "signal": 15
+          }
+        ],
+        "deferred_events_truncated": false,
+        "first_deferred": {
+          "observed_monotonic_ns": 1149959104606310,
+          "phase": "comparison-row-publication",
+          "signal": 15
+        },
+        "observation_errors": [],
+        "observed_snapshot": {
+          "kind": "comparison-row",
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/setup-evidence/root-real-receiver-validation-01/actual-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/row-0003-observation.json",
+          "schema": "TRNM-W1-OBSERVED-SNAPSHOT1",
+          "sha256": "4b04bb1eba940af236f24c071666e9b12ebb2905e9df364d57ef55cf1c4efba9"
+        },
+        "phase": "comparison-row-publication",
+        "prior_canceled_signal": null,
+        "restoration_errors": [],
+        "restored_handler_cancellations": []
+      },
+      {
+        "deferred_events": [],
+        "deferred_events_truncated": false,
+        "first_deferred": null,
+        "observation_errors": [],
+        "observed_snapshot": {
+          "kind": "comparison",
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/setup-evidence/root-real-receiver-validation-01/actual-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/result.json",
+          "schema": "TRNM-W1-OBSERVED-SNAPSHOT1",
+          "sha256": "23c00b990d5bd46f234e2fd9efe3f2a3c126159323b0f2f5a2c9ab116c9e47d0"
+        },
+        "phase": "comparison-final-publication",
+        "prior_canceled_signal": 15,
+        "restoration_errors": [],
+        "restored_handler_cancellations": []
+      }
+    ],
+    "origin_exception": "Canceled",
+    "origin_phase": "comparison-row-publication",
+    "schema": "TRNM-W1-CANCELLATION-HANDOFF1"
+  },
+  "observed_snapshot": {
+    "kind": "comparison",
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/setup-evidence/root-real-receiver-validation-01/actual-controls/test_actual_final_abba_row_cancel_cannot_publish_success/comparison/result.json",
+    "schema": "TRNM-W1-OBSERVED-SNAPSHOT1",
+    "sha256": "23c00b990d5bd46f234e2fd9efe3f2a3c126159323b0f2f5a2c9ab116c9e47d0"
+  },
+  "operation_canceled": true,
+  "schema": "TRNM-W1-OPERATION-CANCELLATION1",
+  "scope": "deployment-comparison"
+}
