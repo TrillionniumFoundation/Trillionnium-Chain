@@ -1,0 +1,2 @@
+Downloading pinned OpenSSL 3.5.9; log: /workspace/scratch/270e2a9ce94f/validation/provider/pq-provider/build-and-smoke.log
+Prepared isolated static OpenSSL 3.5.9 with verified ML-DSA-65

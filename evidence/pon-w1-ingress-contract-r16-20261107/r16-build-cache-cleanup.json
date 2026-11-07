@@ -1,0 +1,12 @@
+{
+  "schema": "trnm-local-build-cache-cleanup-v1",
+  "utc": "2026-11-07T12:30:26.318720+00:00",
+  "path": "/workspace/scratch/270e2a9ce94f/Trillionnium-Chain/trillionnium/target/debug/incremental",
+  "only_untracked_rust_incremental_cache_removed": true,
+  "source_or_executable_test_artifacts_removed": false,
+  "after_all_target_compilation_and_clippy_completed": true,
+  "complete_runtime_tests_still_running": true,
+  "bytes_reclaimed": 11148808192,
+  "free_bytes_after": 15177932800,
+  "changes_test_scope_or_budgets": false
+}

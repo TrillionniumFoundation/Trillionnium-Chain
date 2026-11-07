@@ -39,6 +39,14 @@ ownership, full W1 and consumer contract checks, fixed Host limits, failed campa
 and all activation flags. Exact-source native and original-service results remain
 separate obligations; this change makes no fairness, PoW-hardness or release claim.
 
+The [retained r16 implementation and local evidence](../../evidence/pon-w1-ingress-contract-r16-20261107/README.md)
+bind native checks to implementation `2cd7353187bb58347ae7cbf884fef7aa2d05f610`.
+All 25 added regressions, strict Clippy and formatting passed; the complete
+workspace run retained 4,344 passed, 77 failed and 70 ignored across 385 targets
+(18 failed targets). The original fixed Host/campaign gates were not executed
+locally. Current GitHub access returned account-suspended HTTP 403, so this
+candidate was not published and no new hosted CI result is claimed. Keep HOLD.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

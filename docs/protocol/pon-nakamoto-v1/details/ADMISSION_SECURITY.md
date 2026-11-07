@@ -133,6 +133,13 @@ actual CPU and honest outcomes. A bounded resource counter is not a proof that
 an arbitrary anonymous honest node receives service. The retained failures
 below remain blocking; component regressions cannot close these service gates.
 
+The [r16 local implementation evidence](../../../../evidence/pon-w1-ingress-contract-r16-20261107/README.md)
+retains the exact implementation/source receipts, all 25 new regression results,
+complete workspace failures and a separately identified CLI-startup diagnostic.
+Strict Clippy/formatting passed; the 4,344/77/70 workspace result is not a green
+suite. The original Host/campaign qualifications remain unexecuted locally and
+publication is blocked by the connected GitHub account's HTTP 403 response.
+
 ## PN1 shared-operation admission target
 
 This amendment specifies I02 of the

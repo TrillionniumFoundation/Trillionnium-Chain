@@ -1,0 +1,331 @@
+{
+  "schema": "trnm-w1-ingress-r16-local-validation-v1",
+  "implementation_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+  "implementation_tree": "3f5e11d87787bc0329bbf443f60d02786e1598ce",
+  "status": "HOLD",
+  "runtime_source_frozen": true,
+  "environment_receipt": "r16-implementation-context.json",
+  "source_before": "r16-final-source-before.json",
+  "source_after": "r16-final-source-after.json",
+  "observations": [
+    {
+      "id": "source_before",
+      "command": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head 2cd7353187bb58347ae7cbf884fef7aa2d05f610 --output <receipt>",
+      "log": "r16-final-source-before.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "receipt": "r16-final-source-before.json",
+      "tracked_entries": 10685,
+      "tracked_bytes": 1026937130,
+      "executes_tests": false
+    },
+    {
+      "id": "canonical_plan",
+      "command": "bash scripts/ci/check_canonical_development_plan.sh",
+      "log": "r16-final-canonical-plan.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "repository_negative_tests": 50,
+      "formal_reference_tests": 29,
+      "markdown_links_checked": 3457
+    },
+    {
+      "id": "source_integrity",
+      "command": "python3 scripts/ci/test_ci_source_integrity.py -v",
+      "log": "r16-final-source-integrity-tests.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "passed": 43
+    },
+    {
+      "id": "pq_source_integrity",
+      "command": "python3 scripts/ci/test_pq_research_integration.py",
+      "log": "r16-final-pq-source-tests.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "passed": 37
+    },
+    {
+      "id": "source_pins",
+      "command": "python3 scripts/ci/check_pq_research_integration.py",
+      "log": "r16-final-source-pins.log",
+      "status": "PASS_SOURCE_ONLY",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "matching_source_blobs": 568,
+      "reported_qualification_status": "HOLD_NO_GO"
+    },
+    {
+      "id": "policy_reader",
+      "command": "python3 scripts/ci/test_pon_public_v3_policy_read.py -v",
+      "log": "r16-final-policy-tests.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "passed": 7
+    },
+    {
+      "id": "phase_reader",
+      "command": "python3 scripts/ci/test_pon_public_v3_phase_read.py -v",
+      "log": "r16-final-phase-tests.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "passed": 69
+    },
+    {
+      "id": "retained_artifact_tests",
+      "command": "TMPDIR=/workspace/scratch/270e2a9ce94f/acceptance-tmp python3 scripts/ci/test_read_original_native_campaign.py --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset",
+      "log": "r16-final-retained-artifact-tests.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "passed": 19,
+      "scope": "Parser counterexamples on the exact retained subset; not new execution or full omitted binary verification."
+    },
+    {
+      "id": "strict_clippy",
+      "command": "cargo clippy --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml -- -D warnings",
+      "log": "r16-strict-workspace-clippy.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "exit_code": 0
+    },
+    {
+      "id": "format",
+      "command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+      "log": "r16-final-format.log",
+      "status": "PASS",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "exit_code": 0
+    },
+    {
+      "id": "all_target_compilation",
+      "command": "cargo test --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml -- --test-threads=1",
+      "log": "r16-workspace-all-features-corrected.log",
+      "status": "COMPILE_PASS_RUNTIME_FAIL",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "command_exit_code": 101,
+      "compilation_wall": "16m 05s",
+      "runtime_stopped_after_first_failed_target": true
+    },
+    {
+      "id": "complete_workspace_runtime",
+      "command": "cargo test --no-fail-fast --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml -- --test-threads=1",
+      "log": "r16-workspace-complete-denominator.log",
+      "status": "FAILED",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "readback": "r16-workspace-readback.json",
+      "exit_code": 101,
+      "targets": 385,
+      "passed_targets": 367,
+      "failed_targets": 18,
+      "passed": 4344,
+      "failed": 77,
+      "ignored": 70,
+      "measured": 0,
+      "filtered_out": 0,
+      "nested_child_summaries_excluded": 5,
+      "root_count_receipt": "r16-root-workspace-count-check.json"
+    },
+    {
+      "id": "new_authentication_and_lifecycle_regressions",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "command": "Included in complete_workspace_runtime; not a separate filtered invocation.",
+      "log": "r16-workspace-complete-denominator.log",
+      "status": "PASS_COMPONENT_REGRESSIONS",
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0,
+      "groups": {
+        "real_loopback_tcp_boundary": 3,
+        "authentication_account_and_epoch_lifecycle": 17,
+        "startup_domain_order": 2,
+        "continuous_owner_lifecycle": 3
+      },
+      "entire_workspace_passed": false,
+      "performance_or_fairness_qualification": false
+    },
+    {
+      "id": "retained_native_false_trace_controls",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "command": "Included in complete_workspace_runtime, public_v3_from_zero target.",
+      "log": "r16-workspace-complete-denominator.log",
+      "status": "PASS_COMPONENT_ONLY",
+      "target_passed": 5,
+      "target_failed": 0,
+      "target_ignored": 1,
+      "four_trace_test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "asserted_scope": "Four different passing-ticket invented traces; reference scalar replay reaches all 512 transcript tiles and returns Transcript, regular/limb verifiers reject, native Node admission returns WORK:Transcript and preserves stats/active state. This is not the original fixed-Host pressure test.",
+      "per_case_success_stdout_timing_retained": false,
+      "original_four_second_sixteen_hostile_test": "ignored; explicit fixed Host execution required",
+      "original_pressure_execution_credit": false
+    }
+  ],
+  "additional_observations": [
+    {
+      "id": "applicability_negative_tests",
+      "log": "r16-applicability-negative-tests.log",
+      "status": "PASS",
+      "passed": 37,
+      "source_scope": "Started before the retained complete(true) to complete() test-call and exact-blob-pin repair. The applicability subjects were unchanged; this run is not labelled wholly post-final-commit."
+    },
+    {
+      "id": "w1_python_oracle",
+      "log": "w1-false-transcript-oracle.log",
+      "status": "PASS_COMPONENT_ONLY",
+      "passed": 5,
+      "source_scope": "Earlier development observation, not final committed native qualification. Four distinct passing-ticket invented traces replayed and were rejected by the Python oracle; no proof generation, native Node state or Host CPU ownership is established."
+    },
+    {
+      "id": "observation_cli_startup_diagnostic",
+      "receipt": "diagnostics/observation-cli-startup/diagnostic.json",
+      "archive": "diagnostics/observation-cli-startup/original-diagnostic.zip",
+      "archive_sha256": "ba21cd598e3e1b3aad04796300cbab5688e489b5ab28a8c2ec19e311131ce1cc",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "original_binary_reexecution": {
+        "passed": 1,
+        "failed": 5,
+        "exit_code": 101,
+        "counted_in_complete_workspace": false
+      },
+      "exact_recorded_serve_argv_replays": 5,
+      "each_replay_returncode": 2,
+      "each_replay_stdout_bytes": 0,
+      "each_replay_stderr": "PUBLIC_HOST_PROCESS_UNAVAILABLE\n",
+      "all_before_r16_cold_authentication_budget_start": true,
+      "specific_errno_known": false,
+      "original_five_eof_failures_relabelled": false,
+      "original_deadlines_and_host_configuration_unchanged": true,
+      "dev_keys_or_native_stores_packaged": false
+    }
+  ],
+  "failure_history": [
+    {
+      "id": "ambiguous_test_channel",
+      "log": "public-v3-native-original-profile.log",
+      "status": "COMPILE_FAILED",
+      "resolution": "Test-only channel type specified as channel::<()>."
+    },
+    {
+      "id": "stale_current_profile_vectors",
+      "log": "public-v3-native-corrected-profile.log",
+      "status": "FAILED",
+      "passed": 215,
+      "failed": 3,
+      "ignored": 1,
+      "resolution": "Current r16 vectors updated and historical r14 retained/rejected as predecessor; no assertion removed."
+    },
+    {
+      "id": "stale_applicability_callable",
+      "logs": [
+        "r16-repository-precommit.log",
+        "r16-canonical-plan.log"
+      ],
+      "status": "FAILED",
+      "resolution": "Renamed callable binding corrected in applicability metadata and authority documentation."
+    },
+    {
+      "id": "retained_test_call",
+      "source_commit": "45d84f4acb5222920b535252ff5609ca8a445a68",
+      "log": "r16-workspace-all-features-tests.log",
+      "status": "COMPILE_FAILED",
+      "error": "E0061 at retained fence.complete(true) call",
+      "source_after": "r16-source-after-first-compile-failure.json",
+      "resolution_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610"
+    },
+    {
+      "id": "first_final_workspace_runtime_stop",
+      "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+      "log": "r16-workspace-all-features-corrected.log",
+      "status": "FAILED",
+      "exit_code": 101,
+      "source_after": "r16-source-after-workspace-stop.json",
+      "reason": "Original fail-fast command stopped at checkpoint Unix socket bind EPERM. Complete no-fail-fast run preserves all targets and failures without altering tests."
+    },
+    {
+      "id": "retained_artifact_invocation_and_cross_filesystem_setup",
+      "record": "acceptance-notes.md",
+      "status": "INVOCATION_REFUSED_THEN_FIXTURE_SETUP_ERRORS",
+      "raw_stdout_retained": false,
+      "recorded_failures": [
+        "argparse refused invocation missing required real-artifact pins; no test executed",
+        "19 fixture error occurrences from os.link EXDEV across workspace and /tmp"
+      ],
+      "resolution": "Same original artifact pins and unchanged tests retried with same-filesystem TMPDIR; final-source 19-test pass has its own retained stdout log."
+    }
+  ],
+  "original_host": {
+    "receipt": "original-host-readiness.json",
+    "status": "UNAVAILABLE_NOT_EXECUTED",
+    "original_host_acceptance_executed": false,
+    "original_limits_changed": false,
+    "synthetic_receipt_used": false
+  },
+  "publication": {
+    "receipt": "github-publication-block.json",
+    "status": "BLOCKED_BY_CONNECTED_GITHUB_403",
+    "published": false,
+    "new_pr_created": false,
+    "new_hosted_ci_run": false,
+    "alternative_credentials_or_control_bypass": false
+  },
+  "qualification": {
+    "work_hardness_proved": false,
+    "whole_service_cpu_accounting_qualified": false,
+    "anonymous_fairness_qualified": false,
+    "original_4s_16_hostile_host_test_passed": false,
+    "three_original_0_24_24_campaigns_passed": false,
+    "full_history_capacity_churn_wan_qualified": false,
+    "release_approved": false,
+    "production_activation": false
+  },
+  "scope_notes": [
+    "Clippy overlapped the correctness-only native run on the same frozen source. These local wall times are not original fixed-Host performance observations.",
+    "Fault injection and synthetic CPU-debt inputs test state transitions, not measured adversarial resource cost. Real TCP/native requests test authentication ordering but not global fairness.",
+    "Authentication and mutation CPU counters overlap for mutation response signing; they cannot be added to reconstruct whole-Host CPU.",
+    "The original 30-second phase and three t=1/5/9 offered business rounds, all failed/unknown denominators and original Host limits are retained.",
+    "A local service refusal is not a consensus-invalid result or a chainwork deduction.",
+    "An 11,148,808,192-byte untracked Rust incremental build cache was removed after all-target compilation and Clippy completed to avoid disk exhaustion during remaining large-state tests. Source and executable test binaries were retained; see r16-build-cache-cleanup.json."
+  ],
+  "log_root": "logs",
+  "receipt_root": ".",
+  "provider_receipt": "provider/pq-provider/provider.json",
+  "provider_preparation_log": "provider/pq-provider/build-and-smoke.log",
+  "package_inputs": {
+    "w1-ingress-r16-implementation.patch": {
+      "bytes": 205905,
+      "sha256": "73c0eebdb4890aa1fed4d6ebb11f4b9ef714740c13e287a08690d08b786078c1"
+    },
+    "w1-ingress-r16-implementation.bundle": {
+      "bytes": 57026,
+      "sha256": "25399101758b3e00d47918d2242d6965dec9168bc80d80a744536f709567338f"
+    }
+  },
+  "worker_failure_scope": {
+    "source_and_direct_workspace_dependency_and_lock_unchanged_from_parent": [
+      "trillionnium/crates/trnm-worker-agent",
+      "trillionnium/crates/trnm-types",
+      "trillionnium/Cargo.lock"
+    ],
+    "baseline_test_execution_performed": false,
+    "claim_that_failures_preexisted": false,
+    "root_cause_confirmed": false,
+    "does_not_change_original_workspace_failure_status": true
+  },
+  "workspace_readback": "r16-workspace-readback.json",
+  "workspace_readback_sha256": "69692c0717a6eb03a3b5c81525acb03a966ae325fe51045020551b9b9c39dfb0",
+  "failure_classification_counts": {
+    "explicit_os_eperm_on_checkpoint_socket_bind": 1,
+    "subprocess_exit_reason_not_recorded": 3,
+    "explicit_os_eperm_in_socket_related_startup": 15,
+    "missing_cgroup_cpu_stat_input_before_parser": 1,
+    "explicit_os_eperm_on_independent_witness_unix_bind": 3,
+    "abstract_unix_bind_error_with_errno_erased": 6,
+    "host_kernel_parent_precondition_refusal": 1,
+    "host_kernel_parent_refusal_in_sync_client": 1,
+    "host_kernel_parent_refusal_in_sync_client_after_successful_push_replay": 1,
+    "host_kernel_parent_refusal_at_shared_cli_success_assertion": 1,
+    "host_kernel_parent_refusal_at_local_history_import": 2,
+    "cli_first_ready_stdout_eof_cause_unprinted": 5,
+    "worker_descendant_cleanup_incomplete": 36,
+    "adapter_error_kind_mismatch_cause_unprinted": 1
+  },
+  "source_after_additional_diagnostic": "r16-after-additional-diagnostic-source.json"
+}

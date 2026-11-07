@@ -1,0 +1,13 @@
+{
+  "schema": "trnm-w1-r16-publication-block-v1",
+  "recorded_utc": "2026-11-07T11:59:15.983752+00:00",
+  "operation": "read existing integration branch reference",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-six-axis-performance-20261103",
+  "http_status": 403,
+  "error_code": "FORBIDDEN",
+  "message": "Sorry. Your account was suspended",
+  "remote_write_attempted_after_denial": false,
+  "new_pr_created": false,
+  "candidate_published": false,
+  "credentials_or_access_controls_changed": false
+}
