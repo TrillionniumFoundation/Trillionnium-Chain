@@ -1,0 +1,42 @@
+{
+  "schema": "trnm-throughput-reviewed-source-corrections-v1",
+  "original_source": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "corrections": [
+    {
+      "pr": 768,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/768",
+      "head": "0c084aba1fcbe56ea1661231df24d9a069bda921",
+      "base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "actual_script_blob": "54440d8968cf5eee063605aabf81ea0f4438daf0",
+      "old_script_blob_pin": "3790ce2b25faf674258b6cd9c4e1a16b4ec74817",
+      "source_integrity_checker_changed": false
+    },
+    {
+      "pr": 772,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/772",
+      "head": "1e1cc50a0367fd29f48d00db20f35134900c656e",
+      "base": "65b79a80db157a139523aa3467b32d90c8c6edf3",
+      "paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs"
+      ],
+      "scope": "Two source/test-file differences reviewed by integration owner; actual accept-loop readiness only, original client timeout unchanged. Final combined-source corpus pins must be recomputed."
+    },
+    {
+      "pr": 760,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/760",
+      "head": "4906dbad8e97c2a252a395b7b581ebbe21a59204",
+      "base": "fa1f6a89cc812c5b6daca4e22464b777eeeb3e04",
+      "paths": [
+        ".github/workflows/codeql-real-exact-source.yml"
+      ],
+      "integrated_workflow_blob": "7d2bc2b40aff6bd2fd7418633b656b5406c5c564",
+      "scope": "Single workflow correction reviewed by integration owner. Local exact-source SARIF generation uses upload false; default setup retains server-side upload ownership. Exact source checks, language/source matrix, pinned actions, SARIF validation and retention remain. Historical e70f CodeQL failures remain unchanged; no hosted success is inherited."
+    }
+  ],
+  "child_ci_results_inherited": false,
+  "production_activation": false
+}

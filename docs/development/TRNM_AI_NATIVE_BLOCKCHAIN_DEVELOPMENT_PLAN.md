@@ -17,6 +17,31 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
+Continue the existing #688 candidate from
+`e70f13448aad715286fb8eb56fc802b09db643a3`. Strict packet envelopes may construct
+the identical request after complete lowercase-hex/framing checks; bounded
+socket reads use the already reserved initialized buffer. Preserve every ticket,
+signature, work replay, live Host check, original deadline and resource ceiling.
+Classical mixed-sender execution skips speculative state work whose sender nonce
+already has an earlier transaction; every signature and canonical state effect
+still executes, with the old complete-speculation path retained as a test oracle.
+PQ and Growth keep their existing serial state-owner semantics.
+
+Only classical Legacy reorganization may reuse the existing bounded full-input
+root arithmetic. Actual SQL rows, canonical grammar, untouched corruption,
+current stored roots, atomic owner/cursor checks and cancellation remain checked;
+PQ, Growth and Authenticated profiles retain their original root validation.
+This still traverses complete State and is not touched-set/COW completion.
+The [continuation record](../../evidence/pon-throughput-closure-20261107/README.md)
+separates exact-source component controls, paired cost observations and the
+unchanged original 4-second/16-worker and 4,105-block business gates. Failed
+confirmation summaries retain all available hostile attempts, late/error returns,
+repeated inputs, missing observations and nested CPU ownership. Review existing
+SQLite source pins, actual accept-loop readiness and local CodeQL SARIF ownership
+without importing sibling-branch qualification. No parameter, consensus choice,
+production activation or original failed result is promoted by this work.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

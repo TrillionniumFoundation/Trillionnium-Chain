@@ -17,6 +17,8 @@ mod historical_commitment_tests;
 mod history_page;
 #[cfg(test)]
 mod legacy_reorg_observation_tests;
+#[cfg(test)]
+mod legacy_reorg_root_tests;
 pub mod mempool;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
@@ -2793,12 +2795,23 @@ impl Node {
         }
         Ok(())
     }
+    #[cfg(test)]
     fn check_persisted_state_with_readback(
         &self,
         id: Hash,
         state: &State,
         progress: &mut dyn FnMut() -> Result<()>,
         readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
+        self.check_persisted_state_with_root_arithmetic(id, state, progress, readback, None)
+    }
+    fn check_persisted_state_with_root_arithmetic(
+        &self,
+        id: Hash,
+        state: &State,
+        progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,
     ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
@@ -2810,6 +2823,8 @@ impl Node {
         let actual_root = if self.state_backend == StateBackend::AuthenticatedV1 {
             self.authenticated_arithmetic
                 .state_root(&self.settings, state)?
+        } else if let Some(arithmetic) = arithmetic {
+            arithmetic.root(state)?
         } else {
             self.settings.state_root(state)?
         };
@@ -2827,6 +2842,17 @@ impl Node {
         }
         Ok(())
     }
+    /// Only the Legacy reorganization path opts into the existing bounded root
+    /// arithmetic. It still reads every actual SQL row and checks continuity,
+    /// canonical grammar and the fresh stored root at every original boundary.
+    /// Ordinary append/admission, PQ State grammar and the distinct Growth root
+    /// stay unchanged. Profile exclusion is explicit as well as backend exclusion.
+    fn legacy_reorg_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
+        (self.state_backend == StateBackend::Legacy
+            && !pq_accounts_v2::enabled(&self.settings.app)
+            && !growth_profile_v2::enabled(&self.settings.app))
+        .then_some(&self.commitment_root_arithmetic)
+    }
     /// Check actual data after the last transactional write. A post-COMMIT
     /// observation cannot repair a suppressed write or a trigger-corrupted slot.
     #[cfg(test)]
@@ -2842,7 +2868,15 @@ impl Node {
     fn check_active_before_commit_with_readback(
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
+        self.check_active_before_commit_with_root_arithmetic(progress, readback, None)
+    }
+    fn check_active_before_commit_with_root_arithmetic(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
         mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,
     ) -> Result<()> {
         progress()?;
         self.namespace()?;
@@ -2858,11 +2892,12 @@ impl Node {
         if let Some(scope) = readback.as_deref_mut() {
             scope.nominate_active(&self.db, selected.0)?;
         }
-        self.check_persisted_state_with_readback(
+        self.check_persisted_state_with_root_arithmetic(
             selected.0,
             &state,
             progress,
             readback.as_deref_mut(),
+            arithmetic,
         )?;
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context()?, selected.0)
             .map_err(Error::local_integrity)?;
@@ -5683,7 +5718,15 @@ impl Node {
                             .history
                             .observe(native_authenticated::HistoryStage::ReadActive)
                     });
-                self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
+                let arithmetic =
+                    matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep)
+                        .then(|| self.legacy_reorg_root_arithmetic())
+                        .flatten();
+                self.check_active_before_commit_with_root_arithmetic(
+                    progress,
+                    readback.as_mut(),
+                    arithmetic,
+                )?;
             }
             self.continuous_scope_checkpoint()?;
             self.mining_scope_checkpoint()?;
@@ -5946,11 +5989,12 @@ impl Node {
                         .history
                         .observe(native_authenticated::HistoryStage::VerifyState)
                 });
-                self.check_persisted_state_with_readback(
+                self.check_persisted_state_with_root_arithmetic(
                     old,
                     &self.slot_state_with_progress(next, progress)?,
                     progress,
                     readback.as_mut(),
+                    self.legacy_reorg_root_arithmetic(),
                 )?;
             }
             Ok(readback)
@@ -6167,11 +6211,12 @@ impl Node {
                             .history
                             .observe(native_authenticated::HistoryStage::VerifyState)
                     });
-                    self.check_persisted_state_with_readback(
+                    self.check_persisted_state_with_root_arithmetic(
                         resulting,
                         &self.slot_state_with_progress(g, progress)?,
                         progress,
                         readback.as_mut(),
+                        self.legacy_reorg_root_arithmetic(),
                     )?;
                 }
                 Ok(readback)
@@ -6185,11 +6230,11 @@ impl Node {
         progress()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        ensure(
-            self.settings.state_root(&state)? == self.record(target)?.root,
-            "ROOT",
-        )
-        .map_err(Error::local_integrity)?;
+        let actual_root = match self.legacy_reorg_root_arithmetic() {
+            Some(arithmetic) => arithmetic.root(&state)?,
+            None => self.settings.state_root(&state)?,
+        };
+        ensure(actual_root == self.record(target)?.root, "ROOT").map_err(Error::local_integrity)?;
         progress()?;
         cut(hook, "before-publish")?;
         self.atomic_reorg_with_readback(progress, |progress, original_owner| {
@@ -6248,11 +6293,12 @@ impl Node {
                         .history
                         .observe(native_authenticated::HistoryStage::VerifyState)
                 });
-                self.check_persisted_state_with_readback(
+                self.check_persisted_state_with_root_arithmetic(
                     target,
                     &self.slot_state_with_progress(g, progress)?,
                     progress,
                     readback.as_mut(),
+                    self.legacy_reorg_root_arithmetic(),
                 )?;
             }
             Ok(readback)

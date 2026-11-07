@@ -1470,6 +1470,161 @@ class CompleteConfirmationObservationTests(unittest.TestCase):
                 self.summarize(edit)
 
 
+class AttackAttemptObservationTests(unittest.TestCase):
+    """Failed workload denominators are observations, never gate acceptance."""
+
+    summarize = CompleteConfirmationObservationTests.summarize
+
+    def test_repeated_hostile_packets_keep_every_call_and_nested_cpu(self):
+        report = self.summarize()
+        baseline, pressure = report['phases']
+        empty = baseline['attacker_attempts']
+        self.assertEqual((empty['scheduled_workers'], empty['recorded_attempts']), (0, 0))
+        self.assertTrue(empty['all_scheduled_worker_call_lists_observed'])
+        attacks = pressure['attacker_attempts']
+        self.assertEqual((attacks['scheduled_workers'], attacks['observed_worker_records']), (16, 16))
+        self.assertEqual((attacks['recorded_attempts'], attacks['submitted_client_calls_recorded']), (17, 17))
+        self.assertEqual(attacks['submitted_status_counts'], {'ok': 0, 'refused': 17, 'error': 0})
+        self.assertEqual(attacks['unique_recorded_packet_indices'], 16)
+        self.assertEqual(attacks['repeated_recorded_packet_index_calls'], 1)
+        self.assertEqual(attacks['calling_thread_cpu']['known_sum_ns'], 17)
+        # This is the original worker total, not worker total plus nested calls.
+        self.assertEqual(pressure['resource_coverage']['attacker_workers_calling_thread_cpu_ns']['known_sum'], 32)
+        self.assertIsNone(attacks['unobserved_attempts'])
+
+    def test_failed_late_exhausted_and_unknown_attempts_are_separate(self):
+        def edit(doc):
+            ConfirmationObservationTests.fail_pressure(doc)
+            rows = doc['phases'][1]['attacks'][0]['calls']
+            rows[0].update(status='error', error='PUBLIC_REQUEST_CANCELLED',
+                started_ns=3_000_000_000, ended_ns=5_100_000_000,
+                elapsed_wall_ns=2_100_000_000, returned_after_deadline=True,
+                returned_after_window=True, client_thread_cpu_ns=None,
+                recorded_request_bytes=None, packet_index=None)
+            rows[1] = {'status': 'not_submitted_exhausted'}
+            rows.append({})
+        report = self.summarize(edit)
+        self.assertFalse(report['original_gate_validated'])
+        attacks = report['phases'][1]['attacker_attempts']
+        self.assertEqual(attacks['recorded_attempts'], 18)
+        self.assertEqual(attacks['submitted_client_calls_recorded'], 16)
+        self.assertEqual(attacks['exhausted_without_submission'], 1)
+        self.assertEqual(attacks['unknown_status_records'], 1)
+        self.assertEqual(attacks['submitted_status_counts'], {'ok': 0, 'refused': 15, 'error': 1})
+        self.assertEqual((attacks['returned_after_call_deadline'], attacks['returned_after_original_window']), (1, 1))
+        self.assertEqual(attacks['calling_thread_cpu'], {'known_count': 15, 'missing_count': 1, 'known_sum_ns': 15})
+        self.assertEqual(attacks['recorded_request_body_bytes']['missing_count'], 1)
+        self.assertEqual(attacks['calls_without_packet_index'], 1)
+        self.assertEqual(attacks['raw_client_error_counts'], {'PUBLIC_REQUEST_CANCELLED': 1})
+        self.assertFalse(attacks['diagnostic_text_is_typed_error'])
+
+    def test_missing_worker_and_call_list_do_not_become_empty_workloads(self):
+        def edit(doc):
+            workers = doc['phases'][1]['attacks']
+            workers.pop()
+            workers[0]['calls'] = None
+        attacks = self.summarize(edit)['phases'][1]['attacker_attempts']
+        self.assertEqual(attacks['missing_worker_records'], 1)
+        self.assertEqual(attacks['worker_call_lists_observed'], 14)
+        self.assertEqual(attacks['worker_call_lists_unavailable'], 2)
+        self.assertEqual(attacks['recorded_attempts'], 14)
+        self.assertFalse(attacks['all_scheduled_worker_call_lists_observed'])
+        self.assertIsNone(attacks['unobserved_attempts'])
+        absent = self.summarize(lambda doc: doc['phases'][1].update(attacks=None))['phases'][1]['attacker_attempts']
+        self.assertEqual(absent['missing_worker_records'], 16)
+        self.assertEqual(absent['worker_call_lists_unavailable'], 16)
+        self.assertFalse(absent['all_scheduled_worker_call_lists_observed'])
+        self.assertIsNone(absent['calling_thread_cpu']['known_sum_ns'])
+
+    def test_missing_call_clock_does_not_discard_status_or_become_zero_duration(self):
+        def edit(doc):
+            doc['phases'][1]['attacks'][0]['calls'][0].pop('ended_ns')
+        attacks = self.summarize(edit)['phases'][1]['attacker_attempts']
+        self.assertEqual(attacks['submitted_client_calls_recorded'], 17)
+        self.assertEqual((attacks['calls_with_complete_timing'], attacks['calls_with_unknown_timing']), (16, 1))
+
+    def test_partial_clocks_keep_independent_late_flags_and_missing_flag_counts(self):
+        def edit(doc):
+            rows = doc['phases'][1]['attacks'][0]['calls']
+            rows[0].update(started_ns=None, ended_ns=5_100_000_000,
+                elapsed_wall_ns=2_100_000_000, returned_after_deadline=True,
+                returned_after_window=True)
+            rows[1].pop('returned_after_deadline')
+        report = self.summarize(edit)
+        self.assertFalse(report['original_gate_validated'])
+        attacks = report['phases'][1]['attacker_attempts']
+        self.assertEqual((attacks['calls_with_complete_timing'], attacks['calls_with_unknown_timing']), (15, 2))
+        self.assertEqual((attacks['returned_after_call_deadline'], attacks['returned_after_original_window']), (1, 1))
+        self.assertEqual(attacks['return_flag_coverage'], {
+            'returned_after_call_deadline': {'known_count': 16, 'missing_count': 1},
+            'returned_after_original_window': {'known_count': 17, 'missing_count': 0}})
+
+    def test_unknown_status_keeps_costs_and_clocks_without_claiming_submission(self):
+        def edit(doc):
+            row = doc['phases'][1]['attacks'][0]['calls'][0]
+            row.pop('status')
+            row.update(client_thread_cpu_ns=1000, recorded_request_bytes=256,
+                started_ns=None, ended_ns=5_100_000_000, elapsed_wall_ns=2_100_000_000,
+                returned_after_deadline=True, returned_after_window=True,
+                error='PUBLIC_CLIENT_DEADLINE')
+        report = self.summarize(edit)
+        self.assertFalse(report['original_gate_validated'])
+        attacks = report['phases'][1]['attacker_attempts']
+        self.assertEqual((attacks['recorded_attempts'], attacks['submitted_client_calls_recorded']), (17, 16))
+        self.assertEqual(attacks['calling_thread_cpu']['known_sum_ns'], 16)
+        unknown = attacks['unknown_status_observations']
+        self.assertEqual(unknown['record_count'], 1)
+        self.assertEqual(unknown['calling_thread_cpu'], {'known_count': 1, 'missing_count': 0, 'known_sum_ns': 1000})
+        self.assertEqual(unknown['recorded_request_body_bytes'], {'known_count': 1, 'missing_count': 0, 'known_sum': 256})
+        self.assertEqual((unknown['records_with_complete_timing'], unknown['records_with_unknown_timing']), (0, 1))
+        self.assertEqual((unknown['returned_after_call_deadline'], unknown['returned_after_original_window']), (1, 1))
+        self.assertEqual(unknown['raw_client_error_counts'], {'PUBLIC_CLIENT_DEADLINE': 1})
+
+    def test_reached_original_attempt_cap_is_retained_without_acceptance(self):
+        def edit(doc):
+            worker = doc['phases'][1]['attacks'][0]
+            worker.update(calls=[copy.deepcopy(worker['calls'][0]) for _ in range(1024)],
+                          attempt_cap_reached=True)
+        report = self.summarize(edit)
+        attacks = report['phases'][1]['attacker_attempts']
+        self.assertFalse(report['original_gate_validated'])
+        self.assertEqual(attacks['recorded_attempts'], 1039)
+        self.assertEqual(attacks['workers_reporting_attempt_cap_reached'], 1)
+        self.assertEqual(attacks['repeated_recorded_packet_index_calls'], 1023)
+        with self.assertRaisesRegex(ValueError, 'ATTACK_ATTEMPT_BOUND'):
+            def too_many(doc):
+                edit(doc)
+                doc['phases'][1]['attacks'][0]['calls'].append({})
+            self.summarize(too_many)
+
+    def test_contradictory_attack_clocks_and_noncanonical_fields_are_refused(self):
+        mutations = (
+            lambda row: row.update(elapsed_wall_ns=2_000_000_001),
+            lambda row: row.update(started_ns=20, ended_ns=10),
+            lambda row: row.update(ended_ns=4_000_000_001, elapsed_wall_ns=4_000_000_001,
+                                   returned_after_deadline=True, returned_after_window=False),
+            lambda row: row.update(packet_index=True),
+            lambda row: row.update(client_thread_cpu_ns=-1),
+            lambda row: row.update(status='silently_filtered'),
+            lambda row: row.update(started_ns=None, returned_after_deadline=1),
+            lambda row: row.update(started_ns=None, elapsed_wall_ns=2_000_000_001),
+            lambda row: row.update(started_ns=None, ended_ns=4_000_000_001,
+                                   returned_after_window=False),
+            lambda row: row.update(status=None, client_thread_cpu_ns=-1),
+        )
+        for mutate in mutations:
+            def edit(doc):
+                mutate(doc['phases'][1]['attacks'][0]['calls'][0])
+            with self.subTest(mutate=mutate), self.assertRaises(ValueError):
+                self.summarize(edit)
+
+    def test_historical_v1_has_no_new_attacker_fields(self):
+        report = self.summarize(observation_version=1)
+        self.assertNotIn('attacker_attempts', report['phases'][1])
+        self.assertEqual(driver.digest(json.dumps(report, sort_keys=True, separators=(',', ':')).encode()),
+                         '868038bb147c31963efaf6db6f83ca824fb46701815ca4d9f27de462400e6ea1')
+
+
 class ReceiveClockObservationTests(unittest.TestCase):
     """One synthetic local epoch and peer claims, never authenticated execution."""
 

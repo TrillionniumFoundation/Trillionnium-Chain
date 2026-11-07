@@ -43,7 +43,7 @@ fn fixture(senders: usize) -> (State, Config, Vec<Vec<u8>>) {
         .collect();
     (state, cfg, raws)
 }
-fn experiment<E: Send>(
+fn full_speculation_reference<E: Send>(
     state: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
@@ -56,7 +56,7 @@ fn experiment<E: Send>(
         |_, next| root(next),
         control,
         StateInputs {
-            experimental_skip_repeated_senders: true,
+            force_repeated_sender_speculation: true,
             ..StateInputs::default()
         },
     )
@@ -90,7 +90,7 @@ fn repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_si
         for workers in [1, 2, 4, 8] {
             let serial = execute(&state, &raws, 1, [249; 32], [248; 32], 1, &cfg).unwrap();
             let actual = execute(&state, &raws, 1, [249; 32], [248; 32], workers, &cfg).unwrap();
-            let reference = relation_only(experiment(
+            let reference = relation_only(full_speculation_reference(
                 &state,
                 request(&raws, workers),
                 &cfg,
@@ -104,10 +104,10 @@ fn repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_si
             assert_eq!(actual.metrics.signature_verifications, 256);
             assert_eq!(state, preserved);
             if workers > 1 && (2..256).contains(&senders) {
-                assert_eq!(reference.metrics.speculative, senders);
-                assert!(reference.metrics.reexecuted < actual.metrics.reexecuted);
-                assert_eq!(actual.metrics.speculative, 256);
-                assert_eq!(reference.metrics.serial_conflict_batches, 1);
+                assert_eq!(actual.metrics.speculative, senders);
+                assert!(actual.metrics.reexecuted < reference.metrics.reexecuted);
+                assert_eq!(reference.metrics.speculative, 256);
+                assert_eq!(actual.metrics.serial_conflict_batches, 1);
             } else {
                 assert_eq!(actual.metrics.speculative, reference.metrics.speculative);
                 assert_eq!(actual.metrics.reexecuted, reference.metrics.reexecuted);
@@ -157,7 +157,7 @@ fn repeated_sender_complete_failures_preserve_canonical_first_error_and_parent()
         for workers in [1, 4, 8] {
             let actual =
                 execute(&state, &input, 1, [249; 32], [248; 32], workers, &cfg).unwrap_err();
-            let reference = relation_only(experiment(
+            let reference = relation_only(full_speculation_reference(
                 &state,
                 request(&input, workers),
                 &cfg,
@@ -217,7 +217,7 @@ fn repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relati
     input[0] = tx.encode().unwrap();
     for workers in [1, 4, 8] {
         let actual = execute(&state, &input, 1, [249; 32], [248; 32], workers, &cfg).unwrap();
-        let reference = relation_only(experiment(
+        let reference = relation_only(full_speculation_reference(
             &state,
             request(&input, workers),
             &cfg,
@@ -247,7 +247,7 @@ fn repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relati
     input[0] = tx.encode().unwrap();
     for workers in [1, 4, 8] {
         let actual = execute(&state, &input, 1, [249; 32], [248; 32], workers, &cfg).unwrap();
-        let reference = relation_only(experiment(
+        let reference = relation_only(full_speculation_reference(
             &state,
             request(&input, workers),
             &cfg,
@@ -320,7 +320,7 @@ fn repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers() {
             };
             let control = ExecutionControl::new(&progress, &accounting);
             let result = if experimental {
-                experiment(&state, request(&raws, 4), &cfg, &control)
+                full_speculation_reference(&state, request(&raws, 4), &cfg, &control)
             } else {
                 execute_with_control(&state, request(&raws, 4), &cfg, &control)
             };
@@ -339,7 +339,7 @@ fn repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers() {
         };
         let control = ExecutionControl::new(&no_cancellation, &accounting);
         let result = if experimental {
-            experiment(&state, request(&raws, 4), &cfg, &control)
+            full_speculation_reference(&state, request(&raws, 4), &cfg, &control)
         } else {
             execute_with_control(&state, request(&raws, 4), &cfg, &control)
         };
@@ -349,5 +349,79 @@ fn repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers() {
         ));
         accounting.closed(2);
         assert_eq!(state, preserved);
+    }
+}
+
+#[test]
+#[ignore = "explicit paired complete-block observation; not public-service throughput"]
+fn repeated_sender_complete_block_cost_observation() {
+    // Freeze three sender distributions, four workers, twelve ABBA-ordered
+    // pairs and two recorded warm-up pairs before sampling. Both arms execute
+    // every signature, canonical state effect and final commitment. The old
+    // implementation exists only as the private test oracle above.
+    for senders in [2, 64, 256] {
+        let (state, cfg, raws) = fixture(senders);
+        let preserved = state.clone();
+        let expected = execute(&state, &raws, 1, [249; 32], [248; 32], 1, &cfg).unwrap();
+        for pair in 0..14 {
+            let order = if pair % 2 == 0 {
+                [true, false]
+            } else {
+                [false, true]
+            };
+            for full_speculation in order {
+                let start = std::time::Instant::now();
+                let result = if full_speculation {
+                    relation_only(full_speculation_reference(
+                        std::hint::black_box(&state),
+                        request(std::hint::black_box(&raws), 4),
+                        &cfg,
+                        &ExecutionControl::new(&no_cancellation, &()),
+                    ))
+                } else {
+                    execute(
+                        std::hint::black_box(&state),
+                        std::hint::black_box(&raws),
+                        1,
+                        [249; 32],
+                        [248; 32],
+                        4,
+                        &cfg,
+                    )
+                };
+                let wall_ns = start.elapsed().as_nanos();
+                let actual = result.unwrap();
+                assert_eq!(actual.state, expected.state);
+                assert_eq!(actual.root, expected.root);
+                assert_eq!(actual.receipts, expected.receipts);
+                assert_eq!(actual.metrics.signature_verifications, raws.len());
+                assert_eq!(actual.metrics.workers_spawned, 4);
+                assert_eq!(state, preserved);
+                println!(
+                    "{}",
+                    json!({
+                        "schema": "pon-repeated-sender-whole-block-cost-v1",
+                        "senders": senders,
+                        "transactions": raws.len(),
+                        "workers": 4,
+                        "pair": pair,
+                        "warmup": pair < 2,
+                        "implementation": if full_speculation {
+                            "full-speculation-reference"
+                        } else {
+                            "repeated-sender-hint"
+                        },
+                        "wall_ns": wall_ns,
+                        "signature_verifications": actual.metrics.signature_verifications,
+                        "speculative": actual.metrics.speculative,
+                        "reexecuted": actual.metrics.reexecuted,
+                        "root": hex::encode(actual.root),
+                        "cpu_ns": null,
+                        "public_confirmation": false,
+                        "production_activation": false,
+                    })
+                );
+            }
+        }
     }
 }
