@@ -17,6 +17,25 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Fresh-query cost continuation, 2026-11-07 UTC:** Continue the prior legal-work
+source `9602cb704f97fb9c87d6fd379809bef468c3c1e8` with the
+[fresh-work floor research](specs/pon/GROUPED_FRESH_WORK_FLOOR_V0.md).
+Implement exact cached rank-one/mixing/dropout counterexamples before claiming
+that a new challenge forces new useful arithmetic. Keep lawful sparse-merged
+business reuse, and explicitly add a fixed 64-step security seal whose endpoint
+is the only ticket. Separate the conditional classical aggregate oracle-query
+bound from attacker-owned physical resources and neural cost. Bind one frozen
+model/request/target policy through a new strict native signed capsule, actual
+Node parent/target checks, full independent Cell replay and canonical proof.
+Reserve verification permits durably before expensive replay, retaining failed,
+abandoned and duplicate charges under a local 256-submission cap. Measure full
+local signatures, production, verification, persistence and actual TCP alongside
+all misses and controls; retain real historical input provenance and explicitly
+controlled demand/keys. Global quotas, hidden-verifier assumptions, real demand,
+quantum security and intrinsic useful-work hardness remain open. Actual
+chainwork and production activation remain zero; existing integration candidate
+and original required gates remain the delivery path.
+
 **Legal work, input choice and grouped lottery audit, 2026-11-07 America/New_York:**
 Continue the existing #688 integration candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66`
 with the [fixed int257 audit](specs/pon/GROUPED_WORK_FAIRNESS_AUDIT_V0.md).

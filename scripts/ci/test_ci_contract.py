@@ -132,6 +132,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_fresh_work_theory_and_native_admission_controls_are_additive_and_mandatory(self):
+        theory = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_query_floor_v0.py' -v\n"
+        native = ' --test grouped_fresh_admission_v0'
+        self.assertEqual(self.script.count(theory), 1)
+        self.assertEqual(self.script.count(native), 1)
+        for changed in (self.script.replace(theory, ''), self.script.replace(theory, theory * 2),
+                        self.script.replace(theory, theory.rstrip() + ' || true\n'),
+                        self.script.replace(native, ''),
+                        self.script.replace(native, ' --test grouped_fresh_admission_v0 -- --ignored')):
+            with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
             '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell\n',
