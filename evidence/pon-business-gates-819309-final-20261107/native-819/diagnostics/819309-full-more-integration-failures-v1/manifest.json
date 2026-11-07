@@ -1,0 +1,173 @@
+{
+  "captured_utc": "2026-11-07T20:25:46.725641+00:00",
+  "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "files": [
+    {
+      "bytes": 4289,
+      "context": [
+        [
+          1837,
+          ""
+        ],
+        [
+          1838,
+          "thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (1626399) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:"
+        ],
+        [
+          1839,
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        [
+          1840,
+          ""
+        ],
+        [
+          1841,
+          "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+        ],
+        [
+          1842,
+          "FAILED"
+        ],
+        [
+          1843,
+          "test optional_sync_inputs_reject_before_open_without_changing_old_defaults ... ok"
+        ],
+        [
+          1844,
+          "test prepared_forks_keep_original_public_cpu_after_listener_join_and_restart ... ok"
+        ],
+        [
+          1845,
+          ""
+        ],
+        [
+          1846,
+          "failures:"
+        ],
+        [
+          1847,
+          ""
+        ],
+        [
+          1850,
+          ""
+        ],
+        [
+          1851,
+          "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.83s"
+        ],
+        [
+          1852,
+          ""
+        ],
+        [
+          1853,
+          "error: test failed, to rerun pass `-p trnm-pon-node --test evaluation_sync_observation`"
+        ]
+      ],
+      "original_byte_end_exclusive": 7417972,
+      "original_byte_start": 7413683,
+      "original_lines": [
+        1833,
+        1853
+      ],
+      "outer_target": "evaluation_sync_observation",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-more-integration-failures-v1/evaluation_sync_observation.log",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "sha256": "5b769a33f67d10a878e5e6fe8d0d02ddeaaf20b90beca5bf6fdaf6ae6964b757"
+    },
+    {
+      "bytes": 971,
+      "context": [
+        [
+          1914,
+          "test mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain ... "
+        ],
+        [
+          1915,
+          "thread 'mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain' (1630641) panicked at crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:"
+        ],
+        [
+          1916,
+          "None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        [
+          1917,
+          " stdout="
+        ],
+        [
+          1918,
+          "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+        ],
+        [
+          1919,
+          "FAILED"
+        ],
+        [
+          1920,
+          ""
+        ],
+        [
+          1921,
+          "failures:"
+        ],
+        [
+          1922,
+          ""
+        ],
+        [
+          1923,
+          "failures:"
+        ],
+        [
+          1924,
+          "    mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+        ],
+        [
+          1925,
+          ""
+        ],
+        [
+          1926,
+          "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.76s"
+        ],
+        [
+          1927,
+          ""
+        ],
+        [
+          1928,
+          "error: test failed, to rerun pass `-p trnm-pon-node --test mining_service_budget`"
+        ]
+      ],
+      "original_byte_end_exclusive": 7422769,
+      "original_byte_start": 7421798,
+      "original_lines": [
+        1910,
+        1928
+      ],
+      "outer_target": "mining_service_budget",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-more-integration-failures-v1/mining_service_budget.log",
+      "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "sha256": "01e5e2b3ce8d644968784a753d2009602183a7ed6fbedf4c8ac79833ffca3e32"
+    }
+  ],
+  "full_result_pending": true,
+  "progress": {
+    "integration_execution_ended_via_next_outer": 28,
+    "integration_started": 29,
+    "last_outer_target": {
+      "kind": [
+        "test"
+      ],
+      "line": 1928,
+      "name": "model_composition_v4"
+    },
+    "progress_not_pass_counts": true
+  },
+  "schema": "trnm-exact-native-target-excerpts-v1",
+  "source": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/records/node-full.log",
+  "source_prefix_bytes": 7424993,
+  "source_prefix_sha256": "195806aa3d2ddca650a1071b8efacd929c20c0e807fd22232834b4991df700c5"
+}

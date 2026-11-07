@@ -1,0 +1,67 @@
+{
+  "changes_from_prior_observer": [
+    "independent output root",
+    "record and require existing ProfHepta repository admin/push permissions",
+    "identity recheck after collection; GET-only pagination unchanged"
+  ],
+  "downloads_performed": 0,
+  "files": [
+    {
+      "bytes": 14414,
+      "path": "read_ci_metadata.py",
+      "sha256": "573d971703e82301a466966009708e3cac1590ce0f91dad1a240645eb1065156"
+    },
+    {
+      "bytes": 3356,
+      "path": "observer_controls.py",
+      "sha256": "5a5da1838d648577ce3dd38a337be071ece1b1dbc3872e17f3f9d1ad96d05799"
+    },
+    {
+      "bytes": 6259,
+      "path": "OBSERVATION_PLAN.json",
+      "sha256": "9e663b21d4ebb558160173f37ebcfa51e92981557525e278d79d657061e49431"
+    },
+    {
+      "bytes": 3075,
+      "path": "README.md",
+      "sha256": "cbba81668ed85499cb9bcf9f81419377510b2b5f29f63db3bfc832c5100950d8"
+    }
+  ],
+  "github_calls_performed": 0,
+  "local_checks": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/throughput-final-ci-observation-20261107/read_ci_metadata.py",
+        "--self-test"
+      ],
+      "exit_code": 0,
+      "name": "http-parser-controls",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 50,
+      "stdout_sha256": "36295b796ae5f534070b88d907b8733820740fd8520414e23d194b96f37814af"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/throughput-final-ci-observation-20261107/observer_controls.py"
+      ],
+      "exit_code": 0,
+      "name": "pagination-negative-controls",
+      "stderr_bytes": 1136,
+      "stderr_sha256": "b7b024fac75f5ce7f491acc346a627e6bfd62f9de82d6e171aeb623868aaec70",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_gate_validated": false,
+  "repository_edits": 0,
+  "root": "/home/qian-qi/throughput-final-ci-observation-20261107",
+  "schema": "trnm-final-ci-observer-preparation-v1",
+  "source_script_hashes": {
+    "observer_controls.py": "9e59cd25444c7ef5725227f961d25c6b156a470cac20b647d4e0f873954ee1a4",
+    "read_ci_metadata.py": "7f368a2b6778e9e7c0be6ae2944ece49eb6203206c9c40b86281d421a7724b41"
+  },
+  "state": "PREPARED_NOT_STARTED_AWAITING_AUTHORITATIVE_PUSH"
+}

@@ -1,4 +1,33 @@
-**Combined-source control follow-up, 2026-11-07 UTC — HOLD:** The frozen
+**Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
+
+> Final 819 evidence readback: all 14 core lanes and 20/20 original W1 artifacts are independently retained and verified (24 native manifests, 632 campaigns). Transport v1/v2 failures and Range v3 recovery remain separate. Business qualification is still HOLD. The ordinary Legacy final admission-root candidate requires its own frozen-source 666 controls and 16 library plus one independent History exact run; no earlier result certifies this candidate. See [complete final evidence](../../evidence/pon-business-gates-819309-final-20261107/README.md).
+
+The [complete 819 record](../../evidence/pon-business-gates-819309-final-20261107/README.md)
+binds real push 819309fd312298e099642e1253b1d4ba07113e98 and its original H/M
+matrix through ProfHepta and the HeptaRuntime local GitHub channel. All 666 source
+controls, strict workspace Clippy and linked inventory passed. One complete Node
+package then finished with 1,504 native passes, 12 failures and 57 ignored tests
+across all 67 harnesses; doc-tests separately passed four. Full source and binaries
+matched before/after. Three failures directly report CPU-budget refusal, eight
+report PUBLIC_HOST_KERNEL_PARENT, and one retains a thread panic/Disconnected
+without a confirmed Host cause. Preserve every original failure and denominator.
+
+Real CI closed 37 jobs at 26 success / 11 failure and 34 native lanes at
+24 success / 10 failure; all 136 source steps passed. Four service and both fresh
+jobs still failed pressure confirmation. History returned x64 H/M 2,791 / 3,386
+of 4,105 imports; ARM H/M returned 4,104, stored all packets and cancelled
+activation at cursors 3,782 / 3,701. Every confirmer remained active at genesis.
+These are separate observations from e70 and d26, not paired speed comparisons.
+
+The follow-up connects complete-input arithmetic only to classical Legacy
+ordinary admission's final current-active-State root fence. Keep every actual
+SQL/claim, writer/schema, callback, CPU and commit obligation. Require the new
+warm-corruption/rollback/cold-open regression, retained exact controls and the
+separately declared affected Legacy History test on the new frozen source.
+PQ/Growth/Authenticated semantics and original business gates are unchanged;
+touched-set/COW migration remains a distinct unclosed requirement.
+
+**Prior combined-source control attempt (93277), 2026-11-07 UTC — retained failure:** The frozen
 93277a001f4f8a42be65166f6513177b46cddf5b source completed all 665 controls:
 663 passed, one failure and one error in the exact Host lock controls. Cell's
 202 controls passed; strict Clippy and the complete 1,573-test linked inventory
@@ -6,9 +35,9 @@ also passed preparation, with no native bodies executed. Preserve
 [the complete attempt and reviewed lock-construction correction](../../evidence/pon-business-gates-readback-20261107/README.md).
 Canonicalize only a newly O_EXCL-created lock descriptor to the already required
 0444 mode; never repair existing locks or relax Host checks. One real-child
-umask regression raises the next original-source roster to 666. Its fresh
-execution and the original real CI business gates remain pending; no previous
-pressure, History, CPU-budget, missing-artifact or qualification failure closes.
+umask regression raised the source roster to 666. The later 819 execution and
+real CI outcomes are retained above; no previous pressure, History, CPU-budget,
+missing-artifact or qualification failure is discarded.
 
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
@@ -156,8 +185,8 @@ already has an earlier transaction; every signature and canonical state effect
 still executes, with the old complete-speculation path retained as a test oracle.
 PQ and Growth keep their existing serial state-owner semantics.
 
-Only classical Legacy reorganization may reuse the existing bounded full-input
-root arithmetic. Actual SQL rows, canonical grammar, untouched corruption,
+Classical Legacy reorganization and ordinary admission's final current-active
+State fence may reuse the existing bounded full-input root arithmetic. Actual SQL rows, canonical grammar, untouched corruption,
 current stored roots, atomic owner/cursor checks and cancellation remain checked;
 PQ, Growth and Authenticated profiles retain their original root validation.
 This still traverses complete State and is not touched-set/COW completion.

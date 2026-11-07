@@ -1,0 +1,6 @@
+{
+  "job_id": "1a1b7667540-12894-a9f",
+  "error_type": "observer import-only missing pinned runtime config before any artifact GET",
+  "stderr_sha256": "d3b3266fb82a95b3e00d05a110ba13651b755814a85e9e34a69032c1b8d4fea2",
+  "native_result_unchanged": true
+}

@@ -1,0 +1,280 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -18,6 +18,8 @@
+ mod historical_commitment_tests;
+ mod history_page;
+ mod legacy_admission_readback;
++#[cfg(test)]
++mod legacy_admission_root_tests;
+ #[cfg(test)]
+ mod legacy_reorg_observation_tests;
+ #[cfg(test)]
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs
+@@ -0,0 +1,263 @@
++//! The ordinary admission tail must check the current active State after writes.
++//! Real PNW1 packets and SQLite rollback; this is not a fixed-Host service test.
++use super::*;
++use rusqlite::types::Value as SqlValue;
++use serde_json::json;
++use std::{path::Path, sync::Mutex};
++use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
++use trnm_protocol::pon_wire::Envelope;
++
++const NOW: u64 = 100_000;
++const PROBE_KEY: &str = "legacy-admission-root-probe";
++
++fn settings() -> Settings {
++    let mut settings = Settings::development_with_profiles(
++        Some(1),
++        "native-public-evaluation-dev-v1",
++        continuity_v1::PROFILE,
++    )
++    .unwrap();
++    settings.initial.insert(PROBE_KEY.into(), json!("alpha"));
++    let initial_root = settings.state_root(&settings.initial).unwrap();
++    settings.genesis = hash(
++        b"genesis",
++        &[
++            &settings.network(),
++            &settings.parameters(),
++            &initial_root,
++            &settings.genesis_time().to_le_bytes(),
++        ],
++    );
++    settings
++}
++
++fn packet(node: &Node, parent: Hash, height: u64, miner: u64) -> Packet {
++    let key =
++        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
++    let mut payload = development_public(1).unwrap().to_vec();
++    payload.extend(1_u64.to_le_bytes());
++    let mut command = Envelope {
++        network: node.settings.network(),
++        sender: development_public(0).unwrap(),
++        nonce: height,
++        expiry: 10_000,
++        fee_limit: 1_000_000,
++        tag: 1,
++        payload,
++        signature: [0; 64],
++    };
++    command.signature = hex::decode(sign_hex(&key, &command.signing_digest().unwrap()))
++        .unwrap()
++        .try_into()
++        .unwrap();
++    node.make_consensus_maintenance(
++        parent,
++        vec![command.encode().unwrap()],
++        development_public(miner).unwrap(),
++        1 + height * 10,
++        4096,
++    )
++    .unwrap()
++}
++
++fn receiver(path: &Path, settings: &Settings, active: &Packet, parent: &Packet) -> Node {
++    let mut node = Node::open(path, settings.clone(), 1).unwrap();
++    let active_id = node.admit(active, NOW).unwrap();
++    node.activate_observed(active_id, NOW).unwrap();
++    let parent_id = node.admit(parent, NOW).unwrap();
++    assert_ne!(active_id, parent_id);
++    assert_eq!(node.active().unwrap(), (active_id, 1));
++    assert_eq!(node.record(active_id).unwrap().height, 1);
++    assert_eq!(node.record(parent_id).unwrap().height, 1);
++    node
++}
++
++fn facts(db: &Connection) -> BTreeMap<String, Vec<Vec<SqlValue>>> {
++    let tables = db
++        .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
++        .unwrap()
++        .query_map([], |row| row.get::<_, String>(0))
++        .unwrap()
++        .collect::<rusqlite::Result<Vec<_>>>()
++        .unwrap();
++    tables
++        .into_iter()
++        .map(|table| {
++            assert!(table
++                .bytes()
++                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_'));
++            let columns = db
++                .prepare(&format!("SELECT * FROM {table}"))
++                .unwrap()
++                .column_count();
++            let order = (1..=columns)
++                .map(|column| column.to_string())
++                .collect::<Vec<_>>()
++                .join(",");
++            let mut statement = db
++                .prepare(&format!("SELECT * FROM {table} ORDER BY {order}"))
++                .unwrap();
++            let rows = statement
++                .query_map([], |row| {
++                    (0..columns)
++                        .map(|column| row.get::<_, SqlValue>(column))
++                        .collect::<rusqlite::Result<Vec<_>>>()
++                })
++                .unwrap()
++                .collect::<rusqlite::Result<Vec<_>>>()
++                .unwrap();
++            (table, rows)
++        })
++        .collect()
++}
++
++fn warm_actual_root(node: &Node) -> (Hash, u64, State) {
++    let actual = node.read_active().unwrap();
++    let expected = node.record(actual.0).unwrap().root;
++    for _ in 0..2 {
++        assert_eq!(
++            node.commitment_root_arithmetic.root(&actual.2).unwrap(),
++            expected
++        );
++    }
++    actual
++}
++
++#[derive(Clone, Copy, Debug)]
++enum Damage {
++    CurrentCell,
++    StoredRoot,
++}
++
++fn install_trigger(node: &Node, child: Hash, damage: Damage, corrupt: bool) {
++    let update = match damage {
++        Damage::CurrentCell => {
++            let value = canonical(&json!(if corrupt { "bravo" } else { "alpha" })).unwrap();
++            format!(
++                "UPDATE kv SET value=X'{}' WHERE slot=(SELECT state_slot FROM active WHERE singleton=1) AND key='{PROBE_KEY}';",
++                hex::encode(value)
++            )
++        }
++        Damage::StoredRoot => {
++            let current = node.record(node.active().unwrap().0).unwrap().root;
++            assert_ne!(current, [0; 32]);
++            let root = if corrupt { [0; 32] } else { current };
++            format!(
++                "UPDATE blocks SET state_root=X'{}' WHERE id=(SELECT tip FROM active WHERE singleton=1);",
++                hex::encode(root)
++            )
++        }
++    };
++    node.db
++        .execute_batch(&format!(
++            "CREATE TRIGGER final_admission_probe AFTER INSERT ON blocks WHEN NEW.id=X'{}' BEGIN {update} END;",
++            hex::encode(child)
++        ))
++        .unwrap();
++}
++
++fn admit_traced(node: &mut Node, packet: &Packet) -> (Result<Hash>, Vec<ExecutionProgress>) {
++    let checked = WorkCheckedPacket::verify(packet.clone()).unwrap();
++    let trace = Mutex::new(Vec::new());
++    let result = node.admit_work_checked_with_progress(checked, NOW, &|point| {
++        trace.lock().unwrap().push(point);
++        Ok(())
++    });
++    (result, trace.into_inner().unwrap())
++}
++
++#[test]
++fn ordinary_admission_final_root_rechecks_warm_active_state_and_claim() {
++    let directory = tempfile::tempdir().unwrap();
++    let cfg = settings();
++    let mut builder = Node::open(&directory.path().join("builder"), cfg.clone(), 1).unwrap();
++    let active = packet(&builder, cfg.genesis(), 1, 7);
++    let active_id = builder.admit(&active, NOW).unwrap();
++    builder.activate_observed(active_id, NOW).unwrap();
++    let parent = packet(&builder, cfg.genesis(), 1, 8);
++    let parent_id = builder.admit(&parent, NOW).unwrap();
++    let child = packet(&builder, parent_id, 2, 9);
++    let child_id = child.id().unwrap();
++    assert_ne!(active_id, parent_id);
++    drop(builder);
++
++    for damage in [Damage::CurrentCell, Damage::StoredRoot] {
++        let case = directory.path().join(format!("{damage:?}"));
++        let mut control = receiver(&case.join("control"), &cfg, &active, &parent);
++        let expected_active = warm_actual_root(&control);
++        let expected_parent = control.state_at(parent_id).unwrap();
++        // The no-op trigger has the same writer/schema qualification shape.
++        // This reference must really admit the child before its trace is used.
++        install_trigger(&control, child_id, damage, false);
++        let (accepted, accepted_trace) = admit_traced(&mut control, &child);
++        assert_eq!(accepted.unwrap(), child_id);
++        assert!(control
++            .delta_rows(child_id)
++            .unwrap()
++            .iter()
++            .all(|(key, _, _)| key != PROBE_KEY));
++        assert!(accepted_trace
++            .iter()
++            .any(|point| matches!(point, ExecutionProgress::PersistenceDelta { .. })));
++        assert_eq!(
++            accepted_trace.last(),
++            Some(&ExecutionProgress::BeforeDurableCommit)
++        );
++
++        let path = case.join("damaged");
++        let mut node = receiver(&path, &cfg, &active, &parent);
++        let original_active = warm_actual_root(&node);
++        let original_parent = node.state_at(parent_id).unwrap();
++        assert_eq!(original_active, expected_active);
++        assert_eq!(original_parent, expected_parent);
++        assert_eq!(original_active.2[PROBE_KEY], json!("alpha"));
++        assert_eq!(original_parent[PROBE_KEY], json!("alpha"));
++        let before = facts(&node.db);
++        install_trigger(&node, child_id, damage, true);
++        let (result, trace) = admit_traced(&mut node, &child);
++        let error = result.unwrap_err();
++        let expected = Error::from("ROOT").local_integrity();
++        assert_eq!(error.to_string(), expected.to_string(), "{damage:?}");
++        assert_eq!(error.kind(), expected.kind(), "{damage:?}");
++        assert_eq!(
++            error.requires_owner_stop(),
++            expected.requires_owner_stop(),
++            "{damage:?}"
++        );
++        assert!(error.requires_owner_stop());
++
++        // The inactive right parent and child read their own historical source,
++        // never the active left branch's KV or root claim. All those original
++        // callbacks complete. Only the final post-root commit callback is absent.
++        assert_eq!(
++            trace.as_slice(),
++            &accepted_trace[..accepted_trace.len() - 1],
++            "{damage:?}"
++        );
++        assert!(node.db.is_autocommit());
++        assert_eq!(facts(&node.db), before, "{damage:?}");
++        assert_eq!(node.read_active().unwrap(), original_active);
++        assert_eq!(node.state_at(parent_id).unwrap(), original_parent);
++        let stored: bool = node
++            .db
++            .query_row(
++                "SELECT EXISTS(SELECT 1 FROM blocks WHERE id=?)",
++                [child_id.as_slice()],
++                |row| row.get(0),
++            )
++            .unwrap();
++        assert!(!stored);
++
++        // Remove only the test injector after proving every durable table rolled
++        // back. Cold open then has no volatile arithmetic and no failed child.
++        node.db
++            .execute_batch("DROP TRIGGER final_admission_probe")
++            .unwrap();
++        assert_eq!(facts(&node.db), before);
++        drop(node);
++        let reopened = Node::open(&path, cfg.clone(), 1).unwrap();
++        assert_eq!(reopened.read_active().unwrap(), original_active);
++        assert_eq!(reopened.state_at(parent_id).unwrap(), original_parent);
++        assert_eq!(facts(&reopened.db), before);
++    }
++}

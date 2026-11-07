@@ -1,0 +1,133 @@
+{
+  "binary_after": {
+    "ctime_ns": 1794077228157391209,
+    "device": 2049,
+    "inode": 6298586,
+    "mtime_ns": 1794077228156004171,
+    "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+    "sha256": "3f20c94627043b0ecb716f118379a70e8ef47262b4c90c8d877f16e5b26c2260",
+    "size_bytes": 8790192
+  },
+  "binary_before": {
+    "ctime_ns": 1794077228157391209,
+    "device": 2049,
+    "inode": 6298586,
+    "mtime_ns": 1794077228156004171,
+    "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+    "sha256": "3f20c94627043b0ecb716f118379a70e8ef47262b4c90c8d877f16e5b26c2260",
+    "size_bytes": 8790192
+  },
+  "compilation_in_native_measurement": false,
+  "failures": [
+    "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+    "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+    "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+  ],
+  "hardness_accepted": false,
+  "independent_accepted": false,
+  "job": {
+    "GITHUB_JOB": "native-priorities",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "42402618518"
+  },
+  "log": {
+    "ctime_ns": 1794080128476045603,
+    "device": 2049,
+    "inode": 6298591,
+    "mtime_ns": 1794080128476045603,
+    "path": "/home/runner/work/_temp/priority-observations/history-native/history.log",
+    "sha256": "5637d2ab5967ee274df0e1ff20353bfb152db89b2cb5ab25b5f72de5ff023394",
+    "size_bytes": 11500
+  },
+  "named_execution": null,
+  "native_execution_authenticated": false,
+  "passed": false,
+  "preparation_sha256": "e5f39b80543541a7dbb455bc9f873fe75a2e2b727eae800470911bba896b2333",
+  "process": {
+    "cleanup_errors": [],
+    "command": [
+      "/usr/bin/time",
+      "-v",
+      "-o",
+      "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+      "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+      "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+      "--exact",
+      "--ignored",
+      "--show-output"
+    ],
+    "exit_code": 101,
+    "failure": null,
+    "pid": 5869,
+    "started": true
+  },
+  "production_activation": false,
+  "public_network_ready": false,
+  "resources": {
+    "ctime_ns": 1794080128476045603,
+    "device": 2049,
+    "inode": 6298592,
+    "mtime_ns": 1794080128476045603,
+    "path": "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+    "sha256": "644e303fd0fd9ed2cb12398e0cf4643e616a2a14dfd7c76a61f260fe4472d1e5",
+    "size_bytes": 971
+  },
+  "schema": "trnm-ci-history-native-execution-v1",
+  "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+  "source_after": {
+    "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+      "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1277471450,
+      "tracked_entries": 12639,
+      "tracked_worktree_verified": true
+    },
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "source_before": {
+    "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+      "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1277471450,
+      "tracked_entries": 12639,
+      "tracked_worktree_verified": true
+    },
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "summary": {
+    "error": "PUBLIC_REQUEST_DEADLINE",
+    "hardness_accepted": false,
+    "independent_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "schema": "native-ancestry-long-sync-observation-v1"
+  },
+  "summary_file": {
+    "ctime_ns": 1794080128475045572,
+    "device": 2049,
+    "inode": 6298602,
+    "mtime_ns": 1794080128475045572,
+    "path": "/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json",
+    "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb",
+    "size_bytes": 245
+  },
+  "target": "ancestry_long_sync",
+  "whole_test_command_preserved": true
+}

@@ -1,0 +1,80 @@
+{
+  "captured_utc": "2026-11-07T20:17:16.074224+00:00",
+  "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "failure_context": [
+    [
+      1686,
+      ""
+    ],
+    [
+      1687,
+      "thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (1606591) panicked at crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:"
+    ],
+    [
+      1688,
+      "retained native delivery/replay invariants failed"
+    ],
+    [
+      1689,
+      "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+    ],
+    [
+      1690,
+      "FAILED"
+    ],
+    [
+      1691,
+      ""
+    ],
+    [
+      1692,
+      "failures:"
+    ],
+    [
+      1693,
+      ""
+    ],
+    [
+      1694,
+      "failures:"
+    ],
+    [
+      1696,
+      ""
+    ],
+    [
+      1697,
+      "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.37s"
+    ],
+    [
+      1698,
+      ""
+    ],
+    [
+      1699,
+      "error: test failed, to rerun pass `-p trnm-pon-node --test architecture_delivery_compare`"
+    ]
+  ],
+  "full_package_result_pending": true,
+  "original_byte_end_exclusive": 7234782,
+  "original_byte_start": 7227436,
+  "original_lines": [
+    1652,
+    1699
+  ],
+  "outer_target": "architecture_delivery_compare",
+  "qualification": {
+    "business_gates": false,
+    "native_pass": false
+  },
+  "raw": {
+    "bytes": 7346,
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-architecture-delivery-v1/original-target.log",
+    "sha256": "7e2c7aa71828c1197b2236e99b195638c7b06631f94dee97ba08a728189e404f"
+  },
+  "schema": "trnm-exact-native-target-log-excerpt-v1",
+  "source": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/records/node-full.log",
+  "source_prefix_bytes": 7413097,
+  "source_prefix_sha256": "13757076a86c3114dbb0f39f6f0b09fd3abe27837578d141b6d9451775633e82",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+}

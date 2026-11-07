@@ -1,0 +1,4 @@
+test ingress::public_v3::scalar_cpu::final_samples_tests::actual_final_measurement_keeps_known_components_and_closes_new_starts ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::continuing_checkpoint_still_requires_a_live_reservation ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::final_debit_cannot_forgive_prior_uncertainty_or_numeric_overflow ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::lost_reservation_final_debit_fences_without_refill_repair_or_refund ... ok

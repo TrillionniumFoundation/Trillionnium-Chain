@@ -1,0 +1,277 @@
+{
+  "schema": "trnm-final819-state-four-core-v1",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "state_lane_denominator": 4,
+  "observed_artifacts": 4,
+  "rows": [
+    {
+      "artifact_id": 13587018438,
+      "job_id": 128493671755,
+      "errors": [],
+      "state_control_readback_passed": true,
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "artifact_name": "priority-ubuntu-24.04-head-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "zip": {
+        "exit_code": 0,
+        "timeout": false,
+        "bytes": 20125,
+        "sha256": "8a537719854c40d82b777adf4a9bf5c9b6077d94474cad922201ff0e7f134719"
+      },
+      "retained_file_count": 9,
+      "named_controls": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "pass": true,
+          "sha256": "c2046e1e6c028c013e148ac10c3bc583246e5161086003bd22279c12e2d19294"
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "pass": true,
+          "sha256": "f3436818217be56313444a89e85c8f7246ef2282d7ec90c44be10f97056f9b48"
+        },
+        {
+          "selector": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "pass": true,
+          "sha256": "9ba960cb359d3335971b98898d4cb9fae699418555c2ad90dee39b087c2dec38"
+        },
+        {
+          "selector": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "pass": true,
+          "sha256": "ac59e4f0a6c975e9af0161f8ad8621e6c722e2583130e1c985c266dbe2ba23ad"
+        },
+        {
+          "selector": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "pass": true,
+          "sha256": "7fd0a3410042db2d303f3e3259a84893e0616b650ac6c9f1b18c9535101bfe61"
+        },
+        {
+          "selector": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "pass": true,
+          "sha256": "cfb46ed30b94525b5dc3e8f05873842683263fd8926a95a31ef2475f615cd657"
+        }
+      ],
+      "migration": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13587018438/migration.log",
+        "sha256": "adaee9dba10da762d00dfeeebcdf17a5c05f63511873d11fad07b924a676b780",
+        "main_executed_tests": 40,
+        "all_summary_lines": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 4.11s"
+        ],
+        "main_40_summary_passed": true,
+        "fifo_subprocesses_are_not_additional_main_tests": true
+      },
+      "raw_readback": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13587018438/readback.json"
+    },
+    {
+      "artifact_id": 13586987572,
+      "job_id": 128493671763,
+      "errors": [],
+      "state_control_readback_passed": true,
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "artifact_name": "priority-ubuntu-24.04-arm-prospective-merge-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "zip": {
+        "exit_code": 0,
+        "timeout": false,
+        "bytes": 20136,
+        "sha256": "668f57bceb67f565331dcf75132fea8fb38c57787ca63948427242345096f49b"
+      },
+      "retained_file_count": 9,
+      "named_controls": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "pass": true,
+          "sha256": "892fd4ac61170d17ee7bb4f94f3a65def3db63daddcfa9baa2b9e813a482d7ac"
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "pass": true,
+          "sha256": "5c96559996d3e5cdaedcc0f8d419608cc07b5ae1cf6828285123ca19f0dcd304"
+        },
+        {
+          "selector": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "pass": true,
+          "sha256": "f125fe5200e2525a92d539e71ccd4bc8bcec3cd94426c10d182e0cae7d7c457f"
+        },
+        {
+          "selector": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "pass": true,
+          "sha256": "6bba4d4d6db1b4071df31da19710636f8c0363fd4c4f12c8454e955a4cb661ff"
+        },
+        {
+          "selector": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "pass": true,
+          "sha256": "d35acb02e7c2472a8ecf2d1a3253485528a568685fce09987b063edc50441843"
+        },
+        {
+          "selector": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "pass": true,
+          "sha256": "69bb034426acf444a89d8e13e68deb764b43300fe144912b8cd51197dbc10e75"
+        }
+      ],
+      "migration": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/migration.log",
+        "sha256": "f328870d4f6bdc039f4468fef30ddd2b6c529091eeb63deef45aa188120c3276",
+        "main_executed_tests": 40,
+        "all_summary_lines": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 5.06s"
+        ],
+        "main_40_summary_passed": true,
+        "fifo_subprocesses_are_not_additional_main_tests": true
+      },
+      "raw_readback": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586987572/readback.json"
+    },
+    {
+      "artifact_id": 13586734512,
+      "job_id": 128493671818,
+      "errors": [],
+      "state_control_readback_passed": true,
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "artifact_name": "priority-ubuntu-24.04-arm-head-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "zip": {
+        "exit_code": 0,
+        "timeout": false,
+        "bytes": 20099,
+        "sha256": "6089e5d8bf0e70429345ea3dd8c04726f6e1932d54ed9bb45c9989e630afb79c"
+      },
+      "retained_file_count": 9,
+      "named_controls": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "pass": true,
+          "sha256": "0e35e148f00b8e6d95174c22b8d1290b8671bdc2596f6a59cdf4c6013e21b654"
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "pass": true,
+          "sha256": "86be7bb0e6d2871f6c657a8e1c95b618281740fe61fb0771b479475e33dace0a"
+        },
+        {
+          "selector": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "pass": true,
+          "sha256": "83fbd10f4aa42f867c131fbf455af1289f6ecd5f39f05a637d2e124aefbd9cf4"
+        },
+        {
+          "selector": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "pass": true,
+          "sha256": "5523aa0b5e921ffc14acd79f6e6197638a1cc1fa97a83912ead0b73d14772fe0"
+        },
+        {
+          "selector": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "pass": true,
+          "sha256": "0b7a4f53e39d393f06b6bc0a49d9dfbbf2135df322fe0f905a597a749e09e294"
+        },
+        {
+          "selector": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "pass": true,
+          "sha256": "69bb034426acf444a89d8e13e68deb764b43300fe144912b8cd51197dbc10e75"
+        }
+      ],
+      "migration": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586734512/migration.log",
+        "sha256": "e567c04807c1e8ae7299c67db8bef96cc545ebcd72999b1f8b69c4e733ebebb2",
+        "main_executed_tests": 40,
+        "all_summary_lines": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 5.71s"
+        ],
+        "main_40_summary_passed": true,
+        "fifo_subprocesses_are_not_additional_main_tests": true
+      },
+      "raw_readback": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T192707Z-819309fd3122-ee0ee036/state-artifact-read-v1/13586734512/readback.json"
+    },
+    {
+      "artifact_id": 13588035599,
+      "job_id": 128493671835,
+      "errors": [],
+      "state_control_readback_passed": true,
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+        "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "artifact_name": "priority-ubuntu-24.04-prospective-merge-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "zip": {
+        "exit_code": 0,
+        "timeout": false,
+        "bytes": 20183,
+        "sha256": "d62ca3e0c760da45c004223fbd448f5a08175c6604ce3a18f829dae11478af42"
+      },
+      "retained_file_count": 9,
+      "named_controls": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "pass": true,
+          "sha256": "3413a67c090284b04a404150aa0abb65120c8b7e96604a09ab3fb3fe87ce146e"
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "pass": true,
+          "sha256": "9b2ac091494c5562b3723a1f5e2cd333755f5f5703df86edabbb7344d76298ec"
+        },
+        {
+          "selector": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "pass": true,
+          "sha256": "0d95dcfb89359500b3277bd8c83872ee387a5810621f39f4419bf479dc5935c6"
+        },
+        {
+          "selector": "monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission",
+          "pass": true,
+          "sha256": "fea26e49bb13936ad530ac6d5646ea7afedd3161560422bdee606917e0296b3c"
+        },
+        {
+          "selector": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "pass": true,
+          "sha256": "8aa8766c5415bffe1f446d79d245ad03d225a3bc05cadab97d0c81112ec12067"
+        },
+        {
+          "selector": "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "pass": true,
+          "sha256": "df95d603bbb9c2f6af7f450f593abe8cbe6ef6286fec832a29fb3ce28897bdf0"
+        }
+      ],
+      "migration": {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T193549Z-819309fd3122-d649433e/state-artifact-read-v1/13588035599/migration.log",
+        "sha256": "4f8d9996cb86b2800b1bdbb946ca57e0246297636a71b1e1bb307e03427aa527",
+        "main_executed_tests": 40,
+        "all_summary_lines": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s",
+          "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 5.76s"
+        ],
+        "main_40_summary_passed": true,
+        "fifo_subprocesses_are_not_additional_main_tests": true
+      },
+      "raw_readback": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T193549Z-819309fd3122-d649433e/state-artifact-read-v1/13588035599/readback.json"
+    }
+  ],
+  "scope": "State controls only; service/fresh/History gate not asserted"
+}

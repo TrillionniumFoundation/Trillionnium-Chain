@@ -1,0 +1,73 @@
+{
+  "captured_utc": "2026-11-07T20:08:06.093146+00:00",
+  "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "full_package_result_pending": true,
+  "nonlong_lines": [
+    [
+      1353,
+      "test store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation ... {\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":128114025,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":103900610,\"live_owners\":0,\"paid_cpu_debit_ns\":103908001,\"remaining_paid_credit_ns\":24206024,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":103908001,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":7391,\"stored_credit_ns\":24206024,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":517413600,\"original_page_budget_seconds\":30,\"request_index\":0,\"requested_packets\":1,\"result\":{\"Ok\":\"41a331516e463560383cceff9671ba86767ef42efce272b56c32b0e79853f3f8\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1354,
+      "{\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":232341957,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":209896387,\"live_owners\":0,\"paid_cpu_debit_ns\":209909038,\"remaining_paid_credit_ns\":22432919,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":209909038,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":12651,\"stored_credit_ns\":22432919,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":414055936,\"original_page_budget_seconds\":30,\"request_index\":1,\"requested_packets\":1,\"result\":{\"Ok\":\"3d7c5034a6bf09688bcfd0f0f50788bb6ad4ca9dc22d4a1d497448c134713ef2\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1355,
+      "{\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":335318625,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":298757530,\"live_owners\":0,\"paid_cpu_debit_ns\":298774771,\"remaining_paid_credit_ns\":36543854,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":298774771,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":17241,\"stored_credit_ns\":36543854,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":416722962,\"original_page_budget_seconds\":30,\"request_index\":2,\"requested_packets\":1,\"result\":{\"Ok\":\"1081c954a8508b0a005990b0188ce72c8b05438df15f4c02c77c1b110dca8238\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1356,
+      "{\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":442981029,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":417826334,\"live_owners\":0,\"paid_cpu_debit_ns\":417849716,\"remaining_paid_credit_ns\":25131313,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":417849716,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":23382,\"stored_credit_ns\":25131313,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":471940284,\"original_page_budget_seconds\":30,\"request_index\":3,\"requested_packets\":1,\"result\":{\"Ok\":\"30f52a4139909cc0968bc7bcf185baaeb5e90e52506a04a3cf478dfc10531932\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1357,
+      "{\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":562867407,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":540527875,\"live_owners\":0,\"paid_cpu_debit_ns\":540557800,\"remaining_paid_credit_ns\":22309607,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":540557800,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":29925,\"stored_credit_ns\":22309607,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":478936995,\"original_page_budget_seconds\":30,\"request_index\":4,\"requested_packets\":1,\"result\":{\"Ok\":\"21e524263c10674ff33a1e5fa2c6a3def34e49ca4adf6625643f99dc63ac7a59\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1358,
+      "{\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":672030009,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":659086622,\"live_owners\":0,\"paid_cpu_debit_ns\":659122201,\"remaining_paid_credit_ns\":12907808,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":659122201,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":35579,\"stored_credit_ns\":12907808,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":381475666,\"original_page_budget_seconds\":30,\"request_index\":5,\"requested_packets\":1,\"result\":{\"Ok\":\"045c48490fad3c22e0db74621b9f5d4d206cc2736a160a45244e03f3259666bc\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1359,
+      "{\"active_tip\":\"3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451\",\"cpu_flow\":{\"balance_identity_verified\":true,\"booked_reservation_ns\":0,\"credited_refill_ns\":794552454,\"discarded_refill_ns\":0,\"initial_credit_ns\":0,\"live_debited_cpu_ns\":780065087,\"live_owners\":0,\"paid_cpu_debit_ns\":780105520,\"remaining_paid_credit_ns\":14446934,\"schema\":\"public-v3-local-actual-cpu-flow-v1\",\"settled_full_cpu_ns\":780105520,\"settlement_discard_ns\":0,\"settlement_residual_cpu_ns\":40433,\"stored_credit_ns\":14446934,\"unsettled_known_live_cpu_ns\":0},\"elapsed_ns\":487413569,\"original_page_budget_seconds\":30,\"request_index\":6,\"requested_packets\":1,\"result\":{\"Err\":\"PUBLIC_MUTATION_CPU_BUDGET\"},\"schema\":\"history-original-honest-page-observation-v1\"}"
+    ],
+    [
+      1360,
+      ""
+    ],
+    [
+      1361,
+      "thread 'store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation' (1592188) panicked at crates/trnm-pon-node/src/native_authenticated_tests.rs:834:24:"
+    ],
+    [
+      1362,
+      "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+    ],
+    [
+      1363,
+      "FAILED"
+    ]
+  ],
+  "original_byte_end_exclusive": 6842476,
+  "original_byte_start": 6836539,
+  "original_lines": [
+    1353,
+    1363
+  ],
+  "outer_target": "lib",
+  "qualification": {
+    "business_gates": false,
+    "native_pass": false
+  },
+  "raw": {
+    "bytes": 5937,
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-native-inactive-page-v1/original.log",
+    "sha256": "19ed1a82e3795468790eb85f460129283948203c3d3cff4ee5a4486fbac0253f"
+  },
+  "schema": "trnm-exact-native-log-excerpt-v1",
+  "selector": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+  "source": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/records/node-full.log",
+  "source_prefix_bytes": 6906097,
+  "source_prefix_sha256": "2bf017643da29f82e5812f9864fa1dfbee27026eb9f742c7d04b4b8c451fc90a",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "trnm-external-native-driver-preparation-v2",
+  "prepared_only": true,
+  "native_commands_executed": false,
+  "source_tests_executed": false,
+  "driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/run-targeted-native-v2.py",
+    "bytes": 17019,
+    "sha256": "2a6ecccef6e51cc110165e3debf9a07a1803c3959452cf8db896fc66aad2398f"
+  },
+  "requirements": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/requirements-v2.json",
+    "bytes": 11795,
+    "sha256": "2aee4a85af649777966c2d3a57e7252e35e48ba2ea70da4608e6a0bfa7ad4f42"
+  },
+  "v1_driver_sha256": "3003297f420146295f1291b3c2706ee85cc17f82afa239e1a83b8c5dde7eb88a",
+  "v1_requirements_sha256": "0316ec3eae0ebccde65e09d3c5f81c2df0538110fe3b809a271e8fc0e20c23e2",
+  "syntax_check": "ast.parse only; no driver import or main execution",
+  "changes": [
+    "exact fourth generated-inventory path",
+    "authoritative output complete/durable/synced/nontruncated prerequisite",
+    "explicit manifest binding to v2 requirements",
+    "same engine v2 numeric/supervised abnormal exit attribution"
+  ],
+  "selectors_unchanged": true,
+  "timeout_unchanged": true,
+  "original_full_package_untouched": true
+}

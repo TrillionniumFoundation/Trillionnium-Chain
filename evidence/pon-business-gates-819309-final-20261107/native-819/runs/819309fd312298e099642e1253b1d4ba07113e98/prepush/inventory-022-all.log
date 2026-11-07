@@ -1,0 +1,2 @@
+closed_round_archive_query_matches_api_and_restart_and_preserves_false_authority: test
+round_query_hash_bounds_and_unknown_options_reject_before_store_creation: test
