@@ -48,6 +48,9 @@ case "${1:?required job}" in
     python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_six_workpackage_native_rosters.py
     python3 scripts/ci/test_w1_full_v2_disposition.py
+    # Historical clocks and finite screening do not qualify a proof for block admission.
+    python3 scripts/ci/test_pon_proof_latency.py
+    python3 scripts/ci/test_w1_proof_latency_readback.py
     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py

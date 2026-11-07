@@ -393,6 +393,10 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "config/pon/w1-retained-disposition-v1.json",
     "scripts/read_w1_full_v2_disposition.py",
+    "scripts/pon_proof_latency.py",
+    "scripts/read_w1_proof_latency.py",
+    "scripts/ci/test_pon_proof_latency.py",
+    "scripts/ci/test_w1_proof_latency_readback.py",
     "scripts/pon_w1_preparation_strategy_reader_v4.py",
     "scripts/ci/test_six_workpackage_native_rosters.py",
     "scripts/ci/check_sqlite_build_requalification.py",
