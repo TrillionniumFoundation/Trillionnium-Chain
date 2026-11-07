@@ -113,7 +113,6 @@ fn same_bytes_keep_current_sql_types_grammar_limits_and_error_priority() {
     );
     for wrong in [
         SqlValue::Text("\"AA\"".into()),
-        SqlValue::Null,
         SqlValue::Integer(0),
         SqlValue::Real(0.0),
         SqlValue::Blob(Vec::new()),
@@ -151,6 +150,33 @@ fn same_bytes_keep_current_sql_types_grammar_limits_and_error_priority() {
         .unwrap();
     parity(&node);
     assert_eq!(observed(&node, false, None).0.unwrap_err().0, "STATE_BYTES");
+
+    // The intact schema rejects SQL NULL before either decoder is entered.
+    // Exercise that decoder refusal on a separate deliberately damaged table;
+    // this does not qualify the altered schema for admission or publication.
+    let (_null_directory, null_node) = fixture();
+    null_node
+        .db
+        .execute_batch(
+            "DROP TABLE kv;
+             CREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB,PRIMARY KEY(slot,key));",
+        )
+        .unwrap();
+    replace_rows(
+        &null_node,
+        &[SqlValue::Blob(b"\"AA\"".to_vec()), SqlValue::Null],
+    );
+    let null_type = null_node
+        .db
+        .query_row(
+            "SELECT value FROM kv WHERE slot=? AND key='cell:000001'",
+            [null_node.slot().unwrap()],
+            |row| Ok(row.get_ref(0)?.data_type()),
+        )
+        .unwrap();
+    assert_eq!(null_type, rusqlite::types::Type::Null);
+    parity(&null_node);
+    assert!(observed(&null_node, false, None).0.is_err());
 }
 
 #[test]
