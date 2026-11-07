@@ -1,10 +1,10 @@
 use super::sealed::{DataBuilder, Sealed};
 use sha2::{Digest, Sha256};
-use std::fs::{self, OpenOptions};
+use std::fs::{self, FileTimes, OpenOptions};
 use std::io::Write;
 use std::os::fd::AsRawFd;
 use std::os::unix::fs::{FileExt, OpenOptionsExt, PermissionsExt};
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, UNIX_EPOCH};
 
 #[test]
 fn sealed_copy_survives_in_place_source_rewrite_and_path_replacement() {
@@ -18,6 +18,14 @@ fn sealed_copy_survives_in_place_source_rewrite_and_path_replacement() {
     fs::write(&replacement, b"other bytes").unwrap();
     fs::rename(&replacement, &source).unwrap();
     assert_eq!(sealed.read(64).unwrap(), b"original authenticated bytes");
+    sealed.recheck().unwrap();
+}
+
+#[test]
+fn denied_mutations_preserve_sealed_bytes_without_claiming_unchanged_metadata() {
+    let original = b"original authenticated bytes";
+    let sealed = DataBuilder::new().unwrap().finish(original, 64).unwrap();
+    let seals = rustix::fs::fcntl_get_seals(sealed.file()).unwrap();
     assert!(sealed.file().write_at(b"bad", 0).is_err());
     assert!(sealed.file().set_len(1).is_err());
     assert!(sealed.file().set_len(100).is_err());
@@ -25,7 +33,55 @@ fn sealed_copy_survives_in_place_source_rewrite_and_path_replacement() {
         .file()
         .set_permissions(fs::Permissions::from_mode(0o700))
         .is_err());
-    sealed.recheck().unwrap();
+    let mut observed = [0; 28];
+    sealed.file().read_exact_at(&mut observed, 0).unwrap();
+    assert_eq!(&observed, original);
+    assert_eq!(sealed.file().metadata().unwrap().len(), 28);
+    assert_eq!(rustix::fs::fcntl_get_seals(sealed.file()).unwrap(), seals);
+    // Linux may advance mtime/ctime even when pwrite returns EPERM. Content
+    // seals do not promise an unchanged metadata identity. The production
+    // guard must still refuse that changed identity; do not refresh its pin.
+}
+
+#[test]
+fn metadata_only_changes_refuse_read_copy_descriptor_and_exec_handoff() {
+    enum Change {
+        Permissions,
+        ModifiedTime,
+    }
+    for change in [Change::Permissions, Change::ModifiedTime] {
+        let original = b"authenticated data";
+        let sealed = DataBuilder::new().unwrap().finish(original, 64).unwrap();
+        let seals = rustix::fs::fcntl_get_seals(sealed.file()).unwrap();
+        let fd_flags = rustix::io::fcntl_getfd(sealed.file()).unwrap();
+        match change {
+            Change::Permissions => sealed
+                .file()
+                .set_permissions(fs::Permissions::from_mode(0o600))
+                .unwrap(),
+            Change::ModifiedTime => sealed
+                .file()
+                .set_times(FileTimes::new().set_modified(UNIX_EPOCH + Duration::from_secs(1)))
+                .unwrap(),
+        }
+        let mut observed = [0; 18];
+        sealed.file().read_exact_at(&mut observed, 0).unwrap();
+        assert_eq!(&observed, original);
+        assert_eq!(sealed.file().metadata().unwrap().len(), 18);
+        assert_eq!(rustix::fs::fcntl_get_seals(sealed.file()).unwrap(), seals);
+        assert!(sealed.recheck().is_err());
+        assert!(sealed.read(64).is_err());
+        assert!(sealed.require_descriptor(sealed.raw_fd() as u32).is_err());
+        assert!(sealed.pass_to_exec().is_err());
+        assert_eq!(rustix::io::fcntl_getfd(sealed.file()).unwrap(), fd_flags);
+        let mut destination = tempfile::tempfile().unwrap();
+        destination.write_all(b"unchanged").unwrap();
+        assert!(sealed.copy_to(&mut destination).is_err());
+        let mut remaining = [0; 9];
+        destination.read_exact_at(&mut remaining, 0).unwrap();
+        assert_eq!(&remaining, b"unchanged");
+        assert_eq!(destination.metadata().unwrap().len(), 9);
+    }
 }
 
 #[test]
