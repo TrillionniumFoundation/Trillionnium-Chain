@@ -8168,3 +8168,59 @@ fresh recovery anchors, custody/revocation, long WAN and malicious-cost
 qualification, PQ finality and quantum-work/DAA/fork economics remain open.
 PR #723 remains Draft. No protected-main merge, self-approval, force push,
 production activation or whole-chain PQ acceptance is performed.
+
+
+## 2026-11-06: bounded TLS refusal diagnosis on the exact endpoint candidate
+
+The isolated diagnostic candidate starts at `62cb191a9aad3d7effad9336fac2a72c4c255029`.
+Its original witness and endpoint CLI failures remain failed observations.
+A listener now records at most sixteen local, fixed-field connection refusals,
+including the connection stage and the first BIO ingress-owner failure before
+OpenSSL wraps it. No payload, address, path, certificate, key or raw error text
+is exported. Unknown legacy diagnostics remain unclassified and do not select
+dispatch, retries or cleanup authority. Original listener, witness and request
+deadlines, metering, TLS negotiation and all signed/stored domains are unchanged.
+Exact-source native compilation and original-window execution are pending;
+source-integrity checks alone do not close either failed native control.
+
+The first diagnostic compile at `c37405fe2e0fdb51d97e6390143244d4053d571b`
+stopped with E0061 before executing either original CLI control. Its raw
+strict-Clippy failure is retained. A separate observed accept entry now leaves
+the existing five-argument frame-boundary test entry and test bytes intact.
+
+
+## 2026-11-07: retain only fixed TLS refusal fields in CLI failure reports
+
+On `ddffae78d1a733e3a4a2acb942f0b4a12699bb40`, strict Clippy and both new
+diagnostic controls pass. Each original CLI control executes once and fails:
+witness first Head succeeds, then replay fails at ready + 2.000788 seconds;
+endpoint Head and Submit succeed, then replay fails at ready + 5.000861 seconds.
+Both retained ELF/SQLite bindings pass and both stderr summaries contain
+`PQ_WITNESS_DEADLINE`; the existing harness deliberately discarded raw stderr
+after hashing it. These are distinct from the historical first-handshake reset.
+The harness now projects only known stages, codes, categories and typed scalar
+fields from the same original 4096-byte prefix. Arbitrary child fields stay
+redacted. Producer bytes, original test bodies, windows and cleanup are unchanged.
+New projection controls and original-window diagnosis on this source are pending.
+
+
+## 2026-11-07: buffer already metered TLS ciphertext under the original deadline
+
+The f58 diagnostic run preserves the previous Node ELF exactly. It records a
+witness first-request refusal in `tls_handshake`: nine BIO ingress charges use
+1,657,519 microseconds of the 1,666,486-microsecond handshake stage. The
+endpoint replay refusal is in `request_read`: its connection accumulates
+eighteen BIO charges taking 1,308,603 of 1,469,864 microseconds. Both record
+`PQ_WITNESS_DEADLINE` and an elapsed original connection deadline. Both
+original controls fail; both new strict stderr-projection controls pass.
+These observations do not identify the older ready + 0.338538-second reset.
+
+A fixed 16 KiB ciphertext read buffer now fills through the unchanged raw
+deadline/byte-accounting owner before returning any bytes to OpenSSL. Buffered
+reads check the same absolute deadline on entry and exit. Writes still use the
+original metered stream. No witness answer/root is cached, no signature check
+is skipped, and the original 64 KiB handshake, connection, persistent byte and
+application-frame limits remain. Original CLI bodies and time windows are
+unchanged. New real-TCP controls check prepaid bytes, deadline refusal of
+retained bytes and the durable rejection of byte 65,537. Native validation of
+this buffer change is pending; no public/WAN or whole-chain claim is added.

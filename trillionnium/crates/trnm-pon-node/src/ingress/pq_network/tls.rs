@@ -3,6 +3,7 @@
 //! not enable the public-history reactor or qualify WAN/PKI/custody/production.
 use super::*;
 mod context;
+mod diagnostics;
 mod io;
 pub use context::PqTlsIdentity;
 
@@ -61,6 +62,7 @@ impl PqTlsClient {
 pub struct PqTlsServer {
     inner: PqServer,
     context: context::TlsContext,
+    refusal_records: std::sync::atomic::AtomicUsize,
 }
 impl PqTlsServer {
     pub fn new(
@@ -73,22 +75,41 @@ impl PqTlsServer {
         Ok(Self {
             inner: PqServer::new(policy, signer)?,
             context,
+            refusal_records: std::sync::atomic::AtomicUsize::new(0),
         })
     }
     fn connection(&self, stream: TcpStream, node: &Mutex<Node>, deadline: Instant) -> Result<()> {
-        // The actual kernel peer address is checked before any Node/witness
-        // observation or handshake debit. An IP pin grants no signer authority.
-        self.inner.policy.check_tls_client_ip(stream.peer_addr()?)?;
-        self.inner.charge_connection(node, deadline)?;
-        let mut channel =
-            io::Channel::accept(stream, deadline, &self.context, node, &self.inner.policy)?;
-        let wire = self
-            .inner
-            .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
-        let response = self
-            .inner
-            .handle_admitted(node, &wire, deadline, channel.admission())?;
-        channel.write_frame(&response)
+        let observation = diagnostics::Observation::new();
+        let result = (|| {
+            // The actual kernel peer address is checked before any Node/witness
+            // observation or handshake debit. An IP pin grants no signer authority.
+            self.inner.policy.check_tls_client_ip(stream.peer_addr()?)?;
+            observation.stage("ingress_admission");
+            self.inner.charge_connection(node, deadline)?;
+            observation.stage("tls_handshake");
+            let mut channel = io::Channel::accept_observed(
+                stream,
+                deadline,
+                &self.context,
+                node,
+                &self.inner.policy,
+                &observation,
+            )?;
+            observation.stage("request_read");
+            let wire = self
+                .inner
+                .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
+            observation.stage("request_dispatch");
+            let response =
+                self.inner
+                    .handle_admitted(node, &wire, deadline, channel.admission())?;
+            observation.stage("response_write");
+            channel.write_frame(&response)
+        })();
+        if let Err(error) = &result {
+            observation.emit(error, deadline, &self.refusal_records);
+        }
+        result
     }
 }
 

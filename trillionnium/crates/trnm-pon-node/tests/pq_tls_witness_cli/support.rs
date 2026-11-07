@@ -1,17 +1,20 @@
 use super::fixtures::Fixture;
+#[path = "refusal_diagnostics.rs"]
+mod refusal_diagnostics;
 use openssl::pkey::{PKey, Private};
 use rustix::net::{recv, RecvFlags};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     fs,
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Read, Write},
     os::unix::{
         fs::PermissionsExt,
         net::{UnixListener, UnixStream},
+        process::ExitStatusExt,
     },
     path::{Path, PathBuf},
-    process::{Child, Command, Stdio},
+    process::{Child, Command, ExitStatus, Stdio},
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         mpsc, Arc,
@@ -221,27 +224,138 @@ pub(super) fn command(
 pub(super) struct Running {
     child: Child,
     reader: Option<thread::JoinHandle<Vec<String>>>,
+    stderr: Option<thread::JoinHandle<Value>>,
+    output: Option<Vec<String>>,
+    started: Instant,
+    ready_at: Option<Instant>,
+    stages: Vec<Value>,
+    stages_truncated: bool,
 }
+
+// Only fixed fields are reported. Never print a child command, configuration,
+// key, request/response payload or arbitrary child-output string on failure.
+fn stdout_observation(line: &str) -> Value {
+    let value = serde_json::from_str::<Value>(line).ok();
+    let number = |name| value.as_ref()?.get("metrics")?.get(name)?.as_u64();
+    let flag = |name| value.as_ref()?.get(name)?.as_bool();
+    json!({
+        "valid_json": value.is_some(),
+        "ready_event": value.as_ref().and_then(|v| v.get("event")).and_then(Value::as_str)
+            == Some("pq-tls-ready"),
+        "accepted": number("accepted"), "refused": number("refused"),
+        "pnq2_rollback_witness_selected": flag("pnq2_rollback_witness_selected"),
+        "whole_node_rollback_protection": flag("whole_node_rollback_protection"),
+        "production_activation": flag("production_activation"),
+        "public_wan_qualification": flag("public_wan_qualification")
+    })
+}
+
+fn stderr_observation(mut stream: impl Read) -> Value {
+    let mut prefix = Vec::new();
+    let mut digest = Sha256::new();
+    let mut bytes = 0_u64;
+    let mut buffer = [0_u8; 1024];
+    let error = loop {
+        match stream.read(&mut buffer) {
+            Ok(0) => break None,
+            Ok(count) => {
+                bytes = bytes.saturating_add(count as u64);
+                digest.update(&buffer[..count]);
+                let retained = count.min(4096 - prefix.len());
+                prefix.extend_from_slice(&buffer[..retained]);
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::Interrupted => continue,
+            Err(error) => break Some(format!("{:?}", error.kind())),
+        }
+    };
+    let text = String::from_utf8_lossy(&prefix);
+    let markers: Vec<_> = [
+        "PQ_NETWORK_DEADLINE",
+        "PQ_WITNESS_DEADLINE",
+        "PQ_WITNESS_COMMIT_UNCERTAIN",
+        "PQ_WITNESS_ROLLBACK",
+        "PQ_WITNESS_OBSERVATION_ROLLBACK",
+        "PQ_WITNESS_UNAVAILABLE",
+        "PQ_WITNESS_EOF",
+        "PQ_TLS",
+        "SQLITE",
+        "IO:",
+        "PRIVATE_ABI_UNSUPPORTED",
+        "panicked at",
+    ]
+    .into_iter()
+    .filter(|marker| text.contains(*marker))
+    .collect();
+    json!({"observed_bytes":bytes,"observed_sha256":hex::encode(digest.finalize()),
+        "marker_scan_bytes":prefix.len(),"marker_scan_truncated":bytes > prefix.len() as u64,
+        "known_markers":markers,"read_error_kind":error,"raw_text_redacted":true,
+        "connection_refusals":refusal_diagnostics::records(&prefix)})
+}
+
+fn child_observation(status: std::io::Result<Option<ExitStatus>>) -> Value {
+    match status {
+        Ok(Some(status)) => json!({"state":"exited","success":status.success(),
+            "exit_code":status.code(),"signal":status.signal()}),
+        Ok(None) => json!({"state":"running"}),
+        Err(error) => json!({"state":"unobserved","error_kind":format!("{:?}",error.kind())}),
+    }
+}
+
 impl Running {
     pub fn start(mut command: Command) -> (Self, Value) {
-        let mut child = command.stderr(Stdio::inherit()).spawn().unwrap();
+        let started = Instant::now();
+        let mut child = command.stderr(Stdio::piped()).spawn().unwrap();
         let output = child.stdout.take().unwrap();
+        let error_output = child.stderr.take().unwrap();
+        let stderr = thread::spawn(move || stderr_observation(error_output));
         let (ready, readiness) = mpsc::channel();
         let reader = thread::spawn(move || {
             let mut lines = Vec::new();
-            for line in BufReader::new(output).lines() {
-                let line = line.unwrap();
+            let mut input = BufReader::new(output);
+            loop {
+                // Bound each read before allocation, including a possible CRLF.
+                // The original 65,536-byte line assertion remains unchanged.
+                let mut bytes = Vec::new();
+                if input
+                    .by_ref()
+                    .take(65_539)
+                    .read_until(b'\n', &mut bytes)
+                    .unwrap()
+                    == 0
+                {
+                    break;
+                }
+                if bytes.last() == Some(&b'\n') {
+                    bytes.pop();
+                    if bytes.last() == Some(&b'\r') {
+                        bytes.pop();
+                    }
+                }
+                let line = String::from_utf8(bytes)
+                    .unwrap_or_else(|_| panic!("service stdout is not UTF-8"));
                 assert!(line.len() <= 65_536);
                 if lines.is_empty() {
                     let _ = ready.send(line.clone());
                 }
-                lines.push(line);
+                // The first event and final report suffice; drain later lines
+                // without retaining an unbounded output history.
+                if lines.len() == 2 {
+                    lines[1] = line;
+                } else {
+                    lines.push(line);
+                }
             }
             lines
         });
-        let running = Self {
+        let mut running = Self {
             child,
             reader: Some(reader),
+            stderr: Some(stderr),
+            output: None,
+            started,
+            ready_at: None,
+            stages: Vec::new(),
+            stages_truncated: false,
         };
         let event: Value =
             serde_json::from_str(&readiness.recv_timeout(Duration::from_secs(10)).unwrap())
@@ -250,8 +364,34 @@ impl Running {
         assert_eq!(event["pnq2_rollback_witness_selected"], true);
         assert_eq!(event["whole_node_rollback_protection"], false);
         assert_eq!(event["production_activation"], false);
+        running.ready_at = Some(Instant::now());
         (running, event)
     }
+
+    // This helper is also compiled by the original witness CLI harness, which
+    // does not add endpoint request timings.
+    #[allow(dead_code)]
+    pub fn observe<T>(
+        &mut self,
+        stage: &'static str,
+        action: impl FnOnce() -> trnm_pon_node::Result<T>,
+    ) -> trnm_pon_node::Result<T> {
+        let began = Instant::now();
+        let result = action();
+        let elapsed = began.elapsed();
+        if self.stages.len() < 8 {
+            self.stages.push(json!({"stage":stage,
+                "start_since_ready_us":began.duration_since(self.ready_at.unwrap_or(self.started)).as_micros(),
+                "elapsed_us":elapsed.as_micros(),"ok":result.is_ok(),
+                "error_kind":result.as_ref().err().map(|error| format!("{:?}", error.kind())),
+                "error_code":result.as_ref().err().and_then(|error| error.code()).map(|code| code.as_str())}));
+        } else {
+            self.stages_truncated = true;
+        }
+        // Return the exact original result; diagnostics never retry an action.
+        result
+    }
+
     pub fn finish(mut self) -> Value {
         let until = Instant::now() + Duration::from_secs(10);
         loop {
@@ -262,16 +402,42 @@ impl Running {
             assert!(Instant::now() < until, "bounded service did not exit");
             thread::sleep(Duration::from_millis(2));
         }
-        let lines = self.reader.take().unwrap().join().unwrap();
+        self.output = Some(self.reader.take().unwrap().join().unwrap());
+        let lines = self.output.as_ref().unwrap();
         serde_json::from_str(lines.last().unwrap()).unwrap()
     }
 }
 impl Drop for Running {
     fn drop(&mut self) {
+        let panicking = thread::panicking();
+        let failure_at = Instant::now();
+        let before_cleanup = panicking.then(|| child_observation(self.child.try_wait()));
         let _ = self.child.kill();
-        let _ = self.child.wait();
+        let after_cleanup = self.child.wait();
         if let Some(reader) = self.reader.take() {
-            let _ = reader.join();
+            self.output = reader.join().ok();
+        }
+        let stderr = self.stderr.take().and_then(|reader| reader.join().ok());
+        if panicking {
+            let stdout = self.output.as_ref().map(|lines| {
+                lines
+                    .iter()
+                    .map(|line| stdout_observation(line))
+                    .collect::<Vec<_>>()
+            });
+            let observation = json!({"schema":"trnm-pq-tls-cli-failure-v1",
+                "pid":self.child.id(),"failure_since_spawn_start_us":failure_at.duration_since(self.started).as_micros(),
+                "cleanup_elapsed_us":failure_at.elapsed().as_micros(),
+                "ready_received_us":self.ready_at.map(|ready| ready.duration_since(self.started).as_micros()),
+                "child_before_cleanup":before_cleanup,
+                "child_after_cleanup":child_observation(after_cleanup.map(Some)),
+                "stdout":stdout,"stdout_capture":"first_and_last_only","stderr":stderr,
+                "request_stages":self.stages,"request_stages_truncated":self.stages_truncated});
+            // A diagnostic write failure must not replace the original panic.
+            let _ = writeln!(
+                std::io::stderr().lock(),
+                "TRNM_PQ_TLS_CLI_DIAGNOSTIC {observation}"
+            );
         }
     }
 }

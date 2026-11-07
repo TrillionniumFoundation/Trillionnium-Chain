@@ -200,7 +200,7 @@ fn endpoint_binary_dispatches_replays_recovers_and_rejects_old_database() {
     let node = directory.path().join("node");
     let old = snapshot(&node);
     let reopen = config(&fixture, &witness, "open_existing");
-    let (running, _) = Running::start(command(
+    let (mut running, _) = Running::start(command(
         &fixture,
         directory.path(),
         &reopen,
@@ -212,8 +212,12 @@ fn endpoint_binary_dispatches_replays_recovers_and_rejects_old_database() {
     let expiry = trnm_pon_node::ingress::now().unwrap() + 60;
     let head = client.prepare(1, expiry, Request::Head).unwrap();
     assert_eq!(
-        client
-            .send(address, &head, Duration::from_secs(5))
+        running
+            .observe("head", || client.send(
+                address,
+                &head,
+                Duration::from_secs(5)
+            ))
             .unwrap()
             .value["height"],
         0
@@ -227,14 +231,18 @@ fn endpoint_binary_dispatches_replays_recovers_and_rejects_old_database() {
             },
         )
         .unwrap();
-    let receipt = client
-        .send(address, &submit, Duration::from_secs(5))
+    let receipt = running
+        .observe("submit", || {
+            client.send(address, &submit, Duration::from_secs(5))
+        })
         .unwrap();
     assert!(receipt.ok);
     assert_eq!(receipt.value["block"], hex::encode(block));
     assert_eq!(
-        client
-            .send(address, &submit, Duration::from_secs(5))
+        running
+            .observe("submit_replay", || {
+                client.send(address, &submit, Duration::from_secs(5))
+            })
             .unwrap(),
         receipt
     );
@@ -248,13 +256,15 @@ fn endpoint_binary_dispatches_replays_recovers_and_rejects_old_database() {
             },
         )
         .unwrap();
-    let history_receipt = client
-        .send(address, &history, Duration::from_secs(5))
+    let history_receipt = running
+        .observe("history", || {
+            client.send(address, &history, Duration::from_secs(5))
+        })
         .unwrap();
     assert!(history_receipt.ok);
     assert_eq!(running.finish()["metrics"]["accepted"], 4);
     let before_reopen = witness.current(&fixture.policy);
-    let (running, _) = Running::start(command(
+    let (mut running, _) = Running::start(command(
         &fixture,
         directory.path(),
         &reopen,
@@ -263,8 +273,10 @@ fn endpoint_binary_dispatches_replays_recovers_and_rejects_old_database() {
         true,
     ));
     assert_eq!(
-        client
-            .send(address, &submit, Duration::from_secs(5))
+        running
+            .observe("reopen_submit_replay", || {
+                client.send(address, &submit, Duration::from_secs(5))
+            })
             .unwrap(),
         receipt
     );
