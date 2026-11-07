@@ -142,7 +142,10 @@ impl Setup {
             "cell_sequence phase=accept_loop_ready role={role} setup_elapsed_ns={} outcome={result:?}",
             self.started.elapsed().as_nanos()
         );
-        assert!(result.is_ok(), "server accept loop must be ready before use");
+        assert!(
+            result.is_ok(),
+            "server accept loop must be ready before use"
+        );
     }
 
     fn finish(&mut self) {
