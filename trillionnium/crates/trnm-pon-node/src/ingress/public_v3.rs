@@ -4091,6 +4091,20 @@ mod tests {
             if predicate(&metrics.lock().unwrap()) {
                 return;
             }
+            if Instant::now() >= end {
+                let m = metrics.lock().unwrap();
+                eprintln!(
+                    "actual reactor observation timed out: enqueued={} dequeued={} peak_pending={} mutation_reservations={} backpressure={} queue_refusals={} mutation_refusals={}",
+                    m.tasks_enqueued,
+                    m.tasks_dequeued,
+                    m.peak_pending_enqueue,
+                    m.mutation_cpu_reservations,
+                    m.queue_backpressure_events,
+                    m.queue_refusals,
+                    m.mutation_cpu_refusals,
+                );
+                drop(m);
+            }
             assert!(Instant::now() < end, "actual reactor observation timed out");
             thread::sleep(Duration::from_millis(2));
         }
@@ -4622,15 +4636,23 @@ mod tests {
         for _ in 0..8 {
             sockets.push(paid_grant(address, h, &caller, policy).unwrap());
         }
-        // Let both original workers dequeue and reserve before filling the
-        // channel, so the remaining six produce exactly four pending tasks.
+        // Let both original workers dequeue and reserve before filling the channel.
         for socket in sockets.iter_mut().take(2) {
             socket.write_all(&raw).unwrap();
         }
         wait_metric(&metrics, |m| {
             m.tasks_enqueued == 3 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
         });
-        for socket in sockets.iter_mut().skip(2) {
+        // Body completion enters Enqueue for one reactor turn before try_send.
+        // Fill the original two channel slots before completing the final four
+        // bodies, so that transient staging also respects the asserted peak.
+        for socket in sockets.iter_mut().skip(2).take(2) {
+            socket.write_all(&raw).unwrap();
+        }
+        wait_metric(&metrics, |m| {
+            m.tasks_enqueued == 5 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
+        });
+        for socket in sockets.iter_mut().skip(4) {
             socket.write_all(&raw).unwrap();
         }
         // Initial Head was one task. Two Submit workers are waiting for this
@@ -4889,15 +4911,23 @@ mod tests {
             for _ in 0..8 {
                 sockets.push(paid_grant(address, h, &caller, policy).unwrap());
             }
-            // Let both original workers dequeue and reserve before filling the
-            // channel, so the remaining six produce exactly four pending tasks.
+            // Let both original workers dequeue and reserve before filling the channel.
             for socket in sockets.iter_mut().take(2) {
                 socket.write_all(&raw).unwrap();
             }
             wait_metric(&metrics, |m| {
                 m.tasks_enqueued == 3 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
             });
-            for socket in sockets.iter_mut().skip(2) {
+            // Body completion enters Enqueue for one reactor turn before try_send.
+            // Fill the original two channel slots before completing the final four
+            // bodies, so that transient staging also respects the asserted peak.
+            for socket in sockets.iter_mut().skip(2).take(2) {
+                socket.write_all(&raw).unwrap();
+            }
+            wait_metric(&metrics, |m| {
+                m.tasks_enqueued == 5 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
+            });
+            for socket in sockets.iter_mut().skip(4) {
                 socket.write_all(&raw).unwrap();
             }
             // Initial Head was one task. Two Submit workers are waiting for this
@@ -5036,14 +5066,22 @@ mod tests {
             sockets.push(paid_grant(address, h, &caller, policy).unwrap());
             bodies.push(raw);
         }
-        // Let both original workers dequeue and reserve before filling the
-        // channel, so the remaining six produce exactly four pending tasks.
+        // Let both original workers dequeue and reserve before filling the channel.
         let mut paid_bodies = sockets.iter_mut().zip(bodies);
         for (socket, raw) in paid_bodies.by_ref().take(2) {
             socket.write_all(&raw).unwrap();
         }
         wait_metric(&metrics, |m| {
             m.tasks_enqueued == 3 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
+        });
+        // Body completion enters Enqueue for one reactor turn before try_send.
+        // Fill the original two channel slots before completing the final four
+        // bodies, so that transient staging also respects the asserted peak.
+        for (socket, raw) in paid_bodies.by_ref().take(2) {
+            socket.write_all(&raw).unwrap();
+        }
+        wait_metric(&metrics, |m| {
+            m.tasks_enqueued == 5 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
         });
         for (socket, raw) in paid_bodies {
             socket.write_all(&raw).unwrap();
