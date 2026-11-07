@@ -402,7 +402,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
         for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
-                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py'):
+                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                     'test_useful_cell_multimodal_execution_v3.py',
+                     'test_useful_cell_multimodal_relation_v3.py'):
             command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
             self.assertEqual(self.script.count(command), 1)
             variants = {
@@ -417,6 +419,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for label, script in variants.items():
                 with self.subTest(test=name, mutation=label), self.assertRaises(ValueError):
                     check_independent_conformance(script, self.lanes)
+
+    def test_native_cell_suite_cannot_disappear_from_mandatory_conformance(self):
+        selector = ' --test cell_native_v1'
+        self.assertEqual(self.script.count(selector), 1)
+        command = next(line for line in self.script.splitlines(keepends=True)
+                       if selector in line)
+        for replacement in (command.replace(selector, ''),
+                            command.replace(selector, selector * 2),
+                            '    if false; then\n' + command + '    fi\n',
+                            command.rstrip() + ' || true\n'):
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
 
     def test_original_campaign_reader_keeps_original_pins_and_lane(self):
         for replacement in ['', ORIGINAL_CAMPAIGN_READER * 2,
@@ -617,7 +631,9 @@ class CiContractTests(unittest.TestCase):
         script = (self.root / 'scripts/ci/ci_job.sh').read_text()
         for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
-                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py'):
+                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                     'test_useful_cell_multimodal_execution_v3.py',
+                     'test_useful_cell_multimodal_relation_v3.py'):
             path = self.root / 'formal/pon-nakamoto-v1' / name
             command = next(line.strip() for line in script.splitlines()
                            if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')
