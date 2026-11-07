@@ -17,6 +17,21 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Legal work, input choice and grouped lottery audit, 2026-11-07 America/New_York:**
+Continue the existing #688 integration candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66`
+with the [fixed int257 audit](specs/pon/GROUPED_WORK_FAIRNESS_AUDIT_V0.md).
+Freeze 16 ordered requests, one model/numeric relation and a non-self-referential
+candidate/challenge/statement/ticket sequence. Independently test every bound
+field, canonical encoding, fresh caller clock and precommitted target; count a
+ticket query even when subsequent verification refuses the request. Compare
+lawful direct-selected, cached-merged, grouped, sparse, repeated-input and exact
+factor execution while retaining preparation, failures and full reference cost.
+The original grouped arithmetic is challenge invariant: cached correct outputs
+can produce new hash-only audit tickets. Keep actual chainwork and all rewards
+zero, preserve W1, and leave minimum fresh-work, hardware/quantum security, real
+demand and original service qualification open. The new tests join the existing
+`test_grouped*.py` CI collection without changing the required gate or budgets.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3
