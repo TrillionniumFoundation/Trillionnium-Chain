@@ -39,7 +39,15 @@ def recipes(root=ROOT):
     require(code_lines(runtime) == code_lines(MODEL_OBSERVATION_BLOCK + NATIVE_RELEASE_BLOCK),
             'complete retained Rust runtime commands required')
     header = 'set -euo pipefail\nexport RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"\n'
-    return {'runtime': header + runtime, 'quality': header + prefix + suffix}
+    # Keep the workspace/export/oracle block together. The independent native
+    # release block otherwise makes runtime exceed the existing 180-minute job
+    # while quality is almost idle. Reuse that existing job, not another runner
+    # or a larger timeout. The supply-chain command explicitly runs cargo fetch
+    # --locked; docs and Clippy also build before unchanged offline release tests.
+    require(runtime.endswith(NATIVE_RELEASE_BLOCK), 'native release boundary')
+    model = runtime[:-len(NATIVE_RELEASE_BLOCK)]
+    return {'runtime': header + model,
+            'quality': header + prefix + suffix + NATIVE_RELEASE_BLOCK}
 
 
 def digest(raw):
