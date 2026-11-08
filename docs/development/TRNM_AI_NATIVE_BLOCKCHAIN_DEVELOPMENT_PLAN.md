@@ -7822,3 +7822,12 @@ M12 新 typed terminal 接口仅在原 job/source/clock/deadline 绑定满足时
 
 
 C4 精确候选 `5c489cc2064c3edfc6641f21fea4b46cb0c8e24e` 的原始资格发现旧 PQ source pins 拒绝新 workflow/M12/source bytes，以及既有 200ms late-observation 控制在启动前耗尽预算。后续最小修正将 8 个新源加入 required 与独立负控镜像，更新 21 个既有 pin，维持 645 个精确 blob 校验及所有 HOLD/false 资格字段；不删除或放松 reader 校验。该既有 observer 方法改为真实启动、WNOWAIT 保留原退出0，再于预声明原 deadline 之后交给真实 wait4 观察，method 仍为32，生产计时源码不变。全部 C4 失败原件保留。
+
+
+### 2026-11-08：保持 C5 原件，整合并发推进的 base62
+
+C5 034aa74358e0a5fa33f33e83cb63669e9738da4b 已完成精确本地资格及新的真实昂贵 original-deadline→Failure Unknown→owner取消/本金退款→原Cancel重组恢复→独立cold；[冻结C5事后证据](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/05d8bb25dacab1d6589fa86061e6c23220b96b1d/evidence/pon-w1-four-gates-20261108/README.md) 保留570普通测试通过、4个ignored另列及全部原操作/deadline。Done只闭合派发，资源未知且全cap保留，无provider付款；本轮完整生成样本仍未增加。
+
+发布读回发现integration base从cb314bb4656e5da4844325cd83994ab4764fe8e9并发推进至62d2d90c9e1f4c8450c89843f1e08360a24283ce。新的隔离候选整合genesis ReorgStep的staging arithmetic缓存保护及既有legacy reorg负控加强，保留完整SQL/root/ancestry校验。两份精确pin文件的三处冲突必须绑定合并后的实际store/workflow/test bytes，并保留C5全部645pins及新增profile路径；不通过选取旧一侧pin来冒充合并身份。
+
+C5 checkout、原目标缓存、两个已发布证据分支身份和所有旧操作均保持原事实。当前旧PR merge ref991168a783c3bf82e04f978091adbdc740998c47仍基于旧base，不能作为本新候选资格。新合并须在冻结提交后独立核对source、构建、严格控制和新的120秒研究操作，所有新clock/operation/二进制另行记录。此处不预先声称新候选资格、原业务预算或部署安全门通过；四门继续HOLD。
