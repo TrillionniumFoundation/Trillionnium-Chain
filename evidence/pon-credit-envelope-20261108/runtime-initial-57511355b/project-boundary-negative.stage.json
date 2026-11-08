@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_project_boundary.py"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 12.700062,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:29:34.428013+00:00",
+  "passed": true,
+  "stage": "project-boundary-negative",
+  "started_utc": "2026-11-08T12:29:21.727958+00:00",
+  "stderr": "project-boundary-negative.stderr.log",
+  "stderr_sha256": "8fc33997d78f857f099bab47047a19aac98a87732c468fe730cb1ac094a1d1ed",
+  "stdout": "project-boundary-negative.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "test_methods": 16,
+  "unittest_terminal_receipt_valid": true
+}

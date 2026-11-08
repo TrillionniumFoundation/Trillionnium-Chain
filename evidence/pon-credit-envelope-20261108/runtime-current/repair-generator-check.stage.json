@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.115507,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:57:41.515547+00:00",
+  "passed": true,
+  "stage": "repair-generator-check",
+  "started_utc": "2026-11-08T12:57:41.400052+00:00",
+  "stderr": "repair-generator-check.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "repair-generator-check.stdout.log",
+  "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+}

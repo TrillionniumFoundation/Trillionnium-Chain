@@ -1,0 +1,23 @@
+RECOVERED EXCERPT, NOT A COMPLETE RAW PROCESS LOG
+The original process output was returned by exec session 83218, chunk dd7b58,
+with exit_code 1. It was not separately captured to disk during that run.
+The exact failure section and terminal summary below are copied from that
+tool output. Omitted success lines are not reconstructed in this artifact.
+
+======================================================================
+FAIL: test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved (__main__.EvaluationQuorumLaneTests.test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved)
+----------------------------------------------------------------------
+ValueError: CI contract: credit model prefix must execute immediately after preflight without shell control flow
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/f7e62c814d9f/chain-credit/scripts/ci/test_ci_contract.py", line 265, in test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved
+    with self.assertRaisesRegex(ValueError, 'GSC2 synthetic'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "GSC2 synthetic" does not match "CI contract: credit model prefix must execute immediately after preflight without shell control flow"
+
+----------------------------------------------------------------------
+Ran 109 tests in 11.406s
+
+FAILED (failures=1)

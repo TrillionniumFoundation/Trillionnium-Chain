@@ -1,0 +1,37 @@
+{
+  "bash_syntax_exit_code": 0,
+  "canonical_latest_git_blobs_verified": true,
+  "common_local_source": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "diff_whitespace_exit_code": 0,
+  "latest_ci_suite_on_otherwise_b66_tree": {
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "complete_8d_tree_execution_claimed": false,
+    "elapsed_seconds_from_unittest": 6.118,
+    "exit_code": 1,
+    "line_outcome_counts": {
+      "ERROR": 3,
+      "FAIL": 0,
+      "ok": 104,
+      "skipped": 0
+    },
+    "log": "latest-ci-contract.log",
+    "log_sha256": "ea7f6bc06d250218a7b0b1b15b773bfc885c73c4cb8ce2ca388ea1cedf2a401f",
+    "observed_dependency_failure": "test_useful_cell_execution_v2.py absent from otherwise b66 checkout",
+    "total_test_methods": 107
+  },
+  "new_control_methods_present_and_passed": [
+    "test_credit_model_commands_cannot_be_omitted_duplicated_or_moved",
+    "test_credit_model_commands_cannot_be_skipped_by_false_shell_branch",
+    "test_credit_model_failures_cannot_be_swallowed_by_shell_condition",
+    "test_entire_credit_model_prefix_cannot_be_wrapped_or_preceded"
+  ],
+  "patch": "/workspace/scratch/f7e62c814d9f/latest-ci.patch",
+  "patch_only_adds_to_latest_three_ci_files": true,
+  "patch_sha256": "7462eb97bb3c19955ec0940d6f67db53c3abe13f6b8c3a0447ef1559f964de83",
+  "production_activation": false,
+  "schema": "pon-credit-ci-three-way-integration-v1",
+  "target_base": "8d5389748873dad6e296d17f2ff20483b5afa5bc"
+}
