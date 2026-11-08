@@ -7819,3 +7819,6 @@ C1 提交 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11` 的五角色开发资格已
 M12 新 typed terminal 接口仅在原 job/source/clock/deadline 绑定满足时写入失败终态；持久化 owner cancel 禁止再次派发；资源未知保持全额 cap，重组不回退本地操作/取消历史。新的真实 timeout/refund/reorg 需独立操作记录，旧两项 M12 状态保持其原事实。本轮首个新 timeout operation 因旧 C3 runner 的编译时 checkout 身份被严格拒绝，不延长原 deadline、不重派失败操作；重新构建新源码 runner 后只能启动全新预声明操作。
 
 四门继续 HOLD：合法原 winner 的 Node admission、部署 WAN、完整历史树/资源计费、正向 provider 付款、匹配完整生成重复实验、业务预算以及完整密码学/协议安全资格尚未闭合。原业务失败不可被新的短控制覆盖。
+
+
+C4 精确候选 `5c489cc2064c3edfc6641f21fea4b46cb0c8e24e` 的原始资格发现旧 PQ source pins 拒绝新 workflow/M12/source bytes，以及既有 200ms late-observation 控制在启动前耗尽预算。后续最小修正将 8 个新源加入 required 与独立负控镜像，更新 21 个既有 pin，维持 645 个精确 blob 校验及所有 HOLD/false 资格字段；不删除或放松 reader 校验。该既有 observer 方法改为真实启动、WNOWAIT 保留原退出0，再于预声明原 deadline 之后交给真实 wait4 观察，method 仍为32，生产计时源码不变。全部 C4 失败原件保留。
