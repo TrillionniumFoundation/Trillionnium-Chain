@@ -1,0 +1,69 @@
+name: CPQ1 complete content bindings
+on:
+  push:
+    branches: [feature/chain-cpq1-content-commitments-20261108]
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-protocol/**
+      - trillionnium/crates/trnm-crypto-primitives/**
+      - trillionnium/crates/trnm-data-availability/**
+      - trillionnium/crates/trnm-mvcc-fee/**
+      - trillionnium/crates/trnm-release-bundle/**
+      - config/pon/cpq1-content-commitments-v1.json
+      - tests/fixtures/cpq1-content-v1/**
+      - scripts/ci/check_content_commitment_vectors.py
+      - .github/workflows/cpq1-full-content.yml
+permissions:
+  contents: read
+jobs:
+  native-components:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install pinned compiler and original quality tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Validate exact-source content implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/cpq1-full-content"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/cpq1-full-content-target"
+          packages=(-p trnm-protocol -p trnm-crypto-primitives -p trnm-data-availability -p trnm-mvcc-fee -p trnm-release-bundle)
+          record() {
+            label="$1"
+            shift
+            python3 scripts/ci/record_pq_native_command.py --kind head --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_HEAD" --label "$label" --output "$out" -- "$@"
+          }
+          bash scripts/project-preflight.sh --audit
+          record compiler rustc +1.95.0 -Vv
+          record locked-graph cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1
+          record vectors python3 scripts/ci/check_content_commitment_vectors.py
+          record source-integrity python3 scripts/ci/check_pq_research_integration.py
+          record source-controls python3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py -v
+          record retained-libraries cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml "${packages[@]}" --lib
+          record retained-docs cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml "${packages[@]}" --doc
+          record format cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          record strict-clippy cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml "${packages[@]}" --all-targets --all-features -- -D warnings
+      - name: Retain complete command records and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cpq1-full-content-${{ matrix.runner }}-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cpq1-full-content/
+          if-no-files-found: error
+          retention-days: 14

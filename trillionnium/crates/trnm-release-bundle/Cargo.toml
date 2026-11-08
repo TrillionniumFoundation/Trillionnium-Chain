@@ -9,9 +9,9 @@ publish = false
 [dependencies]
 sha2 = "0.10"
 trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]
-trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 zeroize = "=1.9.1"
 
 [package.metadata.trnm]
