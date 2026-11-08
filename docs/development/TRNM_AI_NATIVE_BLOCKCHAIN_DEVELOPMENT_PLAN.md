@@ -10225,3 +10225,18 @@ additive report/lifecycle controls. A real signal after stage-result fsync
 retains the exit-zero snapshot but cancels the actual call, so the incomplete
 aggregate cannot complete the gate. Later source repairs receive their own
 source identities and cannot inherit the original frozen pair's native passes.
+
+The [versioned QROM source mapping](../../evidence/pon-w1-qrom-source-convergence-20261108/README.md)
+repairs two actual research-workflow failures while retaining the unchanged v1
+engine, contract, 81-name roster and historical reports. The distinct v2 contract
+binds the current 16-file selection and two exact source projections; its 84-name
+roster preserves all original names. The original 105-name closure roster and
+seven exact report comparisons remain, with separately versioned current
+semantics/lifetime provenance baselines. Exact field/type/value checks keep new
+qualification flags false, and canonical JSON comparison rejects numeric aliases
+of booleans or integers. Preserve both internal review counterexamples and the
+patch's explicit dirty-source identity. These selected-input mapping checks do
+not establish the new native paths, complete dependency/build/load equivalence,
+a concrete lifetime quantum budget, or independent cryptographic review. Freeze
+and validate the complete integrated repair separately before publishing its
+source-bound observations; all seven acceptance gates remain HOLD.

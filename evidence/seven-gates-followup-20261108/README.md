@@ -146,6 +146,37 @@ original 23 report controls remain, with eight additive controls and all 58
 original native cases retained. This later code change does not inherit a
 native pass from `bb026697`; the original failed workflows remain failed.
 
+## Versioned QROM source mapping
+
+The [QROM source-convergence record](../pon-w1-qrom-source-convergence-20261108/README.md)
+retains both actual hosted failures and the clean-`bb026697` reproduction before
+the repair. A separate v2 contract and driver now map the current selected
+sources while preserving the v1 engine, contract, 81-name roster and historical
+report unchanged. Fourteen of the 16 selected source files are byte-identical;
+exactly two reviewed reverse edits in each remaining file reproduce the full
+historical bytes. This mapping does not qualify the newly added native verifier
+entry point or funded-service decoder paths.
+
+The v2 driver binds the immutable v1 engine and compares the complete generated
+historical mapping after removing exactly five provenance fields. Canonical
+JSON comparison preserves boolean/integer and integer/float distinctions. The
+workflow separately checks all fields, exact types and values of the v2 source
+review, including three qualification flags fixed to `false`. Two internal
+review counterexamples and their corrections remain in the record.
+
+The new implementation roster retains all original 81 names and adds three.
+The original 105-name closure roster remains unchanged; its 19 lifetime methods
+and eight native C-kernel controls are included in that count. The closure
+workflow still performs seven exact report comparisons. Only the semantics and
+lifetime comparison destinations move to new, explicitly versioned provenance
+baselines; the other five and every historical report remain unchanged.
+
+The recorded patch validation passed 84 implementation methods, 105 closure
+methods and seven exact comparisons. Its source manifests explicitly identify
+an uncommitted patch on `bb026697`, so it is not a clean final-commit observation.
+The integrated repair requires its own complete-source validation. No quantum
+budget, full-chain PQ flag, independent review or acceptance gate advances.
+
 ## Complete original performance and CI failure records
 
 The [performance archive index](performance-audit-bb026697/README.md), its
