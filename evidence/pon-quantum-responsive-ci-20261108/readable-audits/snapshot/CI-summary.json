@@ -1,0 +1,113 @@
+{
+  "schema": "trnm-published-head-CI-readback-v1",
+  "head": "a490d3b971997e927de3aece19864497d65d5984",
+  "started_utc": "2026-11-08T02:21:09.359554+00:00",
+  "observed_utc": "2026-11-08T02:21:16.224361+00:00",
+  "check_run_count": 100,
+  "pages": [
+    100,
+    0
+  ],
+  "total_counts": [
+    100,
+    100
+  ],
+  "pagination_complete_at_observation": true,
+  "status_counts": {
+    "completed": 86,
+    "in_progress": 14
+  },
+  "completed_conclusion_counts": {
+    "success": 71,
+    "skipped": 1,
+    "failure": 14
+  },
+  "attention": [
+    {
+      "id": 128593173791,
+      "name": "cross-arch-cost (x64)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447284/job/128593173791"
+    },
+    {
+      "id": 128593173734,
+      "name": "protocol-contract",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447284/job/128593173734"
+    },
+    {
+      "id": 128593173715,
+      "name": "prospective-merge (protocol-contract)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447284/job/128593173715"
+    },
+    {
+      "id": 128593173626,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447333/job/128593173626"
+    },
+    {
+      "id": 128593173563,
+      "name": "cross-arch-cost (arm64)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447284/job/128593173563"
+    },
+    {
+      "id": 128593173499,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447257/job/128593173499"
+    },
+    {
+      "id": 128593173489,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447257/job/128593173489"
+    },
+    {
+      "id": 128593173423,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447257/job/128593173423"
+    },
+    {
+      "id": 128593173416,
+      "name": "W1 fresh challenge service (x64, head)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447333/job/128593173416"
+    },
+    {
+      "id": 128593173398,
+      "name": "original native campaign (x64, head, release)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447256/job/128593173398"
+    },
+    {
+      "id": 128593173366,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447257/job/128593173366"
+    },
+    {
+      "id": 128593173334,
+      "name": "W1 transparent candidate (prospective-merge, x64)",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447253/job/128593173334"
+    },
+    {
+      "id": 128593173220,
+      "name": "export",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447260/job/128593173220"
+    },
+    {
+      "id": 128593173105,
+      "name": "retained-pressure-failure",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447257/job/128593173105"
+    }
+  ],
+  "live_jobs_not_a_closed_final_CI_cohort": true,
+  "pending_is_not_pass": true
+}

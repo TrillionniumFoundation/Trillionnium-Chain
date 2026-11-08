@@ -1,0 +1,8 @@
+{
+  "review_findings": [
+    "distinguish new evidence verifier from existing executable-source modification",
+    "check extraction membership completeness and archive changes"
+  ],
+  "verifier_sha256": "e1a81c469238cd0a81b562cb6c43cc418b5eb31b1a77cddd7b26593aa010e3c7",
+  "readme_sha256": "7bbdeb0ce16359c70a28d8d3f42bccc2ece6dc6fdf1fdb24df52399483c2a675"
+}

@@ -1,0 +1,9 @@
+{
+  "inventory_returncode": 0,
+  "observed_at": "2026-11-08T02:04:13.963223+00:00",
+  "assignment_status": "available",
+  "owned_endpoint_present": false,
+  "read_only": true,
+  "release_called": false,
+  "raw_sha256": "94c9625bcacc2ca510e2f8f053011d0f8d58397c53c587d2e4c74214e93e3c0a"
+}

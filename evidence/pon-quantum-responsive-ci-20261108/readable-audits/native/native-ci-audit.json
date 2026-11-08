@@ -1,0 +1,270 @@
+{
+  "schema": "trnm-original-native-CI-selected-evidence-audit-v1",
+  "head": "a490d3b971997e927de3aece19864497d65d5984",
+  "job_id": 128593173398,
+  "run_id": 42435447256,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42435447256/job/128593173398",
+  "artifact_id": 13599159251,
+  "artifact_total_bytes": 61146583,
+  "full_archive_sha_verified": false,
+  "selected_range_reads_only": true,
+  "selected_full_reports_and_stderr_SHA_match_console": true,
+  "controller_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "finalization_failures": [],
+  "source_after": {
+    "base": null,
+    "candidate": "a490d3b971997e927de3aece19864497d65d5984",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a490d3b971997e927de3aece19864497d65d5984",
+    "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1115479063,
+    "tracked_entries": 11098,
+    "tracked_worktree_verified": true
+  },
+  "build_complete_success": true,
+  "exact_rejecting_predicate": "public_v3_multiprocess.rs complete = economics_complete && all(phases.finite_phase_criteria_met); assert complete at1765",
+  "runs": [
+    {
+      "run": 1,
+      "native_returncode": 101,
+      "outer_timeout": 600,
+      "elapsed_seconds": 112.06768531,
+      "phase_startup_errors": [],
+      "report_validation_failure": null,
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "raw_report_bytes": 26564934,
+      "raw_report_sha256": "fb7e3116802a7b1eae4444917396eb64a30379eb51054b492f9c563bb1ad4eb5",
+      "gzip_bytes": 1993674,
+      "gzip_sha256": "fec44dd9ca5e6804e1cec578ade6eea4b99b614915897b036348cd4b952ea75c",
+      "full_report_matches_original_console_sha": true,
+      "stderr_matches_original_console_sha": true,
+      "phases": [
+        {
+          "mode": "baseline",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 0,
+          "attacker_processes_ready": 0,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "verifier_error_count": 0,
+          "verifier_error_types": {}
+        },
+        {
+          "mode": "from-zero",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "full_work_accepted": 7,
+          "full_work_failed": 1413,
+          "verifier_error_count": 1,
+          "verifier_error_types": {
+            "str": 1
+          }
+        },
+        {
+          "mode": "late-product",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "full_work_accepted": 7,
+          "full_work_failed": 1275,
+          "verifier_error_count": 1,
+          "verifier_error_types": {
+            "str": 1
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "native_returncode": 101,
+      "outer_timeout": 600,
+      "elapsed_seconds": 111.543617096,
+      "phase_startup_errors": [],
+      "report_validation_failure": null,
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "raw_report_bytes": 26446262,
+      "raw_report_sha256": "1ba558a17a8651f710f2ddb82dcd9d268f3c63bcfbf643c8b4cec8d3022c3ff5",
+      "gzip_bytes": 1988322,
+      "gzip_sha256": "bf5bb4b5a35556cba34eef24f70137da2777dda6f118bd1b43b37bf75d2f66c8",
+      "full_report_matches_original_console_sha": true,
+      "stderr_matches_original_console_sha": true,
+      "phases": [
+        {
+          "mode": "baseline",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 0,
+          "attacker_processes_ready": 0,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "verifier_error_count": 0,
+          "verifier_error_types": {}
+        },
+        {
+          "mode": "from-zero",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "full_work_accepted": 7,
+          "full_work_failed": 1392,
+          "verifier_error_count": 1,
+          "verifier_error_types": {
+            "str": 1
+          }
+        },
+        {
+          "mode": "late-product",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "full_work_accepted": 7,
+          "full_work_failed": 1285,
+          "verifier_error_count": 1,
+          "verifier_error_types": {
+            "str": 1
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "native_returncode": 101,
+      "outer_timeout": 600,
+      "elapsed_seconds": 111.690618804,
+      "phase_startup_errors": [],
+      "report_validation_failure": null,
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "raw_report_bytes": 26719723,
+      "raw_report_sha256": "1df341f4004d91c8e3b9528be99a280025020c4ad063408f2569defec968479e",
+      "gzip_bytes": 2006974,
+      "gzip_sha256": "9f1ff67ad257b64b210abadd7cf59d8e32beeb9be37ea88d5bc412cd155e5444",
+      "full_report_matches_original_console_sha": true,
+      "stderr_matches_original_console_sha": true,
+      "phases": [
+        {
+          "mode": "baseline",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 0,
+          "attacker_processes_ready": 0,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "verifier_error_count": 0,
+          "verifier_error_types": {}
+        },
+        {
+          "mode": "from-zero",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "full_work_accepted": 7,
+          "full_work_failed": 1407,
+          "verifier_error_count": 1,
+          "verifier_error_types": {
+            "str": 1
+          }
+        },
+        {
+          "mode": "late-product",
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "genuine_budget_depletion_observed": false,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "full_work_accepted": 7,
+          "full_work_failed": 1300,
+          "verifier_error_count": 1,
+          "verifier_error_types": {
+            "str": 1
+          }
+        }
+      ]
+    }
+  ],
+  "direct_source_comparison": {
+    "schema": "trnm-original-native-CI-source-comparison-v1",
+    "paths": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "versions": {
+          "bef17d632d1e40014167dba2a1089b85366b67b8": {
+            "bytes": 111313,
+            "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+          },
+          "a490d3b971997e927de3aece19864497d65d5984": {
+            "bytes": 111313,
+            "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+          }
+        },
+        "identical": true
+      },
+      {
+        "path": ".github/workflows/pon-native-campaign-qualification.yml",
+        "versions": {
+          "bef17d632d1e40014167dba2a1089b85366b67b8": {
+            "bytes": 22343,
+            "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+          },
+          "a490d3b971997e927de3aece19864497d65d5984": {
+            "bytes": 22343,
+            "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+          }
+        },
+        "identical": true
+      }
+    ],
+    "direct_source_identity_is_not_counterfactual_timing_proof": true
+  },
+  "source_identity_is_not_counterfactual_latency_proof": true,
+  "new_native_execution_performed_for_triage": false,
+  "acceptance_deadlines_or_resources_changed": false,
+  "general_quantum_security_gates": "HOLD"
+}

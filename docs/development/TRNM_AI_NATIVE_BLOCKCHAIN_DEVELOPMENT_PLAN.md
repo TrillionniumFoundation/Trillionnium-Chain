@@ -8553,3 +8553,37 @@ update, no merge and no production activation. All four general quantum gates
 remain HOLD: no complete calibrated quantum machine, global legal-cost lower
 bound/equal-resource proof, QPU adversarial execution or general hybrid
 settlement theorem is claimed.
+
+## 2026-11-08 Responsive continuation: current CI evidence and scoped budget-test repair
+
+The scientific implementation `bab83768` and evidence `a490d3b9` were published
+through HeptaRuntime's local Mac GitHub channel to draft PR 781 and read back.
+The complete 62-command scientific validation remains bound to its original
+source; no later CI snapshot is substituted for that execution.
+
+The 02:21:16 UTC current-head snapshot retained 100 checks: 71 successful,
+14 failed, one skipped and 14 running. Failure triage recovered original
+confirmation-target failures under unchanged service limits, the missing
+historical artifact, incomplete original native campaigns (including failed
+baselines), the CodeQL export's absent exact-source data, and a brittle
+staged-observer test assertion. The selected original logs/reports and
+verification scope are retained in
+[evidence/pon-quantum-responsive-ci-20261108](../../evidence/pon-quantum-responsive-ci-20261108/README.md).
+
+Only the staged-observer test changes existing executable source in this follow-up.
+The added evidence verifier checks archive identity and extraction completeness.
+Its coordinator-local failed controls verify one cumulative deadline and
+expiry before launch; production clocks, limits, rejection criteria and
+real subprocess lifecycle controls remain unchanged. The entire module
+passes 31 tests, and both deliberate in-memory guard/deadline mutations are
+rejected. The original failure remains retained; its deleted temporary
+receipt is not reconstructed as an observed fact.
+
+A later read-only allocation inventory at 02:04:13 UTC no longer lists the
+owned Colab endpoint. This updates the operational observation while leaving
+the exact release time, mechanism and complete cost interval unknown.
+Earlier guarded-release refusals remain intact.
+
+All four general quantum gates remain HOLD. These CPU observations and
+bounded certificates do not supply calibrated quantum hardware, a global
+legal-work lower bound, native QPU execution or general settlement security.

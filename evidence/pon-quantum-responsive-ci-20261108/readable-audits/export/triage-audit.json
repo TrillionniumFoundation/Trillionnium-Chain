@@ -1,0 +1,117 @@
+{
+  "all_39_raw_and_selected_analysis_and_check_lists_empty": true,
+  "code_changes": false,
+  "conclusion": "The retained provider responses exposed no CodeQL analyses for PR781 and no CodeQL-named checks for either frozen source during all39 snapshots. Readiness was never true and the bounded polling loop failed closed.",
+  "configured_poll_seconds": 30,
+  "configured_wait_seconds": 1200,
+  "exact_failed_condition": {
+    "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "expression": "remaining > args.poll_seconds",
+    "line": 344,
+    "source": "scripts/export_codeql_analysis.py"
+  },
+  "export_observed_elapsed_seconds": 1195.37666,
+  "exporter_result": {
+    "all_branch_historical_alerts": false,
+    "analyses": [],
+    "check_annotations": [],
+    "complete": false,
+    "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "finished_utc": "2026-11-08T02:03:42.268289+00:00",
+    "full_original_sarif_upload": false,
+    "last_checks": [],
+    "schema": "codeql-exact-source-analysis-export-v2",
+    "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+    "security_gate_changed": false,
+    "started_utc": "2026-11-08T01:43:46.891629+00:00",
+    "target": {
+      "base": "7a98f27f99abccc28da2f1f3cc60bdaa2eca4890",
+      "event": "pull_request",
+      "head": "a490d3b971997e927de3aece19864497d65d5984",
+      "head_ref": "refs/pull/781/head",
+      "merge": "249f5d30689f989b3e6368e78c5161fb1b00aa57",
+      "pr": 781,
+      "ref": "refs/pull/781/merge"
+    },
+    "target_pr_gate_authenticated": false,
+    "target_pr_gate_verdict": null
+  },
+  "failed_step": {
+    "completed_at": "2026-11-08T02:03:42Z",
+    "conclusion": "failure",
+    "name": "Export exact PR analyses with the existing read-only token",
+    "number": 5,
+    "started_at": "2026-11-08T01:43:46Z",
+    "status": "completed"
+  },
+  "head_sha": "a490d3b971997e927de3aece19864497d65d5984",
+  "http_or_auth_error_reported": false,
+  "job_conclusion": "failure",
+  "job_id": 128593173220,
+  "job_name": "export",
+  "not_established": [
+    "why the provider exposed no matching CodeQL data",
+    "whether CodeQL data became available after the retained window",
+    "any successful CodeQL security verdict",
+    "any CodeQL vulnerability finding",
+    "identical historical CI behavior"
+  ],
+  "observed_poll_count": 39,
+  "prior_w1_or_frozen_scientific_artifacts_modified": false,
+  "prospective_merge_sha": "249f5d30689f989b3e6368e78c5161fb1b00aa57",
+  "public_artifact_integrity": {
+    "path": "public-safe/artifact-integrity.json",
+    "sha256": "f39924ae6fadcdb668808923d6de0031ce1d4d84badd3047cca4b16241074f57",
+    "size": 671
+  },
+  "public_poll_coverage": {
+    "path": "public-safe/poll-coverage.json",
+    "sha256": "79e00b91cd7ce1ec27648e186c3f02eb4afb600c6466dc150a3c065ba5fc1be0",
+    "size": 40602
+  },
+  "queried_resources": {
+    "analyses": "/code-scanning/analyses?pr=781&tool_name=CodeQL",
+    "checks": "/commits/{head-or-merge}/check-runs?check_name=CodeQL&filter=latest"
+  },
+  "readiness_condition": {
+    "requires_completed_success_or_failure_check_and_no_missing_configurations": true,
+    "requires_nonempty_exact_source_analyses": true,
+    "requires_nonempty_matching_checks": true,
+    "requires_two_equal_ready_snapshots_before_export": true,
+    "source_lines": [
+      197,
+      203
+    ]
+  },
+  "run_id": 42435447260,
+  "schema": "trnm-postpublish-export-ci-triage-v1",
+  "source_comparison": {
+    "baseline_commit": "bef17d632d1e40014167dba2a1089b85366b67b8",
+    "files": [
+      {
+        "baseline_sha256": "31217ef028048e8e47ad71257a8978fe4971d9a97c664a96b0d311bb8e7a98bf",
+        "path": "scripts/export_codeql_analysis.py",
+        "published_sha256": "31217ef028048e8e47ad71257a8978fe4971d9a97c664a96b0d311bb8e7a98bf",
+        "size": 18932,
+        "unchanged": true
+      },
+      {
+        "baseline_sha256": "7327eb8a26f66c87ee7e48604a7cd0e22424fa5e684e3d8c7c52c28f1f0103df",
+        "path": "scripts/test_export_codeql_analysis.py",
+        "published_sha256": "7327eb8a26f66c87ee7e48604a7cd0e22424fa5e684e3d8c7c52c28f1f0103df",
+        "size": 19272,
+        "unchanged": true
+      },
+      {
+        "baseline_sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+        "path": ".github/workflows/codeql-analysis-export.yml",
+        "published_sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+        "size": 3293,
+        "unchanged": true
+      }
+    ],
+    "published_commit": "a490d3b971997e927de3aece19864497d65d5984"
+  },
+  "threshold_relaxations": false,
+  "workflow_rerun_requested": false
+}

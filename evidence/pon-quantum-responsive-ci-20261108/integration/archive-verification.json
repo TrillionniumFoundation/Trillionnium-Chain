@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/evidence/pon-quantum-responsive-ci-20261108/verify_raw.py",
+    "--extract",
+    "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-extracted-verification"
+  ],
+  "returncode": 0,
+  "started_utc": "2026-11-08T02:47:11.981721+00:00",
+  "finished_utc": "2026-11-08T02:47:12.117658+00:00",
+  "stdout_sha256": "5950e757fb3a1bc1a253b51f40a52466e67872221399649a85dd20ad9659514a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "transport_create_only_published": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-package.tar"
+}

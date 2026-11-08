@@ -1,0 +1,26 @@
+{
+  "archives": [
+    {
+      "all_extracted_members_checked_with_zip_crc": true,
+      "archive_sha256": "c16b980de9e9f4df7cc30f7403bb5d6fad9827b53929cc19a0593016733a5ed5",
+      "archive_size": 5415080,
+      "artifact_id": 13599288885,
+      "initial_partial_retained_bytes": 3881904,
+      "job_id": 128593173626,
+      "provider_size_and_digest_match": true,
+      "range_tail_bytes": 1533176
+    },
+    {
+      "all_extracted_members_checked_with_zip_crc": true,
+      "archive_sha256": "01393d2e7fb7fb1672fcc29d291c0f8f98e7f268aeb6ce7af35470392ac09da6",
+      "archive_size": 5530244,
+      "artifact_id": 13598828260,
+      "initial_partial_retained_bytes": 4094909,
+      "job_id": 128593173416,
+      "provider_size_and_digest_match": true,
+      "range_tail_bytes": 1435335
+    }
+  ],
+  "schema": "trnm-postpublish-w1-artifact-integrity-v1",
+  "zip_archives_binaries_and_transport_receipts_excluded_from_public_allowlist": true
+}

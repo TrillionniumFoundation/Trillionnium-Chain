@@ -1,0 +1,14 @@
+{
+  "name": "diff-check",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "started_utc": "2026-11-08T02:49:25.080198+00:00",
+  "completed_utc": "2026-11-08T02:49:25.087031+00:00",
+  "returncode": 2,
+  "stdout_sha256": "883f7662b04feb3ba2060ede604633f9478cf5f46afd818005d777865b32b4ec",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

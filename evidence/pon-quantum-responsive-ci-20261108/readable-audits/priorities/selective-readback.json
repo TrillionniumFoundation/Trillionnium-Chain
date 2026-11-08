@@ -1,0 +1,247 @@
+{
+  "all_selected_members_size_crc_and_sha_verified": true,
+  "artifacts": [
+    {
+      "archive_entry_count": 282,
+      "archive_upload_digest_console_line": 3232,
+      "archive_upload_digest_recorded_in_console": "8cfc897e6a4e0d60403f0ee82b2054e28d870f0f27ab0ba0c35c4886d11eff32",
+      "artifact_id": 13600400419,
+      "full_archive_sha_verified": false,
+      "job_id": 128593173499,
+      "only_selected_members_fetched": true,
+      "operations": [
+        {
+          "attempt": 0,
+          "bytes": 131072,
+          "end_exclusive": 7490963,
+          "returncode": 0,
+          "sha256": "3c33ee817afe57bf5d57efa32b9517c539385599f518bc108fa07702175f5de9",
+          "start": 7359891,
+          "started_utc": "2026-11-08T02:30:35.649742+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 1743665,
+          "returncode": 0,
+          "sha256": "023220700126bbe74f0fd6c4630b9fa5a6950023e9db186a5d19566c05b9e84f",
+          "start": 1481521,
+          "started_utc": "2026-11-08T02:30:39.000496+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 6783117,
+          "returncode": 0,
+          "sha256": "9604a7d556a626a66d1e785ea48d3fd7bad3f7dfd25365d94b67deaa7a8da46e",
+          "start": 6520973,
+          "started_utc": "2026-11-08T02:30:46.969002+00:00"
+        }
+      ],
+      "provided_total_archive_bytes": 7490963,
+      "selected_members": [
+        {
+          "bytes": 65759,
+          "compressed_bytes": 10278,
+          "header_offset": 1481649,
+          "name": "x64-head-native-manifest.json",
+          "original_member": "from-zero-native/manifest.json",
+          "sha256": "802a7d39d83d12bb7bc65a0a436a859a916e092dfff49b18b60fa20f77ddda77",
+          "zip_crc32": 2548795047
+        },
+        {
+          "bytes": 6869,
+          "compressed_bytes": 1399,
+          "header_offset": 6521101,
+          "name": "x64-head-systemd-run.log",
+          "original_member": "from-zero-native-host/systemd-run.log",
+          "sha256": "bcc412bd7a13ca0843027aded7af57b63cc332d9c6c55d7a771654c583cd8532",
+          "zip_crc32": 1613453497
+        }
+      ]
+    },
+    {
+      "archive_entry_count": 282,
+      "archive_upload_digest_console_line": 3228,
+      "archive_upload_digest_recorded_in_console": "044b3e9ec72ad758a6a20161e97692db4c86760fced6ad18f5af9b9d0e52e352",
+      "artifact_id": 13600310622,
+      "full_archive_sha_verified": false,
+      "job_id": 128593173489,
+      "only_selected_members_fetched": true,
+      "operations": [
+        {
+          "attempt": 0,
+          "bytes": 131072,
+          "end_exclusive": 7574430,
+          "returncode": 0,
+          "sha256": "c579adc567ab1d09dc4563f5dc77cd4691eca778f9d3fc8de2431b2de26dd1eb",
+          "start": 7443358,
+          "started_utc": "2026-11-08T02:30:46.355189+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 1850009,
+          "returncode": 0,
+          "sha256": "feba5de7c2ded0d002a43a0ba3cd9b91bb8bbc3460475f45f86b2cbd34168d2e",
+          "start": 1587865,
+          "started_utc": "2026-11-08T02:30:54.063177+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 6866527,
+          "returncode": 0,
+          "sha256": "250910d04d88610c36d289693cc9507eec546293781d910627f0fa4378ee2a3b",
+          "start": 6604383,
+          "started_utc": "2026-11-08T02:30:57.763592+00:00"
+        }
+      ],
+      "provided_total_archive_bytes": 7574430,
+      "selected_members": [
+        {
+          "bytes": 65726,
+          "compressed_bytes": 10280,
+          "header_offset": 1587993,
+          "name": "arm-merge-native-manifest.json",
+          "original_member": "from-zero-native/manifest.json",
+          "sha256": "e0447cd51069a28a944288bb38799d506f83df636963f0ee1ec6f786f18f7d3d",
+          "zip_crc32": 4109017222
+        },
+        {
+          "bytes": 6869,
+          "compressed_bytes": 1407,
+          "header_offset": 6604511,
+          "name": "arm-merge-systemd-run.log",
+          "original_member": "from-zero-native-host/systemd-run.log",
+          "sha256": "a68b15ccd33ad662229049a6aa4774916bacd8de176066f584e8006cbcc0cf86",
+          "zip_crc32": 2740464408
+        }
+      ]
+    },
+    {
+      "archive_entry_count": 282,
+      "archive_upload_digest_console_line": 3229,
+      "archive_upload_digest_recorded_in_console": "9a7a0ebf1e2068f7964b2e41ab29c13aff6cc2569a1c85349b64b04b5ecabe1a",
+      "artifact_id": 13600095892,
+      "full_archive_sha_verified": false,
+      "job_id": 128593173423,
+      "only_selected_members_fetched": true,
+      "operations": [
+        {
+          "attempt": 0,
+          "bytes": 131072,
+          "end_exclusive": 7732547,
+          "returncode": 0,
+          "sha256": "0933737b71ce91b204dad72d8d3ac8e330793ea42f39f4696a4e0a0b6cac6127",
+          "start": 7601475,
+          "started_utc": "2026-11-08T02:30:24.745771+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 1801877,
+          "returncode": 0,
+          "sha256": "5d534eb6b116bf7f8e5cc0a36508e787480d22a50141917bff0814ee561d1304",
+          "start": 1539733,
+          "started_utc": "2026-11-08T02:30:29.853686+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 7025674,
+          "returncode": 0,
+          "sha256": "c71d540867e8e38013c9c860978784caabb4e67ab80d2b22fb0d6268ff1c7950",
+          "start": 6763530,
+          "started_utc": "2026-11-08T02:30:43.127567+00:00"
+        }
+      ],
+      "provided_total_archive_bytes": 7732547,
+      "selected_members": [
+        {
+          "bytes": 65695,
+          "compressed_bytes": 10240,
+          "header_offset": 1539861,
+          "name": "x64-merge-native-manifest.json",
+          "original_member": "from-zero-native/manifest.json",
+          "sha256": "fb18bf84ec31c405aa86f244ef56d77d5cc5030735b7edcac39803216a1c25df",
+          "zip_crc32": 3773154604
+        },
+        {
+          "bytes": 6868,
+          "compressed_bytes": 1405,
+          "header_offset": 6763658,
+          "name": "x64-merge-systemd-run.log",
+          "original_member": "from-zero-native-host/systemd-run.log",
+          "sha256": "4e0a448f52926653cc2e9fc6d849646b6f2e9c8ce51a4d3adfd74a658580d08c",
+          "zip_crc32": 2486773078
+        }
+      ]
+    },
+    {
+      "archive_entry_count": 282,
+      "archive_upload_digest_console_line": 3227,
+      "archive_upload_digest_recorded_in_console": "597ed470f5a9fe67dcf8cdcd1b5e88ffee8b317d488323c9a8708f690b5f5afd",
+      "artifact_id": 13599777268,
+      "full_archive_sha_verified": false,
+      "job_id": 128593173366,
+      "only_selected_members_fetched": true,
+      "operations": [
+        {
+          "attempt": 0,
+          "bytes": 131072,
+          "end_exclusive": 7524801,
+          "returncode": 0,
+          "sha256": "cf5d66fc5905bb38f0fe51dab9231a065742e091ecee480bdd5dc3a1d7b91398",
+          "start": 7393729,
+          "started_utc": "2026-11-08T02:30:11.736832+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 1831834,
+          "returncode": 0,
+          "sha256": "9cfae9847908d92bdad751d9d42bfa936533556c8c92298f3d0977e520eedc74",
+          "start": 1569690,
+          "started_utc": "2026-11-08T02:30:16.291041+00:00"
+        },
+        {
+          "attempt": 0,
+          "bytes": 262144,
+          "end_exclusive": 6816974,
+          "returncode": 0,
+          "sha256": "094fe08757b521cd9f035070c30ba1d58985b59560ab57dce2e20d98008ea245",
+          "start": 6554830,
+          "started_utc": "2026-11-08T02:30:22.799322+00:00"
+        }
+      ],
+      "provided_total_archive_bytes": 7524801,
+      "selected_members": [
+        {
+          "bytes": 65755,
+          "compressed_bytes": 10272,
+          "header_offset": 1569818,
+          "name": "arm-head-native-manifest.json",
+          "original_member": "from-zero-native/manifest.json",
+          "sha256": "56c69dcc9b202f15c1820803bdb42353d9cdf6de7af37bea4c8cb2dea131ec57",
+          "zip_crc32": 3767549475
+        },
+        {
+          "bytes": 6875,
+          "compressed_bytes": 1409,
+          "header_offset": 6554958,
+          "name": "arm-head-systemd-run.log",
+          "original_member": "from-zero-native-host/systemd-run.log",
+          "sha256": "e6bb64f8d4e3f730de76f32d692ffb84a1e03c92ccf29a476d473493519149d4",
+          "zip_crc32": 2557582401
+        }
+      ]
+    }
+  ],
+  "full_archive_sha_verified": false,
+  "helper_sha256": "cd147bf3029b504c79fd323d8f39d3cc26cde9b3b4f4750bf3739c2edba726dc",
+  "read_only": true,
+  "schema": "trnm-native-priorities-selective-readback-v1",
+  "selected_members_per_artifact": 2,
+  "transport_stderr_and_redirect_or_auth_metadata_excluded": true
+}

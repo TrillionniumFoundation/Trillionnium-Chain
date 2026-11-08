@@ -1,0 +1,93 @@
+{
+  "schema": "trnm-postpublish-w1-ci-source-attribution-v1",
+  "baseline_commit": "bef17d632d1e40014167dba2a1089b85366b67b8",
+  "published_commit": "a490d3b971997e927de3aece19864497d65d5984",
+  "prospective_merge_commit": "249f5d30689f989b3e6368e78c5161fb1b00aa57",
+  "head_and_prospective_merge_reported_tree": "a591a9608687a870aaecf3109064640a864d10e9",
+  "files": [
+    {
+      "path": "scripts/ci/test_w1_staged_observer.py",
+      "baseline_sha256": "4a0e6d8ee682950f23251d6e8f8d94835cb8b2b37f704efaf30a036962a8eae4",
+      "published_sha256": "4a0e6d8ee682950f23251d6e8f8d94835cb8b2b37f704efaf30a036962a8eae4",
+      "bytes": 28852,
+      "unchanged": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "baseline_sha256": "704349676bfd812c9788440f9d41d866de9305d9283c34b4e5342ba57bcf52ab",
+      "published_sha256": "704349676bfd812c9788440f9d41d866de9305d9283c34b4e5342ba57bcf52ab",
+      "bytes": 24936,
+      "unchanged": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+      "baseline_sha256": "ec8bf817620d3d4166c03b86693657ae9b4a59ceeed9d147aecc1126bc62f3df",
+      "published_sha256": "ec8bf817620d3d4166c03b86693657ae9b4a59ceeed9d147aecc1126bc62f3df",
+      "bytes": 20135,
+      "unchanged": true
+    },
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "baseline_sha256": "a8d88527f67da307fea9bd822d73e4e2fa12a2f7ccb254a1b9a7c053758e1665",
+      "published_sha256": "a8d88527f67da307fea9bd822d73e4e2fa12a2f7ccb254a1b9a7c053758e1665",
+      "bytes": 24022,
+      "unchanged": true
+    },
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "baseline_sha256": "72bcf116d199b15b2fb49207018b87c66ef74d4315f32b2d7e0c1097540dca04",
+      "published_sha256": "72bcf116d199b15b2fb49207018b87c66ef74d4315f32b2d7e0c1097540dca04",
+      "bytes": 27064,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "baseline_sha256": "dbc50b7fd7d23e2df5a158791c67b8935418d95f84beef1fdabb9bc9566961ef",
+      "published_sha256": "dbc50b7fd7d23e2df5a158791c67b8935418d95f84beef1fdabb9bc9566961ef",
+      "bytes": 21503,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "baseline_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "published_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "bytes": 24743,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "baseline_sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+      "published_sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+      "bytes": 102985,
+      "unchanged": true
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "baseline_sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "published_sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "bytes": 8837,
+      "unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "baseline_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "published_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "bytes": 79067,
+      "unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "baseline_sha256": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f",
+      "published_sha256": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f",
+      "bytes": 10907,
+      "unchanged": true
+    }
+  ],
+  "changed_trillionnium_paths": [
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/responsive.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs"
+  ],
+  "source_comparison_does_not_prove_historical_ci_outcomes": true
+}

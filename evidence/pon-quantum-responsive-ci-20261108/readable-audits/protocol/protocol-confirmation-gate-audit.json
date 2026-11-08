@@ -1,0 +1,441 @@
+{
+  "archive_readback": {
+    "both_full_archives_reconstructed_and_github_upload_digests_verified": true,
+    "earlier_transfer_errors_retained_privately": true,
+    "preserved_earlier_unavailable_observation": {
+      "bytes": 12740,
+      "file": "final-triage.json",
+      "sha256": "63a5e8293d8957d10cb7ff566f73f2c429dc4e722807ceea2fcac94383f1e2ff",
+      "superseded_only_as_to_child_artifact_availability": true
+    },
+    "published_transport_credentials_or_redirect_metadata": false,
+    "raw_archive_contents_manifest_hashes_verified": true
+  },
+  "candidate_commit": "a490d3b971997e927de3aece19864497d65d5984",
+  "ci_run_id": 42435447284,
+  "comparison_predecessor": "bef17d632d1e40014167dba2a1089b85366b67b8",
+  "exact_source_predicate": {
+    "call_lines": [
+      760,
+      762
+    ],
+    "observed_values": {
+      "finite_target_met": false,
+      "invariant_target_met": true,
+      "same_packet_sequence_in_both_runs": true
+    },
+    "path": "scripts/ci/run_from_zero_native.py",
+    "raising_line": 426,
+    "raising_statement": "require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')",
+    "required_true_top_level_flags": [
+      "finite_target_met",
+      "invariant_target_met",
+      "same_packet_sequence_in_both_runs"
+    ],
+    "sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+    "this_failure_occurs_before_deeper_confirmation_checks": true
+  },
+  "gzip_publication": {
+    "compression_level": 9,
+    "decompressed_bytes_equal_original_archive_member": true,
+    "filename_header": "",
+    "lossless": true,
+    "mtime": 0,
+    "original_uncompressed_reports_retained_locally": true
+  },
+  "jobs": [
+    {
+      "acceptance_stage_results": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "raw_sha256": "62a032c0643e14d5250dd722ffdc569ad862019f30bedd25d2bfb2f06c4df1d3",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "raw_sha256": "81659b79dde36e509ae8f6758e32e024996f1591f35cea70e1df9ef64e614472",
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "raw_sha256": "a1a1e2177ed2449544763328679db4935216b83a5823382f944b645eb76c4296",
+          "status": "passed"
+        }
+      },
+      "all_native_invocations_completed_without_timeout": true,
+      "artifact_id": 13599601316,
+      "artifact_matches_github_digest": true,
+      "artifact_zip_bytes": 5961864,
+      "artifact_zip_sha256": "5b3be6f65025b4382be9af3a14536c8ebb0e8217a67bb871a82dfbc89e5f250b",
+      "binary_unchanged_and_matches_preparation_and_retained_elf": true,
+      "driver_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "job_id": 128593173734,
+      "label": "head",
+      "manifest_file_ledger_entries_verified": 50,
+      "native_process_count": 5,
+      "native_processes": [
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s",
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s",
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.08s",
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "cff9fd548c248c307d076b136e0eec940b8c49a038c519ad8043e1ae65a541de",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.58s",
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "4f95023a95e181e697b6c7780aceee65a58d683378c9dc83f3aba0f065ffea1e",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.61s",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e4bd0caf6c28d2a96bad4f3b7c55d2ba9d1704f6e16ddc73da6409e662fb800f",
+          "timed_out": false
+        }
+      ],
+      "native_test_pass_count": 5,
+      "native_test_source_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "original_acceptance_passed": false,
+      "phase_outcomes": [
+        {
+          "accounting_closed": true,
+          "business_started_ns": 88113,
+          "client_confirmation_latency_ns": 2396793947,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "confirmation_ended_ns": 2396882060,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "overlapping_false_calls": 0,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "workers": 0
+        },
+        {
+          "accounting_closed": true,
+          "business_started_ns": 79451673,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 323,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "overlapping_false_calls": 0,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "workers": 16
+        }
+      ],
+      "raw_manifest_failure_line": 230,
+      "raw_report_flags": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero"
+      },
+      "source_matches_outer_preparation": true,
+      "source_unchanged": true,
+      "systemd_failure_line": 7,
+      "tested_commit": "a490d3b971997e927de3aece19864497d65d5984",
+      "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9"
+    },
+    {
+      "acceptance_stage_results": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "raw_sha256": "47a99e1853458397cf57174f2c67c00de2876afed8734866ff0162bff9081195",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "raw_sha256": "ab5e03105e9cd466043647c5402cd336670125396542d9403e98d329a632c85f",
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "raw_sha256": "c30e34bca1f3f80d6d0c693da98fcf184f4225f05234ee98afd1d5c21f37db71",
+          "status": "passed"
+        }
+      },
+      "all_native_invocations_completed_without_timeout": true,
+      "artifact_id": 13599513152,
+      "artifact_matches_github_digest": true,
+      "artifact_zip_bytes": 5621483,
+      "artifact_zip_sha256": "0e786f59d48e46fc5371b09f0b2f0ed368426a210f6727d255cd4f9eb770e68b",
+      "binary_unchanged_and_matches_preparation_and_retained_elf": true,
+      "driver_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "job_id": 128593173715,
+      "label": "merge",
+      "manifest_file_ledger_entries_verified": 50,
+      "native_process_count": 5,
+      "native_processes": [
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s",
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s",
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s",
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "e0ed9305c60d1edc65a684d91aa53f849b9ae7a55e24843b3df38c1c4bb7c62f",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 9.89s",
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "9b1a4b44c4bcc63c38dd050f5e752abcf154109b1f90fa010a2e06275fb0a274",
+          "timed_out": false
+        },
+        {
+          "exit_code": 0,
+          "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.70s",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "named_test_passed": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "d82b888feb4cdcedea3de3194ec397d13490dfcdda0b60d11a34f024809dbc52",
+          "timed_out": false
+        }
+      ],
+      "native_test_pass_count": 5,
+      "native_test_source_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "original_acceptance_passed": false,
+      "phase_outcomes": [
+        {
+          "accounting_closed": true,
+          "business_started_ns": 121518,
+          "client_confirmation_latency_ns": 3185506083,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "confirmation_ended_ns": 3185627601,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "overlapping_false_calls": 0,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [],
+          "workers": 0
+        },
+        {
+          "accounting_closed": true,
+          "business_started_ns": 99749985,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 207,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "overlapping_false_calls": 0,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "workers": 16
+        }
+      ],
+      "raw_manifest_failure_line": 230,
+      "raw_report_flags": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero"
+      },
+      "source_matches_outer_preparation": true,
+      "source_unchanged": true,
+      "systemd_failure_line": 7,
+      "tested_commit": "249f5d30689f989b3e6368e78c5161fb1b00aa57",
+      "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9"
+    }
+  ],
+  "limits": {
+    "confirmation_scope": "One signed business transaction, same prepared seven-packet sequence, original four-second window, separate native verifying client, shared controller/host. No post-window confirmation credit, saturated throughput, independent operators or WAN-security conclusion.",
+    "fix": "No scoped continuation source repair is justified by this evidence. Preserve this gate failure; do not remove the finite target, rerun until green, or relax its deadlines/resources.",
+    "native_state": "Pressure full_native_state_equal is false while receiver_matches_valid_honest_prefix, no_attack_accepted, invariant_target_met and accounting_closed remain true. The audit does not infer acceptance of an invalid attack or consensus-state corruption.",
+    "pressure_verification_error": "PUBLIC_REQUEST_DEADLINE is retained in both raw pressure phases; it is not silently converted into success or a fully isolated root-cause mechanism.",
+    "scientific_separation": "These are the original public-service confirmation checks, not the twelve responsive-miner native runs or their reduced-model certificates."
+  },
+  "native_test_scope": {
+    "assertion_line": 1782,
+    "explanation": "The Rust test explicitly asserts native safety/accounting invariants and records the separate finite business outcome. Its zero exit does not satisfy the independent business-confirmation gate.",
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+    "report_scope_line": 1770,
+    "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  "observed_utc": "2026-11-08T02:20:35.338012+00:00",
+  "public_files_excluding_this_audit": [
+    {
+      "bytes": 154967,
+      "name": "head-protocol-contract.log",
+      "sha256": "356d990f325d3a8209a6f4df03feb2776e234ccfdeac32f657a3b4f18c7f88c2"
+    },
+    {
+      "bytes": 65696,
+      "name": "head-native-manifest.json",
+      "sha256": "854a94c11dca0d700aa4f3f1e387a3ecec2697dd85ecae6543c6c0a416353c08"
+    },
+    {
+      "bytes": 6908,
+      "name": "head-systemd-run.log",
+      "sha256": "bc28cac7bf4c5b0ca1a72ad3f17b02b9017b3ef87cdb6f4342af97e055c54d9d"
+    },
+    {
+      "bytes": 378403,
+      "compression": "gzip",
+      "compression_level": 9,
+      "gzip_filename": "",
+      "gzip_mtime": 0,
+      "name": "head-confirmation-report.json.gz",
+      "sha256": "cfb70d6484575d029d7058ab72585c4262db38ba059b24dfb385735de9d61fb6",
+      "uncompressed_bytes": 10202321,
+      "uncompressed_sha256": "62a032c0643e14d5250dd722ffdc569ad862019f30bedd25d2bfb2f06c4df1d3"
+    },
+    {
+      "bytes": 157936,
+      "name": "merge-protocol-contract.log",
+      "sha256": "421f1a8a89dabd5f24d58580a45e769211a1249286168bc50a719fb6b77aad9d"
+    },
+    {
+      "bytes": 65763,
+      "name": "merge-native-manifest.json",
+      "sha256": "911a99cc3dd7f6799985f1b4a22216bfa5059d7fdc5e0d5b78dfeaf62d92f01c"
+    },
+    {
+      "bytes": 6917,
+      "name": "merge-systemd-run.log",
+      "sha256": "1cd64bb98d607fa35f8d36702c1184c28b596cebe8d4e999e16d5fa1cc24efc6"
+    },
+    {
+      "bytes": 295419,
+      "compression": "gzip",
+      "compression_level": 9,
+      "gzip_filename": "",
+      "gzip_mtime": 0,
+      "name": "merge-confirmation-report.json.gz",
+      "sha256": "ff09f909f22b60cfad87f7f78238ed400d79355d76775b0bcd9c156d33e1317e",
+      "uncompressed_bytes": 7950650,
+      "uncompressed_sha256": "47a99e1853458397cf57174f2c67c00de2876afed8734866ff0162bff9081195"
+    },
+    {
+      "bytes": 20880,
+      "name": "source-comparison.json",
+      "sha256": "69b78db72880727e08fc618e4cea4aecde2d3e4650fa2ef1b7f4418289483f68"
+    }
+  ],
+  "result": {
+    "all_native_processes_return_without_timeout": true,
+    "baseline_signed_transactions_confirmed_in_original_window_each_job": 1,
+    "both_ci_jobs_failed": true,
+    "confirmation_acceptance_fails": true,
+    "exact_driver_error": "CONFIRMATION_TARGET",
+    "five_named_native_tests_pass_in_each_job": true,
+    "later_protocol_contract_lane_commands_not_reached": true,
+    "pressure_signed_transactions_confirmed_in_original_window_each_job": 0,
+    "pressure_workers": 16,
+    "proximate_failure": "The original Python acceptance gate rejects the raw signed-business confirmation report because top-level finite_target_met is false.",
+    "service_and_sustained_acceptance_pass": true,
+    "window_ns": 4000000000
+  },
+  "schema": "trnm-postpublication-protocol-confirmation-gate-audit-v1",
+  "scope": {
+    "native_or_ci_reruns": false,
+    "no_qpu_or_quantum_clock_inference": true,
+    "only_job_ids": [
+      128593173734,
+      128593173715
+    ],
+    "original_ci_deadlines_and_resources_changed": false,
+    "original_four_second_window_preserved": true,
+    "publication_performed": false,
+    "read_only_execution": true,
+    "source_edits": false
+  },
+  "source_attribution": {
+    "all_11_selected_runner_workflow_test_and_dependency_files_identical_to_predecessor": true,
+    "broader_causal_claim": "No changed direct execution-source regression is identified. This readback does not establish complete causal attribution of service latency or exclude environment, quota, toolchain or repository-size effects.",
+    "comparison_file": "source-comparison.json",
+    "comparison_sha256": "69b78db72880727e08fc618e4cea4aecde2d3e4650fa2ef1b7f4418289483f68",
+    "continuation_did_not_add_the_failing_predicate_or_change_the_inspected_native_fixture": true,
+    "first_command_line": 96,
+    "head_protocol_case_lines": [
+      95,
+      172
+    ],
+    "new_responsive_module_scope": "Only the Node unit-test module adds mod responsive; lib.rs lines 717-718 gates its owner under cfg(test), so it is absent from the non-test library used by this integration executable.",
+    "protocol_case_identical_to_predecessor": true
+  },
+  "status": "CONFIRMED_ORIGINAL_CONFIRMATION_GATE_FAILURE"
+}
