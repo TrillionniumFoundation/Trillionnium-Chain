@@ -117,3 +117,66 @@ Actual independent operators, shard placement/repair, funded retention,
 72-hour WAN cohorts, a persistent TCV1 retained-set owner and ordinary
 restricted-loader/device/Hepta next-task execution remain unqualified. Safe
 bounded refusal is not service success, and neither original deadline is widened.
+
+## First committed complete attempt: preserved failure
+
+Exact implementation `d4a0643a29ed1a35576a36d88189cadd28929c65` ran all 19
+commands on the shared desktop Linux host: **17 commands passed and two failed**.
+The [complete command summary](implementation-attempt01/summary.json),
+[log manifest](implementation-attempt01/manifest.json),
+[source before](implementation-attempt01/source-before.json) and
+[source after](implementation-attempt01/source-after.json) retain that result.
+The source fingerprints match exactly and the final worktree was clean.
+
+The [complete native log](implementation-attempt01/complete-da-native.stdout.log)
+records **463 passed / 5 failed / 0 ignored / 0 filtered** library tests in
+642.28 seconds, Cargo exit 101. Cargo stopped before integration tests and
+doctests, so this is not complete-crate acceptance. One new high-first timing
+control selected the old endpoint, but that fixture had not measured whether
+the short lease was still live when received; its precise timing cause cannot
+be reconstructed from that run. Four unchanged classical sequence fixtures
+failed on their very first long-lease advertisement, with three approximately
+200 ms client read timeouts and one server-close EOF. They had not reached the
+sequence/conflict/short-lease behavior under test. Their original 200 ms client
+and 250 ms server bounds, including the separate 4-second client case, remain.
+
+The [strict lint log](implementation-attempt01/strict-clippy.stderr.log) records
+a separate optional-backend build failure: retained OpenSSL tests require the
+`ossl350` API, while the run used system OpenSSL headers. The unchanged pinned
+preparation script subsequently built isolated OpenSSL 3.5.9, checked the exact
+upstream archive digest and ran real sign/verify plus wrong-message rejection.
+[Provider metadata](desktop-provider.json), [validated inputs](desktop-provider-validation.json)
+and the [complete preparation archive](desktop-provider-preparation.tar.gz)
+retain that preparation. It did not change system OpenSSL, run Rust tests or
+run the complete upstream OpenSSL suite. Future all-feature lint runs must
+explicitly load that run's verified provider environment.
+
+## Observable timing premise and desktop diagnostics
+
+The short-lease fixture now mints its one-second high-sequence record after
+receiving the actual query, after key/listener/directory setup. It records the
+third source's query arrival and requires it to precede the same expiry; the
+serial client exchange order then proves the two preceding authenticated replies
+arrived while that lease was live. The third source waits for that exact expiry.
+Production `auth.rs` is unchanged by this test correction. TTL 1 s, request 2 s,
+overall 10 s, three connections, five validation slots and exact bytes remain.
+
+The [desktop diagnostic summary](sequence-differential-desktop/summary.json)
+retains a controlled successor at normal nice 0, the same 200% CPU/12 GiB bounds
+and the same persistent ext4 SSD. The four untouched classical controls still
+failed (0 passed / 4 failed / 464 filtered, 24.31 seconds). Normal priority did
+not resolve their observation; later success must not overwrite this failure.
+The revised old-implementation differential recorded 0 passed / 3 failed, but
+only high-later and quota-withdrawal reached their target assertions. High-first
+explicitly reported a timing-premise failure: the third query arrived after the
+short lease. With the fixed implementation, high-later and quota-withdrawal
+passed; high-first again failed the premise even though its observed discovery
+result was a refusal. That is **2 passed / 1 failed**, not three valid passes.
+Complete source snapshots, output, commands and before/after pressure samples
+are retained in the same directory. These data do not establish a precise cause
+for the earlier uninstrumented failure, nor independent operational capacity.
+
+Full acceptance remains pending a new exact-source complete run. The next
+Linux development observation uses an explicitly persistent NVMe temporary
+directory and the pinned compiler/backend, retaining every original test and
+protocol deadline. All operational qualifications remain HOLD_NO_GO.

@@ -1,0 +1,540 @@
+
+running 468 tests
+test cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved ... ok
+test cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots ... ok
+test cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects ... ok
+test cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history ... ok
+test cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen ... ok
+test cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root ... ok
+test cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty ... ok
+test cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible ... ok
+test cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation ... ok
+test cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack ... ok
+test cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache ... ok
+test cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation ... ok
+test cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent ... ok
+test cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration ... ok
+test cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart ... ok
+test cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype ... ok
+test cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots ... ok
+test cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity ... ok
+test cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement ... ok
+test cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration ... ok
+test cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources ... ok
+test cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity ... ok
+test cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root ... ok
+test cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible ... ok
+test cell::archive::tests::unknown_schema_or_missing_catalog_never_opens_as_empty_archive ... ok
+test cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity ... ok
+test cell::bep52::tests::a_valid_external_hash_never_replaces_the_internal_manifest_or_context_pin ... ok
+test cell::bep52::tests::alternate_bencoding_path_names_codecs_and_overlarge_metadata_fail_closed ... ok
+test cell::bep52::tests::boundary_file_lengths_and_exact_last_piece_lengths_verify ... ok
+test cell::bep52::tests::full_piece_layers_are_checked_even_when_infohash_is_unchanged ... ok
+test cell::bep52::tests::larger_chunks_and_empty_cells_are_explicitly_outside_this_profile ... ok
+test cell::bep52::tests::magnet_profile_rejects_ambiguous_topics_and_network_parameter_injection ... ok
+test cell::bep52::tests::maximum_declared_tree_has_bounded_metadata_and_fourteen_sibling_proof ... ok
+test cell::bep52::tests::non_power_of_two_tree_uses_zero_digest_padding_and_omits_padding_in_piece_layer ... ok
+test cell::bep52::tests::reordered_chunks_cross_index_replays_and_every_single_byte_proof_corruption_fail ... ok
+test cell::bep52::tests::short_single_leaf_has_unpadded_sha256_root_and_exact_bencoding ... ok
+test cell::bep52::tests::truncated_extra_and_hostile_proof_shapes_are_rejected_before_indexing ... ok
+test cell::bep52::tests::wholly_padded_upper_subtrees_are_hashes_of_zero_children_not_zero ... ok
+test cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs ... ok
+test cell::closure_tests::closure_checks_independent_owner_context_and_required_roles ... ok
+test cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership ... ok
+test cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker ... ok
+test cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker ... ok
+test cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities ... ok
+test cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases ... ok
+test cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies ... ok
+test cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts ... ok
+test cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload ... ok
+test cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker ... ok
+test cell::custody::tests::cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report ... ok
+test cell::custody::tests::complementary_partial_archives_never_count_as_a_complete_replica ... ok
+test cell::custody::tests::complete_models_with_one_partial_environment_leave_the_whole_version_incomplete ... ok
+test cell::custody::tests::complete_payload_budget_is_reserved_before_any_partial_scan ... ok
+test cell::custody::tests::complete_version_counts_real_model_and_environment_on_the_same_archives ... ok
+test cell::custody::tests::complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans ... ok
+test cell::custody::tests::complete_version_refuses_to_splice_a_valid_environment_from_another_physical_store ... ok
+test cell::custody::tests::declared_domain_and_owner_aliases_and_absent_evidence_fail_closed ... ok
+test cell::custody::tests::expected_store_identifier_cannot_be_counted_twice_from_two_local_directories ... ok
+test cell::custody::tests::expired_original_observation_deadline_is_not_refreshed ... ok
+test cell::custody::tests::future_and_expired_promises_never_count_even_when_all_bytes_remain ... ok
+test cell::custody::tests::historical_ack_cannot_hide_corruption_and_failed_probes_are_not_refunded ... ok
+test cell::custody::tests::missed_fixed_repair_window_requires_replacement_without_extending_paid_terms ... ok
+test cell::custody::tests::origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache ... ok
+test cell::custody::tests::policy_pin_rejects_changed_domain_and_continuation_owners_before_probe ... ok
+test cell::custody::tests::reachable_sponsor_is_never_treated_as_available_funds_or_paid_renewal ... ok
+test cell::custody::tests::same_payload_under_another_version_is_not_the_pinned_whole_release ... ok
+test cell::custody::tests::sponsor_disappearance_keeps_original_deadline_duty_and_full_coverage_target ... ok
+test cell::custody::tests::three_complete_target_readbacks_survive_source_and_cache_loss ... ok
+test cell::custody::tests::version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor ... ok
+test cell::custody::tests::version_continuation_preserves_environment_probe_refusal_and_actual_reservations ... ok
+test cell::custody::tests::version_continuation_refuses_either_missing_component_observation ... ok
+test cell::custody::tests::version_continuation_retains_each_original_term_owner_and_component_size ... ok
+test cell::custody::tests::version_continuation_validates_one_bounded_sponsor_union_before_component_plans ... ok
+test cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins ... ok
+test cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication ... ok
+test cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target ... ok
+test cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target ... ok
+test cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads ... ok
+test cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success ... ok
+test cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write ... ok
+test cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps ... ok
+test cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused ... ok
+test cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins ... ok
+test cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target ... ok
+test cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::diversity_tests::real_tcp_low_owner_flood_keeps_later_bootstrap_provider_and_original_budgets ... ok
+test cell::discovery::diversity_tests::real_tcp_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget ... ok
+test cell::discovery::diversity_tests::real_tcp_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry ... ok
+test cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_combined_validation_limit_refuses_before_extra_connection ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_forged_capacity_status_is_not_a_trusted_capacity_receipt ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence ... FAILED
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_nonce_is_fresh_and_rng_failure_does_not_fallback ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_old_record_alone_and_unpinned_announcement_source_cannot_mutate_directory ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_oversized_local_durations_are_typed_refusals_before_side_effects ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_partial_reply_charges_original_byte_budget_without_refill ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_query_codec_matches_independent_fixed_preimage ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_announce_cold_fetch_and_withdrawal_share_original_session ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_eight_queries_and_bad_records_share_all_sixty_four_slots ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_revoked_authority_and_duplicate_source_keys_fail_before_dial ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_revoked_first_source_does_not_block_later_source_cold_fetch ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_signature_binds_nonce_every_request_field_epoch_target_and_status ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_unsigned_legacy_replies_never_populate_directory_or_trigger_fallback ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::epoch::tests::v3_actual_mldsa_binds_every_statement_byte_epoch_and_signature ... ok
+test cell::discovery::pq::epoch::tests::v3_and_v2_domains_cannot_be_relabelled_or_transplanted ... ok
+test cell::discovery::pq::epoch::tests::v3_epoch_lifetime_cannot_cross_either_signed_boundary ... ok
+test cell::discovery::pq::epoch::tests::v3_epoch_request_has_exact_canonical_bytes_and_closed_epoch_rules ... ok
+test cell::discovery::pq::epoch::tests::v3_precise_clock_sample_never_renews_fractional_or_delayed_verification_lease ... ok
+test cell::discovery::pq::epoch::tests::v3_rust_unsigned_encoding_matches_independent_python_vector ... ok
+test cell::discovery::pq::epoch::tests::v3_verification_receipt_seals_roster_clock_authority_and_monotonic_lease ... ok
+test cell::discovery::pq::epoch_directory::tests::active_source_ip_and_prefix_limits_reject_before_global_capacity ... ok
+test cell::discovery::pq::epoch_directory::tests::corruption_is_checked_before_retirement_and_overflow_rolls_back_clock_rows_and_refunds ... ok
+test cell::discovery::pq::epoch_directory::tests::expired_or_revoked_provider_authority_releases_active_quota_without_releasing_replay_history ... ok
+test cell::discovery::pq::epoch_directory::tests::expiry_refunds_active_owner_capacity_but_preserves_bounded_history_and_reactivation_checks ... ok
+test cell::discovery::pq::epoch_directory::tests::fixed_namespace_provider_and_source_rosters_refuse_migration_and_reopen_changes ... ok
+test cell::discovery::pq::epoch_directory::tests::fractional_last_second_receipt_refuses_while_owner_still_holds_lock ... ok
+test cell::discovery::pq::epoch_directory::tests::history_manifest_and_source_manifest_caps_remain_after_withdrawal ... ok
+test cell::discovery::pq::epoch_directory::tests::owner_lock_wait_is_limited_by_sealed_receipt_expiry_without_clock_or_quota_changes ... ok
+test cell::discovery::pq::epoch_directory::tests::per_source_manifest_reservation_and_withdrawal_reactivation_share_active_caps ... ok
+test cell::discovery::pq::epoch_directory::tests::randomized_valid_signatures_preserve_durable_wire_and_first_source ... ok
+test cell::discovery::pq::epoch_directory::tests::repeated_prior_operations_reopen_and_epoch_retirement_recover_manifest_capacity ... ok
+test cell::discovery::pq::epoch_directory::tests::retained_source_ip_prefix_and_global_caps_are_exact_and_epoch_reclaims_all_512 ... ok
+test cell::discovery::pq::epoch_directory::tests::sealed_receipts_expire_and_reject_another_authority_without_durable_mutation ... ok
+test cell::discovery::pq::epoch_directory::tests::shortening_high_sequence_expiry_never_revives_old_or_newly_resigned_low_sequence ... ok
+test cell::discovery::pq::epoch_directory::tests::source_pins_are_bounded_canonical_and_cannot_multiply_v4_mapped_identity ... ok
+test cell::discovery::pq::epoch_directory::tests::sqlite_writer_and_commit_contention_preserve_deadline_clock_high_water_and_epoch_retirement ... ok
+test cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire ... ok
+test cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound ... ok
+test cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart ... ok
+test cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication ... ok
+test cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial ... ok
+test cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes ... ok
+test cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry ... ok
+test cell::discovery::selection::tests::bootstrap_flood_cannot_take_all_slots_from_later_observed_sources ... ok
+test cell::discovery::selection::tests::dedup_uses_latest_current_expiry_without_losing_actual_source_provenance ... ok
+test cell::discovery::selection::tests::ipv4_and_ipv6_prefixes_and_ips_precede_additional_ports_of_low_keys ... ok
+test cell::discovery::selection::tests::one_network_fallbacks_survive_and_candidate_identity_is_not_peer_chosen ... ok
+test cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... FAILED
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... FAILED
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... FAILED
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... FAILED
+test cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate ... ok
+test cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply ... ok
+test cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding ... ok
+test cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial ... ok
+test cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets ... ok
+test cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed ... ok
+test cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports ... ok
+test cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts ... ok
+test cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys ... ok
+test cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals ... ok
+test cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack ... ok
+test cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns ... ok
+test cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts ... ok
+test cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps ... ok
+test cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes ... ok
+test cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... ok
+test cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater ... ok
+test cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector ... ok
+test cell::erasure::tests::all_fifteen_four_shard_subsets_restore_real_non_aligned_chunk ... ok
+test cell::erasure::tests::all_padding_remainders_and_short_sources_are_reconstructed_exactly ... ok
+test cell::erasure::tests::corrupted_required_or_extra_shards_never_return_verified_source_bytes ... ok
+test cell::erasure::tests::every_field_product_matches_independent_polynomial_division ... ok
+test cell::erasure::tests::every_single_byte_wire_mutation_is_rejected_by_shape_or_pinned_recovery ... ok
+test cell::erasure::tests::exact_systematic_and_partial_shard_vectors_and_crs1_identity ... ok
+test cell::erasure::tests::full_four_mebibyte_chunk_recovers_with_two_missing_systematic_shards ... ok
+test cell::erasure::tests::insufficient_duplicate_and_reordered_shards_are_not_silently_reinterpreted ... ok
+test cell::erasure::tests::internal_context_object_and_chunk_pins_cannot_be_replaced_by_shard_headers ... ok
+test cell::erasure::tests::nonzero_padding_is_rejected_even_when_original_payload_hash_would_match ... ok
+test cell::erasure::tests::singular_matrix_is_an_error_and_does_not_claim_recovery ... ok
+test cell::erasure::tests::truncated_extra_oversized_and_hostile_headers_refuse_before_payload_copy ... ok
+test cell::model_root_tests::actual_direct_parent_roots_require_complete_matching_family_and_older_generation ... ok
+test cell::model_root_tests::independent_python_model_root_vector_and_every_truncated_prefix ... ok
+test cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root ... ok
+test cell::model_root_tests::router_omission_lineage_alias_and_changed_owner_context_are_refused ... ok
+test cell::network::availability::tests::absence_and_interrupted_io_do_not_quarantine_or_renew_the_original_budget ... ok
+test cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output ... ok
+test cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session ... ok
+test cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback ... ok
+test cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload ... ok
+test cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance ... ok
+test cell::network::availability::tests::malformed_inventory_padding_is_quarantined_and_oversize_page_never_dials ... ok
+test cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget ... ok
+test cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch ... ok
+test cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback ... ok
+test cell::network::budget_tests::chunk_deadline_expiry_does_not_quarantine_peer_but_invalid_bytes_do ... ok
+test cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget ... ok
+test cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock ... ok
+test cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff ... ok
+test cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest ... ok
+test cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits ... ok
+test cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes ... ok
+test cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline ... ok
+test cell::network::cancellation_tests::cancellation_keeps_partial_response_charge_without_retry_or_peer_quarantine ... ok
+test cell::network::cancellation_tests::cancellation_poll_timeouts_keep_original_partial_frame_and_request ... ok
+test cell::network::cancellation_tests::cancelled_budget_wait_preserves_unused_capacity_without_reviving_session ... ok
+test cell::network::cancellation_tests::observed_cancellation_remains_with_original_session_after_flag_reset ... ok
+test cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request ... ok
+test cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache ... ok
+test cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request ... ok
+test cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers ... ok
+test cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame ... ok
+test cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output ... ok
+test cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks ... ok
+test cell::network::persistent::rarest_tests::v3_invalid_local_inventory_range_and_v2_profile_cannot_dial ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance ... ok
+test cell::network::persistent::rarest_tests::v3_partial_inventory_drops_connection_without_implicit_frame_retry ... ok
+test cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections ... ok
+test cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk ... ok
+test cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload ... ok
+test cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes ... ok
+test cell::network::persistent::rarest_tests::v3_wrong_magic_or_noncanonical_inventory_quarantines_without_fallback ... ok
+test cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_new_dial ... ok
+test cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_reused_frame ... ok
+test cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame ... ok
+test cell::network::persistent::tests::interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allowances ... ok
+test cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache ... ok
+test cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame ... ok
+test cell::network::persistent::tests::old_response_magic_is_rejected_without_namespace_fallback_or_redial ... ok
+test cell::network::persistent::tests::original_cancellation_stops_waiting_pool_request_without_new_frame_or_dial ... ok
+test cell::network::persistent::tests::quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion ... ok
+test cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget ... ok
+test cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix ... ok
+test cell::network::persistent::tests::reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial ... ok
+test cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown ... ok
+test cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests ... ok
+test cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes ... ok
+test cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response ... ok
+test cell::network::persistent::tests::temporary_response_reservation_after_connection_wait_is_not_exhaustion ... ok
+test cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection ... ok
+test cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes ... ok
+test cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin ... ok
+test cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged ... ok
+test cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff ... ok
+test cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error ... ok
+test cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup ... ok
+test cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap ... ok
+test cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch ... ok
+test cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store ... ok
+test cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval ... ok
+test cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers ... ok
+test cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request ... ok
+test cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline ... ok
+test cell::network::serving::tests::ready_callback_requires_capacity_and_cannot_renew_or_ignore_cancellation ... ok
+test cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path ... ok
+test cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry ... ok
+test cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry ... ok
+test cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge ... ok
+test cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker ... ok
+test cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation ... ok
+test cell::pq::tests::cached_release_rechecks_current_retirement_rotation_scope_and_sequence ... ok
+test cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates ... ok
+test cell::pq::tests::selecting_old_content_requires_a_new_owner_approved_sequence ... ok
+test cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures ... ok
+test cell::pq::version::tests::cpv3_cached_publisher_observation_rechecks_current_owner_not_only_time ... ok
+test cell::pq::version::tests::cpv3_cannot_reuse_a_signature_for_same_files_with_other_dependency_edges ... ok
+test cell::pq::version::tests::cpv3_signs_complete_version_and_rejects_statement_signature_mutations ... ok
+test cell::pq::version::tests::cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback ... ok
+test cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix ... ok
+test cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries ... ok
+test cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection ... ok
+test cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget ... ok
+test cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload ... ok
+test cell::release::transport_tests::rarest::v3_release_closure_model_and_tensor_keep_one_pool_and_aggregate_inventory_budget ... ok
+test cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_frames_at_member_boundary_and_resume_is_explicit ... ok
+test cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_response_bytes_at_member_boundary ... ok
+test cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels ... ok
+test cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections ... ok
+test cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work ... ok
+test cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version ... ok
+test cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker ... ok
+test cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound ... ok
+test cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker ... ok
+test cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback ... ok
+test cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores ... ok
+test cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections ... ok
+test cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker ... ok
+test cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path ... ok
+test cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed ... ok
+test cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks ... ok
+test cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download ... ok
+test cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download ... ok
+test cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache ... ok
+test cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing ... ok
+test cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff ... ok
+test cell::residency::budget_task_tests::prefetch_deduplicates_exact_ram_needs_and_preserves_complete_transport_counts ... ok
+test cell::residency::budget_task_tests::prefetch_ram_capacity_refuses_after_metadata_before_any_payload_request ... ok
+test cell::residency::budget_task_tests::prefetch_readiness_does_not_refresh_connection_or_response_allowances ... ok
+test cell::residency::budget_task_tests::prefetch_reference_capacity_refuses_after_metadata_before_any_payload_request ... ok
+test cell::residency::budget_task_tests::task_cancellation_is_latched_and_does_not_promise_erasure_of_copied_public_bytes ... ok
+test cell::residency::budget_task_tests::task_cutoff_cannot_be_renewed_by_a_later_hot_lookup ... ok
+test cell::residency::budget_task_tests::task_lookup_rechecks_current_context_and_never_invokes_consumer_after_a_mismatch ... ok
+test cell::residency::budget_task_tests::task_working_set_enforces_all_aggregate_limits_and_nonzero_task_identity ... ok
+test cell::residency::budget_task_tests::task_working_set_is_complete_deduplicated_and_runs_with_no_disk_or_peer ... ok
+test cell::residency::budget_task_tests::task_working_set_refuses_missing_or_noncanonical_members_without_partial_readiness ... ok
+test cell::residency::tensor::tests::resident_correct_hash_invalid_later_tensor_file_returns_no_admission_or_selection_change ... ok
+test cell::residency::tensor::tests::resident_payload_reader_checks_cancellation_on_read_and_seek ... ok
+test cell::residency::tensor::tests::resident_tensor_admission_rejects_independent_pin_context_and_contract_transplants ... ok
+test cell::residency::tensor::tests::resident_tensor_cold_miss_and_wrong_selection_do_not_fetch_or_select ... ok
+test cell::residency::tensor::tests::resident_tensor_deadline_and_mid_admission_cancellation_preserve_residency_and_selection ... ok
+test cell::residency::tensor::tests::resident_tensor_views_preserve_unaligned_cross_chunk_elements_and_half_bits ... ok
+test cell::residency::tensor::tests::resident_tensors_admit_complete_real_containers_then_compute_without_disk_or_provider ... ok
+test cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes ... ok
+test cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges ... ok
+test cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes ... ok
+test cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal ... ok
+test cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection ... ok
+test cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets ... ok
+test cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes ... ok
+test cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection ... ok
+test cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets ... ok
+test cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes ... ok
+test cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin ... ok
+test cell::residency::tests::residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry ... ok
+test cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache ... ok
+test cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings ... ok
+test cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest ... ok
+test cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack ... ok
+test cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement ... ok
+test cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline ... ok
+test cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline ... ok
+test cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline ... ok
+test cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload ... ok
+test cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen ... ok
+test cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id ... ok
+test cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term ... ok
+test cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge ... ok
+test cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost ... ok
+test cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor ... ok
+test cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair ... ok
+test cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration ... ok
+test cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation ... ok
+test cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair ... ok
+test cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge ... ok
+test cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse ... ok
+test cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id ... ok
+test cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled ... ok
+test cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation ... ok
+test cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... 
+running 1 test
+test cell::retention::tests::retention_process_child ... ok
+test cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent ... ok
+test cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline ... ok
+test cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge ... ok
+test cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline ... ok
+test cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload ... ok
+test cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline ... ok
+test cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge ... ok
+test cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch ... ok
+test cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity ... ok
+test cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline ... ok
+test cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss ... ok
+test cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention ... ok
+test cell::retention::tests::retention_process_child ... ok
+test cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation ... ok
+test cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty ... ok
+test cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen ... ok
+test cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage ... ok
+test cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early ... ok
+test cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open ... ok
+test cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal ... ok
+test cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic ... ok
+test cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes ... ok
+test cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen ... ok
+test cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery ... ok
+test cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it ... ok
+test cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds ... ok
+test cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close ... ok
+test cell::tensor_tests::tensor_contract_and_model_wire_reject_downgrades_suffixes_and_source_transplants ... ok
+test cell::tensor_tests::tensor_contract_rejects_shape_overflow_dimension_rank_and_noncanonical_rosters ... ok
+test cell::tensor_tests::tensor_contract_requires_all_base_and_adapter_files_but_not_tokenizer_bytes ... ok
+test cell::tensor_tests::tensor_correct_hash_garbage_and_oversized_or_invalid_header_are_refused ... ok
+test cell::tensor_tests::tensor_duplicate_names_escaped_aliases_fields_and_metadata_are_refused ... ok
+test cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object ... ok
+test cell::tensor_tests::tensor_exact_roster_dtype_and_shape_cannot_be_replaced_by_equal_sized_data ... ok
+test cell::tensor_tests::tensor_offsets_reject_overlap_holes_trailing_and_wrong_element_bytes ... ok
+test cell::tensor_tests::tensor_real_file_all_supported_dtypes_scalar_and_metadata_hash_are_verified ... ok
+test cell::tensor_tests::tensor_streams_whole_payload_in_bounded_chunks_and_expired_calls_read_nothing ... ok
+test cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks ... ok
+test cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache ... ok
+test cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row ... ok
+test cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance ... ok
+test cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance ... ok
+test cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset ... ok
+test cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once ... ok
+test cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite ... ok
+test cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance ... ok
+test cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge ... ok
+test cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup ... ok
+test cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup ... ok
+test cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten ... ok
+test cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null ... ok
+test cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed ... ok
+test cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes ... ok
+test cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation ... ok
+test cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated ... ok
+test cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap ... ok
+test cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible ... ok
+test cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset ... ok
+test cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite ... ok
+test cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes ... ok
+test cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap ... ok
+test cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin ... ok
+test cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers ... ok
+test cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites ... ok
+test cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry ... ok
+test cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash ... ok
+test cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged ... ok
+test cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode ... ok
+test cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works ... ok
+test cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline ... ok
+test cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output ... ok
+test cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication ... ok
+test cell::tests::foreign_database_is_not_repurposed ... ok
+test cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication ... ok
+test cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes ... ok
+test cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair ... ok
+test cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes ... ok
+test cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation ... ok
+test cell::tests::release_manifest_requires_complete_context_bound_closure ... ok
+test cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads ... ok
+test cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin ... ok
+test cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback ... ok
+test cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed ... ok
+test cell::version::tests::aggregate_and_per_owner_limits_are_checked_before_payload_reads ... ok
+test cell::version::tests::complete_version_covers_exact_canonical_manifest_set ... ok
+test cell::version::tests::complete_version_matches_independent_python_framing_vector ... ok
+test cell::version::tests::complete_version_roundtrip_and_actual_model_environment_readback ... ok
+test cell::version::tests::environment_binding_requires_exact_declared_runtime_closure ... ok
+test cell::version::tests::full_version_rejects_missing_environment_payload_after_successful_readback ... ok
+test cell::version::tests::same_release_files_with_different_dependency_graph_change_complete_commitment ... ok
+test cell::version::tests::version_loader_scope_and_original_deadline_fail_closed ... ok
+test cell::version::tests::version_wire_is_bounded_and_has_no_legacy_or_trailing_fallback ... ok
+test tests::admission_is_atomic_replay_safe_and_bounded ... ok
+test tests::attestation_and_certificate_reject_foreign_committed_context ... ok
+test tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse ... ok
+test tests::attestation_manifest_is_stable_across_certificate_retention_and_repair ... ok
+test tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok
+test tests::durable_before_attest_survives_reopen_and_rejects_bad_signature ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::row_tamper_is_rejected_on_reopen ... ok
+test tests::schema_drift_and_sidecar_are_fail_closed_without_migration ... ok
+test tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens ... ok
+test tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed ... ok
+test tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder ... ok
+test tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy ... ok
+test tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed ... ok
+test tests::tamper_latches_unavailable_and_exact_repair_recovers ... ok
+test tests::typed_namespace_and_batch_derivation_are_deterministic ... ok
+test tests::under_quorum_and_signed_equivocation_are_distinct ... ok
+test tests::weighted_certificate_retrieval_retention_and_gc_close ... ok
+
+failures:
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence stdout ----
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence' (1342157) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1422:5:
+expired newer signed sequence resurrected an older provider: Ok([127.0.0.2:19001])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget stdout ----
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=373038 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=626332209 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=626346876 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=626391779
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794162084.976764722s) completed_wall=Some(1794162085.180862146s) elapsed_ns=204098443 expiry_seconds=1794162384 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: Some(11) })
+
+thread 'cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget' (1356770) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(WouldBlock) errno=Some(11)
+
+---- cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial stdout ----
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=1083594354 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=peer setup_elapsed_ns=1510180491 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=1961544185 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=1961563626 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=2371296836 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=2371349480 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=3910063033
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794162089.259534155s) completed_wall=Some(1794162089.460844005s) elapsed_ns=201310934 expiry_seconds=1794162389 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: Some(11) })
+
+thread 'cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial' (1356919) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(WouldBlock) errno=Some(11)
+
+---- cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication stdout ----
+cell_sequence phase=startup role=peer setup_elapsed_ns=1398427181 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=1398676703 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=1662435359 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=1662460149 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=2036872813 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=2036901291 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=2921856817
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794162092.519504948s) completed_wall=Some(1794162092.820165407s) elapsed_ns=300661632 expiry_seconds=1794162392 failure=Some(Failure { class: "io", kind: Some(UnexpectedEof), errno: None })
+
+thread 'cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication' (1357622) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(UnexpectedEof) errno=None
+
+---- cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint stdout ----
+cell_sequence phase=startup role=peer setup_elapsed_ns=1386640651 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=1386964841 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=1698854484 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=1698875685 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=2658664391 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=2658680915 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=3547005319
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794162096.381879353s) completed_wall=Some(1794162096.589896884s) elapsed_ns=208018778 expiry_seconds=1794162396 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: Some(11) })
+
+thread 'cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint' (1358079) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(WouldBlock) errno=Some(11)
+
+
+failures:
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence
+    cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget
+    cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial
+    cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication
+    cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint
+
+test result: FAILED. 463 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 642.28s
+

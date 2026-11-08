@@ -8021,3 +8021,15 @@ historical retention needs an explicit funded capacity horizon.
 The existing PN5 independent 72-hour WAN gate, original four-second service
 contract and separate thirty-second pressure campaign remain unchanged.
 All five operational storage qualifications remain **HOLD_NO_GO**.
+
+The first frozen authenticated-epoch attempt, `d4a0643a29ed1a35576a36d88189cadd28929c65`,
+completed all 19 commands with 17 passes and two failures: library runtime
+463 passed / 5 failed, and strict all-feature lint lacked the required optional
+OpenSSL 3.5 API. Source-before/source-after matched and the worktree stayed clean.
+Preserve its complete logs. A test-only successor makes the short-lease receipt
+premise observable without extending its 1s/2s/10s bounds; production guard
+bytes stay unchanged. Desktop normal-priority diagnostics still failed all four
+original early-announcement controls and one timing premise, while the other two
+new sequence controls passed. Those observations remain failures. Use a new
+source-bound Linux development run with persistent native-test storage, compiler
+1.95.0 and the verified pinned optional backend before claiming a complete pass.

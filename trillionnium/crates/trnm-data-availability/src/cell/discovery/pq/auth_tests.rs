@@ -5,7 +5,11 @@ use crate::cell::{
     serve_cells, CellCacheConfigV4, CellContextV1,
 };
 use sha2::{Digest, Sha256};
-use std::{fs, io::Write, sync::Arc};
+use std::{
+    fs,
+    io::Write,
+    sync::{Arc, Mutex},
+};
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use zeroize::Zeroizing;
 
@@ -906,6 +910,14 @@ impl SignedSource {
         Self::start_sequence(seed, vec![body; count], delay)
     }
     fn start_sequence(seed: u8, bodies: Vec<Vec<u8>>, delay: Duration) -> Self {
+        let count = bodies.len();
+        let mut bodies = bodies.into_iter();
+        Self::start_generated(seed, delay, count, move |_| bodies.next().unwrap())
+    }
+    fn start_generated<F>(seed: u8, delay: Duration, count: usize, mut response_body: F) -> Self
+    where
+        F: FnMut(&Query) -> Vec<u8> + Send + 'static,
+    {
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         listener.set_nonblocking(true).unwrap();
         let address = listener.local_addr().unwrap();
@@ -917,7 +929,7 @@ impl SignedSource {
             let overall = Instant::now() + Duration::from_secs(20);
             let mut nonces = Vec::new();
             while !shutdown.load(Ordering::Relaxed)
-                && nonces.len() < bodies.len()
+                && nonces.len() < count
                 && Instant::now() < overall
             {
                 match listener.accept() {
@@ -932,10 +944,11 @@ impl SignedSource {
                         if !delay.is_zero() {
                             thread::sleep(delay);
                         }
+                        let body = response_body(&query);
                         let wire = signed_response(
                             &query,
                             0,
-                            &bodies[nonces.len() - 1],
+                            &body,
                             wall_now().unwrap().as_secs(),
                             query.expires_at,
                             &key,
@@ -1328,48 +1341,69 @@ fn authenticated_v3_oversized_local_durations_are_typed_refusals_before_side_eff
 }
 
 fn expired_newest_sequence_case(newer_first: bool) {
-    epoch_now();
     let (provider_key, provider_pin) = key_and_pin(41);
     let provider_keys = CellPqKeyPinsV2::new(vec![provider_pin]).unwrap();
     let newer_endpoint: SocketAddr = "127.0.0.1:19001".parse().unwrap();
     let older_endpoint: SocketAddr = "127.0.0.2:19001".parse().unwrap();
-    let wall = wall_now().unwrap();
-    let fractional = wall - Duration::from_secs(wall.as_secs());
-    if fractional > Duration::from_millis(100) {
-        thread::sleep(Duration::from_secs(1) - fractional);
-    }
-    let now = wall_now().unwrap().as_secs();
+    let now = epoch_now();
     let request = request([22; 32], now);
-    let newer = CellProviderRecordV3::sign(
-        CellProviderStatementV3 {
-            request,
-            owner: provider_key.public_key_id(),
-            owner_generation: 1,
-            endpoint: newer_endpoint,
-            sequence: 2,
-            issued_unix_seconds: now,
-            expires_unix_seconds: now + 1,
-            withdrawn: false,
-        },
-        &provider_key,
-    )
-    .unwrap();
     let older = record(request, older_endpoint, 1, now, &provider_key, false);
-    let mut newer_body = vec![1];
-    newer_body.extend(newer.encode());
     let mut older_body = vec![1];
     older_body.extend(older.encode());
-    let (first_body, second_body) = if newer_first {
-        (newer_body, older_body)
+    let newer_expiry = Arc::new(AtomicU64::new(0));
+    let response_expiry = Arc::clone(&newer_expiry);
+    // Create the one-second lease only once the actual query is read. All
+    // bootstrap key generation, listener setup and directory opening precede
+    // that point; their cost must not consume the receipt-time precondition.
+    let newer_source = SignedSource::start_generated(42, Duration::ZERO, 1, move |query| {
+        assert_eq!(query.request, request);
+        let wall = wall_now().unwrap();
+        let fractional = wall - Duration::from_secs(wall.as_secs());
+        if fractional > Duration::from_millis(100) {
+            thread::sleep(Duration::from_secs(1) - fractional);
+        }
+        let now = wall_now().unwrap().as_secs();
+        let newer = CellProviderRecordV3::sign(
+            CellProviderStatementV3 {
+                request,
+                owner: provider_key.public_key_id(),
+                owner_generation: 1,
+                endpoint: newer_endpoint,
+                sequence: 2,
+                issued_unix_seconds: now,
+                expires_unix_seconds: now + 1,
+                withdrawn: false,
+            },
+            &provider_key,
+        )
+        .unwrap();
+        response_expiry.store(newer.statement().expires_unix_seconds, Ordering::Release);
+        let mut body = vec![1];
+        body.extend(newer.encode());
+        body
+    });
+    let older_source = SignedSource::start(43, older_body, Duration::ZERO, 1);
+    let (first, second) = if newer_first {
+        (newer_source, older_source)
     } else {
-        (older_body, newer_body)
+        (older_source, newer_source)
     };
-    let first = SignedSource::start(42, first_body, Duration::ZERO, 1);
-    let second = SignedSource::start(43, second_body, Duration::ZERO, 1);
-    // Both advertisements were received while the newer one was live. The
-    // third source expires that lease before fair admission starts, within its
-    // original two-second request and the operation's ten-second deadline.
-    let slow = SignedSource::start(44, vec![0], Duration::from_millis(1_200), 1);
+    let third_query_time = Arc::new(Mutex::new(None));
+    let observed_query_time = Arc::clone(&third_query_time);
+    let expiry_to_wait_for = Arc::clone(&newer_expiry);
+    let slow = SignedSource::start_generated(44, Duration::ZERO, 1, move |_| {
+        let observed = wall_now().unwrap();
+        let expires = expiry_to_wait_for.load(Ordering::Acquire);
+        *observed_query_time.lock().unwrap() = Some((observed, expires));
+        // The client queries sources serially. Seeing this query before expiry
+        // proves both earlier complete authenticated replies reached it while
+        // the newer record was live. Reply only after that exact expiry, within
+        // the unchanged two-second request and ten-second overall deadlines.
+        if let Some(remaining) = Duration::from_secs(expires).checked_sub(observed) {
+            thread::sleep(remaining);
+        }
+        vec![0]
+    });
     let options = CellDiscoveryOptionsV3 {
         request,
         bootstraps: vec![first.bootstrap, second.bootstrap, slow.bootstrap],
@@ -1408,6 +1442,16 @@ fn expired_newest_sequence_case(newer_first: bool) {
     };
     let mut observation = CellDiscoveryObservationV3::default();
     let result = discover(&directory, &options, &transport, &mut observation);
+    let expiry = newer_expiry.load(Ordering::Acquire);
+    let third_query_time = *third_query_time.lock().unwrap();
+    eprintln!(
+        "authenticated-v3 sequence fixture: newer_first={newer_first}, newer_expiry={expiry}, third_query={third_query_time:?}, observation={observation:?}, result={:?}",
+        result.as_ref().map(|(peers, _)| peers)
+    );
+    assert!(
+        matches!(third_query_time, Some((observed, expires)) if expires != 0 && expires == expiry && observed < Duration::from_secs(expires)),
+        "fixture did not receive both earlier authenticated replies before the newer lease expired: expiry={expiry}, third_query={third_query_time:?}"
+    );
     assert_eq!(observation.connection_attempts, 3);
     assert_eq!(observation.bootstrap_validation_attempts, 3);
     assert_eq!(observation.record_validation_attempts, 2);
@@ -1415,7 +1459,7 @@ fn expired_newest_sequence_case(newer_first: bool) {
     assert_eq!(observation.received_response_bytes, bytes);
     assert_eq!(responses.received().unwrap(), bytes);
     assert_eq!(attempts.load(Ordering::Relaxed), 0);
-    assert!(wall_now().unwrap().as_secs() >= newer.statement().expires_unix_seconds);
+    assert!(wall_now().unwrap().as_secs() >= expiry);
     assert_eq!(first.finish().len(), 1);
     assert_eq!(second.finish().len(), 1);
     assert_eq!(slow.finish().len(), 1);
