@@ -1,0 +1,68 @@
+
+running 9 tests
+test pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature ... FAILED
+test pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed ... ok
+test pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature ... FAILED
+test pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature ... FAILED
+test pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math ... FAILED
+test pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math ... FAILED
+test pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math ... FAILED
+test pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature ... ok
+test pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state ... ok
+
+failures:
+
+---- pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature stdout ----
+
+thread 'pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature' (3395090) panicked at crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs:77:5:
+assertion `left == right` failed
+  left: Err(SignatureRejected)
+ right: Err(InvalidKey)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature stdout ----
+
+thread 'pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature' (3395134) panicked at crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs:77:5:
+assertion `left == right` failed
+  left: Err(SignatureRejected)
+ right: Err(DuplicateSigner)
+
+---- pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature stdout ----
+
+thread 'pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature' (3395138) panicked at crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs:77:5:
+assertion `left == right` failed
+  left: Err(SignatureRejected)
+ right: Err(UnknownSigner)
+
+---- pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math stdout ----
+
+thread 'pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math' (3395159) panicked at crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs:89:5:
+assertion `left == right` failed
+  left: Err(SignatureRejected)
+ right: Err(InsufficientSignatures)
+
+---- pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math stdout ----
+
+thread 'pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math' (3395163) panicked at crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs:89:5:
+assertion `left == right` failed
+  left: Err(SignatureRejected)
+ right: Err(DuplicateSigner)
+
+---- pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math stdout ----
+
+thread 'pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math' (3395316) panicked at crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs:89:5:
+assertion `left == right` failed
+  left: Err(SignatureRejected)
+ right: Err(UnknownSigner)
+
+
+failures:
+    pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature
+    pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature
+    pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature
+    pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math
+    pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math
+    pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math
+
+test result: FAILED. 3 passed; 6 failed; 0 ignored; 0 measured; 43 filtered out; finished in 8.67s
+

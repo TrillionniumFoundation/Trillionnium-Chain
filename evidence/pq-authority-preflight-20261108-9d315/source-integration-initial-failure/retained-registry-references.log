@@ -1,0 +1,76 @@
+.github/workflows/pon-pq-system-continuation.yml:10:      - config/pon/pq-initial-root-material-required-tests-v1.json
+.github/workflows/pon-pq-system-continuation.yml:173:          python3 - config/pon/pq-initial-root-material-required-tests-v1.json "$out" <<'PY'
+.github/workflows/pon-pq-system-continuation.yml:180:          counts = {"original_release": 37, "initial_root_material": 6,
+.github/workflows/pon-pq-system-continuation.yml:181:                    "quorum_preflight": 9, "complete_release": 52}
+.github/workflows/pon-pq-system-continuation.yml:183:                  or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
+.github/workflows/pon-pq-system-continuation.yml:203:          groups = ("original_release", "initial_root_material", "quorum_preflight")
+.github/workflows/pon-pq-system-continuation.yml:206:                  or sets["complete_release"] != set().union(*(sets[group] for group in groups))):
+.github/workflows/pon-pq-system-continuation.yml:212:          if (len(names) != 52 or len(set(names)) != 52 or set(names) != sets["complete_release"]
+.github/workflows/pon-pq-system-continuation.yml:215:          prefixes = {"original_release": "original-release", "initial_root_material": "initial-root",
+scripts/run_llm_cell_native_handoff.py:267:                complete_release = args.output / "consumer-release.tcr1"
+scripts/run_llm_cell_native_handoff.py:270:                    "--peers", address, "--output", str(complete_release),
+scripts/run_llm_cell_native_handoff.py:276:                    complete_release = Path(plan.host["dependency_closure"]["path"])
+scripts/run_llm_cell_native_handoff.py:283:                        "--peers", address, "--output", str(complete_release),
+scripts/run_llm_cell_native_handoff.py:306:                        or sha(complete_release) != expected_marker_sha):
+scripts/run_llm_cell_native_handoff.py:313:                evidence["release"]["completion_file"] = str(complete_release)
+scripts/llm_runtime_assessment.py:319:                complete_economic_cost=False, complete_release_evaluation=False,
+scripts/test_llm_runtime_assessment.py:120:        self.assertFalse(result['complete_release_evaluation'])
+scripts/test_llm_runtime_assessment.py:313:                      'complete_release_evaluation', *runtime.QUALIFICATIONS):
+scripts/llm_runtime_trial_ledger.py:611:                complete_economic_cost=False, complete_release_evaluation=False,
+scripts/ci/test_ci_contract.py:657:            names = self.manifest['complete_release_tests']
+scripts/ci/test_ci_contract.py:680:        self.assertEqual(result['groups'], {'original_release': 37, 'initial_root_material': 6,
+scripts/ci/test_ci_contract.py:682:        self.assertEqual(result['complete_release'], 52)
+scripts/ci/test_ci_contract.py:692:                    index = value['complete_release_tests'].index(name)
+scripts/ci/test_ci_contract.py:693:                    value['complete_release_tests'][index] = name + '_renamed'
+scripts/ci/test_ci_contract.py:694:                    value['complete_release_tests'].sort()
+scripts/ci/test_ci_contract.py:699:            lambda v: v['expected_controls'].__setitem__('complete_release', 43),
+scripts/ci/test_ci_contract.py:700:            lambda v: v['expected_controls'].__setitem__('complete_release', 52.0),
+scripts/ci/test_ci_contract.py:703:            lambda v: v['complete_release_tests'].pop(),
+scripts/ci/test_ci_contract.py:704:            lambda v: v['complete_release_tests'].__setitem__(0, v['complete_release_tests'][1]),
+scripts/ci/test_ci_contract.py:705:            lambda v: v['complete_release_tests'].__setitem__(0, 'unreviewed::test'),
+scripts/ci/test_ci_contract.py:725:            ('set(names) != sets["complete_release"]', 'not sets["complete_release"].issubset(set(names))'),
+scripts/ci/test_ci_contract.py:767:        self.assertEqual({name for _, name in rows}, set(self.manifest['complete_release_tests']))
+scripts/ci/test_ci_contract.py:770:        names = self.manifest['complete_release_tests']
+scripts/ci/test_ci_contract.py:852:                self.assertEqual({name for _, name in calls}, set(self.manifest['complete_release_tests']))
+scripts/ci/check_pq_research_integration.py:482:    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs",
+scripts/ci/check_pq_research_integration.py:483:    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+scripts/ci/check_pq_research_integration.py:484:    "config/pon/pq-initial-root-material-required-tests-v1.json",
+scripts/ci/test_run_from_zero_native.py:1318:        self.assertEqual(set(metrics), {'confirmation', 'complete_release_download',
+config/pon/pq-cross-branch-corpus-v1.json:160:    "config/pon/pq-initial-root-material-required-tests-v1.json": "36b7b80f4bb2c02d7b7070cb30a41c69eb4235a9",
+config/pon/pq-cross-branch-corpus-v1.json:826:    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs": "d1e812ca5cb0df07e51233005cfd503daeb67e4a",
+config/pon/pq-cross-branch-corpus-v1.json:827:    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs": "6ba9115a5a5f40273d039404150165a51dd55eec",
+config/pon/pq-cross-branch-corpus-v1.json:888:    "config/pon/pq-initial-root-material-required-tests-v1.json",
+config/pon/pq-cross-branch-corpus-v1.json:1473:    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs",
+config/pon/pq-cross-branch-corpus-v1.json:1474:    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+scripts/ci/run_from_zero_native.py:1217:               for name, unit in (('complete_release_download', 'verified-release-bytes/second'),
+config/pon/pq-initial-root-material-required-tests-v1.json:3:  "complete_release_tests": [
+config/pon/pq-initial-root-material-required-tests-v1.json:22:    "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+config/pon/pq-initial-root-material-required-tests-v1.json:23:    "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+config/pon/pq-initial-root-material-required-tests-v1.json:24:    "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+config/pon/pq-initial-root-material-required-tests-v1.json:25:    "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+config/pon/pq-initial-root-material-required-tests-v1.json:26:    "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+config/pon/pq-initial-root-material-required-tests-v1.json:27:    "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement",
+config/pon/pq-initial-root-material-required-tests-v1.json:59:    "complete_release": 52,
+config/pon/pq-initial-root-material-required-tests-v1.json:60:    "initial_root_material": 6,
+config/pon/pq-initial-root-material-required-tests-v1.json:65:  "initial_root_material_tests": [
+config/pon/pq-initial-root-material-required-tests-v1.json:66:    "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+config/pon/pq-initial-root-material-required-tests-v1.json:67:    "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+config/pon/pq-initial-root-material-required-tests-v1.json:68:    "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+config/pon/pq-initial-root-material-required-tests-v1.json:69:    "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+config/pon/pq-initial-root-material-required-tests-v1.json:70:    "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+config/pon/pq-initial-root-material-required-tests-v1.json:71:    "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement"
+config/pon/pq-initial-root-material-required-tests-v1.json:126:  "schema": "trnm-pq-initial-root-material-required-tests-v1",
+scripts/ci/check_ci_contract.py:361:PQ_RELEASE_MANIFEST = 'config/pon/pq-initial-root-material-required-tests-v1.json'
+scripts/ci/check_ci_contract.py:368:    'initial_root_material': (6, 'fc24ff07491d3a6a7fe8712e60ea148796e545ac624e3b3612699c6bc96289bb'),
+scripts/ci/check_ci_contract.py:410:          python3 - config/pon/pq-initial-root-material-required-tests-v1.json "$out" <<'PY'
+scripts/ci/check_ci_contract.py:417:          counts = {"original_release": 37, "initial_root_material": 6,
+scripts/ci/check_ci_contract.py:418:                    "quorum_preflight": 9, "complete_release": 52}
+scripts/ci/check_ci_contract.py:420:                  or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
+scripts/ci/check_ci_contract.py:440:          groups = ("original_release", "initial_root_material", "quorum_preflight")
+scripts/ci/check_ci_contract.py:443:                  or sets["complete_release"] != set().union(*(sets[group] for group in groups))):
+scripts/ci/check_ci_contract.py:449:          if (len(names) != 52 or len(set(names)) != 52 or set(names) != sets["complete_release"]
+scripts/ci/check_ci_contract.py:452:          prefixes = {"original_release": "original-release", "initial_root_material": "initial-root",
+scripts/ci/check_ci_contract.py:716:    counts['complete_release'] = 52
+scripts/ci/check_ci_contract.py:718:            and manifest.get('schema') == 'trnm-pq-initial-root-material-required-tests-v1'
+scripts/ci/check_ci_contract.py:739:    complete = manifest.get('complete_release_tests')
+scripts/ci/check_ci_contract.py:777:    return {'complete_release': 52, 'groups': {group: count for group, (count, _) in PQ_RELEASE_GROUPS.items()},
