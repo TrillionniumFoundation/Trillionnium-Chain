@@ -1,0 +1,29 @@
+{
+  "all_archive_members_read_back": true,
+  "archive": {
+    "bytes": 778711,
+    "file": "initial-ci-failures-5633.tar.gz",
+    "sha256": "b1b10bfc99b6b86aaf7b6cdeaf8b34e7eaca915d8307ceee61aee7cb10e4cee2"
+  },
+  "archive_member_count": 71,
+  "checked_utc": "2026-11-08T21:04:04.618389+00:00",
+  "complete_provider_zips_retained_in_scratch": [
+    "artifact-13631389269.zip",
+    "artifact-13631524092.zip",
+    "artifact-13632246727.zip",
+    "artifact-13632252318.zip"
+  ],
+  "deterministic_rebuild_equal": true,
+  "full_artifact_archives_republished": false,
+  "manifest": {
+    "bytes": 16334,
+    "file": "initial-ci-failures-5633.manifest.json",
+    "sha256": "319d6829548ba571f59d7988eb8e0fbf23bf235b46936b326aefc8a8b709f98f"
+  },
+  "native_commands_executed": false,
+  "selected_members_only": true,
+  "source_bytes": 4855396,
+  "source_file_bytes_and_identities_equal_after": true,
+  "source_file_count": 70,
+  "status": "VERIFIED_DETERMINISTIC_SELECTED_PACKET"
+}

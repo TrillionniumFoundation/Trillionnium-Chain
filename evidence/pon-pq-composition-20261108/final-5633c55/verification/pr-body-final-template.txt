@@ -1,0 +1,89 @@
+## Purpose and source identity
+
+**Draft #822 remains HOLD / unqualified for whole-chain PQ, PQ128, production activation and FinalUse.**
+
+This continuation of #812 composes fixed #799, #800, #801, #803, #798 and #806 heads as real Git merge ancestors. Their combined authority, byte-binding and proof-accounting behavior requires one auditable source identity.
+
+- **Executed runtime:** `5633c55219c01c689f670c2ca35d122e39f3f791`, tree `3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c`.
+- **Publication head:** `{{PUBLICATION_HEAD}}`, a subsequent metadata-only documentation/evidence update; original native observations remain bound to the runtime above.
+- **Fixed base:** #812 at `7e044b65454f4c9ea505591727332acffb33e7e5`.
+
+Publication checks must establish unchanged runtime/proof bytes; earlier binaries do not become native tests of the publication commit. Concurrent root V2 work and #807 remain outside this candidate.
+
+## Changes
+
+- Verify complete TCM2 pins and CCH1 commitments over actual cached payload bytes. The same buffers feed staged output and SHA-512 observation. Budgets include EOF and failed-read charges; reservation precedes output creation. Preserve the absolute deadline and no-replace publication. This grants no installation/currentness or FinalUse qualification.
+- Add full-frame and padded-block-equivalent accounting to the actual P3 pruned mixed-height MMCS audit example and an independent reader, covering repeated calls, cached prefixes, witness rechecks and artificial oracle overrides.
+- Retain early classical-owner rejection, authenticated loader-byte controls, M12 recovery fencing, fixed-seal RISC Zero replay, the authority/effect register and bounded dual-family root policy model.
+- Rebind reviewed records to Git blobs without dropping paths, trace spans, unknown budgets or false qualification flags. Repair composed CI sequence expectations and add omission, order and refusal controls.
+
+## Original frozen-runtime results
+
+These observations belong to runtime `5633...`. Campaigns, feature variants, diagnostics, parent controls and internal child cases are not summed into a full-suite pass total.
+
+| Scope | Observed result and limit |
+| --- | --- |
+| Source/model/refusal checks | 26 commands passed, including 603 unittest cases; raw source and runner identity matched before/after |
+| P3 MMCS example | 18 native tests, strict Clippy, format, dependency-source and independent-reader checks passed |
+| Classical-owner guards | 4 green controls; 2 intended guard-removal directory-snapshot assertion failures; source restored |
+| Separate SQLite component | 13 library tests, 2 finite parent controls and 14 internal child cases passed; actual layout cfg and v3 fence checked |
+| DA default full library | **412 passed, 3 failed, 0 ignored**; all 16 new cached-materialization controls passed; strict all-target/all-feature Clippy passed |
+| Node default full library | **Incomplete:** its 1,298-name roster has 792 passed, 2 failed and 24 ignored terminal outer records; **480 names lack a terminal record** |
+| Remaining original build gates | Node Clippy, recovery/settlement/release, the provider-pinned PQ Node variant and workspace Clippy were blocked before build |
+
+The parent ended `FAILED_OR_BLOCKED`: six unsuccessful/blocked gates, raw source unchanged. Node was aborted at the fixed **8 GiB free-disk threshold**: exit `-15`, 2,820.53 seconds, `timed_out=false`. The first unfinished control was the nonignored 65,536-key continuity test. All 818 terminal records are preserved; the summary's zero aggregate counts reflect no final harness receipt. Interruption and ignored status are not passes.
+
+The runner required the wrong prefix, `release_owner::execution_environment_tests::`. The actual prefix is `release_owner::execution_environment::tests::`; its six cases passed in the partial log. The inventory error, original refusal, runner and summary remain preserved.
+
+Locked default/all-feature/fuzz metadata and provider/source readbacks completed; the blocked builds did not execute.
+
+## Separate diagnostics
+
+All three DA failures reproduced once on the original ELF. Unmerged test-only child `f0e8dc919f10a5f1e7debca544aed9d14e75d96d` moves client database preparation before occupying bounded server workers; two other edits add diagnostics. Timeouts, retry count, budgets and overload assertions remain unchanged. After comparing the full 415-name roster, three exact cases each passed once. This does not replace **412/3**, establish all causes or constitute a full 415-test run. The child is excluded from the published runtime.
+
+The child's original launch/cancellation remain unknown. Authorized recovery reused the fixed output and exclusive create-only intent, admitting at most one native contender under reviewed same-host/filesystem assumptions. Recovery success does not prove the old unknown job terminated.
+
+Node's two failures concern M15 real-clock expiry and M12 transaction-head change after witness read. Each passed once in an original-ELF diagnostic (`1 passed / 1297 filtered out`): **not reproduced in those observations; original causes unresolved**. ELF, 12 critical source pins, HEAD/tree and clean state matched before/after. Unrecorded Cargo-injected environment values remain unknown.
+
+## Cryptographic and environment interpretation
+
+The P3 ledger has **76 records: 52 native cached-prefix and 24 artificial-oracle records**. Independent recomputation gives 31,608 framed bytes and **492 full-message padded absorption equivalents**: 336 native (208 prefix + 128 continuation) and 156 artificial. These length-based units are not measured Keccak permutations or an adversary lifetime budget. Counts cover emitted ledgers and successful witness rechecks. Full W1 generation and the complete historical runner were not rerun. The historical unchanged-runtime gate refuses this integrated runtime; its original assertion is intact.
+
+Earlier owner/full-native binaries retained an unqualified SQLite private-ABI layout warning. A separate corrected-loader component run observes `trnm_sqlite_layout_witness` and `sqlite-3.51.3-normal-native-linux-layout-v3` in actual build output before/after controls. This does not qualify earlier binaries, Node AuthenticatedV1, full W1 capacity or the full held-FD bridge. Toolchain hashes were measured initially, not again afterward.
+
+## Additional bounded continuation
+
+{{CONTINUATION_RESULTS}}
+
+Continuation scopes retain separate commands, identities, rosters and limits. They do not replace original failures/interruption, resolve unobserved causes or finish Node's 1,298-test suite.
+
+## Initial Draft GitHub CI observations
+
+The first returned page for executed `5633...` contained 21 PR-triggered workflows: 12 successes, six failures and three in progress. This is a snapshot of the first page, not a complete CI inventory or green result. The execution packet retains all six failed-run listings, ten failed-job decoded logs and original connector responses, and verified selected artifact members with source ZIP identities. Complete artifact ZIPs are not republished; head/prospective-merge lanes remain distinct.
+
+| Failed workflow | Actual refusal or failed goal |
+| --- | --- |
+| [QROM implementation](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220496) | Verifier source exceeds its pinned 9,233-byte reader bound; actual source is 11,172 bytes. This is a source-reader/pin mismatch, not a cryptographic bit bound. |
+| [QROM closure](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220415) | `store.rs` source identity differs from the old `w1_lifetime_ledger.py` research pin in both lanes; this is separate from `pq_lifetime_budget.py`. |
+| [Transparent W1 controls](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220353) | 58 controls report true, then the gate rejects process schema `TRNM-W1-STAGE-MEASUREMENT3` because it expects version 2. The workflow is failed. |
+| [Original native campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220381) | Three prescribed processes exit 101 at finite criteria; every report has phases that fail to confirm all signed rounds within the window. |
+| [W1 work security](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220377) | The original process's exit 0 fails its outer finite-confirmation goal; the fresh case exits 101 at its four-second/six-deep assertion. Pressure reports have zero confirmations and request-deadline refusals. |
+| [CodeQL export](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220346) | The exact-source analyses/check-stability wait reaches its deadline; this is not a vulnerability finding or successful export. |
+
+Research pins, reader limits and schema contracts remain unchanged here. Their compatibility with the composed source is open. Native confirmation failures remain business-gate failures with unresolved deeper causes; they are not relabeled as environmental refusals. Hosted runs are not added to the desktop test counts, and no workflow was rerun or canceled for this readback.
+
+## Publication source checks and receipts
+
+The 151-control publication source gate is separate from native execution:
+
+{{PUBLICATION_SOURCE_RESULTS}}
+
+Post-commit raw receipt: [publication source receipt]({{PUBLICATION_RECEIPT_URL}}).
+
+The [execution packet](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/{{PUBLICATION_HEAD}}/evidence/pon-pq-composition-20261108/README.md) links raw manifests, incomplete/ignored rosters, failures, diagnostics and initial Draft readback. The sole plan is `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`; scope is in `docs/security/PQ_COMPOSITION_20261108.md`.
+
+## Remaining gates
+
+Complete native coverage and failure causes remain open. The unmerged DA child and unapplied M12 fixture draft confer no production fix; later scopes do not rewrite original blocked observations.
+
+Quantum extraction, state restoration/RBR, shared-oracle/Fiat-Shamir composition, recursion, lifetime adversary budgets, root/recovery signatures and custody/currentness, authority-to-effect and actual-loaded-byte closure, and the quantum work/consensus/network model remain unqualified. No whole-chain security-bit or failure bound is asserted; **whole-chain PQ, PQ128, production activation and FinalUse remain HOLD**.

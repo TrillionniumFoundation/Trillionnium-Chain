@@ -1,0 +1,89 @@
+{
+  "external_human_security_certification": false,
+  "github_review_approval": false,
+  "production_activation": false,
+  "reviews": [
+    {
+      "body_sha256": "7a779294355e83097013b8204d7d8bc35b2b79132c3de91a80e35a9df2bd4b58",
+      "native_execution_by_review": false,
+      "publisher_sha256": "7d1866f623303f5efe3fa831b4408da7fba5d7c6c40fc62c11100acd35b59866",
+      "result": "no concrete blocker under explicit PYTHONOPTIMIZE=0 and disabled prompts",
+      "reviewer": "parallel agent pq_content",
+      "scope": "initial Draft publisher and body"
+    },
+    {
+      "plan_sha256": "4eac318c6abf25b5dbc5cdf0509ce70583042e5f131a7090a15d82e9feac9c58",
+      "readme_snapshot_sha256": "a12a8331f065de30d54b0ca45ac3ee7c3cbf746e92647fc5752d1748719b8ba2",
+      "reviewer": "parallel agent pq_content",
+      "scope": "frozen evidence prose and raw numerical reconciliation",
+      "scope_note": "Later continuation additions require their own receipts; staging-only absent links were excluded from this review.",
+      "security_doc_sha256": "366b6102e1241f44dfcd404ab6c000b6b205b256fea60a2449e614c5a180f332",
+      "verified_counts": {
+        "node_missing": 480,
+        "node_partial_failed": 2,
+        "node_partial_ignored": 24,
+        "node_partial_passed": 792,
+        "p3_framed_bytes": 31608,
+        "p3_full_message_equivalents": 492,
+        "p3_ledger_records": 76,
+        "source_cases": 603
+      }
+    },
+    {
+      "executed_by_review": false,
+      "final_runner_sha256": "3fe2609803f69db1a133b66966466f0624442248ab0f3d2973e29e1839d8f076",
+      "pre_execution_findings_closed": [
+        "Require exact suite counts 58,43,50 and total151",
+        "Preserve prior raw evidence Git blobs and modes; only existing README contents may change",
+        "Do not assert preserved-failure status before its scope checks complete"
+      ],
+      "result": "no remaining concrete blocker after readonly re-review",
+      "reviewer": "parallel agent pq_proof_research",
+      "scope": "publication metadata-only verifier before first execution"
+    },
+    {
+      "executed_by_review": false,
+      "final_runner_sha256": "db72dbdb71b06f4bd6e11f4f6d2180821d026ece168d45e652428adf2f25c71a",
+      "pre_execution_findings_closed": [
+        "Verify exact 13 names, 151 counts and all 41 raw check files before candidate push",
+        "Recheck frozen data-publisher bytes immediately before execution",
+        "Place final Draft-body observation immediately before update and disclose non-atomic concurrency boundary"
+      ],
+      "result": "no remaining concrete blocker after readonly re-review and exact inverse-diff check",
+      "reviewer": "parallel agent pq_proof_research",
+      "scope": "final native metadata publisher before first execution"
+    },
+    {
+      "executed_by_review": false,
+      "final_runner_sha256": "bcbc880451fe0625257ca472ae174e3b1063c3fd4462463caf189b99331420be",
+      "result": "no concrete blocker after complete readonly review; importer does not push or run native tests",
+      "reviewer": "parallel agent pq_authority",
+      "scope": "metadata-only bundle importer before first execution"
+    },
+    {
+      "executed_by_review": false,
+      "final_runner_sha256": "0a315ddb827a5b47c76915293cef85c6fc15ba7fb6cc8359cfddf911f6bc6f23",
+      "pre_execution_findings_closed": [
+        "Freeze one summary byte sequence for validation and publication",
+        "Check raw logs and receipts against frozen command records",
+        "Bind committed publisher payload to executed runner bytes"
+      ],
+      "result": "no remaining concrete blocker after readonly re-review",
+      "reviewer": "parallel agent pq_content",
+      "scope": "separate post-commit source-receipt publisher before first execution"
+    },
+    {
+      "Y_source_tests_still_expected_not_executed_at_this_review": true,
+      "native_execution_by_review": false,
+      "result": "no numerical or qualification blocker after comparison to frozen raw readbacks",
+      "reviewer": "parallel agent pq_proof_research",
+      "root_applied_wording_clarifications": [
+        "Preserved dynamic libraries are in the original retained primary target",
+        "Old w1_lifetime_ledger.py CI pin is distinct from pq_lifetime_budget.py"
+      ],
+      "scope": "final execution, blocked continuation, resource cleanup and initial hosted CI failure prose"
+    }
+  ],
+  "schema": "trnm-composition-internal-readonly-reviews-v1",
+  "whole_chain_pq_qualified": false
+}

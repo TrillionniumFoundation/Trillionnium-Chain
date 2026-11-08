@@ -1,0 +1,467 @@
+{
+  "completed_unique_outer_records": 818,
+  "failed_names": [
+    "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+    "store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor"
+  ],
+  "finalized_counts_interpretation": "The original runner only counts finished harness receipts; its zero counts do not erase the 818 retained outer records.",
+  "full_suite_complete": false,
+  "groups": {
+    "classical_owner_effect_controls": {
+      "actual_compiled_prefix": "store::pq_owner_rejection_tests::",
+      "counts": {
+        "failed": 0,
+        "ignored": 0,
+        "passed": 0
+      },
+      "missing_result_count": 4,
+      "roster_count": 4,
+      "tests": {
+        "store::pq_owner_rejection_tests::classical_mining_owner_with_signed_catalog_still_opens": {
+          "outcome": "no_terminal_record"
+        },
+        "store::pq_owner_rejection_tests::classical_task_owner_with_signed_catalog_still_opens": {
+          "outcome": "no_terminal_record"
+        },
+        "store::pq_owner_rejection_tests::pq_account_rejects_classical_mining_owner_before_any_durable_effect": {
+          "outcome": "no_terminal_record"
+        },
+        "store::pq_owner_rejection_tests::pq_account_rejects_classical_task_owner_before_any_durable_effect": {
+          "outcome": "no_terminal_record"
+        }
+      }
+    },
+    "loaded_material_continuous": {
+      "actual_compiled_prefix": "operator_continuous_policy::tests::loaded_material_",
+      "counts": {
+        "failed": 0,
+        "ignored": 0,
+        "passed": 2
+      },
+      "missing_result_count": 0,
+      "roster_count": 2,
+      "tests": {
+        "operator_continuous_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "operator_continuous_policy::tests::loaded_material_refuses_wrong_digest_limit_cancellation_and_path_replacement": {
+          "detail": "ok",
+          "outcome": "passed"
+        }
+      }
+    },
+    "loaded_material_mining": {
+      "actual_compiled_prefix": "operator_mining_policy::tests::loaded_material_",
+      "counts": {
+        "failed": 0,
+        "ignored": 0,
+        "passed": 2
+      },
+      "missing_result_count": 0,
+      "roster_count": 2,
+      "tests": {
+        "operator_mining_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "operator_mining_policy::tests::loaded_material_refuses_wrong_digest_limit_cancellation_and_path_replacement": {
+          "detail": "ok",
+          "outcome": "passed"
+        }
+      }
+    },
+    "m12_recovery": {
+      "actual_compiled_prefix": "store::async_w1_generation_v2::tests::recovery_v3::",
+      "counts": {
+        "failed": 1,
+        "ignored": 0,
+        "passed": 12
+      },
+      "missing_result_count": 0,
+      "roster_count": 13,
+      "tests": {
+        "store::async_w1_generation_v2::tests::recovery_v3::authenticated_cas_cannot_extend_original_generation_deadline": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::error_after_actual_local_commit_quarantines_without_signing_that_successor": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::full_local_backup_restore_refuses_dispatch_against_retained_signed_witness": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::independent_pin_authority_generation_and_random_journal_cannot_be_rebound": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::independent_service_reopen_pin_rejects_restored_witness_database": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::local_commit_without_external_commit_remains_quarantined_on_cold_reopen": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::lost_or_corrupt_cas_ack_recovers_same_operation_pending_without_redispatch": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::lost_settlement_ack_retains_exact_wire_and_never_generates_a_replacement_operation": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::record_limit_refuses_unbounded_journal_before_database_creation": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::reorg_unknown_and_cancel_preserve_operation_cap_and_do_not_dispatch_or_pay": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::restored_journal_count_and_blob_limits_refuse_before_witness_or_effect": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor": {
+          "detail": "failed",
+          "outcome": "failed"
+        },
+        "store::async_w1_generation_v2::tests::recovery_v3::witness_unavailable_refuses_before_local_dispatch_and_missing_fence_has_no_fallback": {
+          "detail": "ok",
+          "outcome": "passed"
+        }
+      }
+    },
+    "m15_execution_environment": {
+      "actual_compiled_prefix": "release_owner::execution_environment::tests::",
+      "counts": {
+        "failed": 0,
+        "ignored": 0,
+        "passed": 6
+      },
+      "missing_result_count": 0,
+      "roster_count": 6,
+      "tests": {
+        "release_owner::execution_environment::tests::actual_kernel_auxiliary_vector_has_a_current_secure_mode": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::execution_environment::tests::empty_configuration_is_explicit_and_external_provider_paths_are_refused": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::execution_environment::tests::exact_environment_refuses_omissions_duplicates_injection_and_non_utf8": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::execution_environment::tests::legacy_configuration_bytes_keep_their_original_signed_digest": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::execution_environment::tests::legacy_contract_is_replayable_but_cannot_authorize_new_execution": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::execution_environment::tests::secure_execution_mode_is_explicit_not_inferred_from_environment_text": {
+          "detail": "ok",
+          "outcome": "passed"
+        }
+      }
+    },
+    "m15_sealed": {
+      "actual_compiled_prefix": "release_owner::sealed_tests::",
+      "counts": {
+        "failed": 0,
+        "ignored": 0,
+        "passed": 12
+      },
+      "missing_result_count": 0,
+      "roster_count": 12,
+      "tests": {
+        "release_owner::sealed_tests::denied_mutations_preserve_sealed_bytes_without_claiming_unchanged_metadata": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::metadata_only_changes_refuse_read_copy_descriptor_and_exec_handoff": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::native_elf_refuses_both_encodings_of_text_relocation": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::native_elf_requires_one_non_executable_stack_and_file_backed_code": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::sealed_ctime_only_change_refuses_all_held_uses": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::sealed_kernel_rejects_payload_extent_and_exec_mutations": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::sealed_mtime_and_nonexec_mode_changes_refuse_all_held_uses": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected": {
+          "detail": "ok",
+          "outcome": "passed"
+        }
+      }
+    },
+    "m15_service": {
+      "actual_compiled_prefix": "release_owner::service_tests::",
+      "counts": {
+        "failed": 1,
+        "ignored": 0,
+        "passed": 7
+      },
+      "missing_result_count": 0,
+      "roster_count": 8,
+      "tests": {
+        "release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas": {
+          "detail": "failed",
+          "outcome": "failed"
+        },
+        "release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor": {
+          "detail": "ok",
+          "outcome": "passed"
+        },
+        "release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence": {
+          "detail": "ok",
+          "outcome": "passed"
+        }
+      }
+    }
+  },
+  "known_started_without_terminal_result": "store::continuity_tests::actual_65536_key_native_chain_rejects_growth_keeps_nonce_and_reopens",
+  "namespace_and_test_sources": {
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs": {
+      "bytes": 10021,
+      "matches_explicit_5633_blob": true,
+      "sha256": "d5fee9ed193f65e93eb43fbe9adfc9621100ec1a900d4c01de226216f6d32e91"
+    },
+    "trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs": {
+      "bytes": 20892,
+      "matches_explicit_5633_blob": true,
+      "sha256": "9433219d7054ca9b547606ef5802633c5a8ae7dba3f9a34fc68de1618417e178"
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/execution_environment.rs": {
+      "bytes": 5022,
+      "matches_explicit_5633_blob": true,
+      "sha256": "3342052dc15683b306673903e08ceac8481dfd597ce2f168c94f66bbd1b5dfe3"
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/execution_environment_tests.rs": {
+      "bytes": 5423,
+      "matches_explicit_5633_blob": true,
+      "sha256": "c35d45c3991b409d0977b1cc771f95c062c56fcfbe2ff839ff103cc50185899d"
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs": {
+      "bytes": 15911,
+      "matches_explicit_5633_blob": true,
+      "sha256": "ec70f3816ba3f4fb05f92f9c788de31ecba7f53829ca2ed62cbc6e400f4e6cdd"
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs": {
+      "bytes": 13717,
+      "matches_explicit_5633_blob": true,
+      "sha256": "4a830b1945af7455103f523d33f9fbfb41b3a262ce21ff36bc8311d6d685f513"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs": {
+      "bytes": 21783,
+      "matches_explicit_5633_blob": true,
+      "sha256": "4a291e66bff207306897a07691f26bbade865a259aeba229359debab1154bbda"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs": {
+      "bytes": 10575,
+      "matches_explicit_5633_blob": true,
+      "sha256": "8ab86bcd623af283b85f460cfeff055c22b0e57c8593174467ce978b6f1cc4a0"
+    }
+  },
+  "native_suite_qualified": false,
+  "no_terminal_record_count": 480,
+  "original_campaign_summary": {
+    "bytes": 367252,
+    "path": "/workspace/scratch/6635074442e1/collected-evidence/native-summary-5633.json",
+    "sha256": "e35cd980af51a8e8778798b36232587933669f773009bbfb0d4948186166776b"
+  },
+  "original_compiled_roster_count": 1298,
+  "original_finalized_harness_counts": {
+    "failed": 0,
+    "ignored": 0,
+    "passed": 0
+  },
+  "original_partial_log": {
+    "bytes": 91444,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+    "retained_copy": "/workspace/scratch/6635074442e1/authority-audit/node-default-terminal-partial-5633.libtest.log",
+    "sha256": "3ed7d7cfa252d8a5aad4392101c4f279c955f5e4e68237f9d77f8908170fa380"
+  },
+  "original_roster_file": {
+    "binding": "Its discovered_harnesses object is retained in the fixed-hash original campaign summary.",
+    "bytes": 152059,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib.roster.json",
+    "sha256": "d2ae981e86abfa1b03e51cc5140c6f571af2ab2e4912d3d368c1269f506bbe71"
+  },
+  "original_run": {
+    "aborted": "free disk fell below the fixed campaign threshold",
+    "attempts": 1,
+    "disk_after": {
+      "free_bytes": 8071430144,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55",
+      "total_bytes": 982240026624,
+      "used_bytes": 954170322944
+    },
+    "disk_before": {
+      "free_bytes": 56528064512,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55",
+      "total_bytes": 982240026624,
+      "used_bytes": 905713688576
+    },
+    "elapsed_seconds": 2820.527300276095,
+    "exit_code": -15,
+    "label": "node-default-lib-run",
+    "logs": [
+      {
+        "bytes": 223796,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-run.stdout.log",
+        "sha256": "1e72e7c3b59a29920de7af587c11fbbf32f7cadc2bce00c1b525558e4d42825e"
+      },
+      {
+        "bytes": 1017,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-run.stderr.log",
+        "sha256": "4bbd551b7bfb8056d8e1abb048b6c237ba38ed3d4a2194560d202804365b1e3f"
+      }
+    ],
+    "timed_out": false
+  },
+  "original_run_receipt": {
+    "bytes": 2147,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-run.receipt.json",
+    "sha256": "072bc042270ff3b45c2484fbf6f5dd1eb85ae238711dfea63052287d11acbfb1"
+  },
+  "original_runner_inventory_error": {
+    "actual_compiled_prefix": "release_owner::execution_environment::tests::",
+    "actual_discovered_count": 6,
+    "actual_partial_outcomes": {
+      "failed": 0,
+      "ignored": 0,
+      "passed": 6
+    },
+    "expected_count": 6,
+    "incorrect_expected_prefix": "release_owner::execution_environment_tests::",
+    "interpretation": "The wrong module prefix is an additional inventory-validation defect. The native command was stopped by its fixed disk threshold, not by this mismatch. Neither original runner nor original result is changed.",
+    "matching_discovered_count_for_incorrect_prefix": 0,
+    "original_issues": [
+      "critical roster changed: release_owner::execution_environment_tests::: 0 != 6"
+    ],
+    "original_runner_sha256": "a7733832e8511daa23385c978dae1c63185f9f7f25c6b7eb69691448e5698f8c",
+    "runtime_abort_cause": false
+  },
+  "original_runner_or_summary_modified": false,
+  "parent_full_raw_source_gates": {
+    "source-after-final": {
+      "identity": {
+        "base": null,
+        "candidate": "5633c55219c01c689f670c2ca35d122e39f3f791",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5633c55219c01c689f670c2ca35d122e39f3f791",
+        "tested_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2384483193,
+        "tracked_entries": 23699,
+        "tracked_worktree_verified": true
+      },
+      "receipt": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/source-after-final.source.json",
+        "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1"
+      },
+      "result": "PASS"
+    },
+    "source-before": {
+      "identity": {
+        "base": null,
+        "candidate": "5633c55219c01c689f670c2ca35d122e39f3f791",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5633c55219c01c689f670c2ca35d122e39f3f791",
+        "tested_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2384483193,
+        "tracked_entries": 23699,
+        "tracked_worktree_verified": true
+      },
+      "receipt": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/source-before.source.json",
+        "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1"
+      },
+      "result": "PASS"
+    }
+  },
+  "partial_counts": {
+    "failed": 2,
+    "ignored": 24,
+    "passed": 792
+  },
+  "production_activation": false,
+  "schema": "trnm-native-partial-inventory-readback-v1",
+  "scope": "Independent partial-result and compiled-namespace mapping; no native execution or source changes here",
+  "separate_owner_campaign_does_not_backfill_this_suite": true,
+  "static_root_control": {
+    "ignored_is_pass": false,
+    "name": "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation",
+    "record": {
+      "detail": "ignored: requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace",
+      "outcome": "ignored"
+    }
+  },
+  "tested_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "tested_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+  "whole_chain_pq_qualified": false
+}

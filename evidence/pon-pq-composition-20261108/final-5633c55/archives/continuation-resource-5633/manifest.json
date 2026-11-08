@@ -1,0 +1,5951 @@
+{
+  "additional_members": [
+    {
+      "bytes": 19039,
+      "path": "collection/collector.py",
+      "sha256": "f4be91a732c4fef5f36f32721dcd1004d23dd2c98ee666fe66065ba200a3233f"
+    },
+    {
+      "bytes": 5773,
+      "path": "collection/required-terminal-statuses.json",
+      "sha256": "9dfe668965135acf8139aa3c4386bca4ae312b1c9b420604fd07438921e090bb"
+    }
+  ],
+  "after_cleanup_native_started": false,
+  "archive_format": {
+    "gid": 0,
+    "gzip_filename": "",
+    "gzip_mtime": 0,
+    "member_order": "lexicographic",
+    "mode": "0644",
+    "mtime": 0,
+    "type": "tar+gzip",
+    "uid": 0
+  },
+  "cleanup_result": "PASS_WHITELIST_REPAIR",
+  "continuation_result": "FAILED_OR_BLOCKED",
+  "evidence_roots": [
+    "native-continuation-5633c55",
+    "owned-resource-repair-5633c55"
+  ],
+  "excluded_subtrees": [],
+  "exclusion_policy": {
+    "exact_excluded_cache_subtrees": [
+      "native-continuation-5633c55/native-target"
+    ],
+    "excluded_subtree_contents_enumerated_or_hashed": false,
+    "large_files": "none over 16 MiB in included inventory; unexpected large input refuses collection",
+    "symlinks": "never followed; metadata observed by lstat/readlink only; none present in frozen scope"
+  },
+  "frozen_runner_sha256": {
+    "continuation_resource_authoritative_controls_5633.json": "40845fb47514f65be156b3e9adc4b5a70937be9e85c350d7c055be9fbc7f1303",
+    "continuation_resource_scope_decision_5633.json": "6933d69c96f42454f821bcfc0ae6f2a93ef39fb5c3a258dfe4a066c401d4a61e",
+    "metadata_import_terminal_evidence_5633.json": "9767b7ad4c41d76fef47e2657f3ba6b2dbda1aab56204a8a1d817ee32fe00fed",
+    "native-continuation-5633-final-upload-receipt.json": "64360beb374b14ccbee949b93174f4fd01a6a681c46a5a16edf74aa184e93e23",
+    "native-continuation-5633-launch-receipt.json": "1b5365912b65703b19aa1421552b4bdc6e836c0aa0cfd1b5243399ce5ac23a74",
+    "native-continuation-5633-launch-request.json": "3460db6596bbdb1d46dee18fd3013ba4faa1ae24c04a6866cf554d806e2e23a9",
+    "native-continuation-5633-upload-receipts.json": "a673663e2fb9f63e018e7581405e16cbacc4b2c9bfe0bfe323ab197ab3dcdfef",
+    "native-continuation-independent-readback-5633.json": "35d2f2276c932b06199e01b43812e9e7fd28e4fb5bfb72c8b2f886713ff4d6fa",
+    "native-continuation-terminal-read-5633.json": "f5c48a988fba463541e07f18a8951c126ecee01d667ea9793fd123a344cb88d1",
+    "native_continuation_campaign_5633.py": "59cb1244816b743e37a92be709383b2e42cf3feecf531d74af40befba7e81058",
+    "owned-resource-repair-readback-5633.json": "a241d387d3dc785aad13e5a55933005ff12292eb09d51092474345807d649ed2",
+    "owned_cache_repair_5633.py": "1814259d2cb6b69b4cef0e44df620434892c440231fa45c396975faaad4546cd",
+    "owned_cleanup_known_jobs_5633.json": "66f6d9a21634808dd4a0e8cbba9063fa7da5eb36f3c30c4b7a170fbec351dd2b",
+    "small-package-roster-5633.json": "c03fd53d5c02e75bf98f790453f827b45e574355d5670a807346103d0aaac895",
+    "tls25-source-roster-5633.json": "cc3bee7070d680df0d952ea102d3416646886c474638f15d634fd916bb75e7be"
+  },
+  "native_commands_executed_by_collector": false,
+  "native_suite_completed": false,
+  "native_summary_sha256": "0e3d3ba84e3fa7edcbb51cdc1c856e214195517a539fd6ca782fef5e7706972d",
+  "native_test_cases_executed_in_continuation": 0,
+  "original_logs_or_runners_modified": false,
+  "partial_records_are_full_suite_counts": false,
+  "schema": "trnm-continuation-resource-evidence-archive-v1",
+  "scope_decision_is_separate_from_raw_runtime_receipts": true,
+  "secret_scan": {
+    "findings": [],
+    "scope": "bounded high-confidence credential pattern scan; not a universal absence proof"
+  },
+  "source_base": "/home/qian-qi/work/chain-pq-composition-663507-20261108",
+  "source_files": [
+    {
+      "bytes": 17968,
+      "path": "continuation_resource_authoritative_controls_5633.json",
+      "sha256": "40845fb47514f65be156b3e9adc4b5a70937be9e85c350d7c055be9fbc7f1303",
+      "source_identity": {
+        "ctime_ns": 1794171285244148899,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885705,
+        "mode": 33152,
+        "mtime_ns": 1794171285227837355,
+        "nlink": 1,
+        "size": 17968,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 695,
+      "path": "continuation_resource_scope_decision_5633.json",
+      "sha256": "6933d69c96f42454f821bcfc0ae6f2a93ef39fb5c3a258dfe4a066c401d4a61e",
+      "source_identity": {
+        "ctime_ns": 1794171287626072539,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885707,
+        "mode": 33152,
+        "mtime_ns": 1794171287249026273,
+        "nlink": 1,
+        "size": 695,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 15229,
+      "path": "metadata_import_terminal_evidence_5633.json",
+      "sha256": "9767b7ad4c41d76fef47e2657f3ba6b2dbda1aab56204a8a1d817ee32fe00fed",
+      "source_identity": {
+        "ctime_ns": 1794171282988221222,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885703,
+        "mode": 33152,
+        "mtime_ns": 1794171282971945811,
+        "nlink": 1,
+        "size": 15229,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 691,
+      "path": "native-continuation-5633-final-upload-receipt.json",
+      "sha256": "64360beb374b14ccbee949b93174f4fd01a6a681c46a5a16edf74aa184e93e23",
+      "source_identity": {
+        "ctime_ns": 1794171268857674300,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885695,
+        "mode": 33152,
+        "mtime_ns": 1794171268840794516,
+        "nlink": 1,
+        "size": 691,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2524,
+      "path": "native-continuation-5633-launch-receipt.json",
+      "sha256": "1b5365912b65703b19aa1421552b4bdc6e836c0aa0cfd1b5243399ce5ac23a74",
+      "source_identity": {
+        "ctime_ns": 1794171264569811806,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885691,
+        "mode": 33152,
+        "mtime_ns": 1794171264566067565,
+        "nlink": 1,
+        "size": 2524,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1106,
+      "path": "native-continuation-5633-launch-request.json",
+      "sha256": "3460db6596bbdb1d46dee18fd3013ba4faa1ae24c04a6866cf554d806e2e23a9",
+      "source_identity": {
+        "ctime_ns": 1794171262505877998,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885689,
+        "mode": 33152,
+        "mtime_ns": 1794171262502415800,
+        "nlink": 1,
+        "size": 1106,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1145,
+      "path": "native-continuation-5633-upload-receipts.json",
+      "sha256": "a673663e2fb9f63e018e7581405e16cbacc4b2c9bfe0bfe323ab197ab3dcdfef",
+      "source_identity": {
+        "ctime_ns": 1794171266722742763,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885693,
+        "mode": 33152,
+        "mtime_ns": 1794171266597471228,
+        "nlink": 1,
+        "size": 1145,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 6224,
+      "path": "native-continuation-5633c55/campaign-start.json",
+      "sha256": "2e7f1c1989a33a7e099288c54cd16b997aa7a689100e8bd48b1e0928b2af346d",
+      "source_identity": {
+        "ctime_ns": 1794169489768764728,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885453,
+        "mode": 33152,
+        "mtime_ns": 1794169489768764728,
+        "nlink": 1,
+        "size": 6224,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1748,
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.receipt.json",
+      "sha256": "d45f78d8e945b196e54ff3b61d44dd815819524da343d1be024803562e220a9d",
+      "source_identity": {
+        "ctime_ns": 1794169543895305966,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885527,
+        "mode": 33152,
+        "mtime_ns": 1794169543895305966,
+        "nlink": 1,
+        "size": 1748,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 904,
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.started.json",
+      "sha256": "a6abca9eab91da7739da3f8985c9c8122aa3df2fb43a09691356a9e685186ce6",
+      "source_identity": {
+        "ctime_ns": 1794169522922526369,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885524,
+        "mode": 33152,
+        "mtime_ns": 1794169522922526369,
+        "nlink": 1,
+        "size": 904,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169522922526369,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885526,
+        "mode": 33152,
+        "mtime_ns": 1794169522922526369,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169522922526369,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885525,
+        "mode": 33152,
+        "mtime_ns": 1794169522922526369,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1628,
+      "path": "native-continuation-5633c55/cargo-version.receipt.json",
+      "sha256": "b83242a44578d96b18d2ce7aa343ab2f0dcfea2ad4c160076d812ff6a603fda4",
+      "source_identity": {
+        "ctime_ns": 1794169521730464913,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885496,
+        "mode": 33152,
+        "mtime_ns": 1794169521730464913,
+        "nlink": 1,
+        "size": 1628,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 793,
+      "path": "native-continuation-5633c55/cargo-version.started.json",
+      "sha256": "ec4431b846442f7b2858429edbd3659b476214169652466c11fb5a3a16ae7491",
+      "source_identity": {
+        "ctime_ns": 1794169521722031536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885493,
+        "mode": 33152,
+        "mtime_ns": 1794169521722031536,
+        "nlink": 1,
+        "size": 793,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169521722031536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885495,
+        "mode": 33152,
+        "mtime_ns": 1794169521722031536,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 36,
+      "path": "native-continuation-5633c55/cargo-version.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_identity": {
+        "ctime_ns": 1794169521728464994,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885494,
+        "mode": 33152,
+        "mtime_ns": 1794169521728464994,
+        "nlink": 1,
+        "size": 36,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1646,
+      "path": "native-continuation-5633c55/clippy-version.receipt.json",
+      "sha256": "a97d687b1796af77f30a62039e09d540ed6fd32ae8a35728c8cf7d6320327ee5",
+      "source_identity": {
+        "ctime_ns": 1794169521898479035,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885508,
+        "mode": 33152,
+        "mtime_ns": 1794169521898479035,
+        "nlink": 1,
+        "size": 1646,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 810,
+      "path": "native-continuation-5633c55/clippy-version.started.json",
+      "sha256": "9947271f179be413d707c91e7243c6b7bad4292fbee09792e3a3c6377f50b1ec",
+      "source_identity": {
+        "ctime_ns": 1794169521782971000,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885505,
+        "mode": 33152,
+        "mtime_ns": 1794169521782971000,
+        "nlink": 1,
+        "size": 810,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/clippy-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169521782971000,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885507,
+        "mode": 33152,
+        "mtime_ns": 1794169521782971000,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 38,
+      "path": "native-continuation-5633c55/clippy-version.stdout.log",
+      "sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8",
+      "source_identity": {
+        "ctime_ns": 1794169521886458611,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885506,
+        "mode": 33152,
+        "mtime_ns": 1794169521886458611,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 438,
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.readback.json",
+      "sha256": "f4bf098ba33222ec20fce9d042e42072d17844d0db8a2e1dc32a6d9d95b74182",
+      "source_identity": {
+        "ctime_ns": 1794169522912666630,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885522,
+        "mode": 33152,
+        "mtime_ns": 1794169522912666630,
+        "nlink": 1,
+        "size": 438,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1790,
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.receipt.json",
+      "sha256": "9989734e1d48f11e7ccad232ad5b4a875f1c623a5620c9a720e3582af255b291",
+      "source_identity": {
+        "ctime_ns": 1794169522890418069,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885521,
+        "mode": 33152,
+        "mtime_ns": 1794169522890418069,
+        "nlink": 1,
+        "size": 1790,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 938,
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.started.json",
+      "sha256": "85d5b655febe7c320a7145f8c72b7c185e4f75dc41559c46efeea181a967a4c6",
+      "source_identity": {
+        "ctime_ns": 1794169522570545253,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885518,
+        "mode": 33152,
+        "mtime_ns": 1794169522570545253,
+        "nlink": 1,
+        "size": 938,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169522570545253,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885520,
+        "mode": 33152,
+        "mtime_ns": 1794169522570545253,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 731505,
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.stdout.log",
+      "sha256": "b2391619382ebd4335d18bb8e8ff98ff22643ceae185967f28c64587d259f649",
+      "source_identity": {
+        "ctime_ns": 1794169522876418635,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885519,
+        "mode": 33152,
+        "mtime_ns": 1794169522876418635,
+        "nlink": 1,
+        "size": 731505,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1624,
+      "path": "native-continuation-5633c55/git-identity.receipt.json",
+      "sha256": "b27c2cce651774fcfc8a4e4b88202704879e685c19578ba3eee132980459de67",
+      "source_identity": {
+        "ctime_ns": 1794169489778764319,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885457,
+        "mode": 33152,
+        "mtime_ns": 1794169489778764319,
+        "nlink": 1,
+        "size": 1624,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 791,
+      "path": "native-continuation-5633c55/git-identity.started.json",
+      "sha256": "0741dbd2f032d80e334d8ba19aabc9c1e61c5710df2417b15d5ab5f8cb6a5e7b",
+      "source_identity": {
+        "ctime_ns": 1794169489769764687,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885454,
+        "mode": 33152,
+        "mtime_ns": 1794169489769764687,
+        "nlink": 1,
+        "size": 791,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/git-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169489769764687,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885456,
+        "mode": 33152,
+        "mtime_ns": 1794169489769764687,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "native-continuation-5633c55/git-identity.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794169489776764401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885455,
+        "mode": 33152,
+        "mtime_ns": 1794169489776764401,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1584,
+      "path": "native-continuation-5633c55/git-origin.receipt.json",
+      "sha256": "42cb2ba3c6c262552b253a64da28e4257f80a7607667869826d0284e6abc87e4",
+      "source_identity": {
+        "ctime_ns": 1794169489784492066,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885461,
+        "mode": 33152,
+        "mtime_ns": 1794169489784492066,
+        "nlink": 1,
+        "size": 1584,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 755,
+      "path": "native-continuation-5633c55/git-origin.started.json",
+      "sha256": "7b4dae2122f0327e1ec4754e0ecfb9f156712994b991c4b8640aace9b223840c",
+      "source_identity": {
+        "ctime_ns": 1794169489780116215,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885458,
+        "mode": 33152,
+        "mtime_ns": 1794169489780116215,
+        "nlink": 1,
+        "size": 755,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/git-origin.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169489780116215,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885460,
+        "mode": 33152,
+        "mtime_ns": 1794169489780116215,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 65,
+      "path": "native-continuation-5633c55/git-origin.stdout.log",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_identity": {
+        "ctime_ns": 1794169489780764237,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885459,
+        "mode": 33152,
+        "mtime_ns": 1794169489780764237,
+        "nlink": 1,
+        "size": 65,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 198,
+      "path": "native-continuation-5633c55/node-pq-build-list-scope.readback.json",
+      "sha256": "fb90a3a10a48990ff056ac0a78fcd67a45af309445f4945935493e7d00c856d8",
+      "source_identity": {
+        "ctime_ns": 1794169596791546179,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885564,
+        "mode": 33152,
+        "mtime_ns": 1794169596791546179,
+        "nlink": 1,
+        "size": 198,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2242,
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.receipt.json",
+      "sha256": "84a820937957b78d6d7dd662b7c2c60f0d1e33615b9bb4f5abeddeaed86f5664",
+      "source_identity": {
+        "ctime_ns": 1794169596791096284,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885563,
+        "mode": 33152,
+        "mtime_ns": 1794169596791096284,
+        "nlink": 1,
+        "size": 2242,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1375,
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.started.json",
+      "sha256": "dff3319c334c13a8eaa3b39eaddfa2c6893f225ba74ed0724d71be597722e36d",
+      "source_identity": {
+        "ctime_ns": 1794169596790452550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885560,
+        "mode": 33152,
+        "mtime_ns": 1794169596790452550,
+        "nlink": 1,
+        "size": 1375,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596790452550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885562,
+        "mode": 33152,
+        "mtime_ns": 1794169596790452550,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596790452550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885561,
+        "mode": 33152,
+        "mtime_ns": 1794169596790452550,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1893,
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.receipt.json",
+      "sha256": "a0c6c9a34a6ab74abdd60c94e711c22c1ecf210d1556aa29b1f6797028d1077f",
+      "source_identity": {
+        "ctime_ns": 1794169543896573626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885531,
+        "mode": 33152,
+        "mtime_ns": 1794169543896573626,
+        "nlink": 1,
+        "size": 1893,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1023,
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.started.json",
+      "sha256": "a0e1041f6ec8d25131a69178b65cc7a8f25559c966c4e237b46f88ade0b08741",
+      "source_identity": {
+        "ctime_ns": 1794169543895957519,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885528,
+        "mode": 33152,
+        "mtime_ns": 1794169543895957519,
+        "nlink": 1,
+        "size": 1023,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169543895957519,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885530,
+        "mode": 33152,
+        "mtime_ns": 1794169543895957519,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169543895957519,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885529,
+        "mode": 33152,
+        "mtime_ns": 1794169543895957519,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1736,
+      "path": "native-continuation-5633c55/pq-provider-version.receipt.json",
+      "sha256": "d9634cda6715859e3af468124cc946b13aec827bbde14ad58a0a031ebe6d09ab",
+      "source_identity": {
+        "ctime_ns": 1794169596076082306,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885549,
+        "mode": 33152,
+        "mtime_ns": 1794169596076082306,
+        "nlink": 1,
+        "size": 1736,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 889,
+      "path": "native-continuation-5633c55/pq-provider-version.started.json",
+      "sha256": "ce4492adf0c643a7c1ec49754abdc9a5dbc92cff51f51ee73170aaff04adfd50",
+      "source_identity": {
+        "ctime_ns": 1794169596070548737,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885546,
+        "mode": 33152,
+        "mtime_ns": 1794169596070548737,
+        "nlink": 1,
+        "size": 889,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/pq-provider-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596070548737,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885548,
+        "mode": 33152,
+        "mtime_ns": 1794169596070548737,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 894,
+      "path": "native-continuation-5633c55/pq-provider-version.stdout.log",
+      "sha256": "a705fa2d34f811ffe4783a72b48b5aeb7b3d03d8ea0acc6a53ac7f68bcc57d7b",
+      "source_identity": {
+        "ctime_ns": 1794169596073506289,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885547,
+        "mode": 33152,
+        "mtime_ns": 1794169596073506289,
+        "nlink": 1,
+        "size": 894,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1607,
+      "path": "native-continuation-5633c55/project-preflight.receipt.json",
+      "sha256": "4ce6f95b3023bb8441f4e54251eaab1ca53be2b5e528c051e45a960bfb8f0122",
+      "source_identity": {
+        "ctime_ns": 1794169490051365826,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885465,
+        "mode": 33152,
+        "mtime_ns": 1794169490051365826,
+        "nlink": 1,
+        "size": 1607,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 765,
+      "path": "native-continuation-5633c55/project-preflight.started.json",
+      "sha256": "21d0d5965f6f373a004896e9f45376a80819abbf3677c5b0e1760eaee39be651",
+      "source_identity": {
+        "ctime_ns": 1794169489784854996,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885462,
+        "mode": 33152,
+        "mtime_ns": 1794169489784854996,
+        "nlink": 1,
+        "size": 765,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/project-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169489784854996,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885464,
+        "mode": 33152,
+        "mtime_ns": 1794169489784854996,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 171,
+      "path": "native-continuation-5633c55/project-preflight.stdout.log",
+      "sha256": "3884089f0fab0f6cdda7ec1bcce584e1d7f513780e5c920c97b7f71425311e4b",
+      "source_identity": {
+        "ctime_ns": 1794169490021754368,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885463,
+        "mode": 33152,
+        "mtime_ns": 1794169490021754368,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2450,
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.receipt.json",
+      "sha256": "ceb36d00cb6646e3cf26b8b7dc49d816932a799f907b5a3fc83d162bc834dd94",
+      "source_identity": {
+        "ctime_ns": 1794169543900573466,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885538,
+        "mode": 33152,
+        "mtime_ns": 1794169543900573466,
+        "nlink": 1,
+        "size": 2450,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1529,
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.started.json",
+      "sha256": "5fb6950999f2946c1ca6169a78d1c88a6ae02597ffec930ad56f3d8c1f698939",
+      "source_identity": {
+        "ctime_ns": 1794169543899682793,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885535,
+        "mode": 33152,
+        "mtime_ns": 1794169543899682793,
+        "nlink": 1,
+        "size": 1529,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169543899682793,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885537,
+        "mode": 33152,
+        "mtime_ns": 1794169543899682793,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169543899682793,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885536,
+        "mode": 33152,
+        "mtime_ns": 1794169543899682793,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 438,
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures.readback.json",
+      "sha256": "36255f34349db833c3c8dfc3f731485d7800b74485097a6f0430074c62128f09",
+      "source_identity": {
+        "ctime_ns": 1794169543901355775,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885539,
+        "mode": 33152,
+        "mtime_ns": 1794169543901355775,
+        "nlink": 1,
+        "size": 438,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1629,
+      "path": "native-continuation-5633c55/rustc-version.receipt.json",
+      "sha256": "cf929dedae5bbe0f582464f8b62a9581835c0514b2e3e1867610fea38daaf176",
+      "source_identity": {
+        "ctime_ns": 1794169521748227629,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885500,
+        "mode": 33152,
+        "mtime_ns": 1794169521748227629,
+        "nlink": 1,
+        "size": 1629,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 794,
+      "path": "native-continuation-5633c55/rustc-version.started.json",
+      "sha256": "28730a35c3b673f57b6b89688fdfb0c8f3647b49a09e54610cda1dec42291f78",
+      "source_identity": {
+        "ctime_ns": 1794169521731339806,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885497,
+        "mode": 33152,
+        "mtime_ns": 1794169521731339806,
+        "nlink": 1,
+        "size": 794,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169521731339806,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885499,
+        "mode": 33152,
+        "mtime_ns": 1794169521731339806,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 196,
+      "path": "native-continuation-5633c55/rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_identity": {
+        "ctime_ns": 1794169521744464348,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885498,
+        "mode": 33152,
+        "mtime_ns": 1794169521744464348,
+        "nlink": 1,
+        "size": 196,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1638,
+      "path": "native-continuation-5633c55/rustdoc-version.receipt.json",
+      "sha256": "eadc5d4c1a523508c8ed68afce42bd307197f6c3a926cc4a1e3e7f39a4f9a218",
+      "source_identity": {
+        "ctime_ns": 1794169521782253788,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885504,
+        "mode": 33152,
+        "mtime_ns": 1794169521782253788,
+        "nlink": 1,
+        "size": 1638,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 801,
+      "path": "native-continuation-5633c55/rustdoc-version.started.json",
+      "sha256": "b42d07fc19a46167bf7afece12dc8f5e0199a8938a180bdb88ca68a3ca0fe5af",
+      "source_identity": {
+        "ctime_ns": 1794169521748660773,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885501,
+        "mode": 33152,
+        "mtime_ns": 1794169521748660773,
+        "nlink": 1,
+        "size": 801,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/rustdoc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169521748660773,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885503,
+        "mode": 33152,
+        "mtime_ns": 1794169521748660773,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 38,
+      "path": "native-continuation-5633c55/rustdoc-version.stdout.log",
+      "sha256": "84ab52888eabc8158cbebaffa261763e982a8b32b8d7d791117447013a0ab4fb",
+      "source_identity": {
+        "ctime_ns": 1794169521768463378,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885502,
+        "mode": 33152,
+        "mtime_ns": 1794169521768463378,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1647,
+      "path": "native-continuation-5633c55/rustfmt-version.receipt.json",
+      "sha256": "ef596f0bc382c33be860ad661a32fcb7fed7db4ceeb813e0b38464a351537347",
+      "source_identity": {
+        "ctime_ns": 1794169521916410502,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885512,
+        "mode": 33152,
+        "mtime_ns": 1794169521916410502,
+        "nlink": 1,
+        "size": 1647,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 808,
+      "path": "native-continuation-5633c55/rustfmt-version.started.json",
+      "sha256": "232b421a5a21140f08158123e7064d9c8f3f2fa79b1b6292cec7d49bd0a764c0",
+      "source_identity": {
+        "ctime_ns": 1794169521899047479,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885509,
+        "mode": 33152,
+        "mtime_ns": 1794169521899047479,
+        "nlink": 1,
+        "size": 808,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/rustfmt-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169521899047479,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885511,
+        "mode": 33152,
+        "mtime_ns": 1794169521899047479,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 45,
+      "path": "native-continuation-5633c55/rustfmt-version.stdout.log",
+      "sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1",
+      "source_identity": {
+        "ctime_ns": 1794169521909457682,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885510,
+        "mode": 33152,
+        "mtime_ns": 1794169521909457682,
+        "nlink": 1,
+        "size": 45,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 9043,
+      "path": "native-continuation-5633c55/scope-source-pins-after.json",
+      "sha256": "62cb58c7de68c5fa10305a1c2cb9e558f24646300bc91a3c29f1b8a9166220ff",
+      "source_identity": {
+        "ctime_ns": 1794169596890474245,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885567,
+        "mode": 33152,
+        "mtime_ns": 1794169596890474245,
+        "nlink": 1,
+        "size": 9043,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 9043,
+      "path": "native-continuation-5633c55/scope-source-pins-before.json",
+      "sha256": "62cb58c7de68c5fa10305a1c2cb9e558f24646300bc91a3c29f1b8a9166220ff",
+      "source_identity": {
+        "ctime_ns": 1794169522921416818,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885523,
+        "mode": 33152,
+        "mtime_ns": 1794169522921416818,
+        "nlink": 1,
+        "size": 9043,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1869,
+      "path": "native-continuation-5633c55/source-after-final.receipt.json",
+      "sha256": "925f99f6b98d503cbcf78c37b08b6d76a1cb765f428f6f780e8918cf9dc5ffec",
+      "source_identity": {
+        "ctime_ns": 1794169619867498416,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885572,
+        "mode": 33152,
+        "mtime_ns": 1794169619867498416,
+        "nlink": 1,
+        "size": 1869,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "native-continuation-5633c55/source-after-final.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794169619809889692,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885571,
+        "mode": 33152,
+        "mtime_ns": 1794169619809889692,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1026,
+      "path": "native-continuation-5633c55/source-after-final.started.json",
+      "sha256": "89b5430c059c20d213bc4a143a0ab498667b27ad7a86f4a4caa0ddac00d6d72d",
+      "source_identity": {
+        "ctime_ns": 1794169596891510248,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885568,
+        "mode": 33152,
+        "mtime_ns": 1794169596891510248,
+        "nlink": 1,
+        "size": 1026,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/source-after-final.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596891510248,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885570,
+        "mode": 33152,
+        "mtime_ns": 1794169596891510248,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "native-continuation-5633c55/source-after-final.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794169619809889692,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885569,
+        "mode": 33152,
+        "mtime_ns": 1794169619809889692,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1881,
+      "path": "native-continuation-5633c55/source-after-primary.receipt.json",
+      "sha256": "2a61d89eaa27740055fb1bded2b7bfec5675fe316236f0e6c8087b293148620d",
+      "source_identity": {
+        "ctime_ns": 1794169595927512016,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885545,
+        "mode": 33152,
+        "mtime_ns": 1794169595927512016,
+        "nlink": 1,
+        "size": 1881,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "native-continuation-5633c55/source-after-primary.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794169595863668206,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885544,
+        "mode": 33152,
+        "mtime_ns": 1794169595863668206,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1034,
+      "path": "native-continuation-5633c55/source-after-primary.started.json",
+      "sha256": "14ae588d0163429d3b480aa9b48539a86111bc356821a8823f41318a8b1adb6a",
+      "source_identity": {
+        "ctime_ns": 1794169543902138202,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885540,
+        "mode": 33152,
+        "mtime_ns": 1794169543902138202,
+        "nlink": 1,
+        "size": 1034,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/source-after-primary.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169543902138202,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885542,
+        "mode": 33152,
+        "mtime_ns": 1794169543902138202,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "native-continuation-5633c55/source-after-primary.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794169595863668206,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885541,
+        "mode": 33152,
+        "mtime_ns": 1794169595863668206,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1840,
+      "path": "native-continuation-5633c55/source-before.receipt.json",
+      "sha256": "2f286138ccf273973ca2397077de4a9d2b4e0746c67b74f37ec01938aa4f6cae",
+      "source_identity": {
+        "ctime_ns": 1794169521721449561,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885492,
+        "mode": 33152,
+        "mtime_ns": 1794169521721449561,
+        "nlink": 1,
+        "size": 1840,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "native-continuation-5633c55/source-before.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794169521662247970,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885491,
+        "mode": 33152,
+        "mtime_ns": 1794169521662247970,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1006,
+      "path": "native-continuation-5633c55/source-before.started.json",
+      "sha256": "efd52063c67575a95fa7907305868d7786f8e7bcff6fa9d56f6f4a16159c79be",
+      "source_identity": {
+        "ctime_ns": 1794169490052009373,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885466,
+        "mode": 33152,
+        "mtime_ns": 1794169490052009373,
+        "nlink": 1,
+        "size": 1006,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169490052009373,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885468,
+        "mode": 33152,
+        "mtime_ns": 1794169490052009373,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "native-continuation-5633c55/source-before.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794169521662247970,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885467,
+        "mode": 33152,
+        "mtime_ns": 1794169521662247970,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 236,
+      "path": "native-continuation-5633c55/sqlite-native-build-fence-final.readback.json",
+      "sha256": "2c130727c9f059dbfd5180dad0e613be467500fee10e09457e967a559da4231c",
+      "source_identity": {
+        "ctime_ns": 1794169596791986564,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885566,
+        "mode": 33152,
+        "mtime_ns": 1794169596791986564,
+        "nlink": 1,
+        "size": 236,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 238,
+      "path": "native-continuation-5633c55/sqlite-native-build-fence-primary.readback.json",
+      "sha256": "4d44d8aa39c289664a45aaba08dc38a129826c85fb51d65871cf9e2cec093a3b",
+      "source_identity": {
+        "ctime_ns": 1794169543898533250,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885532,
+        "mode": 33152,
+        "mtime_ns": 1794169543898533250,
+        "nlink": 1,
+        "size": 238,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 69387,
+      "path": "native-continuation-5633c55/summary.json",
+      "sha256": "0e3d3ba84e3fa7edcbb51cdc1c856e214195517a539fd6ca782fef5e7706972d",
+      "source_identity": {
+        "ctime_ns": 1794169619943573978,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885573,
+        "mode": 33152,
+        "mtime_ns": 1794169619943573978,
+        "nlink": 1,
+        "size": 69387,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 366,
+      "path": "native-continuation-5633c55/tls25-scope.readback.json",
+      "sha256": "6384fd4d18b73a6b09d1afc22a97d887bacb8ad08fd84f2d4e2a838792de290f",
+      "source_identity": {
+        "ctime_ns": 1794169596791745356,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885565,
+        "mode": 33152,
+        "mtime_ns": 1794169596791745356,
+        "nlink": 1,
+        "size": 366,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3548,
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.readback.json",
+      "sha256": "b7df7c5e74bf384e1dc811a4c2be8fd505ff3d320705670dd3422fa8d889fade",
+      "source_identity": {
+        "ctime_ns": 1794169596786478324,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885554,
+        "mode": 33152,
+        "mtime_ns": 1794169596786478324,
+        "nlink": 1,
+        "size": 3548,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1898,
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.receipt.json",
+      "sha256": "ff3600315c76cd04e571cbae36b6d6ded2ea5b135c9db7584d988d0d23f260bb",
+      "source_identity": {
+        "ctime_ns": 1794169596750297133,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885553,
+        "mode": 33152,
+        "mtime_ns": 1794169596750297133,
+        "nlink": 1,
+        "size": 1898,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1013,
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.started.json",
+      "sha256": "ca95d23ad073df2bec00400270d44f8a49deafb29ca5774280372104eaf91555",
+      "source_identity": {
+        "ctime_ns": 1794169596076430119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885550,
+        "mode": 33152,
+        "mtime_ns": 1794169596076430119,
+        "nlink": 1,
+        "size": 1013,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596076430119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885552,
+        "mode": 33152,
+        "mtime_ns": 1794169596076430119,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 861393,
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.stdout.log",
+      "sha256": "015c92774bc2bef51aa8ae2778478eb33a454455359bf0a52509fe1a101bc9f2",
+      "source_identity": {
+        "ctime_ns": 1794169596699481736,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885551,
+        "mode": 33152,
+        "mtime_ns": 1794169596699481736,
+        "nlink": 1,
+        "size": 861393,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3549,
+      "path": "native-continuation-5633c55/workspace-locked-metadata.readback.json",
+      "sha256": "d2f5e8cd14e44dbd6d6d4b3aae1c900fe710565ca88977c9ac0772d850720081",
+      "source_identity": {
+        "ctime_ns": 1794169522568960904,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885517,
+        "mode": 33152,
+        "mtime_ns": 1794169522568960904,
+        "nlink": 1,
+        "size": 3549,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1816,
+      "path": "native-continuation-5633c55/workspace-locked-metadata.receipt.json",
+      "sha256": "f20c06e88e949d7dd48d64b9b572587b6182b88a2d22ec7c16efe798b93f199f",
+      "source_identity": {
+        "ctime_ns": 1794169522540201678,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885516,
+        "mode": 33152,
+        "mtime_ns": 1794169522540201678,
+        "nlink": 1,
+        "size": 1816,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 955,
+      "path": "native-continuation-5633c55/workspace-locked-metadata.started.json",
+      "sha256": "a110dc84d4e2ac7356c860f56751b574edfc0da641be010e763a2d1e7024f723",
+      "source_identity": {
+        "ctime_ns": 1794169521918037599,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885513,
+        "mode": 33152,
+        "mtime_ns": 1794169521918037599,
+        "nlink": 1,
+        "size": 955,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/workspace-locked-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169521918037599,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885515,
+        "mode": 33152,
+        "mtime_ns": 1794169521918037599,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 846594,
+      "path": "native-continuation-5633c55/workspace-locked-metadata.stdout.log",
+      "sha256": "12d91d2cfaa7f298eb92b730511c1386c459d610c4da931ca6be51015cdec49d",
+      "source_identity": {
+        "ctime_ns": 1794169522488434302,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885514,
+        "mode": 33152,
+        "mtime_ns": 1794169522488434302,
+        "nlink": 1,
+        "size": 846594,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1946,
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.receipt.json",
+      "sha256": "83ce3202c43af81fdcac0523c99079bcee7f1d4e5efebb08582542c725728cde",
+      "source_identity": {
+        "ctime_ns": 1794169596789478207,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885558,
+        "mode": 33152,
+        "mtime_ns": 1794169596789478207,
+        "nlink": 1,
+        "size": 1946,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1059,
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.started.json",
+      "sha256": "8ed51e363f73f3df349aae6c6bebbed056fc81fc24dfbd501efdef6bb6e21d53",
+      "source_identity": {
+        "ctime_ns": 1794169596789115964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885555,
+        "mode": 33152,
+        "mtime_ns": 1794169596789115964,
+        "nlink": 1,
+        "size": 1059,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596789115964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885557,
+        "mode": 33152,
+        "mtime_ns": 1794169596789115964,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794169596789115964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885556,
+        "mode": 33152,
+        "mtime_ns": 1794169596789115964,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 14681,
+      "path": "native-continuation-independent-readback-5633.json",
+      "sha256": "35d2f2276c932b06199e01b43812e9e7fd28e4fb5bfb72c8b2f886713ff4d6fa",
+      "source_identity": {
+        "ctime_ns": 1794171270953607090,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885697,
+        "mode": 33152,
+        "mtime_ns": 1794171270937206860,
+        "nlink": 1,
+        "size": 14681,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 23348,
+      "path": "native-continuation-terminal-read-5633.json",
+      "sha256": "f5c48a988fba463541e07f18a8951c126ecee01d667ea9793fd123a344cb88d1",
+      "source_identity": {
+        "ctime_ns": 1794171273217534495,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885699,
+        "mode": 33152,
+        "mtime_ns": 1794171273200798665,
+        "nlink": 1,
+        "size": 23348,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 61704,
+      "path": "native_continuation_campaign_5633.py",
+      "sha256": "59cb1244816b743e37a92be709383b2e42cf3feecf531d74af40befba7e81058",
+      "source_identity": {
+        "ctime_ns": 1794169431345028050,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885450,
+        "mode": 33152,
+        "mtime_ns": 1794169430969614062,
+        "nlink": 1,
+        "size": 61704,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 807,
+      "path": "owned-resource-repair-5633c55/delete-0-size.receipt.json",
+      "sha256": "a0902e71cb0ba538be1fe89d10a1930df6002c811212febe08838dbba1ea9805",
+      "source_identity": {
+        "ctime_ns": 1794170486803628817,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885649,
+        "mode": 33152,
+        "mtime_ns": 1794170486803628817,
+        "nlink": 1,
+        "size": 807,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-0-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170486803037829,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885648,
+        "mode": 33152,
+        "mtime_ns": 1794170486803037829,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 117,
+      "path": "owned-resource-repair-5633c55/delete-0-size.stdout.log",
+      "sha256": "5c55f84debfd1c391fbf4c53255124eb8a9d6f0d9ebb43f96900446e99b53d01",
+      "source_identity": {
+        "ctime_ns": 1794170486803037829,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885647,
+        "mode": 33152,
+        "mtime_ns": 1794170486803037829,
+        "nlink": 1,
+        "size": 117,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1090,
+      "path": "owned-resource-repair-5633c55/delete-0.intent.json",
+      "sha256": "2a1051da3258f92b59d13132759596237dea55b93513e6443e461e515e5563f9",
+      "source_identity": {
+        "ctime_ns": 1794170486809092212,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885650,
+        "mode": 33152,
+        "mtime_ns": 1794170486809092212,
+        "nlink": 1,
+        "size": 1090,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1300,
+      "path": "owned-resource-repair-5633c55/delete-0.receipt.json",
+      "sha256": "5bda6a08b963f1e188172bd1dbe6fee3401f49407f19a0e37b779380c6a13008",
+      "source_identity": {
+        "ctime_ns": 1794170487229374279,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885651,
+        "mode": 33152,
+        "mtime_ns": 1794170487229374279,
+        "nlink": 1,
+        "size": 1300,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 879,
+      "path": "owned-resource-repair-5633c55/delete-1-clean.receipt.json",
+      "sha256": "aa190c0d4ee1635d06a1e30820e184a751a94d94d3f272cdb096c28c52d3c1ed",
+      "source_identity": {
+        "ctime_ns": 1794170487389563174,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885657,
+        "mode": 33152,
+        "mtime_ns": 1794170487389563174,
+        "nlink": 1,
+        "size": 879,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-1-clean.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170487388035080,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885656,
+        "mode": 33152,
+        "mtime_ns": 1794170487388035080,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-1-clean.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170487387035113,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885655,
+        "mode": 33152,
+        "mtime_ns": 1794170487387035113,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 862,
+      "path": "owned-resource-repair-5633c55/delete-1-common-dir.receipt.json",
+      "sha256": "33c6cb2726f356c7fa8aa29c4584037a65351e573a015e71689f22eb43963a66",
+      "source_identity": {
+        "ctime_ns": 1794170487398334196,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885660,
+        "mode": 33152,
+        "mtime_ns": 1794170487398334196,
+        "nlink": 1,
+        "size": 862,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-1-common-dir.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170487397573730,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885659,
+        "mode": 33152,
+        "mtime_ns": 1794170487397573730,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 113,
+      "path": "owned-resource-repair-5633c55/delete-1-common-dir.stdout.log",
+      "sha256": "7e76616cf648bc687634811b97fab54f091fd83d3d0aac2ca6c3fd712ac5f5af",
+      "source_identity": {
+        "ctime_ns": 1794170487397573730,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885658,
+        "mode": 33152,
+        "mtime_ns": 1794170487397573730,
+        "nlink": 1,
+        "size": 113,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 862,
+      "path": "owned-resource-repair-5633c55/delete-1-identity.receipt.json",
+      "sha256": "9fe28bf6aaab32104e8884e2e18c4fbddaae9f0270163bd48c138ab9934ac73d",
+      "source_identity": {
+        "ctime_ns": 1794170487279590935,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885654,
+        "mode": 33152,
+        "mtime_ns": 1794170487279590935,
+        "nlink": 1,
+        "size": 862,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-1-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170487278946951,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885653,
+        "mode": 33152,
+        "mtime_ns": 1794170487278946951,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "owned-resource-repair-5633c55/delete-1-identity.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794170487278946951,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885652,
+        "mode": 33152,
+        "mtime_ns": 1794170487278946951,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 996,
+      "path": "owned-resource-repair-5633c55/delete-1-raw-source.receipt.json",
+      "sha256": "01d0309e2f735c69a94f05adeb71d8d41205a5d35e7c494e9ae00189dc420fe5",
+      "source_identity": {
+        "ctime_ns": 1794170508279919998,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885664,
+        "mode": 33152,
+        "mtime_ns": 1794170508279919998,
+        "nlink": 1,
+        "size": 996,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-1-raw-source.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170508279387801,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885663,
+        "mode": 33152,
+        "mtime_ns": 1794170508279387801,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "owned-resource-repair-5633c55/delete-1-raw-source.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794170508279387801,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885662,
+        "mode": 33152,
+        "mtime_ns": 1794170508279387801,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 810,
+      "path": "owned-resource-repair-5633c55/delete-1-size.receipt.json",
+      "sha256": "85cdb0840937fdeb82e6ae42cbf5311677e95129c46faea02c0c6fcf52948e2f",
+      "source_identity": {
+        "ctime_ns": 1794170508707304029,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885667,
+        "mode": 33152,
+        "mtime_ns": 1794170508707304029,
+        "nlink": 1,
+        "size": 810,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-1-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170508706359394,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885666,
+        "mode": 33152,
+        "mtime_ns": 1794170508706359394,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 119,
+      "path": "owned-resource-repair-5633c55/delete-1-size.stdout.log",
+      "sha256": "b56db59041374629f3ccc05dd27ddc988bb0abf2294f9b9389dfde95792dc84a",
+      "source_identity": {
+        "ctime_ns": 1794170508706359394,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885665,
+        "mode": 33152,
+        "mtime_ns": 1794170508706359394,
+        "nlink": 1,
+        "size": 119,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1685,
+      "path": "owned-resource-repair-5633c55/delete-1.intent.json",
+      "sha256": "1b74e24259b9b788fb8fb3a8a1d9565c7b04492f67af9655cec0bd439b1dab2c",
+      "source_identity": {
+        "ctime_ns": 1794170508712985331,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885668,
+        "mode": 33152,
+        "mtime_ns": 1794170508712985331,
+        "nlink": 1,
+        "size": 1685,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1895,
+      "path": "owned-resource-repair-5633c55/delete-1.receipt.json",
+      "sha256": "0ad6d8d265a3b97409513193e3fd9b29d36ce45ad8b55560b50b10706fb9be9f",
+      "source_identity": {
+        "ctime_ns": 1794170510481271640,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885669,
+        "mode": 33152,
+        "mtime_ns": 1794170510481271640,
+        "nlink": 1,
+        "size": 1895,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "owned-resource-repair-5633c55/delete-1.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794170508258929003,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885661,
+        "mode": 33152,
+        "mtime_ns": 1794170508258929003,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 788,
+      "path": "owned-resource-repair-5633c55/delete-2-size.receipt.json",
+      "sha256": "87b148836422cadbb2def0b707b8ec668eb46e90ae5a35323f5231b9bfe23b83",
+      "source_identity": {
+        "ctime_ns": 1794170510503140943,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885672,
+        "mode": 33152,
+        "mtime_ns": 1794170510503140943,
+        "nlink": 1,
+        "size": 788,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-2-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170510502681729,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885671,
+        "mode": 33152,
+        "mtime_ns": 1794170510502681729,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 96,
+      "path": "owned-resource-repair-5633c55/delete-2-size.stdout.log",
+      "sha256": "57ce3419ff65d151c6146acfa73bc8cc4368fc5df8f6c797c782f8cd175d08d9",
+      "source_identity": {
+        "ctime_ns": 1794170510502681729,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885670,
+        "mode": 33152,
+        "mtime_ns": 1794170510502681729,
+        "nlink": 1,
+        "size": 96,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1030,
+      "path": "owned-resource-repair-5633c55/delete-2.intent.json",
+      "sha256": "5fd39292f479b4ccd0b51ee2de0bef00f0c01184b0fe377542ca9a7301853df4",
+      "source_identity": {
+        "ctime_ns": 1794170510508622428,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885673,
+        "mode": 33152,
+        "mtime_ns": 1794170510508622428,
+        "nlink": 1,
+        "size": 1030,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1241,
+      "path": "owned-resource-repair-5633c55/delete-2.receipt.json",
+      "sha256": "8f7a2d959924d8904df971658a305ab48ccd9e22fe7aaed8b9e97965ca83f839",
+      "source_identity": {
+        "ctime_ns": 1794170510704998664,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885674,
+        "mode": 33152,
+        "mtime_ns": 1794170510704998664,
+        "nlink": 1,
+        "size": 1241,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 794,
+      "path": "owned-resource-repair-5633c55/delete-3-size.receipt.json",
+      "sha256": "0be304cecbcdb534b25ed04db051975f1fea6a0b04559d89c62920d11c073eb6",
+      "source_identity": {
+        "ctime_ns": 1794170510790183318,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885677,
+        "mode": 33152,
+        "mtime_ns": 1794170510790183318,
+        "nlink": 1,
+        "size": 794,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-3-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170510789383830,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885676,
+        "mode": 33152,
+        "mtime_ns": 1794170510789383830,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 101,
+      "path": "owned-resource-repair-5633c55/delete-3-size.stdout.log",
+      "sha256": "33aabbad1c240cab92108ad5409199fc793befaf655cf15c365aba9a140056cd",
+      "source_identity": {
+        "ctime_ns": 1794170510789383830,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885675,
+        "mode": 33152,
+        "mtime_ns": 1794170510789383830,
+        "nlink": 1,
+        "size": 101,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2379,
+      "path": "owned-resource-repair-5633c55/delete-3.intent.json",
+      "sha256": "424e5ba4bae288626db4f53ceb66c421ee1f6d722f4bff62f4da6623c7c177f3",
+      "source_identity": {
+        "ctime_ns": 1794170510796082473,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885678,
+        "mode": 33152,
+        "mtime_ns": 1794170510796082473,
+        "nlink": 1,
+        "size": 2379,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2589,
+      "path": "owned-resource-repair-5633c55/delete-3.receipt.json",
+      "sha256": "19c1e43efe403e645b9966c99bfee1a8ffe47a38fc46f6bf910222d1fa95bc4a",
+      "source_identity": {
+        "ctime_ns": 1794170510916257272,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885679,
+        "mode": 33152,
+        "mtime_ns": 1794170510916257272,
+        "nlink": 1,
+        "size": 2589,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 815,
+      "path": "owned-resource-repair-5633c55/delete-main-after.receipt.json",
+      "sha256": "b9b29886612bb76e8d3e17f4b02de34879b243e332ca645c2be60b47ad355b99",
+      "source_identity": {
+        "ctime_ns": 1794170511324210261,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885682,
+        "mode": 33152,
+        "mtime_ns": 1794170511324210261,
+        "nlink": 1,
+        "size": 815,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-main-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170511323771898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885681,
+        "mode": 33152,
+        "mtime_ns": 1794170511323771898,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "owned-resource-repair-5633c55/delete-main-after.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794170511323771898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885680,
+        "mode": 33152,
+        "mtime_ns": 1794170511323771898,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 816,
+      "path": "owned-resource-repair-5633c55/delete-main-before.receipt.json",
+      "sha256": "232606a47f1c37fb6ca78695b9de7edc593dc79ad190646828a3630a7677078e",
+      "source_identity": {
+        "ctime_ns": 1794170486293362089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885646,
+        "mode": 33152,
+        "mtime_ns": 1794170486293362089,
+        "nlink": 1,
+        "size": 816,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/delete-main-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170486292961583,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885645,
+        "mode": 33152,
+        "mtime_ns": 1794170486292961583,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "owned-resource-repair-5633c55/delete-main-before.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794170486292961583,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885644,
+        "mode": 33152,
+        "mtime_ns": 1794170486292961583,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 629,
+      "path": "owned-resource-repair-5633c55/delete.intent.json",
+      "sha256": "a8d8c4251718c8d6306634ac435a7e6209594e55bb175c23de4e83f49f2b19b6",
+      "source_identity": {
+        "ctime_ns": 1794170486271072040,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885581,
+        "mode": 33152,
+        "mtime_ns": 1794170486271072040,
+        "nlink": 1,
+        "size": 629,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 247583,
+      "path": "owned-resource-repair-5633c55/delete.receipt.json",
+      "sha256": "8d60fad1672f4dda1629f609e2aed4df6c72e4cc239b1e9ea9e418e31b6d1955",
+      "source_identity": {
+        "ctime_ns": 1794170511339243302,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885683,
+        "mode": 33152,
+        "mtime_ns": 1794170511339243302,
+        "nlink": 1,
+        "size": 247583,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 810,
+      "path": "owned-resource-repair-5633c55/inspect-0-size.receipt.json",
+      "sha256": "626072cf0d619f994d2fd5c5644d42c0888829d3ab5173eeeddaa171f24785bc",
+      "source_identity": {
+        "ctime_ns": 1794170302548411273,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885592,
+        "mode": 33152,
+        "mtime_ns": 1794170302548411273,
+        "nlink": 1,
+        "size": 810,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-0-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170302547955586,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885591,
+        "mode": 33152,
+        "mtime_ns": 1794170302547955586,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 117,
+      "path": "owned-resource-repair-5633c55/inspect-0-size.stdout.log",
+      "sha256": "5c55f84debfd1c391fbf4c53255124eb8a9d6f0d9ebb43f96900446e99b53d01",
+      "source_identity": {
+        "ctime_ns": 1794170302547955586,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885590,
+        "mode": 33152,
+        "mtime_ns": 1794170302547955586,
+        "nlink": 1,
+        "size": 117,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 881,
+      "path": "owned-resource-repair-5633c55/inspect-1-clean.receipt.json",
+      "sha256": "5f70771014ab7cd16b9d78fffbc69dfcac0287045caa9c7439c94b6c934ee3c8",
+      "source_identity": {
+        "ctime_ns": 1794170302698044244,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885598,
+        "mode": 33152,
+        "mtime_ns": 1794170302698044244,
+        "nlink": 1,
+        "size": 881,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-1-clean.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170302696195361,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885597,
+        "mode": 33152,
+        "mtime_ns": 1794170302696195361,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-1-clean.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170302696195361,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885596,
+        "mode": 33152,
+        "mtime_ns": 1794170302696195361,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 865,
+      "path": "owned-resource-repair-5633c55/inspect-1-common-dir.receipt.json",
+      "sha256": "ee27b8af49e6e9d7f703a3535d113f0f58e25cba0c2de44c6da5b5092e8198c8",
+      "source_identity": {
+        "ctime_ns": 1794170302711041824,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885601,
+        "mode": 33152,
+        "mtime_ns": 1794170302711041824,
+        "nlink": 1,
+        "size": 865,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-1-common-dir.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170302710260368,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885600,
+        "mode": 33152,
+        "mtime_ns": 1794170302710260368,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 113,
+      "path": "owned-resource-repair-5633c55/inspect-1-common-dir.stdout.log",
+      "sha256": "7e76616cf648bc687634811b97fab54f091fd83d3d0aac2ca6c3fd712ac5f5af",
+      "source_identity": {
+        "ctime_ns": 1794170302710260368,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885599,
+        "mode": 33152,
+        "mtime_ns": 1794170302710260368,
+        "nlink": 1,
+        "size": 113,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 864,
+      "path": "owned-resource-repair-5633c55/inspect-1-identity.receipt.json",
+      "sha256": "f1ab37afb19360c700e298c4cab9b43e62197acbe08239194a25b9d26290d6a1",
+      "source_identity": {
+        "ctime_ns": 1794170302565680269,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885595,
+        "mode": 33152,
+        "mtime_ns": 1794170302565680269,
+        "nlink": 1,
+        "size": 864,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-1-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170302564798862,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885594,
+        "mode": 33152,
+        "mtime_ns": 1794170302564798862,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "owned-resource-repair-5633c55/inspect-1-identity.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794170302564798862,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885593,
+        "mode": 33152,
+        "mtime_ns": 1794170302564798862,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1000,
+      "path": "owned-resource-repair-5633c55/inspect-1-raw-source.receipt.json",
+      "sha256": "7d339b203348970f48e4749d1adb27f2cb34899df67ee97f1f12bfc80f12e9b8",
+      "source_identity": {
+        "ctime_ns": 1794170322744541068,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885605,
+        "mode": 33152,
+        "mtime_ns": 1794170322744541068,
+        "nlink": 1,
+        "size": 1000,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-1-raw-source.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170322744104015,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885604,
+        "mode": 33152,
+        "mtime_ns": 1794170322744104015,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "owned-resource-repair-5633c55/inspect-1-raw-source.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794170322744104015,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885603,
+        "mode": 33152,
+        "mtime_ns": 1794170322744104015,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 812,
+      "path": "owned-resource-repair-5633c55/inspect-1-size.receipt.json",
+      "sha256": "d791f04245b616dd9794742eaf2fa9db1e7ca185948ac9ea819f7a9e126d031c",
+      "source_identity": {
+        "ctime_ns": 1794170323048156961,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885608,
+        "mode": 33152,
+        "mtime_ns": 1794170323048156961,
+        "nlink": 1,
+        "size": 812,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-1-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170323047239009,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885607,
+        "mode": 33152,
+        "mtime_ns": 1794170323047239009,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 119,
+      "path": "owned-resource-repair-5633c55/inspect-1-size.stdout.log",
+      "sha256": "b56db59041374629f3ccc05dd27ddc988bb0abf2294f9b9389dfde95792dc84a",
+      "source_identity": {
+        "ctime_ns": 1794170323047239009,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885606,
+        "mode": 33152,
+        "mtime_ns": 1794170323047239009,
+        "nlink": 1,
+        "size": 119,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "owned-resource-repair-5633c55/inspect-1.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794170322731497187,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885602,
+        "mode": 33152,
+        "mtime_ns": 1794170322731497187,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 790,
+      "path": "owned-resource-repair-5633c55/inspect-2-size.receipt.json",
+      "sha256": "e0578d2160aadc65e420925f006bfd034605f354992301dc3eefdf1661739b60",
+      "source_identity": {
+        "ctime_ns": 1794170323069474782,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885611,
+        "mode": 33152,
+        "mtime_ns": 1794170323069474782,
+        "nlink": 1,
+        "size": 790,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-2-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170323068668262,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885610,
+        "mode": 33152,
+        "mtime_ns": 1794170323068668262,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 96,
+      "path": "owned-resource-repair-5633c55/inspect-2-size.stdout.log",
+      "sha256": "57ce3419ff65d151c6146acfa73bc8cc4368fc5df8f6c797c782f8cd175d08d9",
+      "source_identity": {
+        "ctime_ns": 1794170323068668262,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885609,
+        "mode": 33152,
+        "mtime_ns": 1794170323068668262,
+        "nlink": 1,
+        "size": 96,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 796,
+      "path": "owned-resource-repair-5633c55/inspect-3-size.receipt.json",
+      "sha256": "2ed355ef6f760007a10ce0f1fc2a6b0755ab2ff86c5328c326072ed4498141ec",
+      "source_identity": {
+        "ctime_ns": 1794170323131021555,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885614,
+        "mode": 33152,
+        "mtime_ns": 1794170323131021555,
+        "nlink": 1,
+        "size": 796,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-3-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170323130032864,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885613,
+        "mode": 33152,
+        "mtime_ns": 1794170323130032864,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 101,
+      "path": "owned-resource-repair-5633c55/inspect-3-size.stdout.log",
+      "sha256": "33aabbad1c240cab92108ad5409199fc793befaf655cf15c365aba9a140056cd",
+      "source_identity": {
+        "ctime_ns": 1794170323130032864,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885612,
+        "mode": 33152,
+        "mtime_ns": 1794170323130032864,
+        "nlink": 1,
+        "size": 101,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 817,
+      "path": "owned-resource-repair-5633c55/inspect-main-after.receipt.json",
+      "sha256": "a2fd2272f28aa4ab9eda213126fbccf14ef35b02eae5435c076bbe337cd5363a",
+      "source_identity": {
+        "ctime_ns": 1794170323622577703,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885620,
+        "mode": 33152,
+        "mtime_ns": 1794170323622577703,
+        "nlink": 1,
+        "size": 817,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-main-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170323621798358,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885619,
+        "mode": 33152,
+        "mtime_ns": 1794170323621798358,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "owned-resource-repair-5633c55/inspect-main-after.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794170323621798358,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885618,
+        "mode": 33152,
+        "mtime_ns": 1794170323621798358,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 818,
+      "path": "owned-resource-repair-5633c55/inspect-main-before.receipt.json",
+      "sha256": "260357ad1bae50fc07647ccb545f1bcde898a34bc40ad769e471c0bb059c4c16",
+      "source_identity": {
+        "ctime_ns": 1794170301900054498,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885589,
+        "mode": 33152,
+        "mtime_ns": 1794170301900054498,
+        "nlink": 1,
+        "size": 818,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-main-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170301899573727,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885588,
+        "mode": 33152,
+        "mtime_ns": 1794170301899573727,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "owned-resource-repair-5633c55/inspect-main-before.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794170301899573727,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885587,
+        "mode": 33152,
+        "mtime_ns": 1794170301899573727,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 794,
+      "path": "owned-resource-repair-5633c55/inspect-proof-size.receipt.json",
+      "sha256": "545e6a99aecee633e61d87eee6fe29b6e0fa71074fc443e9c8b552482ade4702",
+      "source_identity": {
+        "ctime_ns": 1794170323172268982,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885617,
+        "mode": 33152,
+        "mtime_ns": 1794170323172268982,
+        "nlink": 1,
+        "size": 794,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "owned-resource-repair-5633c55/inspect-proof-size.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794170323171213893,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885616,
+        "mode": 33152,
+        "mtime_ns": 1794170323171213893,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 93,
+      "path": "owned-resource-repair-5633c55/inspect-proof-size.stdout.log",
+      "sha256": "13dec3e3f8f1d4e23e6c46fe249c2581de732fcad55da928dba2e6ef48b5d2c7",
+      "source_identity": {
+        "ctime_ns": 1794170323171213893,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885615,
+        "mode": 33152,
+        "mtime_ns": 1794170323171213893,
+        "nlink": 1,
+        "size": 93,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 630,
+      "path": "owned-resource-repair-5633c55/inspect.intent.json",
+      "sha256": "974e8c549e0d7e0c4ded604555da1167bd21ae832c54c3de2e3ce968520d4535",
+      "source_identity": {
+        "ctime_ns": 1794170301822224776,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885586,
+        "mode": 33152,
+        "mtime_ns": 1794170301822224776,
+        "nlink": 1,
+        "size": 630,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 246083,
+      "path": "owned-resource-repair-5633c55/inspect.receipt.json",
+      "sha256": "bcd52a4c17d506b95ff8a33bb92f7a2af96d227d1cd95db7aa610e8aaf6adeb8",
+      "source_identity": {
+        "ctime_ns": 1794170323644491143,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885621,
+        "mode": 33152,
+        "mtime_ns": 1794170323644491143,
+        "nlink": 1,
+        "size": 246083,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 12226,
+      "path": "owned-resource-repair-readback-5633.json",
+      "sha256": "a241d387d3dc785aad13e5a55933005ff12292eb09d51092474345807d649ed2",
+      "source_identity": {
+        "ctime_ns": 1794171275401464469,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885701,
+        "mode": 33152,
+        "mtime_ns": 1794171275321467177,
+        "nlink": 1,
+        "size": 12226,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 14473,
+      "path": "owned_cache_repair_5633.py",
+      "sha256": "1814259d2cb6b69b4cef0e44df620434892c440231fa45c396975faaad4546cd",
+      "source_identity": {
+        "ctime_ns": 1794170274008162383,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885582,
+        "mode": 33152,
+        "mtime_ns": 1794170273995394442,
+        "nlink": 1,
+        "size": 14473,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3418,
+      "path": "owned_cleanup_known_jobs_5633.json",
+      "sha256": "66f6d9a21634808dd4a0e8cbba9063fa7da5eb36f3c30c4b7a170fbec351dd2b",
+      "source_identity": {
+        "ctime_ns": 1794170276092092032,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885584,
+        "mode": 33152,
+        "mtime_ns": 1794170276076249967,
+        "nlink": 1,
+        "size": 3418,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 52966,
+      "path": "small-package-roster-5633.json",
+      "sha256": "c03fd53d5c02e75bf98f790453f827b45e574355d5670a807346103d0aaac895",
+      "source_identity": {
+        "ctime_ns": 1794169108993716875,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885371,
+        "mode": 33152,
+        "mtime_ns": 1794169108976477158,
+        "nlink": 1,
+        "size": 52966,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 8252,
+      "path": "tls25-source-roster-5633.json",
+      "sha256": "cc3bee7070d680df0d952ea102d3416646886c474638f15d634fd916bb75e7be",
+      "source_identity": {
+        "ctime_ns": 1794169103538881111,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885367,
+        "mode": 33152,
+        "mtime_ns": 1794169103502786285,
+        "nlink": 1,
+        "size": 8252,
+        "uid": 1000
+      }
+    }
+  ],
+  "source_inventory": [
+    {
+      "kind": "directory",
+      "path": "native-continuation-5633c55",
+      "stat": {
+        "ctime_ns": 1794169619938574173,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885452,
+        "mode": 16832,
+        "mtime_ns": 1794169619938574173,
+        "nlink": 5,
+        "size": 12288,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/campaign-start.json",
+      "stat": {
+        "ctime_ns": 1794169489768764728,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885453,
+        "mode": 33152,
+        "mtime_ns": 1794169489768764728,
+        "nlink": 1,
+        "size": 6224,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169543895305966,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885527,
+        "mode": 33152,
+        "mtime_ns": 1794169543895305966,
+        "nlink": 1,
+        "size": 1748,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.started.json",
+      "stat": {
+        "ctime_ns": 1794169522922526369,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885524,
+        "mode": 33152,
+        "mtime_ns": 1794169522922526369,
+        "nlink": 1,
+        "size": 904,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169522922526369,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885526,
+        "mode": 33152,
+        "mtime_ns": 1794169522922526369,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-fmt-all-check.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169522922526369,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885525,
+        "mode": 33152,
+        "mtime_ns": 1794169522922526369,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169521730464913,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885496,
+        "mode": 33152,
+        "mtime_ns": 1794169521730464913,
+        "nlink": 1,
+        "size": 1628,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-version.started.json",
+      "stat": {
+        "ctime_ns": 1794169521722031536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885493,
+        "mode": 33152,
+        "mtime_ns": 1794169521722031536,
+        "nlink": 1,
+        "size": 793,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169521722031536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885495,
+        "mode": 33152,
+        "mtime_ns": 1794169521722031536,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/cargo-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169521728464994,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885494,
+        "mode": 33152,
+        "mtime_ns": 1794169521728464994,
+        "nlink": 1,
+        "size": 36,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/clippy-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169521898479035,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885508,
+        "mode": 33152,
+        "mtime_ns": 1794169521898479035,
+        "nlink": 1,
+        "size": 1646,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/clippy-version.started.json",
+      "stat": {
+        "ctime_ns": 1794169521782971000,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885505,
+        "mode": 33152,
+        "mtime_ns": 1794169521782971000,
+        "nlink": 1,
+        "size": 810,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/clippy-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169521782971000,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885507,
+        "mode": 33152,
+        "mtime_ns": 1794169521782971000,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/clippy-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169521886458611,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885506,
+        "mode": 33152,
+        "mtime_ns": 1794169521886458611,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.readback.json",
+      "stat": {
+        "ctime_ns": 1794169522912666630,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885522,
+        "mode": 33152,
+        "mtime_ns": 1794169522912666630,
+        "nlink": 1,
+        "size": 438,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169522890418069,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885521,
+        "mode": 33152,
+        "mtime_ns": 1794169522890418069,
+        "nlink": 1,
+        "size": 1790,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.started.json",
+      "stat": {
+        "ctime_ns": 1794169522570545253,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885518,
+        "mode": 33152,
+        "mtime_ns": 1794169522570545253,
+        "nlink": 1,
+        "size": 938,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169522570545253,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885520,
+        "mode": 33152,
+        "mtime_ns": 1794169522570545253,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/fuzz-locked-metadata.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169522876418635,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885519,
+        "mode": 33152,
+        "mtime_ns": 1794169522876418635,
+        "nlink": 1,
+        "size": 731505,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-identity.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169489778764319,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885457,
+        "mode": 33152,
+        "mtime_ns": 1794169489778764319,
+        "nlink": 1,
+        "size": 1624,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-identity.started.json",
+      "stat": {
+        "ctime_ns": 1794169489769764687,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885454,
+        "mode": 33152,
+        "mtime_ns": 1794169489769764687,
+        "nlink": 1,
+        "size": 791,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-identity.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169489769764687,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885456,
+        "mode": 33152,
+        "mtime_ns": 1794169489769764687,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-identity.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169489776764401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885455,
+        "mode": 33152,
+        "mtime_ns": 1794169489776764401,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-origin.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169489784492066,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885461,
+        "mode": 33152,
+        "mtime_ns": 1794169489784492066,
+        "nlink": 1,
+        "size": 1584,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-origin.started.json",
+      "stat": {
+        "ctime_ns": 1794169489780116215,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885458,
+        "mode": 33152,
+        "mtime_ns": 1794169489780116215,
+        "nlink": 1,
+        "size": 755,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-origin.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169489780116215,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885460,
+        "mode": 33152,
+        "mtime_ns": 1794169489780116215,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/git-origin.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169489780764237,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885459,
+        "mode": 33152,
+        "mtime_ns": 1794169489780764237,
+        "nlink": 1,
+        "size": 65,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "native-continuation-5633c55/node-pq-build-list-and-tls25",
+      "stat": {
+        "ctime_ns": 1794169596789478207,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885559,
+        "mode": 16832,
+        "mtime_ns": 1794169596789478207,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-pq-build-list-scope.readback.json",
+      "stat": {
+        "ctime_ns": 1794169596791546179,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885564,
+        "mode": 33152,
+        "mtime_ns": 1794169596791546179,
+        "nlink": 1,
+        "size": 198,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169596791096284,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885563,
+        "mode": 33152,
+        "mtime_ns": 1794169596791096284,
+        "nlink": 1,
+        "size": 2242,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.started.json",
+      "stat": {
+        "ctime_ns": 1794169596790452550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885560,
+        "mode": 33152,
+        "mtime_ns": 1794169596790452550,
+        "nlink": 1,
+        "size": 1375,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169596790452550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885562,
+        "mode": 33152,
+        "mtime_ns": 1794169596790452550,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-pq-build-list-tls-cargo.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169596790452550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885561,
+        "mode": 33152,
+        "mtime_ns": 1794169596790452550,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169543896573626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885531,
+        "mode": 33152,
+        "mtime_ns": 1794169543896573626,
+        "nlink": 1,
+        "size": 1893,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.started.json",
+      "stat": {
+        "ctime_ns": 1794169543895957519,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885528,
+        "mode": 33152,
+        "mtime_ns": 1794169543895957519,
+        "nlink": 1,
+        "size": 1023,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169543895957519,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885530,
+        "mode": 33152,
+        "mtime_ns": 1794169543895957519,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/node-strict-default-alltargets.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169543895957519,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885529,
+        "mode": 33152,
+        "mtime_ns": 1794169543895957519,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/pq-provider-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169596076082306,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885549,
+        "mode": 33152,
+        "mtime_ns": 1794169596076082306,
+        "nlink": 1,
+        "size": 1736,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/pq-provider-version.started.json",
+      "stat": {
+        "ctime_ns": 1794169596070548737,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885546,
+        "mode": 33152,
+        "mtime_ns": 1794169596070548737,
+        "nlink": 1,
+        "size": 889,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/pq-provider-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169596070548737,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885548,
+        "mode": 33152,
+        "mtime_ns": 1794169596070548737,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/pq-provider-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169596073506289,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885547,
+        "mode": 33152,
+        "mtime_ns": 1794169596073506289,
+        "nlink": 1,
+        "size": 894,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/project-preflight.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169490051365826,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885465,
+        "mode": 33152,
+        "mtime_ns": 1794169490051365826,
+        "nlink": 1,
+        "size": 1607,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/project-preflight.started.json",
+      "stat": {
+        "ctime_ns": 1794169489784854996,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885462,
+        "mode": 33152,
+        "mtime_ns": 1794169489784854996,
+        "nlink": 1,
+        "size": 765,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/project-preflight.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169489784854996,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885464,
+        "mode": 33152,
+        "mtime_ns": 1794169489784854996,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/project-preflight.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169490021754368,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885463,
+        "mode": 33152,
+        "mtime_ns": 1794169490021754368,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-discovery-harnesses",
+      "stat": {
+        "ctime_ns": 1794169543898573546,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885533,
+        "mode": 16832,
+        "mtime_ns": 1794169543898573546,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-execution-harnesses",
+      "stat": {
+        "ctime_ns": 1794169543898573546,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885534,
+        "mode": 16832,
+        "mtime_ns": 1794169543898573546,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169543900573466,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885538,
+        "mode": 33152,
+        "mtime_ns": 1794169543900573466,
+        "nlink": 1,
+        "size": 2450,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.started.json",
+      "stat": {
+        "ctime_ns": 1794169543899682793,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885535,
+        "mode": 33152,
+        "mtime_ns": 1794169543899682793,
+        "nlink": 1,
+        "size": 1529,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169543899682793,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885537,
+        "mode": 33152,
+        "mtime_ns": 1794169543899682793,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169543899682793,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885536,
+        "mode": 33152,
+        "mtime_ns": 1794169543899682793,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/recovery-settlement-release-alltargets-allfeatures.readback.json",
+      "stat": {
+        "ctime_ns": 1794169543901355775,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885539,
+        "mode": 33152,
+        "mtime_ns": 1794169543901355775,
+        "nlink": 1,
+        "size": 438,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustc-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169521748227629,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885500,
+        "mode": 33152,
+        "mtime_ns": 1794169521748227629,
+        "nlink": 1,
+        "size": 1629,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustc-version.started.json",
+      "stat": {
+        "ctime_ns": 1794169521731339806,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885497,
+        "mode": 33152,
+        "mtime_ns": 1794169521731339806,
+        "nlink": 1,
+        "size": 794,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustc-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169521731339806,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885499,
+        "mode": 33152,
+        "mtime_ns": 1794169521731339806,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustc-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169521744464348,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885498,
+        "mode": 33152,
+        "mtime_ns": 1794169521744464348,
+        "nlink": 1,
+        "size": 196,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustdoc-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169521782253788,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885504,
+        "mode": 33152,
+        "mtime_ns": 1794169521782253788,
+        "nlink": 1,
+        "size": 1638,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustdoc-version.started.json",
+      "stat": {
+        "ctime_ns": 1794169521748660773,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885501,
+        "mode": 33152,
+        "mtime_ns": 1794169521748660773,
+        "nlink": 1,
+        "size": 801,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustdoc-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169521748660773,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885503,
+        "mode": 33152,
+        "mtime_ns": 1794169521748660773,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustdoc-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169521768463378,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885502,
+        "mode": 33152,
+        "mtime_ns": 1794169521768463378,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustfmt-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169521916410502,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885512,
+        "mode": 33152,
+        "mtime_ns": 1794169521916410502,
+        "nlink": 1,
+        "size": 1647,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustfmt-version.started.json",
+      "stat": {
+        "ctime_ns": 1794169521899047479,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885509,
+        "mode": 33152,
+        "mtime_ns": 1794169521899047479,
+        "nlink": 1,
+        "size": 808,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustfmt-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169521899047479,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885511,
+        "mode": 33152,
+        "mtime_ns": 1794169521899047479,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/rustfmt-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169521909457682,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885510,
+        "mode": 33152,
+        "mtime_ns": 1794169521909457682,
+        "nlink": 1,
+        "size": 45,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/scope-source-pins-after.json",
+      "stat": {
+        "ctime_ns": 1794169596890474245,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885567,
+        "mode": 33152,
+        "mtime_ns": 1794169596890474245,
+        "nlink": 1,
+        "size": 9043,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/scope-source-pins-before.json",
+      "stat": {
+        "ctime_ns": 1794169522921416818,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885523,
+        "mode": 33152,
+        "mtime_ns": 1794169522921416818,
+        "nlink": 1,
+        "size": 9043,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-final.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169619867498416,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885572,
+        "mode": 33152,
+        "mtime_ns": 1794169619867498416,
+        "nlink": 1,
+        "size": 1869,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-final.source.json",
+      "stat": {
+        "ctime_ns": 1794169619809889692,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885571,
+        "mode": 33152,
+        "mtime_ns": 1794169619809889692,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-final.started.json",
+      "stat": {
+        "ctime_ns": 1794169596891510248,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885568,
+        "mode": 33152,
+        "mtime_ns": 1794169596891510248,
+        "nlink": 1,
+        "size": 1026,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-final.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169596891510248,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885570,
+        "mode": 33152,
+        "mtime_ns": 1794169596891510248,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-final.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169619809889692,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885569,
+        "mode": 33152,
+        "mtime_ns": 1794169619809889692,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-primary.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169595927512016,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885545,
+        "mode": 33152,
+        "mtime_ns": 1794169595927512016,
+        "nlink": 1,
+        "size": 1881,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-primary.source.json",
+      "stat": {
+        "ctime_ns": 1794169595863668206,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885544,
+        "mode": 33152,
+        "mtime_ns": 1794169595863668206,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-primary.started.json",
+      "stat": {
+        "ctime_ns": 1794169543902138202,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885540,
+        "mode": 33152,
+        "mtime_ns": 1794169543902138202,
+        "nlink": 1,
+        "size": 1034,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-primary.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169543902138202,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885542,
+        "mode": 33152,
+        "mtime_ns": 1794169543902138202,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-after-primary.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169595863668206,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885541,
+        "mode": 33152,
+        "mtime_ns": 1794169595863668206,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-before.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169521721449561,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885492,
+        "mode": 33152,
+        "mtime_ns": 1794169521721449561,
+        "nlink": 1,
+        "size": 1840,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-before.source.json",
+      "stat": {
+        "ctime_ns": 1794169521662247970,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885491,
+        "mode": 33152,
+        "mtime_ns": 1794169521662247970,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-before.started.json",
+      "stat": {
+        "ctime_ns": 1794169490052009373,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885466,
+        "mode": 33152,
+        "mtime_ns": 1794169490052009373,
+        "nlink": 1,
+        "size": 1006,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-before.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169490052009373,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885468,
+        "mode": 33152,
+        "mtime_ns": 1794169490052009373,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/source-before.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169521662247970,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885467,
+        "mode": 33152,
+        "mtime_ns": 1794169521662247970,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/sqlite-native-build-fence-final.readback.json",
+      "stat": {
+        "ctime_ns": 1794169596791986564,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885566,
+        "mode": 33152,
+        "mtime_ns": 1794169596791986564,
+        "nlink": 1,
+        "size": 236,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/sqlite-native-build-fence-primary.readback.json",
+      "stat": {
+        "ctime_ns": 1794169543898533250,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885532,
+        "mode": 33152,
+        "mtime_ns": 1794169543898533250,
+        "nlink": 1,
+        "size": 238,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/summary.json",
+      "stat": {
+        "ctime_ns": 1794169619943573978,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885573,
+        "mode": 33152,
+        "mtime_ns": 1794169619943573978,
+        "nlink": 1,
+        "size": 69387,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/tls25-scope.readback.json",
+      "stat": {
+        "ctime_ns": 1794169596791745356,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885565,
+        "mode": 33152,
+        "mtime_ns": 1794169596791745356,
+        "nlink": 1,
+        "size": 366,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.readback.json",
+      "stat": {
+        "ctime_ns": 1794169596786478324,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885554,
+        "mode": 33152,
+        "mtime_ns": 1794169596786478324,
+        "nlink": 1,
+        "size": 3548,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169596750297133,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885553,
+        "mode": 33152,
+        "mtime_ns": 1794169596750297133,
+        "nlink": 1,
+        "size": 1898,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.started.json",
+      "stat": {
+        "ctime_ns": 1794169596076430119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885550,
+        "mode": 33152,
+        "mtime_ns": 1794169596076430119,
+        "nlink": 1,
+        "size": 1013,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169596076430119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885552,
+        "mode": 33152,
+        "mtime_ns": 1794169596076430119,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-allfeatures-metadata.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169596699481736,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885551,
+        "mode": 33152,
+        "mtime_ns": 1794169596699481736,
+        "nlink": 1,
+        "size": 861393,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-metadata.readback.json",
+      "stat": {
+        "ctime_ns": 1794169522568960904,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885517,
+        "mode": 33152,
+        "mtime_ns": 1794169522568960904,
+        "nlink": 1,
+        "size": 3549,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-metadata.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169522540201678,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885516,
+        "mode": 33152,
+        "mtime_ns": 1794169522540201678,
+        "nlink": 1,
+        "size": 1816,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-metadata.started.json",
+      "stat": {
+        "ctime_ns": 1794169521918037599,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885513,
+        "mode": 33152,
+        "mtime_ns": 1794169521918037599,
+        "nlink": 1,
+        "size": 955,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-metadata.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169521918037599,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885515,
+        "mode": 33152,
+        "mtime_ns": 1794169521918037599,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-locked-metadata.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169522488434302,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885514,
+        "mode": 33152,
+        "mtime_ns": 1794169522488434302,
+        "nlink": 1,
+        "size": 846594,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.receipt.json",
+      "stat": {
+        "ctime_ns": 1794169596789478207,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885558,
+        "mode": 33152,
+        "mtime_ns": 1794169596789478207,
+        "nlink": 1,
+        "size": 1946,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.started.json",
+      "stat": {
+        "ctime_ns": 1794169596789115964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885555,
+        "mode": 33152,
+        "mtime_ns": 1794169596789115964,
+        "nlink": 1,
+        "size": 1059,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.stderr.log",
+      "stat": {
+        "ctime_ns": 1794169596789115964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885557,
+        "mode": 33152,
+        "mtime_ns": 1794169596789115964,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "native-continuation-5633c55/workspace-strict-alltargets-allfeatures.stdout.log",
+      "stat": {
+        "ctime_ns": 1794169596789115964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885556,
+        "mode": 33152,
+        "mtime_ns": 1794169596789115964,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "owned-resource-repair-5633c55",
+      "stat": {
+        "ctime_ns": 1794170511330243599,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885585,
+        "mode": 16832,
+        "mtime_ns": 1794170511330243599,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-0-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170486803628817,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885649,
+        "mode": 33152,
+        "mtime_ns": 1794170486803628817,
+        "nlink": 1,
+        "size": 807,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-0-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170486803037829,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885648,
+        "mode": 33152,
+        "mtime_ns": 1794170486803037829,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-0-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170486803037829,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885647,
+        "mode": 33152,
+        "mtime_ns": 1794170486803037829,
+        "nlink": 1,
+        "size": 117,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-0.intent.json",
+      "stat": {
+        "ctime_ns": 1794170486809092212,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885650,
+        "mode": 33152,
+        "mtime_ns": 1794170486809092212,
+        "nlink": 1,
+        "size": 1090,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-0.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170487229374279,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885651,
+        "mode": 33152,
+        "mtime_ns": 1794170487229374279,
+        "nlink": 1,
+        "size": 1300,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-clean.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170487389563174,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885657,
+        "mode": 33152,
+        "mtime_ns": 1794170487389563174,
+        "nlink": 1,
+        "size": 879,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-clean.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170487388035080,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885656,
+        "mode": 33152,
+        "mtime_ns": 1794170487388035080,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-clean.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170487387035113,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885655,
+        "mode": 33152,
+        "mtime_ns": 1794170487387035113,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-common-dir.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170487398334196,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885660,
+        "mode": 33152,
+        "mtime_ns": 1794170487398334196,
+        "nlink": 1,
+        "size": 862,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-common-dir.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170487397573730,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885659,
+        "mode": 33152,
+        "mtime_ns": 1794170487397573730,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-common-dir.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170487397573730,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885658,
+        "mode": 33152,
+        "mtime_ns": 1794170487397573730,
+        "nlink": 1,
+        "size": 113,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-identity.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170487279590935,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885654,
+        "mode": 33152,
+        "mtime_ns": 1794170487279590935,
+        "nlink": 1,
+        "size": 862,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-identity.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170487278946951,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885653,
+        "mode": 33152,
+        "mtime_ns": 1794170487278946951,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-identity.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170487278946951,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885652,
+        "mode": 33152,
+        "mtime_ns": 1794170487278946951,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-raw-source.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170508279919998,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885664,
+        "mode": 33152,
+        "mtime_ns": 1794170508279919998,
+        "nlink": 1,
+        "size": 996,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-raw-source.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170508279387801,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885663,
+        "mode": 33152,
+        "mtime_ns": 1794170508279387801,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-raw-source.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170508279387801,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885662,
+        "mode": 33152,
+        "mtime_ns": 1794170508279387801,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170508707304029,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885667,
+        "mode": 33152,
+        "mtime_ns": 1794170508707304029,
+        "nlink": 1,
+        "size": 810,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170508706359394,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885666,
+        "mode": 33152,
+        "mtime_ns": 1794170508706359394,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170508706359394,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885665,
+        "mode": 33152,
+        "mtime_ns": 1794170508706359394,
+        "nlink": 1,
+        "size": 119,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1.intent.json",
+      "stat": {
+        "ctime_ns": 1794170508712985331,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885668,
+        "mode": 33152,
+        "mtime_ns": 1794170508712985331,
+        "nlink": 1,
+        "size": 1685,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170510481271640,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885669,
+        "mode": 33152,
+        "mtime_ns": 1794170510481271640,
+        "nlink": 1,
+        "size": 1895,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-1.source.json",
+      "stat": {
+        "ctime_ns": 1794170508258929003,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885661,
+        "mode": 33152,
+        "mtime_ns": 1794170508258929003,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-2-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170510503140943,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885672,
+        "mode": 33152,
+        "mtime_ns": 1794170510503140943,
+        "nlink": 1,
+        "size": 788,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-2-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170510502681729,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885671,
+        "mode": 33152,
+        "mtime_ns": 1794170510502681729,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-2-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170510502681729,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885670,
+        "mode": 33152,
+        "mtime_ns": 1794170510502681729,
+        "nlink": 1,
+        "size": 96,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-2.intent.json",
+      "stat": {
+        "ctime_ns": 1794170510508622428,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885673,
+        "mode": 33152,
+        "mtime_ns": 1794170510508622428,
+        "nlink": 1,
+        "size": 1030,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-2.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170510704998664,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885674,
+        "mode": 33152,
+        "mtime_ns": 1794170510704998664,
+        "nlink": 1,
+        "size": 1241,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-3-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170510790183318,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885677,
+        "mode": 33152,
+        "mtime_ns": 1794170510790183318,
+        "nlink": 1,
+        "size": 794,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-3-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170510789383830,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885676,
+        "mode": 33152,
+        "mtime_ns": 1794170510789383830,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-3-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170510789383830,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885675,
+        "mode": 33152,
+        "mtime_ns": 1794170510789383830,
+        "nlink": 1,
+        "size": 101,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-3.intent.json",
+      "stat": {
+        "ctime_ns": 1794170510796082473,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885678,
+        "mode": 33152,
+        "mtime_ns": 1794170510796082473,
+        "nlink": 1,
+        "size": 2379,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-3.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170510916257272,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885679,
+        "mode": 33152,
+        "mtime_ns": 1794170510916257272,
+        "nlink": 1,
+        "size": 2589,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-main-after.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170511324210261,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885682,
+        "mode": 33152,
+        "mtime_ns": 1794170511324210261,
+        "nlink": 1,
+        "size": 815,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-main-after.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170511323771898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885681,
+        "mode": 33152,
+        "mtime_ns": 1794170511323771898,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-main-after.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170511323771898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885680,
+        "mode": 33152,
+        "mtime_ns": 1794170511323771898,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-main-before.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170486293362089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885646,
+        "mode": 33152,
+        "mtime_ns": 1794170486293362089,
+        "nlink": 1,
+        "size": 816,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-main-before.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170486292961583,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885645,
+        "mode": 33152,
+        "mtime_ns": 1794170486292961583,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete-main-before.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170486292961583,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885644,
+        "mode": 33152,
+        "mtime_ns": 1794170486292961583,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete.intent.json",
+      "stat": {
+        "ctime_ns": 1794170486271072040,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885581,
+        "mode": 33152,
+        "mtime_ns": 1794170486271072040,
+        "nlink": 1,
+        "size": 629,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/delete.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170511339243302,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885683,
+        "mode": 33152,
+        "mtime_ns": 1794170511339243302,
+        "nlink": 1,
+        "size": 247583,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-0-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170302548411273,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885592,
+        "mode": 33152,
+        "mtime_ns": 1794170302548411273,
+        "nlink": 1,
+        "size": 810,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-0-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170302547955586,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885591,
+        "mode": 33152,
+        "mtime_ns": 1794170302547955586,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-0-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170302547955586,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885590,
+        "mode": 33152,
+        "mtime_ns": 1794170302547955586,
+        "nlink": 1,
+        "size": 117,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-clean.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170302698044244,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885598,
+        "mode": 33152,
+        "mtime_ns": 1794170302698044244,
+        "nlink": 1,
+        "size": 881,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-clean.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170302696195361,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885597,
+        "mode": 33152,
+        "mtime_ns": 1794170302696195361,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-clean.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170302696195361,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885596,
+        "mode": 33152,
+        "mtime_ns": 1794170302696195361,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-common-dir.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170302711041824,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885601,
+        "mode": 33152,
+        "mtime_ns": 1794170302711041824,
+        "nlink": 1,
+        "size": 865,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-common-dir.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170302710260368,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885600,
+        "mode": 33152,
+        "mtime_ns": 1794170302710260368,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-common-dir.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170302710260368,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885599,
+        "mode": 33152,
+        "mtime_ns": 1794170302710260368,
+        "nlink": 1,
+        "size": 113,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-identity.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170302565680269,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885595,
+        "mode": 33152,
+        "mtime_ns": 1794170302565680269,
+        "nlink": 1,
+        "size": 864,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-identity.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170302564798862,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885594,
+        "mode": 33152,
+        "mtime_ns": 1794170302564798862,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-identity.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170302564798862,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885593,
+        "mode": 33152,
+        "mtime_ns": 1794170302564798862,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-raw-source.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170322744541068,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885605,
+        "mode": 33152,
+        "mtime_ns": 1794170322744541068,
+        "nlink": 1,
+        "size": 1000,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-raw-source.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170322744104015,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885604,
+        "mode": 33152,
+        "mtime_ns": 1794170322744104015,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-raw-source.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170322744104015,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885603,
+        "mode": 33152,
+        "mtime_ns": 1794170322744104015,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170323048156961,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885608,
+        "mode": 33152,
+        "mtime_ns": 1794170323048156961,
+        "nlink": 1,
+        "size": 812,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170323047239009,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885607,
+        "mode": 33152,
+        "mtime_ns": 1794170323047239009,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170323047239009,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885606,
+        "mode": 33152,
+        "mtime_ns": 1794170323047239009,
+        "nlink": 1,
+        "size": 119,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-1.source.json",
+      "stat": {
+        "ctime_ns": 1794170322731497187,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885602,
+        "mode": 33152,
+        "mtime_ns": 1794170322731497187,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-2-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170323069474782,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885611,
+        "mode": 33152,
+        "mtime_ns": 1794170323069474782,
+        "nlink": 1,
+        "size": 790,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-2-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170323068668262,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885610,
+        "mode": 33152,
+        "mtime_ns": 1794170323068668262,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-2-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170323068668262,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885609,
+        "mode": 33152,
+        "mtime_ns": 1794170323068668262,
+        "nlink": 1,
+        "size": 96,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-3-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170323131021555,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885614,
+        "mode": 33152,
+        "mtime_ns": 1794170323131021555,
+        "nlink": 1,
+        "size": 796,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-3-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170323130032864,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885613,
+        "mode": 33152,
+        "mtime_ns": 1794170323130032864,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-3-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170323130032864,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885612,
+        "mode": 33152,
+        "mtime_ns": 1794170323130032864,
+        "nlink": 1,
+        "size": 101,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-main-after.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170323622577703,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885620,
+        "mode": 33152,
+        "mtime_ns": 1794170323622577703,
+        "nlink": 1,
+        "size": 817,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-main-after.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170323621798358,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885619,
+        "mode": 33152,
+        "mtime_ns": 1794170323621798358,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-main-after.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170323621798358,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885618,
+        "mode": 33152,
+        "mtime_ns": 1794170323621798358,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-main-before.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170301900054498,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885589,
+        "mode": 33152,
+        "mtime_ns": 1794170301900054498,
+        "nlink": 1,
+        "size": 818,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-main-before.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170301899573727,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885588,
+        "mode": 33152,
+        "mtime_ns": 1794170301899573727,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-main-before.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170301899573727,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885587,
+        "mode": 33152,
+        "mtime_ns": 1794170301899573727,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-proof-size.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170323172268982,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885617,
+        "mode": 33152,
+        "mtime_ns": 1794170323172268982,
+        "nlink": 1,
+        "size": 794,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-proof-size.stderr.log",
+      "stat": {
+        "ctime_ns": 1794170323171213893,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885616,
+        "mode": 33152,
+        "mtime_ns": 1794170323171213893,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect-proof-size.stdout.log",
+      "stat": {
+        "ctime_ns": 1794170323171213893,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885615,
+        "mode": 33152,
+        "mtime_ns": 1794170323171213893,
+        "nlink": 1,
+        "size": 93,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect.intent.json",
+      "stat": {
+        "ctime_ns": 1794170301822224776,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885586,
+        "mode": 33152,
+        "mtime_ns": 1794170301822224776,
+        "nlink": 1,
+        "size": 630,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "owned-resource-repair-5633c55/inspect.receipt.json",
+      "stat": {
+        "ctime_ns": 1794170323644491143,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885621,
+        "mode": 33152,
+        "mtime_ns": 1794170323644491143,
+        "nlink": 1,
+        "size": 246083,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native_continuation_campaign_5633.py",
+      "stat": {
+        "ctime_ns": 1794169431345028050,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885450,
+        "mode": 33152,
+        "mtime_ns": 1794169430969614062,
+        "nlink": 1,
+        "size": 61704,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "tls25-source-roster-5633.json",
+      "stat": {
+        "ctime_ns": 1794169103538881111,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885367,
+        "mode": 33152,
+        "mtime_ns": 1794169103502786285,
+        "nlink": 1,
+        "size": 8252,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "small-package-roster-5633.json",
+      "stat": {
+        "ctime_ns": 1794169108993716875,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885371,
+        "mode": 33152,
+        "mtime_ns": 1794169108976477158,
+        "nlink": 1,
+        "size": 52966,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "owned_cache_repair_5633.py",
+      "stat": {
+        "ctime_ns": 1794170274008162383,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885582,
+        "mode": 33152,
+        "mtime_ns": 1794170273995394442,
+        "nlink": 1,
+        "size": 14473,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "owned_cleanup_known_jobs_5633.json",
+      "stat": {
+        "ctime_ns": 1794170276092092032,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885584,
+        "mode": 33152,
+        "mtime_ns": 1794170276076249967,
+        "nlink": 1,
+        "size": 3418,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native-continuation-5633-launch-request.json",
+      "stat": {
+        "ctime_ns": 1794171262505877998,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885689,
+        "mode": 33152,
+        "mtime_ns": 1794171262502415800,
+        "nlink": 1,
+        "size": 1106,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native-continuation-5633-launch-receipt.json",
+      "stat": {
+        "ctime_ns": 1794171264569811806,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885691,
+        "mode": 33152,
+        "mtime_ns": 1794171264566067565,
+        "nlink": 1,
+        "size": 2524,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native-continuation-5633-upload-receipts.json",
+      "stat": {
+        "ctime_ns": 1794171266722742763,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885693,
+        "mode": 33152,
+        "mtime_ns": 1794171266597471228,
+        "nlink": 1,
+        "size": 1145,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native-continuation-5633-final-upload-receipt.json",
+      "stat": {
+        "ctime_ns": 1794171268857674300,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885695,
+        "mode": 33152,
+        "mtime_ns": 1794171268840794516,
+        "nlink": 1,
+        "size": 691,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native-continuation-independent-readback-5633.json",
+      "stat": {
+        "ctime_ns": 1794171270953607090,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885697,
+        "mode": 33152,
+        "mtime_ns": 1794171270937206860,
+        "nlink": 1,
+        "size": 14681,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "native-continuation-terminal-read-5633.json",
+      "stat": {
+        "ctime_ns": 1794171273217534495,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885699,
+        "mode": 33152,
+        "mtime_ns": 1794171273200798665,
+        "nlink": 1,
+        "size": 23348,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "owned-resource-repair-readback-5633.json",
+      "stat": {
+        "ctime_ns": 1794171275401464469,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885701,
+        "mode": 33152,
+        "mtime_ns": 1794171275321467177,
+        "nlink": 1,
+        "size": 12226,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "metadata_import_terminal_evidence_5633.json",
+      "stat": {
+        "ctime_ns": 1794171282988221222,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885703,
+        "mode": 33152,
+        "mtime_ns": 1794171282971945811,
+        "nlink": 1,
+        "size": 15229,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "continuation_resource_authoritative_controls_5633.json",
+      "stat": {
+        "ctime_ns": 1794171285244148899,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885705,
+        "mode": 33152,
+        "mtime_ns": 1794171285227837355,
+        "nlink": 1,
+        "size": 17968,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "continuation_resource_scope_decision_5633.json",
+      "stat": {
+        "ctime_ns": 1794171287626072539,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4885707,
+        "mode": 33152,
+        "mtime_ns": 1794171287249026273,
+        "nlink": 1,
+        "size": 695,
+        "uid": 1000
+      }
+    }
+  ],
+  "source_inventory_metadata_sha256": "2cf01f73222aece8d1b9f0dc51f21a3ad9213488f9eb1ff48047322b1bcf9425",
+  "source_regular_bytes": 3361088,
+  "source_regular_files": 187,
+  "source_repository_accessed_by_collector": false,
+  "whole_chain_pq_qualified": false
+}

@@ -1,0 +1,4377 @@
+{
+  "additional_members": [
+    {
+      "bytes": 15931,
+      "path": "collection/collector.py",
+      "sha256": "e16fc1d72b18c5caae020dc9526051a6af839e4e7cad350bddd912a450ae6f52"
+    },
+    {
+      "bytes": 731,
+      "path": "collection/parent-terminal-status.json",
+      "sha256": "fe49d86ddbc5ed76b87a428560f2dba1cbf5cf5394ee9f969a7be9d0985a7cc9"
+    }
+  ],
+  "archive_format": {
+    "gid": 0,
+    "gzip_filename": "",
+    "gzip_mtime": 0,
+    "member_order": "lexicographic",
+    "mode": "0644",
+    "mtime": 0,
+    "type": "tar+gzip",
+    "uid": 0
+  },
+  "evidence_roots": [
+    "final-native-5633c55",
+    "parallel-campaigns-5633c55"
+  ],
+  "excluded_subtrees": [
+    {
+      "kind": "excluded_cache_directory",
+      "path": "final-native-5633c55/native-target-default",
+      "stat": {
+        "ctime_ns": 1794161116569121493,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9349389,
+        "mode": 16832,
+        "mtime_ns": 1794161116569121493,
+        "nlink": 4,
+        "size": 4096,
+        "uid": 1000
+      }
+    }
+  ],
+  "exclusion_policy": {
+    "cache_directory_names": [
+      ".cache",
+      ".cargo",
+      ".fingerprint",
+      ".pytest_cache",
+      ".rustup",
+      "__pycache__",
+      "incremental",
+      "native-target-default",
+      "native-target-pq",
+      "target"
+    ],
+    "excluded_subtree_contents_enumerated_or_hashed": false,
+    "large_files": "none over 16 MiB in included inventory; unexpected large input refuses collection",
+    "symlinks": "never followed; metadata observed by lstat/readlink only; none present in frozen scope"
+  },
+  "frozen_runner_sha256": {
+    "final_native_campaign.py": "a7733832e8511daa23385c978dae1c63185f9f7f25c6b7eb69691448e5698f8c",
+    "final_proof_campaign.py": "e533fa59a596290caef42d59c2d4e5450bcc0f186aaa87ed036b595c94723b77",
+    "final_source_campaign_v2.py": "3343683cbc8b1dcfe644250296e76e740df323a7f02d698b62d081b68cb2a770",
+    "owner_guard_counterexamples.py": "35c92721b6342d935d2bba4a5d8deda5c2aa74a816ee0dc776cab0ffe02b1cf7"
+  },
+  "native_commands_executed_by_collector": false,
+  "native_suite_completed": false,
+  "native_summary_sha256": "e35cd980af51a8e8778798b36232587933669f773009bbfb0d4948186166776b",
+  "original_logs_or_runners_modified": false,
+  "parallel_orchestrator": "No separate retained .py was found; exact preparation commands and all four streams remain included.",
+  "partial_records_are_full_suite_counts": false,
+  "schema": "trnm-terminal-native-evidence-archive-v1",
+  "secret_scan": {
+    "findings": [],
+    "scope": "bounded high-confidence credential pattern scan; not a universal absence proof"
+  },
+  "source_base": "/home/qian-qi/work/chain-pq-composition-663507-20261108",
+  "source_files": [
+    {
+      "bytes": 4389,
+      "path": "final-native-5633c55/campaign-start.json",
+      "sha256": "37aabdb0de18b67c24b434a5f52af06123a668b11a81357825c24500093dba55",
+      "source_identity": {
+        "ctime_ns": 1794161031505943097,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9092995,
+        "mode": 33152,
+        "mtime_ns": 1794161031505943097,
+        "nlink": 1,
+        "size": 4389,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1523,
+      "path": "final-native-5633c55/cargo-version.receipt.json",
+      "sha256": "bdf970ca1aced1127fd83bd97815d0c2372ad8c8d913649c9d7e103ce730fed3",
+      "source_identity": {
+        "ctime_ns": 1794161115480177295,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098762,
+        "mode": 33152,
+        "mtime_ns": 1794161115480177295,
+        "nlink": 1,
+        "size": 1523,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 773,
+      "path": "final-native-5633c55/cargo-version.started.json",
+      "sha256": "89dba7284bffb9fd4587b2cd687ea8405ebf73e98147c2cdee8f29a81758c29a",
+      "source_identity": {
+        "ctime_ns": 1794161115471162777,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098759,
+        "mode": 33152,
+        "mtime_ns": 1794161115471162777,
+        "nlink": 1,
+        "size": 773,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161115471162777,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098761,
+        "mode": 33152,
+        "mtime_ns": 1794161115471162777,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 36,
+      "path": "final-native-5633c55/cargo-version.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_identity": {
+        "ctime_ns": 1794161115476420979,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098760,
+        "mode": 33152,
+        "mtime_ns": 1794161115476420979,
+        "nlink": 1,
+        "size": 36,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1542,
+      "path": "final-native-5633c55/clippy-version.receipt.json",
+      "sha256": "a307d6a808e0a7b582e1256a47a5b6980b7f49e037e699a2ff01fe7c23a47cf1",
+      "source_identity": {
+        "ctime_ns": 1794161115632222929,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098793,
+        "mode": 33152,
+        "mtime_ns": 1794161115632222929,
+        "nlink": 1,
+        "size": 1542,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 790,
+      "path": "final-native-5633c55/clippy-version.started.json",
+      "sha256": "708c3a304b6473000fadc6dc4c176ba0404cd1741a0bbdab57f25e851ac16808",
+      "source_identity": {
+        "ctime_ns": 1794161115516419776,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098776,
+        "mode": 33152,
+        "mtime_ns": 1794161115516419776,
+        "nlink": 1,
+        "size": 790,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/clippy-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161115516419776,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098778,
+        "mode": 33152,
+        "mtime_ns": 1794161115516419776,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 38,
+      "path": "final-native-5633c55/clippy-version.stdout.log",
+      "sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8",
+      "source_identity": {
+        "ctime_ns": 1794161115581417821,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098777,
+        "mode": 33152,
+        "mtime_ns": 1794161115581417821,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2782,
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.finish.json",
+      "sha256": "ea028d4482edb699b276e038b9f4311f0c0efe0d7da443ad492ebf22b303fda0",
+      "source_identity": {
+        "ctime_ns": 1794161204865553223,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352854,
+        "mode": 33152,
+        "mtime_ns": 1794161204865553223,
+        "nlink": 1,
+        "size": 2782,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41875,
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.libtest.log",
+      "sha256": "f0eb3c783249a7813fe98f48d58141ba4a6d8f80633bcc2278c1142af4cd26af",
+      "source_identity": {
+        "ctime_ns": 1794161204522740119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352853,
+        "mode": 33152,
+        "mtime_ns": 1794161204522740119,
+        "nlink": 1,
+        "size": 41875,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2079,
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.start.json",
+      "sha256": "49bbe9cea273c8b2e62c0baae55d0d190eec94acfd39d2e1f127097bdd98581e",
+      "source_identity": {
+        "ctime_ns": 1794161204520002226,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352852,
+        "mode": 33152,
+        "mtime_ns": 1794161204520002226,
+        "nlink": 1,
+        "size": 2079,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2766,
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.finish.json",
+      "sha256": "c4a453aa2765b0e35dc3217b344e5ad6daa8504e7581da0622d59c0dd182a5ec",
+      "source_identity": {
+        "ctime_ns": 1794161893981528755,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352858,
+        "mode": 33152,
+        "mtime_ns": 1794161893981528755,
+        "nlink": 1,
+        "size": 2766,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41057,
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.libtest.log",
+      "sha256": "18d1a606af75e26d0a46404b885c4777cfad30b83429dc0b73839083e89e77ed",
+      "source_identity": {
+        "ctime_ns": 1794161893644882669,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352856,
+        "mode": 33152,
+        "mtime_ns": 1794161893644882669,
+        "nlink": 1,
+        "size": 41057,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2064,
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.start.json",
+      "sha256": "377a96f7cda3dc8616c9bca46598852710c39bb812977ee564d1095f8311b9a5",
+      "source_identity": {
+        "ctime_ns": 1794161206009276298,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352855,
+        "mode": 33152,
+        "mtime_ns": 1794161206009276298,
+        "nlink": 1,
+        "size": 2064,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2172,
+      "path": "final-native-5633c55/data-availability-default-lib-list.receipt.json",
+      "sha256": "f60db755573973e3992efcc43fc485575f6cc5f0f2092f06232434ec668a78bc",
+      "source_identity": {
+        "ctime_ns": 1794161204915165943,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098888,
+        "mode": 33152,
+        "mtime_ns": 1794161204915165943,
+        "nlink": 1,
+        "size": 2172,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1375,
+      "path": "final-native-5633c55/data-availability-default-lib-list.started.json",
+      "sha256": "2d1d04b6872fa4ef9186e1408dea9831c23a22af9ef187bbd3014ed681a88085",
+      "source_identity": {
+        "ctime_ns": 1794161116374192550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098816,
+        "mode": 33152,
+        "mtime_ns": 1794161116374192550,
+        "nlink": 1,
+        "size": 1375,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3212,
+      "path": "final-native-5633c55/data-availability-default-lib-list.stderr.log",
+      "sha256": "0d3493b16f0ccbf6ca300213386c483b64e67fd8a20572f98685f8b75c661a90",
+      "source_identity": {
+        "ctime_ns": 1794161204521740149,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098818,
+        "mode": 33152,
+        "mtime_ns": 1794161204521740149,
+        "nlink": 1,
+        "size": 3212,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 144222,
+      "path": "final-native-5633c55/data-availability-default-lib-list.stdout.log",
+      "sha256": "6b51fa93858fb96e09cfd9b5ec33ff6561480ff6c6e877ffd2c5e8c60b874fb9",
+      "source_identity": {
+        "ctime_ns": 1794161204522740119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098817,
+        "mode": 33152,
+        "mtime_ns": 1794161204522740119,
+        "nlink": 1,
+        "size": 144222,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2154,
+      "path": "final-native-5633c55/data-availability-default-lib-run.receipt.json",
+      "sha256": "a9b45b6fbfd9e149c62047669241da9b14e96e2be2d928900ea2836f95d35ca1",
+      "source_identity": {
+        "ctime_ns": 1794161894030686095,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098918,
+        "mode": 33152,
+        "mtime_ns": 1794161894030686095,
+        "nlink": 1,
+        "size": 2154,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1358,
+      "path": "final-native-5633c55/data-availability-default-lib-run.started.json",
+      "sha256": "ed0ec207db7647791cdc80ea4182f6449f22cfae9dcd1fc15b75b529150013fb",
+      "source_identity": {
+        "ctime_ns": 1794161204922728064,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098890,
+        "mode": 33152,
+        "mtime_ns": 1794161204922728064,
+        "nlink": 1,
+        "size": 1358,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 448,
+      "path": "final-native-5633c55/data-availability-default-lib-run.stderr.log",
+      "sha256": "dddf0058a406c50dd9cec1ccafa4367e1d11d5608a14d826b690592ca92d7637",
+      "source_identity": {
+        "ctime_ns": 1794161893991873147,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098892,
+        "mode": 33152,
+        "mtime_ns": 1794161893991873147,
+        "nlink": 1,
+        "size": 448,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 148506,
+      "path": "final-native-5633c55/data-availability-default-lib-run.stdout.log",
+      "sha256": "97a5901c154bcff21720fdfe50502fa6cfa39187d4bfef6fcb522896d1d9584e",
+      "source_identity": {
+        "ctime_ns": 1794161893644882669,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098891,
+        "mode": 33152,
+        "mtime_ns": 1794161893644882669,
+        "nlink": 1,
+        "size": 148506,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 124624,
+      "path": "final-native-5633c55/data-availability-default-lib.readback.json",
+      "sha256": "e86cca3ca047ca2473de7a00bbf0c011ebfbd91705dc26160a4a6c1e8b405117",
+      "source_identity": {
+        "ctime_ns": 1794161894043871719,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098919,
+        "mode": 33152,
+        "mtime_ns": 1794161894043871719,
+        "nlink": 1,
+        "size": 124624,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 45227,
+      "path": "final-native-5633c55/data-availability-default-lib.roster.json",
+      "sha256": "389ad1d791c5f2de5fb19b298065d89c95830cbfbe2f93541f65bb58a8365c9d",
+      "source_identity": {
+        "ctime_ns": 1794161204922587978,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098889,
+        "mode": 33152,
+        "mtime_ns": 1794161204922587978,
+        "nlink": 1,
+        "size": 45227,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1951,
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.receipt.json",
+      "sha256": "43c7bd80295f936d1a2213fcfd890be9aa32b4946683118962327b9717a27a60",
+      "source_identity": {
+        "ctime_ns": 1794161919179180732,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099047,
+        "mode": 33152,
+        "mtime_ns": 1794161919179180732,
+        "nlink": 1,
+        "size": 1951,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1133,
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.started.json",
+      "sha256": "36252eec834ed8437207411d120fa8913a1f82e689c73ddc0dab4c829ca99253",
+      "source_identity": {
+        "ctime_ns": 1794161894045350548,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098920,
+        "mode": 33152,
+        "mtime_ns": 1794161894045350548,
+        "nlink": 1,
+        "size": 1133,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2139,
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.stderr.log",
+      "sha256": "dce931ecfce40217a48e25e3cc7ef1ba18e2b87c450600a09bd3f2f61f79c841",
+      "source_identity": {
+        "ctime_ns": 1794161919114182522,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098922,
+        "mode": 33152,
+        "mtime_ns": 1794161919114182522,
+        "nlink": 1,
+        "size": 2139,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161894045350548,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098921,
+        "mode": 33152,
+        "mtime_ns": 1794161894045350548,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 439,
+      "path": "final-native-5633c55/fuzz-locked-metadata.readback.json",
+      "sha256": "9cd8e98331c7bdfda55cf1bcc31327ce98bcb0800478bea1b5975ea591bcc376",
+      "source_identity": {
+        "ctime_ns": 1794161116371898198,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098815,
+        "mode": 33152,
+        "mtime_ns": 1794161116371898198,
+        "nlink": 1,
+        "size": 439,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1685,
+      "path": "final-native-5633c55/fuzz-locked-metadata.receipt.json",
+      "sha256": "1496ba904ef34f201dc294b75522a941f1f585f3ee4bda1b86bf0e6c75885fe9",
+      "source_identity": {
+        "ctime_ns": 1794161116345179548,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098814,
+        "mode": 33152,
+        "mtime_ns": 1794161116345179548,
+        "nlink": 1,
+        "size": 1685,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 918,
+      "path": "final-native-5633c55/fuzz-locked-metadata.started.json",
+      "sha256": "e1346cac555f0c7e78116aac9b1f98401554ce4fb555ad311c1f534b17a0b21a",
+      "source_identity": {
+        "ctime_ns": 1794161115873508065,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098799,
+        "mode": 33152,
+        "mtime_ns": 1794161115873508065,
+        "nlink": 1,
+        "size": 918,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/fuzz-locked-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161115873508065,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098801,
+        "mode": 33152,
+        "mtime_ns": 1794161115873508065,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 731507,
+      "path": "final-native-5633c55/fuzz-locked-metadata.stdout.log",
+      "sha256": "382f6f629322e13e2c535fb66ba60c3e01fc15d2ecad56744031266878d2bf06",
+      "source_identity": {
+        "ctime_ns": 1794161116303396110,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098800,
+        "mode": 33152,
+        "mtime_ns": 1794161116303396110,
+        "nlink": 1,
+        "size": 731507,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1523,
+      "path": "final-native-5633c55/git-identity.receipt.json",
+      "sha256": "2a1ae49a16108c40e7190ce79a5e4db5fcb79aa166922dc9987645720383ef92",
+      "source_identity": {
+        "ctime_ns": 1794161031517335001,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093011,
+        "mode": 33152,
+        "mtime_ns": 1794161031517335001,
+        "nlink": 1,
+        "size": 1523,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 774,
+      "path": "final-native-5633c55/git-identity.started.json",
+      "sha256": "1e28f836280386881164795170a81d6c6a1cb09434a36a17a6bc7fdaffd69494",
+      "source_identity": {
+        "ctime_ns": 1794161031506943067,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9092996,
+        "mode": 33152,
+        "mtime_ns": 1794161031506943067,
+        "nlink": 1,
+        "size": 774,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/git-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161031506943067,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093010,
+        "mode": 33152,
+        "mtime_ns": 1794161031506943067,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 82,
+      "path": "final-native-5633c55/git-identity.stdout.log",
+      "sha256": "8d2ef56b3c2b52201b78e3d0747c484476251588b0c7d06bcc9012f5b6922698",
+      "source_identity": {
+        "ctime_ns": 1794161031510942947,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093009,
+        "mode": 33152,
+        "mtime_ns": 1794161031510942947,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1480,
+      "path": "final-native-5633c55/git-origin.receipt.json",
+      "sha256": "419e0032067236ceba35db004d5a6443015ff5904302b833a01663c65f3e5578",
+      "source_identity": {
+        "ctime_ns": 1794161031523130050,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093015,
+        "mode": 33152,
+        "mtime_ns": 1794161031523130050,
+        "nlink": 1,
+        "size": 1480,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 735,
+      "path": "final-native-5633c55/git-origin.started.json",
+      "sha256": "d07c936159d3381ed668305aff2dea6b0816baf201a1f27855b3759cbfe71f0c",
+      "source_identity": {
+        "ctime_ns": 1794161031517935327,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093012,
+        "mode": 33152,
+        "mtime_ns": 1794161031517935327,
+        "nlink": 1,
+        "size": 735,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/git-origin.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161031517935327,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093014,
+        "mode": 33152,
+        "mtime_ns": 1794161031517935327,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 65,
+      "path": "final-native-5633c55/git-origin.stdout.log",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "source_identity": {
+        "ctime_ns": 1794161031519942677,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093013,
+        "mode": 33152,
+        "mtime_ns": 1794161031519942677,
+        "nlink": 1,
+        "size": 65,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2686,
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.finish.json",
+      "sha256": "50bff97caad5ae337f6b6a2061853e65dfd6dd00a5ef680788efee33bf2ebc70",
+      "source_identity": {
+        "ctime_ns": 1794162665394257016,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9887189,
+        "mode": 33152,
+        "mtime_ns": 1794162665394257016,
+        "nlink": 1,
+        "size": 2686,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 145250,
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+      "sha256": "5713fe071264781ae1db527cc0e7fd653e1c7a6ad0943a92c156b55f80936dcb",
+      "source_identity": {
+        "ctime_ns": 1794162663782062875,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9886643,
+        "mode": 33152,
+        "mtime_ns": 1794162663782062875,
+        "nlink": 1,
+        "size": 145250,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2012,
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json",
+      "sha256": "33f6d4211aa621c3aeae66c7d36eab48b6c32a475fd6c2bd4e8620f3d91c358e",
+      "source_identity": {
+        "ctime_ns": 1794162663776354435,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9886642,
+        "mode": 33152,
+        "mtime_ns": 1794162663776354435,
+        "nlink": 1,
+        "size": 2012,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 91444,
+      "path": "final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+      "sha256": "3ed7d7cfa252d8a5aad4392101c4f279c955f5e4e68237f9d77f8908170fa380",
+      "source_identity": {
+        "ctime_ns": 1794165203426703306,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9887522,
+        "mode": 33152,
+        "mtime_ns": 1794165203426703306,
+        "nlink": 1,
+        "size": 91444,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1998,
+      "path": "final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json",
+      "sha256": "60328a4b14c868f7b9a97a89b21d15b4d82db5abf54b192c16f12b716e6659a5",
+      "source_identity": {
+        "ctime_ns": 1794162676696610984,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9887521,
+        "mode": 33152,
+        "mtime_ns": 1794162676696610984,
+        "nlink": 1,
+        "size": 1998,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2098,
+      "path": "final-native-5633c55/node-default-lib-list.receipt.json",
+      "sha256": "10e2392e321bfddd5f2b8b929d0b4b41ef8c71f3b8f85d213640ff6840e130c8",
+      "source_identity": {
+        "ctime_ns": 1794162665500485892,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099078,
+        "mode": 33152,
+        "mtime_ns": 1794162665500485892,
+        "nlink": 1,
+        "size": 2098,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1327,
+      "path": "final-native-5633c55/node-default-lib-list.started.json",
+      "sha256": "c309133fbf91da8967841081e6ced6387d6a9558e4a1466f92706d3811cdf1fb",
+      "source_identity": {
+        "ctime_ns": 1794161919181124197,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099048,
+        "mode": 33152,
+        "mtime_ns": 1794161919181124197,
+        "nlink": 1,
+        "size": 1327,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3087,
+      "path": "final-native-5633c55/node-default-lib-list.stderr.log",
+      "sha256": "d3650568927e281a48ae4119192317bf7edc85cdc51adf7591a4aa8d51cfc2b0",
+      "source_identity": {
+        "ctime_ns": 1794162663779062961,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099050,
+        "mode": 33152,
+        "mtime_ns": 1794162663779062961,
+        "nlink": 1,
+        "size": 3087,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 270020,
+      "path": "final-native-5633c55/node-default-lib-list.stdout.log",
+      "sha256": "93a48a1133ce97f4b5992c05cc2247bf3d89c6bfe4140b6d16cdc116ab9c2f62",
+      "source_identity": {
+        "ctime_ns": 1794162663782062875,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099049,
+        "mode": 33152,
+        "mtime_ns": 1794162663782062875,
+        "nlink": 1,
+        "size": 270020,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2147,
+      "path": "final-native-5633c55/node-default-lib-run.receipt.json",
+      "sha256": "072bc042270ff3b45c2484fbf6f5dd1eb85ae238711dfea63052287d11acbfb1",
+      "source_identity": {
+        "ctime_ns": 1794165486110218199,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099505,
+        "mode": 33152,
+        "mtime_ns": 1794165486110218199,
+        "nlink": 1,
+        "size": 2147,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1310,
+      "path": "final-native-5633c55/node-default-lib-run.started.json",
+      "sha256": "3171533c04675299c6dbfa13ab16e199606729413d6f5a5d3df0b7eb74d0d1c1",
+      "source_identity": {
+        "ctime_ns": 1794162665517941716,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099080,
+        "mode": 33152,
+        "mtime_ns": 1794162665517941716,
+        "nlink": 1,
+        "size": 1310,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1017,
+      "path": "final-native-5633c55/node-default-lib-run.stderr.log",
+      "sha256": "4bbd551b7bfb8056d8e1abb048b6c237ba38ed3d4a2194560d202804365b1e3f",
+      "source_identity": {
+        "ctime_ns": 1794162676700689796,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099082,
+        "mode": 33152,
+        "mtime_ns": 1794162676700689796,
+        "nlink": 1,
+        "size": 1017,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 223796,
+      "path": "final-native-5633c55/node-default-lib-run.stdout.log",
+      "sha256": "1e72e7c3b59a29920de7af587c11fbbf32f7cadc2bce00c1b525558e4d42825e",
+      "source_identity": {
+        "ctime_ns": 1794165203426703306,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099081,
+        "mode": 33152,
+        "mtime_ns": 1794165203426703306,
+        "nlink": 1,
+        "size": 223796,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 155569,
+      "path": "final-native-5633c55/node-default-lib.readback.json",
+      "sha256": "0f52eb0ac57fce66fbe827281ec7802a62eefc21331aeaebfdb7658ba02776d8",
+      "source_identity": {
+        "ctime_ns": 1794165486120217973,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099506,
+        "mode": 33152,
+        "mtime_ns": 1794165486120217973,
+        "nlink": 1,
+        "size": 155569,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 152059,
+      "path": "final-native-5633c55/node-default-lib.roster.json",
+      "sha256": "d2ae981e86abfa1b03e51cc5140c6f571af2ab2e4912d3d368c1269f506bbe71",
+      "source_identity": {
+        "ctime_ns": 1794162665516012807,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099079,
+        "mode": 33152,
+        "mtime_ns": 1794162665516012807,
+        "nlink": 1,
+        "size": 152059,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2251,
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.receipt.json",
+      "sha256": "caca6005fe792ad3a6630fdc5847bdea2f04da72cb155517c3049a0d47edbef5",
+      "source_identity": {
+        "ctime_ns": 1794165551005285286,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099533,
+        "mode": 33152,
+        "mtime_ns": 1794165551005285286,
+        "nlink": 1,
+        "size": 2251,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1399,
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.started.json",
+      "sha256": "dc753d003e74326735d657a778836980e15be78fb1418f33d289673e37f2e5f0",
+      "source_identity": {
+        "ctime_ns": 1794165551004572626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099530,
+        "mode": 33152,
+        "mtime_ns": 1794165551004572626,
+        "nlink": 1,
+        "size": 1399,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165551004572626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099532,
+        "mode": 33152,
+        "mtime_ns": 1794165551004572626,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165551004572626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099531,
+        "mode": 33152,
+        "mtime_ns": 1794165551004572626,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 361,
+      "path": "final-native-5633c55/node-pq-native-openssl-lib.readback.json",
+      "sha256": "14bd6ca9997d73aca73bde90aeeae7bac6d91159b0195aba967d8a65a68203d0",
+      "source_identity": {
+        "ctime_ns": 1794165551005525316,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099534,
+        "mode": 33152,
+        "mtime_ns": 1794165551005525316,
+        "nlink": 1,
+        "size": 361,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1900,
+      "path": "final-native-5633c55/node-strict-default-alltargets.receipt.json",
+      "sha256": "0d204385dcbc0bda0c7ee4aeafc7465794abb0f6fe9f890ecd651d278afca7fc",
+      "source_identity": {
+        "ctime_ns": 1794165486123056387,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099510,
+        "mode": 33152,
+        "mtime_ns": 1794165486123056387,
+        "nlink": 1,
+        "size": 1900,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1050,
+      "path": "final-native-5633c55/node-strict-default-alltargets.started.json",
+      "sha256": "4de854d78c9ae41478c8b87e6f262efdc23dbcf789c7cf0e47ac7bc7dd07788b",
+      "source_identity": {
+        "ctime_ns": 1794165486122170073,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099507,
+        "mode": 33152,
+        "mtime_ns": 1794165486122170073,
+        "nlink": 1,
+        "size": 1050,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/node-strict-default-alltargets.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165486122170073,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099509,
+        "mode": 33152,
+        "mtime_ns": 1794165486122170073,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/node-strict-default-alltargets.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165486122170073,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099508,
+        "mode": 33152,
+        "mtime_ns": 1794165486122170073,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1631,
+      "path": "final-native-5633c55/pq-provider-version.receipt.json",
+      "sha256": "0d1a3179b1d07e2a72b2a3482f6d33447b0c35ebb695bdc4d8bd4942b58d3c0a",
+      "source_identity": {
+        "ctime_ns": 1794165550597926797,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099524,
+        "mode": 33152,
+        "mtime_ns": 1794165550597926797,
+        "nlink": 1,
+        "size": 1631,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 868,
+      "path": "final-native-5633c55/pq-provider-version.started.json",
+      "sha256": "22933923efb1da78b19a2ae9212bc9f8312d37e5e6a5cdd0f664ea6af5c57d44",
+      "source_identity": {
+        "ctime_ns": 1794165550593298762,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099521,
+        "mode": 33152,
+        "mtime_ns": 1794165550593298762,
+        "nlink": 1,
+        "size": 868,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/pq-provider-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165550593298762,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099523,
+        "mode": 33152,
+        "mtime_ns": 1794165550593298762,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 894,
+      "path": "final-native-5633c55/pq-provider-version.stdout.log",
+      "sha256": "a705fa2d34f811ffe4783a72b48b5aeb7b3d03d8ea0acc6a53ac7f68bcc57d7b",
+      "source_identity": {
+        "ctime_ns": 1794165550595732894,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099522,
+        "mode": 33152,
+        "mtime_ns": 1794165550595732894,
+        "nlink": 1,
+        "size": 894,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1505,
+      "path": "final-native-5633c55/project-preflight.receipt.json",
+      "sha256": "4954ccc047701d3e71f30f766e9f3cef1699f5ae770645a3a05f3a8132b64432",
+      "source_identity": {
+        "ctime_ns": 1794161031639463473,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093025,
+        "mode": 33152,
+        "mtime_ns": 1794161031639463473,
+        "nlink": 1,
+        "size": 1505,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 746,
+      "path": "final-native-5633c55/project-preflight.started.json",
+      "sha256": "0adc9bb57c0aa020275153b1f264fda3c3e1683f6b47efe69bd8f7dbff88ffa0",
+      "source_identity": {
+        "ctime_ns": 1794161031523664746,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093016,
+        "mode": 33152,
+        "mtime_ns": 1794161031523664746,
+        "nlink": 1,
+        "size": 746,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/project-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161031523664746,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093018,
+        "mode": 33152,
+        "mtime_ns": 1794161031523664746,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 171,
+      "path": "final-native-5633c55/project-preflight.stdout.log",
+      "sha256": "3884089f0fab0f6cdda7ec1bcce584e1d7f513780e5c920c97b7f71425311e4b",
+      "source_identity": {
+        "ctime_ns": 1794161031603940157,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093017,
+        "mode": 33152,
+        "mtime_ns": 1794161031603940157,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2442,
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.receipt.json",
+      "sha256": "a2188068b3904afe0aa6e6339efd68bd37cf213e4aa9da6659b7911e36952215",
+      "source_identity": {
+        "ctime_ns": 1794165486125467861,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099514,
+        "mode": 33152,
+        "mtime_ns": 1794165486125467861,
+        "nlink": 1,
+        "size": 2442,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1543,
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.started.json",
+      "sha256": "66dc6ef3c140a3c6327b96c356438457b1e4dfad55be819023b953355b6eae4b",
+      "source_identity": {
+        "ctime_ns": 1794165486124526417,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099511,
+        "mode": 33152,
+        "mtime_ns": 1794165486124526417,
+        "nlink": 1,
+        "size": 1543,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165486124526417,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099513,
+        "mode": 33152,
+        "mtime_ns": 1794165486124526417,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165486124526417,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099512,
+        "mode": 33152,
+        "mtime_ns": 1794165486124526417,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 438,
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures.readback.json",
+      "sha256": "36255f34349db833c3c8dfc3f731485d7800b74485097a6f0430074c62128f09",
+      "source_identity": {
+        "ctime_ns": 1794165486125828028,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099515,
+        "mode": 33152,
+        "mtime_ns": 1794165486125828028,
+        "nlink": 1,
+        "size": 438,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1525,
+      "path": "final-native-5633c55/rustc-version.receipt.json",
+      "sha256": "578e7bbd2b34c62c0156ae1173312f6a820cf55605312ffbc3a7469bf5057958",
+      "source_identity": {
+        "ctime_ns": 1794161115498547964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098767,
+        "mode": 33152,
+        "mtime_ns": 1794161115498547964,
+        "nlink": 1,
+        "size": 1525,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 773,
+      "path": "final-native-5633c55/rustc-version.started.json",
+      "sha256": "b6bf26c4b30076a4b19b4cba50e8921b644c00c370293a15bc12b88753b1b324",
+      "source_identity": {
+        "ctime_ns": 1794161115480420858,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098763,
+        "mode": 33152,
+        "mtime_ns": 1794161115480420858,
+        "nlink": 1,
+        "size": 773,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161115480420858,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098765,
+        "mode": 33152,
+        "mtime_ns": 1794161115480420858,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 196,
+      "path": "final-native-5633c55/rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_identity": {
+        "ctime_ns": 1794161115492420497,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098764,
+        "mode": 33152,
+        "mtime_ns": 1794161115492420497,
+        "nlink": 1,
+        "size": 196,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1535,
+      "path": "final-native-5633c55/rustdoc-version.receipt.json",
+      "sha256": "23d684447fb195d4bbf86b5df84da43d0e87fa824e50e7ad74f062a81513221e",
+      "source_identity": {
+        "ctime_ns": 1794161115516290000,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098773,
+        "mode": 33152,
+        "mtime_ns": 1794161115516290000,
+        "nlink": 1,
+        "size": 1535,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 781,
+      "path": "final-native-5633c55/rustdoc-version.started.json",
+      "sha256": "f6ddb0cb04584cbd5e147c59c2ab4fbfe0df864859eca7f43e1b9c8957d28280",
+      "source_identity": {
+        "ctime_ns": 1794161115499264706,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098769,
+        "mode": 33152,
+        "mtime_ns": 1794161115499264706,
+        "nlink": 1,
+        "size": 781,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/rustdoc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161115499264706,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098771,
+        "mode": 33152,
+        "mtime_ns": 1794161115499264706,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 38,
+      "path": "final-native-5633c55/rustdoc-version.stdout.log",
+      "sha256": "84ab52888eabc8158cbebaffa261763e982a8b32b8d7d791117447013a0ab4fb",
+      "source_identity": {
+        "ctime_ns": 1794161115511663022,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098770,
+        "mode": 33152,
+        "mtime_ns": 1794161115511663022,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1756,
+      "path": "final-native-5633c55/source-after-final.receipt.json",
+      "sha256": "61b93184728ed9ab0bd35b2a2939444a30a50577cc5c471679f5f52957b13900",
+      "source_identity": {
+        "ctime_ns": 1794165557966560003,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099543,
+        "mode": 33152,
+        "mtime_ns": 1794165557966560003,
+        "nlink": 1,
+        "size": 1756,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "final-native-5633c55/source-after-final.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794165557933652220,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099542,
+        "mode": 33152,
+        "mtime_ns": 1794165557933652220,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 998,
+      "path": "final-native-5633c55/source-after-final.started.json",
+      "sha256": "175127f0dc7d4f34252cc0647fe7620944c704e5d23c96eb4fb01d050774a1e2",
+      "source_identity": {
+        "ctime_ns": 1794165551085407911,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099539,
+        "mode": 33152,
+        "mtime_ns": 1794165551085407911,
+        "nlink": 1,
+        "size": 998,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/source-after-final.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165551085407911,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099541,
+        "mode": 33152,
+        "mtime_ns": 1794165551085407911,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "final-native-5633c55/source-after-final.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794165557933652220,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099540,
+        "mode": 33152,
+        "mtime_ns": 1794165557933652220,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1768,
+      "path": "final-native-5633c55/source-after-primary.receipt.json",
+      "sha256": "82a8bb6a2de4b3028790904d0995a993cbe6dd684934dbfbffe333d9fb45b3a5",
+      "source_identity": {
+        "ctime_ns": 1794165550504564911,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099520,
+        "mode": 33152,
+        "mtime_ns": 1794165550504564911,
+        "nlink": 1,
+        "size": 1768,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "final-native-5633c55/source-after-primary.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794165550444865555,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099519,
+        "mode": 33152,
+        "mtime_ns": 1794165550444865555,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1006,
+      "path": "final-native-5633c55/source-after-primary.started.json",
+      "sha256": "65999c6678ae068a9cf7ee51eccd3c70f466475d2a854ed00619dbded4443456",
+      "source_identity": {
+        "ctime_ns": 1794165486126628162,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099516,
+        "mode": 33152,
+        "mtime_ns": 1794165486126628162,
+        "nlink": 1,
+        "size": 1006,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/source-after-primary.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165486126628162,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099518,
+        "mode": 33152,
+        "mtime_ns": 1794165486126628162,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "final-native-5633c55/source-after-primary.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794165550444865555,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099517,
+        "mode": 33152,
+        "mtime_ns": 1794165550444865555,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1727,
+      "path": "final-native-5633c55/source-before.receipt.json",
+      "sha256": "4d2c088d29da1301b41e107e66ed9aaa9152e70a16199b808d118957234c732b",
+      "source_identity": {
+        "ctime_ns": 1794161115470672946,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098758,
+        "mode": 33152,
+        "mtime_ns": 1794161115470672946,
+        "nlink": 1,
+        "size": 1727,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "final-native-5633c55/source-before.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794161115453281249,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098756,
+        "mode": 33152,
+        "mtime_ns": 1794161115453281249,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 979,
+      "path": "final-native-5633c55/source-before.started.json",
+      "sha256": "8dbe625ab4e1d8d43120ac041b5b324abb0a5c58d3c560b723661d2024108da7",
+      "source_identity": {
+        "ctime_ns": 1794161031640051919,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093026,
+        "mode": 33152,
+        "mtime_ns": 1794161031640051919,
+        "nlink": 1,
+        "size": 979,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161031640051919,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093028,
+        "mode": 33152,
+        "mtime_ns": 1794161031640051919,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "final-native-5633c55/source-before.stdout.log",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794161115453281249,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093027,
+        "mode": 33152,
+        "mtime_ns": 1794161115453281249,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 367252,
+      "path": "final-native-5633c55/summary.json",
+      "sha256": "e35cd980af51a8e8778798b36232587933669f773009bbfb0d4948186166776b",
+      "source_identity": {
+        "ctime_ns": 1794165558065557677,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099544,
+        "mode": 33152,
+        "mtime_ns": 1794165558065557677,
+        "nlink": 1,
+        "size": 367252,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3544,
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.readback.json",
+      "sha256": "05896011fc3155d213096fdcdf0852c4c71c716e08102ba54742cc86812ff54a",
+      "source_identity": {
+        "ctime_ns": 1794165551000494124,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099529,
+        "mode": 33152,
+        "mtime_ns": 1794165551000494124,
+        "nlink": 1,
+        "size": 3544,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1792,
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.receipt.json",
+      "sha256": "888b8913fa145bc8ae2ce814368064286f6e5b52610104f350b0b8ed2adb3ab6",
+      "source_identity": {
+        "ctime_ns": 1794165550969029762,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099528,
+        "mode": 33152,
+        "mtime_ns": 1794165550969029762,
+        "nlink": 1,
+        "size": 1792,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 992,
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.started.json",
+      "sha256": "870d1cb1186464dc5825525739472bdfeaa78a2b32e8417d03c07dd158ebe588",
+      "source_identity": {
+        "ctime_ns": 1794165550598280743,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099525,
+        "mode": 33152,
+        "mtime_ns": 1794165550598280743,
+        "nlink": 1,
+        "size": 992,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165550598280743,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099527,
+        "mode": 33152,
+        "mtime_ns": 1794165550598280743,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 861385,
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.stdout.log",
+      "sha256": "d731d6dc89ea07bfee6ddcdb3af91d46db0f1e3247010db42b7b39488e21aeea",
+      "source_identity": {
+        "ctime_ns": 1794165550945724700,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099526,
+        "mode": 33152,
+        "mtime_ns": 1794165550945724700,
+        "nlink": 1,
+        "size": 861385,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3550,
+      "path": "final-native-5633c55/workspace-locked-metadata.readback.json",
+      "sha256": "5f6af886b39a9679524261335b083ea0076810b6991072497812852e6104c73e",
+      "source_identity": {
+        "ctime_ns": 1794161115872391718,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098798,
+        "mode": 33152,
+        "mtime_ns": 1794161115872391718,
+        "nlink": 1,
+        "size": 3550,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1713,
+      "path": "final-native-5633c55/workspace-locked-metadata.receipt.json",
+      "sha256": "b890e97d673f143c2c8205c0cdb1306404e44b986632f5484dba671edce5730e",
+      "source_identity": {
+        "ctime_ns": 1794161115853672432,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098797,
+        "mode": 33152,
+        "mtime_ns": 1794161115853672432,
+        "nlink": 1,
+        "size": 1713,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 935,
+      "path": "final-native-5633c55/workspace-locked-metadata.started.json",
+      "sha256": "86d7791e268ce694e03693020706342b0a3dae181cef8bbe0c2d1a5ae789b817",
+      "source_identity": {
+        "ctime_ns": 1794161115633911382,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098794,
+        "mode": 33152,
+        "mtime_ns": 1794161115633911382,
+        "nlink": 1,
+        "size": 935,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/workspace-locked-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161115633911382,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098796,
+        "mode": 33152,
+        "mtime_ns": 1794161115633911382,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 846596,
+      "path": "final-native-5633c55/workspace-locked-metadata.stdout.log",
+      "sha256": "aa7dafeeb8c96d6d07934843090c1ae27a08747d0192b73e3a8b6c95a202da5b",
+      "source_identity": {
+        "ctime_ns": 1794161115831410303,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098795,
+        "mode": 33152,
+        "mtime_ns": 1794161115831410303,
+        "nlink": 1,
+        "size": 846596,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1954,
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.receipt.json",
+      "sha256": "6d39de37aba6ad4e6ad28c59e02911eca88dfef38fc625868341b3108dee438e",
+      "source_identity": {
+        "ctime_ns": 1794165551006429404,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099538,
+        "mode": 33152,
+        "mtime_ns": 1794165551006429404,
+        "nlink": 1,
+        "size": 1954,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 1087,
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.started.json",
+      "sha256": "51fe93ea72fd8fd6ea5bc377ce8f55cddb092a458a65a60ccfb24b1898b9a0ac",
+      "source_identity": {
+        "ctime_ns": 1794165551005834898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099535,
+        "mode": 33152,
+        "mtime_ns": 1794165551005834898,
+        "nlink": 1,
+        "size": 1087,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165551005834898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099537,
+        "mode": 33152,
+        "mtime_ns": 1794165551005834898,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794165551005834898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099536,
+        "mode": 33152,
+        "mtime_ns": 1794165551005834898,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 42238,
+      "path": "final_native_campaign.py",
+      "sha256": "a7733832e8511daa23385c978dae1c63185f9f7f25c6b7eb69691448e5698f8c",
+      "source_identity": {
+        "ctime_ns": 1794160814200435397,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905519,
+        "mode": 33152,
+        "mtime_ns": 1794160813892165716,
+        "nlink": 1,
+        "size": 42238,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 20731,
+      "path": "final_proof_campaign.py",
+      "sha256": "e533fa59a596290caef42d59c2d4e5450bcc0f186aaa87ed036b595c94723b77",
+      "source_identity": {
+        "ctime_ns": 1794160485319115499,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905498,
+        "mode": 33152,
+        "mtime_ns": 1794160485115609867,
+        "nlink": 1,
+        "size": 20731,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 6586,
+      "path": "final_source_campaign_v2.py",
+      "sha256": "3343683cbc8b1dcfe644250296e76e740df323a7f02d698b62d081b68cb2a770",
+      "source_identity": {
+        "ctime_ns": 1794160759624056056,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905505,
+        "mode": 33152,
+        "mtime_ns": 1794160759491746699,
+        "nlink": 1,
+        "size": 6586,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 20904,
+      "path": "owner_guard_counterexamples.py",
+      "sha256": "35c92721b6342d935d2bba4a5d8deda5c2aa74a816ee0dc776cab0ffe02b1cf7",
+      "source_identity": {
+        "ctime_ns": 1794160293135641068,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905469,
+        "mode": 33152,
+        "mtime_ns": 1794160293092919489,
+        "nlink": 1,
+        "size": 20904,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "parallel-campaigns-5633c55/native.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161030630969343,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905602,
+        "mode": 33152,
+        "mtime_ns": 1794161030630969343,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 25029,
+      "path": "parallel-campaigns-5633c55/native.stdout",
+      "sha256": "f0f1063d0b7c800b6f0c50e224fad2539e7d854aadd5bb73f560a4e8cf6be94e",
+      "source_identity": {
+        "ctime_ns": 1794165558127556220,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905601,
+        "mode": 33152,
+        "mtime_ns": 1794165558127556220,
+        "nlink": 1,
+        "size": 25029,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "parallel-campaigns-5633c55/owner.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161030629969373,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905600,
+        "mode": 33152,
+        "mtime_ns": 1794161030629969373,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 14295,
+      "path": "parallel-campaigns-5633c55/owner.stdout",
+      "sha256": "c4f4d242d3ed567237dde9a8dc59e356b349a9a0dcf65c953c36ec6ae75f493e",
+      "source_identity": {
+        "ctime_ns": 1794163413787795737,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905599,
+        "mode": 33152,
+        "mtime_ns": 1794163413787795737,
+        "nlink": 1,
+        "size": 14295,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 6347,
+      "path": "parallel-campaigns-5633c55/preparation.json",
+      "sha256": "de81b0a6ba6e17e255a254ed9afb0714f93ff8251830c347f6e2ab47c000d955",
+      "source_identity": {
+        "ctime_ns": 1794161030628326954,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905594,
+        "mode": 33152,
+        "mtime_ns": 1794161030628326954,
+        "nlink": 1,
+        "size": 6347,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "parallel-campaigns-5633c55/proof.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161030628969403,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905598,
+        "mode": 33152,
+        "mtime_ns": 1794161030628969403,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 24307,
+      "path": "parallel-campaigns-5633c55/proof.stdout",
+      "sha256": "5556cb33f158f747a6c42d492aee0b331923d61939e0129a9aac99f2b7160db3",
+      "source_identity": {
+        "ctime_ns": 1794161189824183040,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905597,
+        "mode": 33152,
+        "mtime_ns": 1794161189824183040,
+        "nlink": 1,
+        "size": 24307,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "parallel-campaigns-5633c55/source-after.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794165565058066316,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4906784,
+        "mode": 33152,
+        "mtime_ns": 1794165565058066316,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 423,
+      "path": "parallel-campaigns-5633c55/source-before.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "source_identity": {
+        "ctime_ns": 1794161030605305955,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905593,
+        "mode": 33152,
+        "mtime_ns": 1794161030605305955,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "parallel-campaigns-5633c55/source.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794161030628326954,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905596,
+        "mode": 33152,
+        "mtime_ns": 1794161030628326954,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 2784,
+      "path": "parallel-campaigns-5633c55/source.stdout",
+      "sha256": "a5ebb9b0305879d7d802705cd718e51c7787bad3fe6a8b98fd9a839c39fed3bc",
+      "source_identity": {
+        "ctime_ns": 1794161775022814503,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905595,
+        "mode": 33152,
+        "mtime_ns": 1794161775022814503,
+        "nlink": 1,
+        "size": 2784,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 4094,
+      "path": "parallel-campaigns-5633c55/summary.json",
+      "sha256": "4c510dd664a9c53c3c395f8d239a41c43da639ec8acebda85034f8ebd8f4f1ed",
+      "source_identity": {
+        "ctime_ns": 1794165565249886013,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4906785,
+        "mode": 33152,
+        "mtime_ns": 1794165565249886013,
+        "nlink": 1,
+        "size": 4094,
+        "uid": 1000
+      }
+    }
+  ],
+  "source_inventory": [
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55",
+      "stat": {
+        "ctime_ns": 1794165558012558922,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9092937,
+        "mode": 16832,
+        "mtime_ns": 1794165558012558922,
+        "nlink": 11,
+        "size": 12288,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/campaign-start.json",
+      "stat": {
+        "ctime_ns": 1794161031505943097,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9092995,
+        "mode": 33152,
+        "mtime_ns": 1794161031505943097,
+        "nlink": 1,
+        "size": 4389,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/cargo-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161115480177295,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098762,
+        "mode": 33152,
+        "mtime_ns": 1794161115480177295,
+        "nlink": 1,
+        "size": 1523,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/cargo-version.started.json",
+      "stat": {
+        "ctime_ns": 1794161115471162777,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098759,
+        "mode": 33152,
+        "mtime_ns": 1794161115471162777,
+        "nlink": 1,
+        "size": 773,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/cargo-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161115471162777,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098761,
+        "mode": 33152,
+        "mtime_ns": 1794161115471162777,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/cargo-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161115476420979,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098760,
+        "mode": 33152,
+        "mtime_ns": 1794161115476420979,
+        "nlink": 1,
+        "size": 36,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/clippy-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161115632222929,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098793,
+        "mode": 33152,
+        "mtime_ns": 1794161115632222929,
+        "nlink": 1,
+        "size": 1542,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/clippy-version.started.json",
+      "stat": {
+        "ctime_ns": 1794161115516419776,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098776,
+        "mode": 33152,
+        "mtime_ns": 1794161115516419776,
+        "nlink": 1,
+        "size": 790,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/clippy-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161115516419776,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098778,
+        "mode": 33152,
+        "mtime_ns": 1794161115516419776,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/clippy-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161115581417821,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098777,
+        "mode": 33152,
+        "mtime_ns": 1794161115581417821,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses",
+      "stat": {
+        "ctime_ns": 1794161204863729842,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9349370,
+        "mode": 16832,
+        "mtime_ns": 1794161204863729842,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.finish.json",
+      "stat": {
+        "ctime_ns": 1794161204865553223,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352854,
+        "mode": 33152,
+        "mtime_ns": 1794161204865553223,
+        "nlink": 1,
+        "size": 2782,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.libtest.log",
+      "stat": {
+        "ctime_ns": 1794161204522740119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352853,
+        "mode": 33152,
+        "mtime_ns": 1794161204522740119,
+        "nlink": 1,
+        "size": 41875,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-discovery-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.start.json",
+      "stat": {
+        "ctime_ns": 1794161204520002226,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352852,
+        "mode": 33152,
+        "mtime_ns": 1794161204520002226,
+        "nlink": 1,
+        "size": 2079,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses",
+      "stat": {
+        "ctime_ns": 1794161893979873476,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9349371,
+        "mode": 16832,
+        "mtime_ns": 1794161893979873476,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.finish.json",
+      "stat": {
+        "ctime_ns": 1794161893981528755,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352858,
+        "mode": 33152,
+        "mtime_ns": 1794161893981528755,
+        "nlink": 1,
+        "size": 2766,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.libtest.log",
+      "stat": {
+        "ctime_ns": 1794161893644882669,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352856,
+        "mode": 33152,
+        "mtime_ns": 1794161893644882669,
+        "nlink": 1,
+        "size": 41057,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-execution-harnesses/trnm_data_availability-e2df522b48ec374b-487806e9cd87376cacc8.start.json",
+      "stat": {
+        "ctime_ns": 1794161206009276298,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9352855,
+        "mode": 33152,
+        "mtime_ns": 1794161206009276298,
+        "nlink": 1,
+        "size": 2064,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-list.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161204915165943,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098888,
+        "mode": 33152,
+        "mtime_ns": 1794161204915165943,
+        "nlink": 1,
+        "size": 2172,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-list.started.json",
+      "stat": {
+        "ctime_ns": 1794161116374192550,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098816,
+        "mode": 33152,
+        "mtime_ns": 1794161116374192550,
+        "nlink": 1,
+        "size": 1375,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-list.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161204521740149,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098818,
+        "mode": 33152,
+        "mtime_ns": 1794161204521740149,
+        "nlink": 1,
+        "size": 3212,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-list.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161204522740119,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098817,
+        "mode": 33152,
+        "mtime_ns": 1794161204522740119,
+        "nlink": 1,
+        "size": 144222,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-run.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161894030686095,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098918,
+        "mode": 33152,
+        "mtime_ns": 1794161894030686095,
+        "nlink": 1,
+        "size": 2154,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-run.started.json",
+      "stat": {
+        "ctime_ns": 1794161204922728064,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098890,
+        "mode": 33152,
+        "mtime_ns": 1794161204922728064,
+        "nlink": 1,
+        "size": 1358,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-run.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161893991873147,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098892,
+        "mode": 33152,
+        "mtime_ns": 1794161893991873147,
+        "nlink": 1,
+        "size": 448,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib-run.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161893644882669,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098891,
+        "mode": 33152,
+        "mtime_ns": 1794161893644882669,
+        "nlink": 1,
+        "size": 148506,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib.readback.json",
+      "stat": {
+        "ctime_ns": 1794161894043871719,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098919,
+        "mode": 33152,
+        "mtime_ns": 1794161894043871719,
+        "nlink": 1,
+        "size": 124624,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-default-lib.roster.json",
+      "stat": {
+        "ctime_ns": 1794161204922587978,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098889,
+        "mode": 33152,
+        "mtime_ns": 1794161204922587978,
+        "nlink": 1,
+        "size": 45227,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161919179180732,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099047,
+        "mode": 33152,
+        "mtime_ns": 1794161919179180732,
+        "nlink": 1,
+        "size": 1951,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.started.json",
+      "stat": {
+        "ctime_ns": 1794161894045350548,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098920,
+        "mode": 33152,
+        "mtime_ns": 1794161894045350548,
+        "nlink": 1,
+        "size": 1133,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161919114182522,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098922,
+        "mode": 33152,
+        "mtime_ns": 1794161919114182522,
+        "nlink": 1,
+        "size": 2139,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/data-availability-strict-alltargets-allfeatures.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161894045350548,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098921,
+        "mode": 33152,
+        "mtime_ns": 1794161894045350548,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/fuzz-locked-metadata.readback.json",
+      "stat": {
+        "ctime_ns": 1794161116371898198,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098815,
+        "mode": 33152,
+        "mtime_ns": 1794161116371898198,
+        "nlink": 1,
+        "size": 439,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/fuzz-locked-metadata.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161116345179548,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098814,
+        "mode": 33152,
+        "mtime_ns": 1794161116345179548,
+        "nlink": 1,
+        "size": 1685,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/fuzz-locked-metadata.started.json",
+      "stat": {
+        "ctime_ns": 1794161115873508065,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098799,
+        "mode": 33152,
+        "mtime_ns": 1794161115873508065,
+        "nlink": 1,
+        "size": 918,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/fuzz-locked-metadata.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161115873508065,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098801,
+        "mode": 33152,
+        "mtime_ns": 1794161115873508065,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/fuzz-locked-metadata.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161116303396110,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098800,
+        "mode": 33152,
+        "mtime_ns": 1794161116303396110,
+        "nlink": 1,
+        "size": 731507,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-identity.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161031517335001,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093011,
+        "mode": 33152,
+        "mtime_ns": 1794161031517335001,
+        "nlink": 1,
+        "size": 1523,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-identity.started.json",
+      "stat": {
+        "ctime_ns": 1794161031506943067,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9092996,
+        "mode": 33152,
+        "mtime_ns": 1794161031506943067,
+        "nlink": 1,
+        "size": 774,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-identity.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161031506943067,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093010,
+        "mode": 33152,
+        "mtime_ns": 1794161031506943067,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-identity.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161031510942947,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093009,
+        "mode": 33152,
+        "mtime_ns": 1794161031510942947,
+        "nlink": 1,
+        "size": 82,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-origin.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161031523130050,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093015,
+        "mode": 33152,
+        "mtime_ns": 1794161031523130050,
+        "nlink": 1,
+        "size": 1480,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-origin.started.json",
+      "stat": {
+        "ctime_ns": 1794161031517935327,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093012,
+        "mode": 33152,
+        "mtime_ns": 1794161031517935327,
+        "nlink": 1,
+        "size": 735,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-origin.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161031517935327,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093014,
+        "mode": 33152,
+        "mtime_ns": 1794161031517935327,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/git-origin.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161031519942677,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093013,
+        "mode": 33152,
+        "mtime_ns": 1794161031519942677,
+        "nlink": 1,
+        "size": 65,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "excluded_cache_directory",
+      "path": "final-native-5633c55/native-target-default",
+      "stat": {
+        "ctime_ns": 1794161116569121493,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9349389,
+        "mode": 16832,
+        "mtime_ns": 1794161116569121493,
+        "nlink": 4,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses",
+      "stat": {
+        "ctime_ns": 1794162665393016359,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9865907,
+        "mode": 16832,
+        "mtime_ns": 1794162665393016359,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.finish.json",
+      "stat": {
+        "ctime_ns": 1794162665394257016,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9887189,
+        "mode": 33152,
+        "mtime_ns": 1794162665394257016,
+        "nlink": 1,
+        "size": 2686,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+      "stat": {
+        "ctime_ns": 1794162663782062875,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9886643,
+        "mode": 33152,
+        "mtime_ns": 1794162663782062875,
+        "nlink": 1,
+        "size": 145250,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json",
+      "stat": {
+        "ctime_ns": 1794162663776354435,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9886642,
+        "mode": 33152,
+        "mtime_ns": 1794162663776354435,
+        "nlink": 1,
+        "size": 2012,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/node-default-lib-execution-harnesses",
+      "stat": {
+        "ctime_ns": 1794162676700689796,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9865908,
+        "mode": 16832,
+        "mtime_ns": 1794162676700689796,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+      "stat": {
+        "ctime_ns": 1794165203426703306,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9887522,
+        "mode": 33152,
+        "mtime_ns": 1794165203426703306,
+        "nlink": 1,
+        "size": 91444,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json",
+      "stat": {
+        "ctime_ns": 1794162676696610984,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9887521,
+        "mode": 33152,
+        "mtime_ns": 1794162676696610984,
+        "nlink": 1,
+        "size": 1998,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-list.receipt.json",
+      "stat": {
+        "ctime_ns": 1794162665500485892,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099078,
+        "mode": 33152,
+        "mtime_ns": 1794162665500485892,
+        "nlink": 1,
+        "size": 2098,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-list.started.json",
+      "stat": {
+        "ctime_ns": 1794161919181124197,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099048,
+        "mode": 33152,
+        "mtime_ns": 1794161919181124197,
+        "nlink": 1,
+        "size": 1327,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-list.stderr.log",
+      "stat": {
+        "ctime_ns": 1794162663779062961,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099050,
+        "mode": 33152,
+        "mtime_ns": 1794162663779062961,
+        "nlink": 1,
+        "size": 3087,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-list.stdout.log",
+      "stat": {
+        "ctime_ns": 1794162663782062875,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099049,
+        "mode": 33152,
+        "mtime_ns": 1794162663782062875,
+        "nlink": 1,
+        "size": 270020,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-run.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165486110218199,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099505,
+        "mode": 33152,
+        "mtime_ns": 1794165486110218199,
+        "nlink": 1,
+        "size": 2147,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-run.started.json",
+      "stat": {
+        "ctime_ns": 1794162665517941716,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099080,
+        "mode": 33152,
+        "mtime_ns": 1794162665517941716,
+        "nlink": 1,
+        "size": 1310,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-run.stderr.log",
+      "stat": {
+        "ctime_ns": 1794162676700689796,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099082,
+        "mode": 33152,
+        "mtime_ns": 1794162676700689796,
+        "nlink": 1,
+        "size": 1017,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib-run.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165203426703306,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099081,
+        "mode": 33152,
+        "mtime_ns": 1794165203426703306,
+        "nlink": 1,
+        "size": 223796,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib.readback.json",
+      "stat": {
+        "ctime_ns": 1794165486120217973,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099506,
+        "mode": 33152,
+        "mtime_ns": 1794165486120217973,
+        "nlink": 1,
+        "size": 155569,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-default-lib.roster.json",
+      "stat": {
+        "ctime_ns": 1794162665516012807,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099079,
+        "mode": 33152,
+        "mtime_ns": 1794162665516012807,
+        "nlink": 1,
+        "size": 152059,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-discovery-harnesses",
+      "stat": {
+        "ctime_ns": 1794165551002723365,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9853167,
+        "mode": 16832,
+        "mtime_ns": 1794165551002723365,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-execution-harnesses",
+      "stat": {
+        "ctime_ns": 1794165551002723365,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9853168,
+        "mode": 16832,
+        "mtime_ns": 1794165551002723365,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165551005285286,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099533,
+        "mode": 33152,
+        "mtime_ns": 1794165551005285286,
+        "nlink": 1,
+        "size": 2251,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.started.json",
+      "stat": {
+        "ctime_ns": 1794165551004572626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099530,
+        "mode": 33152,
+        "mtime_ns": 1794165551004572626,
+        "nlink": 1,
+        "size": 1399,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165551004572626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099532,
+        "mode": 33152,
+        "mtime_ns": 1794165551004572626,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib-list.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165551004572626,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099531,
+        "mode": 33152,
+        "mtime_ns": 1794165551004572626,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-pq-native-openssl-lib.readback.json",
+      "stat": {
+        "ctime_ns": 1794165551005525316,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099534,
+        "mode": 33152,
+        "mtime_ns": 1794165551005525316,
+        "nlink": 1,
+        "size": 361,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-strict-default-alltargets.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165486123056387,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099510,
+        "mode": 33152,
+        "mtime_ns": 1794165486123056387,
+        "nlink": 1,
+        "size": 1900,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-strict-default-alltargets.started.json",
+      "stat": {
+        "ctime_ns": 1794165486122170073,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099507,
+        "mode": 33152,
+        "mtime_ns": 1794165486122170073,
+        "nlink": 1,
+        "size": 1050,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-strict-default-alltargets.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165486122170073,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099509,
+        "mode": 33152,
+        "mtime_ns": 1794165486122170073,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/node-strict-default-alltargets.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165486122170073,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099508,
+        "mode": 33152,
+        "mtime_ns": 1794165486122170073,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/pq-provider-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165550597926797,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099524,
+        "mode": 33152,
+        "mtime_ns": 1794165550597926797,
+        "nlink": 1,
+        "size": 1631,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/pq-provider-version.started.json",
+      "stat": {
+        "ctime_ns": 1794165550593298762,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099521,
+        "mode": 33152,
+        "mtime_ns": 1794165550593298762,
+        "nlink": 1,
+        "size": 868,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/pq-provider-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165550593298762,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099523,
+        "mode": 33152,
+        "mtime_ns": 1794165550593298762,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/pq-provider-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165550595732894,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099522,
+        "mode": 33152,
+        "mtime_ns": 1794165550595732894,
+        "nlink": 1,
+        "size": 894,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/project-preflight.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161031639463473,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093025,
+        "mode": 33152,
+        "mtime_ns": 1794161031639463473,
+        "nlink": 1,
+        "size": 1505,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/project-preflight.started.json",
+      "stat": {
+        "ctime_ns": 1794161031523664746,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093016,
+        "mode": 33152,
+        "mtime_ns": 1794161031523664746,
+        "nlink": 1,
+        "size": 746,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/project-preflight.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161031523664746,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093018,
+        "mode": 33152,
+        "mtime_ns": 1794161031523664746,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/project-preflight.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161031603940157,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093017,
+        "mode": 33152,
+        "mtime_ns": 1794161031603940157,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-discovery-harnesses",
+      "stat": {
+        "ctime_ns": 1794165486123217905,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9852903,
+        "mode": 16832,
+        "mtime_ns": 1794165486123217905,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-execution-harnesses",
+      "stat": {
+        "ctime_ns": 1794165486123217905,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9852904,
+        "mode": 16832,
+        "mtime_ns": 1794165486123217905,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165486125467861,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099514,
+        "mode": 33152,
+        "mtime_ns": 1794165486125467861,
+        "nlink": 1,
+        "size": 2442,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.started.json",
+      "stat": {
+        "ctime_ns": 1794165486124526417,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099511,
+        "mode": 33152,
+        "mtime_ns": 1794165486124526417,
+        "nlink": 1,
+        "size": 1543,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165486124526417,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099513,
+        "mode": 33152,
+        "mtime_ns": 1794165486124526417,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures-list.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165486124526417,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099512,
+        "mode": 33152,
+        "mtime_ns": 1794165486124526417,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/recovery-settlement-release-alltargets-allfeatures.readback.json",
+      "stat": {
+        "ctime_ns": 1794165486125828028,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099515,
+        "mode": 33152,
+        "mtime_ns": 1794165486125828028,
+        "nlink": 1,
+        "size": 438,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustc-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161115498547964,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098767,
+        "mode": 33152,
+        "mtime_ns": 1794161115498547964,
+        "nlink": 1,
+        "size": 1525,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustc-version.started.json",
+      "stat": {
+        "ctime_ns": 1794161115480420858,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098763,
+        "mode": 33152,
+        "mtime_ns": 1794161115480420858,
+        "nlink": 1,
+        "size": 773,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustc-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161115480420858,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098765,
+        "mode": 33152,
+        "mtime_ns": 1794161115480420858,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustc-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161115492420497,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098764,
+        "mode": 33152,
+        "mtime_ns": 1794161115492420497,
+        "nlink": 1,
+        "size": 196,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustdoc-version.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161115516290000,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098773,
+        "mode": 33152,
+        "mtime_ns": 1794161115516290000,
+        "nlink": 1,
+        "size": 1535,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustdoc-version.started.json",
+      "stat": {
+        "ctime_ns": 1794161115499264706,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098769,
+        "mode": 33152,
+        "mtime_ns": 1794161115499264706,
+        "nlink": 1,
+        "size": 781,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustdoc-version.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161115499264706,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098771,
+        "mode": 33152,
+        "mtime_ns": 1794161115499264706,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/rustdoc-version.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161115511663022,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098770,
+        "mode": 33152,
+        "mtime_ns": 1794161115511663022,
+        "nlink": 1,
+        "size": 38,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-final.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165557966560003,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099543,
+        "mode": 33152,
+        "mtime_ns": 1794165557966560003,
+        "nlink": 1,
+        "size": 1756,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-final.source.json",
+      "stat": {
+        "ctime_ns": 1794165557933652220,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099542,
+        "mode": 33152,
+        "mtime_ns": 1794165557933652220,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-final.started.json",
+      "stat": {
+        "ctime_ns": 1794165551085407911,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099539,
+        "mode": 33152,
+        "mtime_ns": 1794165551085407911,
+        "nlink": 1,
+        "size": 998,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-final.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165551085407911,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099541,
+        "mode": 33152,
+        "mtime_ns": 1794165551085407911,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-final.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165557933652220,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099540,
+        "mode": 33152,
+        "mtime_ns": 1794165557933652220,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-primary.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165550504564911,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099520,
+        "mode": 33152,
+        "mtime_ns": 1794165550504564911,
+        "nlink": 1,
+        "size": 1768,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-primary.source.json",
+      "stat": {
+        "ctime_ns": 1794165550444865555,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099519,
+        "mode": 33152,
+        "mtime_ns": 1794165550444865555,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-primary.started.json",
+      "stat": {
+        "ctime_ns": 1794165486126628162,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099516,
+        "mode": 33152,
+        "mtime_ns": 1794165486126628162,
+        "nlink": 1,
+        "size": 1006,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-primary.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165486126628162,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099518,
+        "mode": 33152,
+        "mtime_ns": 1794165486126628162,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-after-primary.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165550444865555,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099517,
+        "mode": 33152,
+        "mtime_ns": 1794165550444865555,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-before.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161115470672946,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098758,
+        "mode": 33152,
+        "mtime_ns": 1794161115470672946,
+        "nlink": 1,
+        "size": 1727,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-before.source.json",
+      "stat": {
+        "ctime_ns": 1794161115453281249,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098756,
+        "mode": 33152,
+        "mtime_ns": 1794161115453281249,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-before.started.json",
+      "stat": {
+        "ctime_ns": 1794161031640051919,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093026,
+        "mode": 33152,
+        "mtime_ns": 1794161031640051919,
+        "nlink": 1,
+        "size": 979,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-before.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161031640051919,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093028,
+        "mode": 33152,
+        "mtime_ns": 1794161031640051919,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/source-before.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161115453281249,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9093027,
+        "mode": 33152,
+        "mtime_ns": 1794161115453281249,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/summary.json",
+      "stat": {
+        "ctime_ns": 1794165558065557677,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099544,
+        "mode": 33152,
+        "mtime_ns": 1794165558065557677,
+        "nlink": 1,
+        "size": 367252,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.readback.json",
+      "stat": {
+        "ctime_ns": 1794165551000494124,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099529,
+        "mode": 33152,
+        "mtime_ns": 1794165551000494124,
+        "nlink": 1,
+        "size": 3544,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165550969029762,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099528,
+        "mode": 33152,
+        "mtime_ns": 1794165550969029762,
+        "nlink": 1,
+        "size": 1792,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.started.json",
+      "stat": {
+        "ctime_ns": 1794165550598280743,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099525,
+        "mode": 33152,
+        "mtime_ns": 1794165550598280743,
+        "nlink": 1,
+        "size": 992,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165550598280743,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099527,
+        "mode": 33152,
+        "mtime_ns": 1794165550598280743,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-allfeatures-metadata.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165550945724700,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099526,
+        "mode": 33152,
+        "mtime_ns": 1794165550945724700,
+        "nlink": 1,
+        "size": 861385,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-metadata.readback.json",
+      "stat": {
+        "ctime_ns": 1794161115872391718,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098798,
+        "mode": 33152,
+        "mtime_ns": 1794161115872391718,
+        "nlink": 1,
+        "size": 3550,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-metadata.receipt.json",
+      "stat": {
+        "ctime_ns": 1794161115853672432,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098797,
+        "mode": 33152,
+        "mtime_ns": 1794161115853672432,
+        "nlink": 1,
+        "size": 1713,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-metadata.started.json",
+      "stat": {
+        "ctime_ns": 1794161115633911382,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098794,
+        "mode": 33152,
+        "mtime_ns": 1794161115633911382,
+        "nlink": 1,
+        "size": 935,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-metadata.stderr.log",
+      "stat": {
+        "ctime_ns": 1794161115633911382,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098796,
+        "mode": 33152,
+        "mtime_ns": 1794161115633911382,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-locked-metadata.stdout.log",
+      "stat": {
+        "ctime_ns": 1794161115831410303,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9098795,
+        "mode": 33152,
+        "mtime_ns": 1794161115831410303,
+        "nlink": 1,
+        "size": 846596,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.receipt.json",
+      "stat": {
+        "ctime_ns": 1794165551006429404,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099538,
+        "mode": 33152,
+        "mtime_ns": 1794165551006429404,
+        "nlink": 1,
+        "size": 1954,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.started.json",
+      "stat": {
+        "ctime_ns": 1794165551005834898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099535,
+        "mode": 33152,
+        "mtime_ns": 1794165551005834898,
+        "nlink": 1,
+        "size": 1087,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.stderr.log",
+      "stat": {
+        "ctime_ns": 1794165551005834898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099537,
+        "mode": 33152,
+        "mtime_ns": 1794165551005834898,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "final-native-5633c55/workspace-strict-alltargets-allfeatures.stdout.log",
+      "stat": {
+        "ctime_ns": 1794165551005834898,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 9099536,
+        "mode": 33152,
+        "mtime_ns": 1794165551005834898,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "directory",
+      "path": "parallel-campaigns-5633c55",
+      "stat": {
+        "ctime_ns": 1794165565249388577,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905523,
+        "mode": 16832,
+        "mtime_ns": 1794165565249388577,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/native.stderr",
+      "stat": {
+        "ctime_ns": 1794161030630969343,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905602,
+        "mode": 33152,
+        "mtime_ns": 1794161030630969343,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/native.stdout",
+      "stat": {
+        "ctime_ns": 1794165558127556220,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905601,
+        "mode": 33152,
+        "mtime_ns": 1794165558127556220,
+        "nlink": 1,
+        "size": 25029,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/owner.stderr",
+      "stat": {
+        "ctime_ns": 1794161030629969373,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905600,
+        "mode": 33152,
+        "mtime_ns": 1794161030629969373,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/owner.stdout",
+      "stat": {
+        "ctime_ns": 1794163413787795737,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905599,
+        "mode": 33152,
+        "mtime_ns": 1794163413787795737,
+        "nlink": 1,
+        "size": 14295,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/preparation.json",
+      "stat": {
+        "ctime_ns": 1794161030628326954,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905594,
+        "mode": 33152,
+        "mtime_ns": 1794161030628326954,
+        "nlink": 1,
+        "size": 6347,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/proof.stderr",
+      "stat": {
+        "ctime_ns": 1794161030628969403,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905598,
+        "mode": 33152,
+        "mtime_ns": 1794161030628969403,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/proof.stdout",
+      "stat": {
+        "ctime_ns": 1794161189824183040,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905597,
+        "mode": 33152,
+        "mtime_ns": 1794161189824183040,
+        "nlink": 1,
+        "size": 24307,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/source-after.json",
+      "stat": {
+        "ctime_ns": 1794165565058066316,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4906784,
+        "mode": 33152,
+        "mtime_ns": 1794165565058066316,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/source-before.json",
+      "stat": {
+        "ctime_ns": 1794161030605305955,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905593,
+        "mode": 33152,
+        "mtime_ns": 1794161030605305955,
+        "nlink": 1,
+        "size": 423,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/source.stderr",
+      "stat": {
+        "ctime_ns": 1794161030628326954,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905596,
+        "mode": 33152,
+        "mtime_ns": 1794161030628326954,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/source.stdout",
+      "stat": {
+        "ctime_ns": 1794161775022814503,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905595,
+        "mode": 33152,
+        "mtime_ns": 1794161775022814503,
+        "nlink": 1,
+        "size": 2784,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "parallel-campaigns-5633c55/summary.json",
+      "stat": {
+        "ctime_ns": 1794165565249886013,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4906785,
+        "mode": 33152,
+        "mtime_ns": 1794165565249886013,
+        "nlink": 1,
+        "size": 4094,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "final_native_campaign.py",
+      "stat": {
+        "ctime_ns": 1794160814200435397,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905519,
+        "mode": 33152,
+        "mtime_ns": 1794160813892165716,
+        "nlink": 1,
+        "size": 42238,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "final_source_campaign_v2.py",
+      "stat": {
+        "ctime_ns": 1794160759624056056,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905505,
+        "mode": 33152,
+        "mtime_ns": 1794160759491746699,
+        "nlink": 1,
+        "size": 6586,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "final_proof_campaign.py",
+      "stat": {
+        "ctime_ns": 1794160485319115499,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905498,
+        "mode": 33152,
+        "mtime_ns": 1794160485115609867,
+        "nlink": 1,
+        "size": 20731,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "owner_guard_counterexamples.py",
+      "stat": {
+        "ctime_ns": 1794160293135641068,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905469,
+        "mode": 33152,
+        "mtime_ns": 1794160293092919489,
+        "nlink": 1,
+        "size": 20904,
+        "uid": 1000
+      }
+    }
+  ],
+  "source_inventory_metadata_sha256": "3038a5e34f0709266a566588146a9feb113bf92db2d022c4a73e9100bd311b6b",
+  "source_regular_bytes": 4667043,
+  "source_regular_files": 133,
+  "source_repository_accessed_by_collector": false,
+  "whole_chain_pq_qualified": false
+}

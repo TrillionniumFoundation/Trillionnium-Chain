@@ -1,0 +1,231 @@
+{
+  "schema": "trnm-owned-resource-repair-independent-readback-v1",
+  "authorization": "One explicit repair of four derived directories; no additional deletion; new continuation requires available >=16GiB.",
+  "runner": {
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/owned_cache_repair_5633.py",
+    "bytes": 14473,
+    "sha256": "1814259d2cb6b69b4cef0e44df620434892c440231fa45c396975faaad4546cd",
+    "reviewer": "/root/pq_proof_research",
+    "review_result": "NO_CONCRETE_BLOCKER_FOR_AUTHORIZED_FOUR_PATHS"
+  },
+  "inspect": {
+    "job_id": "1a1bce1ff35-138b0-4fa",
+    "request": {
+      "host": "desktop",
+      "executable": "/usr/bin/python3.12",
+      "args": [
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/owned_cache_repair_5633.py",
+        "--mode",
+        "inspect",
+        "--known-jobs-sha",
+        "66f6d9a21634808dd4a0e8cbba9063fa7da5eb36f3c30c4b7a170fbec351dd2b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108",
+      "idempotency_key": "chain-pq-owned-cache-inspection-5633-20261108-once",
+      "timeout_seconds": 2000
+    },
+    "launch": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-pq-composition-663507-20261108/owned_cache_repair_5633.py\",\n      \"--mode\",\n      \"inspect\",\n      \"--known-jobs-sha\",\n      \"66f6d9a21634808dd4a0e8cbba9063fa7da5eb36f3c30c4b7a170fbec351dd2b\"\n    ],\n    \"created_unix_ms\": 1794170289973,\n    \"cwd\": \"/home/qian-qi/work/chain-pq-composition-663507-20261108\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1bce1ff35-138b0-4fa\",\n    \"idempotency_key\": \"chain-pq-owned-cache-inspection-5633-20261108-once\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1bce1ff35-138b0-4fa\",\n    \"request_digest\": \"77515aa17222ece128e5e05d88443f19a24de70f64b9a5716ee26a44657dd6c7\",\n    \"request_fingerprint\": 8597752813078113505,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1bce1ff35-138b0-4fa\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1bce1ff35-138b0-4fa\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+        }
+      ],
+      "structuredContent": null,
+      "isError": false
+    },
+    "terminal": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"at_unix_ms\": 1794170323685,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bce1ff35-138b0-4fa\",\n  \"launch_nonce\": \"40778e05baf123f1bea82075fe7d3112\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 351,\n      \"stored\": 351\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+        }
+      ],
+      "structuredContent": null,
+      "isError": false
+    },
+    "receipt": {
+      "bytes": 246083,
+      "sha256": "bcd52a4c17d506b95ff8a33bb92f7a2af96d227d1cd95db7aa610e8aaf6adeb8"
+    }
+  },
+  "deletion": {
+    "job_id": "1a1bce4f3dd-138b0-508",
+    "request": {
+      "host": "desktop",
+      "executable": "/usr/bin/python3.12",
+      "args": [
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/owned_cache_repair_5633.py",
+        "--mode",
+        "delete",
+        "--known-jobs-sha",
+        "66f6d9a21634808dd4a0e8cbba9063fa7da5eb36f3c30c4b7a170fbec351dd2b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108",
+      "idempotency_key": "chain-pq-owned-cache-delete-four-whitelist-5633-20261108-once",
+      "timeout_seconds": 2000
+    },
+    "launch": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-pq-composition-663507-20261108/owned_cache_repair_5633.py\",\n      \"--mode\",\n      \"delete\",\n      \"--known-jobs-sha\",\n      \"66f6d9a21634808dd4a0e8cbba9063fa7da5eb36f3c30c4b7a170fbec351dd2b\"\n    ],\n    \"created_unix_ms\": 1794170483677,\n    \"cwd\": \"/home/qian-qi/work/chain-pq-composition-663507-20261108\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1bce4f3dd-138b0-508\",\n    \"idempotency_key\": \"chain-pq-owned-cache-delete-four-whitelist-5633-20261108-once\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1bce4f3dd-138b0-508\",\n    \"request_digest\": \"de5cf99bd3ca411dae9ee20b6097766ca398ddc16f44400d41c6418a508dd608\",\n    \"request_fingerprint\": 16022956021945876765,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1bce4f3dd-138b0-508\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1bce4f3dd-138b0-508\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+        }
+      ],
+      "structuredContent": null,
+      "isError": false
+    },
+    "terminal": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"at_unix_ms\": 1794170511433,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bce4f3dd-138b0-508\",\n  \"launch_nonce\": \"3b7e65c4328f71aa160daf0e134855b7\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 758,\n      \"stored\": 758\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+        }
+      ],
+      "structuredContent": null,
+      "isError": false
+    },
+    "receipt": {
+      "bytes": 247583,
+      "sha256": "8d60fad1672f4dda1629f609e2aed4df6c72e4cc239b1e9ea9e418e31b6d1955"
+    }
+  },
+  "paths": [
+    {
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/owner-guard-counterexamples-5633c55/native-target",
+      "allocated_bytes": 4796436480,
+      "deleted": true,
+      "identity": {
+        "device": 2050,
+        "inode": 9216491,
+        "mode": 16832,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/owner-guard-counterexamples-5633c55/native-target",
+        "uid": 1000
+      },
+      "per_directory_free_before": 8322891776,
+      "per_directory_free_after": 13119053824
+    },
+    {
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/owner-guard-counterexamples-5633c55/isolated-source",
+      "allocated_bytes": 2458689536,
+      "deleted": true,
+      "identity": {
+        "device": 2050,
+        "inode": 9337765,
+        "mode": 16832,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/owner-guard-counterexamples-5633c55/isolated-source",
+        "uid": 1000
+      },
+      "per_directory_free_before": 13118451712,
+      "per_directory_free_after": 15576125440
+    },
+    {
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/bounded-io-5633/native-target",
+      "allocated_bytes": 205561856,
+      "deleted": true,
+      "identity": {
+        "device": 2050,
+        "inode": 4905987,
+        "mode": 16832,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/bounded-io-5633/native-target",
+        "uid": 1000
+      },
+      "per_directory_free_before": 15576113152,
+      "per_directory_free_after": 15781371904
+    },
+    {
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/da-fixture-diagnostics-5633/target",
+      "allocated_bytes": 506638336,
+      "deleted": true,
+      "identity": {
+        "device": 2050,
+        "inode": 5167248,
+        "mode": 16832,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/da-fixture-diagnostics-5633/target",
+        "uid": 1000
+      },
+      "per_directory_free_before": 15781351424,
+      "per_directory_free_after": 16287985664
+    }
+  ],
+  "total_allocated_bytes": 7967326208,
+  "free_before": {
+    "available_bytes": 8322715648,
+    "free_including_reserved_bytes": 28320989184,
+    "time_unix": 1794170486.2764647
+  },
+  "free_after": {
+    "available_bytes": 16287776768,
+    "free_including_reserved_bytes": 36286050304,
+    "time_unix": 1794170511.3307228
+  },
+  "observed_available_increase": 7965061120,
+  "observed_available_increase_is_not_asserted_to_equal_exclusive_release_of_blocks": true,
+  "preserved_out_file_count": 449,
+  "all_preserved_out_file_records_identical": true,
+  "da_original_launch_unknown_retained": true,
+  "da_original_cancel_unknown_retained": true,
+  "da_execution_intent_preserved": {
+    "bytes": 515,
+    "sha256": "bae51865d6cc3dac17f9b8db8658508ca065b023d79357995b3e02859ad4186d"
+  },
+  "proof_target_observation_only": {
+    "allocated_bytes": 188739584,
+    "deletion_authorized": false,
+    "identity": {
+      "device": 2050,
+      "inode": 9092929,
+      "mode": 16832,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55",
+      "uid": 1000
+    },
+    "known_cgroups": [
+      {
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc526042-138b0-1aa.service",
+        "job_id": "1a1bc526042-138b0-1aa",
+        "present": false
+      }
+    ]
+  },
+  "main_repository_identity_before": {
+    "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c"
+  },
+  "main_repository_identity_after": {
+    "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c"
+  },
+  "main_repository_raw_source_full_scan_in_this_repair": false,
+  "owner_clone_raw_source_verified_before_deletion": {
+    "base": null,
+    "candidate": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "tested_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2384483193,
+    "tracked_entries": 23699,
+    "tracked_worktree_verified": true
+  },
+  "protected_no_deletion_paths": [
+    "main repo",
+    "final-native-5633c55/native-target-default and original ELFs",
+    "DA child source",
+    "all OUT logs and manifests",
+    "execution-intent.json",
+    "final-proof-target-5633c55",
+    "/tmp and other tasks"
+  ],
+  "entry_threshold_bytes": 17179869184,
+  "entry_threshold_met": false,
+  "entry_gap_bytes": 892092416,
+  "after_cleanup_continuation_started": false,
+  "native_tests_executed_by_repair": 0,
+  "prior_results_replaced": false,
+  "whole_chain_pq_qualified": false,
+  "interpretation": "Known task cgroups were absent and exact recorded tasks terminal; the DA unknown job remains unknown and late execute is fenced by the unchanged create-only intent. No global no-writer/no-orphan assertion."
+}

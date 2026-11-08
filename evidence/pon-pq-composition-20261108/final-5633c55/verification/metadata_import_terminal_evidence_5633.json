@@ -1,0 +1,372 @@
+{
+  "schema": "trnm-metadata-import-terminal-evidence-v1",
+  "source_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "captured_at": "2026-11-08 20:51:51 UTC",
+  "jobs": {
+    "parallel_main": {
+      "observed": {
+        "at_unix_ms": 1794165565554,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1bc526042-138b0-1aa",
+        "launch_nonce": "f13ebc3f85634144fcf20658c4ab5c63",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 23379,
+            "stored": 23379
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794165565554,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 1,\n  \"job_id\": \"1a1bc526042-138b0-1aa\",\n  \"launch_nonce\": \"f13ebc3f85634144fcf20658c4ab5c63\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 23379,\n      \"stored\": 23379\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"failed\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    "bounded_io": {
+      "observed": {
+        "at_unix_ms": 1794162731617,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1bc6ad0fc-138b0-257",
+        "launch_nonce": "d5c27daa02d759af936237f2abc4caac",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 9036,
+            "stored": 9036
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794162731617,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bc6ad0fc-138b0-257\",\n  \"launch_nonce\": \"d5c27daa02d759af936237f2abc4caac\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 9036,\n      \"stored\": 9036\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    "da_recovery": {
+      "observed": {
+        "at_unix_ms": 1794165346603,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1bc9287f7-138b0-354",
+        "launch_nonce": "d5d414bcc4ed07bc5e41c7a607eb3a7f",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 822,
+            "stored": 822
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794165346603,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bc9287f7-138b0-354\",\n  \"launch_nonce\": \"d5d414bcc4ed07bc5e41c7a607eb3a7f\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 822,\n      \"stored\": 822\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    "original_node_two_case": {
+      "observed": {
+        "at_unix_ms": 1794166986859,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1bcaf5f3b-138b0-408",
+        "launch_nonce": "2bf1682641f5023bc0ff4600e905148c",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 401,
+            "stored": 401
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794166986859,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bcaf5f3b-138b0-408\",\n  \"launch_nonce\": \"2bf1682641f5023bc0ff4600e905148c\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 401,\n      \"stored\": 401\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    "native_continuation": {
+      "observed": {
+        "at_unix_ms": 1794169619990,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1bcd5be33-138b0-4c5",
+        "launch_nonce": "6175cb7cc81b2f329f246a52ac93c42b",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 7396,
+            "stored": 7396
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794169619990,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 1,\n  \"job_id\": \"1a1bcd5be33-138b0-4c5\",\n  \"launch_nonce\": \"6175cb7cc81b2f329f246a52ac93c42b\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 7396,\n      \"stored\": 7396\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"failed\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    "cache_inspection": {
+      "observed": {
+        "at_unix_ms": 1794170323685,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1bce1ff35-138b0-4fa",
+        "launch_nonce": "40778e05baf123f1bea82075fe7d3112",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 351,
+            "stored": 351
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794170323685,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bce1ff35-138b0-4fa\",\n  \"launch_nonce\": \"40778e05baf123f1bea82075fe7d3112\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 351,\n      \"stored\": 351\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    "cache_deletion": {
+      "observed": {
+        "at_unix_ms": 1794170511433,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1bce4f3dd-138b0-508",
+        "launch_nonce": "3b7e65c4328f71aa160daf0e134855b7",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 758,
+            "stored": 758
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "raw_tool_result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"at_unix_ms\": 1794170511433,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bce4f3dd-138b0-508\",\n  \"launch_nonce\": \"3b7e65c4328f71aa160daf0e134855b7\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 758,\n      \"stored\": 758\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    }
+  },
+  "parallel_main_covers_roles": [
+    "source",
+    "proof",
+    "owner",
+    "native"
+  ],
+  "da_original_unknown": {
+    "job_id": "1a1bc8399f6-138b0-2f7",
+    "launch_state": "launch_unknown",
+    "cancel_state": "cancel_unknown",
+    "termination_confirmed": false,
+    "reclassified": false,
+    "intent": {
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/da-fixture-diagnostics-5633/output/execution-intent.json",
+      "bytes": 515,
+      "sha256": "bae51865d6cc3dac17f9b8db8658508ca065b023d79357995b3e02859ad4186d"
+    },
+    "scope": "Isolated DA child source; preserved create-only intent fences any late original execute before native commands."
+  },
+  "no_future_native_or_cleanup_launch_authorized_by_this_evidence": true,
+  "source_identity_still_required_at_import": true,
+  "whole_chain_pq_qualified": false
+}

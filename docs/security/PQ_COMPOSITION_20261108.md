@@ -114,3 +114,26 @@ model remain open. No actual whole-chain failure bound is asserted.
 The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 tracks this continuation. Final commands, source receipts, unsuccessful
 observations and scoped results belong to its composition evidence packet.
+
+## Frozen execution result
+
+The executed candidate is `5633c55219c01c689f670c2ca35d122e39f3f791`,
+published as [Draft #822](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/822).
+The [retained execution packet](../../evidence/pon-pq-composition-20261108/README.md)
+records the 603-case source campaign, 18-case P3 example, four green/two intended
+red owner controls, separate qualified-layout SQLite component and actual
+full-native limitations. All 16 new cached-materialization tests pass inside
+the DA full-library result of 412 passes and three failures. The Node run is
+interrupted at its fixed disk gate with 480 names lacking terminal results;
+its two observed failures and all 24 ignored records remain visible. The
+separate DA-child and original-ELF Node diagnostics do not replace these
+original results. Later evidence-only publication preserves the executed
+runtime/proof bytes and does not claim a new native test run.
+
+The separate bounded continuation passed its formatting, metadata and identity
+checks but launched no native build or test: the unchanged free-disk gate
+refused all heavy commands. An owned-cache repair preserved all 449 retained
+OUT records but still did not meet the planned continuation entry threshold.
+No additional native result is inferred from the expected package/TLS rosters,
+the successful cleanup or provider-control-flow flags. These blocked attempts
+and the exact deletion/readback receipts remain in the same evidence packet.

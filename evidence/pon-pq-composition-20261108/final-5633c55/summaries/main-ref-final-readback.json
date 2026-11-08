@@ -1,0 +1,36 @@
+{
+  "launch": {
+    "content": [
+      {
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"ls-remote\",\n      \"--heads\",\n      \"origin\",\n      \"refs/heads/main\"\n    ],\n    \"created_unix_ms\": 1794171572451,\n    \"cwd\": \"/home/qian-qi/work/chain-pq-composition-663507-20261108/repo\",\n    \"env_keys\": [\n      \"GIT_TERMINAL_PROMPT\"\n    ],\n    \"executable\": \"/usr/bin/git\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1bcf590e3-138b0-542\",\n    \"idempotency_key\": \"chain-pq-final-main-readback-20261108-663507\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1bcf590e3-138b0-542\",\n    \"request_digest\": \"c7ff8275d2f0e4b7b2bf805ea851f7a9c8b128995d2aa8f9edf2a9e7d466e759\",\n    \"request_fingerprint\": 14411380775170663607,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1bcf590e3-138b0-542\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1bcf590e3-138b0-542\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": null
+  },
+  "observed_ref": "refs/heads/main",
+  "observed_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "output": {
+    "content": [
+      {
+        "text": "{\n  \"audit_recorded\": true,\n  \"job_id\": \"1a1bcf590e3-138b0-542\",\n  \"stderr\": {\n    \"bytes_hex\": \"\",\n    \"eof\": true,\n    \"next_offset\": 0,\n    \"offset\": 0,\n    \"size\": 0,\n    \"text\": \"\"\n  },\n  \"stdout\": {\n    \"bytes_hex\": \"6464366531633363626561636264633533326230363739323937383335623361306161633738663009726566732f68656164732f6d61696e0a\",\n    \"eof\": true,\n    \"next_offset\": 57,\n    \"offset\": 0,\n    \"size\": 57,\n    \"text\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\\trefs/heads/main\\n\"\n  }\n}",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": null
+  },
+  "read_only": true,
+  "schema": "trnm-composition-main-ref-readback-v1",
+  "terminal": {
+    "content": [
+      {
+        "text": "{\n  \"at_unix_ms\": 1794171576599,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bcf590e3-138b0-542\",\n  \"launch_nonce\": \"289cdf1194cdf78295fe794940032fd4\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 57,\n      \"stored\": 57\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": null
+  }
+}

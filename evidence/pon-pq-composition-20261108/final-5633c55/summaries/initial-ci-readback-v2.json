@@ -1,0 +1,324 @@
+{
+  "base812_response": {
+    "content": [
+      {
+        "text": "Action completed.",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": {
+      "additions": 3704836,
+      "base": "fix/chain-pq-integrated-20261105-df8969",
+      "base_sha": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+      "body": "## Purpose\n\nQualification was spread across different branches and different source identities. This draft integrates the ten pinned Chain inputs into one candidate and preserves the original negative results, ignored cases, and unknowns. It does not qualify a production consensus, authority profile, model product loop, public data network, performance improvement, or whole-chain post-quantum claim.\n\n## Frozen identities\n\n- Chain: `7e044b65454f4c9ea505591727332acffb33e7e5`\n- Chain tree: `0cd23efee58e9c08a80a9f38d135d504c96469ea`\n- Paired private-ci / Hepta source: `f1785ca15e41e4e49509a5b211a659e3cbdbf60e`\n- Integrated inputs: #796, #782, #793, #794, #787, #789, #790, #791, #795, #792. All ten exact heads in `evidence/p0-unified-qualification-20261108/source-inputs.json` are ancestors of the Chain candidate.\n- Strict raw-byte source capture verified all 23,326 tracked Chain entries against Git. The original `trnm-ci-source-v1` head receipt records this exact commit/tree and explicitly says it executes no tests. Each native run also checks source before and after execution.\n\n## Changes\n\n- Reconcile the W1 / timestamp / DAA evidence readers and exact native export contracts; preserve original deadlines and required confirmation depth.\n- Reconcile cold observation, existing PQ owner boundaries, strict role decoding, complete-root rejection, content commitment, and installer / consumer authority tracing.\n- Retain the original 32-command authority runner byte-for-byte; add a separately reviewed 17-command observer for the integrated workspace and fresh DAA exports.\n- Update the release authority inventory to the exact 55-case Unix library roster without changing the original v1 inventory. Keep the original runner's 52-case contract failure visible if the native 55-case suite succeeds.\n- Require both the retained 11 full-v2 receiver controls and the incoming 58 saved-v2 controls in the CI footer; retain the original shared four-minute budget.\n- Preserve the sole development plan and all historical failed observations. Refresh the exact source corpus and distributed inventory after conflict resolution.\n\n## Validation status at draft creation\n\nThe unchanged 32-command native run is in progress on this exact Chain commit, followed serially by the 17-command integrated run. Its build target was newly created empty after the previously recorded cache source and destination were found absent; that unexplained absence and both pre-test bootstrap failures are retained. No result from an earlier branch is counted as this candidate's native pass.\n\nThe first Hepta attempt has 12 passing component tests, but its evidence collector failed: two JUnit files were overwritten and OS execution identity was not observed. Those facts remain separate. The reviewed corrective attempt uses the same original case roster, timeouts, retry policy, and pinned Hepta source, and will have its own receipt rather than replacing the first attempt.\n\nLocal source / reader controls, static entry-to-effect traces, and successful component executions do not close the original resource business gate. The P1 independent fault-domain / WAN obligations, same-run real training-to-next-task loop, matched adversarial throughput improvement, and independent whole-chain cryptographic / implementation review remain open. All seven user-requested qualification gates remain **HOLD / NO-GO**.\n\n## Evidence\n\nCommitted source evidence: `evidence/p0-unified-qualification-20261108/README.md`, source inputs, retained failure ledger, review snapshots, and complete retained Hepta attempt-01 text evidence. Native outputs for the frozen commit are kept outside the checkout so collecting evidence does not silently change the tested head. This draft will be updated with the actual completed results and hosted run identities, distinguishing candidate head from any prospective merge commit.\n",
+      "changed_files": 12339,
+      "closed_at": null,
+      "comments": null,
+      "commits": 168,
+      "created_at": "2026-11-08T13:59:01Z",
+      "deletions": 1661,
+      "diff": null,
+      "display_title": "Integrate single-source Chain and Hepta qualification candidate (HOLD)",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/812",
+      "draft": true,
+      "head": "fix/chain-p0-unified-qualification-20261108-99b5",
+      "head_repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "head_repo_id": 1323087357,
+      "head_sha": "7e044b65454f4c9ea505591727332acffb33e7e5",
+      "merge_commit_sha": "2931405a4d604ae7243394541b5c66af3cdf8147",
+      "mergeable": true,
+      "merged": false,
+      "merged_at": null,
+      "number": 812,
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "state": "open",
+      "title": "Integrate single-source Chain and Hepta qualification candidate (HOLD)",
+      "updated_at": "2026-11-08T13:59:01Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/812",
+      "user": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "email": null,
+        "id": 102159240,
+        "login": "ProfHepta",
+        "name": "ProfHepta"
+      }
+    }
+  },
+  "pr822_response": {
+    "content": [
+      {
+        "text": "Action completed.",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": {
+      "additions": 47585,
+      "base": "fix/chain-p0-unified-qualification-20261108-99b5",
+      "base_sha": "7e044b65454f4c9ea505591727332acffb33e7e5",
+      "body": "## Purpose\n\nThis Draft continues #812 at `7e044b65454f4c9ea505591727332acffb33e7e5` and composes the fixed #799, #800, #801, #803, #798 and #806 heads as real Git merge ancestors. Independent branch results need a common source identity before their combined behavior can be assessed.\n\n**Whole-chain PQ, PQ128, production activation and FinalUse remain HOLD / unqualified.** This is an implementation and evidence candidate.\n\n## Changes\n\n- Bind cached materialization to an independently pinned complete TCM2/CCH1 manifest. The same actual payload buffers feed the staged output and SHA-512 observer. Cumulative manifest/payload budgets precede cache/output operations, retain EOF and failed reservations, and use the original absolute deadline. Sixteen new controls retain the nonempty payload namespace and no-replace publication.\n- Add explicit full-frame/padded-block-equivalent accounting to the actual P3 pruned mixed-height MMCS audit example, with an independent Python reader. Repeated calls, cached prefixes, full-message witness rechecks and artificial oracle overrides remain distinct; no measured permutation count or adversary lifetime bound is invented.\n- Retain classical-owner rejection before durable effects, authenticated loader-byte controls, M12 recovery fencing, fixed-seal RISC Zero algebra replay, the curated authority/effect register, and the bounded dual-family root policy model from the fixed inputs.\n- Rebind reviewed source records to actual Git blobs while retaining all prior paths, trace spans, unknown budget terms and false qualification flags. Repair the composed CI sequence expectations and add omission/order/refusal controls.\n\nThe sole plan and detailed scope are in `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md` and `docs/security/PQ_COMPOSITION_20261108.md`. Concurrent root V2 work and #807 are outside this candidate.\n\n## Validation status at Draft creation\n\nAll completed candidate campaigns below use `5633c55219c01c689f670c2ca35d122e39f3f791` / tree `3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c`.\n\n| Scope | Observed result |\n| --- | --- |\n| Source/model/refusal checks | 26 commands passed, including 603 unittest cases; matching raw source before/after |\n| P3 MMCS native example | 18 tests passed; strict Clippy, format and dependency-source checks passed; independent reader reconciled 76 records |\n| Owner guards | 4 green controls passed; removing each of the two guards produced the intended directory-snapshot assertion failure; source fully restored |\n| Separate corrected-loader SQLite component | 13 library tests, 2 explicitly executed finite parents and 14 internal cases passed; actual layout cfg/v3 fence and raw source before/after checked |\n| DA full default library | **412 passed, 3 failed, 0 ignored**; all 16 new cached-materialization controls passed; strict all-target/all-feature Clippy passed |\n| Node default full library | **Aborted at the fixed 8 GiB free-disk threshold** (exit -15, not a timeout); its 1,298-test roster did not finish. M15 clock-expiry and M12 transaction-head failures were observed before the abort; no complete-suite pass count is asserted |\n| Remaining full-native stages | Node Clippy, recovery/settlement/release, provider-pinned PQ Node build and workspace Clippy were blocked before build by the same free-disk gate. Locked default/all-feature/fuzz metadata and provider/source readbacks completed |\n\nThe full parent campaign has now ended with `FAILED_OR_BLOCKED`, six unsuccessful/blocked gates and matching raw source-before/source-after receipts. The free-disk threshold was not relaxed. Two original-ELF Node cases will be diagnosed separately; their results cannot replace the interrupted full run.\n\nThe P3 ledger contains 52 native cached-prefix records and 24 artificial-oracle records. Its 492 full-message recomputation equivalents are not measured Keccak permutations. The original historical unchanged-runtime gate still refuses this integrated runtime; its original scope was not weakened or relabeled as passed.\n\nThe original DA failures were each reproduced once using the original ELF. A separate, unmerged test-only child `f0e8dc919f10a5f1e7debca544aed9d14e75d96d` moves transient-client database setup before occupying bounded server workers and adds diagnostics to two other tests. Its three exact cases subsequently passed once. This does not replace the 412/3 full-suite result, establish the other two root causes, or represent a full 415-test execution of that child.\n\nThe separate SQLite run does not retroactively qualify the earlier owner/full-native binaries, whose build output retained an unqualified loader/layout warning.\n\n## Evidence and remaining gates\n\n`evidence/pon-pq-composition-20261108/` already retains source-preparation refusals, the first failed source attempt and the CI repair. The completed raw native packets, interrupted-run receipts and separate diagnostic outcomes will be added in an evidence-only follow-up after their manifests are reconciled. Failed, ignored, incomplete, expected-red and successful controls remain separate.\n\nOpen obligations include actual quantum commitment extraction/state restoration/shared-oracle/Fiat-Shamir and recursion mapping; full-lifetime adversary budgets; real root/recovery signature verification and custody/currentness; complete authority-to-effect and actual-loaded-byte closure; and the joint quantum work/consensus/network model. No whole-chain failure bound or security-bit claim is made.\n",
+      "changed_files": 422,
+      "closed_at": null,
+      "comments": null,
+      "commits": 22,
+      "created_at": "2026-11-08T19:40:31Z",
+      "deletions": 403,
+      "diff": null,
+      "display_title": "Compose PQ authority, content-byte binding and exact-source evidence",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/822",
+      "draft": true,
+      "head": "fix/chain-pq-composition-20261108-663507",
+      "head_repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "head_repo_id": 1323087357,
+      "head_sha": "5633c55219c01c689f670c2ca35d122e39f3f791",
+      "merge_commit_sha": "7fa3b95144048469a816f0f5b251f85ec5c132ac",
+      "mergeable": true,
+      "merged": false,
+      "merged_at": null,
+      "number": 822,
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "state": "open",
+      "title": "Compose PQ authority, content-byte binding and exact-source evidence",
+      "updated_at": "2026-11-08T19:40:31Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/822",
+      "user": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "email": null,
+        "id": 102159240,
+        "login": "ProfHepta",
+        "name": "ProfHepta"
+      }
+    }
+  },
+  "production_activation": false,
+  "runtime_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "schema": "trnm-initial-draft-ci-readback-v2",
+  "scope": "First-page pull-request-triggered workflow runs returned by connector; not all workflows or final publication commit",
+  "whole_chain_pq_qualified": false,
+  "workflow_response": {
+    "content": [
+      {
+        "text": "Action completed.",
+        "type": "text"
+      }
+    ],
+    "isError": false,
+    "structuredContent": {
+      "workflow_runs": [
+        {
+          "conclusion": "failure",
+          "id": 42516220496,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220496/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220496/logs",
+          "name": "PoN W1 QROM implementation observations",
+          "run_number": 11,
+          "status": "completed",
+          "workflow_id": 410335087
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220474,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220474/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220474/logs",
+          "name": "PoN owned process cleanup",
+          "run_number": 1050,
+          "status": "completed",
+          "workflow_id": 381802523
+        },
+        {
+          "conclusion": null,
+          "id": 42516220669,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220669/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220669/logs",
+          "name": "PoN priority acceptance",
+          "run_number": 1498,
+          "status": "in_progress",
+          "workflow_id": 378180520
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220625,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220625/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220625/logs",
+          "name": "PoN native full relation and path controls",
+          "run_number": 10,
+          "status": "completed",
+          "workflow_id": 410954075
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220600,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220600/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220600/logs",
+          "name": "PoN original large-state CPU acceptance",
+          "run_number": 362,
+          "status": "completed",
+          "workflow_id": 403449877
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220420,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220420/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220420/logs",
+          "name": "PoN original workspace test-profile CPU acceptance",
+          "run_number": 360,
+          "status": "completed",
+          "workflow_id": 403747290
+        },
+        {
+          "conclusion": null,
+          "id": 42516220439,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220439/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220439/logs",
+          "name": "PoN PQ network and rollback witness",
+          "run_number": 304,
+          "status": "in_progress",
+          "workflow_id": 403755130
+        },
+        {
+          "conclusion": "failure",
+          "id": 42516220353,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220353/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220353/logs",
+          "name": "PoN W1 transparent candidate observations",
+          "run_number": 237,
+          "status": "completed",
+          "workflow_id": 406945301
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220444,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220444/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220444/logs",
+          "name": "PoN baseline diagnostic readback",
+          "run_number": 1129,
+          "status": "completed",
+          "workflow_id": 379262275
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220345,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220345/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220345/logs",
+          "name": "W1 fixed AIR DEEP and FRI algebra",
+          "run_number": 2,
+          "status": "completed",
+          "workflow_id": 411089614
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220408,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220408/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220408/logs",
+          "name": "Release finality reference and native baseline",
+          "run_number": 975,
+          "status": "completed",
+          "workflow_id": 384076239
+        },
+        {
+          "conclusion": "failure",
+          "id": 42516220381,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220381/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220381/logs",
+          "name": "PoN original native campaign",
+          "run_number": 1043,
+          "status": "completed",
+          "workflow_id": 391170410
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220380,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220380/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220380/logs",
+          "name": "PoN recent batch exact-source acceptance",
+          "run_number": 540,
+          "status": "completed",
+          "workflow_id": 379339707
+        },
+        {
+          "conclusion": null,
+          "id": 42516220318,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220318/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220318/logs",
+          "name": "trnm-required-baseline",
+          "run_number": 2882,
+          "status": "in_progress",
+          "workflow_id": 345677268
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220388,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220388/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220388/logs",
+          "name": "PoN next architecture exact-source observations",
+          "run_number": 12,
+          "status": "completed",
+          "workflow_id": 410936856
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220378,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220378/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220378/logs",
+          "name": "W1 QROM proof-chain observations",
+          "run_number": 8,
+          "status": "completed",
+          "workflow_id": 410941053
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220482,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220482/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220482/logs",
+          "name": "PoN parent-bound model evidence",
+          "run_number": 787,
+          "status": "completed",
+          "workflow_id": 381968354
+        },
+        {
+          "conclusion": "failure",
+          "id": 42516220415,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220415/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220415/logs",
+          "name": "PoN W1 QROM closure observations",
+          "run_number": 10,
+          "status": "completed",
+          "workflow_id": 410372663
+        },
+        {
+          "conclusion": "success",
+          "id": 42516220450,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220450/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220450/logs",
+          "name": "CPQ1 complete content bindings",
+          "run_number": 10,
+          "status": "completed",
+          "workflow_id": 410926617
+        },
+        {
+          "conclusion": "failure",
+          "id": 42516220346,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220346/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220346/logs",
+          "name": "CodeQL exact-source analysis export",
+          "run_number": 1339,
+          "status": "completed",
+          "workflow_id": 391170411
+        },
+        {
+          "conclusion": "failure",
+          "id": 42516220377,
+          "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220377/jobs",
+          "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220377/logs",
+          "name": "PoN W1 work security observations",
+          "run_number": 342,
+          "status": "completed",
+          "workflow_id": 403419146
+        }
+      ]
+    }
+  }
+}

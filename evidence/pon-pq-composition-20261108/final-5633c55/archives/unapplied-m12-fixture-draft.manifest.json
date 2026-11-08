@@ -1,0 +1,54 @@
+{
+  "schema": "trnm-unapplied-draft-archive-v1",
+  "applied": false,
+  "compiled": false,
+  "native_tests_executed": false,
+  "production_fix_claimed": false,
+  "original_failure_root_cause_established": false,
+  "source_root": "/workspace/scratch/6635074442e1",
+  "archive": "unapplied-m12-fixture-draft.tar.gz",
+  "bytes": 18777,
+  "sha256": "bfe2fdff10801adc216ac0de47efc17de1955ad59199a2e8c380c1871b0859a1",
+  "members": [
+    {
+      "path": "proof-research/m12-fixture-draft/DRAFT.md",
+      "bytes": 4593,
+      "sha256": "44b753bdbecf0f7a1415868bc94037dfc805e494be6a7dd9f6b2daa5a48ef4e0"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/baseline.json",
+      "bytes": 690,
+      "sha256": "e81fcd2eb9bcfdbd3e206997b12fe9f4466e7dc8674e03d10a8e02c8c4891364"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/candidate/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/recovery_v3.rs",
+      "bytes": 10599,
+      "sha256": "d2731dd5c46acec59484a00cbbebb9884451baaaa55cb37a122ef862f724a5bf"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/candidate/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs",
+      "bytes": 21917,
+      "sha256": "2015507931a5daec7537d27c45858cec15090922fea27b5392439c17eb82ce36"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/fixture-after-authenticated-current.patch",
+      "bytes": 5950,
+      "sha256": "62d0806e86e4c4ce17b109838e2fb3d2160d03b1f323051af21d4a62444a2f38"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/manifest.json",
+      "bytes": 2082,
+      "sha256": "ee2ab42e5ce5ecaa51bee56c4badd3b35b09d7aa0ada6261efdeaaa2ee0e3a8b"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/original/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/recovery_v3.rs",
+      "bytes": 9882,
+      "sha256": "ef3b54afdc5ff3b3c3c52939eed897674fac8c930299bdea2fda0ad08cfc630a"
+    },
+    {
+      "path": "proof-research/m12-fixture-draft/original/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs",
+      "bytes": 21783,
+      "sha256": "4a291e66bff207306897a07691f26bbade865a259aeba229359debab1154bbda"
+    }
+  ]
+}

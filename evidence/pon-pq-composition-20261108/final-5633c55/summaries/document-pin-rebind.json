@@ -1,0 +1,22 @@
+{
+  "source": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "scope": "two documentation pins only",
+  "preserved_pins": 900,
+  "total_pins": 902,
+  "required_paths": 810,
+  "changes": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old_blob": "f331bc9441b82756f5efd836a7780f758c705e48",
+      "new_blob": "3281caf8a3a08a2f516d996dbae04c02e346b731",
+      "sha256": "8c3392555f53deb7b06468db40fbee4e525905f05a7658d28e2aec821fabd178"
+    },
+    {
+      "path": "docs/security/PQ_COMPOSITION_20261108.md",
+      "old_blob": "d39ef87ec9289b50fdea0eafab644e7690a29b62",
+      "new_blob": "e9857a955be3af62cff50a93758ad53ef256b946",
+      "sha256": "0faa198a34868f20227f18ed0981de18d579fc5929a26994fbeab2661d956446"
+    }
+  ],
+  "runtime_source_modified": false
+}

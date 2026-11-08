@@ -1,0 +1,434 @@
+{
+  "attempted_cases": 2,
+  "diagnostic_capture_complete": true,
+  "diagnostic_cases": [
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/trnm_pon_node-cf56cc7c22eb0fc0",
+        "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+        "--exact",
+        "--format=pretty",
+        "--color=never",
+        "--test-threads=1",
+        "--nocapture",
+        "--logfile",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m15-clock.libtest.log"
+      ],
+      "attempts": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node",
+      "elapsed_seconds": 2.4228495738934726,
+      "elf_identity_after": {
+        "ctime_ns": 1794162661211137105,
+        "device": 2050,
+        "inode": 9352984,
+        "mode": 33216,
+        "mtime_ns": 1794162660868147008,
+        "size": 506457320
+      },
+      "elf_identity_before": {
+        "ctime_ns": 1794162661211137105,
+        "device": 2050,
+        "inode": 9352984,
+        "mode": 33216,
+        "mtime_ns": 1794162660868147008,
+        "size": 506457320
+      },
+      "exactly_one_nonignored_outer_result": true,
+      "exit_code": 0,
+      "label": "m15-clock",
+      "logs": [
+        {
+          "bytes": 214,
+          "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m15-clock.stdout.log",
+          "sha256": "d405bfd1ed7d954bc443ef57f419e2dcc0ebb11be928a33b71be3152d9c73191"
+        },
+        {
+          "bytes": 34,
+          "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m15-clock.stderr.log",
+          "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+        },
+        {
+          "bytes": 90,
+          "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m15-clock.libtest.log",
+          "sha256": "e269c998b2933298bb651d52fdd93b5c6a588405de860cda9dfa641037f499ef"
+        }
+      ],
+      "native_outcome": "passed",
+      "outer_records": [
+        "ok release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas"
+      ],
+      "pid": 1777174,
+      "result_consistent": true,
+      "retry": false,
+      "started_unix_seconds": 1794166980.506807,
+      "test_name": "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/trnm_pon_node-cf56cc7c22eb0fc0",
+        "store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor",
+        "--exact",
+        "--format=pretty",
+        "--color=never",
+        "--test-threads=1",
+        "--nocapture",
+        "--logfile",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m12-transaction-head.libtest.log"
+      ],
+      "attempts": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node",
+      "elapsed_seconds": 1.8203496038913727,
+      "elf_identity_after": {
+        "ctime_ns": 1794162661211137105,
+        "device": 2050,
+        "inode": 9352984,
+        "mode": 33216,
+        "mtime_ns": 1794162660868147008,
+        "size": 506457320
+      },
+      "elf_identity_before": {
+        "ctime_ns": 1794162661211137105,
+        "device": 2050,
+        "inode": 9352984,
+        "mode": 33216,
+        "mtime_ns": 1794162660868147008,
+        "size": 506457320
+      },
+      "exactly_one_nonignored_outer_result": true,
+      "exit_code": 0,
+      "label": "m12-transaction-head",
+      "logs": [
+        {
+          "bytes": 259,
+          "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m12-transaction-head.stdout.log",
+          "sha256": "48c2946f3e0954bd44eb50521fc47b8591c58bb8198e2086dca9c482fcb73d7a"
+        },
+        {
+          "bytes": 34,
+          "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m12-transaction-head.stderr.log",
+          "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+        },
+        {
+          "bytes": 135,
+          "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/m12-transaction-head.libtest.log",
+          "sha256": "af66be99bf91ff5728dcdc08e58929b59dedcededf155af83e7ceabbceab8649"
+        }
+      ],
+      "native_outcome": "passed",
+      "outer_records": [
+        "ok store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor"
+      ],
+      "pid": 1777416,
+      "result_consistent": true,
+      "retry": false,
+      "started_unix_seconds": 1794166982.9316854,
+      "test_name": "store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor",
+      "timed_out": false,
+      "timeout_seconds": 120
+    }
+  ],
+  "elf_after": {
+    "bytes": 506457320,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/trnm_pon_node-cf56cc7c22eb0fc0",
+    "sha256": "b8beb2cddc818af3ddc59ce44b7d184ad21c27d5170318fdf6be7b388797b466"
+  },
+  "elf_before": {
+    "bytes": 506457320,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/trnm_pon_node-cf56cc7c22eb0fc0",
+    "sha256": "b8beb2cddc818af3ddc59ce44b7d184ad21c27d5170318fdf6be7b388797b466"
+  },
+  "errors": [],
+  "executed_cases": 2,
+  "expected_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "expected_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+  "failed_cases": 0,
+  "finished_unix_seconds": 1794166986.8045914,
+  "full_raw_source_prepost_responsibility": "original parent campaign",
+  "full_raw_source_scan_performed_here": false,
+  "original_bindings": {
+    "campaign-start.json": {
+      "bytes": 4389,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/campaign-start.json",
+      "sha256": "37aabdb0de18b67c24b434a5f52af06123a668b11a81357825c24500093dba55"
+    },
+    "node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.finish.json": {
+      "bytes": 2686,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.finish.json",
+      "sha256": "50bff97caad5ae337f6b6a2061853e65dfd6dd00a5ef680788efee33bf2ebc70"
+    },
+    "node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log": {
+      "bytes": 145250,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+      "sha256": "5713fe071264781ae1db527cc0e7fd653e1c7a6ad0943a92c156b55f80936dcb"
+    },
+    "node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json": {
+      "bytes": 1998,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json",
+      "sha256": "60328a4b14c868f7b9a97a89b21d15b4d82db5abf54b192c16f12b716e6659a5"
+    },
+    "node-default-lib-list.receipt.json": {
+      "bytes": 2098,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-list.receipt.json",
+      "sha256": "10e2392e321bfddd5f2b8b929d0b4b41ef8c71f3b8f85d213640ff6840e130c8"
+    },
+    "node-default-lib-list.stderr.log": {
+      "bytes": 3087,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-list.stderr.log",
+      "sha256": "d3650568927e281a48ae4119192317bf7edc85cdc51adf7591a4aa8d51cfc2b0"
+    },
+    "node-default-lib-list.stdout.log": {
+      "bytes": 270020,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-list.stdout.log",
+      "sha256": "93a48a1133ce97f4b5992c05cc2247bf3d89c6bfe4140b6d16cdc116ab9c2f62"
+    },
+    "node-default-lib-run.started.json": {
+      "bytes": 1310,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-run.started.json",
+      "sha256": "3171533c04675299c6dbfa13ab16e199606729413d6f5a5d3df0b7eb74d0d1c1"
+    },
+    "node-default-lib.roster.json": {
+      "bytes": 152059,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib.roster.json",
+      "sha256": "d2ae981e86abfa1b03e51cc5140c6f571af2ab2e4912d3d368c1269f506bbe71"
+    },
+    "source-before.source.json": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/source-before.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1"
+    }
+  },
+  "original_bindings_after": {
+    "campaign-start.json": {
+      "bytes": 4389,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/campaign-start.json",
+      "sha256": "37aabdb0de18b67c24b434a5f52af06123a668b11a81357825c24500093dba55"
+    },
+    "node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.finish.json": {
+      "bytes": 2686,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.finish.json",
+      "sha256": "50bff97caad5ae337f6b6a2061853e65dfd6dd00a5ef680788efee33bf2ebc70"
+    },
+    "node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log": {
+      "bytes": 145250,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-discovery-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log",
+      "sha256": "5713fe071264781ae1db527cc0e7fd653e1c7a6ad0943a92c156b55f80936dcb"
+    },
+    "node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json": {
+      "bytes": 1998,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.start.json",
+      "sha256": "60328a4b14c868f7b9a97a89b21d15b4d82db5abf54b192c16f12b716e6659a5"
+    },
+    "node-default-lib-list.receipt.json": {
+      "bytes": 2098,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-list.receipt.json",
+      "sha256": "10e2392e321bfddd5f2b8b929d0b4b41ef8c71f3b8f85d213640ff6840e130c8"
+    },
+    "node-default-lib-list.stderr.log": {
+      "bytes": 3087,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-list.stderr.log",
+      "sha256": "d3650568927e281a48ae4119192317bf7edc85cdc51adf7591a4aa8d51cfc2b0"
+    },
+    "node-default-lib-list.stdout.log": {
+      "bytes": 270020,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-list.stdout.log",
+      "sha256": "93a48a1133ce97f4b5992c05cc2247bf3d89c6bfe4140b6d16cdc116ab9c2f62"
+    },
+    "node-default-lib-run.started.json": {
+      "bytes": 1310,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-run.started.json",
+      "sha256": "3171533c04675299c6dbfa13ab16e199606729413d6f5a5d3df0b7eb74d0d1c1"
+    },
+    "node-default-lib.roster.json": {
+      "bytes": 152059,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib.roster.json",
+      "sha256": "d2ae981e86abfa1b03e51cc5140c6f571af2ab2e4912d3d368c1269f506bbe71"
+    },
+    "source-before.source.json": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/source-before.source.json",
+      "sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1"
+    }
+  },
+  "original_campaign": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55",
+  "original_deadlines_or_budgets_changed": false,
+  "original_failures_reclassified": false,
+  "original_full_suite_replaced": false,
+  "original_live_failures": {
+    "copied_prefix_bytes": 91444,
+    "failed_lines": {
+      "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas": [
+        "failed release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas"
+      ],
+      "store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor": [
+        "failed store::async_w1_generation_v2::tests::recovery_v3::transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor"
+      ]
+    },
+    "full_harness_finish_present": false,
+    "full_suite_completion_receipt_present": true,
+    "interpretation": "A bounded live prefix, not the original full-suite final result.",
+    "observed_source_size_after_first_read": 91444,
+    "snapshot": {
+      "bytes": 91444,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once/original-live-libtest-prefix.log",
+      "sha256": "3ed7d7cfa252d8a5aad4392101c4f279c955f5e4e68237f9d77f8908170fa380"
+    },
+    "source_path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/node-default-lib-execution-harnesses/trnm_pon_node-cf56cc7c22eb0fc0-28961ac7046b22c0bcd0.libtest.log"
+  },
+  "original_parent_job_id": "1a1bc526042-138b0-1aa",
+  "output": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node-failure-diagnostic-5633c55-once",
+  "passed_cases": 2,
+  "production_activation": false,
+  "result": "DIAGNOSTIC_CAPTURED_BOTH_PASS",
+  "runner": {
+    "bytes": 22071,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/node_failure_diagnostic_5633.py",
+    "sha256": "9535d6cb24cced430e0187d65ab8615f85d5b6a544b45acf394902459011e218"
+  },
+  "schema": "trnm-original-node-failure-diagnostic-v1",
+  "source_after": {
+    "critical_sources": {
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
+        "bytes": 38146,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+        "sha256": "090c13700baf9ed945a4aa86519f1d4df85105ef1064addd73de2acb025d9a45"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs": {
+        "bytes": 5931,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs",
+        "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs": {
+        "bytes": 3396,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs",
+        "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs": {
+        "bytes": 5896,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs",
+        "sha256": "ce08c9a464ccc27bcb52838bfb73416e4b0e5ed5df29622f3f7439c7e5787a90"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_faults.rs": {
+        "bytes": 1900,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_faults.rs",
+        "sha256": "670031a3618c69a54d9be080ce6f0eb9510763c94dd9696a59b72176fb8df294"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs": {
+        "bytes": 8222,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+        "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs": {
+        "bytes": 12410,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+        "sha256": "9d11574e909c3c8fc6dc74e8ed580d64a81ed4f83f16cc26284b04f3562284c4"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs": {
+        "bytes": 13717,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+        "sha256": "4a830b1945af7455103f523d33f9fbfb41b3a262ce21ff36bc8311d6d685f513"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/recovery_v3.rs": {
+        "bytes": 9882,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/recovery_v3.rs",
+        "sha256": "ef3b54afdc5ff3b3c3c52939eed897674fac8c930299bdea2fda0ad08cfc630a"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs": {
+        "bytes": 21783,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs",
+        "sha256": "4a291e66bff207306897a07691f26bbade865a259aeba229359debab1154bbda"
+      },
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs": {
+        "bytes": 43345,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "sha256": "a8d026bf5f31fbf692b69a888d9251545143657a28278c90c4104970ea562d34"
+      },
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/recovery_checkpoint_v3.rs": {
+        "bytes": 3651,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/recovery_checkpoint_v3.rs",
+        "sha256": "af4d32879a2509f2cd9877b19b69b233ca3fe609949eed04dba7942a00340618"
+      }
+    },
+    "full_tracked_raw_scan_performed_here": false,
+    "git_status_bytes": 0,
+    "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "scope": "HEAD/tree, Git clean status, and twelve explicit raw source pins",
+    "tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c"
+  },
+  "source_before": {
+    "critical_sources": {
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": {
+        "bytes": 38146,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+        "sha256": "090c13700baf9ed945a4aa86519f1d4df85105ef1064addd73de2acb025d9a45"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs": {
+        "bytes": 5931,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs",
+        "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs": {
+        "bytes": 3396,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs",
+        "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs": {
+        "bytes": 5896,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs",
+        "sha256": "ce08c9a464ccc27bcb52838bfb73416e4b0e5ed5df29622f3f7439c7e5787a90"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_faults.rs": {
+        "bytes": 1900,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_faults.rs",
+        "sha256": "670031a3618c69a54d9be080ce6f0eb9510763c94dd9696a59b72176fb8df294"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs": {
+        "bytes": 8222,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+        "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs": {
+        "bytes": 12410,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+        "sha256": "9d11574e909c3c8fc6dc74e8ed580d64a81ed4f83f16cc26284b04f3562284c4"
+      },
+      "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs": {
+        "bytes": 13717,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+        "sha256": "4a830b1945af7455103f523d33f9fbfb41b3a262ce21ff36bc8311d6d685f513"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/recovery_v3.rs": {
+        "bytes": 9882,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/recovery_v3.rs",
+        "sha256": "ef3b54afdc5ff3b3c3c52939eed897674fac8c930299bdea2fda0ad08cfc630a"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs": {
+        "bytes": 21783,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/recovery_v3.rs",
+        "sha256": "4a291e66bff207306897a07691f26bbade865a259aeba229359debab1154bbda"
+      },
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs": {
+        "bytes": 43345,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "sha256": "a8d026bf5f31fbf692b69a888d9251545143657a28278c90c4104970ea562d34"
+      },
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/recovery_checkpoint_v3.rs": {
+        "bytes": 3651,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/recovery_checkpoint_v3.rs",
+        "sha256": "af4d32879a2509f2cd9877b19b69b233ca3fe609949eed04dba7942a00340618"
+      }
+    },
+    "full_tracked_raw_scan_performed_here": false,
+    "git_status_bytes": 0,
+    "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "scope": "HEAD/tree, Git clean status, and twelve explicit raw source pins",
+    "tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c"
+  },
+  "source_modified": false,
+  "sqlite_bounded_io_qualification_claimed": false,
+  "started_unix_seconds": 1794166978.024068,
+  "tests_rebuilt": false,
+  "timed_out_cases": 0,
+  "whole_chain_pq_qualified": false
+}

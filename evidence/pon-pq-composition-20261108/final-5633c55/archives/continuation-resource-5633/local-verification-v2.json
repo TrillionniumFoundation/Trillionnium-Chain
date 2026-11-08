@@ -1,0 +1,87 @@
+{
+  "archive": {
+    "bytes": 369873,
+    "sha256": "e1366a88a79dab02ea2deaa5af8915bba913e97f3c02d21eb06badf3fa2f82dc"
+  },
+  "archive_paths_and_types_verified": true,
+  "chunks": [
+    {
+      "bytes": 65536,
+      "offset": 0,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "e6cc21ca2d27fa9be44706dc818cafd5a6f5cd1b131638c521e3b53343867f09"
+    },
+    {
+      "bytes": 65536,
+      "offset": 65536,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "d99d7bfdcd54541392ebd7bc235328282873ffbdcc8b3c17e08d9f2814bbb4b6"
+    },
+    {
+      "bytes": 65536,
+      "offset": 131072,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "0bcdc9989bc2d37148eb95c7a26c2826fdc21032ad5376b50f1ba4365cf4cb2f"
+    },
+    {
+      "bytes": 65536,
+      "offset": 196608,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "95e92df0c4d8d9f2caa23a1206011a9f5cf48d42d2f067a9ba10aeb90d0ef18d"
+    },
+    {
+      "bytes": 65536,
+      "offset": 262144,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "e328e21e73491dd58ee510975b197eecc72ec4783baac1a39787664ca4d1929d"
+    },
+    {
+      "bytes": 42193,
+      "offset": 327680,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "c34bf4616d36a4442f2ab0df4712975443cbed2db793b30b384935c72c2ddba1"
+    },
+    {
+      "bytes": 65536,
+      "offset": 0,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/manifest.json",
+      "sha256": "35ab41e8c2b55af4e6e6ca0e7383f823336896475d8037d60cb561581d0fde53"
+    },
+    {
+      "bytes": 65536,
+      "offset": 65536,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/manifest.json",
+      "sha256": "098b05398d2d93172f44d219d63814c92589d448d50b17a2b1db77dca3c16a9f"
+    },
+    {
+      "bytes": 31873,
+      "offset": 131072,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/manifest.json",
+      "sha256": "f6046f25b073f1fa290196045d81b9846d2fb60dd5e02d8bdef704bc8e3bcd1b"
+    },
+    {
+      "bytes": 795,
+      "offset": 0,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1/collection-result.json",
+      "sha256": "a77b44e82fbc50324703ef519945ef2a17093fc89114b35fb1b0c4389dc71316"
+    }
+  ],
+  "cleanup_result_retained": true,
+  "collector_source_inventory_and_bytes_equal": true,
+  "deterministic_rebuild_identical": true,
+  "every_member_sha_size_verified": true,
+  "manifest": {
+    "bytes": 162945,
+    "sha256": "2b9fb133b7301fc1fa674f61baa7d89946a0333ac2e9d509941e4aea9c0b83b9"
+  },
+  "members_verified": 190,
+  "native_tests_executed": false,
+  "original_blocked_result_retained": true,
+  "prior_verifier_attempt_retained": "verification-attempt-1.json",
+  "schema": "trnm-continuation-resource-local-verification-v1",
+  "source_regular_bytes": 3361088,
+  "source_regular_files": 187,
+  "status": "VERIFIED",
+  "transport_chunks_verified": 10,
+  "whole_chain_pq_qualified": false
+}

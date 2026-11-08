@@ -1,0 +1,66 @@
+[
+  {
+    "bytes": 9220,
+    "file": "publication/verify_metadata_publication.py",
+    "name": "verify_metadata_publication.py",
+    "result": {
+      "content": [
+        {
+          "text": "{\"mode\":384,\"sha256\":\"3fe2609803f69db1a133b66966466f0624442248ab0f3d2973e29e1839d8f076\",\"size\":9220,\"version\":\"2050:4885731:9220:1794171689340782739:1794171689456206193\",\"written\":9220}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "sha256": "3fe2609803f69db1a133b66966466f0624442248ab0f3d2973e29e1839d8f076"
+  },
+  {
+    "bytes": 20089,
+    "file": "proof-research/import_metadata_child_5633.py",
+    "name": "import_metadata_child_5633.py",
+    "result": {
+      "content": [
+        {
+          "text": "{\"mode\":384,\"sha256\":\"bcbc880451fe0625257ca472ae174e3b1063c3fd4462463caf189b99331420be\",\"size\":20089,\"version\":\"2050:4885733:20089:1794171691687434721:1794171691717153241\",\"written\":20089}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "sha256": "bcbc880451fe0625257ca472ae174e3b1063c3fd4462463caf189b99331420be"
+  },
+  {
+    "bytes": 16781,
+    "file": "publication/publish_verification_evidence.py",
+    "name": "publish_verification_evidence.py",
+    "result": {
+      "content": [
+        {
+          "text": "{\"mode\":384,\"sha256\":\"0a315ddb827a5b47c76915293cef85c6fc15ba7fb6cc8359cfddf911f6bc6f23\",\"size\":16781,\"version\":\"2050:4885735:16781:1794171693958100690:1794171694247093906\",\"written\":16781}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "sha256": "0a315ddb827a5b47c76915293cef85c6fc15ba7fb6cc8359cfddf911f6bc6f23"
+  },
+  {
+    "bytes": 21570,
+    "file": "publication/publish_final_metadata.py",
+    "name": "publish_final_metadata.py",
+    "result": {
+      "content": [
+        {
+          "text": "{\"mode\":384,\"sha256\":\"db72dbdb71b06f4bd6e11f4f6d2180821d026ece168d45e652428adf2f25c71a\",\"size\":21570,\"version\":\"2050:4885737:21570:1794171696700456419:1794171696817033543\",\"written\":21570}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": null
+    },
+    "sha256": "db72dbdb71b06f4bd6e11f4f6d2180821d026ece168d45e652428adf2f25c71a"
+  }
+]

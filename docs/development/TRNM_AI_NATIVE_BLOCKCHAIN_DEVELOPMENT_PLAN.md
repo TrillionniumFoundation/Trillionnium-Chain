@@ -10309,3 +10309,58 @@ repository-copy source controls to the existing desktop environment after their
 cloud ENOSPC observations; do not silently retry or discard those results.
 All native suites will bind a new clean final candidate; all qualification
 flags and outstanding quantum/authority obligations remain unchanged.
+
+### 2026-11-08 frozen composition results and Draft #822
+
+Publish the fixed composition `5633c55219c01c689f670c2ca35d122e39f3f791`
+as [Draft #822](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/822)
+against the exact #812 base. The
+[execution packet](../../evidence/pon-pq-composition-20261108/README.md)
+retains 603 source/model/refusal cases, 18 P3 native example cases, four owner
+green controls and two intended guard-removal assertion failures. A separate
+normal-native SQLite component run observes its actual layout cfg and build
+fence; it does not qualify earlier binaries that emitted the unqualified-layout
+warning.
+
+The DA full library records 412 passes and three failures, including passes for
+all 16 new cached-payload controls. Each original failure is preserved and was
+reproduced once with the original ELF. The unmerged test-only child `f0e8dc9`
+records three exact single passes, not a full 415-test execution or resolution
+of all original causes. Keep its source identity and unknown-launch/guarded-
+recovery history separate.
+
+The Node full library is interrupted by the unchanged 8 GiB free-disk gate.
+Its 1,298-name roster has 792 passed, two failed and 24 ignored terminal records;
+480 names have no terminal record. Four subsequent build gates are blocked
+before execution. Preserve the wrong execution-environment prefix in the old
+runner as an additional inventory refusal, while independently recording the
+six actual module cases that did pass. Both observed Node failures passed once
+in separate original-ELF diagnostics; their original causes remain unresolved.
+
+Attach the exact raw receipts, manifests, incomplete and ignored rosters,
+counterexamples and diagnostics without editing prior observations. Later
+documentation/evidence commits must distinguish their source identity from the
+executed candidate and verify that the runtime/proof bytes remain unchanged.
+The full native campaign, whole-chain PQ, PQ128, production activation and
+FinalUse remain unqualified. Complete native coverage and the existing quantum,
+authority, lifetime and consensus composition obligations remain open.
+
+### 2026-11-08 bounded continuation and evidence publication
+
+Keep the later bounded continuation distinct from the original full campaign.
+It passed 16 auxiliary gates but all heavy commands were refused before launch;
+seven native or qualification gates remain failed/blocked and zero native cases
+executed. The 179 package cases and 25 TLS cases are expected rosters only.
+Retain the fixed 8 GiB running threshold and the 16 GiB planned repair-entry
+threshold. Cleanup of four task-owned derived paths preserved 449 OUT records
+but left 16,287,776,768 available bytes, so the repair continuation did not start.
+Retain the original primary Node/DA binaries, logs and unknown process observations; do not turn
+cleanup or metadata success into native qualification.
+
+Publish the final raw execution packets and diagnostics in a single metadata
+child of the executed runtime. Rebind only the two modified documentation pins,
+retain every earlier raw evidence blob, and verify unchanged runtime, proof,
+workflow and test bytes. Execute the separate 151-case source-negative roster
+on that committed child and retain its post-commit receipts without moving the
+verified candidate. Keep Draft #822 at HOLD with actual failed, interrupted,
+ignored, expected-red and successful observations separately visible.
