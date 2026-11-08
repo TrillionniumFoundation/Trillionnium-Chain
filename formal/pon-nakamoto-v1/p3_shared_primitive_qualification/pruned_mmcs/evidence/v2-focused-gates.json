@@ -1,0 +1,437 @@
+{
+  "binary_sha256": {
+    "packed_carry_backend": "e6528d4a10e7f6585f23994c0d4d4bb17653c893114bfd57bfea9afb5147904f",
+    "tagged_sha3_backend": "ddc5b9d20e9c2463690e0b3a1aff2ed781b685efa687501096340b85ded58fe5"
+  },
+  "commit": "70293cec717416ed57a97b0d326909c4227963e6",
+  "complete_repository_ci": false,
+  "evidence_git_closure_receipt_sha256": "f29bcd7cb556cfa23d6929d7e2665e9561907705034d8cffebbfa348ddb45afd",
+  "finite_origin_control": {
+    "conflicting_opening_pairs": 29624,
+    "distinct_table_callset_cases": 108,
+    "first_exposure_order_direction_cases": 12768,
+    "permutations": 24,
+    "structural_controls": 2
+  },
+  "independent_reference_vectors_sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5",
+  "production_activation": false,
+  "production_node_invocations": 0,
+  "pruned_mmcs_binding_report_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606",
+  "pruned_mmcs_source_identity_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+  "qualification": "HOLD_NO_GO",
+  "records": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "bc38d66cfe67492aa7937bb2bb211190e313f032e93df950d3b1808e579da0c1",
+      "wall_seconds": 0.08835461991839111
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "70293cec717416ed57a97b0d326909c4227963e6",
+        "--output",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/focused-final-v2/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "source-before",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "0cbf7701998c1a37bf6aa21721cee35042e96a88583748723f094b35f01f3556",
+      "wall_seconds": 3.163149315165356
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/verify_evidence_git_closure.py",
+        "--expected-head",
+        "70293cec717416ed57a97b0d326909c4227963e6"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "evidence-git-closure",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f29bcd7cb556cfa23d6929d7e2665e9561907705034d8cffebbfa348ddb45afd",
+      "wall_seconds": 2.5992148760706186
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "repository-and-markdown",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "846d7986f30d3b2367987d9854dc9e668949964efdb14192691d7108d4602c76",
+      "wall_seconds": 19.05107310693711
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_repository.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "repository-negatives",
+      "stderr_sha256": "53d49c162e21b23f3e8145c68b438e22f80a5d2224740fa78b9bf5eeda8276d4",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 185.63685199106112
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "source-integrity-negatives",
+      "stderr_sha256": "0fae84a46e1fd3ebb73bdd97d7f3821face31b39423b88a50c4619022d21d9b2",
+      "stdout_sha256": "42aaf342fe56e64d980bfb2d098e61d93fff2f163dbf4609f42aeed1fb5dcc58",
+      "wall_seconds": 5.037330777850002
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_hash_role_audit.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit",
+      "exit_code": 0,
+      "name": "historical-hash-audit",
+      "stderr_sha256": "4c95be353a50b206618c82faaf6371b545666ddf4a3fd1e42eaae471f7c2c9d5",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 1.6053514629602432
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/budget",
+      "exit_code": 0,
+      "name": "model-budget",
+      "stderr_sha256": "8289d1b89fbb68a1eb971dcc74cf6251fccd05d32181432bcbd2a39564fef212",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.3550338549539447
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_opening_collision_extractor.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/restricted_tree",
+      "exit_code": 0,
+      "name": "ordinary-path-extractor",
+      "stderr_sha256": "25cea0ab06f40078d47215eff01869dcf668dd46254b22b155be3b74f3fd071b",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.086049698991701
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_evidence_git_closure.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification",
+      "exit_code": 0,
+      "name": "evidence-closure-negatives",
+      "stderr_sha256": "d39fea247ae40862b6399d22489e3e9454f52c3247383a133868cf82ae3c43c4",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.8093652501702309
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "finite_origin_check.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/restricted_tree",
+      "exit_code": 0,
+      "name": "finite-origin-control",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4140e669409b087dfd46f29a3eba8b44c1ed93f705744099e50fc9c751f147a1",
+      "wall_seconds": 0.1131210490129888
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/reference_vectors.py"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "independent-reference-vectors",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5",
+      "wall_seconds": 0.05041315802372992
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "locked-offline-graph",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "536147e9fd8078bb42ee12bf89740727e30bda2f19119bd51884b08348e1bc88",
+      "wall_seconds": 0.2153012459166348
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "--repository",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+        "--cargo-metadata",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/focused-final-v2/locked-offline-graph.stdout.txt"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "pruned-mmcs-source-identity",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+      "wall_seconds": 0.21691049402579665
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "format",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.22061505797319114
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "strict-clippy",
+      "stderr_sha256": "f35daa4f96e0edbd7f6298ca29879c86dedc5ba4f22be242fbdad7a68d287d38",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 1.4142095579300076
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "rust-tests",
+      "stderr_sha256": "022b5d32077018d3a798bb4bb98458b41a4105c105f3cf31906bc46bde12652c",
+      "stdout_sha256": "e0259fecff68f13d5a1b30506c8fcdc86bfd23413c764aead7efceca2595039a",
+      "wall_seconds": 123.36943617695943
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target",
+        "--doc"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "doc-tests",
+      "stderr_sha256": "8cae9abf3b77f95d05d5b493cd1a94c3392ed502a2a422f1515bb6d86a1ead19",
+      "stdout_sha256": "df166913f47ff1f04202cae9b31df67ed272d692d99a0023a8117dc3029100dd",
+      "wall_seconds": 11.032381486846134
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--manifest-path",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "build",
+      "stderr_sha256": "15fc5bcb5aa9118f317a12c860a1e1535e4f0145dcedbb60616e6635588833ee",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 86.79903417406604
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target/release/examples/tagged_sha3_mmcs_binding"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "tagged-pruned-mmcs-binding",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "06f0ca48a869b2342cf08eb18fdd6dd69a02ccbc46d6044ca9994ccd81875606",
+      "wall_seconds": 0.004667691886425018
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/target/release/examples/hash_role_probe"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "historical-native-hash-probe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "20e684a8eba0fd8a98a8e24a5ad0c2b119010ee099167625d3338e59e11f0661",
+      "wall_seconds": 0.0023055251222103834
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "HEAD",
+        "--",
+        "trillionnium",
+        "config",
+        "qualification"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "unchanged-runtime-scope",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.011115611996501684
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "--repository",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+        "--cargo-metadata",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/focused-final-v2/locked-offline-graph.stdout.txt"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "pruned-mmcs-source-after",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+      "wall_seconds": 0.16743911686353385
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "70293cec717416ed57a97b0d326909c4227963e6",
+        "--output",
+        "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/focused-final-v2/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/p3-mmcs-binding-dded70360575-v1/repo",
+      "exit_code": 0,
+      "name": "source-after",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "0cbf7701998c1a37bf6aa21721cee35042e96a88583748723f094b35f01f3556",
+      "wall_seconds": 2.8083576371427625
+    }
+  ],
+  "schema": "p3.shared-primitive.focused-gates.v1",
+  "source_receipt_sha256": "0cbf7701998c1a37bf6aa21721cee35042e96a88583748723f094b35f01f3556",
+  "source_receipts_equal": true,
+  "tests": {
+    "evidence-closure-negatives": 9,
+    "historical-hash-audit": 10,
+    "model-budget": 40,
+    "ordinary-path-extractor": 6,
+    "repository-negatives": 50,
+    "rust": 79,
+    "source-integrity-negatives": 43
+  },
+  "tree": "2ae8517c1d8c386d4357bfed8fe6cb14a4a76023"
+}
