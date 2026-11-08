@@ -7679,3 +7679,36 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+
+### 2026-11-08 cold packet readback and cumulative CPU component continuation
+
+The [native packet observation contract](specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md)
+now keeps local `packet-status` on a locked, source-preserving private copy for
+both legacy-v2 and authenticated-v1. It refuses unfinished recovery and uses
+the original typed completed-journal/candidate checks without calling
+`Node::recover`. Exact accepted-task fields and absence/authority boundaries
+remain. The ordinary writer retains its established recovery behavior.
+
+A Linux CLI supervisor adds an absolute process CPU ceiling before stored
+input or model loading. All native threads share that ceiling, including
+non-cooperative validation. The parent separately bounds wall time and output,
+reaps its worker and removes its private snapshot tree. The original shared
+mutation CPU domain already reserves original credit and charges actual owner
+and scoped-worker CPU on refusal. A new continuously changing canonical bad-C
+regression exercises that full path until credit cannot fund another replay;
+no cache hit, failed-request refund or fresh domain is substituted.
+
+The [component evidence](../../evidence/pon-cpu-observer-budget-20261108/README.md)
+retains the optimized-test compiler SIGKILL and initially incomplete toolchain
+loader environment alongside the corrected component runs. Low-memory test
+compilation is an explicit opt-level-zero override for the Node test package;
+existing debug/overflow checks and the optimized W1 crypto primitive remain.
+These runs do not replace original pressure or performance qualification.
+
+Per-invocation CPU caps do not establish cross-process, cross-restart global
+and owner observer credit. Direct library/Growth/public-read consumers keep
+their own contracts; their complete aggregate observer budget remains open.
+No external effect reconciliation, independent rollback anchor, full loaded
+identity closure, control-domain independence or release acceptance follows
+from this local component. All original HOLD / NO-GO decisions remain.

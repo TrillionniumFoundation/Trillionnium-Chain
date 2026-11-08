@@ -408,3 +408,99 @@ fn a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation() {
     assert_paid(&owner_domain, &real.cpu);
     println!("METERED_NODE_BIND rejected_foreign=true foreign_cpu_reservations=0 valid_paid=true");
 }
+
+#[test]
+fn continuously_distinct_bad_products_exhaust_one_original_prepaid_domain() {
+    let (_dir, node, packet) = fixture(2);
+    let facts = WorkFactCache::new(2).unwrap();
+    let domain = ServiceMutationCpuDomain::standalone();
+    let original = i128::from(MUTATION_CPU_START_RESERVE_NS) * 4;
+    // Freeze only refill, not the measured owner/scoped-worker CPU clock. Every
+    // verifier and failure below executes the real native admission path.
+    freeze(&domain, original);
+    let before = node.lock().unwrap().read_active().unwrap();
+    let mut identities = std::collections::BTreeSet::new();
+    let mut paid = 0_u64;
+    let mut attempted = 0_u64;
+    let mut exhausted = false;
+    for index in 0..512 {
+        let mut bad = packet.clone();
+        let offset = 4 + 8 * 4096 + index * 4;
+        let old = u32::from_le_bytes(bad.proof[offset..offset + 4].try_into().unwrap());
+        // Different canonical C cell on every attempt. Valid A/B, the real
+        // trace and its ticket stay intact: refusal requires the full original
+        // replay/product check, unless original CPU accounting stops it first.
+        let changed = if old == 4_294_967_290 { 0 } else { old + 1 };
+        bad.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+        assert!(identities.insert(hash(b"distinct-invalid-regression-v1", &[&bad.proof])));
+        let cloned = domain.clone();
+        match ingress::dispatch_shared_with_metered_work_facts(
+            &node,
+            request(&bad),
+            &facts,
+            &cloned,
+            &|| Ok(()),
+        ) {
+            Err(error) => {
+                assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+                exhausted = true;
+                break;
+            }
+            Ok(outcome) => {
+                let error = outcome.native.unwrap_err().to_string();
+                assert!(
+                    matches!(
+                        error.as_str(),
+                        "WORK:Product" | "PUBLIC_MUTATION_CPU_BUDGET"
+                    ),
+                    "{error}"
+                );
+                assert_paid(&domain, &outcome.cpu);
+                paid = paid.checked_add(outcome.cpu.total_cpu_ns.unwrap()).unwrap();
+                attempted += 1;
+                let budget = domain.budget.lock().unwrap();
+                assert_eq!(budget.credit_ns, original - i128::from(paid));
+                assert_eq!(budget.verified_completions, 0);
+                assert_eq!(budget.completion_work_len, 0);
+            }
+        }
+    }
+    assert!(
+        exhausted && attempted > 0,
+        "paid={paid} attempted={attempted}"
+    );
+    assert_eq!(facts.counters().hits, 0);
+    assert!(facts.counters().full_replays > 0);
+    let replays = facts.counters().full_replays;
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.paid_cpu_debit_ns, paid);
+    assert_eq!(flow.live_owners, 0);
+    for index in 1000..1008 {
+        let mut bad = packet.clone();
+        bad.proof[index] ^= 1;
+        assert_eq!(
+            ingress::dispatch_shared_with_metered_work_facts(
+                &node,
+                request(&bad),
+                &facts,
+                &domain.clone(),
+                &|| Ok(()),
+            )
+            .err()
+            .unwrap()
+            .to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+    }
+    assert_eq!(facts.counters().full_replays, replays);
+    assert_eq!(
+        domain
+            .observe_actual_flow()
+            .unwrap()
+            .unwrap()
+            .paid_cpu_debit_ns,
+        paid
+    );
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    println!("DISTINCT_W1_REFUSALS attempts={attempted} actual_cpu_ns={paid} hits=0 retained_state_unchanged=true exhausted_before_next_replay=true");
+}

@@ -54,6 +54,10 @@ pub use store::native_budget::{
     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
 };
+pub use store::packet_observation::{
+    observe_existing_packet, PacketObservationBackend,
+    DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+};
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{
     native_cell_release_repair_subject_v2, native_cell_repair_subject_v1,
