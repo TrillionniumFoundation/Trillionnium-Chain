@@ -256,6 +256,19 @@ fn a_reserved_permit_checks_context_before_any_crypto_checkpoint() {
 fn cli_input_failure_consumes_a_slot_and_exhaustion_precedes_loading() {
     let dir = tempfile::tempdir().unwrap();
     let (owner, path, expected) = make_owner(dir.path(), 1);
+    let legacy_output = dir.path().join("legacy-output");
+    let legacy = cli()
+        .arg("exercise")
+        .arg(fixture())
+        .arg(fixture())
+        .arg(&legacy_output)
+        .arg("none")
+        .output()
+        .unwrap();
+    assert!(!legacy.status.success());
+    assert!(String::from_utf8_lossy(&legacy.stderr).contains("usage:"));
+    assert!(!legacy_output.exists());
+    assert_eq!(owner.snapshot().unwrap().occupied_slots, 0);
     let bad_output = dir.path().join("bad-output");
     let bad = cli()
         .arg("exercise")
