@@ -110,25 +110,62 @@ def main() -> None:
     sha3 = [p for p in graph["packages"] if p["name"] == "sha3"]
     if len(sha3) != 1 or sha3[0]["version"] != "0.10.9":
         raise SystemExit("SHA3 graph drift")
+    run("pruned-mmcs-source-identity", ["python3", "-B", scope / "pruned_mmcs/verify_upstream_source.py",
+                                           "--repository", root, "--cargo-metadata",
+                                           output / "locked-offline-graph.stdout.txt"])
     run("format", cargo + ["fmt", *manifest, "--", "--check"])
     flags = [*manifest, "--release", "--all-targets", "--all-features", "--locked", "--offline", "--target-dir", target]
     run("strict-clippy", cargo + ["clippy", *flags, "--", "-D", "warnings"])
     log = run("rust-tests", cargo + ["test", *flags])
     rust = [tuple(map(int, row)) for row in re.findall(
         r"test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored; (\d+) measured; (\d+) filtered out;", log)]
-    if not rust or any(any(row[1:]) for row in rust) or sum(row[0] for row in rust) < 68:
+    if not rust or any(any(row[1:]) for row in rust) or sum(row[0] for row in rust) < 79:
         raise SystemExit("Unexpected Rust test result")
     if "independent_python_hashlib_vectors_match_actual_hash_roles ... ok" not in log:
         raise SystemExit("Independent Rust role-vector test did not pass")
+    for required in (
+        "sha_profile_pruned_mixed_heights_restore_to_native_paths",
+        "carry_profile_pruned_mixed_heights_restore_to_native_paths",
+        "extension_flattening_preserves_exact_rows_and_shared_paths",
+        "deliberately_colliding_leaves_yield_full_framed_collision",
+        "arbitrary_siblings_and_injected_row_conflict_yield_branch_collision",
+        "real_hash_rejects_duplicate_injection_shape_index_and_sibling_controls",
+        "shared_coordinate_is_the_reduced_matrix_row_not_the_global_index",
+        "conflict_search_never_erases_an_earlier_duplicate_value",
+        "a_single_row_conflict_needs_no_authentication_sibling",
+        "disjoint_valid_queries_are_not_reported_as_a_binding_violation",
+        "an_extra_cap_entry_is_outside_the_fixed_profile",
+    ):
+        if re.search(r"^test tests::" + re.escape(required) + r" \.\.\. ok$", log, re.MULTILINE) is None:
+            raise SystemExit("Pruned MMCS regression did not pass: " + required)
     counts["rust"] = sum(row[0] for row in rust)
     run("doc-tests", cargo + ["test", *manifest, "--release", "--all-features", "--locked", "--offline", "--target-dir", target, "--doc"])
     run("build", cargo + ["build", *flags])
+    run("tagged-pruned-mmcs-binding", [target / "release/examples/tagged_sha3_mmcs_binding"])
+    mmcs = json.loads((output / "tagged-pruned-mmcs-binding.stdout.txt").read_text())
+    if not (mmcs["schema"] == "p3.tagged-mmcs.two-opening-reduction-check.v1"
+            and mmcs["qualification"] == "HOLD_NO_GO"
+            and mmcs["native_rejection_controls"] == 11
+            and mmcs["actual_w1_forgery"] is False
+            and mmcs["concrete_hash_binding_bits"] is None
+            and mmcs["quantum_pcs_extraction"] is False
+            and mmcs["fiat_shamir_knowledge_soundness"] is False
+            and mmcs["complete_noninteractive_security_bits"] is None
+            and mmcs["production_activation"] is False
+            and len(mmcs["native"]) == 2
+            and len(mmcs["artificial_collision_extractions"]) == 2):
+        raise SystemExit("Pruned MMCS reduction scope drift")
     run("historical-native-hash-probe", [target / "release/examples/hash_role_probe"])
     probe = json.loads((output / "historical-native-hash-probe.stdout.txt").read_text())
     if not (probe["actual_p3_api"] and probe["arbitrary_compressor_collision"]
             and not probe["merkle_or_w1_forgery"] and probe["qualification"] == "HOLD_NO_GO"):
         raise SystemExit("Historical audit outcome drift")
     run("unchanged-runtime-scope", ["git", "diff", "--exit-code", "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0", "HEAD", "--", "trillionnium", "config", "qualification"])
+    run("pruned-mmcs-source-after", ["python3", "-B", scope / "pruned_mmcs/verify_upstream_source.py",
+                                       "--repository", root, "--cargo-metadata",
+                                       output / "locked-offline-graph.stdout.txt"])
+    if (output / "pruned-mmcs-source-identity.stdout.txt").read_bytes() != (output / "pruned-mmcs-source-after.stdout.txt").read_bytes():
+        raise SystemExit("Pruned MMCS dependency sources changed while checking")
     run("source-after", source + [output / "source-after.json"])
     if (output / "source-before.json").read_bytes() != (output / "source-after.json").read_bytes():
         raise SystemExit("Source changed while checking")
@@ -138,11 +175,13 @@ def main() -> None:
         "schema": "p3.shared-primitive.focused-gates.v1", "commit": args.expected_head,
         "tree": git("rev-parse", "HEAD^{tree}"), "records": records, "tests": counts,
         "finite_origin_control": enumeration, "source_receipts_equal": True,
+        "pruned_mmcs_source_identity_sha256": sha(output / "pruned-mmcs-source-identity.stdout.txt"),
+        "pruned_mmcs_binding_report_sha256": sha(output / "tagged-pruned-mmcs-binding.stdout.txt"),
         "independent_reference_vectors_sha256": sha(fixture),
         "source_receipt_sha256": sha(output / "source-after.json"),
         "evidence_git_closure_receipt_sha256": sha(output / "evidence-git-closure.stdout.txt"),
         "binary_sha256": {name: sha(target / "release/examples" / name)
-                          for name in ("tagged_sha3_backend", "packed_carry_backend")},
+                          for name in ("tagged_sha3_backend", "packed_carry_backend", "tagged_sha3_mmcs_binding")},
         "qualification": "HOLD_NO_GO", "complete_repository_ci": False,
         "production_activation": False, "production_node_invocations": 0,
     }
@@ -154,3 +193,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

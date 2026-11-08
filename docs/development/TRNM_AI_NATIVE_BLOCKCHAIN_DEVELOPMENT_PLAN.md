@@ -10177,3 +10177,32 @@ Clippy passes after explicitly aligning the Rustup shim with the actual compiler
 its original exit-0 / SQLite-UNQUALIFIED observation remains retained separately.
 The isolated fixed-root ordinary consumer remains unexecuted. These results do
 not qualify the general model loader or any production activation.
+
+
+### P3 follow-up: actual pruned-MMCS two-opening collision reduction
+
+The [bounded structural argument](../../formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/BINDING_REDUCTION.md)
+extends the tagged SHA3-512 candidate to the actual locked P3 0.8.0 binary,
+cap-zero pruned verifier with pinned ordered power-of-two matrix heights,
+widths and statement context. It covers shorter-row injections, unequal and
+duplicate query lists, arbitrary full sibling digests and extension-field
+basis flattening. Two accepted outputs that disagree at a shared matrix-row
+coordinate yield a collision in the complete framed hash. With query counts
+q0/q1, tallest height 2^h and k distinct matrix heights, the postprocessor
+uses at most (q0+q1)(h+2k-1)+2 additional whole-hash calls including the witness
+recheck. It also postprocesses quantum-produced classical outputs in the same
+oracle/advice experiment; this is not quantum commitment or PCS extraction.
+
+The additive native executable uses the unchanged R1 role APIs and real P3
+pruned, restoration, single-path and ExtensionMmcs interfaces. Its real-hash
+controls and deliberately colliding test-oracle controls are separately
+identified. Forced test-oracle collisions are not SHA3 collisions or W1
+forgeries. The focused runner executes this harness and checks original
+profile bytes and locked dependency archives/source identities before and
+after testing. It preserves all earlier W1 campaign evidence and does not
+activate a consensus profile.
+
+Concrete primitive security, Merkle knowledge extraction, full PCS/Fiat–Shamir
+composition, recursive verification and lifetime qualification remain open.
+All concrete security-bit fields remain null; the decision stays HOLD_NO_GO.
+

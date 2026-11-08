@@ -1,0 +1,15 @@
+{
+  "archive_members": 151,
+  "indexed_original_files": 150,
+  "command_records_with_raw_hashes_checked": 42,
+  "python_tests_v2": 158,
+  "rust_tests_v2": 79,
+  "rust_tests_v3": 79,
+  "final_name_gate_accepts_original": true,
+  "final_name_gate_negative_controls": 2,
+  "native_reports_v2_v3_v4_identical": true,
+  "native_commit_objects_rehashed": 3,
+  "final_source_tree": "ae3ac43e02ee68d8adcb864b0cf4d21ef21864d7",
+  "result": "PASS",
+  "scope": "Independent archive, raw records and name gate readback; no new native execution or complete cryptographic qualification."
+}
