@@ -1,0 +1,72 @@
+{
+  "binary": {
+    "bytes": 3865848,
+    "path": "/home/qian-qi/work/chain-cell-exact-807-d9fb-20261108-target/release/trnm-cell",
+    "sha256": "f4110b8a9126133303fdee34ed586018ab266433f0ee20d5650c8d6968a54427"
+  },
+  "end_unix_ns": 1794161111919977533,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS_BUILD",
+  "source": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+  "start_unix_ns": 1794160839057596441,
+  "steps": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.09325717389583588,
+      "exit_code": 0,
+      "name": "preflight"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+        "--output",
+        "/home/qian-qi/work/chain-cell-exact-807-d9fb-20261108-build/source-before.json"
+      ],
+      "elapsed_seconds": 63.29257322894409,
+      "exit_code": 0,
+      "name": "source-before"
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version=1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "elapsed_seconds": 0.4113694350235164,
+      "exit_code": 0,
+      "name": "graph"
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--bin",
+        "trnm-cell"
+      ],
+      "elapsed_seconds": 123.98273349599913,
+      "exit_code": 0,
+      "name": "build"
+    }
+  ],
+  "tree": "80170d240fbaba258a98f1b90d81a58724002b77"
+}

@@ -88,3 +88,7 @@ The final baseline import follows six successful imports and ends with PUBLIC_RE
 Earlier F2 storage-exhaustion, Unknown launch/publication observations, pre-fix red controls, source refusals, integration failures and failed learning operations remain visible. Later source checks or successful operations do not relabel them.
 
 The existing real-model exports have their own original-byte verifiers under the SmolLM and native-learning evidence directories. Those scripts replay identities and original records; they do not rerun training or authenticate an independent operator. Final delivery validation also identifies the exact later source and the unchanged native subtrees.
+
+## Separately bound real-model evidence
+
+The original model/Cell materials are in [the SmolLM and Cell evidence](../smollm-same-iteration-20261108/README.md). The original v8 NoUpdate and retained failures are in [native learning evidence](../hepta-real-native-learning-20261108/README.md). The new positive adoption and independent NoUpdate operation are in [native adoption evidence](../hepta-real-native-adoption-20261108/README.md). Their original-byte verifiers validate consistency and replay the unchanged Chain reader; they do not rerun private training or establish independent operation.

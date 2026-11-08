@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/cell_learning_completion_join.py",
+    "--selection-checkpoint",
+    "/tmp/chain-learning-d9fb/evidence/hepta-real-native-learning-20261108/joins/v7/selection.bin",
+    "--selection-checkpoint-sha256",
+    "a77055230d76b1c5b65e04821a8fc474a274e1e7d7e9198b7e6ad06a8da47dce",
+    "--completed-checkpoint",
+    "/tmp/chain-learning-d9fb/evidence/hepta-real-native-learning-20261108/joins/v7/completed.bin",
+    "--completed-checkpoint-sha256",
+    "f4af9167afda27c1b2e90b0a5a47a50478a7dbcda08a9c7554ffd78e1cef89bb",
+    "--readback",
+    "/tmp/chain-learning-d9fb/evidence/hepta-real-native-learning-20261108/joins/v7/readback.json",
+    "--readback-sha256",
+    "d850a7ba0f433164933b12d52e2a8d212f687f146f1a25f285c1881f06d5195f",
+    "--freeze",
+    "/tmp/chain-learning-d9fb/evidence/hepta-real-native-learning-20261108/joins/v7/freeze.json",
+    "--freeze-sha256",
+    "ad984ca0d696cd49df998a00baef1205a1462fc6dfb8fdbdb019239bbefdbea8",
+    "--expected",
+    "/tmp/chain-learning-d9fb/evidence/hepta-real-native-learning-20261108/joins/v7/expected.json",
+    "--expected-sha256",
+    "291360446a74d46abb1cdb4cc6c615f96f638af72f6a2e2eefe03b2e1cda2cd0"
+  ],
+  "exit_code": 0,
+  "expectation_scope": "observed-research-pins-not-independent-authority",
+  "freeze_source": "original-pre-training-CAS-checkpoint-0",
+  "reader_source_sha256": "db90de5c974565c874a8d34679de907d6214bc84a6294c3ec5466c7e28eb4ed0"
+}

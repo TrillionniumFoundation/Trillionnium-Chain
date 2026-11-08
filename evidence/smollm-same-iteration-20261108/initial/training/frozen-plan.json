@@ -1,0 +1,67 @@
+{
+  "authority": "DENY_ALL",
+  "evaluation": [
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 4807 greater than 4806?",
+      "request_id": "chain-learning-d9fb-20261108-evaluation-0"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 5208 greater than 5209?",
+      "request_id": "chain-learning-d9fb-20261108-evaluation-1"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 6311 greater than 6310?",
+      "request_id": "chain-learning-d9fb-20261108-evaluation-2"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 7402 greater than 7403?",
+      "request_id": "chain-learning-d9fb-20261108-evaluation-3"
+    }
+  ],
+  "evaluation_is_public_controlled": true,
+  "evaluation_profile": "original-conditional-binary-raw-logit-q32-v1",
+  "generation_count": 2,
+  "independent_custody": false,
+  "inputs": [
+    {
+      "path": "/home/qq/chain-learning-d9fb-20261108/training-input-1.json",
+      "sha256": "b84448b6a0000477e0170f19e443c583d4c7d149118f0901ead486db04931b67"
+    },
+    {
+      "path": "/home/qq/chain-learning-d9fb-20261108/training-input-2.json",
+      "sha256": "37941edc1981a90fa95039fdbb9e01fff0017708c0bd88f21dc4d432f5e06c21"
+    }
+  ],
+  "next_task": {
+    "mode": "conditional_binary",
+    "prompt": "Answer with only yes or no. Is 8517 greater than 8516?",
+    "request_id": "chain-learning-d9fb-20261108-next-task"
+  },
+  "operation": "chain-learning-d9fb-20261108",
+  "original_zero_parent_is_reinitialized": false,
+  "production_adoption_rule": "none-research-load-only",
+  "python": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+  "python_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-smollm-same-run-research-plan-v1",
+  "source_before": {
+    "path": "/home/qq/chain-learning-d9fb-20261108/source-before.json",
+    "sha256": "6972cbcd13a0f765b1c9979244b7be7d9e04860f1cfee40355e54cada22e93f3"
+  },
+  "source_hashes": {
+    "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+    "scripts/llm_inherited_runtime.py": "1c356c4e8e9a114ac7b6348cac4bed9a6fc72d53ce71ce00139c3deed8733596",
+    "scripts/llm_neural_read_worker.py": "791fbe67ae7d2b2e0551e5f9f6fd77797ed9f8c210e7ca47f9acb6ac02895769",
+    "scripts/llm_parent_material.py": "5396d72c4730aea2d271b55a8404f6eaba64dc57f91343537710c28f7686b43c",
+    "scripts/llm_runtime_pilot.py": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755"
+  },
+  "start_unix_ns": 1794159724765459329,
+  "threads": 4,
+  "training_steps_per_generation": 10
+}

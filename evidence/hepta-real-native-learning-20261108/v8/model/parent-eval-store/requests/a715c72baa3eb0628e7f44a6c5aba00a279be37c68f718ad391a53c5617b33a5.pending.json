@@ -1,0 +1,1 @@
+{"request":{"id":"evaluation-1","op":"probe","params":{"inputs":{"mode":"conditional_binary","prompt":"Answer with only yes or no. Is 4807 greater than 4806?","request_id":"learning-d9fb-native-v8-eval-0"}},"session_id":"learning-d9fb-native-v8-parent-eval"},"request_sha256":"65dcf30a9ec35f644fbc290e4fe2979fefa92704d5e3196be329a1689655b030","started_at_ms":1794167012137}

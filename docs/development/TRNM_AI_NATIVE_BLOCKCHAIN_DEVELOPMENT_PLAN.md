@@ -112,6 +112,42 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Six-capability final evidence composition, 2026-11-08 UTC:**
+The [completed observations](../../evidence/chain-six-full-20261108/OBSERVED_RESULTS.md)
+retain the exact F3 native source, every original campaign failure, separate fresh
+supplements and the actual hosted business counterexamples. Twelve hashed archives
+preserve original output, source guards, resource controls and reconciliation
+receipts. Delivery adds the explicit current-stage version-3 candidate reader while
+retaining its historical version-2 API, an additive current-source QROM observer,
+six required corpus paths and the exact six-name amortized output reader. Existing
+native runtime, formal and fuzz subtrees remain F3-identical; source equality does
+not transfer a test result or grant quantum, timing or production qualification.
+
+The original native evidence includes 496 Cell controls, both retained complete
+STARKs through actual native verification/admission/cold recovery, the 178 Python
+and 79 Rust MMCS controls, and the original settlement/checkpoint/release/MVCC
+suites. This campaign generated no new STARK. The original root and consensus
+wrapper failures remain, with separately bound successful fixed-roster and
+historical-blob supplements under the original limits. Both original QROM guards
+still refuse their historical scope; all full-security bounds remain null/false.
+
+The [new native adoption](../../evidence/hepta-real-native-adoption-20261108/README.md)
+completes an actual candidate training-to-next-task research loop in 51.138 seconds,
+alongside the 44.440-second NoUpdate regression. The four exposed questions improve
+only from 1/4 to 2/4, all candidate answers are no, and its next answer is wrong.
+General useful learning and original ParameterV3/Product OPE remain unqualified.
+Actual Cell loading remains a separate, fixed-source, single-operator experiment.
+
+Hosted native business targets remain failed: three original repetitions each
+report 0/3 confirmations in baseline and both pressure modes, and the fresh-service
+work-security target remains unmet. The pre-existing Host checkpoint/activation
+path is attributed with original measurements, without caching checks, reducing
+frequency or extending deadlines. Credit passed; the pinned ARM setup failure
+passed one explicit same-source infrastructure recheck. Independent operators,
+public discovery, long custody, equal-resource gain, complete external payment,
+irreversible-effect reconciliation and whole-lifecycle PQ security remain open.
+The broader disposition remains HOLD / NO-GO.
+
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
 Complete bounded signer-set checks before release signature mathematics, and
@@ -398,6 +434,56 @@ hardness qualification. Existing service, History, recovery and PQ gates remain
 independent and their failed evidence remains retained.
 The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
 contains the complete local replay, counterexample/repair and source-pinned gates.
+
+**Actual new-candidate native adoption and retained-parent regression, 2026-11-08 UTC:**
+The [explicit research adoption evidence](../../evidence/hepta-real-native-adoption-20261108/README.md)
+records two fresh operations on exact Hepta `edf03ecb8a814a0f5e86b1d6a752aeac80b1a978`:
+NoUpdate passes in 44.440 seconds and positive new-candidate adoption in 51.138
+seconds, both under the original 60-second watchdog and zero retries. Each freezes
+its own profile, native coordinator and real budget before ten-step training.
+The new `ResearchExternalTrainedArtifactV1` test-only concrete owner checks actual
+complete training/evaluation/material bytes and its durable anchored proposal;
+the original updated selection, CURRENT, cutover, ACK and cold owner recovery then
+use that same new candidate. Two real material faults refuse without advancing
+the native owners. The unchanged Chain reader consumes original 0/5/6 and 0/6/7
+checkpoints, preserving all authority flags false. The finite adopted comparison
+is only 1/4 to 2/4: the candidate answers all four exposed questions `no`, and its
+next task is incorrect. General learning benefit, original Parameter V3/Product
+OPE admission, independent custody, production FinalUse, payment and activation
+remain unqualified. All earlier failures and the v8 NoUpdate namespace remain.
+
+**Actual native NoUpdate iteration and recovery, 2026-11-08 UTC:**
+The [same-iteration native model evidence](../../evidence/hepta-real-native-learning-20261108/README.md)
+now records original Hepta source `27849cbdcfc0d4afc69764d6c1742af22c41c293`
+passing its actual model test in 44.615 seconds under the unchanged 60-second
+watchdog and zero retries. The new operation freezes its profile and coordinator
+before its own ten-step training, evaluates the exact candidate, correctly retains
+the parent after a 3/4 to 1/4 regression, executes a new next task through the
+original generation actor, ACKs it and completes the original NextUse checkpoint.
+Original Fleet retirement/restart, generation-owner and learning-owner recovery
+then pass; the actual worker PID changes while its live persisted forward counter
+stays at one on replay. Native daemon OS restart remains false. The unchanged
+Chain reader joins original checkpoint 0/5/6 and the exact ACKed readback. All five
+earlier failures and their preparation/publication/nonce boundaries remain.
+These 517 original records qualify the research NoUpdate execution branch only:
+new-candidate adoption, original Parameter/OPE qualification, independent custody,
+production FinalUse, payment and activation remain unqualified.
+
+**Actual model execution, NoUpdate and Cell payload loading, 2026-11-08 UTC:**
+The [original SmolLM execution evidence](../../evidence/smollm-same-iteration-20261108/README.md)
+retains two actual ten-step generations and a separate fresh ten-step controlled
+NoUpdate replay, all on the same pinned trainer/worker material closure. The
+candidate regresses from three to one correct answer on four public frozen rows.
+The replay freezes its strict decision rule before its own training, retains the
+complete parent, executes a new parent next task and recovers the exact response
+in another worker process. Prior tasks/outcomes were exposed; no prospective,
+independent or efficacy claim follows. Fixed #807 native Cell code transfers
+the exact adapter and two companion files (1,011,315 bytes, 17 chunks, zero cache
+hits), and the actual worker loads from the receiver directory. Same-device
+loopback is not independent operation, public discovery or long-term custody.
+The 233 preserved original files replay under a separate bounded evidence check.
+Native learning-owner completion, real settlement, production FinalUse and
+activation remain distinct obligations; these records grant none of them.
 
 **Original completed learning receipts and acknowledged use, 2026-11-08 UTC:**
 Continue the exact #809 Selection reader with the

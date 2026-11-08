@@ -1,0 +1,7 @@
+error: error extracting archive `/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/transfer/agentd-nextest.tar.zst`
+
+Caused by:
+  error canonicalizing destination directory `/home/qq/hepta-learning-native-4f559bf-d9fb-20261108/extracted`
+
+Caused by:
+  No such file or directory (os error 2)
