@@ -1,0 +1,171 @@
+{
+  "actual_per_step_token_trace_verified": false,
+  "cold_readback": {
+    "query_only": true,
+    "same_candidate_readback": true,
+    "same_evaluation": true,
+    "same_native_settlement": true,
+    "same_next_readback_and_output": true,
+    "same_operation_and_intent": true
+  },
+  "complete_economic_cost": false,
+  "cost_scope": "Sum of twelve disjoint original model child-plus-supervisor observations; excludes bootstrap preparation, orchestration, native service, build/transfer, custody, recovery and other unmeasured lifecycle costs; peak RSS is not simultaneous process-tree memory",
+  "current_branch_payment_finality": false,
+  "development_settlement": {
+    "anti_sybil_consensus_credit": 0,
+    "base_fee_contract": 2000,
+    "current_branch_base_fee": 2000,
+    "historically_observed_base_fee": 2000,
+    "improvement_bonus": 0,
+    "locally_revoked": false,
+    "model_state_unchanged": true,
+    "resource_reservation": "ORIGINAL_CONSUMPTION_RECORDED",
+    "status": "PAID_CURRENT_BRANCH"
+  },
+  "evaluation": {
+    "all_required_controls_executed": true,
+    "correct": {
+      "budget-matched-full-tune": 4,
+      "candidate": 4,
+      "current-backbone": 0,
+      "fresh-budget-matched-lora": 4,
+      "randomized-rank-matched-lora": 0,
+      "retained-parent": 0
+    },
+    "equal_inference_caps": true,
+    "equal_training_caps": true,
+    "gain_correct_vs_retained_parent": 4,
+    "gain_correct_vs_strongest_control": 0,
+    "min_correct_gain": 1,
+    "numerical_disposition": "NoUpdate",
+    "rows": 8
+  },
+  "evaluation_profile_sha256": "748cfd188acd70b450789eb9421d41b60ca187beafbaf48b66d4614615a56faa",
+  "intent_sha256": "5076ac05ac74835a8ab9a567a3e8833759a0eac53a39587064e711bb2ed5146c",
+  "matched_observed_steps_and_token_totals": true,
+  "native_iteration_completed": false,
+  "native_operation": "a42d024b4d1dab9293db261e3fa058f14b808697bd017de1c108e517b8a11b67",
+  "native_resource_cap": [
+    5400000000000,
+    16777216,
+    0,
+    0
+  ],
+  "native_resource_charge": [
+    27561655939,
+    933544,
+    0,
+    0
+  ],
+  "native_task": "e95486d0d020e0cf8960b19fc66a5b6f547903c604f19474b35b4307e5be0ced",
+  "next_input": {
+    "decoded_outputs": [
+      "Yes\nsystem\n"
+    ],
+    "expected_output_match": false,
+    "expected_output_sha256": "8a798890fe93817163b10b5f7bd2ca4d25d84c52739a645a889c173eee7d9d3d",
+    "output_sha256": "bae55644b0d2a5215f94350c85039fd8b640e4720aea7db24a2eb989b90bb29e",
+    "status": "SUCCESS"
+  },
+  "observed_model_child_plus_supervisor_cpu_ns": 202921131849,
+  "observed_model_phases": {
+    "evaluate-budget-matched-full-tune": {
+      "observed_wall_ns": 10684911557,
+      "observer_cpu_ns": 73726352,
+      "owned_child_cpu_ns": 17288408000,
+      "waited_child_peak_rss_bytes": 1978724352
+    },
+    "evaluate-candidate": {
+      "observed_wall_ns": 9595143005,
+      "observer_cpu_ns": 62804053,
+      "owned_child_cpu_ns": 16117054000,
+      "waited_child_peak_rss_bytes": 1421959168
+    },
+    "evaluate-current-backbone": {
+      "observed_wall_ns": 9357592616,
+      "observer_cpu_ns": 62416897,
+      "owned_child_cpu_ns": 15864847000,
+      "waited_child_peak_rss_bytes": 1422172160
+    },
+    "evaluate-fresh-budget-matched-lora": {
+      "observed_wall_ns": 9561659552,
+      "observer_cpu_ns": 64279706,
+      "owned_child_cpu_ns": 16087228000,
+      "waited_child_peak_rss_bytes": 1421070336
+    },
+    "evaluate-randomized-rank-matched-lora": {
+      "observed_wall_ns": 9588813003,
+      "observer_cpu_ns": 65265081,
+      "owned_child_cpu_ns": 16157313000,
+      "waited_child_peak_rss_bytes": 1422807040
+    },
+    "evaluate-retained-parent": {
+      "observed_wall_ns": 9597926918,
+      "observer_cpu_ns": 62422732,
+      "owned_child_cpu_ns": 16132680000,
+      "waited_child_peak_rss_bytes": 1421459456
+    },
+    "prepare-or-train-budget-matched-full-tune": {
+      "observed_wall_ns": 31951707874,
+      "observer_cpu_ns": 156284736,
+      "owned_child_cpu_ns": 37142605000,
+      "waited_child_peak_rss_bytes": 6175043584
+    },
+    "prepare-or-train-current-backbone": {
+      "observed_wall_ns": 3173210450,
+      "observer_cpu_ns": 18925312,
+      "owned_child_cpu_ns": 3498155000,
+      "waited_child_peak_rss_bytes": 1428054016
+    },
+    "prepare-or-train-fresh-budget-matched-lora": {
+      "observed_wall_ns": 24397245606,
+      "observer_cpu_ns": 124549699,
+      "owned_child_cpu_ns": 27111736000,
+      "waited_child_peak_rss_bytes": 3093331968
+    },
+    "prepare-or-train-randomized-rank-matched-lora": {
+      "observed_wall_ns": 4534409523,
+      "observer_cpu_ns": 26909954,
+      "owned_child_cpu_ns": 3942646000,
+      "waited_child_peak_rss_bytes": 1423085568
+    },
+    "retained-parent-next-input": {
+      "observed_wall_ns": 4084015963,
+      "observer_cpu_ns": 26519388,
+      "owned_child_cpu_ns": 5272700000,
+      "waited_child_peak_rss_bytes": 1421094912
+    },
+    "train-candidate": {
+      "observed_wall_ns": 24869442138,
+      "observer_cpu_ns": 136140939,
+      "owned_child_cpu_ns": 27425515000,
+      "waited_child_peak_rss_bytes": 3088429056
+    }
+  },
+  "operation_id": "dev-learning-service-8b4f-v1",
+  "schema": "learning-service-execution-summary-v1",
+  "scope": "controlled-development-public-fixtures-not-production-iteration",
+  "scope_flags": {
+    "anti_sybil_consensus_credit": 0,
+    "atomic_cross_owner_revocation_enforced": false,
+    "controlled_local_development": true,
+    "external_custody_verified": false,
+    "improvement_bonus": 0,
+    "independent_customer_verified": false,
+    "independent_evaluation_accepted": false,
+    "original_owner_installation_verified": false,
+    "production_activation": false,
+    "real_asset_funding_verified": false
+  },
+  "sources": {
+    "cold-query.stdout.json": {
+      "bytes": 79592,
+      "sha256": "8ab71e7204b8a2baeb3fbf2ef58f280e6310a3fce6a01a602c8293c503905e06"
+    },
+    "main-result.json": {
+      "bytes": 100850,
+      "sha256": "161a3bd2b194b2c8f6df598697cf2828c42df5e1657911bd42ca11e857175616"
+    }
+  },
+  "status": "NO_UPDATE_NEXT_INPUT_OUTPUT_MISMATCH"
+}

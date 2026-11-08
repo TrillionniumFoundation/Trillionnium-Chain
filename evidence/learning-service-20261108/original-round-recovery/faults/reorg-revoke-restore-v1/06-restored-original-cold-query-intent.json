@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+    "query",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service"
+  ],
+  "automatic_retry_allowed": false,
+  "label": "06-restored-original-cold-query",
+  "same_original_round": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service",
+  "started_unix_ns": 1794162386508573635
+}

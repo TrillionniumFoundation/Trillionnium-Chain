@@ -1,0 +1,11 @@
+{
+  "all_paths_size_sha256_git_blob_sha1_verified": true,
+  "archive_sha256": "e6666a3f8aa324620d6e3b952b098d83be988ae3687c409d7fad233b6f78075a",
+  "archive_size": 381313,
+  "base_commit": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "manifest_sha256": "2708306ae88f3ddec5bbe8d63c40375ef8826c50aa99d3b223ab448a60563cac",
+  "schema": "chain-runtime-source-transfer-v1",
+  "scope": "exact-runtime-file-snapshot-before-final-repository-commit",
+  "verified_files": 87,
+  "whole_repository_source_verified": false
+}

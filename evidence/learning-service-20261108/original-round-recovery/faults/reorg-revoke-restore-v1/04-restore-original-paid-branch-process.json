@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_recovery_probe-414dd728",
+    "restore",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service",
+    "05d2acaf505b3e7da1cdf2e9daff8881608dcfe621fcb3dc506cba344db72ce9",
+    "5076ac05ac74835a8ab9a567a3e8833759a0eac53a39587064e711bb2ed5146c",
+    "dev-learning-service-8b4f-v1"
+  ],
+  "automatic_retry_allowed": false,
+  "exit_code": 0,
+  "finished_unix_ns": 1794162385374780298,
+  "label": "04-restore-original-paid-branch",
+  "same_original_round": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service",
+  "started_unix_ns": 1794162382193921998,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 45315,
+  "stdout_sha256": "28dc48e02e3228eb1f4e0a6d69762e15c26f5e55630cb25ff2fc1339c9339637",
+  "wall_ns": 3180133118
+}

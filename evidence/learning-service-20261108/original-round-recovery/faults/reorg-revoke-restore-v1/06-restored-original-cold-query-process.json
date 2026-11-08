@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+    "query",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service"
+  ],
+  "automatic_retry_allowed": false,
+  "exit_code": 0,
+  "finished_unix_ns": 1794162387664727627,
+  "label": "06-restored-original-cold-query",
+  "same_original_round": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service",
+  "started_unix_ns": 1794162386508573635,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 11881,
+  "stdout_sha256": "a55709dea3860ae9a3c50a530b0ef17fa7993589315fd79fc354f297e3d96368",
+  "wall_ns": 1155152061
+}

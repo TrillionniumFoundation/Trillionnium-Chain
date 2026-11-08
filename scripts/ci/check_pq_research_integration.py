@@ -583,6 +583,26 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs',
     'trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs',
 ))
+# The development service adapter must retain its actual inherited executor,
+# frozen controls, native owner and refusal/recovery tests as one source set.
+# These pins do not establish independent demand, installation or FinalUse.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'docs/development/specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md',
+    'scripts/llm_inherited_runtime.py',
+    'scripts/llm_parent_material.py',
+    'scripts/llm_inherited_operation.py',
+    'scripts/llm_frozen_evaluation.py',
+    'scripts/run_learning_service_development.py',
+    'scripts/test_llm_inherited_operation.py',
+    'scripts/test_llm_frozen_evaluation.py',
+    'scripts/test_run_learning_service_development.py',
+    'trillionnium/crates/trnm-pon-node/examples/learning_service_round.rs',
+    'trillionnium/crates/trnm-pon-node/examples/learning_service_recovery_probe.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_probe_unix.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_binding.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_round_unix.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_receipt.rs',
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

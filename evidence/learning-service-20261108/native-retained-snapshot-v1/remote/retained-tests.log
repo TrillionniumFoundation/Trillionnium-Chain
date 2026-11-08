@@ -1,0 +1,142 @@
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.45
+   Compiling cfg-if v1.0.4
+   Compiling vcpkg v0.2.15
+   Compiling syn v2.0.117
+   Compiling pkg-config v0.3.32
+   Compiling cpufeatures v0.2.17
+   Compiling zeroize v1.9.1
+   Compiling libc v0.2.184
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling sha2-asm v0.6.4
+   Compiling cmov v0.5.4
+   Compiling bitflags v2.11.0
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling serde_core v1.0.228
+   Compiling semver v1.0.27
+   Compiling rustc_version v0.4.1
+   Compiling hybrid-array v0.4.15
+   Compiling cfg_aliases v0.2.2
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling libsqlite3-sys v0.37.0
+   Compiling zmij v1.0.21
+   Compiling autocfg v1.5.1
+   Compiling equivalent v1.0.2
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling num-traits v0.2.19
+   Compiling crypto-common v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling openssl-sys v0.9.117
+   Compiling subtle v2.6.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde v1.0.228
+   Compiling foldhash v0.2.0
+   Compiling signature v2.2.0
+   Compiling serde_json v1.0.149
+   Compiling ed25519 v2.2.3
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling digest v0.11.3
+   Compiling serde_derive v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling ed25519-dalek v2.2.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling hashlink v0.11.1
+   Compiling borsh v1.8.0
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling anyhow v1.0.103
+   Compiling openssl v0.10.81
+   Compiling foreign-types-shared v0.1.1
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling sponge-cursor v0.1.0
+   Compiling once_cell v1.21.4
+   Compiling shake v0.1.0
+   Compiling borsh-derive v1.8.0
+   Compiling rusqlite v0.39.0
+   Compiling foreign-types v0.3.2
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-crypto-primitives)
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-mempool v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/source/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 13s
+     Running tests/funded_service_contract.rs (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/target/debug/deps/funded_service_contract-848bc0ba818e86b7)
+
+running 4 tests
+test actual_arbitrator_payment_reopens_and_reorg_refund_cannot_claim_service_payment ... ok
+test ordinary_customer_acceptance_uses_the_frozen_contract_and_same_payment_owner ... ok
+test permanent_account_growth_refuses_the_unmigrated_contract_profile_explicitly ... ok
+test unresolved_native_contract_expiry_refunds_payer_and_is_not_a_service_payment ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
+
+     Running tests/native_active_anchor.rs (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/target/debug/deps/native_active_anchor-33a07fc132747ee4)
+
+running 2 tests
+test retained_never_active_funding_cannot_borrow_an_actual_generation_number ... ok
+test retained_never_active_payment_cannot_be_reported_as_historical_active_payment ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+     Running tests/native_demand_evidence.rs (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/target/debug/deps/native_demand_evidence-eceb80f7a4fbef4c)
+
+running 2 tests
+test complete_contract_real_arbitration_reconciles_after_restart_reorg_and_epoch ... ok
+test ordinary_growth_task_keeps_native_evidence_without_claiming_full_contract ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.10s
+
+     Running tests/native_task_operation_v2.rs (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/target/debug/deps/native_task_operation_v2-46d9c880d3e34342)
+
+running 4 tests
+test current_paid_observation_rechecks_original_receipts_and_settlement_on_both_backends ... ok
+test ordinary_task_cannot_claim_full_contract_v2_admission ... ok
+test real_old_funding_rows_cannot_backfill_a_later_native_begin_or_reservation ... ok
+test unknown_output_uses_native_once_fence_and_real_delivery_on_both_backends ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.86s
+
+     Running tests/no_gain_fees.rs (/home/qq/chain-real-iteration-20261108-8b4f0eedf006/native-retained-gates-v1/target/debug/deps/no_gain_fees-c7bbfd85f9de6079)
+
+running 2 tests
+test native_no_gain_evaluation_task_fee_survives_reopen_and_reorg_without_double_payment ... ok
+test native_no_gain_training_task_fee_survives_reopen_and_reorg_without_double_payment ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s
+

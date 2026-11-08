@@ -1,0 +1,63 @@
+{
+  "compatibility": "rejected",
+  "expected_current_runtime": {
+    "numeric_operator_contract": "c091193b7438b3039fde49eda8133fa8e2b4f5176e5932724b790b9d2dbf3c54",
+    "runtime_source": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+    "tokenizer_behavior_contract": "82104e1ad458fadd3e5fd3018f669641989a5421e23e9a98f2df4c4f1bb6b4c5"
+  },
+  "installation_authorized": false,
+  "observed_at_utc": "2026-11-08T17:27:24.230207+00:00",
+  "observed_contract": {
+    "numeric_operator_contract": "d38ae51cff2fa493bcaaa763eaf5d515fc7d7e3e0317434f7c9f8bcfff264d3e",
+    "tokenizer_behavior_contract": "7d6669ccfe3242228d0601778d8854538e1178b5e585bbd817505bcb0edce643"
+  },
+  "observed_files": {
+    "artifact.safetensors": {
+      "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "size": 933664
+    },
+    "target-contract.json": {
+      "sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852",
+      "size": 56809
+    },
+    "wrapped-adapter.json": {
+      "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d",
+      "size": 20962
+    }
+  },
+  "observed_parent_directory": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent",
+  "old_materials_modified": false,
+  "original_descriptors": {
+    "original-parent-material.json": {
+      "sha256": "ffa4bc641fd31a1d7dad955ca562358272024846580db4a50cf5c30c9f843984",
+      "value": {
+        "adapter": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+        "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+        "directory": "/home/runner/work/_temp/hepta-public-initial-v2/genesis",
+        "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+        "generation": 1,
+        "operation_id": "public-v2-material-derivation-no-execution",
+        "schema": "hepta-smollm-parent-material-v1"
+      }
+    },
+    "original-trained-material.json": {
+      "sha256": "69aef6337ec8b684a4e5dbcfd0321c779dedaf581322bead716fb70971adb8e9",
+      "value": {
+        "adapter": "94ae1569c09d81d15e7a540db7e4ab8f30c16e1a73fe03d13438e4addbee0985",
+        "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+        "directory": "/home/runner/work/_temp/hepta-public-initial-v2/n/n/trained/candidate",
+        "file_sha256": "e98cc51c5f8b0ea49217516efb33ff1cdf095aeae74e99504724dcb5401806e8",
+        "generation": 2,
+        "operation_id": "c0c1605742327c3678cd7452d201290a351f240aff063d1ea03ab2689ce9121c",
+        "schema": "hepta-smollm-parent-material-v1"
+      }
+    }
+  },
+  "original_owner_current_installation_proven": false,
+  "reasons": [
+    "numeric-operator-contract-mismatch",
+    "tokenizer-behavior-contract-mismatch",
+    "original-descriptor-retains-historical-runner-directory"
+  ],
+  "schema": "chain-legacy-parent-readback-rejection-v1"
+}

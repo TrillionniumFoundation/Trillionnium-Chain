@@ -1,0 +1,190 @@
+{
+  "binary": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_recovery_probe-414dd728",
+  "build_manifest_sha256": "19157f31567cefc1a611754b27d60ed3c32e93d8f47c366ab09ffc41494e455e",
+  "elf_sha256": "414dd7288418b8df225f80b1090c31d42547a63a61592d25055f2a475e1c9a57",
+  "elf_size": 20695312,
+  "gzip_sha256": "e5194764b8e8d33f7925c0fcb01a30e134eeec332b20a414c8b9f913989ca844",
+  "original_frozen_runtime_modified": false,
+  "parts": [
+    {
+      "n": 0,
+      "offset": 0,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part00",
+      "sha256": "09460fbb5510dc680baf5f66b86992a5a8b8db858bb74094463d0185b1f96b1e",
+      "size": 262144,
+      "version": "66306:56892435:262144:1794161861131012288:1794161861131853466"
+    },
+    {
+      "n": 1,
+      "offset": 262144,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part01",
+      "sha256": "ef6865c88b662af9591d00e106df6a092e41ad51d1abc11a232678404a69f7fc",
+      "size": 262144,
+      "version": "66306:56892429:262144:1794161847605330332:1794161847609328536"
+    },
+    {
+      "n": 2,
+      "offset": 524288,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part02",
+      "sha256": "7c3472e8098bae084262dd3c4cd58421dd7e2d827750a4f1edcef4e44d3b234c",
+      "size": 262144,
+      "version": "66306:56892433:262144:1794161855960295147:1794161855961035125"
+    },
+    {
+      "n": 3,
+      "offset": 786432,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part03",
+      "sha256": "a343538e9b4108d7e0662417e88b31491d149f6a30ff3a5aab0cea5f2c58ee7f",
+      "size": 262144,
+      "version": "66306:56892431:262144:1794161850900124017:1794161850937211621"
+    },
+    {
+      "n": 4,
+      "offset": 1048576,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part04",
+      "sha256": "131dff6db5ab1f2bf298bef58b59e6c30d4cebc2920186d783773c5300a25894",
+      "size": 262144,
+      "version": "66306:56892439:262144:1794161867720155263:1794161867727621745"
+    },
+    {
+      "n": 5,
+      "offset": 1310720,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part05",
+      "sha256": "5d499d8df11e02df6390ab795e0699a6b7ad71a069213ba64f67e9798567a734",
+      "size": 262144,
+      "version": "66306:56892443:262144:1794161872459391346:1794161872462455403"
+    },
+    {
+      "n": 6,
+      "offset": 1572864,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part06",
+      "sha256": "d5eb479e776a80cecf70fc4229525c71c77674925ba1716ab4fc8a2f6ac8e863",
+      "size": 262144,
+      "version": "66306:56892437:262144:1794161863738708254:1794161863774760616"
+    },
+    {
+      "n": 7,
+      "offset": 1835008,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part07",
+      "sha256": "5a2f7e06d45d03aa146fffc3ca5aac299f035251b7fde17036a273427a128b4b",
+      "size": 262144,
+      "version": "66306:56892441:262144:1794161870229281155:1794161870265532583"
+    },
+    {
+      "n": 8,
+      "offset": 2097152,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part08",
+      "sha256": "08030aad835219a3b001ca98f014ab82eab100eec10f0652fd77b73168acfd95",
+      "size": 262144,
+      "version": "66306:56892445:262144:1794161878553147572:1794161878555241350"
+    },
+    {
+      "n": 9,
+      "offset": 2359296,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part09",
+      "sha256": "a98cc8d8a30716cf98726e324c513b5e75af0f53b8bf3b68753f1234fbb890f2",
+      "size": 262144,
+      "version": "66306:56892447:262144:1794161881396858003:1794161881433140245"
+    },
+    {
+      "n": 10,
+      "offset": 2621440,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part10",
+      "sha256": "7028ce0848a30148254dd17507b9d6d83d0761afe6a67ab8ead0e45286f8b85d",
+      "size": 262144,
+      "version": "66306:56892451:262144:1794161885830663943:1794161885865984512"
+    },
+    {
+      "n": 11,
+      "offset": 2883584,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part11",
+      "sha256": "9bdb57fb73f807536096bfc4879b28cf4d90d2a661b39e41b41c97175c8559ca",
+      "size": 262144,
+      "version": "66306:56892449:262144:1794161883569412017:1794161883627063169"
+    },
+    {
+      "n": 12,
+      "offset": 3145728,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part12",
+      "sha256": "f653129da11445f13f6be8faad24f11b27928edc9a53bf0d93db0f562dd86524",
+      "size": 262144,
+      "version": "66306:56892468:262144:1794161891169912847:1794161891170798146"
+    },
+    {
+      "n": 13,
+      "offset": 3407872,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part13",
+      "sha256": "4527ce2a1e15964687039d97920bcdd99f5f17455326249884c70b0350eb046d",
+      "size": 262144,
+      "version": "66306:56892472:262144:1794161895589133810:1794161895591642836"
+    },
+    {
+      "n": 14,
+      "offset": 3670016,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part14",
+      "sha256": "22b0bbb42923c90e17c9f366b81dd02d0ad0864671fbbebd4e9d9713bced5b66",
+      "size": 262144,
+      "version": "66306:56892470:262144:1794161893446324661:1794161893481716960"
+    },
+    {
+      "n": 15,
+      "offset": 3932160,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part15",
+      "sha256": "c909894b5c25478ca9b0c141d5c7b0d87173b80d13ada4c7b360dbf104469415",
+      "size": 262144,
+      "version": "66306:56892466:262144:1794161888667172343:1794161888669886007"
+    },
+    {
+      "n": 16,
+      "offset": 4194304,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part16",
+      "sha256": "90bb3e44a9ccd533fd50bd7fa00ed7001a9ba044231b65a2411b213dca7a3978",
+      "size": 262144,
+      "version": "66306:56892478:262144:1794161903170889757:1794161903173376479"
+    },
+    {
+      "n": 17,
+      "offset": 4456448,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part17",
+      "sha256": "9bd7ea27361785cb245a0fafcb248b385f76ef7961c7e4efb056dcaf8de57016",
+      "size": 262144,
+      "version": "66306:56892474:262144:1794161898385254132:1794161898387544611"
+    },
+    {
+      "n": 18,
+      "offset": 4718592,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part18",
+      "sha256": "0c4bccfde17a78effbf26c915d8f5cee56ccd9748141ae4ade63f7cb32df37de",
+      "size": 262144,
+      "version": "66306:56892480:262144:1794161905841507974:1794161905899280713"
+    },
+    {
+      "n": 19,
+      "offset": 4980736,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part19",
+      "sha256": "b09a067c2173a174452b5b3ed4145907732496c5d32e06c3c019e1eb785fa67b",
+      "size": 262144,
+      "version": "66306:56892476:262144:1794161900705131618:1794161900742461880"
+    },
+    {
+      "n": 20,
+      "offset": 5242880,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part20",
+      "sha256": "a3915b80681a58e06f4b439d7f2b23d7d06687b5c70031f6cd2e0a19364ca78b",
+      "size": 262144,
+      "version": "66306:56892484:262144:1794161912524765617:1794161912528047836"
+    },
+    {
+      "n": 21,
+      "offset": 5505024,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/recovery-414dd728-gz.part21",
+      "sha256": "5b7211b59def1ccaf32832540143e0145578aac2dbf9fe8a285d239ed345bdbc",
+      "size": 201487,
+      "version": "66306:56892482:201487:1794161910217848725:1794161910254127722"
+    }
+  ],
+  "probe_executed": false,
+  "schema": "chain-additive-recovery-probe-transfer-v1",
+  "scope": "exact-additive-probe-binary-and-three-sources-not-original-frozen-model-runtime",
+  "source_archive_sha256": "7175616c628c2708510e7be314f72b2526ee39d06836bd1fd2b5d279a16ec2e4"
+}

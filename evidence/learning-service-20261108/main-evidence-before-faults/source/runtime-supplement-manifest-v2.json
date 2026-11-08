@@ -1,0 +1,37 @@
+{
+  "base_commit": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "files": {
+    "scripts/run_learning_service_development.py": {
+      "bytes": 34840,
+      "git_blob_sha1": "ba8ac8b81ccb4cfe57768cb7d29fd3fece40587a",
+      "sha256": "2f0e75426c6369174e07fd780d45643b67a4efc334a82bee62b989b158cee30f"
+    },
+    "scripts/test_run_learning_service_development.py": {
+      "bytes": 18710,
+      "git_blob_sha1": "d6826941a9d3c8b5311c0e7592219eb5d4805765",
+      "sha256": "5332d4a4263540eaab50acafd6933b30f7aee7f82b91235653345cbb648d0bb0"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/learning_service_round.rs": {
+      "bytes": 470,
+      "git_blob_sha1": "64458af5f8ae960095da5a7fcb14c4a9734ea157",
+      "sha256": "290173ac0f15252a90b70a4864ed175c68ce233b15f53401c2af5896c33c1d79"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/learning_service_receipt.rs": {
+      "bytes": 19508,
+      "git_blob_sha1": "9b20fff61c3f35d20c16a2e7f49207eeddaf9514",
+      "sha256": "48432ee1838cb8f364f4f0ba2db3295ac669e8626bc99b85db4ad19fc0ffa78e"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/learning_service_round_unix.rs": {
+      "bytes": 45229,
+      "git_blob_sha1": "b3a0096bafc035e622784ec83f367f645935583d",
+      "sha256": "c9f089103753442e249905e4edf6c9ac5bbf977e5f807067680456464316a6fa"
+    }
+  },
+  "native_binary": {
+    "bytes": 20546720,
+    "sha256": "fc406badb161bd9847b9aa3b7f5863018baae62b172467e2ae3a44317a76808a"
+  },
+  "schema": "chain-learning-service-source-supplement-v2",
+  "scope": "exact additional source bytes; main trial source snapshot before final repository commit",
+  "whole_repository_source_verified": false
+}

@@ -1,0 +1,92 @@
+{
+  "schema": "native-learning-service-recovery-probe-build-v1",
+  "scope": "CONTROLLED_LOCAL_DEVELOPMENT_ADDITIVE_RECOVERY_PROBE",
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/learning_service_recovery_probe.rs",
+      "bytes": 404,
+      "sha256": "47d0615cd55945ad041385c7bc7b1826d9b265e2eb8eacdb54916c75d449e0cb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_probe_unix.rs",
+      "bytes": 57516,
+      "sha256": "8a474bdccd37f27cc08bce466dc008851058057d1279090658f168f2f4e30223"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_binding.rs",
+      "bytes": 9605,
+      "sha256": "21c104a0b79b0d719d528515d592fd81db7c5d6221b85131c33f843e20d6e1e9"
+    }
+  ],
+  "elf": {
+    "path": "/workspace/scratch/8b4f0eedf006/target-learning-service/debug/examples/learning_service_recovery_probe",
+    "bytes": 20695312,
+    "sha256": "414dd7288418b8df225f80b1090c31d42547a63a61592d25055f2a475e1c9a57"
+  },
+  "transport": {
+    "path": "/workspace/scratch/8b4f0eedf006/learning_service_recovery_probe-v1.gz",
+    "bytes": 5706511,
+    "sha256": "e5194764b8e8d33f7925c0fcb01a30e134eeec332b20a414c8b9f913989ca844"
+  },
+  "gates": {
+    "native_probe_tests": {
+      "passed": 5,
+      "failed": 0,
+      "log": "learning-service-recovery-test-03.log"
+    },
+    "strict_clippy": "PASS",
+    "workspace_format": "PASS",
+    "build": "PASS"
+  },
+  "environment": {
+    "toolchain": "/workspace/scratch/2b54b253422c/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "optimization_level_overridden": false
+  },
+  "prior_failures_retained": {
+    "clippy-01": "No space left on device",
+    "clippy-02": "two needless_borrow diagnostics corrected"
+  },
+  "logs": [
+    {
+      "path": "learning-service-recovery-test-01.log",
+      "sha256": "520787ade4836a3825c22023d2fd2d6af2ace10d0e0a5f8fdfa62e0fcbc85110"
+    },
+    {
+      "path": "learning-service-recovery-test-02.log",
+      "sha256": "74cb7db18d7e55e1c561e29d3b554cd0b383f4305baf7e16b999636217c7ec04"
+    },
+    {
+      "path": "learning-service-recovery-test-03.log",
+      "sha256": "1fe34920eba6239a888f4480a736a85303f75a95ad5808a6913853c0d527af67"
+    },
+    {
+      "path": "learning-service-recovery-clippy-01.log",
+      "sha256": "259af8d1e6f40cfffef58ec9d8ddc1d5d668711e00ca997621daf24ba9595b98"
+    },
+    {
+      "path": "learning-service-recovery-clippy-02.log",
+      "sha256": "53d496a733e8c228694ff583eb3c18dd8db165efc24550e8eb3f756aa5be4c2d"
+    },
+    {
+      "path": "learning-service-recovery-clippy-03.log",
+      "sha256": "bdc746f76db0389632ff04e484fee368b9ec726985371a13ee1bf019e6eb8608"
+    },
+    {
+      "path": "learning-service-recovery-format-01.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "learning-service-recovery-format-02.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "learning-service-recovery-build-01.log",
+      "sha256": "1ece2bbe32814d705a7955a94d0e53a1b49529eded4a5bc7a9bc39600ca94200"
+    }
+  ],
+  "production_activation": false,
+  "whole_repository_source_attestation": false
+}

@@ -1,0 +1,262 @@
+{
+  "evidence_copy_only": true,
+  "execute_copied_authority_allowed": false,
+  "files": [
+    {
+      "bytes": 17487,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/intent.json",
+      "sha256": "62152f20749ba18630ac48bd645b4c7882ad44cab76cd8a2dda9bc5fc9419521"
+    },
+    {
+      "bytes": 99486,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/reorg-00.json",
+      "sha256": "741b6838a4784d2d05760b6e2deef102b0a7b1dbe1f27bff37c2232bd5a53671"
+    },
+    {
+      "bytes": 99486,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/reorg-01.json",
+      "sha256": "805af37b236f899905af7d30341e6f03d4eb7228107c30850a8688bebf657b82"
+    },
+    {
+      "bytes": 99486,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/reorg-02.json",
+      "sha256": "e1bbf5825692dd63d4d9b8c8599f3abd3dc02c97a7f2a524982ae8690926333d"
+    },
+    {
+      "bytes": 99486,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/reorg-03.json",
+      "sha256": "9ff8a4e6b91d4ba5490114d5b52359a6ee8d9555f8797e1c7f6eea1f9b4293ee"
+    },
+    {
+      "bytes": 5728,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/reorg-complete.json",
+      "sha256": "654d8272f5eede4d5d035be933996d96251d2cf29b17b2c4da389790a8f8ab26"
+    },
+    {
+      "bytes": 99488,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/restore-00.json",
+      "sha256": "d839a188312f7c79190dfda3802c2ac2b1d972c36c0c1d076358555a7ac6fd57"
+    },
+    {
+      "bytes": 99488,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/restore-01.json",
+      "sha256": "2412e17b885c1896da549c65fc9790722111214d761ab6cf115097202832fd0d"
+    },
+    {
+      "bytes": 14506,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/restore-complete.json",
+      "sha256": "38e5b56c924af885de3e05a254973430a74fc56eb333c33ef11b8868b9a35158"
+    },
+    {
+      "bytes": 5857,
+      "path": "artifacts/development-iteration-v1/native-service/recovery-probe-v1/restore-intent.json",
+      "sha256": "f5e601cb791e47493ce7a0ed1d569a5129805e660d2e5889142acccea7be1835"
+    },
+    {
+      "bytes": 283,
+      "path": "artifacts/development-iteration-v1/native-service/revoked.json",
+      "sha256": "c2045ce4512e5a8c82fff6d5d357594f41372908ebce43c244c451ffe87d9949"
+    },
+    {
+      "bytes": 671,
+      "path": "faults/reorg-revoke-restore-v1/00-baseline-probe-query-intent.json",
+      "sha256": "a4420bc7abb66f4781b3cc328c8b6ce9929820d5b06c9b17c303b1e6e122eebb"
+    },
+    {
+      "bytes": 976,
+      "path": "faults/reorg-revoke-restore-v1/00-baseline-probe-query-process.json",
+      "sha256": "f9f70eed84120a25e266c5c69d5ddc2dbff41658bd2ef7f0daf8de862c89bf0f"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/00-baseline-probe-query.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14347,
+      "path": "faults/reorg-revoke-restore-v1/00-baseline-probe-query.stdout.json",
+      "sha256": "8edeebc246d97bc52b258398774994cfa34b94460317cb4ecd9734f21fdcaddf"
+    },
+    {
+      "bytes": 656,
+      "path": "faults/reorg-revoke-restore-v1/01-reorg-intent.json",
+      "sha256": "a4da9761979cb25d4ee9f2b298d8ec0398fd0476409e1cb3e3485e43e746a01c"
+    },
+    {
+      "bytes": 962,
+      "path": "faults/reorg-revoke-restore-v1/01-reorg-process.json",
+      "sha256": "b0dfc898c22bc3f35b042c43aad280863bcedf6e55f090ac38e5f0e38eb34b02"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/01-reorg.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 19054,
+      "path": "faults/reorg-revoke-restore-v1/01-reorg.stdout.json",
+      "sha256": "6318299813985c7f6b432b09a03fb8b17fa68fcdc924770c2ff0daa76df3aa20"
+    },
+    {
+      "bytes": 485,
+      "path": "faults/reorg-revoke-restore-v1/02-orphaned-original-query-intent.json",
+      "sha256": "721cd336da0ae8058e942c9a6f83893ee6809b4684ea12333559f02e83b92673"
+    },
+    {
+      "bytes": 789,
+      "path": "faults/reorg-revoke-restore-v1/02-orphaned-original-query-process.json",
+      "sha256": "b79798d0639da0765007dfbe93684197954d8fb6a08d9a2ee66feaf63124325d"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/02-orphaned-original-query.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3252,
+      "path": "faults/reorg-revoke-restore-v1/02-orphaned-original-query.stdout.json",
+      "sha256": "ff489bc5f404a5f02b90ff09d77877819b7ca89e9aec493d3773e74dffc9db45"
+    },
+    {
+      "bytes": 484,
+      "path": "faults/reorg-revoke-restore-v1/03-revoke-while-orphaned-intent.json",
+      "sha256": "f5d18946935cb993742032bcd5e77c709086d8bcdc17d96338cb1051bb5dcac8"
+    },
+    {
+      "bytes": 788,
+      "path": "faults/reorg-revoke-restore-v1/03-revoke-while-orphaned-process.json",
+      "sha256": "898cdebcab12683209de31a71fca07b0635f4caa57f8a5c373aaad986ec47d49"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/03-revoke-while-orphaned.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3251,
+      "path": "faults/reorg-revoke-restore-v1/03-revoke-while-orphaned.stdout.json",
+      "sha256": "65d01b65c439e57cf5c50125908f3ad9db64a99987a139426c872c914a2f66c4"
+    },
+    {
+      "bytes": 681,
+      "path": "faults/reorg-revoke-restore-v1/04-restore-original-paid-branch-intent.json",
+      "sha256": "199949bcdb059abfa154b500326b2f5c21eb078494f5d0bfd6978ebaa6a01769"
+    },
+    {
+      "bytes": 987,
+      "path": "faults/reorg-revoke-restore-v1/04-restore-original-paid-branch-process.json",
+      "sha256": "c4989b404040fd06bcd752e9998f06cd3bf2bda32ade077cb6b084ed1628d715"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/04-restore-original-paid-branch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 45315,
+      "path": "faults/reorg-revoke-restore-v1/04-restore-original-paid-branch.stdout.json",
+      "sha256": "28dc48e02e3228eb1f4e0a6d69762e15c26f5e55630cb25ff2fc1339c9339637"
+    },
+    {
+      "bytes": 676,
+      "path": "faults/reorg-revoke-restore-v1/05-restored-probe-cold-query-intent.json",
+      "sha256": "a967f49d44f62fa4f766e59786cde61a276a1f690055d662024a3707e363f432"
+    },
+    {
+      "bytes": 982,
+      "path": "faults/reorg-revoke-restore-v1/05-restored-probe-cold-query-process.json",
+      "sha256": "a9a472f396f9649ce8be42b3fb8776f383ea3f9990e10ed8c4dcb1aa79361135"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/05-restored-probe-cold-query.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 45316,
+      "path": "faults/reorg-revoke-restore-v1/05-restored-probe-cold-query.stdout.json",
+      "sha256": "837fa52944087042901ad2a36f7691d7fdf9ed7a0587dde1666fef4564c90dfa"
+    },
+    {
+      "bytes": 490,
+      "path": "faults/reorg-revoke-restore-v1/06-restored-original-cold-query-intent.json",
+      "sha256": "47a6967bc68e20326a1cf1faf0225dce4f26f835d3aa522f4e815efe680881f7"
+    },
+    {
+      "bytes": 796,
+      "path": "faults/reorg-revoke-restore-v1/06-restored-original-cold-query-process.json",
+      "sha256": "57a7658ede604a234ce20897fca862f2cc456c7ee8c9b0e3166ece47b33d9970"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/06-restored-original-cold-query.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11881,
+      "path": "faults/reorg-revoke-restore-v1/06-restored-original-cold-query.stdout.json",
+      "sha256": "a55709dea3860ae9a3c50a530b0ef17fa7993589315fd79fc354f297e3d96368"
+    },
+    {
+      "bytes": 668,
+      "path": "faults/reorg-revoke-restore-v1/07-final-probe-query-intent.json",
+      "sha256": "3edbe616f371dac59b6c7d56a8aca2ed448052da4efdb805916b12d6e459cc67"
+    },
+    {
+      "bytes": 974,
+      "path": "faults/reorg-revoke-restore-v1/07-final-probe-query-process.json",
+      "sha256": "218d5ea93de20f085860de4f59a388c8f597e2971f2680569d984e5a3d58313b"
+    },
+    {
+      "bytes": 0,
+      "path": "faults/reorg-revoke-restore-v1/07-final-probe-query.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 45316,
+      "path": "faults/reorg-revoke-restore-v1/07-final-probe-query.stdout.json",
+      "sha256": "837fa52944087042901ad2a36f7691d7fdf9ed7a0587dde1666fef4564c90dfa"
+    },
+    {
+      "bytes": 2184,
+      "path": "faults/reorg-revoke-restore-v1/driver-intent.json",
+      "sha256": "9744e797d3d89f0e15044a688befdba86ab1b140a49a5e91e6eacb1d439aea7a"
+    },
+    {
+      "bytes": 38484,
+      "path": "faults/reorg-revoke-restore-v1/result.json",
+      "sha256": "4523dc49ab2af7309c699638b20602e5bf1de85f77e3cebe9d7c6e2f4888d0b7"
+    },
+    {
+      "bytes": 12429,
+      "path": "logs/reorg-revoke-restore-driver-v1.py",
+      "sha256": "5ec94b77436b44fa7b06b2fd8ed1edeff89596002295e27572b449e58fb695cd"
+    },
+    {
+      "bytes": 3380,
+      "path": "recovery-probe-v1/source/learning-service-recovery-probe-build-v1.json",
+      "sha256": "19157f31567cefc1a611754b27d60ed3c32e93d8f47c366ab09ffc41494e455e"
+    },
+    {
+      "bytes": 404,
+      "path": "recovery-probe-v1/source/trillionnium/crates/trnm-pon-node/examples/learning_service_recovery_probe.rs",
+      "sha256": "47d0615cd55945ad041385c7bc7b1826d9b265e2eb8eacdb54916c75d449e0cb"
+    },
+    {
+      "bytes": 9605,
+      "path": "recovery-probe-v1/source/trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_binding.rs",
+      "sha256": "21c104a0b79b0d719d528515d592fd81db7c5d6221b85131c33f843e20d6e1e9"
+    },
+    {
+      "bytes": 57516,
+      "path": "recovery-probe-v1/source/trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_probe_unix.rs",
+      "sha256": "8a474bdccd37f27cc08bce466dc008851058057d1279090658f168f2f4e30223"
+    },
+    {
+      "bytes": 8331,
+      "path": "recovery-probe-v1/transfer-receipt.json",
+      "sha256": "a88ff4cdff3d19f82672e20af92aa789381cda047e9ad6a5fbaebe05d0e28c34"
+    }
+  ],
+  "schema": "same-round-recovery-evidence-files-v1"
+}

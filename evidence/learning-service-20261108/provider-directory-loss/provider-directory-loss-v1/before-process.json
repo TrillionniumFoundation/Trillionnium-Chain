@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+    "query",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service"
+  ],
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "04167cc586b209886e0f69809d669de2018e630ad581ac63a8d5c8e195f2589e",
+  "wall_ns": 1034298201
+}
