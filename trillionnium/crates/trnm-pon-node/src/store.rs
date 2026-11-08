@@ -2903,8 +2903,17 @@ impl Node {
     fn check_active_before_commit_with_root_arithmetic(
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,
+    ) -> Result<()> {
+        self.check_active_before_commit_with_root_role(progress, readback, arithmetic, false)
+    }
+    fn check_active_before_commit_with_root_role(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
         mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
         arithmetic: Option<&pon_commitment::FullRootArithmetic>,
+        preserve_staging: bool,
     ) -> Result<()> {
         progress()?;
         self.namespace()?;
@@ -2920,6 +2929,16 @@ impl Node {
         if let Some(scope) = readback.as_deref_mut() {
             scope.nominate_active(&self.db, selected.0)?;
         }
+        // During initial full-history activation, the still-published genesis
+        // State alternates with staging State. Do not evict staging's bounded
+        // pure arithmetic with that small, unrelated active input. All rows and
+        // the root are still checked by the original complete-root algorithm.
+        // Other active tips and every non-reorg caller keep their old policy.
+        let arithmetic = if preserve_staging && selected.0 == self.settings.genesis() {
+            None
+        } else {
+            arithmetic
+        };
         self.check_persisted_state_with_root_arithmetic(
             selected.0,
             &state,
@@ -5836,14 +5855,15 @@ impl Node {
                             .history
                             .observe(native_authenticated::HistoryStage::ReadActive)
                     });
-                let arithmetic =
-                    matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep)
-                        .then(|| self.legacy_persisted_root_arithmetic())
-                        .flatten();
-                self.check_active_before_commit_with_root_arithmetic(
+                let reorg = matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep);
+                let arithmetic = reorg
+                    .then(|| self.legacy_persisted_root_arithmetic())
+                    .flatten();
+                self.check_active_before_commit_with_root_role(
                     progress,
                     readback.as_mut(),
                     arithmetic,
+                    reorg,
                 )?;
             }
             self.continuous_scope_checkpoint()?;
