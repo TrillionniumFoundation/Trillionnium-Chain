@@ -17,6 +17,7 @@ on:
       - scripts/run_w1_receiver.py
       - scripts/run_w1_postwin_proof.py
       - scripts/run_w1_deployment_comparison.py
+      - scripts/audit_w1_deployment_comparison.py
       - scripts/build_w1_kaggle_source.py
       - scripts/kaggle_generation_contract_v2.py
       - scripts/test_kaggle_generation_contract_v2.py
@@ -26,7 +27,10 @@ on:
       - scripts/test_w1_owner_cancellation_v1.py
       - scripts/w1_owned_generation_runtime_v2.py
       - scripts/test_w1_owned_generation_runtime_v2.py
+      - scripts/w1_owned_process_collector_v1.py
+      - scripts/test_w1_owned_process_collector_v1.py
       - evidence/pon-w1-full-v2-20261105/**
+      - evidence/pon-w1-fresh-runtime-20261107/**
       - evidence/pon-w1-backend-sdk-20261107/**
       - scripts/w1_kaggle_worker_template.py
       - scripts/ci/**
@@ -245,7 +249,7 @@ jobs:
           cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest" 2>&1 | tee "$W1_PROFILE_OUT/v2-build.log"
           cp "$CARGO_TARGET_DIR/release/w1-verify-v2" "$W1_PROFILE_OUT/bin/w1-verify-v2"
           sha256sum "$W1_PROFILE_OUT/bin/w1-verify-v2" > "$W1_PROFILE_OUT/v2-binary.sha256"
-      - name: Execute seven actual full-v2 receiver and cancellation controls
+      - name: Execute eleven actual full-v2 receiver and cancellation controls
         if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'
         id: real_receiver_controls
         shell: bash
@@ -281,13 +285,13 @@ jobs:
           from pathlib import Path
           import json, sys
           report = json.loads(Path(sys.argv[1]).read_text())
-          counts = {"tests_run": 7, "failures": 0, "errors": 0, "skipped": 0, "fresh_proof_generations": 0}
+          counts = {"tests_run": 11, "failures": 0, "errors": 0, "skipped": 0, "fresh_proof_generations": 0}
           if (report.get("schema") != "TRNM-W1-REAL-RECEIVER-CONTROLS1"
                   or any(type(report.get(key)) is not int or report[key] != value for key, value in counts.items())
                   or report.get("result") != "PASS" or report.get("actual_complete_receipt_used") is not True
                   or report.get("verifier_sha256") != sys.argv[2]
                   or report.get("receipt_sha256") != "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"):
-              raise SystemExit("all seven actual receiver controls must execute with the declared saved receipt and zero proof generation")
+              raise SystemExit("all eleven actual receiver controls must execute with the declared saved receipt and zero proof generation")
           PY
       - name: Reproduce the component-budget report with its unqualified boundary
         if: always() && steps.source.outcome == 'success' && steps.hardened.outcome == 'success'

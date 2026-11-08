@@ -424,14 +424,19 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
       python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
       python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
       python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"
+      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
       python3 - "$w1_contract_out" <<'PY'
 from pathlib import Path
 import re, sys
 root = Path(sys.argv[1])
 expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
-            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 7),
+            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 8),
             ("source-builder", 8),
-            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4))
+            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+            ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+            ("owned-process-collector", 14))
 for name, count in expected:
     text = (root / (name + ".log")).read_text()
     if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]
@@ -484,6 +489,7 @@ on:
       - scripts/run_w1_receiver.py
       - scripts/run_w1_postwin_proof.py
       - scripts/run_w1_deployment_comparison.py
+      - scripts/audit_w1_deployment_comparison.py
       - scripts/build_w1_kaggle_source.py
       - scripts/kaggle_generation_contract_v2.py
       - scripts/test_kaggle_generation_contract_v2.py
@@ -493,7 +499,10 @@ on:
       - scripts/test_w1_owner_cancellation_v1.py
       - scripts/w1_owned_generation_runtime_v2.py
       - scripts/test_w1_owned_generation_runtime_v2.py
+      - scripts/w1_owned_process_collector_v1.py
+      - scripts/test_w1_owned_process_collector_v1.py
       - evidence/pon-w1-full-v2-20261105/**
+      - evidence/pon-w1-fresh-runtime-20261107/**
       - evidence/pon-w1-backend-sdk-20261107/**
       - scripts/w1_kaggle_worker_template.py
       - scripts/ci/**
@@ -628,7 +637,7 @@ W1_POSTWIN_CRITICAL_STEPS = {
           cp "$CARGO_TARGET_DIR/release/w1-verify-v2" "$W1_PROFILE_OUT/bin/w1-verify-v2"
           sha256sum "$W1_PROFILE_OUT/bin/w1-verify-v2" > "$W1_PROFILE_OUT/v2-binary.sha256"
 ''',
-    "real_receiver_controls": r'''      - name: Execute seven actual full-v2 receiver and cancellation controls
+    "real_receiver_controls": r'''      - name: Execute eleven actual full-v2 receiver and cancellation controls
         if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'
         id: real_receiver_controls
         shell: bash
@@ -664,13 +673,13 @@ W1_POSTWIN_CRITICAL_STEPS = {
           from pathlib import Path
           import json, sys
           report = json.loads(Path(sys.argv[1]).read_text())
-          counts = {"tests_run": 7, "failures": 0, "errors": 0, "skipped": 0, "fresh_proof_generations": 0}
+          counts = {"tests_run": 11, "failures": 0, "errors": 0, "skipped": 0, "fresh_proof_generations": 0}
           if (report.get("schema") != "TRNM-W1-REAL-RECEIVER-CONTROLS1"
                   or any(type(report.get(key)) is not int or report[key] != value for key, value in counts.items())
                   or report.get("result") != "PASS" or report.get("actual_complete_receipt_used") is not True
                   or report.get("verifier_sha256") != sys.argv[2]
                   or report.get("receipt_sha256") != "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"):
-              raise SystemExit("all seven actual receiver controls must execute with the declared saved receipt and zero proof generation")
+              raise SystemExit("all eleven actual receiver controls must execute with the declared saved receipt and zero proof generation")
           PY
 ''',
     "source_after": r'''      - name: Verify measured source after execution
@@ -696,6 +705,9 @@ W1_POSTWIN_REQUIRED_TEST_FILES = (
     "scripts/test_w1_owned_generation_runtime_v2.py",
     "scripts/ci/test_w1_kaggle_worker_contract.py",
     "scripts/ci/test_w1_postwin_identity.py",
+    "scripts/ci/test_w1_deployment_evidence_binding.py",
+    "scripts/ci/test_w1_deployment_comparison_audit.py",
+    "scripts/test_w1_owned_process_collector_v1.py",
 )
 
 def check_w1_postwin_workflow(text: str) -> None:

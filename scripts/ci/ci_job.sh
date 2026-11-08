@@ -71,14 +71,19 @@ case "${1:?required job}" in
       python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
       python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
       python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"
+      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
       python3 - "$w1_contract_out" <<'PY'
 from pathlib import Path
 import re, sys
 root = Path(sys.argv[1])
 expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
-            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 7),
+            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 8),
             ("source-builder", 8),
-            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4))
+            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+            ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+            ("owned-process-collector", 14))
 for name, count in expected:
     text = (root / (name + ".log")).read_text()
     if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]

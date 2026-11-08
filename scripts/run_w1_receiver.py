@@ -24,8 +24,11 @@ SCHEMA = "TRNM-W1-RECEIVER-ACK2"
 def execute(args):
     entered = time.monotonic_ns()
     boot = Path("/proc/sys/kernel/random/boot_id").read_text().strip()
-    if not math.isfinite(args.wall_seconds) or not 0 < args.wall_seconds <= 7200:
+    comparison.require_measurement(args.wall_seconds, positive=True)
+    if args.wall_seconds > 7200:
         raise ValueError("finite bounded receiver wall time required")
+    if args.deadline_monotonic is not None:
+        comparison.require_measurement(args.deadline_monotonic, positive=True)
     if (args.deadline_monotonic is None) != (args.deadline_boot_id is None):
         raise ValueError("original local deadline and boot ID are a pair")
     if args.deadline_boot_id is not None and args.deadline_boot_id != boot:
@@ -66,11 +69,13 @@ def execute(args):
             if stage.get("timed_out") or time.monotonic() >= deadline:
                 raise TimeoutError("receiver verifier missed its original effective deadline")
             raise ValueError("receiver verifier did not exit cleanly")
-        value = comparison.read_json(out / "verify/stdout.log")
-        work_id, _ = comparison.validate_observation("proof", stage, value, identities, None)
+        value = comparison.read_verifier_report(out / "verify/stdout.log", stage)
+        candidate_identities = dict(identities)
+        candidate_work, _ = comparison.validate_observation("proof", stage, value, candidate_identities, None)
         if any(measure.sha(path) != identities[name + "_sha256"] for name, path in paths.items()):
             raise ValueError("receiver fixed input or executable bytes changed")
-        verified = True
+        identities.update(candidate_identities)
+        work_id, verified = candidate_work, True
         if time.monotonic() >= deadline:
             raise TimeoutError("receiver completion missed original effective deadline")
     except BaseException as caught:
@@ -82,10 +87,12 @@ def execute(args):
         # cancellation. This fact never changes the canceled operation to success.
         if stage is not None and not verified:
             try:
-                candidate = comparison.read_json(out / "verify/stdout.log")
-                candidate_work, _ = comparison.validate_observation("proof", stage, candidate, identities, None)
+                candidate = comparison.read_verifier_report(out / "verify/stdout.log", stage)
+                candidate_identities = dict(identities)
+                candidate_work, _ = comparison.validate_observation("proof", stage, candidate, candidate_identities, None)
                 if any(measure.sha(path) != identities[name + "_sha256"] for name, path in paths.items()):
                     raise ValueError("saved verified bytes changed")
+                identities.update(candidate_identities)
                 verified, value, work_id = True, candidate, candidate_work
             except Exception:
                 pass

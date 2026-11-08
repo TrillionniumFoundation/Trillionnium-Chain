@@ -9,12 +9,14 @@ commitments, plus the exact qualified verifier binary digest.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import math
 import os
 from pathlib import Path
 import statistics
+import stat
 import sys
 import time
 
@@ -38,16 +40,57 @@ def strict_object(pairs):
     return result
 
 
-def read_json(path):
-    with Path(path).open("rb") as stream:
+def read_json(path, *, expected_sha256=None):
+    # Follow existing symlink semantics, but never block on a replaced FIFO.
+    # Validate the descriptor actually opened, not a preceding path stat.
+    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NONBLOCK), "rb") as stream:
+        before = os.fstat(stream.fileno())
+        if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_JSON:
+            raise ValueError("bounded regular JSON report required")
         data = stream.read(MAX_JSON + 1)
-    if len(data) > MAX_JSON:
-        raise ValueError("JSON report exceeds limit")
-    value = json.loads(data, object_pairs_hook=strict_object,
+        after = os.fstat(stream.fileno())
+    stamp = lambda value: (value.st_dev, value.st_ino, value.st_size,
+                           value.st_mtime_ns, value.st_ctime_ns)
+    if len(data) != before.st_size or len(data) > MAX_JSON or stamp(before) != stamp(after):
+        raise ValueError("JSON report changed while reading or exceeds limit")
+    if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+        raise ValueError("verifier stdout differs from measured bytes")
+    def finite_float(text):
+        value = float(text)
+        if not math.isfinite(value):
+            raise ValueError("nonfinite JSON")
+        return value
+    value = json.loads(data.decode("utf-8"), object_pairs_hook=strict_object,
+                       parse_float=finite_float,
                        parse_constant=lambda _: (_ for _ in ()).throw(ValueError("nonfinite JSON")))
     if type(value) is not dict:
         raise ValueError("JSON object required")
     return value
+
+
+def read_verifier_report(path, stage):
+    # Bind the exact parsed bytes to the observer's terminal stdout commitment.
+    # A digest read separately before or after parsing would leave a read race.
+    expected = stage.get("stdout_sha256")
+    if (type(expected) is not str or len(expected) != 64
+            or any(c not in "0123456789abcdef" for c in expected)):
+        raise ValueError("measured verifier stdout commitment required")
+    return read_json(path, expected_sha256=expected)
+
+
+def require_fixed_sources(paths, identities):
+    if any(measure.sha(path) != identities[name + "_sha256"] for name, path in paths.items()):
+        raise ValueError("fixed comparison source bytes changed")
+
+
+def require_measurement(value, *, positive=False):
+    valid = type(value) in (int, float)
+    try:
+        valid = valid and math.isfinite(value) and (value > 0 if positive else value >= 0)
+    except OverflowError:
+        valid = False
+    if not valid:
+        raise ValueError("finite numeric measurement required")
 
 
 def plan(repeats):
@@ -57,8 +100,10 @@ def plan(repeats):
 
 
 def distribution(values):
-    if not values or any(not math.isfinite(v) or v < 0 for v in values):
+    if not values:
         raise ValueError("nonempty finite nonnegative measurements required")
+    for value in values:
+        require_measurement(value)
     ordered = sorted(values)
     def percentile(p):
         return ordered[max(0, math.ceil(p * len(ordered)) - 1)]
@@ -69,15 +114,30 @@ def distribution(values):
 
 
 def validate_observation(kind, stage, value, identities, reference_work_id):
+    if kind not in ("native", "proof"):
+        raise ValueError("unknown comparison kind")
     if (stage.get("schema") != "TRNM-W1-STAGE-MEASUREMENT3"
             or stage.get("stage_process_complete") is not True
-            or stage.get("returncode") != 0 or stage.get("error") is not None
+            or type(stage.get("returncode")) is not int or stage["returncode"] != 0
+            or stage.get("error") is not None
             or stage.get("canceled_signal") is not None
             or stage.get("cancellation_event") is not None
             or stage.get("termination_reasons") != []
+            or stage.get("timed_out") is not False
+            or stage.get("completion_observed_before_deadline") is not True
             or stage.get("deadline_exhausted_at_snapshot") is not False
             or stage.get("owned_session_observation_complete") is not True):
         raise ValueError("verifier process has no eligible terminal observation")
+    require_measurement(stage.get("wall_seconds"), positive=True)
+    require_measurement(stage.get("started_monotonic"))
+    require_measurement(stage.get("effective_deadline_monotonic"), positive=True)
+    if stage["started_monotonic"] + stage["wall_seconds"] >= stage["effective_deadline_monotonic"]:
+        raise ValueError("verifier observation exceeds its original stage deadline")
+    usage = stage.get("rusage")
+    if type(usage) is not dict:
+        raise ValueError("wait4 CPU observation unavailable")
+    for key in ("user_seconds", "system_seconds"):
+        require_measurement(usage.get(key))
     expected_schema = "TRNM-W1-V2-NATIVE-ONCE1" if kind == "native" else "TRNM-W1-V2-FULL-VERIFY1"
     if (value.get("schema") != expected_schema or value.get("profile_id") != PROFILE
             or type(value.get("iterations")) is not int or value["iterations"] != 1
@@ -95,7 +155,6 @@ def validate_observation(kind, stage, value, identities, reference_work_id):
             or any(c not in "0123456789abcdef" for c in journal_hash)
             or "journal_sha256" in identities and journal_hash != identities["journal_sha256"]):
         raise ValueError("complete public journal identity changed")
-    identities.setdefault("journal_sha256", journal_hash)
     if kind == "native":
         if (type(value.get("full_replay_calls")) is not int or value["full_replay_calls"] != 1
                 or value.get("input_sha256") != identities["input_sha256"]):
@@ -103,12 +162,14 @@ def validate_observation(kind, stage, value, identities, reference_work_id):
         timings = value.get("full_native_verify_ns")
     else:
         if (value.get("receipt_sha256") != identities["receipt_sha256"]
-                or value.get("independent_proof_trials") != 1):
+                or type(value.get("independent_proof_trials")) is not int
+                or value["independent_proof_trials"] != 1):
             raise ValueError("receipt identity mismatch")
         timings = value.get("decode_and_verify_ns")
     if (type(timings) is not list or len(timings) != 1
             or type(timings[0]) is not int or timings[0] <= 0):
         raise ValueError("one positive integer verification duration required")
+    identities.setdefault("journal_sha256", journal_hash)
     return work_id, timings[0]
 
 
@@ -151,6 +212,11 @@ def summary(rows, planned, identities, error, deadline, started, resource_record
 
 
 def execute(args):
+    require_measurement(args.wall_seconds, positive=True)
+    if args.wall_seconds > 7200:
+        raise ValueError("finite bounded deadline required")
+    if args.deadline_monotonic is not None:
+        require_measurement(args.deadline_monotonic, positive=True)
     planned = plan(args.repeats)
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -184,8 +250,7 @@ def execute(args):
         for index, kind in enumerate(planned):
             if time.monotonic() >= deadline:
                 raise TimeoutError("original comparison deadline exhausted")
-            if any(measure.sha(path) != identities[name + "_sha256"] for name, path in paths.items()):
-                raise ValueError("fixed comparison source bytes changed")
+            require_fixed_sources(paths, identities)
             argv = [str(paths["verifier"])]
             argv += (["--native-once", str(paths["input"])] if kind == "native" else [str(paths["receipt"])])
             argv += [str(paths["header"]), str(paths["expected_artifacts"])]
@@ -196,10 +261,13 @@ def execute(args):
                 stage = measure.measure(argv, out / f"row-{index:04d}-{kind}",
                                         min(7200., max(.001, deadline - time.monotonic())), deadline=deadline)
                 row["stage"] = stage
-                value = read_json(out / f"row-{index:04d}-{kind}/stdout.log")
-                reference_work_id, inner = validate_observation(kind, stage, value, identities, reference_work_id)
-                if any(type(stage["rusage"].get(k)) not in (int, float) for k in ("user_seconds", "system_seconds")):
-                    raise ValueError("wait4 CPU observation unavailable")
+                value = read_verifier_report(out / f"row-{index:04d}-{kind}/stdout.log", stage)
+                candidate_identities = dict(identities)
+                candidate_work, inner = validate_observation(
+                    kind, stage, value, candidate_identities, reference_work_id)
+                require_fixed_sources(paths, identities)
+                identities.update(candidate_identities)
+                reference_work_id = candidate_work
                 row.update(accepted=True, verifier_report=value, inner_ns=inner)
             except BaseException as caught:
                 row["observation_error"] = {"type": type(caught).__name__, "message": str(caught)}
@@ -214,6 +282,9 @@ def execute(args):
                 with measure.DeferredCancellation(prior_cancel, phase="comparison-row-publication", live_deadline=(deadline, boot_id)) as handoff:
                     measure.write_new(out / f"row-{index:04d}-observation.json", row)
                     handoff.published_snapshot("comparison-row", out / f"row-{index:04d}-observation.json")
+        # The last row has no next pre-dispatch check. Include its publication
+        # boundary before assigning operation completion or cost benefits.
+        require_fixed_sources(paths, identities)
     except BaseException as caught:
         failure = caught
         error = {"type": type(caught).__name__, "message": str(caught)}

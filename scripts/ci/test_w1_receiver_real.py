@@ -127,6 +127,87 @@ class RealReceiverControls(unittest.TestCase):
         self.assertEqual(report["fresh_proof_generations"], 0)
         self.assertTrue((args.out / "operation-cancellation.json").is_file())
 
+    def test_actual_receiver_stdout_rewrite_is_not_a_verified_observation(self):
+        args = self.arguments()
+        original = receiver.measure.measure
+        def measure_then_rewrite(*items, **options):
+            stage = original(*items, **options)
+            path = args.out / "verify/stdout.log"
+            raw = path.read_bytes()
+            path.with_name("stdout-unmodified.log").write_bytes(raw)
+            value = json.loads(raw)
+            value["decode_and_verify_ns"] = [1]
+            path.write_text(json.dumps(value))
+            return stage
+        with receiver.measure.cancel_on_signals(), patch.object(receiver.measure, "measure", measure_then_rewrite):
+            with self.assertRaisesRegex(ValueError, "differs from measured bytes"):
+                receiver.execute(args)
+        self.assertFalse((args.out / "ack.json").exists())
+        self.assertIs(comparison.read_json(args.out / "failure.json")["verified"], False)
+
+    def test_actual_abba_stdout_rewrite_cannot_publish_benefit(self):
+        args = self.arguments(out=self.directory / "comparison")
+        args.input, args.repeats = OPTIONS.input, 1
+        original = comparison.measure.measure
+        def measure_then_rewrite(*items, **options):
+            stage = original(*items, **options)
+            path = Path(items[1]) / "stdout.log"
+            if path.parent.name == "row-0001-proof":
+                raw = path.read_bytes()
+                path.with_name("stdout-unmodified.log").write_bytes(raw)
+                value = json.loads(raw)
+                value["decode_and_verify_ns"] = [1]
+                path.write_text(json.dumps(value))
+            return stage
+        with comparison.measure.cancel_on_signals(), patch.object(comparison.measure, "measure", measure_then_rewrite):
+            with self.assertRaisesRegex(ValueError, "differs from measured bytes"):
+                comparison.execute(args)
+        report = comparison.read_json(args.out / "result.json")
+        self.assertEqual([r["accepted"] for r in report["rows"]], [True, False])
+        self.assertIs(report["operation_complete"], False)
+        self.assertIsNone(report["cost_comparison"])
+
+    def test_actual_final_abba_input_change_is_not_accepted(self):
+        isolated = self.directory / "isolated-input.bin"
+        isolated.write_bytes(OPTIONS.input.read_bytes())
+        args = self.arguments(out=self.directory / "comparison")
+        args.input, args.repeats = isolated, 1
+        original = comparison.measure.measure
+        def measure_then_change(*items, **options):
+            stage = original(*items, **options)
+            if Path(items[1]).name == "row-0003-native":
+                raw = bytearray(isolated.read_bytes())
+                raw[-1] ^= 1
+                isolated.write_bytes(raw)
+            return stage
+        with comparison.measure.cancel_on_signals(), patch.object(comparison.measure, "measure", measure_then_change):
+            with self.assertRaisesRegex(ValueError, "source bytes changed"):
+                comparison.execute(args)
+        report = comparison.read_json(args.out / "result.json")
+        self.assertEqual([r["accepted"] for r in report["rows"]], [True, True, True, False])
+        self.assertIs(report["operation_complete"], False)
+        self.assertIsNone(report["cost_comparison"])
+
+    def test_actual_final_abba_publication_input_change_vetoes_completion(self):
+        isolated = self.directory / "isolated-input.bin"
+        isolated.write_bytes(OPTIONS.input.read_bytes())
+        args = self.arguments(out=self.directory / "comparison")
+        args.input, args.repeats = isolated, 1
+        original = comparison.measure.write_new
+        def save_then_change(path, value):
+            original(path, value)
+            if path == args.out / "row-0003-observation.json":
+                raw = bytearray(isolated.read_bytes())
+                raw[-1] ^= 1
+                isolated.write_bytes(raw)
+        with comparison.measure.cancel_on_signals(), patch.object(comparison.measure, "write_new", save_then_change):
+            with self.assertRaisesRegex(ValueError, "source bytes changed"):
+                comparison.execute(args)
+        report = comparison.read_json(args.out / "result.json")
+        self.assertTrue(all(r["accepted"] for r in report["rows"]))
+        self.assertIs(report["operation_complete"], False)
+        self.assertIsNone(report["cost_comparison"])
+
     def test_expired_original_deadline_never_starts_verifier(self):
         args = self.arguments(deadline_monotonic=time.monotonic() - 1)
         with receiver.measure.cancel_on_signals(), self.assertRaises(TimeoutError):
@@ -158,7 +239,7 @@ def main():
                "actual_complete_receipt_used": True, "fresh_proof_generations": 0,
                "verifier_sha256": OPTIONS.verifier_sha256,
                "receipt_sha256": receiver.measure.sha(OPTIONS.receipt),
-               "result": "PASS" if result.wasSuccessful() and result.testsRun == 7 and not result.skipped else "FAIL"}
+               "result": "PASS" if result.wasSuccessful() and result.testsRun == 11 and not result.skipped else "FAIL"}
     receiver.measure.write_new(OPTIONS.out / "summary.json", summary)
     return 0 if summary["result"] == "PASS" else 1
 

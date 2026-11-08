@@ -1,0 +1,22 @@
+{
+  "schema": "TRNM-W1-HEADER-DIAGNOSIS-ARTIFACTS1",
+  "header_decode_reencode_equal": true,
+  "node_calls_performed": 0,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5650,
+      "sha256": "41012cb578f45906b43449f5365ae90d48519febfe7fe0e35de0ef0541a3d7ec"
+    },
+    {
+      "path": "diagnosis.json",
+      "bytes": 13739,
+      "sha256": "10d9477626a2d8d57d11aec80a393a9c92c72d6814309edacc21e396b98f7664"
+    },
+    {
+      "path": "source-pins.json",
+      "bytes": 3404,
+      "sha256": "101eb35d2fc07c332233d9afe1d23413a522d58560789138057ff2de371ab440"
+    }
+  ]
+}

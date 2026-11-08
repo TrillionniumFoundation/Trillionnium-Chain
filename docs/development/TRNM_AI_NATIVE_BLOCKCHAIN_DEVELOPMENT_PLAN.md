@@ -7808,3 +7808,14 @@ C1 提交 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11` 的五角色开发资格已
 新研究计划域 TRNM-W1-OWNER-TIMEOUT-PLAN1 严格区分原 target worker 的 original-deadline 与主动 cancelled。入口只在实际固定 r0vm 已启动后等待同一原 deadline，由目标自己的原期限终止；actual helper 和 Rust caller 退出证据通过窄 terminal adapter 后，先写 Failure Unknown，再单独记录 owner veto 与普通 NativeTask tag 3。本金退款后构造不含该 Cancel 的更长有效分支，实际关闭再冷开 Node 和 M12，确认不重派且 cap 不回滚；仅追加空子块恢复原 Cancel packet 的 ancestry，不重签、不另造资金动作。
 
 候选实际控制为 Python owner helper 8 项、Node async 20 项、M12 11 项通过，两个 crate 的 strict Clippy 通过；重型入口在普通控制中仍 ignored。新的 120 秒、8 CPU／8 GiB 试验须在本候选冻结的干净提交上另行执行并保留原 config、source、唯一 operation、deadline 与全套成功或失败原件。此段仅记录实现与候选控制，不预先声称昂贵 timeout、退款重组、完整历史 wait/reap、GPU 计量或资源结算已经通过；固定 guest 不重编，原业务预算及部署资格仍 HOLD。
+
+
+### 2026-11-08：W1 四门整合、证据绑定与前瞻式进程回收
+
+本轮从 C3 `abab79dac0cb89eb2753d3f579119ac135650eb5` 整合 M12 topic `a5ec1ba30916400c345cb47679602cfb1b30a65f`，并修复实际 stdout 摘要未绑定、整数/布尔类型别名及最终输入 pin 闭合缺口。提交前完整树已实际执行 12 项证据绑定、20 项审计、10 项 CI 接线负控、11 项真实 receiver；独立桌面 collector 14/14 及后续 startup 等待窗定向控制均通过。mandatory W1 command block 固定 151 项，真实 receiver 11 项；最终精确提交资格单独固定，不把开发树控制充作精确提交资格。
+
+[四门原件与边界](../../evidence/pon-w1-four-gates-20261108/README.md) 包含原 80 行 ABBA 严格重审、旧取消费用独立验算、所有 collector 首轮失败/修正、新 system-scope CPU 隔离探针和 C3 业务 CI 原始失败。短隔离探针实际 12/12 通过，但未运行完整 zkVM；旧 GPU 未知与 full cap 均不回填。所有 80 行仍是 verification-only，完整生成两方案仍各 n=1。
+
+M12 新 typed terminal 接口仅在原 job/source/clock/deadline 绑定满足时写入失败终态；持久化 owner cancel 禁止再次派发；资源未知保持全额 cap，重组不回退本地操作/取消历史。新的真实 timeout/refund/reorg 需独立操作记录，旧两项 M12 状态保持其原事实。本轮首个新 timeout operation 因旧 C3 runner 的编译时 checkout 身份被严格拒绝，不延长原 deadline、不重派失败操作；重新构建新源码 runner 后只能启动全新预声明操作。
+
+四门继续 HOLD：合法原 winner 的 Node admission、部署 WAN、完整历史树/资源计费、正向 provider 付款、匹配完整生成重复实验、业务预算以及完整密码学/协议安全资格尚未闭合。原业务失败不可被新的短控制覆盖。
