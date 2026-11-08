@@ -1,0 +1,141 @@
+{
+  "actual_suite_results": [
+    {
+      "failed": 13,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "outcome": "FAILED",
+      "passed": 458
+    }
+  ],
+  "command_log_hashes_rechecked": [
+    {
+      "label": "preflight",
+      "unchanged": true
+    },
+    {
+      "label": "source-before",
+      "unchanged": true
+    },
+    {
+      "label": "graph-default",
+      "unchanged": true
+    },
+    {
+      "label": "graph-all-features",
+      "unchanged": true
+    },
+    {
+      "label": "graph-fuzz",
+      "unchanged": true
+    },
+    {
+      "label": "format",
+      "unchanged": true
+    },
+    {
+      "label": "version-vector",
+      "unchanged": true
+    },
+    {
+      "label": "native-list",
+      "unchanged": true
+    },
+    {
+      "label": "p2p-complete",
+      "unchanged": true
+    },
+    {
+      "label": "native-example",
+      "unchanged": true
+    },
+    {
+      "label": "clippy-workspace",
+      "unchanged": true
+    },
+    {
+      "label": "source-negative",
+      "unchanged": true
+    },
+    {
+      "label": "pq-source-negative",
+      "unchanged": true
+    },
+    {
+      "label": "ci-contract",
+      "unchanged": true
+    },
+    {
+      "label": "repository",
+      "unchanged": true
+    },
+    {
+      "label": "pq-source-pins",
+      "unchanged": true
+    },
+    {
+      "label": "inventory",
+      "unchanged": true
+    },
+    {
+      "label": "source-after",
+      "unchanged": true
+    },
+    {
+      "label": "clean-worktree",
+      "unchanged": true
+    }
+  ],
+  "failed_commands": [
+    "p2p-complete",
+    "clippy-workspace",
+    "ci-contract"
+  ],
+  "new_case_groups": {
+    "cell::discovery::pq3::directory::": {
+      "failed": 0,
+      "listed": 6,
+      "passed": 6,
+      "unobserved": []
+    },
+    "cell::discovery::pq3::directory_tests::": {
+      "failed": 12,
+      "listed": 17,
+      "passed": 5,
+      "unobserved": []
+    },
+    "cell::discovery::pq3::multisource_tests::": {
+      "failed": 1,
+      "listed": 2,
+      "passed": 1,
+      "unobserved": []
+    },
+    "cell::discovery::pq3::transport_tests::": {
+      "failed": 0,
+      "listed": 9,
+      "passed": 9,
+      "unobserved": []
+    },
+    "cell::residency::version::tests::": {
+      "failed": 0,
+      "listed": 9,
+      "passed": 9,
+      "unobserved": []
+    }
+  },
+  "no_command_timed_out": true,
+  "observations": [
+    "Thirteen SQLite DiskFull failures; available-space telemetry from that execution namespace was not collected, so the precise resource root cause is not established.",
+    "Two trnm-pon-node Clippy drivers received SIGKILL; this observation alone does not establish an OOM cause.",
+    "CI contract reported 31 tests with 3 failures and 5 errors, including ENOSPC writes and copies.",
+    "The original example exited zero and validated the cold payload bytes, but review found its withdrawal negative-control denominator too broad and an epoch-boundary ambiguity. Those claims require the revised source campaign.",
+    "The old native-results.json parsed only successful harness totals; this additive reconciliation preserves failed harness denominators without overwriting the raw record."
+  ],
+  "original_summary_unchanged": true,
+  "production_qualified": false,
+  "recorded_at": "2026-11-08T17:47:24.272866+00:00",
+  "runner_sha256": "c17b185646bdac8c5988b32607faa86210023d8845895eac820d28e1d90b32d3",
+  "schema": "trnm-cell-storage-campaign-reconciliation-v1",
+  "source": "9170779008ec8abdd1fd27b8ff16f2c2462fdb47"
+}

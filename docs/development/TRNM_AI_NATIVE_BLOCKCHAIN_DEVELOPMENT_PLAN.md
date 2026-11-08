@@ -8017,3 +8017,15 @@ repair dispatch, independently administered WAN recovery, measured device use
 and the same-iteration Hepta next-task/FinalUse loop remain acceptance gates.
 Source-bound native results are recorded separately from those operational
 qualifications; all six end-to-end capability gates remain **HOLD_NO_GO**.
+
+The [storage-v3 source and observation record](../../evidence/cell-storage-network-v3-20261108/README.md)
+retains initial source `9170779008ec8abdd1fd27b8ff16f2c2462fdb47` and reviewed source
+`266d9be8e7f6a2ecb556a129b1be69e6ec9553a2` separately. The reviewed source passed 19 command gates,
+507 native tests and 12 compile-fail doctests, including all 45 new native
+controls. Real rendezvous regressions first failed against the unchanged
+initial transport, then passed after current-authority filtering and active
+provider prioritization. The finite example checked 40,960 actual cold bytes
+and an authenticated same-epoch withdrawal refusal. Initial DiskFull/ENOSPC,
+Clippy SIGKILL and earlier implementation failures remain in the raw record.
+These shared-host component results do not close independent administration,
+funded retention/repair, WAN or actual Hepta FinalUse qualification.

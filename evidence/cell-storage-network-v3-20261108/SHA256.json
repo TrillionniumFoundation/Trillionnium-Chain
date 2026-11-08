@@ -1,0 +1,42 @@
+{
+  "README.md": {
+    "bytes": 12295,
+    "sha256": "77576650ae3ac55b2b27cacbb99a837d8c86d7f2961d38e2556e238cdb4f5c98"
+  },
+  "initial-reconciliation.json": {
+    "bytes": 3490,
+    "sha256": "f8c7788039dbcd462b82354b6e4260ca4ec7f2af1b989cba8075e0576c0b454b"
+  },
+  "raw-artifacts.tar.xz": {
+    "bytes": 234592,
+    "sha256": "81f013bdd990536d3be6a51c56c30f0c9cff6899a521c14dc0c081e4c1ccd478"
+  },
+  "raw-manifest.json": {
+    "bytes": 19762,
+    "sha256": "dff11df7480ed7b814545bccf4f83a9e69c7507156edbaa969ee34728d44a1ed"
+  },
+  "reviewed-environment.json": {
+    "bytes": 5227,
+    "sha256": "0b82a7da7609736ff592eb7a833bab4408b30ab33b6ae64ec87fb57b5e99bdc3"
+  },
+  "reviewed-native-example.json": {
+    "bytes": 4802,
+    "sha256": "51f598307fa855566aca571f773b2c942dda22c26295f64e5185707984762384"
+  },
+  "reviewed-native-results.json": {
+    "bytes": 101604,
+    "sha256": "e3c4967fca28b8585bf053a189f6afd394ff85075bbb59f29166b7e0a08edfc5"
+  },
+  "reviewed-resource-summary.json": {
+    "bytes": 442,
+    "sha256": "ba0b38a0cb62b5c11efed5250b5410ad5dce29668a88526246804b27dbfc3256"
+  },
+  "reviewed-summary.json": {
+    "bytes": 15881,
+    "sha256": "c2cc81a7d9ad6051795ec31af5cb8c1e085315db20d52f598ed0283bfac8e695"
+  },
+  "source-bindings.json": {
+    "bytes": 2276,
+    "sha256": "7039e5ff33a0aa7c2962d14e7609c2eeff38dc87340677fbbf78a5aacdb906e2"
+  }
+}
