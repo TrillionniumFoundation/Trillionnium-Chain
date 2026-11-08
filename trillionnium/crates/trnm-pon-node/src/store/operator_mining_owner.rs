@@ -385,6 +385,10 @@ impl Node {
         inputs: policy::Inputs,
         cpu: &ServiceMutationCpuDomain,
     ) -> Result<Self> {
+        ensure(
+            !settings.app.is_pq_account_profile(),
+            "PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER",
+        )?;
         let (owner, permit, operation, fault) = Self::prepare_mining_owner(&inputs, cpu)?;
         Self::finish_mining_open(
             path, settings, workers, &inputs, owner, permit, operation, fault,

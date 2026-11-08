@@ -77,6 +77,14 @@ Separate native receipts and a reviewed authorization argument are required
 for those conclusions. The [whole-chain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md)
 remains an independent gate.
 
+The profile-boundary record also binds both public classical owner constructors
+and their exact refusal regressions. These constructors now check the PQ account
+profile before policy journals, reservations or required-owner markers can be
+created. Their previous eventual profile refusal did not establish an absence of
+earlier durable effects. Full indicator-file context reviews and these source
+anchors remain separate from the native execution receipts and complete authority
+tracing; all six selected records retain their incomplete status.
+
 ## Selected observations and boundaries
 
 | Trace | Source observation | Remaining boundary |

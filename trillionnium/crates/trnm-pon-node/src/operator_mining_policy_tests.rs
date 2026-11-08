@@ -98,7 +98,7 @@ pub(crate) fn view() -> TaskView {
     });
     v
 }
-fn sign(v: TaskView) -> (Vec<u8>, ExternalAuthority) {
+pub(crate) fn sign(v: TaskView) -> (Vec<u8>, ExternalAuthority) {
     let r = signing_key_from_hex(&"07".repeat(32)).unwrap();
     let t = signing_key_from_hex(&"09".repeat(32)).unwrap();
     let raw = serde_json::to_vec(&ViewEnvelope {

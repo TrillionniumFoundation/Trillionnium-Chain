@@ -1,0 +1,60 @@
+{
+  "schema": "trnm-pq-native-rustfmt-v1",
+  "started_unix_seconds": 1794139353.9479866,
+  "base_source": "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "before_sha256": "b579c72b6f51c42cbec5ece54779048fc3b01df1bab8e5c5987c90b7f8b8a13f",
+      "after_sha256": "b579c72b6f51c42cbec5ece54779048fc3b01df1bab8e5c5987c90b7f8b8a13f",
+      "changed": false
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs": {
+      "before_sha256": "155c3864d0a7026d19682c609acdf2204fe9c7a8cbf439e251998d95858c53dd",
+      "after_sha256": "155c3864d0a7026d19682c609acdf2204fe9c7a8cbf439e251998d95858c53dd",
+      "changed": false
+    },
+    "trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs": {
+      "before_sha256": "77478e6b598b48eb2c153ec055bfa2441156e6dc7af9bcb4d8f570b4b8b1dfb7",
+      "after_sha256": "77478e6b598b48eb2c153ec055bfa2441156e6dc7af9bcb4d8f570b4b8b1dfb7",
+      "changed": false
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs": {
+      "before_sha256": "a3400b19e02e63b6512e86b96342b8558832a748ed5dd37fe4b084a91948311a",
+      "after_sha256": "8ab86bcd623af283b85f460cfeff055c22b0e57c8593174467ce978b6f1cc4a0",
+      "changed": true
+    }
+  },
+  "result": "FORMATTED",
+  "rustfmt_version": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)",
+  "check": {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "--config",
+      "skip_children=true",
+      "--check",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs"
+    ],
+    "exit_code": 1
+  },
+  "format": {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "--config",
+      "skip_children=true",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs",
+      "/home/qian-qi/work/chain-pq-effects-20261108-43ede/format-precommit-03/trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs"
+    ],
+    "exit_code": 0
+  },
+  "format_patch": "--- a/trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs\n+++ b/trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs\n@@ -35,7 +35,14 @@\n         }\n         let mut catalog = b\"TRNM-RESTRICTED-NODE-CATALOG1\".to_vec();\n         let mut rows = Vec::new();\n-        for role in [\"activation\", \"bootstrap\", \"checkpoint\", \"input\", \"model\", \"spec\"] {\n+        for role in [\n+            \"activation\",\n+            \"bootstrap\",\n+            \"checkpoint\",\n+            \"input\",\n+            \"model\",\n+            \"spec\",\n+        ] {\n             let raw = format!(\"unqualified-policy-file:{role}\").into_bytes();\n             let path = materials.join(role);\n             fs::write(&path, &raw).unwrap();\n@@ -100,7 +107,11 @@\n         let allocation = view.permissions[0].allocation.clone();\n         view.permissions.clear();\n         for (purpose, nonce, payload) in [\n-            (mining::Purpose::StartupCatalog, \"a1\".repeat(32), self.catalog.clone()),\n+            (\n+                mining::Purpose::StartupCatalog,\n+                \"a1\".repeat(32),\n+                self.catalog.clone(),\n+            ),\n             (\n                 mining::Purpose::ParentReconcile,\n                 \"a2\".repeat(32),\n@@ -191,14 +202,10 @@\n         let fixture = CatalogFixture::new(existing_empty_store);\n         let inputs = fixture.task_inputs(&settings);\n         let before = snapshot(fixture.root.path());\n-        let error = Node::open_with_operator_task_policy(\n-            &fixture.native,\n-            settings.clone(),\n-            1,\n-            inputs,\n-        )\n-        .err()\n-        .expect(\"a classical policy cannot own a PQ account Node\");\n+        let error =\n+            Node::open_with_operator_task_policy(&fixture.native, settings.clone(), 1, inputs)\n+                .err()\n+                .expect(\"a classical policy cannot own a PQ account Node\");\n         assert_eq!(error.to_string(), \"PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER\");\n         assert_eq!(snapshot(fixture.root.path()), before);\n     }\n@@ -230,11 +237,14 @@\n     let settings = Settings::development(Some(1)).unwrap();\n     let fixture = CatalogFixture::new(false);\n     let inputs = fixture.task_inputs(&settings);\n-    let node = Node::open_with_operator_task_policy(&fixture.native, settings.clone(), 1, inputs)\n-        .unwrap();\n+    let node =\n+        Node::open_with_operator_task_policy(&fixture.native, settings.clone(), 1, inputs).unwrap();\n     assert_eq!(node.active().unwrap(), (settings.genesis(), 0));\n     assert!(fixture.native.join(\"owner-task-policy.required\").is_file());\n-    assert!(fixture.journal.join(\"view-00000000000000000001.json\").is_file());\n+    assert!(fixture\n+        .journal\n+        .join(\"view-00000000000000000001.json\")\n+        .is_file());\n }\n \n #[test]\n@@ -251,11 +261,21 @@\n     )\n     .unwrap();\n     assert_eq!(node.active().unwrap(), (settings.genesis(), 0));\n-    assert!(!node.take_mining_startup_cpu().unwrap().accounting_unavailable);\n+    assert!(\n+        !node\n+            .take_mining_startup_cpu()\n+            .unwrap()\n+            .accounting_unavailable\n+    );\n     assert_eq!(\n         fs::read_dir(&fixture.journal)\n             .unwrap()\n-            .filter(|entry| entry.as_ref().unwrap().file_name().to_string_lossy().starts_with(\"claim-\"))\n+            .filter(|entry| entry\n+                .as_ref()\n+                .unwrap()\n+                .file_name()\n+                .to_string_lossy()\n+                .starts_with(\"claim-\"))\n             .count(),\n         2,\n     );\n",
+  "finished_unix_seconds": 1794139354.4913242
+}

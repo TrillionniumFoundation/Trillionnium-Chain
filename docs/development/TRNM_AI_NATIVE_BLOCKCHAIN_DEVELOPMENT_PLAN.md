@@ -25,7 +25,13 @@ records. Preserve the distinction between 23 mapped role hints, source anchors,
 actual execution and completed authority review; retain all untraced surfaces
 and whole-chain HOLD. Add the current account-profile refusal independently at
 the final classical listener boundary, with a test-only inconsistent-backend
-counterexample and actual no-accept/no-state-effect checks. Synchronize the real
+counterexample and actual no-accept/no-state-effect checks. Review all 120 original
+indicator files without relabelling source-context review as completed authority
+tracing. Refuse PQ accounts at the start of both classical local owner constructors,
+before their policy journals, reservations or required-owner markers can change;
+require two real signed-policy refusal controls and two classic positive controls.
+Retain the first source's 37-command observation separately and require all 45
+commands on the later owner-effect source. Synchronize the real
 clock fixture and wait for the original signed expiry, retaining the original
 two-second request deadline, exact refusal and durable-state assertions. Keep
 the original failed Node observations and the separately recovered hosted HTTP

@@ -3,8 +3,9 @@
 
 Run only on a clean committed source with the original pinned Rust/OpenSSL
 environment. The original runner owns execution, timeouts, raw logs, source and
-provider checks, and failed-result retention. Five additional checks run before
-its final raw-source guard. --list-commands executes no validation.
+provider checks, and failed-result retention. The previous five additional checks
+are retained, followed by four exact owner tests and their individual transcript
+readbacks before the final raw-source guard. --list-commands executes no validation.
 """
 from __future__ import annotations
 
@@ -24,6 +25,20 @@ BOUNDARY_TEST = (
     "ingress::pq_network::tests::"
     "pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects"
 )
+OWNER_TESTS = (
+    ("node-pq-task-owner-rejection",
+     "store::pq_owner_rejection_tests::"
+     "pq_account_rejects_classical_task_owner_before_any_durable_effect"),
+    ("node-pq-mining-owner-rejection",
+     "store::pq_owner_rejection_tests::"
+     "pq_account_rejects_classical_mining_owner_before_any_durable_effect"),
+    ("node-classical-task-owner-positive",
+     "store::pq_owner_rejection_tests::classical_task_owner_with_signed_catalog_still_opens"),
+    ("node-classical-mining-owner-positive",
+     "store::pq_owner_rejection_tests::classical_mining_owner_with_signed_catalog_still_opens"),
+)
+OWNER_TEST_READERS = {"owner-exact:" + label: name for label, name in OWNER_TESTS}
+OWNER_READBACK_READERS = {"owner-readback:" + label: name for label, name in OWNER_TESTS}
 
 
 def load_base():
@@ -62,17 +77,51 @@ def command_list(expected_head: str, out: Path) -> list[tuple[str, list[str], st
          str(out / "node-pq-profile-boundary.stdout.log"), "--test", BOUNDARY_TEST],
          "native-test-readback"),
     ]
-    result = [*original[:-1], *extra, original[-1]]
+    owner_commands = []
+    for label, name in OWNER_TESTS:
+        owner_commands.extend([
+            (label, node + [name, "--", "--exact", "--show-output", "--test-threads=1"],
+             "owner-exact:" + label),
+            (label + "-readback", py + ["scripts/ci/check_required_native_test.py",
+             str(out / (label + ".stdout.log")), "--test", name], "owner-readback:" + label),
+        ])
+    prior = [*original[:-1], *extra, original[-1]]
+    result = [*original[:-1], *extra, *owner_commands, original[-1]]
     labels = [item[0] for item in result]
     inherited_labels = {item[0] for item in original}
     if len(labels) != len(set(labels)) or [
         item for item in result if item[0] in inherited_labels
     ] != original:
         raise ValueError("the extension changed an inherited command or its ordering")
+    prior_labels = {item[0] for item in prior}
+    if (len(prior) != 37 or len(owner_commands) != 8 or len(result) != 45
+            or [item for item in result if item[0] in prior_labels] != prior):
+        raise ValueError("the owner checks changed the prior 37 commands or final 45-command inventory")
     return result
 
 
 def validate_output(kind: str, stdout: str, stderr: str, repo: Path) -> dict:
+    if kind in OWNER_TEST_READERS:
+        expected = OWNER_TEST_READERS[kind]
+        value = BASE_VALIDATE("rust-tests", stdout, stderr, repo)
+        if (re.findall(r"^running (\d+) tests?$", stdout, re.M) != ["1"]
+                or BASE.LIBTEST_NAME.findall(stdout) != [(expected, "ok")]
+                or value["passed_names"] != [expected]
+                or len(value["summaries"]) != 1
+                or value["summaries"][0][:4] != (1, 0, 0, 0)
+                or value["ignored_names"]):
+            raise ValueError("the exact owner control must pass once with zero failed, ignored or measured tests")
+        return value
+    if kind in OWNER_READBACK_READERS:
+        value = json.loads(stdout)
+        if (not isinstance(value, dict)
+                or value.get("result") != "PASS"
+                or value.get("test") != OWNER_READBACK_READERS[kind]
+                or type(value.get("executed_tests")) is not int
+                or value.get("executed_tests") != 1
+                or value.get("scope") != "named-libtest-execution-only"):
+            raise ValueError("the owner transcript readback does not match its one exact test")
+        return value
     if kind == "trace-unittest":
         value = BASE_VALIDATE("unittest", stdout, stderr, repo)
         combined = stdout + "\n" + stderr
@@ -141,12 +190,15 @@ def main() -> int:
         "inherited_runner_sha256_required": BASE_SHA256,
         "extension_runner": BASE.file_record(retained),
         "inherited_command_count": len(inherited),
+        "prior_extension_command_count": 37,
+        "prior_extension_commands_preserved_exactly": True,
         "extended_command_count": len(extended),
         "inherited_commands_preserved_exactly": True,
         "inherited_commands": [
             {"label": label, "argv": argv, "reader": kind} for label, argv, kind in inherited
         ],
         "required_boundary_test": BOUNDARY_TEST,
+        "required_owner_tests": [name for _, name in OWNER_TESTS],
         "whole_chain_pq_qualified": False,
         "production_activation": False,
     }

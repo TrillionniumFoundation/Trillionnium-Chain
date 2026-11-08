@@ -1626,6 +1626,10 @@ impl Node {
         workers: usize,
         inputs: crate::operator_task_policy::RestrictedNodeInputs,
     ) -> Result<Self> {
+        ensure(
+            !settings.app.is_pq_account_profile(),
+            "PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER",
+        )?;
         let policy = crate::operator_task_policy::authenticate(
             &inputs.raw_policy,
             &inputs.authority,
@@ -8480,6 +8484,9 @@ mod native_ancestry_tests {
 #[cfg(test)]
 #[path = "operator_task_store_tests.rs"]
 mod operator_task_store_tests;
+
+#[cfg(all(test, target_os = "linux"))]
+mod pq_owner_rejection_tests;
 
 #[cfg(test)]
 mod branch_target_tests {

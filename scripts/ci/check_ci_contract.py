@@ -799,6 +799,29 @@ PQ_CLASSICAL_PROFILE_STEP = '''      - name: Require independent account-profile
 '''
 
 
+PQ_CLASSICAL_OWNER_STEP = r'''      - name: Require classical owner rejection before durable effects
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          for selector in \
+            store::pq_owner_rejection_tests::pq_account_rejects_classical_task_owner_before_any_durable_effect \
+            store::pq_owner_rejection_tests::pq_account_rejects_classical_mining_owner_before_any_durable_effect \
+            store::pq_owner_rejection_tests::classical_task_owner_with_signed_catalog_still_opens \
+            store::pq_owner_rejection_tests::classical_mining_owner_with_signed_catalog_still_opens; do
+            label="pq-classical-owner-${selector##*::}"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            fi
+            if ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          test "$failed" = 0
+'''
+
+
 def check_pq_authority_trace_controls(root: Path) -> dict:
     """Require the trace ledger and its negative controls in both CI owners.
 
@@ -846,6 +869,10 @@ def check_pq_authority_trace_controls(root: Path) -> dict:
     native = jobs.get('native', '')
     require(native.count(PQ_CLASSICAL_PROFILE_STEP) == text.count(PQ_CLASSICAL_PROFILE_STEP) == 1,
             'classical listener guard requires its exact native test and actual execution readback')
+    require(native.count(PQ_CLASSICAL_OWNER_STEP) == text.count(PQ_CLASSICAL_OWNER_STEP) == 1
+            and text.count('      - name: Require classical owner rejection before durable effects\n') == 1
+            and PQ_CLASSICAL_PROFILE_STEP + PQ_CLASSICAL_OWNER_STEP in native,
+            'classical owner refusal requires all four exact native executions and readbacks immediately after the listener control, preserving failures without skipping later controls')
     require(native.count(expected_step) == text.count(expected_step) == 1
             and not re.search(r'^    (?:if|continue-on-error):', native, re.M)
             and '        runner: [ubuntu-24.04, ubuntu-24.04-arm]\n'
@@ -862,6 +889,7 @@ def check_pq_authority_trace_controls(root: Path) -> dict:
                 'PQ authority trace inputs must trigger the native workflow: ' + relative)
     return {'repository_commands': 2, 'hosted_source_cells': 4,
             'additional_native_profile_controls': 1,
+            'additional_native_owner_controls': 4,
             'tests_executed': False, 'whole_chain_pq_qualified': False}
 
 

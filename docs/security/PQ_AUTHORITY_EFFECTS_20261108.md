@@ -65,8 +65,34 @@ inconsistent combination. The change is defense in depth; it is not presented as
 a reproduced external downgrade exploit.
 
 The original positive classic-profile protected-head test remains required by the
-related module run. The existing public constructors, PQ signatures, signed
-namespaces, transaction rules and source retirement obligations remain unchanged.
+related module run. PQ signatures, signed namespaces, transaction rules and source
+retirement obligations remain unchanged.
+
+### Refuse classical owner setup before durable effects
+
+Review of the full indicator-file set found an earlier effect boundary in two
+public local constructors. `open_with_operator_task_policy` authenticated a real
+Ed25519 policy, checked its settings and material catalog, opened the policy
+journal and wrote the required-owner marker before the common opener refused a PQ
+account configuration. `open_with_operator_mining_task_view` similarly reached
+durable journal reservations and marker creation before that final refusal.
+
+These paths did not successfully return a classical owner for PQ accounts. The
+specific defect is that an ultimately refused local opening could already alter
+durable state. Both constructors now reject the PQ account profile at their first
+statement, with the existing `PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER` error, before
+policy preparation, journal opening or marker creation.
+
+Four new exact native controls use the actual public constructors, valid Ed25519
+signatures and all six required material roles. Two controls use real NPQ6 account
+settings and compare names, modes and bytes across the complete temporary tree,
+for both an absent target and an existing empty target. Two classic-profile
+controls establish that the same signed catalog can still open the corresponding
+owner; the mining control also checks the two durable claims and startup CPU
+accounting. These synthetic material files do not qualify model execution or Work.
+The CI requires each named test and its actual execution readback. A separate
+guard-removal experiment must retain its failures to establish that these controls
+reach the original durable-effect defect.
 
 ## Inventory integrity is distinct from completed tracing
 
@@ -75,6 +101,14 @@ indicator files. **120 is a file count, not a vulnerability count.** The histori
 `reviewed_roles_mapped` key counted a curated pathname map. The additive
 `mapped_role_hints` field states its meaning, while `completed_authority_traces`
 remains zero.
+
+All 120 original indicator files received a source-context review, including
+their module/build placement, authority inputs, observable effects and unresolved
+obligations. This is distinct from closing 120 authority traces. The new owner
+test file expands the Rust corpus and indicator set by one; its context is reviewed
+separately, without turning fixture coverage into a production authority proof.
+The execution record binds the baseline and updated context evidence to their own
+source identities.
 
 The revised scanner hashes every sorted Rust path and file digest, including files
 with no crypto indicator. A renamed file, changed unflagged state mutation or
@@ -86,9 +120,11 @@ The [trace contract](PQ_AUTHORITY_TRACE_V1.md) defines the limits of this eviden
 
 Both repository-truth and the PQ head/prospective-merge workflow execute the trace
 checker and its negative controls. A separately registered exact native test and
-actual libtest readback cover the listener guard. The original 52 required network
-controls and 52 release controls remain intact. Passing source checks cannot turn
-any of the independent whole-chain claim gates into qualified status.
+actual libtest readback cover the listener guard; four additional exact tests and
+readbacks cover the two owner refusals and their classic positive controls. The
+original 52 required network controls and 52 release controls remain intact.
+Passing source checks cannot turn any of the independent whole-chain claim gates
+into qualified status.
 
 ## Two failed timing controls remain preserved
 
@@ -127,8 +163,11 @@ jobs are not diagnosed by this one recovered artifact.
 
 ## Fresh validation and remaining gates
 
-Fresh validation must retain the original 32 command gates and add the trace
-controls and related native listener tests on one exact committed source. The
+The first continuation source, `28306d24b5f606fc89a6de3d7d2c08949a2b3edc`, uses
+37 commands: the original 32 plus trace and native listener controls. The later
+owner-effect fix requires its own 45-command run: all 37 commands, unchanged in
+arguments and relative order, plus four exact owner tests and their four execution
+readbacks. No result for the first source qualifies the later source. The
 [execution record](../../evidence/pq-authority-effects-20261108-43ede/README.md)
 reports the actual commands, source/tree, provider identity, names, counts and
 failures. Historical green runs do not qualify later source, and a complete local
