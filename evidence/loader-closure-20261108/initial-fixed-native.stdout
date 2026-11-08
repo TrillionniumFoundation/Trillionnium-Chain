@@ -1,0 +1,93 @@
+
+running 76 tests
+test operator_continuous_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor ... ok
+test operator_continuous_policy::tests::loaded_material_refuses_wrong_digest_limit_cancellation_and_path_replacement ... ok
+test operator_continuous_policy::tests::mode4_catalog_permission_is_not_material_or_classification_evidence ... ok
+test operator_continuous_policy::tests::mode4_duplicate_purpose_payload_is_not_a_second_selectable_operation ... ok
+test operator_continuous_policy::tests::mode4_linked_view_keeps_full_task_and_epoch_cancel_cannot_reissue_old_view ... ok
+test operator_continuous_policy::tests::mode4_protected_launch_keys_and_nested_authorities_cannot_self_authorize ... ok
+test operator_continuous_policy::tests::mode4_view_authenticates_selected_allocations_before_any_catalog_read ... ok
+test operator_mining_policy::tests::catalog_and_parent_reconcile_bind_distinct_exact_payloads ... ok
+test operator_mining_policy::tests::changing_declared_class_does_not_reset_one_task_reservations ... ok
+test operator_mining_policy::tests::changing_task_does_not_reset_one_declared_class_reservations ... ok
+test operator_mining_policy::tests::complete_declared_task_binding_changes_on_lease_matrix_or_class ... ok
+test operator_mining_policy::tests::fresh_v3_journal_rejects_mode2_identity_and_keeps_replay_after_restart ... ok
+test operator_mining_policy::tests::full_signed_command_bytes_need_both_allowlist_and_ordered_batch_binding ... ok
+test operator_mining_policy::tests::held_fault_sink_survives_open_failure_and_unfinished_operation_unwind ... ok
+test operator_mining_policy::tests::journal_namespace_rejects_same_registry_with_different_external_keys_or_source ... ok
+test operator_mining_policy::tests::linked_revoke_highwater_cancels_epoch_without_refund_or_rollback ... ok
+test operator_mining_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor ... ok
+test operator_mining_policy::tests::loaded_material_refuses_wrong_digest_limit_cancellation_and_path_replacement ... ok
+test operator_mining_policy::tests::nonce_zero_overflow_and_unbounded_search_are_not_mining_permissions ... ok
+test operator_mining_policy::tests::outside_latest_two_keys_and_full_expected_parent_search_are_mandatory ... ok
+test operator_mining_policy::tests::outside_signing_bytes_require_new_role_and_valid_complete_body ... ok
+test operator_mining_policy::tests::same_purpose_payload_cannot_redirect_a_selected_operation_id ... ok
+test operator_mining_policy::tests::search_intent_cannot_be_reused_as_winner_validation_capability ... ok
+test operator_mining_policy::tests::task_and_class_budget_accumulates_across_views_and_purposes ... ok
+test operator_mining_policy::tests::taskview_has_no_dummy_packet_and_no_pool_or_work_domain_fallback ... ok
+test operator_mining_policy::tests::unknown_accounting_blocks_restart_and_does_not_remove_reserved_history ... ok
+test operator_mining_policy::tests::wrong_parent_generation_and_ordered_transaction_digest_refuse_before_native ... ok
+test release_owner::clock_contract::tests::boot_namespace_backwards_elapsed_overflow_and_budget_refuse ... ok
+test release_owner::clock_contract::tests::clock_contract_has_no_default_and_requires_both_direction_and_rate_bounds ... ok
+test release_owner::clock_contract::tests::quantization_upper_boundary_rate_rounding_and_persisted_lower_are_distinct ... ok
+test release_owner::execution_environment::tests::actual_kernel_auxiliary_vector_has_a_current_secure_mode ... ok
+test release_owner::execution_environment::tests::empty_configuration_is_explicit_and_external_provider_paths_are_refused ... ok
+test release_owner::execution_environment::tests::exact_environment_refuses_omissions_duplicates_injection_and_non_utf8 ... ok
+test release_owner::execution_environment::tests::legacy_configuration_bytes_keep_their_original_signed_digest ... ok
+test release_owner::execution_environment::tests::legacy_contract_is_replayable_but_cannot_authorize_new_execution ... ok
+test release_owner::execution_environment::tests::secure_execution_mode_is_explicit_not_inferred_from_environment_text ... ok
+test release_owner::files_tests::child_names_are_exact_single_components_before_any_filesystem_mutation ... ok
+test release_owner::files_tests::exact_size_is_accepted_but_growth_after_the_held_read_is_rejected ... ok
+test release_owner::files_tests::held_directory_and_lock_replacement_prevent_read_and_write ... ok
+test release_owner::files_tests::in_place_rewrite_and_private_mode_drift_are_rejected_after_the_read ... ok
+test release_owner::files_tests::same_bytes_at_a_new_named_inode_do_not_pass_the_held_read ... ok
+test release_owner::files_tests::symlink_fifo_directory_hardlink_and_nonprivate_modes_are_rejected ... ok
+test release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation ... ignored, requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace
+test release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role ... ok
+test release_owner::root_separation_tests::canonical_role_keys_replay_at_every_tagged_proof_boundary ... ok
+test release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay ... ok
+test release_owner::root_separation_tests::expired_root_recovery_requires_both_real_quorums_and_a_fresh_successor ... ok
+test release_owner::root_separation_tests::role_decoding_preserves_complete_root_and_canonical_record_requirements ... ok
+test release_owner::root_separation_tests::root_role_keys_refuse_aliases_unknown_codes_and_duplicates_in_tagged_proofs ... ok
+test release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key ... ok
+test release_owner::sealed_tests::denied_mutations_preserve_sealed_bytes_without_claiming_unchanged_metadata ... ok
+test release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open ... ok
+test release_owner::sealed_tests::metadata_only_changes_refuse_read_copy_descriptor_and_exec_handoff ... ok
+test release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine ... ok
+test release_owner::sealed_tests::native_elf_refuses_both_encodings_of_text_relocation ... ok
+test release_owner::sealed_tests::native_elf_requires_one_non_executable_stack_and_file_backed_code ... ok
+test release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement ... ok
+test release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication ... ok
+test release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected ... ok
+test release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences ... FAILED
+test release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch ... FAILED
+test release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas ... FAILED
+test release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas ... FAILED
+test release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault ... FAILED
+test release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission ... FAILED
+test release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor ... FAILED
+test release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence ... FAILED
+test release_owner::transaction_tests::actual_fsync_cuts_preserve_unknown_and_only_cleanup_an_exact_external_winner ... ok
+test release_owner::transaction_tests::cas_error_and_reply_loss_never_cause_an_automatic_cold_retry ... ok
+test release_owner::transaction_tests::final_clock_cannot_admit_an_action_after_local_lock_or_index_replacement ... ok
+test release_owner::transaction_tests::final_external_load_cannot_move_the_lock_before_cas ... ok
+test release_owner::transaction_tests::first_verification_cannot_overwrite_a_new_pending_record_or_return_idempotent_success ... ok
+test release_owner::transaction_tests::known_external_winner_cannot_tombstone_a_different_retained_local_record ... ok
+test release_owner::transaction_tests::rollback_after_index_fsync_keeps_the_attempt_for_completed_only_cold_recovery ... ok
+test release_owner::transaction_tests::second_verification_cannot_cas_after_lock_proposal_attempt_or_index_replacement ... ok
+test release_owner::transaction_tests::whole_local_slot_rollback_is_rejected_against_the_retained_external_frontier ... ok
+
+failures:
+
+failures:
+    release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences
+    release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch
+    release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas
+    release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas
+    release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault
+    release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission
+    release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor
+    release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence
+
+test result: FAILED. 67 passed; 8 failed; 1 ignored; 0 measured; 1145 filtered out; finished in 6.96s
+

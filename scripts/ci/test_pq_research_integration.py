@@ -174,6 +174,24 @@ class CorpusGateTests(unittest.TestCase):
         with self.assertRaises(IntegrityError):
             check(self.root)
 
+    def test_actual_material_reader_and_execution_environment_pins_cannot_be_omitted(self):
+        original = copy.deepcopy(self.manifest)
+        for path in (
+            'trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_mining_policy.rs',
+            'trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/execution_environment.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/execution_environment_tests.rs',
+        ):
+            with self.subTest(path=path):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(path)
+                del self.manifest['pinned_blobs'][path]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+
     def test_symlinked_checkout_root_refuses(self):
         alias = self.root.parent / (self.root.name + '-alias')
         alias.symlink_to(self.root, target_is_directory=True)

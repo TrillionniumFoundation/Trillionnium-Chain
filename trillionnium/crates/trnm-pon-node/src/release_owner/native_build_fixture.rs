@@ -264,11 +264,7 @@ pub(super) fn contract(
             uid: metadata.uid(),
             mode: metadata.mode(),
         },
-        environment: std::collections::BTreeMap::from([
-            ("LANG".into(), "C".into()),
-            ("LC_ALL".into(), "C".into()),
-            ("TZ".into(), "UTC".into()),
-        ]),
+        environment: super::execution_environment::restricted_environment(),
         arguments: outside.arguments()?,
         outside,
     };

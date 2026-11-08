@@ -33,24 +33,8 @@ pub(crate) struct Admission {
 }
 
 fn environment(contract: &Contract) -> Result<()> {
-    let raw: Vec<_> = std::env::vars_os().collect();
-    let values = raw
-        .iter()
-        .map(|(k, v)| {
-            Ok((
-                k.to_str()
-                    .ok_or_else(|| invalid("M15 environment key encoding"))?
-                    .to_string(),
-                v.to_str()
-                    .ok_or_else(|| invalid("M15 environment value encoding"))?
-                    .to_string(),
-            ))
-        })
-        .collect::<Result<BTreeMap<_, _>>>()?;
-    if values.len() != raw.len() || values != contract.environment {
-        return Err(invalid("M15 exact restricted environment required"));
-    }
-    Ok(())
+    contract.require_closed_execution()?;
+    super::execution_environment::require_exact_environment()
 }
 fn arguments(attempt: &LaunchAttempt) -> Result<()> {
     let actual = std::env::args_os()
@@ -97,6 +81,9 @@ impl Session {
         launch_fd: u32,
         handoff_fd: u32,
     ) -> Result<Self> {
+        // Optional native providers must not consult ambient configuration
+        // while opening authority, before the signed contract is available.
+        super::execution_environment::require_exact_environment()?;
         // The handoff is only an untrusted locator. The independent fixed
         // deployment chooses namespace, roots, endpoints and actual retained state.
         let mut owner = Owner::open()?;
@@ -110,6 +97,7 @@ impl Session {
             .pending_attempt(handoff.attempt, owner.now()?)?
             .clone();
         let contract = &attempt.contract;
+        contract.require_closed_execution()?;
         if attempt.launch_fd != launch_fd
             || attempt.handoff_fd != handoff_fd
             || state.claims.contains(&handoff.attempt)

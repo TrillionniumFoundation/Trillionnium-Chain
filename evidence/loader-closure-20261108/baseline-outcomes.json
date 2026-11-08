@@ -1,0 +1,27 @@
+{
+  "schema": "trnm-loader-component-regression-observation-v1",
+  "base_source_commit": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+  "source_state": "base implementation plus retained test additions; two new unreferenced environment modules were not part of this compiled crate",
+  "attempts": [
+    {
+      "name": "baseline-cursor-offline",
+      "cargo_exit_code": 101,
+      "test_executed": false,
+      "reason": "offline Cargo cache lacked nix"
+    },
+    {
+      "name": "baseline-cursor-online",
+      "cargo_exit_code": 101,
+      "test_executed": true,
+      "passed": 0,
+      "failed": 2,
+      "ignored": 0,
+      "filtered_out": 1209,
+      "build_warning": "trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute"
+    }
+  ],
+  "observed_loaded_sha256": "02c9a68f567b8ec215d893cde67ae2da41ba3c9b838d0ba4d3d04ab3cdc58da6",
+  "expected_input_sha256": "1566ccd537d00b47da815ef976d5fcefaa69cc45ec562c2ef99f9b3404d05e43",
+  "production_activation": false,
+  "native_deployment_qualified": false
+}
