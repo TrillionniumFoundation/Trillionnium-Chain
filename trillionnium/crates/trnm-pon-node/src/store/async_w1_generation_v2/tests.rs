@@ -419,10 +419,17 @@ fn real_reserved_task_cancel_and_owner_wire_negative_controls() {
         store.prepare(&mut owner, s).unwrap()
     };
     store.cancel(id, [92; 32]).unwrap();
+    let retained = store.readback(id).unwrap();
     {
         let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
-        assert!(store.begin(&mut owner, id).is_err());
+        assert!(matches!(
+            store.begin(&mut owner, id).unwrap(),
+            DispatchDecisionV2::Done
+        ));
     }
+    assert_eq!(store.readback(id).unwrap(), retained);
+    assert_eq!(retained.resource_charge, retained.statement.resource_cap);
+    assert!(!retained.dispatch_intent);
     let cancelled = mine(
         &mut n,
         reserved,
@@ -555,3 +562,4 @@ fn real_owner_signed_wrong_subject_or_sender_never_creates_settlement_intent() {
 }
 
 mod heavy;
+mod terminal;

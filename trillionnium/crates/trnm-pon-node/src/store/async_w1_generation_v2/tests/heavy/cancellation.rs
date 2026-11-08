@@ -14,6 +14,7 @@ const INTENT_SCHEMA: &str = "TRNM-W1-EXPLICIT-OWNER-CANCEL1";
 pub(super) struct Plan {
     reason: Hash,
     cancel_native: bool,
+    deadline_trigger: bool,
 }
 impl Plan {
     pub(super) fn parse(c: &Value) -> Result<Self> {
@@ -35,12 +36,16 @@ impl Plan {
         )?;
         let p = &c["owner_cancellation"];
         check(
-            p["schema"] == "TRNM-W1-OWNER-CANCEL-PLAN1"
-                && p["authority"] == "development-owner-0"
-                && p["trigger"] == "live-first-prove-r0vm"
-                && c["provider"]["kind"] != "kaggle-cli",
+            p["authority"] == "development-owner-0" && c["provider"]["kind"] != "kaggle-cli",
             "CANCEL_PLAN_AUTHORITY",
         )?;
+        let deadline_trigger = match (text(p, "schema")?, text(p, "trigger")?) {
+            ("TRNM-W1-OWNER-CANCEL-PLAN1", "live-first-prove-r0vm") => false,
+            ("TRNM-W1-OWNER-TIMEOUT-PLAN1", "original-deadline-after-live-first-prove-r0vm") => {
+                true
+            }
+            _ => return Err(error("CANCEL_PLAN_DOMAIN_TRIGGER")),
+        };
         let reason = json_hash(p, "reason_sha256")?;
         check(reason != [0; 32], "CANCEL_REASON")?;
         let cancel_native = match text(p, "native_task_action")? {
@@ -48,10 +53,29 @@ impl Plan {
             "cancel-reserved" => true,
             _ => return Err(error("CANCEL_NATIVE_ACTION")),
         };
+        check(
+            !deadline_trigger || cancel_native,
+            "TIMEOUT_RESEARCH_REFUND_PLAN",
+        )?;
         Ok(Self {
             reason,
             cancel_native,
+            deadline_trigger,
         })
+    }
+    fn runtime_schema(&self) -> &'static str {
+        if self.deadline_trigger {
+            "TRNM-W1-OWNER-TIMEOUT-RUNTIME1"
+        } else {
+            RUNTIME_SCHEMA
+        }
+    }
+    fn intent_schema(&self) -> &'static str {
+        if self.deadline_trigger {
+            "TRNM-W1-EXPLICIT-OWNER-TIMEOUT1"
+        } else {
+            INTENT_SCHEMA
+        }
     }
 }
 
@@ -282,7 +306,7 @@ fn helper(
     pin(&c["owner_cancel_runtime"])?;
     let result = value(&observed.join("result.json"))?;
     check(
-        result["schema"] == RUNTIME_SCHEMA
+        result["schema"] == Plan::parse(c)?.runtime_schema()
             && result["phase"] == phase_name
             && result["phase_observation_complete"] == true
             && result["generation_operation_complete"] == false
@@ -473,10 +497,27 @@ pub(super) fn run(mut run: Run) -> Result<()> {
             && row["status"] == "reserved",
         "CANCEL_ACTUAL_RESEARCH_OWNER",
     )?;
+    if plan.deadline_trigger {
+        timeout::wait_original_deadline(&run.config, run.config_hash, &run.out)?;
+    }
     let start_path = run.out.join("owner-cancel-start/result.json");
+    let timeout_terminal = if plan.deadline_trigger {
+        let observed = helper(
+            &run.config,
+            run.config_hash,
+            &run.request_path,
+            &run.out,
+            "reconcile",
+            Some(&start_path),
+        )?;
+        timeout::record_terminal_failure(&mut run.node, &mut run.store, &mut run.runtime, run.id)?;
+        Some(observed)
+    } else {
+        None
+    };
     write_new(
         &run.out.join("owner-cancel-requested.json"),
-        &json!({"schema":INTENT_SCHEMA,"state":"REQUESTED",
+        &json!({"schema":plan.intent_schema(),"state":"REQUESTED",
         "owner":hex::encode(run.statement.owner),"native_task":hex::encode(run.task),"statement":hex::encode(run.id),
         "provider_operation":hex::encode(run.statement.provider_operation),"original_job":original_job,
         "reason_sha256":hex::encode(plan.reason),"start_observation_sha256":hex::encode(sha256(&bytes(&start_path,8*1024*1024)?)),
@@ -508,25 +549,37 @@ pub(super) fn run(mut run: Run) -> Result<()> {
         "--operation".into(),
         hex::encode(run.statement.provider_operation),
     ];
-    let target_command = command(
-        &run.config,
-        run.config_hash,
-        &run.out.join("owner-target-cancel-command"),
-        &argv,
-        Some(10),
-    )?;
+    let target_command = if plan.deadline_trigger {
+        json!({"target_cancel_request_sent":false,"reason":"original deadline owns target termination",
+            "original_deadline_ns":run.statement.original_deadline.deadline_ns,"deadline_renewed":false})
+    } else {
+        command(
+            &run.config,
+            run.config_hash,
+            &run.out.join("owner-target-cancel-command"),
+            &argv,
+            Some(10),
+        )?
+    };
     // Even an absent/lost ACK is retained. Reconciliation below never resends.
-    let terminal = helper(
-        &run.config,
-        run.config_hash,
-        &run.request_path,
-        &run.out,
-        "reconcile",
-        Some(&start_path),
-    )?;
+    let terminal = match timeout_terminal {
+        Some(observed) => observed,
+        None => helper(
+            &run.config,
+            run.config_hash,
+            &run.request_path,
+            &run.out,
+            "reconcile",
+            Some(&start_path),
+        )?,
+    };
     check(
-        terminal["cancellation_observed"] == true
-            && terminal["original_target_execution_terminal"] == true
+        (if plan.deadline_trigger {
+            terminal["original_deadline_timeout_observed"] == true
+                && terminal["cancellation_observed"] == false
+        } else {
+            terminal["cancellation_observed"] == true
+        }) && terminal["original_target_execution_terminal"] == true
             && terminal["gpu_ns"].is_null()
             && terminal["resource_reservation_must_remain"] == true,
         "CANCEL_TERMINAL_UNKNOWN",
@@ -556,15 +609,12 @@ pub(super) fn run(mut run: Run) -> Result<()> {
     let mut node = open(&run.node_path, StateBackend::PermanentAccountGrowthV2);
     let mut store = NativeGenerationStoreV2::open(
         &run.out.join("native-generation-v2.sqlite"),
-        run.configuration,
+        run.configuration.clone(),
     )?;
     {
         let mut owner = NodeGenerationOwnerV2::new(&mut node, &mut run.runtime)?;
         check(
-            matches!(
-                store.begin(&mut owner, run.id)?,
-                DispatchDecisionV2::Pending
-            ),
+            matches!(store.begin(&mut owner, run.id)?, DispatchDecisionV2::Done),
             "CANCEL_COLD_REDISPATCH",
         )?;
     }
@@ -572,6 +622,30 @@ pub(super) fn run(mut run: Run) -> Result<()> {
         store.readback(run.id)? == before && balance(&node, public(1)) == provider_before,
         "CANCEL_COLD_STATE_OR_PAYMENT_CHANGED",
     )?;
+    if plan.deadline_trigger {
+        timeout::replay_terminal_failure(&mut node, &mut store, &mut run.runtime, run.id)?;
+    }
+    let reorg = if plan.deadline_trigger {
+        let context = timeout::Reorg {
+            node_path: &run.node_path,
+            out: &run.out,
+            configuration: run.configuration,
+            task: run.task,
+            id: run.id,
+            reserve_tip: run.reserve_tip,
+            retained: &before,
+        };
+        let (reopened_node, reopened_store, result) = context.run(node, store, &mut run.runtime)?;
+        node = reopened_node;
+        store = reopened_store;
+        check(
+            store.readback(run.id)? == before,
+            "TIMEOUT_REORG_FINAL_JOURNAL",
+        )?;
+        result
+    } else {
+        Value::Null
+    };
     let native = observe_native(&node, &run.out, run.task)?;
     check(
         !plan.cancel_native || native["canonical_cancel_observed"] == true,
@@ -579,11 +653,13 @@ pub(super) fn run(mut run: Run) -> Result<()> {
     )?;
     write_new(
         &run.out.join("funded-owner-cancellation-result.json"),
-        &json!({"schema":"TRNM-W1-FUNDED-OWNER-CANCEL-RESULT1",
+        &json!({"schema":if plan.deadline_trigger {"TRNM-W1-FUNDED-OWNER-TIMEOUT-RESULT1"}else{"TRNM-W1-FUNDED-OWNER-CANCEL-RESULT1"},
+        "original_deadline_timeout_observed":plan.deadline_trigger,"native_reorg_roundtrip":reorg,
         "explicit_owner_cancel_accepted":true,"real_expensive_generation_started":true,"fresh_generation_attempts":1,
         "new_complete_proofs":0,"full_proof_verified":false,"original_provider_operation":hex::encode(run.statement.provider_operation),
         "target_cancel_command":target_command,"target_terminal_observation":terminal,"native_task":native,
-        "m12_cancellation_reason":hex::encode(plan.reason),"m12_cold_begin":"Pending","m12_original_resource_cap_retained":true,
+        "m12_cancellation_reason":hex::encode(plan.reason),"m12_failure_kind":before.failure.as_ref().map(|f|format!("{:?}",f.kind)),
+        "m12_terminal_failure_recorded_before_owner_veto":plan.deadline_trigger,"m12_cold_begin":"Done","m12_original_resource_cap_retained":true,
         "gpu_accounting":"UNKNOWN","node_positive":false,"provider_payment_observed":false,"public_chain_transactions_sent":false,
         "original_deadline_ns":number(&run.config,"original_deadline_ns")?,"deadline_renewed":false,
         "all_descendants_reaped":Value::Null,"production_qualified":false}),
@@ -598,7 +674,7 @@ pub(super) fn cold_reconcile(config_path: &Path, output: &Path) -> Result<()> {
     let original_out = PathBuf::from(text(&c, "out")?);
     let requested = value(&original_out.join("owner-cancel-requested.json"))?;
     check(
-        requested["schema"] == INTENT_SCHEMA
+        requested["schema"] == plan.intent_schema()
             && requested["state"] == "REQUESTED"
             && json_hash(&requested, "reason_sha256")? == plan.reason,
         "CANCEL_RETAINED_REQUEST_REQUIRED",
@@ -729,7 +805,7 @@ pub(super) fn cold_reconcile(config_path: &Path, output: &Path) -> Result<()> {
     };
     write_new(
         &output.join("result.json"),
-        &json!({"schema":"TRNM-W1-OWNER-CANCEL-COLD-READBACK1",
+        &json!({"schema":if plan.deadline_trigger {"TRNM-W1-OWNER-TIMEOUT-COLD-READBACK1"}else{"TRNM-W1-OWNER-CANCEL-COLD-READBACK1"},
         "original_statement":hex::encode(id),"original_operation":hex::encode(before.statement.provider_operation),
         "cancellation":before.cancellation.map(hex::encode),"original_resource_cap_retained":before.resource_charge==before.statement.resource_cap,
         "m12_begin":replay_label,"native_task":native,"new_generation_dispatches":0,"target_cancel_requests_sent":0,
@@ -740,6 +816,8 @@ pub(super) fn cold_reconcile(config_path: &Path, output: &Path) -> Result<()> {
     )?;
     Ok(())
 }
+
+mod timeout;
 
 #[cfg(test)]
 mod tests;

@@ -7800,3 +7800,11 @@ C1 提交 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11` 的五角色开发资格已
 - 公开包只含最终证明、源绑定输入、列明的小型原件、审计与 SHA 清单；四库私有页及完整私有 dump 不公开。准备／采集／辅助观察和包内成员数检查失败均保留，修正不重跑资金操作或证明。Kaggle CUDA 探针成功但 build-only 请求正常 guard 拒绝、Colab 原绑定/释放冲突及后续只读状态均维持原记录，0 GPU W1 proof。
 
 四门仍分别保留部署 HOLD：中奖 W1 的真实网络 Node admission、完整历史资源归属、昂贵任务重组/超时全路径与正向一次性 provider 付款、原业务预算、总体生成尾延迟、验证/传输部署收益及完整密码学/PQ/语义/DA/模型效用条件未完成。最终发布提交的精确资格由独立外部 attestation 引用实际被测 commit；事后资格结果不写回并改变该被测提交。没有部署、激活、force push、自审批准或受保护主分支绕过。
+
+### 2026-11-08：原始 deadline 终态对账与独立研究重组入口
+
+本候选修正已持久化 M12 Cancel 的派发重放结果为 Done，保留原资源 charge；没有修改旧实验记录。新增 owned terminal V3 以独立观测摘要域绑定同一 job、operation、request、source、原 clock/deadline，已记录 Failure 的冷恢复不再访问 runtime。资源未知写 Failure Unknown 并保留全 cap；已知超额原值保留，不裁剪，不授权 Positive、provider 付款或本金退款。
+
+新研究计划域 TRNM-W1-OWNER-TIMEOUT-PLAN1 严格区分原 target worker 的 original-deadline 与主动 cancelled。入口只在实际固定 r0vm 已启动后等待同一原 deadline，由目标自己的原期限终止；actual helper 和 Rust caller 退出证据通过窄 terminal adapter 后，先写 Failure Unknown，再单独记录 owner veto 与普通 NativeTask tag 3。本金退款后构造不含该 Cancel 的更长有效分支，实际关闭再冷开 Node 和 M12，确认不重派且 cap 不回滚；仅追加空子块恢复原 Cancel packet 的 ancestry，不重签、不另造资金动作。
+
+候选实际控制为 Python owner helper 8 项、Node async 20 项、M12 11 项通过，两个 crate 的 strict Clippy 通过；重型入口在普通控制中仍 ignored。新的 120 秒、8 CPU／8 GiB 试验须在本候选冻结的干净提交上另行执行并保留原 config、source、唯一 operation、deadline 与全套成功或失败原件。此段仅记录实现与候选控制，不预先声称昂贵 timeout、退款重组、完整历史 wait/reap、GPU 计量或资源结算已经通过；固定 guest 不重编，原业务预算及部署资格仍 HOLD。

@@ -74,6 +74,8 @@ pub trait OwnedGenerationRuntimeV2 {
     ) -> Result<OwnedVerifierRunV2>;
 }
 mod task_owner;
+mod terminal;
+pub use terminal::{OwnedTerminalExecutionV3, OwnedTerminalGenerationRuntimeV3, TerminalReasonV3};
 pub struct NodeGenerationOwnerV2<'a, R> {
     node: &'a mut Node,
     runtime: &'a mut R,

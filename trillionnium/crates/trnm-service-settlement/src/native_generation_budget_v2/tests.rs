@@ -363,7 +363,7 @@ fn cancellation_committed_while_verifier_runs_is_sticky_and_blocks_settlement() 
         .is_err());
     assert!(matches!(
         a.begin(&mut o, id).unwrap(),
-        DispatchDecisionV2::Pending
+        DispatchDecisionV2::Done
     ));
     assert_eq!(a.readback(id).unwrap(), prior);
 }
@@ -455,4 +455,28 @@ fn actual_resource_overrun_is_retained_without_clipping_or_positive() {
     .unwrap();
     assert_eq!(a.readback(id).unwrap().resource_charge, actual);
     assert!(a.readback(id).unwrap().verified.is_none());
+}
+
+#[test]
+fn cancel_before_dispatch_is_terminal_after_cold_reopen_without_repinning_funds() {
+    let d = tempfile::tempdir().unwrap();
+    let path = d.path().join("generation.sqlite");
+    let s = statement();
+    let mut o = MockOwner::new(&s);
+    let mut store = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    let id = store.prepare(&mut o, s.clone()).unwrap();
+    store.cancel(id, [84; 32]).unwrap();
+    let prior = store.readback(id).unwrap();
+    assert!(!prior.dispatch_intent);
+    assert_eq!(prior.resource_charge, s.resource_cap);
+    drop(store);
+    o.row = None;
+    o.clock.clock_domain = [85; 32];
+    let mut store = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    assert!(matches!(
+        store.begin(&mut o, id).unwrap(),
+        DispatchDecisionV2::Done
+    ));
+    assert_eq!(store.readback(id).unwrap(), prior);
+    assert!(store.bind_job(id, job(&s)).is_err());
 }

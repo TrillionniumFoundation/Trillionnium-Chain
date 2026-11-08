@@ -888,14 +888,14 @@ impl NativeGenerationStoreV2 {
         let journal = self.journal_identity;
         self.update(|state| {
             let r = state.record(id)?;
+            // Cancellation is terminal for dispatch even when accounting is
+            // unknown. Replaying it neither releases the original resource
+            // charge nor consults/repins native funding after a branch change.
+            if r.cancel.is_some() || r.verified.is_some() || r.failure.is_some() {
+                return Ok(Update::Replay(DispatchDecisionV2::Done));
+            }
             if r.intent {
-                return Ok(Update::Replay(
-                    if r.verified.is_some() || r.failure.is_some() {
-                        DispatchDecisionV2::Done
-                    } else {
-                        DispatchDecisionV2::Pending
-                    },
-                ));
+                return Ok(Update::Replay(DispatchDecisionV2::Pending));
             }
             let (anchor, clock, pin) = observe_task(owner, &r.statement, false)?;
             require(pin == r.funding, "GENERATION_NATIVE_REPIN")?;

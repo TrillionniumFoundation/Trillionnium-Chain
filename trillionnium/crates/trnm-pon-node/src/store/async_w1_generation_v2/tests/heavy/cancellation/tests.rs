@@ -94,7 +94,7 @@ fn actual_owner_cancel_cold_reopen_and_reorg_preserve_veto_and_full_cap() {
         let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
         assert!(matches!(
             store.begin(&mut owner, id).unwrap(),
-            DispatchDecisionV2::Pending
+            DispatchDecisionV2::Done
         ));
     }
     assert_eq!(store.readback(id).unwrap(), before);
@@ -112,7 +112,7 @@ fn actual_owner_cancel_cold_reopen_and_reorg_preserve_veto_and_full_cap() {
         let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
         assert!(matches!(
             store.begin(&mut owner, id).unwrap(),
-            DispatchDecisionV2::Pending
+            DispatchDecisionV2::Done
         ));
     }
     assert_eq!(store.readback(id).unwrap(), before);

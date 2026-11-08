@@ -50,6 +50,45 @@ class OwnerCancellationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 cancel.plan(changed)
 
+
+    def test_timeout_domain_and_original_deadline_cannot_be_substituted_by_cancel(self):
+        c = {"original_deadline_ns": 1000, "owner_cancellation": {
+            "schema": cancel.TIMEOUT_PLAN, "authority": "development-owner-0",
+            "trigger": "original-deadline-after-live-first-prove-r0vm",
+            "reason_sha256": "02" * 32, "native_task_action": "cancel-reserved"}}
+        request = {"operation": "03" * 32, "clock_domain": "04" * 32, "deadline_monotonic_ns": 1000}
+        job = {"job_id": "original"}
+        retained = {"original_job": job, "target_request_sha256": "05" * 32}
+        result = {"operation": request["operation"], "provider_job": job,
+            "request_sha256": retained["target_request_sha256"], "clock_domain": request["clock_domain"],
+            "original_deadline_monotonic_ns": 1000, "exit_code": -9, "command_success": False,
+            "all_owned_processes_terminal": True, "direct_child_reaped": True,
+            "resources": {"gpu_ns": None}, "sticky_cancel": False,
+            "cause": "original-deadline", "finished_monotonic_ns": 1001}
+        row = {"cancel": False, "result": result}
+        self.assertEqual(cancel.runtime_schema(c), cancel.TIMEOUT_SCHEMA)
+        self.assertEqual(cancel.terminal_observation(c, request, retained, row),
+                         {"cancellation_observed": False, "original_deadline_timeout_observed": True})
+        for key, value in (("cause", "cancelled"), ("sticky_cancel", True),
+                           ("finished_monotonic_ns", 999), ("original_deadline_monotonic_ns", 1001),
+                           ("provider_job", {"job_id": "replacement"}),
+                           ("clock_domain", "06" * 32), ("command_success", True),
+                           ("resources", {"gpu_ns": 0}), ("direct_child_reaped", False)):
+            changed = copy.deepcopy(row)
+            changed["result"][key] = value
+            with self.subTest(field=key), self.assertRaises(ValueError):
+                cancel.terminal_observation(c, request, retained, changed)
+        changed = copy.deepcopy(row)
+        changed["cancel"] = True
+        with self.assertRaises(ValueError):
+            cancel.terminal_observation(c, request, retained, changed)
+        for key, value in (("schema", cancel.PLAN), ("trigger", "live-first-prove-r0vm"),
+                           ("native_task_action", "retain-reserved")):
+            changed = copy.deepcopy(c)
+            changed["owner_cancellation"][key] = value
+            with self.subTest(plan_field=key), self.assertRaises(ValueError):
+                cancel.plan(changed)
+
     def test_duplicate_and_nonfinite_configuration_rejected(self):
         for raw in ('{"authority":1,"authority":2}', '{"deadline":NaN}'):
             with self.assertRaises(ValueError):
@@ -101,7 +140,10 @@ class OwnerCancellationTests(unittest.TestCase):
                                  public_readback=lambda *a: {"sticky_cancel": True, "result": None},
                                  cgroup_observation=lambda *a: {"recursive_empty": False, "members": [7]})
         scope = SimpleNamespace(observe=lambda: {"scope_empty_except_live_caller_ancestors": False, "remaining_noncaller_members": [7]})
-        c = {"_config_path": "/fixed", "target_root": "/root", "target_instance": "original"}
+        c = {"_config_path": "/fixed", "target_root": "/root", "target_instance": "original",
+             "owner_cancellation": {"schema": cancel.PLAN, "authority": "development-owner-0",
+                 "trigger": "live-first-prove-r0vm", "reason_sha256": "01" * 32,
+                 "native_task_action": "retain-reserved"}}
         with patch.object(cancel, "original_request", return_value=request), \
              patch.object(cancel, "ContinuingScope", return_value=scope), \
              patch.object(cancel, "process_state", return_value={"execution_terminal": False}), \

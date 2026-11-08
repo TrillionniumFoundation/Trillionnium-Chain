@@ -34,7 +34,9 @@ mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
 pub use store::async_w1_generation_v2::{
-    NodeGenerationOwnerV2, OwnedFullGenerationV2, OwnedGenerationRuntimeV2, OwnedVerifierRunV2,
+    NodeGenerationOwnerV2, OwnedFullGenerationV2, OwnedGenerationRuntimeV2,
+    OwnedTerminalExecutionV3, OwnedTerminalGenerationRuntimeV3, OwnedVerifierRunV2,
+    TerminalReasonV3,
 };
 pub use store::authenticated_migration::{
     verify_growth_rehearsal_v2, verify_growth_rehearsal_v2_with_snapshot_byte_limit,

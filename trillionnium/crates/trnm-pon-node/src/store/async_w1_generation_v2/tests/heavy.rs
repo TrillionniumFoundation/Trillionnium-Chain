@@ -970,3 +970,19 @@ fn funded_w1_owner_cancellation_cold_reconcile() {
     cancellation::cold_reconcile(&path, &out)
         .expect("cold observation incomplete; original intent stays retained, never redispatch");
 }
+
+#[test]
+#[ignore = "explicit new research operation; actual r0vm original deadline, principal refund and real fork/cold round trip"]
+fn funded_fresh_full_w1_generation_timeout_then_refund_and_reorg() {
+    let path = PathBuf::from(
+        std::env::var_os("TRNM_W1_FUNDED_CONFIG").expect("explicit new timeout config required"),
+    );
+    let config = value(&path).unwrap();
+    assert_eq!(
+        config["owner_cancellation"]["schema"],
+        "TRNM-W1-OWNER-TIMEOUT-PLAN1"
+    );
+    execute_mode(&path, true).expect(
+        "original timeout observation incomplete; retain original effects, never redispatch",
+    );
+}

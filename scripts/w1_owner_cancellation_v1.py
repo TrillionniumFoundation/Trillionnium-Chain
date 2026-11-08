@@ -18,6 +18,8 @@ from types import SimpleNamespace
 
 SCHEMA = "TRNM-W1-OWNER-CANCELLATION-RUNTIME1"
 PLAN = "TRNM-W1-OWNER-CANCEL-PLAN1"
+TIMEOUT_PLAN = "TRNM-W1-OWNER-TIMEOUT-PLAN1"
+TIMEOUT_SCHEMA = "TRNM-W1-OWNER-TIMEOUT-RUNTIME1"
 
 
 def strict_json(raw):
@@ -41,14 +43,48 @@ def plan(c):
     p = c.get("owner_cancellation")
     require(type(p) is dict and set(p) == {"schema", "authority", "trigger", "reason_sha256", "native_task_action"},
             "explicit complete owner cancellation plan required")
-    require(p["schema"] == PLAN and p["authority"] == "development-owner-0"
-            and p["trigger"] == "live-first-prove-r0vm"
+    domain = (p["schema"], p["trigger"])
+    require(p["authority"] == "development-owner-0"
+            and domain in ((PLAN, "live-first-prove-r0vm"),
+                           (TIMEOUT_PLAN, "original-deadline-after-live-first-prove-r0vm"))
             and p["native_task_action"] in ("retain-reserved", "cancel-reserved"), "owner cancellation plan")
+    require(p["schema"] != TIMEOUT_PLAN or p["native_task_action"] == "cancel-reserved",
+            "timeout research plan requires explicit owner refund action")
     reason = p["reason_sha256"]
     require(type(reason) is str and len(reason) == 64 and reason != "0" * 64
             and all(x in "0123456789abcdef" for x in reason), "explicit nonzero cancellation reason")
     require(c.get("provider", {}).get("kind") != "kaggle-cli", "this cancellation entry owns a local child cgroup only")
     return p
+
+
+def runtime_schema(c):
+    return TIMEOUT_SCHEMA if plan(c)["schema"] == TIMEOUT_PLAN else SCHEMA
+
+
+def terminal_observation(c, request, retained, row):
+    """Validate retained target evidence; no process action or accounting guess."""
+    result = row["result"]
+    timeout = plan(c)["schema"] == TIMEOUT_PLAN
+    require(result["operation"] == request["operation"]
+            and result["provider_job"] == retained["original_job"]
+            and result["request_sha256"] == retained["target_request_sha256"]
+            and result["clock_domain"] == request["clock_domain"]
+            and result["original_deadline_monotonic_ns"] == request["deadline_monotonic_ns"]
+            and result["exit_code"] is not None and result["exit_code"] != 0
+            and result["command_success"] is False and result["all_owned_processes_terminal"] is True
+            and result["direct_child_reaped"] is True and result["resources"]["gpu_ns"] is None,
+            "original terminal execution identity or incomplete resource boundary")
+    if timeout:
+        require(row["cancel"] is False and result["sticky_cancel"] is False
+                and result["cause"] == "original-deadline"
+                and result["finished_monotonic_ns"] >= request["deadline_monotonic_ns"]
+                and request["deadline_monotonic_ns"] == c["original_deadline_ns"],
+                "original target did not observe the declared original-deadline timeout")
+    else:
+        require(row["cancel"] is True and result["sticky_cancel"] is True
+                and result["cause"] == "cancelled",
+                "original target did not observe the requested running-generation cancellation")
+    return {"cancellation_observed": not timeout, "original_deadline_timeout_observed": timeout}
 
 
 def module(path, name):
@@ -253,7 +289,7 @@ def reconcile(rt, target, c, request_path, start_path, seconds):
     require(type(seconds) is int and 1 <= seconds <= 30, "bounded read-only reconciliation budget")
     retained = rt.obj(start_path)
     request = original_request(rt, target, c, request_path)
-    require(retained["schema"] == SCHEMA and retained["phase"] == "start"
+    require(retained["schema"] == runtime_schema(c) and retained["phase"] == "start"
             and retained["config_sha256"] == rt.sha(c["_config_path"])
             and retained["operation"] == request["operation"]
             and retained["target_request_raw_sha256"] == rt.sha(request_path), "original start observation changed")
@@ -282,13 +318,8 @@ def reconcile(rt, target, c, request_path, start_path, seconds):
             last["observation_completed_monotonic_ns"] = time.monotonic_ns()
             if (row["result"] is not None and worker["execution_terminal"] and observed_group["recursive_empty"]
                     and owner_scope["scope_empty_except_live_caller_ancestors"]):
-                result = row["result"]
-                require(row["cancel"] and result["sticky_cancel"] and result["cause"] == "cancelled"
-                        and result["exit_code"] is not None and result["exit_code"] != 0
-                        and result["command_success"] is False and result["all_owned_processes_terminal"] is True
-                        and result["direct_child_reaped"] is True and result["resources"]["gpu_ns"] is None,
-                        "original target did not observe the requested running-generation cancellation")
-                return {"observation": last, "owner_cancel_performed": False, "cancellation_observed": True,
+                observed_terminal = terminal_observation(c, request, retained, row)
+                return {**observed_terminal, "observation": last, "owner_cancel_performed": False,
                         "original_target_execution_terminal": True, "all_descendants_reaped": None,
                         "gpu_ns": None, "resource_reservation_must_remain": True, "can_authorize_refund": False,
                         "generation_operation_complete": False, "full_proof_verified": False,
@@ -333,7 +364,7 @@ def main():
     out = Path(args.out)
     require(out.is_absolute() and out.parent.is_dir(), "new absolute observation directory")
     out.mkdir(exist_ok=False)
-    intent = {"schema": SCHEMA, "phase": args.phase, "config_sha256": hashlib.sha256(raw).hexdigest(),
+    intent = {"schema": runtime_schema(c), "phase": args.phase, "config_sha256": hashlib.sha256(raw).hexdigest(),
               "operation": c["provider_operation"], "original_deadline_ns": c["original_deadline_ns"],
               "original_boot_id": c["original_boot_id"], "started_monotonic_ns": time.monotonic_ns(),
               "source": source, "can_authorize_payment": False, "new_complete_proofs": 0}
@@ -349,7 +380,7 @@ def main():
         result.update(intent, phase_observation_complete=True, completed_monotonic_ns=time.monotonic_ns(),
                       completion_timestamp_scope="pre-handoff observation; caller must record actual exit/ACK")
         rt.write_new(out / "result.json", result)
-        print(json.dumps({"schema": SCHEMA, "phase": args.phase, "phase_observation_complete": True,
+        print(json.dumps({"schema": runtime_schema(c), "phase": args.phase, "phase_observation_complete": True,
                           "generation_operation_complete": False, "new_complete_proofs": 0,
                           "can_authorize_payment": False}), flush=True)
     except BaseException as exc:
