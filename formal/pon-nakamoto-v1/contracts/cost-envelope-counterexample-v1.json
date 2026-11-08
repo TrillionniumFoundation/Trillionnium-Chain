@@ -1,0 +1,271 @@
+{
+  "batches": [
+    {
+      "basis": "declared_finite_strategy",
+      "class": "classical",
+      "credit_per_normalized_cost_cap": {
+        "d": 2,
+        "n": 1
+      },
+      "deadline_ms": 120000,
+      "expected_accepts": [
+        {
+          "count": {
+            "d": 2,
+            "n": 1
+          },
+          "u": 1
+        },
+        {
+          "count": {
+            "d": 2,
+            "n": 1
+          },
+          "u": 4
+        }
+      ],
+      "horizon_rounds": 1,
+      "id": "paid-preparation-shared-two-work-levels",
+      "reference": "Synthetic finite model, not an actual W1 execution: preparation cost 1 is paid once; the u=1 and u=4 attempts cost 1 and 4 regardless of success/failure, total 6. The two accept bits have four equally likely outcomes; each expected count is 1/2. The single-task fixed-alpha costs force credits 2 and 5, giving batch expected credit 7/2 against cap (1/2)*6=3. Quantum scale 7 is a model coefficient, not measured hardware.",
+      "schema": "pon.cost-envelope.batch.v1",
+      "total_lifecycle_cost": {
+        "d": 1,
+        "n": 6
+      },
+      "window_semantics": "expected_accepted_credit_within_same_window"
+    }
+  ],
+  "class_scales": {
+    "classical": {
+      "d": 1,
+      "n": 1
+    },
+    "quantum": {
+      "d": 1,
+      "n": 7
+    }
+  },
+  "credit_quantum": {
+    "d": 1,
+    "n": 1
+  },
+  "deadline_ms": 120000,
+  "envelopes": [
+    {
+      "class": "classical",
+      "evidence": {
+        "entries": [
+          {
+            "elapsed_ms": 120000,
+            "rounds": 1,
+            "strategy_id": "finite-preparation-1-plus-attempt-1",
+            "success_probability": {
+              "d": 2,
+              "n": 1
+            },
+            "total_lifecycle_cost": {
+              "d": 1,
+              "n": 2
+            }
+          }
+        ],
+        "kind": "finite_catalog",
+        "minimum_strategy_id": "finite-preparation-1-plus-attempt-1",
+        "schema": "pon.cost-envelope.finite-catalog.v1"
+      },
+      "lower": {
+        "d": 1,
+        "n": 2
+      },
+      "u": 1,
+      "upper": {
+        "d": 1,
+        "n": 2
+      }
+    },
+    {
+      "class": "classical",
+      "evidence": {
+        "entries": [
+          {
+            "elapsed_ms": 120000,
+            "rounds": 1,
+            "strategy_id": "finite-preparation-1-plus-attempt-4",
+            "success_probability": {
+              "d": 2,
+              "n": 1
+            },
+            "total_lifecycle_cost": {
+              "d": 1,
+              "n": 5
+            }
+          }
+        ],
+        "kind": "finite_catalog",
+        "minimum_strategy_id": "finite-preparation-1-plus-attempt-4",
+        "schema": "pon.cost-envelope.finite-catalog.v1"
+      },
+      "lower": {
+        "d": 1,
+        "n": 5
+      },
+      "u": 4,
+      "upper": {
+        "d": 1,
+        "n": 5
+      }
+    },
+    {
+      "class": "classical",
+      "evidence": {
+        "entries": [
+          {
+            "elapsed_ms": 120000,
+            "rounds": 1,
+            "strategy_id": "finite-preparation-1-plus-attempt-16",
+            "success_probability": {
+              "d": 2,
+              "n": 1
+            },
+            "total_lifecycle_cost": {
+              "d": 1,
+              "n": 17
+            }
+          }
+        ],
+        "kind": "finite_catalog",
+        "minimum_strategy_id": "finite-preparation-1-plus-attempt-16",
+        "schema": "pon.cost-envelope.finite-catalog.v1"
+      },
+      "lower": {
+        "d": 1,
+        "n": 17
+      },
+      "u": 16,
+      "upper": {
+        "d": 1,
+        "n": 17
+      }
+    },
+    {
+      "class": "quantum",
+      "evidence": {
+        "entries": [
+          {
+            "elapsed_ms": 120000,
+            "rounds": 1,
+            "strategy_id": "finite-preparation-1-plus-attempt-1",
+            "success_probability": {
+              "d": 2,
+              "n": 1
+            },
+            "total_lifecycle_cost": {
+              "d": 1,
+              "n": 14
+            }
+          }
+        ],
+        "kind": "finite_catalog",
+        "minimum_strategy_id": "finite-preparation-1-plus-attempt-1",
+        "schema": "pon.cost-envelope.finite-catalog.v1"
+      },
+      "lower": {
+        "d": 1,
+        "n": 14
+      },
+      "u": 1,
+      "upper": {
+        "d": 1,
+        "n": 14
+      }
+    },
+    {
+      "class": "quantum",
+      "evidence": {
+        "entries": [
+          {
+            "elapsed_ms": 120000,
+            "rounds": 1,
+            "strategy_id": "finite-preparation-1-plus-attempt-4",
+            "success_probability": {
+              "d": 2,
+              "n": 1
+            },
+            "total_lifecycle_cost": {
+              "d": 1,
+              "n": 35
+            }
+          }
+        ],
+        "kind": "finite_catalog",
+        "minimum_strategy_id": "finite-preparation-1-plus-attempt-4",
+        "schema": "pon.cost-envelope.finite-catalog.v1"
+      },
+      "lower": {
+        "d": 1,
+        "n": 35
+      },
+      "u": 4,
+      "upper": {
+        "d": 1,
+        "n": 35
+      }
+    },
+    {
+      "class": "quantum",
+      "evidence": {
+        "entries": [
+          {
+            "elapsed_ms": 120000,
+            "rounds": 1,
+            "strategy_id": "finite-preparation-1-plus-attempt-16",
+            "success_probability": {
+              "d": 2,
+              "n": 1
+            },
+            "total_lifecycle_cost": {
+              "d": 1,
+              "n": 119
+            }
+          }
+        ],
+        "kind": "finite_catalog",
+        "minimum_strategy_id": "finite-preparation-1-plus-attempt-16",
+        "schema": "pon.cost-envelope.finite-catalog.v1"
+      },
+      "lower": {
+        "d": 1,
+        "n": 119
+      },
+      "u": 16,
+      "upper": {
+        "d": 1,
+        "n": 119
+      }
+    }
+  ],
+  "failure_budget": null,
+  "horizon_rounds": 1,
+  "max_distortion": {
+    "d": 1,
+    "n": 1
+  },
+  "nondecreasing": true,
+  "p0": {
+    "d": 2,
+    "n": 1
+  },
+  "probability_scope": "declared_model_not_statistical_confidence",
+  "profile_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+  "schema": "pon.cost-envelope.contract.v1",
+  "success_probability_target": {
+    "d": 2,
+    "n": 1
+  },
+  "success_standard": "total_cost_for_fixed_success_probability_by_deadline",
+  "work_levels": [
+    1,
+    4,
+    16
+  ]
+}

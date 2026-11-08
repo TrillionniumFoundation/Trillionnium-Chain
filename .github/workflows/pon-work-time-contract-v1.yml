@@ -1,0 +1,68 @@
+name: PoN work and time contract V1
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  work-time-contract:
+    name: Work and time contract (${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      TRNM_SOURCE_KIND: ${{ matrix.source }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify full tracked source before execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$TRNM_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
+          if test "$TRNM_SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/work-time-source-before.json"
+      - name: Check repository boundary and retained source integrity controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/test_ci_source_integrity.py
+      - name: Execute named controls and full W1 optimization campaign
+        run: python3 scripts/ci/run_work_time_contract_v1.py --output-dir "$RUNNER_TEMP/work-time-contract" --campaign
+      - name: Verify full tracked source after execution
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$TRNM_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
+          if test "$TRNM_SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/work-time-source-after.json"
+      - name: Retain all outcomes and source receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: work-time-contract-${{ matrix.source }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/work-time-source-before.json
+            ${{ runner.temp }}/work-time-source-after.json
+            ${{ runner.temp }}/work-time-contract/
+          if-no-files-found: error
+          retention-days: 30
