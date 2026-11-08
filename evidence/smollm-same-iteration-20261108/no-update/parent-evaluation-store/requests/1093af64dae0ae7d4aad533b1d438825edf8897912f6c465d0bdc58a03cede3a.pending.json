@@ -1,0 +1,1 @@
+{"request":{"id":"evaluation-4","op":"probe","params":{"inputs":{"mode":"conditional_binary","prompt":"Answer with only yes or no. Is 7402 greater than 7403?","request_id":"learning-d9fb-retain-v2-evaluation-3"}},"session_id":"learning-d9fb-retain-v2-parent"},"request_sha256":"6cf35869c735f15ebbd9d14a320ea6bce231e44e507c5ab98ad2e66127bcbed2","started_at_ms":1794160742654}

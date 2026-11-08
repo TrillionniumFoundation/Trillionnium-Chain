@@ -1,0 +1,1 @@
+{"request":{"id":"evaluation-3","op":"probe","params":{"inputs":{"mode":"conditional_binary","prompt":"Answer with only yes or no. Is 6311 greater than 6310?","request_id":"learning-d9fb-retain-v2-evaluation-2"}},"session_id":"learning-d9fb-retain-v2-candidate"},"request_sha256":"37f1055c9519f06c3311eb9dba4329e4c982fcaa5862e5287dfce6af5a03e188","started_at_ms":1794160745770}
