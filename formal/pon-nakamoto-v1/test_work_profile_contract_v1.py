@@ -10,6 +10,13 @@ import work_profile_contract_v1 as contract
 
 
 class WorkProfileContractTests(unittest.TestCase):
+    # The runner may select an independently verified frozen reference fixture.
+    # Ordinary direct/discovery execution still checks the current checkout.
+    source_root = contract.ROOT
+
+    def check_contract(self, value):
+        return contract.check_contract(value, root=self.source_root)
+
     @classmethod
     def setUpClass(cls):
         cls.original = contract.loads((contract.ROOT / contract.CONTRACT_PATH).read_bytes())
@@ -18,7 +25,7 @@ class WorkProfileContractTests(unittest.TestCase):
         return copy.deepcopy(self.original)
 
     def test_full_pinned_source_and_contract_check(self):
-        result = contract.check_contract(self.original)
+        result = self.check_contract(self.original)
         self.assertEqual(result["source_commit"], contract.BASELINE)
         self.assertGreater(result["verified_source_entries"], 1000)
         self.assertTrue(result["contract_and_source_consistent"])
@@ -31,21 +38,21 @@ class WorkProfileContractTests(unittest.TestCase):
         obj["source_entries"].pop()
         obj["source_inventory_digest"] = contract.digest(obj["source_entries"])
         with self.assertRaisesRegex(ValueError, "SOURCE_ROSTER"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_duplicate_source_even_with_rehashed_inventory_rejects(self):
         obj = self.changed()
         obj["source_entries"][1] = obj["source_entries"][0]
         obj["source_inventory_digest"] = contract.digest(obj["source_entries"])
         with self.assertRaisesRegex(ValueError, "SOURCE_ROSTER"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_reordered_inventory_rejects(self):
         obj = self.changed()
         obj["source_entries"].reverse()
         obj["source_inventory_digest"] = contract.digest(obj["source_entries"])
         with self.assertRaisesRegex(ValueError, "SOURCE_ROSTER"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_mutated_source_bytes_reject(self):
         original_reader = contract.bytes_at
@@ -55,34 +62,34 @@ class WorkProfileContractTests(unittest.TestCase):
             return data + b"\nmutated" if path == chosen else data
         with patch.object(contract, "bytes_at", changed_reader):
             with self.assertRaisesRegex(ValueError, "SOURCE_BYTES"):
-                contract.check_contract(self.original)
+                self.check_contract(self.original)
 
     def test_wrong_git_blob_rejects_despite_sha256_relabel(self):
         obj = self.changed()
         obj["source_entries"][0]["git_blob"] = "0" * 40
         obj["source_inventory_digest"] = contract.digest(obj["source_entries"])
         with self.assertRaisesRegex(ValueError, "SOURCE_ROSTER"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_wrong_source_sha256_rejects(self):
         obj = self.changed()
         obj["source_entries"][0]["sha256"] = "0" * 64
         obj["source_inventory_digest"] = contract.digest(obj["source_entries"])
         with self.assertRaisesRegex(ValueError, "SOURCE_BYTES"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_bool_is_not_byte_count(self):
         obj = self.changed()
         obj["source_entries"][0]["bytes"] = True
         obj["source_inventory_digest"] = contract.digest(obj["source_entries"])
         with self.assertRaisesRegex(ValueError, "SOURCE_SIZE"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_bool_is_not_numeric_semantics(self):
         obj = self.changed()
         obj["definition"]["numeric_semantics"]["word_bytes"] = True
         with self.assertRaisesRegex(ValueError, "DEFINITION_DRIFT"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_missing_charge_event_rejects(self):
         for event in ("failed", "withheld", "post-winner", "cross-version-state"):
@@ -90,19 +97,19 @@ class WorkProfileContractTests(unittest.TestCase):
                 obj = self.changed()
                 obj["definition"]["lifecycle"]["charge_events"].remove(event)
                 with self.assertRaisesRegex(ValueError, "DEFINITION_DRIFT"):
-                    contract.check_contract(obj)
+                    self.check_contract(obj)
 
     def test_measured_best_is_not_lower_bound(self):
         obj = self.changed()
         obj["definition"]["lifecycle"]["cost_bound_rule"] = "measured-best-is-minimum"
         with self.assertRaisesRegex(ValueError, "DEFINITION_DRIFT"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_unknown_backend_is_not_replaced_by_an_unverified_identity(self):
         obj = self.changed()
         obj["definition"]["proof_identity"]["guest_image"] = "0" * 64
         with self.assertRaisesRegex(ValueError, "DEFINITION_DRIFT"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_cannot_join_a_different_source(self):
         for field in ("source_commit", "source_tree", "native_tree"):
@@ -110,7 +117,7 @@ class WorkProfileContractTests(unittest.TestCase):
                 obj = self.changed()
                 obj[field] = "f" * 40
                 with self.assertRaisesRegex(ValueError, "SOURCE_IDENTITY"):
-                    contract.check_contract(obj)
+                    self.check_contract(obj)
 
     def test_every_unsupported_qualification_refuses_promotion(self):
         for field in contract.QUALIFICATION:
@@ -118,19 +125,19 @@ class WorkProfileContractTests(unittest.TestCase):
                 obj = self.changed()
                 obj["qualification"][field] = True
                 with self.assertRaisesRegex(ValueError, "CLAIM_PROMOTION"):
-                    contract.check_contract(obj)
+                    self.check_contract(obj)
 
     def test_false_does_not_accept_zero_alias(self):
         obj = self.changed()
         obj["qualification"]["production_activation"] = 0
         with self.assertRaisesRegex(ValueError, "CLAIM_PROMOTION"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_reject_unknown_top_level_keys(self):
         obj = self.changed()
         obj["acceptance"] = True
         with self.assertRaisesRegex(ValueError, "CONTRACT_KEYS"):
-            contract.check_contract(obj)
+            self.check_contract(obj)
 
     def test_strict_json_duplicate_float_and_nonfinite_reject(self):
         for data in ('{"x":1,"x":2}', '{"x":1.0}', '{"x":NaN}', '{"x":Infinity}'):

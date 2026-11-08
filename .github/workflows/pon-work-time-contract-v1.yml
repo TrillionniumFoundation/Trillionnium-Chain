@@ -43,8 +43,18 @@ jobs:
           set -euo pipefail
           bash scripts/project-preflight.sh --audit
           python3 scripts/ci/test_ci_source_integrity.py
-      - name: Execute named controls and full W1 optimization campaign
-        run: python3 scripts/ci/run_work_time_contract_v1.py --output-dir "$RUNNER_TEMP/work-time-contract" --campaign
+      - name: Prepare independent fixed baseline reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline="$RUNNER_TEMP/work-time-baseline"
+          test ! -e "$baseline"
+          git clone --shared --no-checkout . "$baseline"
+          git -C "$baseline" sparse-checkout init --no-cone
+          git -C "$baseline" sparse-checkout set --no-cone /trillionnium/ /formal/ /config/ /rust-toolchain.toml
+          git -C "$baseline" checkout --detach b16bae2824e6c8236ef2011fc93a74df3ac7f039
+      - name: Execute named controls and full historical W1 replay
+        run: python3 scripts/ci/run_work_time_contract_v1.py --output-dir "$RUNNER_TEMP/work-time-contract" --campaign --frozen-baseline-source "$RUNNER_TEMP/work-time-baseline"
       - name: Verify full tracked source after execution
         if: always()
         shell: bash

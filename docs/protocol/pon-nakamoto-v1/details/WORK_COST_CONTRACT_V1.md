@@ -127,3 +127,55 @@ keeps the all-algorithm lower bound, variable-work native relation, native time
 upgrade, joint CP/CQ/CG proof, same-iteration deployment, real Hepta product loop
 and production activation unqualified. A missing lifetime security bound stays
 `null`; the program cannot turn an unreviewed assertion into security bits.
+
+
+## Explicit historical replay from a changed integration
+
+The ordinary checker and the runner without additional flags still compare the
+current checkout to all 1,747 original files. A changed integration therefore
+retains its actual SOURCE_BYTES refusal. It must not refresh the old inventory
+or call that refusal a current-native pass.
+
+The optional runner argument --frozen-baseline-source selects a separate Git
+checkout as historical input. The
+[reference reader](../../../../formal/pon-nakamoto-v1/frozen_work_profile_replay_v1.py)
+requires that directory's actual Git top-level, fixed HEAD, tree and native
+subtree, then calls the unchanged original checker on all historical file
+bytes. It accepts no caller-supplied source digest. The reference must be outside
+the current research source tree, and neither tree may contain the other.
+Git replacement refs, grafts, mode changes, symlinks and changed bytes keep
+their original refusals. A caller may prepare a sparse checkout containing
+the complete original PIN_ROOTS; it is a reference input, never an import path.
+
+Current research code has a different identity. The explicit mode checks its
+complete raw tracked source before and after execution, retains its exact
+commit/tree, and separately pins every baseline module imported by the named
+suites plus the catalog's baseline configuration, header and scalar-oracle
+inputs. A changed current scalar oracle cannot borrow a valid historical
+directory's source check. New research modules remain bound to their current
+source; they are not retroactively inserted into the old baseline.
+
+The original 104 named controls, their assertions, the two catalog subprocesses
+and their 300-second limits are retained. Only the profile tests receive the
+explicitly verified reference as their source fixture; their ordinary direct
+execution still selects the current checkout. Thirteen additional named
+Git/filesystem controls check the reference boundary and current raw-source
+identity. Both rosters require actual started and successful names, with no
+skips, expected failures or zero-execution pass.
+
+For an existing independently prepared fixed-baseline checkout:
+
+    python3 scripts/ci/run_work_time_contract_v1.py \
+      --output-dir /absolute/new/replay-output \
+      --campaign \
+      --frozen-baseline-source /absolute/independent/b16bae-checkout
+
+This mode emits pon-work-time-frozen-replay-execution-v1. It retains the
+ordinary current-checkout comparison and any original refusal alongside the
+separate historical contract and current research source receipts.
+The current-native-cost qualification, native execution and production
+activation remain false. A successful replay means the selected current
+research code checked the fixed historical contract and its conditional finite
+experiments; it does not certify current native code, a cheapest legal algorithm,
+a classical/quantum lower bound, a new admission profile or joint consensus
+security. All qualification fields keep HOLD_NO_GO.
