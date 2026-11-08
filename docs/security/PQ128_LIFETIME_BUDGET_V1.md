@@ -4,8 +4,10 @@ Status: **research only; HOLD / NO-GO**. This contract is a budget-review aid,
 not a cryptographic proof, production activation, or an attestation that the
 chain has a failure probability of at most `2^-128`.
 
-The implementation baseline is PQ integration candidate
-[`12e510b211110d93d9ead07e02c07a1eecc28ae9`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/12e510b211110d93d9ead07e02c07a1eecc28ae9).
+The current reviewed implementation baseline is the composed candidate
+[`7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b).
+The original 15-path record at `12e510b211110d93d9ead07e02c07a1eecc28ae9`
+remains historical; the explicit rebind below does not transfer old test results.
 The [machine-readable register](../../config/pon/pq128-lifetime-budget-v1.json)
 and [budget checker](../../scripts/ci/pq_lifetime_budget.py) extend the existing
 [whole-chain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md). They do not
@@ -216,7 +218,7 @@ in both modes, and the actual lifetime failure bound remains null.
 
 ### Source-lock generation record
 
-The checked-in lock was generated from the 15 declared event paths at commit
+The initial lock was generated from the 15 declared event paths at commit
 `12e510b211110d93d9ead07e02c07a1eecc28ae9`. For every path, generation checked
 the exact `git ls-tree` entry was a regular blob with mode `100644` or `100755`,
 read `git show <revision>:<path>`, and compared those bytes with the current
@@ -227,6 +229,19 @@ This is evidence of how this review artifact was constructed, not a signature
 or a theorem about the complete program. A future source change requires a
 new reviewed mapping; CI must not silently regenerate the lock from whatever
 bytes it is checking.
+
+The [2026-11-08 composition](PQ_COMPOSITION_20261108.md) re-reviewed the changed
+source mapping and rebound it to `7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b`.
+The six changed predecessor paths remain present. Three actual content owners
+were added to the commitment event: `content_commitment.rs`, `content_v2.rs`
+and `content_v2/cached.rs`. All 18 declared paths were independently read from
+regular Git blobs at that revision and compared byte-for-byte with the working
+files. The current lock SHA-256 is
+`ea9562f51adc15081966a45f57ba1f9d5d0c3c9390881c57f66a2e72ec6697f4`.
+The eight unknown terms, four unknown query budgets, allocations and unmet
+assumptions are unchanged. The selected paths remain incomplete dependency
+coverage. P3's separately scoped SHA3 research does not become the active native
+PNW1 verifier or inherit this model's unproved reduction.
 
 With that commit available, reproduce the generation checks without rewriting
 the lock:
@@ -243,7 +258,7 @@ from pq_source_reader import read_regular
 root = Path.cwd()
 manifest = budget.strict_json(read_regular(root, budget.DEFAULT_MANIFEST, budget.MAX_BYTES))
 lock = budget.strict_json(read_regular(root, budget.DEFAULT_SOURCE_LOCK, budget.MAX_BYTES))
-revision = '12e510b211110d93d9ead07e02c07a1eecc28ae9'
+revision = '7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b'
 assert revision == lock['source_revision'] == manifest['experiment']['source_revision']
 paths = {path for event in manifest['events'] for path in event['source_paths']}
 assert paths == set(lock['files'])

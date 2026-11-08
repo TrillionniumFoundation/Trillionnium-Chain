@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the source baseline
-`88568e2511fcf166e6824947ac97b06b72104385`. The
+`7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -72,11 +72,19 @@ register. Those additional owners still require their own qualification work.
 
 For each required path, the initial SHA-256 was computed from
 `git show 88568e2511fcf166e6824947ac97b06b72104385:<path>` and compared with the
-working file before this register was created. The checker fixes both that
-revision label and the digest of the entire path/hash table:
+working file before this register was created. Its original reviewed table
+digest was `aa8d0fd93a6917b6a4685673c1a286575df026b3cc144750aaef4a95bf77e773`.
+
+The [composed candidate](PQ_COMPOSITION_20261108.md) changes six of those files:
+crypto exports, discovery transport, the executor, ingress, Node store and
+transaction wire. The seven route descriptions and all 44 required paths were
+retained after reviewing those changes. Every source digest was recomputed
+from `git show 7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b:<path>` after checking
+the regular-file mode and equality with the working bytes. The checker and its
+independent literal-revision test now fix that revision and this table digest:
 
 ```text
-aa8d0fd93a6917b6a4685673c1a286575df026b3cc144750aaef4a95bf77e773
+1b7311376795498390aff1eb4958f57355d9751cfefc64b071f36cd467580315
 ```
 
 The table digest is SHA-256 of UTF-8 JSON containing exactly

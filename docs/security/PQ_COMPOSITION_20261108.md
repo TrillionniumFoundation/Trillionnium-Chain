@@ -91,6 +91,16 @@ Git blobs, check those bytes against the worktree, retain all selected paths,
 anchors and false qualification flags, and record the old and new identities.
 It must not relabel an old passing run as execution of the new source.
 
+The reviewed source commit is `7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b`.
+The lifetime event map retains its original 15 paths and adds the three actual
+CCH1/TCM2 materialization owners. The effect register retains all 44 paths and
+seven effect scopes. Changed files were compared with their old pinned
+revisions; the new hashes were taken from regular Git blobs and checked against
+the working files. The 50 trace anchors retain both portions of the expanded
+common-opener span without raising the 8192-character or 16-anchor bounds.
+The global Rust source inventory and combined corpus are separate byte checks;
+none authenticates provenance, proves reachability or closes an authority path.
+
 The root/recovery module remains a policy model over supplied approval claims;
 it does not execute the proposed dual-family root signatures. TLS key agreement
 does not migrate every account, administrator, release or recovery authority.

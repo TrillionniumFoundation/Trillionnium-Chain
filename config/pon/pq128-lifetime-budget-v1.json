@@ -7,7 +7,7 @@
     "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
     "model": "quantum-adaptive-lifetime",
     "horizon": "UNSPECIFIED: no finite deployment lifetime or stopping rule is qualified; include prior preprocessing and surviving authority after retirement.",
-    "source_revision": "12e510b211110d93d9ead07e02c07a1eecc28ae9"
+    "source_revision": "7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b"
   },
   "assumptions": [
     {
@@ -161,7 +161,10 @@
       "source_paths": [
         "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
         "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/pq.rs"
+        "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+        "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached.rs"
       ],
       "allocation": {
         "numerator": "1",

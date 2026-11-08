@@ -1,0 +1,30 @@
+--- inherited-trace-anchor
++++ integrated-source-anchor
+@@ -167,7 +167,7 @@
+         state_backend: StateBackend,
+         selection: SelectedOpen,
+     ) -> Result<Self> {
+-        let (growth_observation_only, existing_owner_only) = match selection {
++        let (observation_only, existing_owner_only) = match selection {
+             SelectedOpen::InitializeOrRecover {
+                 growth_observation_only,
+             } => (growth_observation_only, false),
+@@ -190,10 +190,14 @@
+                 == (state_backend == StateBackend::PermanentAccountGrowthV2),
+             "GROWTH_PROFILE_BACKEND",
+         )?;
+-        if growth_observation_only {
+-            ensure(
+-                state_backend == StateBackend::PermanentAccountGrowthV2
+-                    && path.join("native.sqlite").is_file(),
++        if observation_only {
++            ensure(
++                matches!(
++                    state_backend,
++                    StateBackend::Legacy
++                        | StateBackend::AuthenticatedV1
++                        | StateBackend::PermanentAccountGrowthV2
++                ) && path.join("native.sqlite").is_file(),
+                 "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
+             )?;
+         }
