@@ -39,13 +39,15 @@ pub mod public_submit;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;
 pub mod release_owner;
+/// Opt-in bounded work-schedule checks; never selected by native admission.
+pub mod research_work_schedule;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
 pub use store::async_w1_generation_v2::{
-    NodeGenerationOwnerV2, OwnedFullGenerationV2, OwnedGenerationRuntimeV2,
+    NodeGenerationOwnerV2, NodeGenerationOwnerV3, OwnedFullGenerationV2, OwnedGenerationRuntimeV2,
     OwnedTerminalExecutionV3, OwnedTerminalGenerationRuntimeV3, OwnedVerifierRunV2,
-    TerminalReasonV3,
+    TerminalReasonV3, RECOVERY_PROFILE_V3,
 };
 pub use store::authenticated_migration::{
     verify_growth_rehearsal_v2, verify_growth_rehearsal_v2_with_snapshot_byte_limit,

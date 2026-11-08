@@ -1,4 +1,5 @@
 //! The real local CLI must observe an owner's state without opening a writer.
+#![cfg(target_os = "linux")]
 use serde_json::Value;
 use std::{
     collections::BTreeMap,
@@ -500,6 +501,73 @@ fn packet_status_cli_absence_is_local_only_and_does_not_execute() {
         ] {
             assert_eq!(observed[authority], false, "{authority}");
         }
+        assert_eq!(image(&store), before);
+    }
+}
+
+#[test]
+fn packet_status_budget_and_worker_options_refuse_before_touching_source() {
+    for backend in BACKENDS {
+        let temp = tempfile::tempdir().unwrap();
+        let store = temp.path().join("store");
+        let packet = golden();
+        let input = packet_file(temp.path(), &packet);
+        // Keep the actual owner alive. Budget/worker validation must precede
+        // even attempts to acquire its lock or inspect private stored state.
+        let owner = writer(&store, backend);
+        let before = image(&store);
+        for (flag, value, code) in [
+            (
+                "--observation-cpu-seconds",
+                "0",
+                "PACKET_OBSERVATION_BUDGET",
+            ),
+            (
+                "--observation-cpu-seconds",
+                "31",
+                "PACKET_OBSERVATION_BUDGET",
+            ),
+            (
+                "--observation-cpu-seconds",
+                "-1",
+                "PACKET_OBSERVATION_BUDGET",
+            ),
+            (
+                "--observation-wall-seconds",
+                "0",
+                "PACKET_OBSERVATION_BUDGET",
+            ),
+            (
+                "--observation-wall-seconds",
+                "121",
+                "PACKET_OBSERVATION_BUDGET",
+            ),
+            (
+                "--packet-observer-worker",
+                "invalid",
+                "PACKET_OBSERVATION_WORKER",
+            ),
+        ] {
+            rejected(
+                command(&store, &input, backend)
+                    .args([flag, value])
+                    .output()
+                    .unwrap(),
+                code,
+            );
+            assert_eq!(image(&store), before);
+        }
+        drop(owner);
+        let before = image(&store);
+        // These are local reader budgets. They must never cause a remote
+        // reconciliation call to take a different transport/authority path.
+        rejected(
+            command(&store, &input, backend)
+                .args(["--peer", "127.0.0.1:1", "--observation-cpu-seconds", "1"])
+                .output()
+                .unwrap(),
+            "PACKET_OBSERVATION_LOCAL_ONLY",
+        );
         assert_eq!(image(&store), before);
     }
 }

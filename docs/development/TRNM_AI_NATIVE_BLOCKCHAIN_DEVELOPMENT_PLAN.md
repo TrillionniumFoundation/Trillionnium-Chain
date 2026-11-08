@@ -1,3 +1,51 @@
+**M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
+The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
+adds a separate M12 witness binding, complete-journal checkpoints and transaction
+head fencing. New generation/settlement intents require an authenticated external
+CAS; uncertain replies keep the same operation and full unresolved reservation.
+Whole local rollback and an unwitnessed local successor refuse recovery. The
+original V2 research path and historical #782 Unknown operations remain outside
+this new profile's qualification. Native fixture evidence, independent current
+custody, provider query/idempotency, real power loss and original CPU/service
+budget acceptance are distinct requirements; no runtime activation is authorized.
+
+**Lifecycle legal-cost accounting and service separation, 2026-11-08 America/New_York — HOLD:**
+
+Continue the existing integration lineage from
+`8d5389748873dad6e296d17f2ff20483b5afa5bc`. The
+[finite lifecycle game](../../formal/pon-nakamoto-v1/LIFECYCLE_COST_GAME_V1.md)
+checks exact rational drift for every declared state/action, independently caps
+initial expected potential under the declared initial law, retains deferred nonce
+selectors, unused wins, cache state,
+failed/discarded attempts and already redeemed credit across restart/context
+aliases. Bellman truncation is not a certificate; independently replayed
+finite-policy, cycle and stationary-flow witnesses expose missing credit. An
+additional checked exponential envelope gives only a finite-model bounded-time
+tail, never a native-chain security probability or quantum cost theorem.
+
+The [Cell cost conformance audit](specs/pon/CELL_LOTTERY_COST_AUDIT_V1.md) runs the
+unchanged complete V2 relation at two fixed nonces. It distinguishes equal
+complete useful outputs from fresh nonce-dependent transcripts, original
+canonical/context refusals and the still-open six all-algorithm cost obligations.
+The [service settlement adapter](specs/pon/SERVICE_WORK_SETTLEMENT_V1.md) reuses
+the original five-lane budget planner: a fully replayed evaluation service can
+earn its agreed base fee when the correct decision is NoUpdate; measured
+improvement requires its separate frozen comparisons and retention condition.
+Unknown retains reservations, failures do not become NoUpdate, and all adapter
+outcomes have zero additional consensus credit. This is conditional process-local
+accounting, not native escrow, independent customers or external payment.
+
+Run the [combined reproduction](../../formal/pon-nakamoto-v1/experiments/lifecycle_cost_game_v1.py)
+against one clean committed source and retain its original whole-tree source
+checks. New test commands join the existing mandatory protocol-contract lane
+and its refusal controls; no old test or qualification requirement is removed.
+Repair the inherited embedded source-inventory omission of the already tracked
+`history_stage_diagnostic.rs`; the original inventory checker is unchanged.
+Actual classical/quantum resource reduction, durable native owner integration,
+real Hepta numerical/quality/retention/adoption evidence and long-run useful-task
+supply remain open. `work_profile_qualified`, public reward and production
+activation remain false.
+
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
 > Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.
@@ -63,6 +111,69 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 [applicability](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
 
 ## 0. One authority and explicit retirement
+
+**Final integration repair boundaries, 2026-11-08 UTC:**
+The F4 scoped run at e9b7a60b9519e39b792199dc8756fb9d1245bab8 executed all
+431 named controls and retained four errors: three exact CI-step wiring errors
+and one repository JSON error. Its source-before/after bytes remained identical.
+The final repair makes the CI contract require both the historical 23 and current
+10 controls, matches the exact current rustdoc line 359, and stores the single
+original empty failed-command stdout through a closed raw-byte path mapping.
+The 517 original identities and original export-manifest bytes are unchanged.
+
+The original source-inventory generator adds exactly the new current QROM
+observation configuration, increasing its path roster from 1484 to 1485. This
+changes the generated example/test Rust inventory; the native algorithm and
+main-entry source files remain unchanged. Formal source and dependency lockfiles
+also remain unchanged. The current composition pin is refreshed, while every
+historical work-cost pin and its current-source refusal remain intact.
+Later scoped validation and strict compilation identify their exact committed
+source. No result is transferred to a new binary by source comparison alone.
+
+Original hosted business failures remain open. The ML-DSA workflow's original
+API rejection tests succeeded on all four lanes, but its old readback line
+prevented independent-C execution; the offline repair does not claim that
+unexecuted stage. CodeQL exported no API analyses or checks in 39 polls and
+correctly retained its original deadline refusal. Its explicit local-SARIF lane
+has a different branch/upload scope; empty results, trigger policy, permissions
+and the original wait limit are not weakened. The overall disposition remains
+HOLD / NO-GO.
+
+**Six-capability final evidence composition, 2026-11-08 UTC:**
+The [completed observations](../../evidence/chain-six-full-20261108/OBSERVED_RESULTS.md)
+retain the exact F3 native source, every original campaign failure, separate fresh
+supplements and the actual hosted business counterexamples. Twelve hashed archives
+preserve original output, source guards, resource controls and reconciliation
+receipts. Delivery adds the explicit current-stage version-3 candidate reader while
+retaining its historical version-2 API, an additive current-source QROM observer,
+six required corpus paths and the exact six-name amortized output reader. At the F4 observation,
+native, formal and fuzz subtrees are F3-identical; source equality does
+not transfer a test result or grant quantum, timing or production qualification.
+
+The original native evidence includes 496 Cell controls, both retained complete
+STARKs through actual native verification/admission/cold recovery, the 178 Python
+and 79 Rust MMCS controls, and the original settlement/checkpoint/release/MVCC
+suites. This campaign generated no new STARK. The original root and consensus
+wrapper failures remain, with separately bound successful fixed-roster and
+historical-blob supplements under the original limits. Both original QROM guards
+still refuse their historical scope; all full-security bounds remain null/false.
+
+The [new native adoption](../../evidence/hepta-real-native-adoption-20261108/README.md)
+completes an actual candidate training-to-next-task research loop in 51.138 seconds,
+alongside the 44.440-second NoUpdate regression. The four exposed questions improve
+only from 1/4 to 2/4, all candidate answers are no, and its next answer is wrong.
+General useful learning and original ParameterV3/Product OPE remain unqualified.
+Actual Cell loading remains a separate, fixed-source, single-operator experiment.
+
+Hosted native business targets remain failed: three original repetitions each
+report 0/3 confirmations in baseline and both pressure modes, and the fresh-service
+work-security target remains unmet. The pre-existing Host checkpoint/activation
+path is attributed with original measurements, without caching checks, reducing
+frequency or extending deadlines. Credit passed; the pinned ARM setup failure
+passed one explicit same-source infrastructure recheck. Independent operators,
+public discovery, long custody, equal-resource gain, complete external payment,
+irreversible-effect reconciliation and whole-lifecycle PQ security remain open.
+The broader disposition remains HOLD / NO-GO.
 
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
@@ -350,6 +461,90 @@ hardness qualification. Existing service, History, recovery and PQ gates remain
 independent and their failed evidence remains retained.
 The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
 contains the complete local replay, counterexample/repair and source-pinned gates.
+
+**Actual new-candidate native adoption and retained-parent regression, 2026-11-08 UTC:**
+The [explicit research adoption evidence](../../evidence/hepta-real-native-adoption-20261108/README.md)
+records two fresh operations on exact Hepta `edf03ecb8a814a0f5e86b1d6a752aeac80b1a978`:
+NoUpdate passes in 44.440 seconds and positive new-candidate adoption in 51.138
+seconds, both under the original 60-second watchdog and zero retries. Each freezes
+its own profile, native coordinator and real budget before ten-step training.
+The new `ResearchExternalTrainedArtifactV1` test-only concrete owner checks actual
+complete training/evaluation/material bytes and its durable anchored proposal;
+the original updated selection, CURRENT, cutover, ACK and cold owner recovery then
+use that same new candidate. Two real material faults refuse without advancing
+the native owners. The unchanged Chain reader consumes original 0/5/6 and 0/6/7
+checkpoints, preserving all authority flags false. The finite adopted comparison
+is only 1/4 to 2/4: the candidate answers all four exposed questions `no`, and its
+next task is incorrect. General learning benefit, original Parameter V3/Product
+OPE admission, independent custody, production FinalUse, payment and activation
+remain unqualified. All earlier failures and the v8 NoUpdate namespace remain.
+
+**Actual native NoUpdate iteration and recovery, 2026-11-08 UTC:**
+The [same-iteration native model evidence](../../evidence/hepta-real-native-learning-20261108/README.md)
+now records original Hepta source `27849cbdcfc0d4afc69764d6c1742af22c41c293`
+passing its actual model test in 44.615 seconds under the unchanged 60-second
+watchdog and zero retries. The new operation freezes its profile and coordinator
+before its own ten-step training, evaluates the exact candidate, correctly retains
+the parent after a 3/4 to 1/4 regression, executes a new next task through the
+original generation actor, ACKs it and completes the original NextUse checkpoint.
+Original Fleet retirement/restart, generation-owner and learning-owner recovery
+then pass; the actual worker PID changes while its live persisted forward counter
+stays at one on replay. Native daemon OS restart remains false. The unchanged
+Chain reader joins original checkpoint 0/5/6 and the exact ACKed readback. All five
+earlier failures and their preparation/publication/nonce boundaries remain.
+These 517 original records qualify the research NoUpdate execution branch only:
+new-candidate adoption, original Parameter/OPE qualification, independent custody,
+production FinalUse, payment and activation remain unqualified.
+
+**Actual model execution, NoUpdate and Cell payload loading, 2026-11-08 UTC:**
+The [original SmolLM execution evidence](../../evidence/smollm-same-iteration-20261108/README.md)
+retains two actual ten-step generations and a separate fresh ten-step controlled
+NoUpdate replay, all on the same pinned trainer/worker material closure. The
+candidate regresses from three to one correct answer on four public frozen rows.
+The replay freezes its strict decision rule before its own training, retains the
+complete parent, executes a new parent next task and recovers the exact response
+in another worker process. Prior tasks/outcomes were exposed; no prospective,
+independent or efficacy claim follows. Fixed #807 native Cell code transfers
+the exact adapter and two companion files (1,011,315 bytes, 17 chunks, zero cache
+hits), and the actual worker loads from the receiver directory. Same-device
+loopback is not independent operation, public discovery or long-term custody.
+The 233 preserved original files replay under a separate bounded evidence check.
+Native learning-owner completion, real settlement, production FinalUse and
+activation remain distinct obligations; these records grant none of them.
+
+**Original completed learning receipts and acknowledged use, 2026-11-08 UTC:**
+Continue the exact #809 Selection reader with the
+[completed-checkpoint join](specs/pon/CELL_LEARNING_COMPLETION_JOIN_V1.md).
+The original Hepta actor now exports the actual final `NextUse` checkpoint after
+retained-parent or adopted-candidate use and after native cold recovery. The
+Chain reader requires one exact appended receipt, byte-identical prior receipt
+objects, the original owner/iteration, and the actual acknowledged actor use.
+Changing and rehashing a checkpoint cannot substitute another observed task,
+publication, cutover or checkpoint. ACK, model STOP and training completion
+remain independent facts. Hepta source `34eacaec1c94032f4980807e4a6f7c3516a7dafc`
+passed its five selected native controls; Chain retains their original bytes and
+thirteen continuation controls. The outer collector's incorrect JUnit path is
+preserved as a failure and reconciled with the original report, not overwritten.
+These actor fixtures do not execute a neural model and do not authenticate
+training/evaluation owners or grant current permission, payment or FinalUse.
+The complete real-model owner cycle remains **HOLD_NO_GO**.
+[Exact-source evidence](../../evidence/cell-learning-completion-20261108/README.md).
+
+
+**Original frozen learning iteration to native use, 2026-11-08 America/New_York:**
+Continue #787 with the [bounded checkpoint/readback join](specs/pon/CELL_LEARNING_ITERATION_JOIN_V2.md).
+Hepta #5357 adds a mandatory owner-frozen evaluation-profile commitment before
+training and refuses lineage/evaluation drift or profile substitution during
+recovery. Its explicit HEPLCP02 format does not reinterpret historical HEPLCP01.
+The Chain reader replays exact native checkpoint bytes and joins the complete
+original request, owners, budgets, learning receipts and Selection cut to the
+existing native next-use readback. Preserve evaluated and proposal-rejected
+NoUpdate, original complete parent retention and current owner authority.
+Hash consistency cannot authenticate pre-dispatch custody, learning signatures,
+independent control, actual model execution or settlement. The original funded
+Task/M12/work/confirmation/loader adapters remain responsible for their real
+effects; this read-only join does not replace them or create FinalUse. Keep the
+complete-cycle gate at **HOLD_NO_GO** pending same-source original evidence.
 
 
 **Cell original native use readbacks, 2026-11-08:** Preserve the original
@@ -10106,3 +10301,308 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+
+### 2026-11-08 native money observation epoch continuation
+
+Six new original Node regressions reproduce late foreign WAL commits escaping legacy/authenticated funding and payment observations. Each commits through a separate SQLite connection at the real snapshot rollback boundary after an accepted signed native payment; no production test hook or replacement verifier is introduced. The tests retain both generation replacement and stored-parameter replacement, verify read-only behavior, and require a fresh read to preserve the original payment identity after deliberate fixture repair.
+
+The candidate samples the live owner/context, active head/generation and SQLite data version before the snapshot, binds the active snapshot to that epoch, and rechecks after rollback before returning either current or retained-anchor payment facts. A changed observation returns an owner error; it does not infer unpaid status, authorize retry, release resources, rewind local history or create another payment. Growth retains its original owner guard and receives the same final epoch check. No signed domain, wire or stored schema changes.
+
+The source-only repair does not establish a real provider payment, irreversibility of an external effect, independent witness custody, original business-budget qualification or whole-chain security. Exact committed-source tests and the original failures are retained separately.
+
+
+### 2026-11-08 cold packet readback and cumulative CPU component continuation
+
+The [native packet observation contract](specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md)
+now keeps local `packet-status` on a locked, source-preserving private copy for
+both legacy-v2 and authenticated-v1. It refuses unfinished recovery and uses
+the original typed completed-journal/candidate checks without calling
+`Node::recover`. Exact accepted-task fields and absence/authority boundaries
+remain. The ordinary writer retains its established recovery behavior.
+
+A Linux CLI supervisor adds an absolute process CPU ceiling before stored
+input or model loading. All native threads share that ceiling, including
+non-cooperative validation. The parent separately bounds wall time and output,
+reaps its worker and removes its private snapshot tree. The original shared
+mutation CPU domain already reserves original credit and charges actual owner
+and scoped-worker CPU on refusal. A new continuously changing canonical bad-C
+regression exercises that full path until credit cannot fund another replay;
+no cache hit, failed-request refund or fresh domain is substituted.
+
+The [component evidence](../../evidence/pon-cpu-observer-budget-20261108/README.md)
+retains the optimized-test compiler SIGKILL and initially incomplete toolchain
+loader environment alongside the corrected component runs. Low-memory test
+compilation is an explicit opt-level-zero override for the Node test package;
+existing debug/overflow checks and the optimized W1 crypto primitive remain.
+These runs do not replace original pressure or performance qualification.
+
+Per-invocation CPU caps do not establish cross-process, cross-restart global
+and owner observer credit. Direct library/Growth/public-read consumers keep
+their own contracts; their complete aggregate observer budget remains open.
+No external effect reconciliation, independent rollback anchor, full loaded
+identity closure, control-domain independence or release acceptance follows
+from this local component. All original HOLD / NO-GO decisions remain.
+
+
+### P3 follow-up: actual pruned-MMCS two-opening collision reduction
+
+The [bounded structural argument](../../formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/BINDING_REDUCTION.md)
+extends the tagged SHA3-512 candidate to the actual locked P3 0.8.0 binary,
+cap-zero pruned verifier with pinned ordered power-of-two matrix heights,
+widths and statement context. It covers shorter-row injections, unequal and
+duplicate query lists, arbitrary full sibling digests and extension-field
+basis flattening. Two accepted outputs that disagree at a shared matrix-row
+coordinate yield a collision in the complete framed hash. With query counts
+q0/q1, tallest height 2^h and k distinct matrix heights, the postprocessor
+uses at most (q0+q1)(h+2k-1)+2 additional whole-hash calls including the witness
+recheck. It also postprocesses quantum-produced classical outputs in the same
+oracle/advice experiment; this is not quantum commitment or PCS extraction.
+
+The additive native executable uses the unchanged R1 role APIs and real P3
+pruned, restoration, single-path and ExtensionMmcs interfaces. Its real-hash
+controls and deliberately colliding test-oracle controls are separately
+identified. Forced test-oracle collisions are not SHA3 collisions or W1
+forgeries. The focused runner executes this harness and checks original
+profile bytes and locked dependency archives/source identities before and
+after testing. It preserves all earlier W1 campaign evidence and does not
+activate a consensus profile.
+
+Concrete primitive security, Merkle knowledge extraction, full PCS/Fiat–Shamir
+composition, recursive verification and lifetime qualification remain open.
+All concrete security-bit fields remain null; the decision stays HOLD_NO_GO.
+
+### 2026-11-08 four-metric throughput continuation
+
+The [four-metric readers and reproduction contract](../../formal/throughput-v1/README.md)
+now keep independent transaction confirmation, complete Cell distribution,
+physical model loading, and model computation/adoption separate. Exact
+transaction identities, the installed depth-and-work rule, strict original
+deadline, duplicate/reorg retention and one common canonical cut precede any
+aggregate observation. Conflicting forks and contradictory zero/native-positive
+reports produce unknown counts. Growth readback is not a native confirmation
+return. The original Host confirmation reader remains the separate owner.
+
+The SmolLM research runner now retains original command and partial-output
+receipts for timeout/failure without changing its timeout. The historical
+projection checks complete release membership, one-to-one materialization,
+provider/cache bindings, controlled refusal, the 32+32 forward denominator,
+training-stage coverage and NoUpdate. Action-scoring forwards are not generated
+tokens; CPU model-load substages are not complete cold or GPU loading. The
+original failed cold-transfer cohort remains distinct.
+
+The [dated evidence](../../evidence/pon-throughput-20261108/README.md) preserves
+the eight-run proof corpus and recomputes the tagged verifier's 2.36 CPU-second
+pooled median. Its eight-thread wall-time result does not qualify the original
+one-CPU-second nominal service envelope. Historical scheduled-SHA and tagged
+improvements are not multiplied. A new four-arm, source/profile-separated,
+same-resource combination experiment is still required.
+
+A new release-built same-host development run retained four starts and nine
+processes, one transaction/block, exact duplicate, late-product rejection and
+terminal cancellation. It ended at depth zero after about 0.2067 seconds and
+therefore did not complete the original four-second observation window.
+All 2,365 non-evidence source files matched exact source `812589d9bb189b6abbf33b916a424121199dee75`
+before/after; historical-evidence sparse omissions keep whole-tree qualification
+false. Current cloud/desktop prerequisite observations both lack the required
+root-owned original Host slice. Original pressure is NOT_RUN, with admission
+and cryptographic-refusal counts unknown.
+
+Dedicated exact-head CI retains the original raw-source, corpus, inventory,
+resource and repository guards. Reader/test success is not public TPS, a risk
+bound, independent custody, complete History/capacity/churn, physical loading,
+actual adoption, cryptographic closure or production activation. These gates
+remain HOLD until the corresponding original owners and complete campaigns
+supply source-bound evidence.
+
+### 2026-11-08 frozen work, time and cost-contract continuation
+
+Continue the joint DAA lineage at exact source
+`b16bae2824e6c8236ef2011fc93a74df3ac7f039`. Freeze all 1,747 native/formal source
+and complete configuration entries, the canonical W1 relation, legal attacker
+freedoms and lifecycle accounting. Add a temporal reference namespace with
+branch-derived integer ASERT anchors, explicitly scheduled nondecreasing
+timestamps, cache rejection and cold replay bound to an external snapshot
+identity. Restoring the reference graph does not activate a native branch.
+
+Execute a fixed 24-cohort optimization catalog across PNH1/PGH2 header shapes,
+dense/low-rank/zero materials and eager/prepared/rank-aware producers. Retain
+all 96 complete attempts and 24 actual first-tile cancellations. Check the
+original target separately from diagnostic full replay of misses. Every legal
+observed implementation gives an upper bound on minimum cost, never an
+all-algorithm lower bound.
+
+Use exact rational interval and joint-batch constraints for public-credit
+feasibility under one fixed success target, deadline and round horizon. Missing
+real classical/quantum bounds remain HOLD. Keep CP/CQ/CG, complete lifetime
+reductions, same-source native/WAN/payment and the same real Hepta iteration
+as unclosed gates. Distinct branch results cannot be joined by adding passes.
+
+The [seven-package integration record](../protocol/pon-nakamoto-v1/details/WORK_TIME_COST_INTEGRATION_20261108.md)
+contains this increment's acceptance detail, within this sole plan. The
+dedicated hosted workflow retains head/prospective-merge source checks,
+frozen named controls, full W1 campaign and failed/partial observations. Local
+sparse historical evidence remains explicit. Native activation and production
+qualification are not granted by these components.
+
+### 2026-11-08 seven-layer source, effect and recovery-policy composition
+
+Continue [PR #790](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/790)
+at `88568e2511fcf166e6824947ac97b06b72104385` with the
+[seven-layer review](../security/PQ_SEVEN_LAYER_REVIEW_20261108.md).
+The retained remote observation keeps main at
+`dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`; the independent #796 candidate is
+not merged into this work. Preserve #796's original 31/32 command outcome and
+its Node release-owner result of 38 passed, 2 failed, and 1 ignored at
+`ca3c4f88afc70399000b18fc7d68cfa62e57fb2f`. Other branch successes do not repair
+those failures or validate this composition.
+
+Bind the lifetime register's revision and 15 declared event paths to a reviewed
+regular-file SHA-256 lock generated from fixed Git blobs. Reject source changes,
+revision substitutions, omitted/extra paths, ambiguous JSON, and unavailable
+locks. The 58 lifetime and 49 claim-guard tests pass; arithmetic examples remain
+explicitly unbound, and source consistency never becomes authenticated
+provenance or a complete dependency closure.
+
+Add the bounded [root/recovery policy model](../security/PQ_ROOT_RECOVERY_POLICY_V1.md)
+and [authority/effect register](../security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md).
+Require both declared signature families across every modeled root path and
+successor policy, retain unknown custody/currentness/anchor/effect obligations,
+and never grant authority from supplied approval claims. Trace seven reviewed
+effect scopes, including the actual `pon_wire::Envelope` account path through
+executor debit/credit and Node persistence; do not substitute compatibility
+validation, discovery/cache writes, or read-only finality facts for that effect.
+
+This work changes no Rust authorization owner, native execution, signed wire,
+deployed root or production permission. Exact-source integration receipts remain
+separate from native and independent end-to-end qualification. All seven layers
+retain their open composition obligations; the complete actual lifetime bound
+stays null and whole-chain PQ/activation stay false.
+
+
+### 2026-11-08 complete Cell version, discovery, custody and task residency
+
+Continue the existing next-architecture candidate at
+`9f54b05c643185a5041fc1f78cef77e95877f52a` in an isolated stacked review branch.
+The six requested storage/distribution capabilities share one source tree;
+separate CPQ1 and Hepta readback candidates are not treated as merged or accepted.
+
+The [complete-version contract](specs/pon/CELL_COMPLETE_VERSION_V1.md) adds TCV1
+and CPV3: one canonical commitment and publisher signature bind the entire model
+root, dependency graph, environment closure and exact full manifest/chunk set.
+Actual cache readback includes every model and environment payload under one
+aggregate budget and original deadline. Same release members with a different
+dependency graph cannot reuse the signature. This is declared-byte completeness;
+unlisted dependencies and actual loader/device compatibility remain owner gates.
+
+The [discovery refinement](specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md) moves
+source-fair scheduling before permanent identity-quota admission. Two early
+sources returning eight valid records each can no longer exclude a later source
+merely by batch order. Signature/history checking retains receipt time while
+current admission retains the original TTL and deadline, including same-sequence
+conflicts that expire while later replies arrive. No high-water row, namespace,
+connection allowance, signature allowance or original timeout is reset.
+
+The [custody/continuation contract](specs/pon/CELL_CUSTODY_CONTINUATION_V1.md)
+reads real physical archives for an independently pinned complete replica roster.
+TCV1 coverage requires both model and environment at the same exact store/slot;
+complementary fragments or mismatched owners cannot be pooled into a complete
+version. All probes share a nonrefundable aggregate payload/probe budget. Renewal
+and repair plans retain the original terms and responsible owners. Contactability
+is not prepaid funding; sponsor disappearance requests a replacement without
+lowering replica requirements, extending an old lease or granting deletion.
+The complete-version continuation plan pairs model and environment actions at
+the same original store/slot, retaining both payers and both sets of original
+terms. Model health cannot hide environment repair or sponsor loss. A missing
+component observation or an expired observation deadline cannot produce a
+healthy complete-version plan. Unique version payload size remains distinct
+from component probe reservations.
+
+Residency checks incremental RAM/reference demand after complete metadata but
+before payload download inside the original network session. A task-local
+borrowed working set admits only a complete canonical resident set and has no
+remote or disk fallback during hot reads. Current loader pins, original deadline
+and latched cancellation are rechecked without conferring execution authority.
+
+| Capability | Candidate control added | Remaining acceptance evidence |
+| --- | --- | --- |
+| Complete version | TCV1/CPV3, exact dependencies and environment, complete byte readback | Actual restricted-loader dependency inventory, device/ABI readback, separate CPQ1 qualification |
+| Discovery | Fair durable admission, expiry/conflict preservation, original aggregate budgets | Authenticated bootstrap response/query binding, genuinely independent operators and WAN/Sybil scope |
+| Custody | Exact per-store whole-version intersection and physical archive readback | Independently administered custody/failure domains and elapsed-time recovery campaigns |
+| Renewal/repair economy | Original terms, payer/responsible-owner work items, no invented funding or refund | Real prepaid successor funding, repair effects, sponsor replacement and economic sustainability |
+| Loading/cache | Pre-download memory rejection and bounded complete task RAM set | Measured NVMe/device transfer and ordinary expert/VRAM path |
+| Current use | Fresh supplied-owner view checks; no cache-to-execution grant | Actual Hepta CURRENT/resource/FinalUse guard and ordinary next-task execution |
+
+All six end-to-end capability qualifications remain **HOLD_NO_GO** pending their
+explicit external/owner evidence. Published plaintext cannot be made secret or
+forgotten by revocation. Preserve the actual failed pre-fix discovery controls,
+intermediate build failures and source-specific final validation separately.
+
+The [source-bound implementation and observation record](../../evidence/cell-six-capabilities-20261108/README.md)
+retains both complete campaigns. Initial source `a7e3ebd7883d6b865c997e8c1cbce7576caa6f4b`
+passed 457 native tests and 11 compile-fail doctests; reviewed source
+`bbe7f6fbed13450922a9bac49c0c5cfafcf3cf1e` passed 462 native tests and 11
+compile-fail doctests. All 51 newly added native tests ran successfully on the
+reviewed source. Each source passed its own 17-command gate, including strict
+whole-workspace all-target/all-feature Clippy, locked dependency graphs,
+negative source/CI-contract controls and repository links. These are default
+feature component runtime tests on shared Linux x86_64, not all-feature runtime,
+independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
+not change those source identities or close the six operational qualifications.
+
+
+### 2026-11-08 classical and quantum credit feasibility
+
+Continue the existing work-scale and stateful-tail research with the
+[public-credit envelope contract](../../formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md)
+and [project applicability review](../protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md).
+A bounded exact-rational solver either supplies common positive credits for
+all declared cost intervals or a separately verified constraint cycle with
+product below one. The paired search-cost component checks actual normalized
+success mass and separates repeated attempts, shared preparation, failed
+restarts and success-only proofs. Exact mathematical feasibility does not
+authenticate the intervals as all-algorithm lower bounds.
+
+Register both suites in repository-truth and the CI omission/duplication/
+relocation contract. Retain named execution, source hashes, independent credit
+witness verification, normalized-cost report readback and head/prospective-merge checks in the
+[evidence packet](../../evidence/pon-credit-envelope-20261108/README.md).
+All W1 minimum-cost, adaptive portfolio, complete initial-state, mixed-mining
+CP/CG/CQ, original Host/WAN and production gates retain their existing HOLD.
+No native consensus parameter or activation is changed.
+
+## Fixed-probability cost contract and bounded branch schedule, 2026-11-08
+
+Continue the existing MU1 and joint-consensus research on one explicitly joined
+source. The [executable cost-contract continuation](../protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md)
+binds MU1's frozen target/context and keeps actual classical/quantum lower
+envelopes unknown. Exact common-credit feasibility returns a schedule or a
+verifiable contradictory cycle. Additive lifecycle-potential synthesis returns
+a checked finite Bellman certificate or Farkas witness, preserving initial
+potential and a non-refillable eta account; no finite action menu certifies all
+legal W1 algorithms. The bounded Rust C0/C1 component replays original PNH1/PGH2
+work with branch-derived anchors and separates historical work from wall-clock
+eligibility. Existing admission, stored profile and work scoring are unchanged.
+Original native/History/PQ failures remain open. Required next gates are the
+actual joint cost lower envelope, complete legal-strategy/initial-state
+simulation, resource/tail/network composition, explicit new native admission
+and recovery namespaces, and real Cell quality/owner use. A successful source
+contract check or synthetic certificate leaves production HOLD_NO_GO.
+
+The complete scalar MU1 reuse probe additionally retains a winning outer-ticket hybrid and rejects its stale unit transcript without new credit; legal prepared-matrix reuse remains allowed and unqualified as a minimum cost. The embedded distributed source inventory includes both new native research files and the existing upstream history diagnostic.
+
+### 2026-11-08 — Six-capability composed continuation (d9fb)
+
+The six capability continuations and exact original PR heads #801–#811 are integrated on the #812 base. The [composition index](../../evidence/chain-six-full-20261108/README.md) records source ancestry, explicit continuation cherry-picks, current scope and the exact-source execution entry point.
+
+New changes bind money observations across transaction exit, complete Growth confirmation routing, retain durable proof-verification starts, export original learning completion checkpoints, preserve complete Cell/research controls and review the PQ lifetime/effect path mappings. CI commands retain strict independent literals and original refusal diagnostics. Source/lock refusals and integration failures remain separate observations.
+
+Final composition campaigns must identify their own frozen source and actual outcomes. Prior branch passes do not qualify this composition. General work cost, joint time/difficulty security, independent operators, complete irreversible external-effect reconciliation, equal-resource proof gain and whole-chain quantum/lifetime composition remain HOLD / NO-GO. Genuine model-process and actual-device observations retain their own exact sources and scope. No production activation is authorized by a source or finite-fixture PASS.
+
+### 2026-11-08 — Explicit current-roster replay after incomplete F2 campaign
+
+The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains preserved. Its historical 49-test runner refused a real 55-control passing claim-test log; storage exhaustion then left zero-byte summary files and no confirmed successful supervisor terminal receipt. The campaign is INCOMPLETE, not PASS. A subsequent complete raw-source comparison matched the F2 before snapshot and establishes only unchanged source bytes.
+
+The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
+
+The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.

@@ -330,6 +330,7 @@ impl Node {
         retained_anchor: Option<NativeBudgetAnchorV1>,
     ) -> Result<NativePaymentObservationV1> {
         ensure(query.maximum_gross_units > 0, "NATIVE_PAYMENT_LIMIT")?;
+        let epoch = self.native_money_observation_epoch()?;
         self.namespace()?;
         let read = self.db.unchecked_transaction()?;
         self.storage_context()?;
@@ -357,6 +358,10 @@ impl Node {
                 generation,
             }
         };
+        ensure(
+            (active_anchor.block, active_anchor.generation) == (epoch.0, epoch.1),
+            "NATIVE_MONEY_OBSERVATION_EPOCH_CHANGED",
+        )?;
         let anchor = retained_anchor.unwrap_or(active_anchor);
         self.validate_native_active_anchor_v1(&anchor)?;
         let mut cursor = anchor.block;
@@ -476,6 +481,7 @@ impl Node {
             // Payment facts cannot renew an invalidated native owner epoch.
             self.growth_payment_epoch()?;
         }
+        self.check_native_money_observation_epoch(epoch)?;
         result.ok_or_else(|| {
             if cursor != self.settings.genesis() && examined == MAX_ANCESTORS {
                 "NATIVE_PAYMENT_SCAN_LIMIT".into()

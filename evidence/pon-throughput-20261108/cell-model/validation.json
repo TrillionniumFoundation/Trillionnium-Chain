@@ -1,0 +1,78 @@
+{
+  "all_commands_succeeded": true,
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_smollm_command_receipts.py",
+        "-v"
+      ],
+      "elapsed_ns": 458589814,
+      "name": "command-receipt-tests",
+      "returncode": 0,
+      "stderr": "command-receipt-tests.stderr.txt",
+      "stderr_sha256": "883ca13e5bda5593c440ae1688becc97ecf57943c79a92d36db01f4d906f94b3",
+      "stdout": "command-receipt-tests.stdout.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "formal/throughput-v1/test_cell_model_metrics.py",
+        "-v"
+      ],
+      "elapsed_ns": 167857497,
+      "name": "cell-model-tests",
+      "returncode": 0,
+      "stderr": "cell-model-tests.stderr.txt",
+      "stderr_sha256": "e1252c703fcac1892d1a4a6217c5aa91c5053520791646ad7f78aef695ae51fa",
+      "stdout": "cell-model-tests.stdout.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "formal/throughput-v1/cell_model_metrics.py",
+        "--manifest",
+        "evidence/pon-throughput-20261108/cell-model/input-manifest.json",
+        "--manifest-sha256",
+        "9e3c64afcd03bb17ac8746d1146a98c78d214000ccaf71ed2aed0ea96a6a3d25"
+      ],
+      "elapsed_ns": 52090769,
+      "name": "projection",
+      "returncode": 0,
+      "stderr": "projection.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "projection.json",
+      "stdout_sha256": "48dc8c4387b77113c9b875f18acc44734c31942d5a8227b6fa4b1e57cb1d9599"
+    }
+  ],
+  "earlier_reader_development_observation": {
+    "corrected_by": "preserving empty argv values while retaining all source/output identity checks",
+    "original_raw_log_file_retained": false,
+    "outcome": "COMMAND_ARGV refusal",
+    "reason": "initial parser disallowed the original valid empty --peers value in cache-only materialization"
+  },
+  "fresh_WAN_runs": 0,
+  "native_Cell_runs": 0,
+  "native_model_runs": 0,
+  "production_activation": false,
+  "same_tested_sources": true,
+  "schema": "trnm-cell-model-reader-validation-v1",
+  "scope": "current-Python-reader-and-command-lifecycle-controls; historical-native-record-reprojection-only",
+  "source_after": {
+    "formal/throughput-v1/cell_model_metrics.py": "a10a40523783b0985f863e7d9f4814fd49217db9237bf7e9f1776b682115902f",
+    "formal/throughput-v1/test_cell_model_metrics.py": "0559fc3c45d8c9add71721247b5fba65c1e3fefa7fd58087d459f9964530ccee",
+    "scripts/ci/test_smollm_command_receipts.py": "79c0fcc8619f21e7d8795dae4ed7276fd19372eab533093e8c30a92fbddd7fc2",
+    "scripts/run_smollm_cell_replica_research.py": "67a2312f785727cbabe3b6d4414d9c9e3c2040541a4b61f5903ed3bcbfca8851"
+  },
+  "source_before": {
+    "formal/throughput-v1/cell_model_metrics.py": "a10a40523783b0985f863e7d9f4814fd49217db9237bf7e9f1776b682115902f",
+    "formal/throughput-v1/test_cell_model_metrics.py": "0559fc3c45d8c9add71721247b5fba65c1e3fefa7fd58087d459f9964530ccee",
+    "scripts/ci/test_smollm_command_receipts.py": "79c0fcc8619f21e7d8795dae4ed7276fd19372eab533093e8c30a92fbddd7fc2",
+    "scripts/run_smollm_cell_replica_research.py": "67a2312f785727cbabe3b6d4414d9c9e3c2040541a4b61f5903ed3bcbfca8851"
+  }
+}

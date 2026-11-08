@@ -1,0 +1,8 @@
+{
+  "derivation_only": true,
+  "exit_code": 1,
+  "fresh_native_executions_in_this_reader": 0,
+  "original_preregistration_sha256": "57c785320e087b796202de0f6e5ac96459ae44181bf478f75be85849b819140f",
+  "reader_sha256": "555e35ac10518da406ceaf45794bce533ff732899af2d25f72bd37f426d5caba",
+  "report_sha256": "b8dde48c31fe25973f7b0cef47aad0a3fc39abcfd6ee96da73b42883c4c5430d"
+}

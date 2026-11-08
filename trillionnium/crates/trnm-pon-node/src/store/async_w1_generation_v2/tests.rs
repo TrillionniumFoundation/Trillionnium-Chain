@@ -562,4 +562,5 @@ fn real_owner_signed_wrong_subject_or_sender_never_creates_settlement_intent() {
 }
 
 mod heavy;
+mod recovery_v3;
 mod terminal;

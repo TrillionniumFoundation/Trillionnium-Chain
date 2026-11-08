@@ -1,0 +1,14 @@
+test_anchor_branch_median_and_profile_are_recomputed (__main__.BranchScheduleCounterexamples.test_anchor_branch_median_and_profile_are_recomputed) ... ok
+test_challenge_and_scope_claims_are_not_evidence (__main__.BranchScheduleCounterexamples.test_challenge_and_scope_claims_are_not_evidence) ... ok
+test_checked_work_rejects_overflow_and_boolean_values (__main__.BranchScheduleCounterexamples.test_checked_work_rejects_overflow_and_boolean_values) ... ok
+test_complete_proofs_preserve_explicit_scope (__main__.BranchScheduleCounterexamples.test_complete_proofs_preserve_explicit_scope) ... ok
+test_external_digest_directory_and_file_bounds_fail_closed (__main__.BranchScheduleCounterexamples.test_external_digest_directory_and_file_bounds_fail_closed) ... ok
+test_schema_inventory_and_order_are_fixed (__main__.BranchScheduleCounterexamples.test_schema_inventory_and_order_are_fixed) ... ok
+test_ticket_valid_false_product_reaches_and_fails_complete_w1_replay (__main__.BranchScheduleCounterexamples.test_ticket_valid_false_product_reaches_and_fails_complete_w1_replay) ... ok
+test_time_refusal_cannot_be_relabelled_or_awarded_credit (__main__.BranchScheduleCounterexamples.test_time_refusal_cannot_be_relabelled_or_awarded_credit) ... ok
+test_wrong_actual_target_fails_even_when_all_byte_observations_are_refreshed (__main__.BranchScheduleCounterexamples.test_wrong_actual_target_fails_even_when_all_byte_observations_are_refreshed) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 2.395s
+
+OK

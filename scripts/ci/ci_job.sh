@@ -4,10 +4,15 @@ export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
 case "${1:?required job}" in
   repository-truth)
     bash scripts/project-preflight.sh --audit
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
+    python3 scripts/ci/test_pq_authority_effect_register.py
+    python3 scripts/ci/pq_authority_effect_register.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
@@ -18,6 +23,12 @@ case "${1:?required job}" in
 
     # Conditional resource/event models retain unknown W1 hardware and protocol gates.
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v
+    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py
+    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check
     python3 formal/pon-nakamoto-v1/stateful_tail.py
     python3 formal/pon-nakamoto-v1/residual_grover.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
@@ -234,6 +245,9 @@ PY
     python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v
+    python3 formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
@@ -295,6 +309,9 @@ PY
       export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
       test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      export TRNM_WORK_SCHEDULE_RESEARCH_DIR="$trnm_model_receipt_root/branch-work-schedule"
+      test ! -e "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
+      test ! -L "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
@@ -302,6 +319,13 @@ PY
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
       python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
       unset TRNM_DAA_EVIDENCE_DIR
+      for trnm_schedule_backend in pnh1-authenticated pgh2-growth; do
+        trnm_schedule_dir="$TRNM_WORK_SCHEDULE_RESEARCH_DIR/$trnm_schedule_backend"
+        trnm_schedule_digest="$(sha256sum "$trnm_schedule_dir/report.json" | cut -d ' ' -f 1)"
+        python3 scripts/pon_branch_work_schedule_reader.py --raw-dir "$trnm_schedule_dir" --report-sha256 "$trnm_schedule_digest" > "$trnm_model_receipt_root/branch-work-schedule-$trnm_schedule_backend.json"
+        python3 scripts/ci/test_pon_branch_work_schedule_reader.py --raw-dir "$trnm_schedule_dir" --report-sha256 "$trnm_schedule_digest" -v
+      done
+      unset TRNM_WORK_SCHEDULE_RESEARCH_DIR
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pnh1-python.json"
       python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated"
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"

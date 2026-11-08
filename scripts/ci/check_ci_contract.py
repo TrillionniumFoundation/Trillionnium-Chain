@@ -156,6 +156,12 @@ NATIVE_OWNER_JOURNAL = ('    cargo test --offline --locked --manifest-path trill
                         + '    python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output-dir "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition"\n')
 NATIVE_RISK_LEDGER = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger\n    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger"\n    NATIVE_RISK_LEDGER_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \'test_native_risk_ledger.py\' -v\n    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json"\n'
 WORK_NATIVE_MODEL_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v",
+    'python3 formal/pon-nakamoto-v1/fixed_probability_contract.py',
+    'python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check',
     'python3 formal/pon-nakamoto-v1/stateful_tail.py',
     'python3 formal/pon-nakamoto-v1/residual_grover.py',
     "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v",
@@ -166,6 +172,19 @@ WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v',
     'python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v',
     'python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v',
+)
+
+# Anchor these controls at the start of the lane. Presence/count alone accepts
+# a false branch or an if-condition that suppresses Bash's errexit behavior.
+# The outer lane dispatch is checked independently below.
+CREDIT_MODEL_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v",
+)
+CREDIT_MODEL_PREFIX = (
+    "    bash scripts/project-preflight.sh --audit\n"
+    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n"
+    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n"
 )
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
 EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'
@@ -272,6 +291,9 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
       test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      export TRNM_WORK_SCHEDULE_RESEARCH_DIR="$trnm_model_receipt_root/branch-work-schedule"
+      test ! -e "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
+      test ! -L "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
@@ -279,6 +301,13 @@ MODEL_OBSERVATION_BLOCK = '''    (
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
       python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
       unset TRNM_DAA_EVIDENCE_DIR
+      for trnm_schedule_backend in pnh1-authenticated pgh2-growth; do
+        trnm_schedule_dir="$TRNM_WORK_SCHEDULE_RESEARCH_DIR/$trnm_schedule_backend"
+        trnm_schedule_digest="$(sha256sum "$trnm_schedule_dir/report.json" | cut -d ' ' -f 1)"
+        python3 scripts/pon_branch_work_schedule_reader.py --raw-dir "$trnm_schedule_dir" --report-sha256 "$trnm_schedule_digest" > "$trnm_model_receipt_root/branch-work-schedule-$trnm_schedule_backend.json"
+        python3 scripts/ci/test_pon_branch_work_schedule_reader.py --raw-dir "$trnm_schedule_dir" --report-sha256 "$trnm_schedule_digest" -v
+      done
+      unset TRNM_WORK_SCHEDULE_RESEARCH_DIR
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pnh1-python.json"
       python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated"
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"
@@ -416,6 +445,9 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
     python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v
+    python3 formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
@@ -583,10 +615,15 @@ PQ_RELEASE_REGRESSION_COMMAND = '          python3 scripts/ci/record_pq_native_c
 # Required post-win controls retain one literal executable lane and one actual
 # saved-receipt verifier step. These source guards do not qualify a proof.
 REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
+    python3 scripts/ci/test_pq_authority_effect_register.py
+    python3 scripts/ci/pq_authority_effect_register.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
@@ -597,6 +634,12 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
 
     # Conditional resource/event models retain unknown W1 hardware and protocol gates.
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v
+    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py
+    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check
     python3 formal/pon-nakamoto-v1/stateful_tail.py
     python3 formal/pon-nakamoto-v1/residual_grover.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
@@ -711,6 +754,41 @@ PY
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
 '''
+
+# Independent literal for the existing external lane. A command inside a false
+# branch or an errexit-suppressing shell condition is not an executed control.
+EXTERNAL_EVIDENCE_CONTRACT_BLOCK = '''    python3 scripts/ci/prepare_evidence_sources.py
+    python3 scripts/ci/test_evidence_sources.py
+    python3 scripts/ci/check_repository.py
+    python3 scripts/ci/test_repository.py EvidenceBoundaryTests
+    python3 scripts/ci/check_pon_evidence.py
+    python3 scripts/ci/test_pon_evidence.py
+    python3 scripts/ci/check_invariant_evidence.py --historical
+    python3 scripts/ci/test_invariant_evidence.py
+    python3 scripts/ci/check_completion_evidence.py --historical
+    python3 scripts/ci/test_completion_evidence.py
+    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1
+    python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1
+    python3 scripts/ci/test_public_readiness_evidence.py
+    python3 scripts/ci/check_native_node_supplements.py --historical
+    python3 scripts/ci/test_native_node_supplements.py
+    python3 scripts/ci/test_native_session_evidence.py
+    python3 scripts/ci/test_client_confirmation_evidence.py
+    python3 scripts/ci/test_evaluation_bundle_evidence.py
+    python3 scripts/ci/report_module_evidence.py --format markdown
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost --historical
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical
+    python3 scripts/ci/check_four_priority_evidence.py
+    python3 scripts/ci/test_four_priority_evidence.py
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-four-priority-audit-v1/work-cost --historical
+'''
+
 
 W1_POSTWIN_WORKFLOW_PREFIX = r'''name: PoN W1 transparent candidate observations
 on:
@@ -912,6 +990,31 @@ W1_POSTWIN_CRITICAL_STEPS = {
                   or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['23']
                   or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
               raise SystemExit('all 23 named v2 report controls must execute exactly once without skips')
+          PY
+          python3 -m unittest discover -s scripts/ci -p test_w1_v2_current_stage_gate.py -v 2>&1 | tee "$W1_PROFILE_OUT/v3-gate-tests.log"
+          python3 - "$W1_PROFILE_OUT/v3-gate-tests.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          expected = {
+              'test_current_cli_selects_current_schema_without_a_downgrade_option',
+              'test_current_contract_accepts_actual_clean_expected_rejection',
+              'test_current_contract_accepts_actual_clean_process_observation',
+              'test_current_contract_refuses_deadline_exhaustion',
+              'test_current_contract_refuses_legacy_and_unknown_observations',
+              'test_current_contract_refuses_snapshot_cancellation',
+              'test_current_contract_requires_every_new_snapshot_field',
+              'test_current_contract_retains_unqualified_resource_and_proof_scope',
+              'test_current_snapshot_fields_cannot_coerce_types',
+              'test_version_selector_is_explicit_and_unknown_versions_are_refused',
+          }
+          rows = re.findall(r'^(test_\S+) \(([^)]+)\) \.\.\. (.*)$', text, re.M)
+          required = sorted((name, f'test_w1_v2_current_stage_gate.CurrentStageV3ControlsGateTests.{name}', 'ok')
+                            for name in expected)
+          if (sorted(rows) != required
+                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['10']
+                  or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
+              raise SystemExit('all 10 current stage-v3 controls must execute exactly once without skips')
           PY
 ''',
     "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls
@@ -1215,11 +1318,13 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'work/native model controls must execute exactly once in repository-truth')
-    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
-    expected_repository_commands = code_lines(
-        re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
-    require(repository_commands == expected_repository_commands,
-            'repository-truth controls must retain a straight-line command sequence')
+    for command in (
+            'python3 scripts/ci/test_pq_authority_effect_register.py',
+            'python3 scripts/ci/pq_authority_effect_register.py',
+            "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v"):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'PQ authority effect and root recovery controls must execute exactly once in repository-truth')
     require(MODEL_WINDOW_ORACLE in lanes['protocol-contract'] and script.count(MODEL_WINDOW_ORACLE) == 1,
             'model-window history arithmetic and frozen evidence checks must execute once in protocol-contract')
     require(MODEL_WINDOW_ORACLE + EVALUATION_QUORUM_ORACLE in lanes['protocol-contract'] and
@@ -1266,10 +1371,30 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
             'full-capacity, reference-growth, bounded-growth and account-verification release controls must execute once sequentially')
+    for command in CREDIT_MODEL_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'credit model controls must execute exactly once in repository-truth')
+    # Preserve the preceding specific refusal diagnostics when an unrelated
+    # required command is moved into this prefix.
+    require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
+            'credit model prefix must execute immediately after preflight without shell control flow')
+    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
+    expected_repository_commands = code_lines(
+        re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
+    require(repository_commands == expected_repository_commands,
+            'repository-truth controls must retain a straight-line command sequence')
     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
     require(code_lines(lanes['repository-truth']) == code_lines(REPOSITORY_TRUTH_BLOCK),
             'W1 post-win controls and all retained repository-truth commands require one straight-line lane without skipped or swallowed failures')
+    require(code_lines(lanes['external-evidence-contract']) == code_lines(EXTERNAL_EVIDENCE_CONTRACT_BLOCK),
+            'external-evidence-contract must retain its complete straight-line command sequence without skipped or swallowed failures')
+    for command in ('python3 scripts/ci/check_completion_evidence.py --historical',
+                    'python3 scripts/ci/test_completion_evidence.py'):
+        require(code_lines(lanes['external-evidence-contract']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'historical completion evidence controls must execute exactly once in external-evidence-contract')
     dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'
                        'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"\n'
                        'case "${1:?required job}" in\n')
@@ -1542,7 +1667,9 @@ def validate(root: Path = ROOT) -> dict:
                  'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                  'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                  'test_useful_cell_multimodal_execution_v3.py',
-                 'test_useful_cell_multimodal_relation_v3.py'):
+                 'test_useful_cell_multimodal_relation_v3.py',
+                 'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
+                 'test_service_work_settlement_v1.py'):
         source = root / 'formal/pon-nakamoto-v1' / name
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)
@@ -1731,10 +1858,13 @@ def validate(root: Path = ROOT) -> dict:
             'cross-architecture evidence negative checks missing')
     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     for budget_command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
-                           '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+                           '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                           '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+                           '    python3 scripts/ci/pq_authority_effect_register.py\n',
+                           "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
         require(budget_command in dict(lane_pairs)['repository-truth'] and
                 script.count(budget_command) == 1,
-                'PQ lifetime arithmetic and refusal controls execute once in repository-truth')
+                'PQ lifetime and root recovery refusal controls execute once in repository-truth')
     require(RUNTIME_RELEASE_COMMAND in dict(lane_pairs)['repository-truth']
             and script.count(RUNTIME_RELEASE_COMMAND) == 1,
             'runtime material controls execute once with the configured verifier interpreter')

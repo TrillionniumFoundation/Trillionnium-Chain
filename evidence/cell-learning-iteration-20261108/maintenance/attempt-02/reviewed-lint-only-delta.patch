@@ -1,0 +1,30 @@
+diff --git a/codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs b/codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs
+index 4867b9914..60b6ee549 100644
+--- a/codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs
++++ b/codex-rs/hepta-agentd/src/learning_iteration_checkpoint_profile_tests.rs
+@@ -9,6 +9,10 @@ use pretty_assertions::assert_eq;
+ 
+ use super::*;
+ 
++#[allow(
++    clippy::duplicate_mod,
++    reason = "This test-only module reuses the original fsync CAS fixture without widening its visibility"
++)]
+ #[path = "learning_iteration_checkpoint_test_support.rs"]
+ mod support;
+ use support::Decision;
+diff --git a/codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs b/codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs
+index a5fb772a4..ce4d5ba89 100644
+--- a/codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs
++++ b/codex-rs/hepta-agentd/src/neuron_generation_learning_readback_test_support.rs
+@@ -14,6 +14,10 @@ use super::AgentdGenerationLearningUseReadbackV1;
+ use crate::LearningIterationCheckpointErrorV1;
+ 
+ // Exercise the exact production codec without widening its production API.
++#[allow(
++    clippy::duplicate_mod,
++    reason = "This test-only exporter reuses the private production codec without widening its API"
++)]
+ #[path = "learning_iteration_checkpoint_codec.rs"]
+ mod checkpoint_codec;
+ 

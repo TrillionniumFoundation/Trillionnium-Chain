@@ -29,6 +29,7 @@ use trnm_mvcc_fee::{
 };
 use trnm_protocol::pon_growth::GrowthHeader;
 use trnm_protocol::pon_wire::{Envelope, Hash, Header};
+mod confirmation;
 #[cfg(test)]
 mod difference_tests;
 mod observation;

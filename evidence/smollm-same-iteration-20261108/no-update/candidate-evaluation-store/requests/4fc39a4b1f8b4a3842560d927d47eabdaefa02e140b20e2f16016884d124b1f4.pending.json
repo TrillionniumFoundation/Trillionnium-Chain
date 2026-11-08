@@ -1,0 +1,1 @@
+{"request":{"id":"evaluation-2","op":"probe","params":{"inputs":{"mode":"conditional_binary","prompt":"Answer with only yes or no. Is 5208 greater than 5209?","request_id":"learning-d9fb-retain-v2-evaluation-1"}},"session_id":"learning-d9fb-retain-v2-candidate"},"request_sha256":"f5e0e74d4ac89aa57384c494b341a4f6f6a3360251f734e40a66beecae9c7ec0","started_at_ms":1794160745686}

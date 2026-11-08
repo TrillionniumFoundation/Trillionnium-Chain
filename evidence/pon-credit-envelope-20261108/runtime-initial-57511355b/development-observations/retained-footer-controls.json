@@ -1,0 +1,60 @@
+{
+  "schema": "pon-credit-retained-footer-controls-v1",
+  "executed_inline_workflow_guard": true,
+  "cases": [
+    {
+      "name": "valid",
+      "accepted": true,
+      "expected": true
+    },
+    {
+      "name": "valid_one",
+      "accepted": true,
+      "expected": true
+    },
+    {
+      "name": "skipped",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "expected_failure",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "misleading_ok",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "zero_after_positive",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "zero",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "failed",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "truncated",
+      "accepted": false,
+      "expected": false
+    },
+    {
+      "name": "trailing_output",
+      "accepted": false,
+      "expected": false
+    }
+  ],
+  "pass": true,
+  "guard_sha256": "af362e37c18308dda06ddcd1fb2d2c089d1c1dad33b210f6350e8cbc01d9f994",
+  "workflow_sha256_at_control_execution": "c5c87ce1ffc54e64a032c1858e6b5ee487c6d5418139599077bcaddc40a324a5",
+  "subsequent_workflow_change": "Removed only an unavailable retained suite from the new workflow; the four guard lines are byte-identical."
+}

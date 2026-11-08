@@ -1,0 +1,24 @@
+{
+  "applied_new_files": [
+    ".github/workflows/pon-credit-envelope.yml",
+    "docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md",
+    "evidence/pon-credit-envelope-20261108/README.md",
+    "formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md",
+    "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+    "formal/pon-nakamoto-v1/credit_envelope_test_roster_v1.json",
+    "formal/pon-nakamoto-v1/normalized_search_cost.py",
+    "formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+    "formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+    "scripts/ci/run_credit_envelope_checks.py"
+  ],
+  "base_commit": "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+  "branch": "fix/chain-credit-envelope-20261108-f7e62",
+  "ci_patch_files": [
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "packet_sha256": "5d8d82ce5e5e7cfc1156f2c74c2ea1b32edcc0fcbc977126c995014a1cbe104b",
+  "plan_update": "append-only",
+  "started_utc": "2026-11-08T12:23:06.063636+00:00"
+}

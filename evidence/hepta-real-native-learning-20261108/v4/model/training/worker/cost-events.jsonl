@@ -1,0 +1,9 @@
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 118349498, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 28119040, "outcome": "success", "stage": "material-verification", "wall_ns": 118389658}
+{"bytes_read": 0, "bytes_written": 8192, "cpu_ns": 2169602373, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 308518912, "outcome": "success", "stage": "runtime-import", "wall_ns": 1496348068}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 373043410, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1143255040, "outcome": "success", "stage": "model-load", "wall_ns": 160664199}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 257139851, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1143255040, "outcome": "success", "stage": "complete-backbone-tokenizer-verification", "wall_ns": 257161980}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 35658524, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1143255040, "outcome": "success", "stage": "parent-material-verification", "wall_ns": 35659343}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 198216652, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1143255040, "outcome": "success", "stage": "adapter-insertion", "wall_ns": 198225258}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 37339325, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1143255040, "outcome": "success", "stage": "actual-parent-reload", "wall_ns": 37339916}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 22232039619, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 3000688640, "outcome": "success", "stage": "training", "wall_ns": 17366281106}
+{"bytes_read": 0, "bytes_written": 933888, "cpu_ns": 1845882, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 3085660160, "outcome": "success", "stage": "artifact-save", "wall_ns": 1849718}

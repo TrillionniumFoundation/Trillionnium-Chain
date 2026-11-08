@@ -1,0 +1,80 @@
+{
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "native_test_stdout_sha256": "74c1996f49419de49f447f0bfd540b6717bb9bc70800c3e00a2f528ef71cbed0",
+  "checks": [
+    {
+      "label": "native-01-pgh2-growth-reader",
+      "argv": [
+        "python3",
+        "scripts/pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pgh2-growth",
+        "--report-sha256",
+        "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_stdout_digest": "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+      "duration_seconds": 1.346654152031988,
+      "unittest_count": []
+    },
+    {
+      "label": "native-01-pgh2-growth-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pgh2-growth",
+        "--report-sha256",
+        "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+        "-v"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_stdout_digest": "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+      "duration_seconds": 2.5681810178793967,
+      "unittest_count": [
+        "9"
+      ]
+    },
+    {
+      "label": "native-01-pnh1-authenticated-reader",
+      "argv": [
+        "python3",
+        "scripts/pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pnh1-authenticated",
+        "--report-sha256",
+        "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_stdout_digest": "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+      "duration_seconds": 1.2431294911075383,
+      "unittest_count": []
+    },
+    {
+      "label": "native-01-pnh1-authenticated-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pon_branch_work_schedule_reader.py",
+        "--raw-dir",
+        "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pnh1-authenticated",
+        "--report-sha256",
+        "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+        "-v"
+      ],
+      "exit": 0,
+      "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+      "native_stdout_digest": "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+      "duration_seconds": 2.527204117970541,
+      "unittest_count": [
+        "9"
+      ]
+    }
+  ],
+  "all_passed": true,
+  "full_execution_identity_verified": false,
+  "minimum_cost_qualified": false,
+  "new_native_policy_installed": false
+}

@@ -1,0 +1,14 @@
+{
+  "name": "01-original-lifetime-refusal",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/pq_lifetime_budget.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-mmcs-composition-d9fb-20261108",
+  "source_revision": "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66",
+  "exit_code": 2,
+  "expected_exit_code": 2,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "8780782d6ec3c5b7e8d49b5d8e8fc0090cac19866aa188a2dc1f762fa7af3e5a"
+}

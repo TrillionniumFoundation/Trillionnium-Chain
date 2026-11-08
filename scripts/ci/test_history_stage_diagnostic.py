@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Local controls only: never provision resources or claim History qualification."""
 import copy
+import fnmatch
 import json
 import os
 import tempfile
@@ -84,4 +85,15 @@ class Controls(unittest.TestCase):
         for text in ['fail-fast: false','replica: [1, 2]','if: always()','if-no-files-found: error','cancel-in-progress: false','--prepare','not qualification']:
             self.assertIn(text,s)
         self.assertNotIn('continue-on-error',s)
+        # Check real changed-file examples against the push path filter. Keep
+        # original branch routing; dispatch requires a separately bound source.
+        self.assertIn('branches: [fix/chain-six-axis-performance-20261103]',s)
+        self.assertNotIn('workflow_dispatch',s)
+        paths=[line.strip()[2:] for line in s.split('    paths:\n',1)[1].split('permissions:',1)[0].splitlines()
+               if line.strip().startswith('- ')]
+        for path in ['trillionnium/crates/trnm-pon-node/src/store.rs', 'trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs', 'trillionnium/crates/trnm-pon-node/src/ingress.rs', 'trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs', 'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs', 'trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs', 'trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs', 'trillionnium/crates/trnm-protocol/src/pon_state.rs', 'trillionnium/crates/trnm-protocol/src/pon_wire.rs', 'trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs', 'trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs', 'scripts/ci/run_from_zero_host.py', 'scripts/ci/public_host_ci_observation.py', 'scripts/ci/public_fixture_host_lease.py', 'config/systemd/trnmponpublic.slice']:
+            self.assertTrue(any(fnmatch.fnmatchcase(path,pattern) for pattern in paths),path)
+        for path in ['README.md','docs/unrelated.md','trillionnium/crates/trnm-cli/src/main.rs']:
+            self.assertFalse(any(fnmatch.fnmatchcase(path,pattern) for pattern in paths),path)
+
 if __name__=='__main__':unittest.main()

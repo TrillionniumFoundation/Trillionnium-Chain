@@ -1,0 +1,1 @@
+{"exit_code":0,"readiness":[{"address":"127.0.0.1:43465","schema":"trnm.cell.listen.v1"},{"address":"127.0.0.1:43465","schema":"trnm.cell.ready.v1"}],"stdout":"{\"schema\":\"trnm.cell.serve.persistent.v2\",\"request_attempts\":23,\"connections\":3,\"overloaded\":0,\"completed\":20,\"peak_active_workers\":1,\"sent_response_bytes\":1012818}\n"}

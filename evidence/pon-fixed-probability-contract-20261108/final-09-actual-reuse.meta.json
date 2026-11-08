@@ -1,0 +1,15 @@
+{
+  "label": "final-09-actual-reuse",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py",
+    "--out",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/actual-mu1-reuse"
+  ],
+  "exit": 0,
+  "duration_seconds": 2.2275662468746305,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": []
+}

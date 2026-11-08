@@ -21,6 +21,8 @@ from pq_source_reader import SourceReadError, read_regular
 
 SCHEMA = 'trnm-pq128-lifetime-budget-v1'
 DEFAULT_MANIFEST = 'config/pon/pq128-lifetime-budget-v1.json'
+SOURCE_LOCK_SCHEMA = 'trnm-pq128-source-lock-v1'
+DEFAULT_SOURCE_LOCK = 'config/pon/pq128-source-lock-v1.json'
 EVENT_IDS = frozenset({'signature', 'commitment', 'proof', 'ledger', 'transport',
                        'recovery', 'release', 'application'})
 QUERY_COVERAGE = frozenset({'online', 'offline', 'preprocessing', 'failed',
@@ -333,6 +335,10 @@ def evaluate(data):
         'whole_chain_pq_qualified': False, 'pq_128_qualified': False,
         'production_activation': False, 'composition_coverage_proved': False,
         'theorem_applicability_verified': False,
+        # evaluate() has no source access. Only inspect() can establish
+        # consistency with the separately reviewed declared-path source lock.
+        'source_revision_bound': False, 'source_binding_scope': 'unbound',
+        'source_lock_sha256': None,
         'experiment': exp, 'assumptions': data['assumptions'],
         'unknown_terms': unknown, 'unknown_query_budgets': query_unknown,
         'term_results': results, 'source_paths': sorted(source_paths),
@@ -346,16 +352,43 @@ def evaluate(data):
 
 
 def inspect(root, manifest_path=DEFAULT_MANIFEST):
-    """Read source-bound inputs through the repository's existing safe reader."""
+    """Bind research paths to a reviewed lock, without authenticating its origin.
+
+    The lock is checked-in review material so this check also works in shallow
+    CI checkouts. It is not a signature, a Git history check, an immutable
+    checkout snapshot, or evidence of complete dependency/theorem coverage.
+    Arithmetic examples never acquire a revision binding from this lock.
+    """
     root = Path(root)
     try:
         raw = read_regular(root, relative_path(manifest_path, 'manifest'), MAX_BYTES)
         result = evaluate(strict_json(raw))
         result['manifest_sha256'] = hashlib.sha256(raw).hexdigest()
+        lock_raw = None
+        if result['purpose'] == 'research-model':
+            lock_raw = read_regular(root, DEFAULT_SOURCE_LOCK, MAX_BYTES)
+            lock = strict_json(lock_raw)
+            fields(lock, 'schema source_revision files', 'source lock')
+            require(lock['schema'] == SOURCE_LOCK_SCHEMA, 'unsupported source lock schema')
+            require(lock['source_revision'] == result['experiment']['source_revision'],
+                    'source lock revision differs from the declared experiment')
+            require(type(lock['files']) is dict
+                    and set(lock['files']) == set(result['source_paths']),
+                    'source lock paths must exactly match the declared event paths')
+            for path, digest in lock['files'].items():
+                require(type(digest) is str and re.fullmatch(r'[0-9a-f]{64}', digest) is not None,
+                        'source lock digest must be a full lowercase SHA-256: ' + path)
         result['source_files_sha256'] = {
             path: hashlib.sha256(read_regular(root, path, MAX_BYTES)).hexdigest()
             for path in result['source_paths']
         }
+        if lock_raw is not None:
+            for path, digest in lock['files'].items():
+                require(result['source_files_sha256'][path] == digest,
+                        'source lock hash mismatch: ' + path)
+            result['source_revision_bound'] = True
+            result['source_binding_scope'] = 'declared-event-paths-only'
+            result['source_lock_sha256'] = hashlib.sha256(lock_raw).hexdigest()
     except SourceReadError as error:
         raise BudgetError(str(error)) from error
     return result

@@ -1,0 +1,186 @@
+{
+  "files": {
+    "actual-next-task-output.safetensors": {
+      "bytes": 197579,
+      "sha256": "5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22.safetensors"
+    },
+    "actual-open.json": {
+      "bytes": 7656,
+      "sha256": "591bb1b8529342fa3628164d8350cbff84bf14976eb7b70ccdd35bf98da54ebd",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/actual-open.json"
+    },
+    "actual-response.json": {
+      "bytes": 3245,
+      "sha256": "0c0615ccb6c63ebd8193dff190b24701238f37d6a0e317ac1b9248f557e25ba9",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/actual-response.json"
+    },
+    "fetch-0.json": {
+      "bytes": 1261,
+      "sha256": "0a202beefb5c620648e79eac3d024ec12c41e360c15a890f9e2b8c09c604e855",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/fetch-0.json"
+    },
+    "fetch-1.json": {
+      "bytes": 1257,
+      "sha256": "35f663f2f036448b1b0ba53ec8ef6f539ba0a6835819f77a4797848f2360bcf9",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/fetch-1.json"
+    },
+    "fetch-2.json": {
+      "bytes": 1255,
+      "sha256": "78e87dcc9f5a092c0d48ac335cdcd7cfe558cd7205b94c7cd6cea29969073d55",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/fetch-2.json"
+    },
+    "frozen-transfer.json": {
+      "bytes": 894,
+      "sha256": "e68095ebae5a2003b8a4cc9a158dc755828ae34f012da2234ee87ea9ca7b8950",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/frozen-transfer.json"
+    },
+    "pack-0.json": {
+      "bytes": 1139,
+      "sha256": "aa78708224f4f1e31443cc8535d1095e35b809506140bb0cd1bcb40f9d082ac7",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/pack-0.json"
+    },
+    "pack-1.json": {
+      "bytes": 1138,
+      "sha256": "9a5dbc7f4a708c27635a26c162ee70b7dff3713d248ccd4288257d2ec0d3aca5",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/pack-1.json"
+    },
+    "pack-2.json": {
+      "bytes": 1138,
+      "sha256": "82878d9635990448832e7dec13bcd00db1e7fe10e6f6e9baa3e212ae24e94f09",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/pack-2.json"
+    },
+    "provider-start.json": {
+      "bytes": 568,
+      "sha256": "91b6b98daee60841d4a909a19b6bc2c6cfc819c3009953335601a51e530e7f9e",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/provider-start.json"
+    },
+    "provider-terminal.json": {
+      "bytes": 345,
+      "sha256": "ee4eb775b997a5fcf2d93e639880c9a352afbcaa877a04331a552620818a04a8",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/provider-terminal.json"
+    },
+    "provider.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/provider.stderr"
+    },
+    "replica/artifact.safetensors": {
+      "bytes": 933544,
+      "sha256": "a946c2cd7073092e607fb5ee3fd9b2dc78053ba5dc3d357a0a27c273ebbf95e2",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/replica/artifact.safetensors"
+    },
+    "replica/target-contract.json": {
+      "bytes": 56809,
+      "sha256": "69832b9f6230b6a08ee03b8f829b76ec539956f6214ef693f3b35b01c8ba8d76",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/replica/target-contract.json"
+    },
+    "replica/wrapped-adapter.json": {
+      "bytes": 20962,
+      "sha256": "a3cbf4360be57dd3b2fd8a6e0ac9127bdb38828741f849b7034d18d3a99245c4",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/replica/wrapped-adapter.json"
+    },
+    "result.json": {
+      "bytes": 5329,
+      "sha256": "b9c96c36e8ab277aaa1a805060f455a740f1696dbbfb54f2e5a21f50f147c11d",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/result.json"
+    },
+    "transferred-model-cold-readback.jsonl": {
+      "bytes": 14201,
+      "sha256": "ab5da6c99f9c3e5b76f4425ca9a93d45cfb98026cb6f80cfdaebc065c13ba626",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/transferred-model-cold-readback.jsonl"
+    },
+    "transferred-model-cold-readback.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/transferred-model-cold-readback.stderr.log"
+    },
+    "transferred-model-load.jsonl": {
+      "bytes": 13746,
+      "sha256": "a7600def0692836655149ddcc2f1814fcf4f9edc27080bd92b93df33d9164667",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/transferred-model-load.jsonl"
+    },
+    "transferred-model-load.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/transferred-model-load.stderr.log"
+    },
+    "verify-0.json": {
+      "bytes": 665,
+      "sha256": "2e90967c9e858e92be5342dbf0b6eed6ab74931752ef860168749ab5497cb69c",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/verify-0.json"
+    },
+    "verify-1.json": {
+      "bytes": 665,
+      "sha256": "3da1a289e75d7cf6074b4da75d823ff86e8ba69f01560fecf23328d7fab39f3d",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/verify-1.json"
+    },
+    "verify-2.json": {
+      "bytes": 664,
+      "sha256": "3e1226196bc3418b7385ddc33b5285cf707cb457609c0a20a878c5de0c36cf14",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/verify-2.json"
+    },
+    "worker-store/1f0a945f2a0c123e268aa9762f5b748bfe0d197017858aee1de3105aea2fc0b0.json": {
+      "bytes": 3403,
+      "sha256": "1f0a945f2a0c123e268aa9762f5b748bfe0d197017858aee1de3105aea2fc0b0",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/1f0a945f2a0c123e268aa9762f5b748bfe0d197017858aee1de3105aea2fc0b0.json"
+    },
+    "worker-store/413a00e66ebb46eec77e4a2d7fa33f7aa0349b097d48e193d58110b6d109812f.ref.json": {
+      "bytes": 354,
+      "sha256": "6bdd44b20f7332c8db4ea2b0e2cc91859640bbb17682c39b7ac2ca3dec68bbd0",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/413a00e66ebb46eec77e4a2d7fa33f7aa0349b097d48e193d58110b6d109812f.ref.json"
+    },
+    "worker-store/e058f8af60bbe0d8b2dbf8986ab0c822b9cce561a598108b480f1dc3a56600cd.ref.json": {
+      "bytes": 864,
+      "sha256": "6247b8445c52ff102a500adc241de88243b42ef3d678b8a3657ed44b676d6ea0",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/e058f8af60bbe0d8b2dbf8986ab0c822b9cce561a598108b480f1dc3a56600cd.ref.json"
+    },
+    "worker-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json": {
+      "bytes": 7838,
+      "sha256": "8d9637e3233793513519e12f220f2ed15c50b1829e61f5b6336bd01f3518f00a",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.done.json"
+    },
+    "worker-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json": {
+      "bytes": 2596,
+      "sha256": "446c76efd83fb40d0a25d94fa7ddd629bbce22a335561595432708218c69c9d2",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/requests/35ff74aeea25311f4fe759a6b762c8cd41a79adb23dd5615b92cf215175a63e5.pending.json"
+    },
+    "worker-store/requests/59a56e97bc0c924749081be8364b10d76825954e22b551848e381828522a6443.done.json": {
+      "bytes": 3427,
+      "sha256": "7bee5b2a77baa04839fd9feb3b3788181da8ffbca2f6bd0e2dccd473d1ce2fcd",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/requests/59a56e97bc0c924749081be8364b10d76825954e22b551848e381828522a6443.done.json"
+    },
+    "worker-store/requests/59a56e97bc0c924749081be8364b10d76825954e22b551848e381828522a6443.pending.json": {
+      "bytes": 371,
+      "sha256": "ecdaccd13a5c6f22c841f78184afb8ef54788e2be7d5e3565e582ea672bc0930",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/requests/59a56e97bc0c924749081be8364b10d76825954e22b551848e381828522a6443.pending.json"
+    },
+    "worker-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.done.json": {
+      "bytes": 490,
+      "sha256": "48221e56ab30abdbcd071d5105e77424ca088705a11603f05c67c757d4fec19a",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.done.json"
+    },
+    "worker-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.pending.json": {
+      "bytes": 208,
+      "sha256": "30974b1a0f826885a6aea601d5ad839a08c1320e471bc24f53775fb246c130f8",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/requests/97959247360c5f0b8faf336aea5eba322af7be295958302fdb8a3fe8c6eb8ab8.pending.json"
+    },
+    "worker-store/session.json": {
+      "bytes": 607,
+      "sha256": "56874cd07c3b5c6352b9b4bd5866e083271511e187266ddf37810753dc61fbaf",
+      "source_path": "/home/qq/chain-learning-cell-transfer-d9fb-20261108-v1/worker-store/session.json"
+    }
+  },
+  "full_base_weights_included": false,
+  "omitted_database_images": {
+    "consumer.db": {
+      "bytes": 1052672,
+      "sha256": "2ae25dbd69b41af679d8fc5869501baf880ce10341e984b258a36fdf57adc448"
+    },
+    "provider.db": {
+      "bytes": 1052672,
+      "sha256": "f0d7b3d8ae85e577a2b6dc7065a026b4961e7de591cd935d476e88b379c7dec5"
+    }
+  },
+  "schema": "trnm-research-original-files-v1"
+}

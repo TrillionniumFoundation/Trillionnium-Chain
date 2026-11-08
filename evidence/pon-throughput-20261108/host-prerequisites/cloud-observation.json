@@ -1,0 +1,84 @@
+{
+  "collector_sha256": "70fe4d09dc6e6e8a32bd04b3277fd45ff67cc91d995547ebf0284ef56d638603",
+  "cryptographic_refusals": null,
+  "native_pressure_campaign_started": false,
+  "native_pressure_campaign_status": "NOT_RUN",
+  "observed_parent_prerequisites_match": false,
+  "original_observation": {
+    "boot_id": "673cfd48-3d8e-45de-8933-8ed1b12c2604",
+    "cgroup_controllers": null,
+    "consensus_or_model_authority": false,
+    "counters": {
+      "cgroup.events": null,
+      "cpu.stat": null,
+      "memory.current": null,
+      "memory.events": null,
+      "pids.current": null
+    },
+    "cwd": "/workspace/scratch/d570ecfded92/chain-throughput",
+    "gid": 1000,
+    "host_readiness_only": true,
+    "installed_unit_sha256": null,
+    "limits": {
+      "cpu.max": null,
+      "cpu.max.burst": null,
+      "memory.max": null,
+      "memory.swap.max": null,
+      "pids.max": null
+    },
+    "observed_utc": "2026-11-08T11:24:25.816017+00:00",
+    "parent": null,
+    "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "phase": "outside-before-throughput-campaign",
+    "pid": 5,
+    "read_errors": {
+      "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+      "/sys/fs/cgroup/cgroup.controllers": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cgroup.controllers'",
+      "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'"
+    },
+    "schema": "trnm-ci-original-public-host-observation-v1",
+    "service": "not-started",
+    "thread_cgroup": "0::/",
+    "thread_privileges": {
+      "CapBnd": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "uid": 1000
+  },
+  "original_observer_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+  "original_resource_contract_enforced": false,
+  "prerequisite_violations": [
+    "FIXED_PARENT_IDENTITY",
+    "KERNEL_OBSERVATION_UNAVAILABLE",
+    "ORIGINAL_FINITE_LIMITS",
+    "REVIEWED_UNIT_BYTES"
+  ],
+  "production_activation": false,
+  "qualification": "HOLD",
+  "qualified_confirmed_tps": null,
+  "qualified_wan_tps": null,
+  "required_contract": {
+    "cpu_cores": "0.25",
+    "deadline_comparison": "strictly_before",
+    "deadline_ns": 4000000000,
+    "hostile_inputs": 16,
+    "memory_bytes": 2147483648,
+    "pids": 256,
+    "required_depth": 6,
+    "required_work_multiplier": 6,
+    "swap_bytes": 0
+  },
+  "schema": "trnm-throughput-original-host-prerequisites-v1",
+  "scope": "read-only prerequisites, not a pressure campaign or enforcement certificate",
+  "valid_admissions": null
+}

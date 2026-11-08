@@ -5,10 +5,12 @@ separately from the W1 AIR relation, physical-work pricing and production
 admission. It starts from the exact published PR #783 source
 `cc836dfc13ef0006eb0878abd8cb5eca9a76bec0`.
 
-There are three substantive results: a conditional classical ordinary-path
-argument for the retained construction; an incompatible tagged SHA3-512
-research profile that generates and verifies complete W1 proofs; and an
-exact-arithmetic, explicitly conditional ideal-sponge query calculator.
+The substantive results are a conditional classical ordinary-path argument
+for the retained construction; an incompatible tagged SHA3-512 research
+profile that generates and verifies complete W1 proofs; an exact-arithmetic,
+explicitly conditional ideal-sponge query calculator; and a structural
+two-opening collision reduction for the tagged profile's actual binary
+cap-zero pruned multi-matrix verifier.
 None grants concrete noninteractive, quantum, lifecycle or production
 qualification. The old unrestricted raw-compressor collision remains a
 valid finding and is not relabelled a Merkle or W1 forgery.
@@ -20,6 +22,7 @@ valid finding and is not relabelled a Merkle or W1 forgery.
 | Old raw compressor | Existing inverse witnesses and native P3 audit retained | Arbitrary input pairs; not an accepted conflicting W1 opening |
 | Retained ordinary tree | New classical ideal-permutation binding proposition, allowing arbitrary siblings and shared forward/inverse calls | Fixed ordinary shape/index; no concrete Poseidon2, quantum, pruned multiproof or PCS/FS theorem |
 | Full-hash path extraction | Deterministic extraction from two already available conflicting ordinary openings | Toy executable framing; not the actual P3 multi-matrix adapter or a quantum extractor |
+| Tagged pruned-MMCS binding reduction | Two accepted outputs conflicting at one shared matrix-row coordinate yield a full framed-hash collision through the actual P3 0.8.0 verifier | Fixed binary cap-zero power-of-two geometry and context; structural postprocessing also covers quantum-produced classical outputs, not quantum commitment extraction or concrete security |
 | New commitment/transcript profile | Full SHA3-512, framed roles, typed statement context, raw 512-bit digests, separate wire magic | Same concrete primitive in all roles; no independent-oracle claim |
 | New complete W1 execution | Two separate campaigns of eight fresh complete W1 executions, independently verified across old/new variants and two inputs | Research processes; no mining/search, recursive verifier, Node or production service measurement |
 | Independent byte reference | 31 fixed Python `hashlib` vectors exercised by native role APIs | Finite interoperability evidence |
@@ -69,7 +72,28 @@ uses at most `2(h+1)` full-hash evaluations, plus two if the extracted collision
 is rechecked. It postprocesses two classically available openings and cannot
 be promoted to a quantum knowledge extractor. Its executable uses toy local
 tags, so it does not claim implementation equivalence with the new profile.
-The actual P3 pruned/mixed-height multi-opening extension remains uncompleted.
+
+## Tagged pruned/mixed-height opening reduction
+
+The [new argument](pruned_mmcs/BINDING_REDUCTION.md) handles the actual P3
+0.8.0 binary cap-zero verifier with fixed ordered power-of-two matrix heights
+and widths, one context, exact shared frontiers, unequal global query lists
+and shorter-row injections. It tracks shared `(matrix, reduced row)`
+coordinates and allows arbitrary sibling digests. The native executable
+uses the unchanged R1 leaf/branch APIs, verifies pruned proofs, restores
+full paths, and independently verifies each restored path. Actual
+`ExtensionMmcs` and explicitly flattened base-field rows agree.
+
+For two already available accepted conflicting outputs, verification finds
+an explicit collision in the complete framed hash. With `q0,q1` query
+counts, maximum height `2^h` and `k` distinct matrix heights, at most
+`(q0+q1)*(h+2*k-1)+2` additional whole-hash calls suffice, including the
+collision-witness recheck. This postprocessing also applies after a quantum
+producer outputs classical openings, in the same oracle/advice experiment.
+It provides no numeric collision bound and is not a quantum PCS or
+Fiat-Shamir extractor. The native controls force collisions only in
+explicitly artificial leaf/branch oracles; no real SHA3 collision or W1
+forgery is claimed.
 
 ## Initial complete W1 comparison
 
@@ -197,6 +221,43 @@ A successful focused runner is not the complete repository CI lane. Raw
 observations, failed development attempts and source/binary identities must
 remain distinguishable from the final exact-commit verification receipt.
 
+### Explicit observation of an integrated runtime
+
+The default command still requires the original runtime/configuration/
+qualification comparison against `cc836dfc13ef0006eb0878abd8cb5eca9a76bec0`
+to exit zero. A composed candidate with changes in those paths fails that
+guard; its nonzero status, stdout patch and stderr remain in the output.
+
+For a deliberately composed candidate, add `--composition-observation` to
+the same command. This mode runs every original gate, including the original
+`git diff --exit-code` comparison. Only that comparison may return 1. Other
+failures and Git errors still stop the run. Twenty additional controls check
+missing gates, replaced commands, changed source identities, forged patches
+and altered cryptographic inputs using real temporary Git repositories.
+Those fixture controls do not execute native proofs.
+
+The new `p3.shared-primitive.composition-observation.v1` receipt binds the
+fixed runtime reference and tree, current exact source and tree, identical
+complete source receipts, the actual full binary-capable runtime patch, and
+the complete executed gate roster. It reproduces the comparison before
+recording `original_unchanged_runtime_scope_passed`; a recorded exit 1 stays
+false. Its companion summary uses the separate
+`p3.shared-primitive.composition-focused-gates.v1` namespace and reports
+`COMPOSITION_OBSERVATION_COMPLETE_HOLD`, without qualifying runtime changes.
+
+The four original frozen R1 files still match the #795 baseline and all seven
+locked dependency archives retain their original checks. In this explicit
+mode, the public-STARK `Cargo.toml`, `Cargo.lock`, `src/tagged_sha3.rs`,
+`src/tagged_sha3_wire.rs`, and `examples/tagged_sha3_mmcs_binding.rs` must also
+match exact #803 commit `ebc31f07f96060fe1e9fb165aae0123de0fcbc1a` before and
+after the campaign. Missing history or source refuses the observation.
+
+These are local execution records under a trusted runner and local account,
+not independently authenticated attestations. Completion grants no runtime,
+noninteractive, quantum, lifecycle or production qualification. The original
+scope failure remains a failure, and its runtime patch still requires review
+under the candidate's own system validation contract.
+
 The initial native implementation campaign passed 56 Rust tests: 24 library,
 three carry-proof, three original proof-smoke, 11 new-profile and 15 retained
 wire-admission tests. One new-profile test exercises all 31 independent
@@ -209,8 +270,9 @@ own thread, without asserting a bound for the rest of the process.
 
 ## Remaining acceptance conditions
 
-Concrete joint leaf/branch/transcript security, actual P3 opening geometry,
-PCS extraction and Fiat-Shamir knowledge soundness remain open. So do
+Concrete joint leaf/branch/transcript security, commitment extraction beyond
+the bounded pruned-opening structural reduction, PCS extraction and
+Fiat-Shamir knowledge soundness remain open. So do
 quantum queries, construction-dependent advice, lifetime budget justification,
 recursive-verifier AIR cost and global malicious receiver cost. The new
 profile intentionally leaves the corresponding security-bit fields null.

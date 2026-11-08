@@ -24,6 +24,7 @@ COVERAGE = ['online', 'offline', 'preprocessing', 'failed', 'unpublished',
             'recursive', 'shared-primitive']
 SOURCE = 'test-input/declared-boundary.txt'
 MANIFEST = 'config/pon/pq128-lifetime-budget-v1.json'
+SOURCE_LOCK = 'config/pon/pq128-source-lock-v1.json'
 TARGET = Fraction(1, 1 << 128)
 
 
@@ -525,6 +526,7 @@ class CheckedInContractTests(ContractCase):
 
     def test_default_research_register_contains_no_known_security_bound(self):
         self.assertEqual(budget.DEFAULT_MANIFEST, MANIFEST)
+        self.assertEqual(budget.DEFAULT_SOURCE_LOCK, SOURCE_LOCK)
         data = budget.strict_json((self.root / MANIFEST).read_bytes())
         self.assertEqual(data['purpose'], 'research-model')
         self.assertEqual(len(data['terms']), 8)
@@ -537,6 +539,10 @@ class CheckedInContractTests(ContractCase):
         self.assertEqual(len(report['unknown_query_budgets']), 4)
         self.assertIsNone(report['model_arithmetic_sum'])
         self.assertIsNone(report['target_met_under_declared_bounds'])
+        self.assertIs(report['source_revision_bound'], True)
+        self.assertEqual(report['source_binding_scope'], 'declared-event-paths-only')
+        self.assertEqual(report['source_lock_sha256'],
+                         hashlib.sha256((self.root / SOURCE_LOCK).read_bytes()).hexdigest())
         self.remains_unqualified(report)
 
     def test_checked_in_example_reproduces_only_the_illustrative_equality(self):
@@ -548,6 +554,9 @@ class CheckedInContractTests(ContractCase):
         report = budget.inspect(self.root, example_path)
         self.assertEqual(decode(report['model_arithmetic_sum']), TARGET)
         self.assertIs(report['target_met_under_declared_bounds'], True)
+        self.assertIs(report['source_revision_bound'], False)
+        self.assertEqual(report['source_binding_scope'], 'unbound')
+        self.assertIsNone(report['source_lock_sha256'])
         self.remains_unqualified(report)
 
 
@@ -603,6 +612,140 @@ class SourceAndCliTests(ContractCase):
         self.assertEqual(result.stdout, '')
         self.assertNotIn('Traceback', result.stderr)
         self.assertEqual(json.loads(result.stderr)['status'], 'REFUSE')
+
+
+class ReviewedSourceLockTests(ContractCase):
+    """A reviewed file map binds declared paths, not cryptographic provenance."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        self.source = self.root / SOURCE
+        self.source.parent.mkdir(parents=True)
+        self.source.write_bytes(b'Synthetic owner bytes, not a project implementation.\n')
+        self.manifest = self.root / MANIFEST
+        self.manifest.parent.mkdir(parents=True)
+        self.data = example()
+        self.data['purpose'] = 'research-model'
+        self.data['experiment']['source_revision'] = 'a' * 40
+        for term in self.data['terms']:
+            make_unknown(term)
+        self.manifest.write_text(json.dumps(self.data), encoding='utf-8')
+        self.lock_path = self.root / SOURCE_LOCK
+        self.lock = {
+            'schema': 'trnm-pq128-source-lock-v1',
+            'source_revision': self.data['experiment']['source_revision'],
+            'files': {SOURCE: hashlib.sha256(self.source.read_bytes()).hexdigest()},
+        }
+        self.write_lock()
+
+    def write_lock(self):
+        self.lock_path.write_text(json.dumps(self.lock), encoding='utf-8')
+
+    def refuses_inspection(self):
+        with self.assertRaises(budget.BudgetError):
+            budget.inspect(self.root)
+
+    def test_matching_lock_needs_no_git_history_and_still_grants_no_security_claim(self):
+        self.assertFalse((self.root / '.git').exists())
+        report = budget.inspect(self.root)
+        self.assertIs(report['source_revision_bound'], True)
+        self.assertEqual(report['source_binding_scope'], 'declared-event-paths-only')
+        self.assertEqual(report['source_lock_sha256'],
+                         hashlib.sha256(self.lock_path.read_bytes()).hexdigest())
+        self.remains_unqualified(report)
+
+    def test_changed_actual_source_cannot_keep_the_declared_revision_binding(self):
+        self.source.write_bytes(b'Changed owner bytes under the old revision declaration.\n')
+        self.refuses_inspection()
+
+    def test_manifest_revision_swap_does_not_relabel_locked_bytes(self):
+        self.data['experiment']['source_revision'] = 'b' * 40
+        self.manifest.write_text(json.dumps(self.data), encoding='utf-8')
+        self.refuses_inspection()
+
+    def test_lock_revision_swap_cannot_relabel_the_manifest(self):
+        self.lock['source_revision'] = 'b' * 40
+        self.write_lock()
+        self.refuses_inspection()
+
+    def test_missing_lock_is_not_a_hash_only_fallback(self):
+        self.lock_path.unlink()
+        self.refuses_inspection()
+
+    def test_omitted_and_extra_lock_paths_are_refused(self):
+        original = deepcopy(self.lock)
+        del self.lock['files'][SOURCE]
+        self.write_lock()
+        self.refuses_inspection()
+        self.lock = original
+        self.lock['files']['test-input/unrequested-owner.txt'] = '0' * 64
+        self.write_lock()
+        self.refuses_inspection()
+
+    def test_duplicate_json_lock_fields_and_paths_are_refused(self):
+        raw = json.dumps(self.lock)
+        path_entry = json.dumps(SOURCE) + ': ' + json.dumps(self.lock['files'][SOURCE])
+        for altered in (
+                raw.replace('"schema":', '"schema":"trnm-pq128-source-lock-v1","schema":', 1),
+                raw.replace(path_entry, path_entry + ', ' + path_entry, 1)):
+            with self.subTest(raw=altered[:80]):
+                self.lock_path.write_text(altered, encoding='utf-8')
+                self.refuses_inspection()
+
+    def test_lock_symlink_is_refused_even_when_target_bytes_match(self):
+        other = self.root / 'copied-lock.json'
+        other.write_bytes(self.lock_path.read_bytes())
+        self.lock_path.unlink()
+        self.lock_path.symlink_to(other)
+        self.refuses_inspection()
+
+    def test_source_symlink_is_refused_even_when_target_hash_matches(self):
+        other = self.root / 'copied-source.txt'
+        other.write_bytes(self.source.read_bytes())
+        self.source.unlink()
+        self.source.symlink_to(other)
+        self.refuses_inspection()
+
+    def test_oversize_source_lock_is_refused(self):
+        self.lock_path.write_bytes(b' ' * (budget.MAX_BYTES + 1))
+        self.refuses_inspection()
+
+    def test_lock_schema_fields_and_digest_encoding_are_closed(self):
+        original = deepcopy(self.lock)
+        for key, value in (('schema', 'trnm-pq128-source-lock-v0'),
+                           ('authenticated', True), ('files', [])):
+            with self.subTest(field=key):
+                self.lock = deepcopy(original)
+                self.lock[key] = value
+                self.write_lock()
+                self.refuses_inspection()
+        for value in ('0' * 40, 'A' * 64, 'g' * 64, True, None):
+            with self.subTest(digest=value):
+                self.lock = deepcopy(original)
+                self.lock['files'][SOURCE] = value
+                self.write_lock()
+                self.refuses_inspection()
+
+    def test_evaluate_without_file_inspection_is_unbound(self):
+        report = budget.evaluate(self.data)
+        self.assertIs(report['source_revision_bound'], False)
+        self.assertEqual(report['source_binding_scope'], 'unbound')
+        self.assertIsNone(report['source_lock_sha256'])
+        self.remains_unqualified(report)
+
+    def test_arithmetic_example_never_inherits_a_research_source_binding(self):
+        for revision in ('illustrative', self.lock['source_revision']):
+            with self.subTest(revision=revision):
+                data = example()
+                data['experiment']['source_revision'] = revision
+                self.manifest.write_text(json.dumps(data), encoding='utf-8')
+                report = budget.inspect(self.root)
+                self.assertIs(report['source_revision_bound'], False)
+                self.assertEqual(report['source_binding_scope'], 'unbound')
+                self.assertIsNone(report['source_lock_sha256'])
+                self.remains_unqualified(report)
 
 
 if __name__ == '__main__':

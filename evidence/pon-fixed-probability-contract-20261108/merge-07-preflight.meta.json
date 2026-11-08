@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit": 0,
+  "duration_seconds": 0.17604029504582286,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "8d5389748873dad6e296d17f2ff20483b5afa5bc"
+}

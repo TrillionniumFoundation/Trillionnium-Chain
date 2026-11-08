@@ -26,6 +26,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
                                WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE,
                                LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL, CERTIFICATE_COMPOSITION_TESTS, NATIVE_RISK_LEDGER,
+                               CREDIT_MODEL_COMMANDS, CREDIT_MODEL_PREFIX,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                check_from_zero_host_callsites,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
@@ -264,6 +265,60 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         for changed in variants:
             with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
                 check_independent_conformance(changed, self.lanes)
+
+    def test_credit_model_commands_cannot_be_omitted_duplicated_or_moved(self):
+        for command in CREDIT_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            variants = [self.script.replace(line, ''),
+                        self.script.replace(line, '    true # omitted credit model\n'),
+                        self.script.replace(line, line * 2),
+                        self.script.replace(line, '').replace('  protocol-contract)\n',
+                                                              '  protocol-contract)\n' + line)]
+            for script in variants:
+                with self.subTest(command=command, script=script), self.assertRaises(ValueError):
+                    check_independent_conformance(script, self.lanes)
+
+    def test_credit_model_commands_cannot_be_skipped_by_false_shell_branch(self):
+        for command in CREDIT_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            skipped = '    if false; then\n' + line + '    fi\n'
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
+                    check_independent_conformance(self.script.replace(line, skipped), self.lanes)
+                # This reproduces the shell failure mode without executing any
+                # actual model/native command or changing the source checkout.
+                prelude = 'set -euo pipefail\npython3() { return 19; }\n'
+                normal = subprocess.run(['bash', '-c', prelude + line],
+                                        capture_output=True, text=True, timeout=5)
+                bypass = subprocess.run(['bash', '-c', prelude + skipped],
+                                        capture_output=True, text=True, timeout=5)
+                self.assertEqual(normal.returncode, 19, normal.stderr)
+                self.assertEqual(bypass.returncode, 0, bypass.stderr)
+
+    def test_credit_model_failures_cannot_be_swallowed_by_shell_condition(self):
+        for command in CREDIT_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            conditional = '    if\n' + line + '    then\n      :\n    fi\n'
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
+                    check_independent_conformance(self.script.replace(line, conditional), self.lanes)
+                prelude = 'set -euo pipefail\npython3() { return 19; }\n'
+                normal = subprocess.run(['bash', '-c', prelude + line],
+                                        capture_output=True, text=True, timeout=5)
+                bypass = subprocess.run(['bash', '-c', prelude + conditional],
+                                        capture_output=True, text=True, timeout=5)
+                self.assertEqual(normal.returncode, 19, normal.stderr)
+                self.assertEqual(bypass.returncode, 0, bypass.stderr)
+
+    def test_entire_credit_model_prefix_cannot_be_wrapped_or_preceded(self):
+        self.assertIn(CREDIT_MODEL_PREFIX, self.script)
+        for replacement in ('    if false; then\n' + CREDIT_MODEL_PREFIX + '    fi\n',
+                            '    if\n' + CREDIT_MODEL_PREFIX + '    then\n      :\n    fi\n',
+                            '    :\n' + CREDIT_MODEL_PREFIX):
+            with self.subTest(replacement=replacement):
+                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
+                    check_independent_conformance(
+                        self.script.replace(CREDIT_MODEL_PREFIX, replacement), self.lanes)
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
@@ -584,7 +639,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                      'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                      'test_useful_cell_multimodal_execution_v3.py',
-                     'test_useful_cell_multimodal_relation_v3.py'):
+                     'test_useful_cell_multimodal_relation_v3.py',
+                     'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
+                     'test_service_work_settlement_v1.py'):
             command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
             self.assertEqual(self.script.count(command), 1)
             variants = {
@@ -651,6 +708,25 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 moved = self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
                 with self.assertRaises(ValueError):
                     check_independent_conformance(moved, self.lanes)
+
+    def test_branch_schedule_export_and_full_reader_cannot_be_omitted_or_forged(self):
+        commands = [line + '\n' for line in self.script.splitlines()
+                    if 'TRNM_WORK_SCHEDULE_RESEARCH_DIR' in line
+                    or 'trnm_schedule_' in line]
+        self.assertGreaterEqual(len(commands), 9)
+        for command in commands:
+            for replacement in ('', command * 2, '      true # suppressed schedule evidence\n'):
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        for old, new in [
+            ('in pnh1-authenticated pgh2-growth; do', 'in pnh1-authenticated; do'),
+            ('sha256sum "$trnm_schedule_dir/report.json"', 'printf stale-prior-report'),
+            ('--report-sha256 "$trnm_schedule_digest"', '--skip-full-work'),
+        ]:
+            with self.subTest(old=old):
+                with self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(old, new), self.lanes)
 
     def test_native_daa_reader_requires_fresh_full_work_export_and_actual_digest(self):
         lines = [line + '\n' for line in self.script.splitlines()
@@ -1249,7 +1325,9 @@ class CiContractTests(unittest.TestCase):
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                      'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                      'test_useful_cell_multimodal_execution_v3.py',
-                     'test_useful_cell_multimodal_relation_v3.py'):
+                     'test_useful_cell_multimodal_relation_v3.py',
+                     'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
+                     'test_service_work_settlement_v1.py'):
             path = self.root / 'formal/pon-nakamoto-v1' / name
             command = next(line.strip() for line in script.splitlines()
                            if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')
@@ -1447,7 +1525,10 @@ class CiContractTests(unittest.TestCase):
     def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
         path = 'scripts/ci/ci_job.sh'
         for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
-                        '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+                        '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                        '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+                        '    python3 scripts/ci/pq_authority_effect_register.py\n',
+                        "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
             for replacement in ('', '    true # omitted lifetime budget check\n', command * 2):
                 with self.subTest(command=command, replacement=replacement):
                     self.rejected(path, command, replacement)
@@ -2480,6 +2561,122 @@ class W1PostwinLaneTests(unittest.TestCase):
                 self.workflow_check(self.workflow.replace(before, '', 1))
 
 
+
+
+class MergedQualificationLaneTests(unittest.TestCase):
+    """Independent source-contract controls; these do not execute native lanes."""
+
+    # Keep these literals independent from every checker's roster and prefix.
+    GROUPS = {
+        'credit': ('repository-truth', '    bash scripts/project-preflight.sh --audit\n', (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n",
+        ), '    python3 scripts/ci/test_project_boundary.py\n'),
+        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_budget.py\n', (
+            '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+            '    python3 scripts/ci/pq_authority_effect_register.py\n',
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n",
+        ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
+        'fixed_probability': ('repository-truth',
+                              "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v\n",
+            '    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n',
+            '    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check\n',
+        ), '    python3 formal/pon-nakamoto-v1/stateful_tail.py\n'),
+        'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
+            '    python3 scripts/ci/check_completion_evidence.py --historical\n',
+            '    python3 scripts/ci/test_completion_evidence.py\n',
+        ), '    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical\n'),
+    }
+
+    def setUp(self):
+        self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        self.required = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                         'rust-baseline', 'external-evidence-contract'}
+
+    def checked(self, script):
+        check_independent_conformance(script, self.required)
+
+    def test_actual_merged_lanes_keep_all_original_controls(self):
+        self.checked(self.script)
+
+    def test_independent_literals_keep_original_neighbors_and_unique_commands(self):
+        self.checked(self.script)
+        for name, (lane, before, commands, after) in self.GROUPS.items():
+            block = self.script.split('  ' + lane + ')\n', 1)[1].split('    ;;\n', 1)[0]
+            with self.subTest(group=name):
+                self.assertIn(before + ''.join(commands) + after, block)
+                for command in commands:
+                    self.assertEqual(self.script.count(command), 1)
+
+    def reject_command_mutations(self, group):
+        # A positive precondition prevents a stale checker from making every
+        # negative case pass merely because the untouched lane already fails.
+        self.checked(self.script)
+        lane, _, commands, after = self.GROUPS[group]
+        for command in commands:
+            self.assertEqual(self.script.count(command), 1)
+            variants = {
+                'removed': self.script.replace(command, '', 1),
+                'modified argv': self.script.replace(command, command.replace('python3 ', 'python3 -O ', 1), 1),
+                'duplicated locally': self.script.replace(command, command * 2, 1),
+                'commented out': self.script.replace(command, '    # ' + command.lstrip(), 1),
+                'false branch': self.script.replace(command, '    if false; then\n' + command + '    fi\n', 1),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n', 1),
+                'errexit suppressed': self.script.replace(command, '    if\n' + command + '    then :; fi\n', 1),
+                'backgrounded': self.script.replace(command, command.rstrip() + ' &\n', 1),
+                'moved within lane': self.script.replace(command, '', 1).replace(after, after + command, 1),
+                'moved to fuzz lane': self.script.replace(command, '', 1).replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command, 1),
+                'duplicated in fuzz lane': self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command, 1),
+            }
+            for label, changed in variants.items():
+                self.assertNotEqual(changed, self.script)
+                with self.subTest(group=group, lane=lane, command=command, mutation=label):
+                    with self.assertRaises(ValueError):
+                        self.checked(changed)
+
+    def test_credit_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('credit')
+
+    def test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('pq_effect_root')
+
+    def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('fixed_probability')
+
+    def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('completion')
+
+    def test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions(self):
+        self.checked(self.script)
+        for name, (_, _, commands, _) in self.GROUPS.items():
+            block = ''.join(commands)
+            for replacement in (
+                    ''.join(reversed(commands)), block + block,
+                    '    if false; then\n' + block + '    fi\n',
+                    '    if\n' + block + '    then :; fi\n',
+                    '    {\n' + block + '    } || true\n'):
+                with self.subTest(group=name, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        self.checked(self.script.replace(block, replacement, 1))
+
+    def test_whole_repository_and_external_lanes_cannot_suppress_failures(self):
+        self.checked(self.script)
+        for lane in ('repository-truth', 'external-evidence-contract'):
+            marker = '  ' + lane + ')\n'
+            block = self.script.split(marker, 1)[1].split('    ;;\n', 1)[0]
+            for replacement in (
+                    '    if false; then\n' + block + '    fi\n',
+                    '    if\n' + block + '    then :; fi\n',
+                    '    {\n' + block + '    } || true\n',
+                    '    set +e\n' + block,
+                    block + '    true\n'):
+                with self.subTest(lane=lane, replacement=replacement[:80]):
+                    with self.assertRaises(ValueError):
+                        self.checked(self.script.replace(marker + block, marker + replacement, 1))
 
 
 if __name__ == '__main__':

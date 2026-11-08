@@ -1,0 +1,550 @@
+RUST_MIN_STACK=8388608 NEXTEST_PROFILE=local python3 ../scripts/run-nextest.py "$@"
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> third_party/i18n-config-0.4.8/src/lib.rs:144:9
+    |
+144 |         &self,
+    |         ^^^^^ the lifetime is elided here
+145 |     ) -> Result<Option<(&'_ Crate, &'_ I18nConfig)>, I18nConfigError> {
+    |                          ^^ ^^^^^   ^^ the same lifetime is elided here
+    |                          |  |
+    |                          |  the same lifetime is hidden here
+    |                          the same lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+145 |     ) -> Result<Option<(&'_ Crate<'_>, &'_ I18nConfig)>, I18nConfigError> {
+    |                                  ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> third_party/i18n-config-0.4.8/src/lib.rs:155:26
+    |
+155 |     pub fn active_config(&self) -> Result<Option<(&'_ Crate, &'_ I18nConfig)>, I18nConfigError> {
+    |                          ^^^^^                     ^^ ^^^^^   ^^ the same lifetime is elided here
+    |                          |                         |  |
+    |                          |                         |  the same lifetime is hidden here
+    |                          |                         the same lifetime is elided here
+    |                          the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+    |
+155 |     pub fn active_config(&self) -> Result<Option<(&'_ Crate<'_>, &'_ I18nConfig)>, I18nConfigError> {
+    |                                                            ++++
+
+warning: `i18n-config` (lib) generated 2 warnings (run `cargo fix --lib -p i18n-config` to apply 2 suggestions)
+   Compiling codex-hepta-learning-artifacts v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-learning-artifacts)
+   Compiling codex-hepta-agentd v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-agentd)
+    Finished `test` profile [unoptimized] target(s) in 35.00s
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#parking_lot_core@0.9.12` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#portable-atomic@1.15.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.21` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.154` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#clang-sys@1.9.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#getrandom@0.3.4` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#bindgen@0.73.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#icu_normalizer_data@2.3.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.3.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#aws-lc-sys@0.46.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#zerocopy@0.8.63` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#aws-lc-rs@1.18.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#crossbeam-utils@0.8.23` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.5` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#httparse@1.10.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#ring@0.17.14` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rustversion@1.0.23` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.46` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.154` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#ahash@0.8.12` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#crossbeam-epoch@0.9.21` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#openssl-sys@0.9.117` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#openssl@0.10.81` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#native-tls@0.2.18` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#crossbeam-deque@0.8.8` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#oid-registry@0.8.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#cookie@0.18.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#encoding_rs@0.8.42` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rayon-core@1.13.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#syn@1.0.109` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#schemars@0.8.22` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#ref-cast@1.0.27` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#zstd-sys@2.1.2+zstd.1.5.7` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#typeid@1.0.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#zstd-safe@8.2.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#heapless@0.7.17` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#erased-serde@0.4.10` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#allocative@0.3.6` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#blake3@1.8.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#logos-codegen@0.15.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#nix@0.28.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rama-http-headers@0.3.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#bindgen@0.72.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#starlark_map@0.14.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#icu_locale_fallback_data@2.3.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#memoffset@0.9.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#starlark@0.14.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#icu_decimal_data@2.3.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rama-dns@0.3.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#heapless@0.8.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#faster-hex@0.10.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@4.1.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#nix@0.31.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#tree-sitter-language@0.1.9` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#windows_x86_64_gnu@0.52.6` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#tree-sitter-powershell@0.26.4` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#tree-sitter-bash@0.25.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#tree-sitter@0.25.10` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#ring@0.17.14` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#crossbeam-utils@0.8.23` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.21` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.46` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.37.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#aws-types@1.6.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.5` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#getrandom@0.3.4` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#object@0.37.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#findshlibs@0.10.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#rmcp@3.1.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#sentry-contexts@0.46.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#sentry@0.46.2` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#noyalib@0.0.58` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#constant_time_eq@0.6.1` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#pulldown-cmark@0.10.3` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#stop-words@0.9.0` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#inotify-sys@0.1.8` which wasn't produced by cargo metadata
+warning: warning: saw package ID `registry+https://github.com/rust-lang/crates.io-index#assert_cmd@2.2.2` which wasn't produced by cargo metadata
+────────────
+ Nextest run ID daa6f76b-4408-4a08-b6ce-22d1fb7d7bdd with nextest profile: local
+    Starting 39 tests across 2 binaries (823 tests skipped)
+        PASS [   0.008s] codex-hepta-agentd learning_iteration_checkpoint::profile_tests::changed_frozen_profile_cannot_restore_or_replace_the_original_checkpoint
+        PASS [   0.014s] codex-hepta-agentd learning_iteration_checkpoint::profile_tests::both_no_update_paths_keep_the_frozen_profile_and_full_parent_after_cold_reopen
+        PASS [   0.006s] codex-hepta-agentd learning_iteration_checkpoint::profile_tests::previous_codec_version_is_refused_without_repair_or_append
+        PASS [   0.008s] codex-hepta-agentd learning_iteration_checkpoint::tests::foreign_owner_request_skipped_stage_and_divergent_successor_leave_current_unchanged
+        PASS [   0.005s] codex-hepta-agentd learning_iteration_checkpoint::tests::malformed_counts_strings_tags_and_truncated_checkpoints_are_rejected
+        PASS [   0.011s] codex-hepta-agentd learning_iteration_checkpoint::tests::maximum_legal_snapshots_roundtrip_all_decisions_inside_original_root_bound
+        PASS [   0.030s] codex-hepta-agentd learning_iteration_checkpoint::tests::each_checkpoint_reopens_and_exact_retry_performs_no_second_cas
+        PASS [   0.006s] codex-hepta-agentd learning_iteration_checkpoint::tests::valid_json_with_corrupt_protected_record_metadata_is_never_restored
+        PASS [   0.006s] codex-hepta-agentd learning_iteration_checkpoint::tests::write_failure_and_lost_ack_reconcile_original_record_without_reexecution
+        PASS [   3.338s] codex-hepta-agentd neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset
+        PASS [   3.694s] codex-hepta-agentd neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation
+        PASS [   3.097s] codex-hepta-agentd neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution
+        PASS [   0.307s] codex-hepta-agentd neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors
+        PASS [   0.118s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::coordinator_uses_native_proposal_owner_and_reconciles_lost_ack
+        PASS [   0.072s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::evaluated_no_update_waits_for_selection_and_cannot_resume_after_expiry
+        PASS [   0.009s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::invalid_signature_prevents_dataset_training_and_checkpoint_progress
+        PASS [   0.049s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::no_update_next_use_checks_actual_selection_stage_and_controller
+        PASS [   0.027s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::profile_tests::signed_training_profile_drift_stops_before_evaluator_and_cannot_rebind_restore
+        PASS [   0.062s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_current_revocation_controller_and_signature_expiry
+        PASS [   0.010s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_ready_and_clock_after_awaiting_owner_attestation
+        PASS [   0.206s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_reauthenticates_all_signed_stages_without_reproposing_or_checkpointing
+        PASS [   0.164s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_rejects_each_invalid_retained_signature_before_work
+        PASS [   0.011s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::fresh_receipt_wait_rechecks_time_and_ready_before_checkpointing
+        PASS [   0.119s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::partial_and_completed_recovery_preserve_deadlines_and_only_resume_after_authentication
+        PASS [   0.009s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::scope_and_generation_readiness_refuse_before_owner_work
+        PASS [   0.038s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::separate_keys_under_one_controller_cannot_self_evaluate
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::profile_tests::frozen_profile_is_required_and_committed_before_any_owner_work
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::profile_tests::trainer_and_evaluator_cannot_replace_the_frozen_profile
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::retained_tests::existing_cutover_signing_bytes_are_preserved_and_retained_use_has_its_own_tag
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::retained_tests::retained_task_and_model_cutover_are_not_interchangeable
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::retained_tests::retained_use_rejects_wrong_partition_selection_and_missing_owner_receipts
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::completes_only_after_next_task_and_replays_every_durable_boundary
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::failed_validation_never_advances_checkpoint
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::no_update_cannot_skip_selection_or_substitute_a_no_admissible_proposal
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::tests::no_update_keeps_baseline_and_replays_selection_and_actual_next_use
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::over_budget_dataset_and_cross_dataset_training_are_rejected
+        PASS [   0.001s] codex-hepta-learning-artifacts learning_iteration::tests::owner_independence_is_checked_before_any_stage
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::replay_rejects_missing_receipts_changed_budget_and_false_next_use
+        PASS [   4.633s] codex-hepta-agentd neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation
+────────────
+     Summary [   8.376s] 39 tests run: 39 passed, 823 skipped
+        PASS [   0.014s] codex-hepta-agentd learning_iteration_checkpoint::profile_tests::both_no_update_paths_keep_the_frozen_profile_and_full_parent_after_cold_reopen
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::profile_tests::both_no_update_paths_keep_the_frozen_profile_and_full_parent_after_cold_reopen ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.01s
+
+
+        PASS [   0.008s] codex-hepta-agentd learning_iteration_checkpoint::profile_tests::changed_frozen_profile_cannot_restore_or_replace_the_original_checkpoint
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::profile_tests::changed_frozen_profile_cannot_restore_or_replace_the_original_checkpoint ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.006s] codex-hepta-agentd learning_iteration_checkpoint::profile_tests::previous_codec_version_is_refused_without_repair_or_append
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::profile_tests::previous_codec_version_is_refused_without_repair_or_append ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.030s] codex-hepta-agentd learning_iteration_checkpoint::tests::each_checkpoint_reopens_and_exact_retry_performs_no_second_cas
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::tests::each_checkpoint_reopens_and_exact_retry_performs_no_second_cas ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.03s
+
+
+        PASS [   0.008s] codex-hepta-agentd learning_iteration_checkpoint::tests::foreign_owner_request_skipped_stage_and_divergent_successor_leave_current_unchanged
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::tests::foreign_owner_request_skipped_stage_and_divergent_successor_leave_current_unchanged ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.005s] codex-hepta-agentd learning_iteration_checkpoint::tests::malformed_counts_strings_tags_and_truncated_checkpoints_are_rejected
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::tests::malformed_counts_strings_tags_and_truncated_checkpoints_are_rejected ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.011s] codex-hepta-agentd learning_iteration_checkpoint::tests::maximum_legal_snapshots_roundtrip_all_decisions_inside_original_root_bound
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::tests::maximum_legal_snapshots_roundtrip_all_decisions_inside_original_root_bound ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.01s
+
+
+        PASS [   0.006s] codex-hepta-agentd learning_iteration_checkpoint::tests::valid_json_with_corrupt_protected_record_metadata_is_never_restored
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::tests::valid_json_with_corrupt_protected_record_metadata_is_never_restored ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.006s] codex-hepta-agentd learning_iteration_checkpoint::tests::write_failure_and_lost_ack_reconcile_original_record_without_reexecution
+  stdout ───
+
+    running 1 test
+    test learning_iteration_checkpoint::tests::write_failure_and_lost_ack_reconcile_original_record_without_reexecution ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   3.694s] codex-hepta-agentd neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation
+  stdout ───
+
+    running 1 test
+    test neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 3.69s
+
+  stderr ───
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+
+        PASS [   3.338s] codex-hepta-agentd neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset
+  stdout ───
+
+    running 1 test
+    HEPTA_LEARNING_READBACK_V1 adopted_pending {"schema":"hepta.agentd.learning-use-readback.v1","payload_json":"{\"disposition\":\"adopted_model_reset\",\"learning_operation_id\":\"learning-operation\",\"learning_head\":[76,157,191,52,1,233,34,246,46,112,64,34,65,53,124,205,222,176,88,96,109,165,0,167,132,186,64,193,3,124,234,0],\"learning_decision_head\":[70,62,123,81,178,212,242,79,71,143,145,98,183,64,212,69,129,173,46,109,115,27,173,193,233,12,101,157,111,143,254,128],\"source_run_id\":\"generation-task\",\"source_task_receipt\":[10,17,27,71,39,157,88,67,79,133,107,78,80,114,122,45,102,54,242,75,67,205,115,87,217,81,70,251,24,9,74,29],\"source_selected_artifact\":[202,230,98,23,47,212,80,187,12,215,16,167,105,7,156,5,191,197,216,227,94,250,101,118,237,199,208,55,122,253,212,162],\"source_selected_bundle\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\"observation\":{\"kind\":\"next_use\",\"bundle_digest\":[16,171,175,83,119,128,247,41,140,212,171,103,229,8,198,208,255,155,248,142,136,48,32,74,195,133,31,146,251,212,17,251],\"state_partition_digest\":[163,155,44,103,54,7,221,95,246,239,217,194,149,22,32,181,255,32,88,130,53,80,102,7,221,75,217,207,225,77,217,200],\"checkpoint_digest\":[45,147,109,180,35,42,94,68,94,163,113,168,74,213,215,91,68,158,101,49,13,208,27,177,49,165,231,28,100,48,182,250],\"selection_digest\":[224,164,203,101,244,175,26,122,82,207,255,5,232,34,204,190,51,104,144,26,143,199,133,11,179,226,57,170,188,63,173,115],\"committed_step_receipt\":[139,30,6,186,215,87,55,9,99,52,29,146,233,47,64,118,12,108,1,28,201,253,91,23,84,94,234,5,44,24,191,223],\"state_cutover_receipt\":[207,64,38,95,153,97,48,181,16,117,156,87,68,115,176,128,39,2,169,185,247,49,220,70,180,96,220,178,107,128,47,25],\"task_owner_publication\":null},\"intent\":{\"operation_id\":\"new-task-stop\",\"task_digest\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\"source_frontier\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\"predecessor_digest\":[214,190,54,36,21,70,38,230,1,141,103,40,23,149,58,239,197,196,119,230,38,22,110,10,11,131,3,98,127,98,243,240],\"input_digest\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\"deadline_micros\":10000},\"manifest_json\":\"{\\\"profile\\\":\\\"generation-service-test\\\",\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\\\"bundle_digest\\\":[16,171,175,83,119,128,247,41,140,212,171,103,229,8,198,208,255,155,248,142,136,48,32,74,195,133,31,146,251,212,17,251],\\\"encoder\\\":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],\\\"head\\\":null,\\\"memory\\\":null,\\\"world_model\\\":null,\\\"decoder\\\":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],\\\"runtime_digest\\\":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],\\\"device_digest\\\":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],\\\"input_schema\\\":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],\\\"state_schema\\\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],\\\"output_schema\\\":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],\\\"learning\\\":{\\\"kind\\\":\\\"frozen\\\",\\\"weights\\\":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},\\\"evolution\\\":{\\\"structure\\\":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],\\\"lineage\\\":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],\\\"source_dependencies\\\":[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],\\\"adoption_receipt\\\":[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},\\\"max_input_bytes\\\":64,\\\"max_state_bytes\\\":64,\\\"max_delta_bytes\\\":128,\\\"max_prefix_bytes\\\":1024,\\\"max_step_cost_entries\\\":32,\\\"max_ack_cost_entries\\\":16}\",\"previous_manifest_json\":\"{\\\"profile\\\":\\\"generation-service-test\\\",\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\\\"bundle_digest\\\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\\\"encoder\\\":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],\\\"head\\\":null,\\\"memory\\\":null,\\\"world_model\\\":null,\\\"decoder\\\":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],\\\"runtime_digest\\\":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],\\\"device_digest\\\":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],\\\"input_schema\\\":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],\\\"state_schema\\\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],\\\"output_schema\\\":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],\\\"learning\\\":{\\\"kind\\\":\\\"frozen\\\",\\\"weights\\\":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},\\\"evolution\\\":{\\\"structure\\\":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],\\\"lineage\\\":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],\\\"source_dependencies\\\":[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],\\\"adoption_receipt\\\":[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},\\\"max_input_bytes\\\":64,\\\"max_state_bytes\\\":64,\\\"max_delta_bytes\\\":128,\\\"max_prefix_bytes\\\":1024,\\\"max_step_cost_entries\\\":32,\\\"max_ack_cost_entries\\\":16}\",\"publication_json\":\"{\\\"intent\\\":{\\\"operation_id\\\":\\\"learning-updated-task:79b5b25d07f3052649c0fa5f2e6a6be8059b022a27616dbd68e5a87e0701ec1b\\\",\\\"supersedes\\\":null,\\\"previous\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"task_digest\\\":[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[81,146,144,118,38,184,168,83,252,150,247,131,214,154,55,56,159,203,121,158,46,203,138,67,43,186,155,216,24,62,178,42],\\\"generation\\\":41,\\\"writer_epoch\\\":7,\\\"config_digest\\\":[201,23,74,76,199,40,127,181,217,11,178,17,82,57,12,167,166,170,254,116,141,1,153,160,254,85,200,171,21,240,69,33]},\\\"previous_checkpoint\\\":[111,90,109,41,151,70,252,126,124,113,232,84,49,250,199,127,218,250,59,167,53,52,255,58,68,174,154,220,87,113,5,182],\\\"previous_observation\\\":[47,20,6,28,197,22,123,238,131,74,99,75,88,244,13,245,27,166,200,182,222,174,154,203,49,130,237,62,108,82,50,52],\\\"target\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-updated-learning-next\\\"},\\\"manifest_digest\\\":[252,13,126,48,59,214,7,91,81,111,194,172,82,100,157,12,16,209,137,43,66,203,234,209,35,32,232,222,119,153,235,126],\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[214,190,54,36,21,70,38,230,1,141,103,40,23,149,58,239,197,196,119,230,38,22,110,10,11,131,3,98,127,98,243,240],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"config_digest\\\":[12,99,24,146,160,31,199,98,191,194,93,117,88,231,85,69,111,202,3,241,232,144,24,98,78,132,61,86,49,84,143,82]},\\\"genesis_checkpoint\\\":[122,136,150,50,145,169,77,246,28,191,230,157,138,113,78,238,50,59,127,60,92,77,106,155,51,151,211,178,90,207,2,250],\\\"selection\\\":[224,164,203,101,244,175,26,122,82,207,255,5,232,34,204,190,51,104,144,26,143,199,133,11,179,226,57,170,188,63,173,115]},\\\"witness\\\":{\\\"schema_version\\\":1,\\\"authority_epoch\\\":1,\\\"verified_at_unix_ms\\\":1000,\\\"boundary\\\":\\\"dispatch_entry\\\",\\\"authority_ref\\\":{\\\"authority_family\\\":\\\"final_use\\\",\\\"authority\\\":{\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"grant_id\\\":\\\"test-replace-86be99a286f668e4b5727d3f07e1925b386cc39b299630de8839698cfe891ca3\\\",\\\"revocation_revision\\\":1,\\\"binding_sha256\\\":[167,144,24,88,12,51,253,136,177,200,239,38,7,160,254,76,95,92,195,97,204,30,175,141,190,158,180,118,108,244,68,187]}}},\\\"signed\\\":{\\\"grant\\\":{\\\"schema_version\\\":1,\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"authority_epoch\\\":1,\\\"grant_id\\\":\\\"test-replace-86be99a286f668e4b5727d3f07e1925b386cc39b299630de8839698cfe891ca3\\\",\\\"nonce\\\":[107,165,69,179,252,21,120,83,228,27,165,67,128,224,51,114,164,223,24,34,40,103,198,206,41,174,11,28,24,248,140,152],\\\"binding\\\":{\\\"subject_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"destination_id\\\":\\\"agentd.cell-generation.replace\\\",\\\"request_sha256\\\":[134,190,153,162,134,246,104,228,181,114,125,63,7,225,146,91,56,108,195,155,41,150,48,222,136,57,105,140,254,137,28,163],\\\"scope_sha256\\\":[4,52,118,0,230,193,179,53,130,1,84,146,117,162,184,138,245,161,32,42,149,14,187,149,196,46,106,182,169,158,197,201],\\\"payload_sha256\\\":[174,39,139,6,53,97,226,177,135,212,112,219,91,70,45,127,27,21,48,189,236,189,16,61,247,70,13,10,215,108,110,32]},\\\"not_before_unix_ms\\\":1,\\\"expires_at_unix_ms\\\":9000},\\\"signature\\\":[132,136,172,210,115,196,236,40,120,39,253,218,97,96,238,156,3,195,242,166,245,229,134,190,22,113,52,27,40,240,156,28,76,218,203,7,160,162,90,159,40,93,27,251,226,92,90,149,239,218,218,192,236,37,140,240,226,99,216,73,44,192,132,9]},\\\"signed_grant_digest\\\":[187,248,157,231,200,196,33,49,8,71,220,62,55,235,90,150,251,25,3,152,81,69,204,226,152,149,250,133,168,197,72,106]}\",\"step_receipt_json\":\"{\\\"operation_id\\\":\\\"new-task-stop\\\",\\\"request_digest\\\":[238,169,234,125,52,132,106,243,32,163,36,206,223,119,232,174,175,95,54,81,245,27,251,75,166,183,222,41,214,207,2,71],\\\"proposal_digest\\\":[82,182,78,118,143,204,225,247,155,26,13,242,250,221,224,223,50,52,66,99,170,160,24,222,218,5,138,247,185,106,155,112],\\\"checkpoint_after\\\":[94,106,197,138,191,51,36,22,217,158,48,250,46,241,237,253,82,215,215,11,115,73,73,139,72,70,92,18,35,49,148,13],\\\"disposition\\\":\\\"stopped\\\",\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]}}\",\"generation_observation_json\":\"{\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[214,190,54,36,21,70,38,230,1,141,103,40,23,149,58,239,197,196,119,230,38,22,110,10,11,131,3,98,127,98,243,240],\\\"first_advance_input_digest\\\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\\\"owner_checkpoint\\\":[45,147,109,180,35,42,94,68,94,163,113,168,74,213,215,91,68,158,101,49,13,208,27,177,49,165,231,28,100,48,182,250],\\\"snapshot\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-updated-learning-next\\\"},\\\"manifest_digest\\\":[252,13,126,48,59,214,7,91,81,111,194,172,82,100,157,12,16,209,137,43,66,203,234,209,35,32,232,222,119,153,235,126],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"revision\\\":1,\\\"state\\\":[5,6],\\\"prefix\\\":[115,121,110,116,104,101,116,105,99,32,115,117,99,99,101,115,115,111,114,32,116,97,115,107],\\\"stopped\\\":true},\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]},\\\"pending_request_digest\\\":null,\\\"pending_output\\\":{\\\"operation_id\\\":\\\"new-task-stop\\\",\\\"request_digest\\\":[238,169,234,125,52,132,106,243,32,163,36,206,223,119,232,174,175,95,54,81,245,27,251,75,166,183,222,41,214,207,2,71],\\\"prefix_offset\\\":0,\\\"bytes\\\":[115,121,110,116,104,101,116,105,99,32,115,117,99,99,101,115,115,111,114,32,116,97,115,107]}}\",\"authority\":\"DENY_ALL\",\"current_permission\":\"NOT_EXPORTED\"}","payload_digest":[195,175,250,157,239,196,114,155,18,3,113,247,189,31,4,34,23,80,45,150,50,28,173,161,55,235,196,70,240,52,148,13]}
+    HEPTA_LEARNING_CHECKPOINT_V2 adopted_pending {"authority":"DENY_ALL","checkpoint_base64":"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","checkpoint_sha256":"b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad","current_permission":"NOT_EXPORTED","evaluation_profile":"efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271","initial_head":"e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a","learning_head":"4c9dbf3401e922f62e70402241357ccddeb058606da500a784ba40c1037cea00","pins_are_fixture_derived":true,"production_qualification":"HOLD_NO_GO","schema":"hepta.learning.checkpoint.fixture.v2"}
+    HEPTA_LEARNING_READBACK_V1 adopted_acked {"schema":"hepta.agentd.learning-use-readback.v1","payload_json":"{\"disposition\":\"adopted_model_reset\",\"learning_operation_id\":\"learning-operation\",\"learning_head\":[76,157,191,52,1,233,34,246,46,112,64,34,65,53,124,205,222,176,88,96,109,165,0,167,132,186,64,193,3,124,234,0],\"learning_decision_head\":[70,62,123,81,178,212,242,79,71,143,145,98,183,64,212,69,129,173,46,109,115,27,173,193,233,12,101,157,111,143,254,128],\"source_run_id\":\"generation-task\",\"source_task_receipt\":[10,17,27,71,39,157,88,67,79,133,107,78,80,114,122,45,102,54,242,75,67,205,115,87,217,81,70,251,24,9,74,29],\"source_selected_artifact\":[202,230,98,23,47,212,80,187,12,215,16,167,105,7,156,5,191,197,216,227,94,250,101,118,237,199,208,55,122,253,212,162],\"source_selected_bundle\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\"observation\":{\"kind\":\"next_use\",\"bundle_digest\":[16,171,175,83,119,128,247,41,140,212,171,103,229,8,198,208,255,155,248,142,136,48,32,74,195,133,31,146,251,212,17,251],\"state_partition_digest\":[163,155,44,103,54,7,221,95,246,239,217,194,149,22,32,181,255,32,88,130,53,80,102,7,221,75,217,207,225,77,217,200],\"checkpoint_digest\":[110,70,31,129,249,250,16,64,111,189,127,108,202,204,89,41,214,238,28,43,246,72,113,53,227,134,221,242,71,48,142,128],\"selection_digest\":[224,164,203,101,244,175,26,122,82,207,255,5,232,34,204,190,51,104,144,26,143,199,133,11,179,226,57,170,188,63,173,115],\"committed_step_receipt\":[139,30,6,186,215,87,55,9,99,52,29,146,233,47,64,118,12,108,1,28,201,253,91,23,84,94,234,5,44,24,191,223],\"state_cutover_receipt\":[207,64,38,95,153,97,48,181,16,117,156,87,68,115,176,128,39,2,169,185,247,49,220,70,180,96,220,178,107,128,47,25],\"task_owner_publication\":null},\"intent\":{\"operation_id\":\"new-task-stop\",\"task_digest\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\"source_frontier\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\"predecessor_digest\":[214,190,54,36,21,70,38,230,1,141,103,40,23,149,58,239,197,196,119,230,38,22,110,10,11,131,3,98,127,98,243,240],\"input_digest\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\"deadline_micros\":10000},\"manifest_json\":\"{\\\"profile\\\":\\\"generation-service-test\\\",\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\\\"bundle_digest\\\":[16,171,175,83,119,128,247,41,140,212,171,103,229,8,198,208,255,155,248,142,136,48,32,74,195,133,31,146,251,212,17,251],\\\"encoder\\\":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],\\\"head\\\":null,\\\"memory\\\":null,\\\"world_model\\\":null,\\\"decoder\\\":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],\\\"runtime_digest\\\":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],\\\"device_digest\\\":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],\\\"input_schema\\\":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],\\\"state_schema\\\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],\\\"output_schema\\\":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],\\\"learning\\\":{\\\"kind\\\":\\\"frozen\\\",\\\"weights\\\":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},\\\"evolution\\\":{\\\"structure\\\":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],\\\"lineage\\\":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],\\\"source_dependencies\\\":[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],\\\"adoption_receipt\\\":[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},\\\"max_input_bytes\\\":64,\\\"max_state_bytes\\\":64,\\\"max_delta_bytes\\\":128,\\\"max_prefix_bytes\\\":1024,\\\"max_step_cost_entries\\\":32,\\\"max_ack_cost_entries\\\":16}\",\"previous_manifest_json\":\"{\\\"profile\\\":\\\"generation-service-test\\\",\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\\\"bundle_digest\\\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\\\"encoder\\\":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],\\\"head\\\":null,\\\"memory\\\":null,\\\"world_model\\\":null,\\\"decoder\\\":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],\\\"runtime_digest\\\":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],\\\"device_digest\\\":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],\\\"input_schema\\\":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],\\\"state_schema\\\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],\\\"output_schema\\\":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],\\\"learning\\\":{\\\"kind\\\":\\\"frozen\\\",\\\"weights\\\":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},\\\"evolution\\\":{\\\"structure\\\":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],\\\"lineage\\\":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],\\\"source_dependencies\\\":[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],\\\"adoption_receipt\\\":[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},\\\"max_input_bytes\\\":64,\\\"max_state_bytes\\\":64,\\\"max_delta_bytes\\\":128,\\\"max_prefix_bytes\\\":1024,\\\"max_step_cost_entries\\\":32,\\\"max_ack_cost_entries\\\":16}\",\"publication_json\":\"{\\\"intent\\\":{\\\"operation_id\\\":\\\"learning-updated-task:79b5b25d07f3052649c0fa5f2e6a6be8059b022a27616dbd68e5a87e0701ec1b\\\",\\\"supersedes\\\":null,\\\"previous\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"task_digest\\\":[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[81,146,144,118,38,184,168,83,252,150,247,131,214,154,55,56,159,203,121,158,46,203,138,67,43,186,155,216,24,62,178,42],\\\"generation\\\":41,\\\"writer_epoch\\\":7,\\\"config_digest\\\":[201,23,74,76,199,40,127,181,217,11,178,17,82,57,12,167,166,170,254,116,141,1,153,160,254,85,200,171,21,240,69,33]},\\\"previous_checkpoint\\\":[111,90,109,41,151,70,252,126,124,113,232,84,49,250,199,127,218,250,59,167,53,52,255,58,68,174,154,220,87,113,5,182],\\\"previous_observation\\\":[47,20,6,28,197,22,123,238,131,74,99,75,88,244,13,245,27,166,200,182,222,174,154,203,49,130,237,62,108,82,50,52],\\\"target\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-updated-learning-next\\\"},\\\"manifest_digest\\\":[252,13,126,48,59,214,7,91,81,111,194,172,82,100,157,12,16,209,137,43,66,203,234,209,35,32,232,222,119,153,235,126],\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[214,190,54,36,21,70,38,230,1,141,103,40,23,149,58,239,197,196,119,230,38,22,110,10,11,131,3,98,127,98,243,240],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"config_digest\\\":[12,99,24,146,160,31,199,98,191,194,93,117,88,231,85,69,111,202,3,241,232,144,24,98,78,132,61,86,49,84,143,82]},\\\"genesis_checkpoint\\\":[122,136,150,50,145,169,77,246,28,191,230,157,138,113,78,238,50,59,127,60,92,77,106,155,51,151,211,178,90,207,2,250],\\\"selection\\\":[224,164,203,101,244,175,26,122,82,207,255,5,232,34,204,190,51,104,144,26,143,199,133,11,179,226,57,170,188,63,173,115]},\\\"witness\\\":{\\\"schema_version\\\":1,\\\"authority_epoch\\\":1,\\\"verified_at_unix_ms\\\":1000,\\\"boundary\\\":\\\"dispatch_entry\\\",\\\"authority_ref\\\":{\\\"authority_family\\\":\\\"final_use\\\",\\\"authority\\\":{\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"grant_id\\\":\\\"test-replace-86be99a286f668e4b5727d3f07e1925b386cc39b299630de8839698cfe891ca3\\\",\\\"revocation_revision\\\":1,\\\"binding_sha256\\\":[167,144,24,88,12,51,253,136,177,200,239,38,7,160,254,76,95,92,195,97,204,30,175,141,190,158,180,118,108,244,68,187]}}},\\\"signed\\\":{\\\"grant\\\":{\\\"schema_version\\\":1,\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"authority_epoch\\\":1,\\\"grant_id\\\":\\\"test-replace-86be99a286f668e4b5727d3f07e1925b386cc39b299630de8839698cfe891ca3\\\",\\\"nonce\\\":[107,165,69,179,252,21,120,83,228,27,165,67,128,224,51,114,164,223,24,34,40,103,198,206,41,174,11,28,24,248,140,152],\\\"binding\\\":{\\\"subject_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"destination_id\\\":\\\"agentd.cell-generation.replace\\\",\\\"request_sha256\\\":[134,190,153,162,134,246,104,228,181,114,125,63,7,225,146,91,56,108,195,155,41,150,48,222,136,57,105,140,254,137,28,163],\\\"scope_sha256\\\":[4,52,118,0,230,193,179,53,130,1,84,146,117,162,184,138,245,161,32,42,149,14,187,149,196,46,106,182,169,158,197,201],\\\"payload_sha256\\\":[174,39,139,6,53,97,226,177,135,212,112,219,91,70,45,127,27,21,48,189,236,189,16,61,247,70,13,10,215,108,110,32]},\\\"not_before_unix_ms\\\":1,\\\"expires_at_unix_ms\\\":9000},\\\"signature\\\":[132,136,172,210,115,196,236,40,120,39,253,218,97,96,238,156,3,195,242,166,245,229,134,190,22,113,52,27,40,240,156,28,76,218,203,7,160,162,90,159,40,93,27,251,226,92,90,149,239,218,218,192,236,37,140,240,226,99,216,73,44,192,132,9]},\\\"signed_grant_digest\\\":[187,248,157,231,200,196,33,49,8,71,220,62,55,235,90,150,251,25,3,152,81,69,204,226,152,149,250,133,168,197,72,106]}\",\"step_receipt_json\":\"{\\\"operation_id\\\":\\\"new-task-stop\\\",\\\"request_digest\\\":[238,169,234,125,52,132,106,243,32,163,36,206,223,119,232,174,175,95,54,81,245,27,251,75,166,183,222,41,214,207,2,71],\\\"proposal_digest\\\":[82,182,78,118,143,204,225,247,155,26,13,242,250,221,224,223,50,52,66,99,170,160,24,222,218,5,138,247,185,106,155,112],\\\"checkpoint_after\\\":[94,106,197,138,191,51,36,22,217,158,48,250,46,241,237,253,82,215,215,11,115,73,73,139,72,70,92,18,35,49,148,13],\\\"disposition\\\":\\\"stopped\\\",\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]}}\",\"generation_observation_json\":\"{\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[214,190,54,36,21,70,38,230,1,141,103,40,23,149,58,239,197,196,119,230,38,22,110,10,11,131,3,98,127,98,243,240],\\\"first_advance_input_digest\\\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\\\"owner_checkpoint\\\":[110,70,31,129,249,250,16,64,111,189,127,108,202,204,89,41,214,238,28,43,246,72,113,53,227,134,221,242,71,48,142,128],\\\"snapshot\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-updated-learning-next\\\"},\\\"manifest_digest\\\":[252,13,126,48,59,214,7,91,81,111,194,172,82,100,157,12,16,209,137,43,66,203,234,209,35,32,232,222,119,153,235,126],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"revision\\\":1,\\\"state\\\":[5,6],\\\"prefix\\\":[115,121,110,116,104,101,116,105,99,32,115,117,99,99,101,115,115,111,114,32,116,97,115,107],\\\"stopped\\\":true},\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[55,30,58,209,161,220,238,152,56,3,146,199,2,172,143,182,80,136,110,3,62,197,42,20,210,16,168,130,109,136,175,136],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]},\\\"pending_request_digest\\\":null,\\\"pending_output\\\":null}\",\"authority\":\"DENY_ALL\",\"current_permission\":\"NOT_EXPORTED\"}","payload_digest":[161,185,77,219,30,214,34,118,44,45,225,36,125,66,106,216,200,41,243,155,49,4,242,190,85,26,204,23,41,87,39,190]}
+    HEPTA_LEARNING_CHECKPOINT_V2 adopted_acked {"authority":"DENY_ALL","checkpoint_base64":"SEVQTENQMDISbGVhcm5pbmctb3BlcmF0aW9uQDBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYwZjBmMGYkMDE4ZjRmNzItNWY4Zi03Y2MxLThmNTUtZGY5ZmIzYWEyYzEyBGNlbGwPZ2VuZXJhdGlvbi10YXNrChEbRyedWENPhWtOUHJ6LWY28ktDzXNX2VFG+xgJSh3K5mIXL9RQuwzXEKdpB5wFv8XY4176ZXbtx9A3ev3Uou/neyAdwhbA7fQ1oiffKyiY0/bqH/FuXU0NTsDPWTJxEGZpeHR1cmUtYmFzZWxpbmUAAAAAAAAAAcrmYhcv1FC7DNcQp2kHnAW/xdjjXvpldu3H0Dd6/dSiXAvCQjwa8YzQFypNH4TAGvJaPuPFzNIX6OikiST+QU5zDXJcilnTpzA97yvtBBpXfttCVaq9SInOEpGDEdlS8J/5TD6wwdNQt2EBxVPm5wwReLlvx/1zgYLjnio/G56+X5fjd0xR7dHWNwbC7DgmxWSgZ3lHcM2rD4xHl5ccrPn7u0+U8Yih4SlykeuJUBSsWnDsv8eSwu4/yIHaHeSIveFSM35Ohao+gUgvDOMprse/rVMUE/5T/vhPHw1BZcruFfRQpZE083qyvyKC5INRmEs5oaLI2jL3SIPFf43gbtfg7ou1BoXgX6D0ftBCA66VP9/QVfW9KJLqGGUEJU+MOkumlzXKU3Ze1qcJ7bVsbqI2txk6Oymms5DDRvD0NA5OkEsf3N7uBn2pNxPXlnP+fNOIQWWELm6z+xhVsPSk0akAAAAAEWxlYXJuaW5nLWVudmVsb3BllQXKy3xxDtFxJfzGyzZp6N3KbIzYr2ox9rPNZGBMMJjcnF7biy1Hnml7SwuKuHTzKzJROFmM6ee3WeuCkhEGItRUvsZW0ycjQElhAj7Zyzw3IhaHxAtJilez7vqTxMX04F64pKJVdD4FHXfV5Dt15eOAc7J1ObAYT7zjUkBaPuEAAQAAAAAAAACAAAEBAAAAAAAAAGQAAAABAAAAAAAAAIAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAIDZHM9dc7oO5vfxYupl9nQmXJ8SD1RMyoC1pZVo/CTkfgpleHBlcmllbmNlB2RhdGFzZXQHdHJhaW5lcglldmFsdWF0b3IIcHJvcG9zYWwIc2VsZWN0b3IIb2JzZXJ2ZXIGEmxlYXJuaW5nLW9wZXJhdGlvbuTtUPpXKCtUeq8qLiqdyK6ilB5zYg8Q68wo67rFCE1qCmV4cGVyaWVuY2XDw9ZNHIgewAs/1SpVxdNejbUV8GpGNUZ/GdpHrXAADgAAAAAAAAAUAH5BTmrEGsegZYzigHVIr4+0ixRfm3Sqd8m1JsVpgEu8ChEbRyedWENPhWtOUHJ6LWY28ktDzXNX2VFG+xgJSh0SbGVhcm5pbmctb3BlcmF0aW9uL/VmuLJk6tIH1AFraSg3vCDcOcCdKwuhhu0rGGzKkO0HZGF0YXNldMPD1k0ciB7ACz/VKlXF016NtRXwakY1Rn8Z2ketcAAOAAAAAAAAABQBsnf9YjZ2pSXCm56xVa/IyQEGgYFM6vstdif0e5ojJXZ+QU5qxBrHoGWM4oB1SK+PtIsUX5t0qnfJtSbFaYBLvLgb+ixJb7heay9QzoKZjq54DAU8KBbiS5rwpB8wDo/bAAAAAQAAAAAAAABAEmxlYXJuaW5nLW9wZXJhdGlvbgoBb/ukxkBVdavm3WGzIkWBdEu6NIjERRHsHeWWbu2xB3RyYWluZXLDw9ZNHIgewAs/1SpVxdNejbUV8GpGNUZ/GdpHrXAADgAAAAAAAAAUAiJmaXh0dXJlLXNlbGVjdGVkLXRyYWluZWQtY2FuZGlkYXRlAAAAAAAAAALK5mIXL9RQuwzXEKdpB5wFv8XY4176ZXbtx9A3ev3UolwLwkI8GvGM0BcqTR+EwBryWj7jxczSF+jopIkk/kFOcw1yXIpZ06cwPe8r7QQaV37bQlWqvUiJzhKRgxHZUvCf+Uw+sMHTULdhAcVT5ucMEXi5b8f9c4GC454qPxuevl+X43dMUe3R1jcGwuw4JsVkoGd5R3DNqw+MR5eXHKz5+7tPlPGIoeEpcpHriVAUrFpw7L/HksLuP8iB2h3kiL3hUjN+ToWqPoFILwzjKa7Hv61TFBP+U/74Tx8NQWXK7hX0UKWRNPN6sr8iguSDUZhLOaGiyNoy90iDxX+N4G7X4O6LtQaF4F+g9H7QQgOulT/f0FX1vSiS6hhlBCVPjDpLppc1ylN2XtanCe21bG6iNrcZOjspprOQw0bw9DQOTpBLH9ze7gZ9qTcT15Zz/nzTiEFlhC5us/sYVbD0pNGpAAHOMFahngl9BfUPJuA0bZSKQir4dUvbATD+YE2Bum/WSgHVuIv/ll6K/3LkKLU9bbRBp9kW9i2QOuzZjtp0cdZ0aAHVuIv/ll6K/3LkKLU9bbRBp9kW9i2QOuzZjtp0cdZ0aLJ3/WI2dqUlwpuesVWvyMkBBoGBTOr7LXYn9HuaIyV2KTcBPyGBgQYGsqeZsFvaKEnz42miCYKkE48OClWYTOTv53sgHcIWwO30NaIn3ysomNP26h/xbl1NDU7Az1kycQAAAAAAAAABAAAAAAAAAAEAAAAAAAAAQBJsZWFybmluZy1vcGVyYXRpb25d2LzapybrF/DhsdKsNKlPR4pIx6m/goo59rzxAckXkQlldmFsdWF0b3LDw9ZNHIgewAs/1SpVxdNejbUV8GpGNUZ/GdpHrXAADgAAAAAAAAAUAxCrr1N3gPcpjNSrZ+UIxtD/m/iOiDAgSsOFH5L71BH77+d7IB3CFsDt9DWiJ98rKJjT9uof8W5dTQ1OwM9ZMnEAEmxlYXJuaW5nLW9wZXJhdGlvblriKLQN4JyH88l5un6vHojjwC+yJzUnwOdV5Boz6GjWCHByb3Bvc2Fsw8PWTRyIHsALP9UqVcXTXo21FfBqRjVGfxnaR61wAA4AAAAAAAAAFAQQq69Td4D3KYzUq2flCMbQ/5v4jogwIErDhR+S+9QR+xJsZWFybmluZy1vcGVyYXRpb27i6cPVtRCrbAQzFO3hCPF6+jRFb3MMa4d9DmZNpdoENQASbGVhcm5pbmctb3BlcmF0aW9uRj57UbLU8k9Hj5Fit0DURYGtLm1zG63B6QxlnW+P/oAIc2VsZWN0b3LDw9ZNHIgewAs/1SpVxdNejbUV8GpGNUZ/GdpHrXAADgAAAAAAAAAUBRCrr1N3gPcpjNSrZ+UIxtD/m/iOiDAgSsOFH5L71BH74KTLZfSvGnpSz/8F6CLMvjNokBqPx4ULs+I5qrw/rXNMnb80Aeki9i5wQCJBNXzN3rBYYG2lAKeEukDBA3zqAA","checkpoint_sha256":"b4580307b7ae1d06d7589eb3df083d4ef8380d9c38d53a1147533af488db25ad","current_permission":"NOT_EXPORTED","evaluation_profile":"efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271","initial_head":"e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a","learning_head":"4c9dbf3401e922f62e70402241357ccddeb058606da500a784ba40c1037cea00","pins_are_fixture_derived":true,"production_qualification":"HOLD_NO_GO","schema":"hepta.learning.checkpoint.fixture.v2"}
+    test neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 3.33s
+
+
+        PASS [   3.097s] codex-hepta-agentd neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution
+  stdout ───
+
+    running 1 test
+    HEPTA_LEARNING_READBACK_V1 retained_pending {"schema":"hepta.agentd.learning-use-readback.v1","payload_json":"{\"disposition\":\"retained_model\",\"learning_operation_id\":\"learning-operation\",\"learning_head\":[200,72,21,232,180,144,210,179,50,158,174,21,174,116,188,19,195,200,230,75,131,99,243,30,214,98,154,207,4,1,97,151],\"learning_decision_head\":[32,255,105,149,32,11,182,206,169,165,21,15,35,142,56,179,82,53,172,46,120,174,242,188,12,25,212,21,166,201,88,198],\"source_run_id\":\"generation-task\",\"source_task_receipt\":[10,17,27,71,39,157,88,67,79,133,107,78,80,114,122,45,102,54,242,75,67,205,115,87,217,81,70,251,24,9,74,29],\"source_selected_artifact\":[202,230,98,23,47,212,80,187,12,215,16,167,105,7,156,5,191,197,216,227,94,250,101,118,237,199,208,55,122,253,212,162],\"source_selected_bundle\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\"observation\":{\"kind\":\"retained_model_next_use\",\"bundle_digest\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\"state_partition_digest\":[85,68,82,224,38,252,17,43,8,5,32,166,182,133,154,225,102,229,157,150,204,69,76,149,187,163,30,11,254,181,7,67],\"checkpoint_digest\":[122,186,103,245,103,165,76,182,216,15,42,16,140,51,89,87,46,217,35,235,195,177,129,188,10,249,125,168,229,72,236,112],\"selection_digest\":[175,27,75,186,11,251,33,214,197,235,229,113,14,216,140,47,141,30,72,125,212,138,142,1,150,41,34,31,155,101,109,190],\"committed_step_receipt\":[245,67,196,39,53,223,89,64,38,212,191,49,121,147,200,150,1,122,46,103,211,222,172,57,105,177,83,154,45,78,80,52],\"state_cutover_receipt\":null,\"task_owner_publication\":[143,24,68,215,58,49,183,62,127,217,240,146,174,58,180,203,165,110,183,148,81,145,70,246,189,81,18,208,178,115,23,35]},\"intent\":{\"operation_id\":\"new-task-stop\",\"task_digest\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\"source_frontier\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\"predecessor_digest\":[213,138,191,195,121,245,161,253,117,227,87,24,185,146,206,116,85,145,3,205,165,66,52,145,58,252,178,58,204,144,84,105],\"input_digest\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\"deadline_micros\":10000},\"manifest_json\":\"{\\\"profile\\\":\\\"generation-service-test\\\",\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\\\"bundle_digest\\\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\\\"encoder\\\":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],\\\"head\\\":null,\\\"memory\\\":null,\\\"world_model\\\":null,\\\"decoder\\\":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],\\\"runtime_digest\\\":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],\\\"device_digest\\\":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],\\\"input_schema\\\":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],\\\"state_schema\\\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],\\\"output_schema\\\":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],\\\"learning\\\":{\\\"kind\\\":\\\"frozen\\\",\\\"weights\\\":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},\\\"evolution\\\":{\\\"structure\\\":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],\\\"lineage\\\":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],\\\"source_dependencies\\\":[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],\\\"adoption_receipt\\\":[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},\\\"max_input_bytes\\\":64,\\\"max_state_bytes\\\":64,\\\"max_delta_bytes\\\":128,\\\"max_prefix_bytes\\\":1024,\\\"max_step_cost_entries\\\":32,\\\"max_ack_cost_entries\\\":16}\",\"previous_manifest_json\":null,\"publication_json\":\"{\\\"intent\\\":{\\\"operation_id\\\":\\\"learning-retained-task:e5dbc34861708a00ffe076f7fec716192647729d0ce7aed202c1be9e8a9e71b5\\\",\\\"supersedes\\\":null,\\\"previous\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"task_digest\\\":[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[81,146,144,118,38,184,168,83,252,150,247,131,214,154,55,56,159,203,121,158,46,203,138,67,43,186,155,216,24,62,178,42],\\\"generation\\\":41,\\\"writer_epoch\\\":7,\\\"config_digest\\\":[201,23,74,76,199,40,127,181,217,11,178,17,82,57,12,167,166,170,254,116,141,1,153,160,254,85,200,171,21,240,69,33]},\\\"previous_checkpoint\\\":[111,90,109,41,151,70,252,126,124,113,232,84,49,250,199,127,218,250,59,167,53,52,255,58,68,174,154,220,87,113,5,182],\\\"previous_observation\\\":[47,20,6,28,197,22,123,238,131,74,99,75,88,244,13,245,27,166,200,182,222,174,154,203,49,130,237,62,108,82,50,52],\\\"target\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-learning-next\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[213,138,191,195,121,245,161,253,117,227,87,24,185,146,206,116,85,145,3,205,165,66,52,145,58,252,178,58,204,144,84,105],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"config_digest\\\":[148,206,225,182,83,23,254,207,60,195,195,237,141,26,7,85,130,195,29,67,61,240,56,25,53,185,250,249,95,189,186,25]},\\\"genesis_checkpoint\\\":[61,122,189,210,252,33,92,237,133,215,3,96,200,59,17,93,82,165,104,29,68,125,148,65,210,196,231,161,55,129,196,112],\\\"selection\\\":[175,27,75,186,11,251,33,214,197,235,229,113,14,216,140,47,141,30,72,125,212,138,142,1,150,41,34,31,155,101,109,190],\\\"completion\\\":\\\"owner_drained_same_model\\\"},\\\"witness\\\":{\\\"schema_version\\\":1,\\\"authority_epoch\\\":1,\\\"verified_at_unix_ms\\\":1000,\\\"boundary\\\":\\\"dispatch_entry\\\",\\\"authority_ref\\\":{\\\"authority_family\\\":\\\"final_use\\\",\\\"authority\\\":{\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"grant_id\\\":\\\"test-replace-aae65f34097fcf73bc83b0e6e824a85bcf77d83403528112f2af7e1f3f0394bf\\\",\\\"revocation_revision\\\":1,\\\"binding_sha256\\\":[233,90,47,247,178,101,99,228,202,235,49,181,198,191,62,90,134,8,100,30,93,174,37,198,172,161,80,17,94,138,245,71]}}},\\\"signed\\\":{\\\"grant\\\":{\\\"schema_version\\\":1,\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"authority_epoch\\\":1,\\\"grant_id\\\":\\\"test-replace-aae65f34097fcf73bc83b0e6e824a85bcf77d83403528112f2af7e1f3f0394bf\\\",\\\"nonce\\\":[175,111,88,202,212,220,30,170,184,166,215,147,219,37,100,237,40,85,249,204,129,1,224,127,242,171,223,202,19,240,197,75],\\\"binding\\\":{\\\"subject_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"destination_id\\\":\\\"agentd.cell-generation.next-task-same-model\\\",\\\"request_sha256\\\":[170,230,95,52,9,127,207,115,188,131,176,230,232,36,168,91,207,119,216,52,3,82,129,18,242,175,126,31,63,3,148,191],\\\"scope_sha256\\\":[4,52,118,0,230,193,179,53,130,1,84,146,117,162,184,138,245,161,32,42,149,14,187,149,196,46,106,182,169,158,197,201],\\\"payload_sha256\\\":[48,23,116,146,45,190,234,159,224,34,215,109,92,13,52,228,170,242,220,131,158,119,78,234,136,242,218,86,14,220,227,211]},\\\"not_before_unix_ms\\\":1,\\\"expires_at_unix_ms\\\":9000},\\\"signature\\\":[97,170,172,156,17,221,131,49,80,250,214,242,237,175,239,125,58,13,230,142,164,106,92,164,96,139,171,83,95,125,174,20,212,19,126,245,112,162,83,35,106,127,82,253,94,185,18,102,144,121,108,107,176,195,158,236,85,59,8,66,19,160,50,12]},\\\"signed_grant_digest\\\":[13,100,72,150,46,171,75,234,139,19,165,200,206,214,183,162,208,188,115,105,106,34,46,204,172,230,201,140,18,18,24,223]}\",\"step_receipt_json\":\"{\\\"operation_id\\\":\\\"new-task-stop\\\",\\\"request_digest\\\":[184,198,234,235,126,52,120,213,253,4,110,112,211,120,71,10,140,87,85,75,60,95,162,42,228,135,127,166,214,122,86,229],\\\"proposal_digest\\\":[212,65,102,182,151,42,178,232,165,187,181,105,29,28,247,163,236,28,65,224,84,41,116,150,7,77,240,95,228,64,90,239],\\\"checkpoint_after\\\":[28,96,142,196,191,241,130,66,79,129,90,176,29,149,13,183,83,253,48,109,214,106,5,167,165,82,14,58,66,214,4,36],\\\"disposition\\\":\\\"stopped\\\",\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]}}\",\"generation_observation_json\":\"{\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[213,138,191,195,121,245,161,253,117,227,87,24,185,146,206,116,85,145,3,205,165,66,52,145,58,252,178,58,204,144,84,105],\\\"first_advance_input_digest\\\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\\\"owner_checkpoint\\\":[122,186,103,245,103,165,76,182,216,15,42,16,140,51,89,87,46,217,35,235,195,177,129,188,10,249,125,168,229,72,236,112],\\\"snapshot\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-learning-next\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"revision\\\":1,\\\"state\\\":[5,6],\\\"prefix\\\":[115,121,110,116,104,101,116,105,99,32,115,117,99,99,101,115,115,111,114,32,116,97,115,107],\\\"stopped\\\":true},\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]},\\\"pending_request_digest\\\":null,\\\"pending_output\\\":{\\\"operation_id\\\":\\\"new-task-stop\\\",\\\"request_digest\\\":[184,198,234,235,126,52,120,213,253,4,110,112,211,120,71,10,140,87,85,75,60,95,162,42,228,135,127,166,214,122,86,229],\\\"prefix_offset\\\":0,\\\"bytes\\\":[115,121,110,116,104,101,116,105,99,32,115,117,99,99,101,115,115,111,114,32,116,97,115,107]}}\",\"authority\":\"DENY_ALL\",\"current_permission\":\"NOT_EXPORTED\"}","payload_digest":[168,255,105,122,154,212,1,6,177,32,25,227,22,212,208,54,156,235,67,242,87,114,52,171,58,237,242,97,147,217,105,205]}
+    HEPTA_LEARNING_CHECKPOINT_V2 retained_pending {"authority":"DENY_ALL","checkpoint_base64":"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","checkpoint_sha256":"7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa","current_permission":"NOT_EXPORTED","evaluation_profile":"efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271","initial_head":"e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a","learning_head":"c84815e8b490d2b3329eae15ae74bc13c3c8e64b8363f31ed6629acf04016197","pins_are_fixture_derived":true,"production_qualification":"HOLD_NO_GO","schema":"hepta.learning.checkpoint.fixture.v2"}
+    HEPTA_LEARNING_READBACK_V1 retained_acked {"schema":"hepta.agentd.learning-use-readback.v1","payload_json":"{\"disposition\":\"retained_model\",\"learning_operation_id\":\"learning-operation\",\"learning_head\":[200,72,21,232,180,144,210,179,50,158,174,21,174,116,188,19,195,200,230,75,131,99,243,30,214,98,154,207,4,1,97,151],\"learning_decision_head\":[32,255,105,149,32,11,182,206,169,165,21,15,35,142,56,179,82,53,172,46,120,174,242,188,12,25,212,21,166,201,88,198],\"source_run_id\":\"generation-task\",\"source_task_receipt\":[10,17,27,71,39,157,88,67,79,133,107,78,80,114,122,45,102,54,242,75,67,205,115,87,217,81,70,251,24,9,74,29],\"source_selected_artifact\":[202,230,98,23,47,212,80,187,12,215,16,167,105,7,156,5,191,197,216,227,94,250,101,118,237,199,208,55,122,253,212,162],\"source_selected_bundle\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\"observation\":{\"kind\":\"retained_model_next_use\",\"bundle_digest\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\"state_partition_digest\":[85,68,82,224,38,252,17,43,8,5,32,166,182,133,154,225,102,229,157,150,204,69,76,149,187,163,30,11,254,181,7,67],\"checkpoint_digest\":[182,148,74,5,143,142,139,191,172,21,55,117,5,20,41,245,166,75,223,54,221,69,15,213,24,128,60,146,229,84,120,155],\"selection_digest\":[175,27,75,186,11,251,33,214,197,235,229,113,14,216,140,47,141,30,72,125,212,138,142,1,150,41,34,31,155,101,109,190],\"committed_step_receipt\":[245,67,196,39,53,223,89,64,38,212,191,49,121,147,200,150,1,122,46,103,211,222,172,57,105,177,83,154,45,78,80,52],\"state_cutover_receipt\":null,\"task_owner_publication\":[143,24,68,215,58,49,183,62,127,217,240,146,174,58,180,203,165,110,183,148,81,145,70,246,189,81,18,208,178,115,23,35]},\"intent\":{\"operation_id\":\"new-task-stop\",\"task_digest\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\"source_frontier\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\"predecessor_digest\":[213,138,191,195,121,245,161,253,117,227,87,24,185,146,206,116,85,145,3,205,165,66,52,145,58,252,178,58,204,144,84,105],\"input_digest\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\"deadline_micros\":10000},\"manifest_json\":\"{\\\"profile\\\":\\\"generation-service-test\\\",\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\\\"bundle_digest\\\":[213,184,139,255,150,94,138,255,114,228,40,181,61,109,180,65,167,217,22,246,45,144,58,236,217,142,218,116,113,214,116,104],\\\"encoder\\\":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],\\\"head\\\":null,\\\"memory\\\":null,\\\"world_model\\\":null,\\\"decoder\\\":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],\\\"runtime_digest\\\":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],\\\"device_digest\\\":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],\\\"input_schema\\\":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],\\\"state_schema\\\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],\\\"output_schema\\\":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],\\\"learning\\\":{\\\"kind\\\":\\\"frozen\\\",\\\"weights\\\":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},\\\"evolution\\\":{\\\"structure\\\":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],\\\"lineage\\\":[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12],\\\"source_dependencies\\\":[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],\\\"adoption_receipt\\\":[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14]},\\\"max_input_bytes\\\":64,\\\"max_state_bytes\\\":64,\\\"max_delta_bytes\\\":128,\\\"max_prefix_bytes\\\":1024,\\\"max_step_cost_entries\\\":32,\\\"max_ack_cost_entries\\\":16}\",\"previous_manifest_json\":null,\"publication_json\":\"{\\\"intent\\\":{\\\"operation_id\\\":\\\"learning-retained-task:e5dbc34861708a00ffe076f7fec716192647729d0ce7aed202c1be9e8a9e71b5\\\",\\\"supersedes\\\":null,\\\"previous\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"task_digest\\\":[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[81,146,144,118,38,184,168,83,252,150,247,131,214,154,55,56,159,203,121,158,46,203,138,67,43,186,155,216,24,62,178,42],\\\"generation\\\":41,\\\"writer_epoch\\\":7,\\\"config_digest\\\":[201,23,74,76,199,40,127,181,217,11,178,17,82,57,12,167,166,170,254,116,141,1,153,160,254,85,200,171,21,240,69,33]},\\\"previous_checkpoint\\\":[111,90,109,41,151,70,252,126,124,113,232,84,49,250,199,127,218,250,59,167,53,52,255,58,68,174,154,220,87,113,5,182],\\\"previous_observation\\\":[47,20,6,28,197,22,123,238,131,74,99,75,88,244,13,245,27,166,200,182,222,174,154,203,49,130,237,62,108,82,50,52],\\\"target\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-learning-next\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[213,138,191,195,121,245,161,253,117,227,87,24,185,146,206,116,85,145,3,205,165,66,52,145,58,252,178,58,204,144,84,105],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"config_digest\\\":[148,206,225,182,83,23,254,207,60,195,195,237,141,26,7,85,130,195,29,67,61,240,56,25,53,185,250,249,95,189,186,25]},\\\"genesis_checkpoint\\\":[61,122,189,210,252,33,92,237,133,215,3,96,200,59,17,93,82,165,104,29,68,125,148,65,210,196,231,161,55,129,196,112],\\\"selection\\\":[175,27,75,186,11,251,33,214,197,235,229,113,14,216,140,47,141,30,72,125,212,138,142,1,150,41,34,31,155,101,109,190],\\\"completion\\\":\\\"owner_drained_same_model\\\"},\\\"witness\\\":{\\\"schema_version\\\":1,\\\"authority_epoch\\\":1,\\\"verified_at_unix_ms\\\":1000,\\\"boundary\\\":\\\"dispatch_entry\\\",\\\"authority_ref\\\":{\\\"authority_family\\\":\\\"final_use\\\",\\\"authority\\\":{\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"grant_id\\\":\\\"test-replace-aae65f34097fcf73bc83b0e6e824a85bcf77d83403528112f2af7e1f3f0394bf\\\",\\\"revocation_revision\\\":1,\\\"binding_sha256\\\":[233,90,47,247,178,101,99,228,202,235,49,181,198,191,62,90,134,8,100,30,93,174,37,198,172,161,80,17,94,138,245,71]}}},\\\"signed\\\":{\\\"grant\\\":{\\\"schema_version\\\":1,\\\"signer_id\\\":\\\"test-control-authority\\\",\\\"authority_epoch\\\":1,\\\"grant_id\\\":\\\"test-replace-aae65f34097fcf73bc83b0e6e824a85bcf77d83403528112f2af7e1f3f0394bf\\\",\\\"nonce\\\":[175,111,88,202,212,220,30,170,184,166,215,147,219,37,100,237,40,85,249,204,129,1,224,127,242,171,223,202,19,240,197,75],\\\"binding\\\":{\\\"subject_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"destination_id\\\":\\\"agentd.cell-generation.next-task-same-model\\\",\\\"request_sha256\\\":[170,230,95,52,9,127,207,115,188,131,176,230,232,36,168,91,207,119,216,52,3,82,129,18,242,175,126,31,63,3,148,191],\\\"scope_sha256\\\":[4,52,118,0,230,193,179,53,130,1,84,146,117,162,184,138,245,161,32,42,149,14,187,149,196,46,106,182,169,158,197,201],\\\"payload_sha256\\\":[48,23,116,146,45,190,234,159,224,34,215,109,92,13,52,228,170,242,220,131,158,119,78,234,136,242,218,86,14,220,227,211]},\\\"not_before_unix_ms\\\":1,\\\"expires_at_unix_ms\\\":9000},\\\"signature\\\":[97,170,172,156,17,221,131,49,80,250,214,242,237,175,239,125,58,13,230,142,164,106,92,164,96,139,171,83,95,125,174,20,212,19,126,245,112,162,83,35,106,127,82,253,94,185,18,102,144,121,108,107,176,195,158,236,85,59,8,66,19,160,50,12]},\\\"signed_grant_digest\\\":[13,100,72,150,46,171,75,234,139,19,165,200,206,214,183,162,208,188,115,105,106,34,46,204,172,230,201,140,18,18,24,223]}\",\"step_receipt_json\":\"{\\\"operation_id\\\":\\\"new-task-stop\\\",\\\"request_digest\\\":[184,198,234,235,126,52,120,213,253,4,110,112,211,120,71,10,140,87,85,75,60,95,162,42,228,135,127,166,214,122,86,229],\\\"proposal_digest\\\":[212,65,102,182,151,42,178,232,165,187,181,105,29,28,247,163,236,28,65,224,84,41,116,150,7,77,240,95,228,64,90,239],\\\"checkpoint_after\\\":[28,96,142,196,191,241,130,66,79,129,90,176,29,149,13,183,83,253,48,109,214,106,5,167,165,82,14,58,66,214,4,36],\\\"disposition\\\":\\\"stopped\\\",\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]}}\",\"generation_observation_json\":\"{\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_frontier\\\":[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16],\\\"initial_snapshot_digest\\\":[213,138,191,195,121,245,161,253,117,227,87,24,185,146,206,116,85,145,3,205,165,66,52,145,58,252,178,58,204,144,84,105],\\\"first_advance_input_digest\\\":[196,37,34,18,139,73,25,61,232,205,69,216,247,88,156,215,224,133,230,95,19,134,64,213,125,68,130,229,247,24,150,35],\\\"owner_checkpoint\\\":[182,148,74,5,143,142,139,191,172,21,55,117,5,20,41,245,166,75,223,54,221,69,15,213,24,128,60,146,229,84,120,155],\\\"snapshot\\\":{\\\"scope\\\":{\\\"principal_digest\\\":[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],\\\"agent_id\\\":\\\"018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12\\\",\\\"cell_id\\\":\\\"cell\\\",\\\"run_id\\\":\\\"generation-task-learning-next\\\"},\\\"manifest_digest\\\":[7,108,222,119,98,18,179,207,102,89,88,218,71,82,227,165,226,160,98,230,178,26,151,87,99,243,55,79,115,21,55,121],\\\"generation\\\":42,\\\"writer_epoch\\\":8,\\\"revision\\\":1,\\\"state\\\":[5,6],\\\"prefix\\\":[115,121,110,116,104,101,116,105,99,32,115,117,99,99,101,115,115,111,114,32,116,97,115,107],\\\"stopped\\\":true},\\\"cost\\\":{\\\"schema_version\\\":2,\\\"identity\\\":{\\\"task_digest\\\":[32,38,80,104,20,12,160,225,241,93,181,38,100,139,95,233,75,161,137,199,249,91,210,246,176,18,155,8,190,155,204,241],\\\"source_digest\\\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]},\\\"entries\\\":[]},\\\"pending_request_digest\\\":null,\\\"pending_output\\\":null}\",\"authority\":\"DENY_ALL\",\"current_permission\":\"NOT_EXPORTED\"}","payload_digest":[165,220,76,122,22,20,58,185,224,86,211,24,11,140,194,59,154,25,85,71,106,111,136,163,91,81,158,42,162,231,192,102]}
+    HEPTA_LEARNING_CHECKPOINT_V2 retained_acked {"authority":"DENY_ALL","checkpoint_base64":"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","checkpoint_sha256":"7e61b75aee24347e4d38eaccdba6a67229466cba2bab689510bc6243c5e588aa","current_permission":"NOT_EXPORTED","evaluation_profile":"efe77b201dc216c0edf435a227df2b2898d3f6ea1ff16e5d4d0d4ec0cf593271","initial_head":"e4ed50fa57282b547aaf2a2e2a9dc8aea2941e73620f10ebcc28ebbac5084d6a","learning_head":"c84815e8b490d2b3329eae15ae74bc13c3c8e64b8363f31ed6629acf04016197","pins_are_fixture_derived":true,"production_qualification":"HOLD_NO_GO","schema":"hepta.learning.checkpoint.fixture.v2"}
+    test neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 3.09s
+
+
+        PASS [   4.633s] codex-hepta-agentd neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation
+  stdout ───
+
+    running 1 test
+    test neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 4.63s
+
+  stderr ───
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+    hepta-agentd module=neuron-generation: optional runtime component quarantined
+
+        PASS [   0.307s] codex-hepta-agentd neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors
+  stdout ───
+
+    running 1 test
+    test neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.30s
+
+
+        PASS [   0.118s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::coordinator_uses_native_proposal_owner_and_reconciles_lost_ack
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::coordinator_uses_native_proposal_owner_and_reconciles_lost_ack ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.11s
+
+
+        PASS [   0.072s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::evaluated_no_update_waits_for_selection_and_cannot_resume_after_expiry
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::evaluated_no_update_waits_for_selection_and_cannot_resume_after_expiry ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.07s
+
+
+        PASS [   0.009s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::invalid_signature_prevents_dataset_training_and_checkpoint_progress
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::invalid_signature_prevents_dataset_training_and_checkpoint_progress ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.049s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::no_update_next_use_checks_actual_selection_stage_and_controller
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::no_update_next_use_checks_actual_selection_stage_and_controller ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.04s
+
+
+        PASS [   0.027s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::profile_tests::signed_training_profile_drift_stops_before_evaluator_and_cannot_rebind_restore
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::profile_tests::signed_training_profile_drift_stops_before_evaluator_and_cannot_rebind_restore ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.02s
+
+
+        PASS [   0.062s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_current_revocation_controller_and_signature_expiry
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_current_revocation_controller_and_signature_expiry ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.06s
+
+
+        PASS [   0.010s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_ready_and_clock_after_awaiting_owner_attestation
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_ready_and_clock_after_awaiting_owner_attestation ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.206s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_reauthenticates_all_signed_stages_without_reproposing_or_checkpointing
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_reauthenticates_all_signed_stages_without_reproposing_or_checkpointing ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.20s
+
+
+        PASS [   0.164s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_rejects_each_invalid_retained_signature_before_work
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_rejects_each_invalid_retained_signature_before_work ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.16s
+
+
+        PASS [   0.011s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::fresh_receipt_wait_rechecks_time_and_ready_before_checkpointing
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::fresh_receipt_wait_rechecks_time_and_ready_before_checkpointing ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.01s
+
+
+        PASS [   0.119s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::partial_and_completed_recovery_preserve_deadlines_and_only_resume_after_authentication
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::partial_and_completed_recovery_preserve_deadlines_and_only_resume_after_authentication ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.11s
+
+
+        PASS [   0.009s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::scope_and_generation_readiness_refuse_before_owner_work
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::scope_and_generation_readiness_refuse_before_owner_work ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.00s
+
+
+        PASS [   0.038s] codex-hepta-agentd plasticity_runtime::lifetime_tests::learning_iteration_tests::separate_keys_under_one_controller_cannot_self_evaluate
+  stdout ───
+
+    running 1 test
+    test plasticity_runtime::lifetime_tests::learning_iteration_tests::separate_keys_under_one_controller_cannot_self_evaluate ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 752 filtered out; finished in 0.03s
+
+
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::profile_tests::frozen_profile_is_required_and_committed_before_any_owner_work
+  stdout ───
+
+    running 1 test
+    test learning_iteration::profile_tests::frozen_profile_is_required_and_committed_before_any_owner_work ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::profile_tests::trainer_and_evaluator_cannot_replace_the_frozen_profile
+  stdout ───
+
+    running 1 test
+    test learning_iteration::profile_tests::trainer_and_evaluator_cannot_replace_the_frozen_profile ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::retained_tests::existing_cutover_signing_bytes_are_preserved_and_retained_use_has_its_own_tag
+  stdout ───
+
+    running 1 test
+    test learning_iteration::retained_tests::existing_cutover_signing_bytes_are_preserved_and_retained_use_has_its_own_tag ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::retained_tests::retained_task_and_model_cutover_are_not_interchangeable
+  stdout ───
+
+    running 1 test
+    test learning_iteration::retained_tests::retained_task_and_model_cutover_are_not_interchangeable ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::retained_tests::retained_use_rejects_wrong_partition_selection_and_missing_owner_receipts
+  stdout ───
+
+    running 1 test
+    test learning_iteration::retained_tests::retained_use_rejects_wrong_partition_selection_and_missing_owner_receipts ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::completes_only_after_next_task_and_replays_every_durable_boundary
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::completes_only_after_next_task_and_replays_every_durable_boundary ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::failed_validation_never_advances_checkpoint
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::failed_validation_never_advances_checkpoint ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::no_update_cannot_skip_selection_or_substitute_a_no_admissible_proposal
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::no_update_cannot_skip_selection_or_substitute_a_no_admissible_proposal ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.003s] codex-hepta-learning-artifacts learning_iteration::tests::no_update_keeps_baseline_and_replays_selection_and_actual_next_use
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::no_update_keeps_baseline_and_replays_selection_and_actual_next_use ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::over_budget_dataset_and_cross_dataset_training_are_rejected
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::over_budget_dataset_and_cross_dataset_training_are_rejected ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.001s] codex-hepta-learning-artifacts learning_iteration::tests::owner_independence_is_checked_before_any_stage
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::owner_independence_is_checked_before_any_stage ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+
+        PASS [   0.002s] codex-hepta-learning-artifacts learning_iteration::tests::replay_rejects_missing_receipts_changed_budget_and_false_next_use
+  stdout ───
+
+    running 1 test
+    test learning_iteration::tests::replay_rejects_missing_receipts_changed_budget_and_false_next_use ... ok
+
+    test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+
+

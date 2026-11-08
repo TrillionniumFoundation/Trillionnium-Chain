@@ -1,0 +1,15 @@
+{
+  "label": "qa-credit-exact-solve",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/credit_feasibility.py",
+    "solve",
+    "formal/pon-nakamoto-v1/vectors/fixed-probability-credit/synthetic-linear-sqrt-exact.json",
+    "--output",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/credit-exact-certificate.json"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 0.10898684710264206,
+  "unittest_count": []
+}

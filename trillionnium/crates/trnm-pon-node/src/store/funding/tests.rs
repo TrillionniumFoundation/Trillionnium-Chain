@@ -266,6 +266,164 @@ fn working(node: &Node) -> trnm_mvcc_fee::pon_executor::State {
     }
 }
 
+/// The foreign writer commits only when the reader has completed all replay
+/// work and is about to release its SQLite snapshot. No production test hook,
+/// timing sleep or replacement verifier is used.
+fn late_money_observation(backend: StateBackend, payment: bool, context_change: bool) {
+    use rusqlite::hooks::{AuthAction, AuthContext, Authorization, TransactionOperation};
+    use std::sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc,
+    };
+
+    let dir = tempfile::tempdir().unwrap();
+    let node_path = dir.path().join("node");
+    let mut node = open(&node_path, backend);
+    let settings = node.settings.clone();
+    let (task, reserve) = reserve_task(&settings, 1, 2_000, 20);
+    let first = mine(&mut node, settings.genesis(), vec![reserve]);
+    let source = NativeFundingSourceV1::Task(task);
+    let output = [231; 32];
+    let mut payload = task.to_vec();
+    payload.extend(output);
+    let receipt = signed(&settings, 1, 1, 4, payload.clone());
+    let settle = signed(&settings, 0, 2, 5, payload);
+    let operation = transaction_id(&settle);
+    let settled = mine(&mut node, first, vec![receipt, settle]);
+    let query = NativePaymentQueryV1 {
+        source,
+        subject: output,
+        beneficiary: public(1),
+        operation,
+        maximum_gross_units: 2_000,
+    };
+    // This is an actual accepted signed native payment, not a caller claim.
+    assert_eq!(
+        node.native_payment_observation(&query)
+            .unwrap()
+            .anchor
+            .block,
+        settled
+    );
+    assert_eq!(
+        node.native_funding_observation(source)
+            .unwrap()
+            .row
+            .unwrap()["remaining"],
+        0
+    );
+    let original_generation = node.active().unwrap().1;
+    let reader_writes = node.db.total_changes();
+    let foreign = rusqlite::Connection::open(node_path.join("native.sqlite")).unwrap();
+    let committed = Arc::new(AtomicUsize::new(0));
+    let witness = Arc::clone(&committed);
+    node.db
+        .authorizer(Some(move |context: AuthContext<'_>| {
+            if matches!(
+                context.action,
+                AuthAction::Transaction {
+                    operation: TransactionOperation::Rollback
+                }
+            ) && witness.load(Ordering::SeqCst) == 0
+            {
+                let sql = if context_change {
+                    "UPDATE metadata SET value=X'01' WHERE key='parameters'"
+                } else {
+                    "UPDATE active SET generation=generation+1 WHERE singleton=1"
+                };
+                let changed = foreign.execute(sql, []).unwrap();
+                assert_eq!(changed, 1);
+                assert!(foreign.is_autocommit());
+                witness.store(1, Ordering::SeqCst);
+            }
+            Authorization::Allow
+        }))
+        .unwrap();
+    let result = if payment {
+        node.native_payment_observation(&query).map(|_| ())
+    } else {
+        node.native_funding_observation(source).map(|_| ())
+    };
+    node.db
+        .authorizer(None::<fn(AuthContext<'_>) -> Authorization>)
+        .unwrap();
+    assert_eq!(
+        committed.load(Ordering::SeqCst),
+        1,
+        "the late WAL commit actually ran"
+    );
+    assert_eq!(
+        node.db.total_changes(),
+        reader_writes,
+        "observation must issue no writes"
+    );
+    let expected = if context_change {
+        "STORAGE_CONTEXT"
+    } else {
+        "NATIVE_MONEY_OBSERVATION_EPOCH_CHANGED"
+    };
+    assert_eq!(
+        result
+            .expect_err("a result from the old snapshot escaped after a foreign commit")
+            .to_string(),
+        expected
+    );
+    // Repair only the deliberate fixture corruption and make a fresh read.
+    // The observer itself neither rewinds anything nor creates a replacement.
+    let repair = rusqlite::Connection::open(node_path.join("native.sqlite")).unwrap();
+    if context_change {
+        repair
+            .execute(
+                "UPDATE metadata SET value=?1 WHERE key='parameters'",
+                [settings.parameters().as_slice()],
+            )
+            .unwrap();
+    } else {
+        repair
+            .execute(
+                "UPDATE active SET generation=?1 WHERE singleton=1",
+                [original_generation],
+            )
+            .unwrap();
+    }
+    let current = node.native_payment_observation(&query).unwrap();
+    assert_eq!(current.operation, operation);
+    assert_eq!(current.gross_escrow_debit, 2_000);
+    assert_eq!(current.beneficiary_credit, 2_000);
+    assert_eq!(
+        node.native_funding_observation(source)
+            .unwrap()
+            .row
+            .unwrap()["remaining"],
+        0
+    );
+}
+
+#[test]
+fn native_funding_legacy_rejects_late_generation_commit() {
+    late_money_observation(StateBackend::Legacy, false, false);
+}
+#[test]
+fn native_funding_authenticated_rejects_late_generation_commit() {
+    late_money_observation(StateBackend::AuthenticatedV1, false, false);
+}
+#[test]
+fn native_payment_legacy_rejects_late_generation_commit() {
+    late_money_observation(StateBackend::Legacy, true, false);
+}
+#[test]
+fn native_payment_authenticated_rejects_late_generation_commit() {
+    late_money_observation(StateBackend::AuthenticatedV1, true, false);
+}
+#[test]
+fn native_funding_rejects_late_context_replacement() {
+    late_money_observation(StateBackend::Legacy, false, true);
+}
+#[test]
+fn native_payment_rejects_late_context_replacement() {
+    late_money_observation(StateBackend::Legacy, true, true);
+}
+
 #[test]
 fn native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg() {
     for backend in [

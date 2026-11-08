@@ -262,7 +262,16 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "scripts/ci/pq_lifetime_budget.py",
     "scripts/ci/test_pq_lifetime_budget.py",
     "config/pon/pq128-lifetime-budget-v1.json",
+    "config/pon/pq128-source-lock-v1.json",
     "config/pon/pq128-lifetime-example-v1.json",
+    "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py",
+    "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py",
+    "docs/security/PQ_ROOT_RECOVERY_POLICY_V1.md",
+    "docs/security/PQ_SEVEN_LAYER_REVIEW_20261108.md",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "config/pon/pq-authority-effects-v1.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
     "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
     "formal/pon-nakamoto-v1/cell_dependency_closure.py",
     "formal/pon-nakamoto-v1/test_cell_dependency_closure.py",
@@ -582,6 +591,17 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs',
     'trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs',
+))
+# Explicit current report observers retain their exact sources and tests.
+# This coverage does not promote selected-byte observations or retained controls
+# to cryptographic, independent Host, or complete lifetime qualification.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/w1_v2_controls_gate.py",
+    "scripts/ci/test_w1_v2_current_stage_gate.py",
+    "scripts/w1_current_source_observation.py",
+    "scripts/ci/test_w1_current_source_observation.py",
+    "config/pon/w1-qrom-current-source-observation-v1.json",
+    "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((

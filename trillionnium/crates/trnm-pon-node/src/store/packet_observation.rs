@@ -13,7 +13,8 @@ pub enum PacketObservationBackend {
     AuthenticatedV1,
 }
 
-/// Local temporary-copy bound only; complete native replay is not CPU-bounded.
+/// Local temporary-copy bound only. The library call has no process CPU cap;
+/// the local packet-status CLI supplies its separate Linux process envelope.
 pub const DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT: u64 =
     observer::DEFAULT_SNAPSHOT_BYTE_LIMIT;
 

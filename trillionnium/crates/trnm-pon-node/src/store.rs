@@ -1373,7 +1373,7 @@ impl StateBackend {
     }
 }
 enum SelectedOpen {
-    InitializeOrRecover { growth_observation_only: bool },
+    InitializeOrRecover { observation_only: bool },
     ExistingPqOwner,
 }
 
@@ -1782,7 +1782,7 @@ impl Node {
         hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
-        growth_observation_only: bool,
+        observation_only: bool,
     ) -> Result<Self> {
         Self::open_selected_mode(
             path,
@@ -1791,9 +1791,7 @@ impl Node {
             hook,
             owners,
             state_backend,
-            SelectedOpen::InitializeOrRecover {
-                growth_observation_only,
-            },
+            SelectedOpen::InitializeOrRecover { observation_only },
         )
     }
 
@@ -1807,9 +1805,7 @@ impl Node {
         selection: SelectedOpen,
     ) -> Result<Self> {
         let (observation_only, existing_owner_only) = match selection {
-            SelectedOpen::InitializeOrRecover {
-                growth_observation_only,
-            } => (growth_observation_only, false),
+            SelectedOpen::InitializeOrRecover { observation_only } => (observation_only, false),
             SelectedOpen::ExistingPqOwner => (false, true),
         };
         ensure(
@@ -6639,6 +6635,9 @@ impl Node {
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<()> {
         progress()?;
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_check_observed_history_with_progress(tip, observed_now, progress);
+        }
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
@@ -6700,6 +6699,9 @@ impl Node {
         queries: &[(Hash, Hash)],
         observed_now: u64,
     ) -> Result<ConfirmationBatch> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_confirmations_with_progress(queries, observed_now, &|_| Ok(()));
+        }
         self.confirmations_with_progress(queries, observed_now, &mut |_| Ok(()))
     }
     /// Cancellation produces no partial batch and never stores a reusable clock verdict.
@@ -6714,6 +6716,12 @@ impl Node {
         let unique: BTreeSet<_> = queries.iter().copied().collect();
         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
         progress(0)?;
+        // The growth W1/M06 callback is Sync. Never discard it or silently
+        // substitute this legacy non-Sync FnMut callback for its checkpoints.
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_USE_CONFIRMATION_PROGRESS",
+        )?;
         self.ready()?;
         let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();

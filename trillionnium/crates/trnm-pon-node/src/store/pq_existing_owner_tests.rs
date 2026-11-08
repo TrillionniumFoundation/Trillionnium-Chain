@@ -48,7 +48,7 @@ fn with_hook(
             SelectedOpen::ExistingPqOwner
         } else {
             SelectedOpen::InitializeOrRecover {
-                growth_observation_only: false,
+                observation_only: false,
             }
         },
     )
