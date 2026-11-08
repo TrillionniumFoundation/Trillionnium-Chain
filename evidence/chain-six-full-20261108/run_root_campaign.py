@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Exact-source local research checks; preserve failures and original gates.
 
-The original PQ composition runner is executed unchanged. Its full raw-source
-before record also anchors all subsequent stages; a final full verification
-covers the whole campaign. This runner cannot qualify hosted CI or production.
+The current PQ successor retains the original 29 commands and source gates,
+and requires all 55 current claim controls by name and fixed source hash. Its
+raw-source before record anchors every stage and the final full verification.
+The historical runner and incomplete F2 execution remain unchanged evidence.
 """
 from __future__ import annotations
 
@@ -52,7 +53,7 @@ def main() -> int:
     native = cargo + ["test", *manifest, "--release"]
     rows = []
     result = {
-        "schema": "chain-six-unified-root-campaign-v1", "expected_head": args.head,
+        "schema": "chain-six-unified-root-campaign-v2", "expected_head": args.head,
         "scope": "local exact-source research controls and native executions",
         "started_unix_seconds": time.time(), "stages": rows,
         "whole_chain_pq_qualified": False, "quantum_soundness_qualified": False,
@@ -126,14 +127,14 @@ def main() -> int:
         preflight = run("preflight", ["bash", "scripts/project-preflight.sh"])
         if not preflight["passed"]:
             raise RuntimeError("preflight failed")
-        pq_out = out / "original-pq-composition"
-        nested = run("original-pq-composition-runner", py + [
-            "evidence/pq-seven-layer-composition-20261108/run_validation.py",
+        pq_out = out / "current-pq-composition"
+        nested = run("current-pq-composition-runner", py + [
+            "evidence/chain-six-full-20261108/run_pq_composition_current.py",
             "--root", str(root), "--out", str(pq_out), "--expected-head", args.head,
             "--cargo", "/home/qian-qi/.cargo/bin/cargo", "--target", target,
         ], timeout=10800)
         if not (pq_out / "source-before.json").is_file():
-            raise RuntimeError("original complete source-before gate did not complete")
+            raise RuntimeError("current complete source-before gate did not complete")
         before = json.loads((pq_out / "source-before.json").read_text())
         pq_summary = json.loads((pq_out / "summary.json").read_text())
         nested["nested_result"] = pq_summary["result"]
@@ -141,6 +142,7 @@ def main() -> int:
         if not nested["passed"]:
             nested["outcome"] = "FAIL"
         save()
+        run("current-composition-reader-controls", py + ["evidence/chain-six-full-20261108/test_pq_composition_current.py", "-v"], python_count=9)
         credit_row = run("credit-envelope-original-77", py + ["scripts/ci/run_credit_envelope_checks.py", "--output-dir", str(out / "credit-envelope")])
         if credit_row["passed"]:
             credit = json.loads((out / "credit-envelope/test-outcomes.json").read_text())
@@ -212,7 +214,7 @@ def main() -> int:
         result["failed_stages"] = [row["stage"] for row in rows if not row["passed"]]
         result["completed_stage_count"] = len(rows)
         result["finished_unix_seconds"] = time.time()
-        result["result"] = "PASS" if not result.get("driver_error") and not result["failed_stages"] and result.get("source_unchanged_for_complete_campaign") and len(rows) == 28 else "FAIL"
+        result["result"] = "PASS" if not result.get("driver_error") and not result["failed_stages"] and result.get("source_unchanged_for_complete_campaign") and len(rows) == 29 else "FAIL"
         save()
         print("CAMPAIGN_TERMINAL", json.dumps({k: v for k, v in result.items() if k != "stages"}), flush=True)
     return 0 if result["result"] == "PASS" else 1

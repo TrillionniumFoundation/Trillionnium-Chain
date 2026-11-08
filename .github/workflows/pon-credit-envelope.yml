@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v 2>&1 | tee "$OUT/candidate-clock-controls.log"
           python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v 2>&1 | tee "$OUT/restricted-oracle-controls.log"
-          python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-integrity-controls.log"
+          python3 -u scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-integrity-controls.log"
           python3 scripts/ci/test_ci_contract.py 2>&1 | tee "$OUT/ci-contract-controls.log"
           python3 - <<'PY'
           import os, re

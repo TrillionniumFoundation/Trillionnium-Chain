@@ -23,11 +23,14 @@ The sole development plan remains
 
 ## Exact-source execution
 
-[run_root_campaign.py](run_root_campaign.py) executes the original
-`pq-seven-layer-composition-20261108/run_validation.py` unchanged, including its
-29 stages when native checks are requested. Its full raw-source before receipt
-anchors the additional exact-roster controls, native money/settlement tests and
-the final full-source recheck. Common checks, consensus/Cell checks and proof
+[run_root_campaign.py](run_root_campaign.py) uses the explicitly versioned
+[current PQ composition](CURRENT_PQ_COMPOSITION.md). It retains all 29 original
+commands and their 1200-second limits, and independently requires the complete
+55-name current claim-test roster and fixed test source bytes. The historical
+49-test runner remains unchanged. Nine actual-log mutation controls reject an
+incomplete, duplicated, skipped or falsely reported roster. The full raw-source
+before receipt anchors the additional controls, native money/settlement tests
+and the final full-source recheck. Common checks, consensus/Cell checks and proof
 checks use one frozen checkout with separate build directories.
 
 The root campaign checks the original credit-envelope roster (77 named tests),
@@ -44,6 +47,15 @@ be read from the real PR event and its source tuple. No GitHub runner environmen
 is fabricated and no local workstation is provisioned as the hosted parent.
 
 ## Preserved failures and interpretation
+
+The first composed campaign at `0101b0ce76239832e0b2d19d0fd3f07e40fabeb4`
+encountered the historical 49-test roster refusal after its actual claim command
+reported 55 passing controls, then lost complete result publication during
+storage exhaustion. Its summary files were truncated and no successful
+supervisor terminal receipt was confirmed. It is not accepted as a completed
+campaign. A later full raw-source check matched its original before snapshot;
+that establishes source identity only. Fresh campaigns use new output
+directories and the explicit current roster without relabelling the old failure.
 
 The evidence retains the actual late-commit payment red tests, the original
 work-contract default refusal, stale source-lock refusals, integration compile
