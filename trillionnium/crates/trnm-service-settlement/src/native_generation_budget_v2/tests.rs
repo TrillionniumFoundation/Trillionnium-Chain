@@ -247,6 +247,113 @@ fn a_second_generation_journal_cannot_claim_the_same_task_or_reset_its_deadline(
     assert!(b.readback(id).is_err());
 }
 #[test]
+fn generation_prepare_rejects_full_journal_before_claiming_a_fresh_task() {
+    let d = tempfile::tempdir().unwrap();
+    let mut config = cfg();
+    config.max_records = 1;
+    let first = statement();
+    let mut second = first.clone();
+    second.task = [40; 32];
+    let mut owner = MockOwner::new(&first);
+    let mut full = NativeGenerationStoreV2::open(&d.path().join("full.sqlite"), config).unwrap();
+    let first_id = full.prepare(&mut owner, first).unwrap();
+    let before = full.readback(first_id).unwrap();
+    let claims = owner.task_owners.clone();
+    assert!(matches!(
+        full.prepare(&mut owner, second.clone()),
+        Err(NativeBudgetErrorV1::Invalid("GENERATION_TASK_REPLAY"))
+    ));
+    assert_eq!(owner.task_owners, claims);
+    assert_eq!(full.readback(first_id).unwrap(), before);
+    assert!(full.readback(second.id().unwrap()).is_err());
+    let mut available =
+        NativeGenerationStoreV2::open(&d.path().join("available.sqlite"), cfg()).unwrap();
+    assert_eq!(
+        available.prepare(&mut owner, second.clone()).unwrap(),
+        second.id().unwrap()
+    );
+}
+
+#[test]
+fn generation_prepare_rejects_invalid_or_stale_anchor_before_claiming_a_fresh_task() {
+    for stale in [false, true] {
+        let d = tempfile::tempdir().unwrap();
+        let first = statement();
+        let mut owner = MockOwner::new(&first);
+        let mut store =
+            NativeGenerationStoreV2::open(&d.path().join("generation.sqlite"), cfg()).unwrap();
+        let first_id = store.prepare(&mut owner, first.clone()).unwrap();
+        let before = store.readback(first_id).unwrap();
+        let claims = owner.task_owners.clone();
+        let anchor = owner.anchor;
+        let mut second = first;
+        second.task = [40; 32];
+        let expected = if stale {
+            owner.anchor.generation -= 1;
+            "GENERATION_STALE_OWNER_SNAPSHOT"
+        } else {
+            owner.anchor.network[0] ^= 1;
+            "GENERATION_NATIVE_CONTEXT"
+        };
+        assert!(matches!(
+            store.prepare(&mut owner, second.clone()),
+            Err(NativeBudgetErrorV1::Invalid(code)) if code == expected
+        ));
+        assert_eq!(owner.task_owners, claims);
+        assert_eq!(store.readback(first_id).unwrap(), before);
+        assert!(store.readback(second.id().unwrap()).is_err());
+        owner.anchor = anchor;
+        let mut available =
+            NativeGenerationStoreV2::open(&d.path().join("available.sqlite"), cfg()).unwrap();
+        assert_eq!(
+            available.prepare(&mut owner, second.clone()).unwrap(),
+            second.id().unwrap()
+        );
+    }
+}
+
+#[test]
+fn generation_prepare_write_failure_keeps_original_claim_for_same_journal_retry() {
+    let d = tempfile::tempdir().unwrap();
+    let path = d.path().join("original.sqlite");
+    let s = statement();
+    let mut owner = MockOwner::new(&s);
+    let mut original = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    original
+        .connection
+        .execute_batch(
+            "CREATE TEMP TRIGGER fail_prepare BEFORE INSERT ON native_generation_events_v2 \
+             BEGIN SELECT RAISE(FAIL, 'injected prepare write failure'); END;",
+        )
+        .unwrap();
+    assert!(matches!(
+        original.prepare(&mut owner, s.clone()),
+        Err(NativeBudgetErrorV1::Store(_))
+    ));
+    let id = s.id().unwrap();
+    assert!(original.readback(id).is_err());
+    assert_eq!(
+        owner.task_owners.get(&s.task),
+        Some(&(id, original.journal_identity()))
+    );
+    drop(original);
+    let mut other = NativeGenerationStoreV2::open(&d.path().join("other.sqlite"), cfg()).unwrap();
+    assert!(other.prepare(&mut owner, s.clone()).is_err());
+    let mut original = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    assert_eq!(original.prepare(&mut owner, s).unwrap(), id);
+    assert!(matches!(
+        original.begin(&mut owner, id).unwrap(),
+        DispatchDecisionV2::New
+    ));
+    drop(original);
+    let mut original = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    assert!(matches!(
+        original.begin(&mut owner, id).unwrap(),
+        DispatchDecisionV2::Pending
+    ));
+}
+
+#[test]
 fn committed_intent_after_cold_restart_never_reissues_new_even_without_funding() {
     let d = tempfile::tempdir().unwrap();
     let p = d.path().join("generation.sqlite");
