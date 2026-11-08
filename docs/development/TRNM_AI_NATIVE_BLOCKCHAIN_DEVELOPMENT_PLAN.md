@@ -17,6 +17,37 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+
+**Cell original native use readbacks, 2026-11-08:** Preserve the original
+Hepta actor as the owner of retained-parent and adopted-candidate next-use.
+The [readback review](specs/pon/CELL_ADOPTION_READBACK_V1.md) consumes exact
+serialize-only actor exports, original manifests/publications/receipts and
+independently pinned task/intent context. Five selected native tests at Hepta
+`2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd` emitted four actual engineering
+fixtures, pending and after ACK for both dispositions. The separate Chain
+reader has 26 controls, including historical real-model download/64-forward
+rejection as a substitute for FinalUse. Retain the original before-use zero
+execution revocation case. NoUpdate keeps the complete parent manifest.
+Current permission cannot be exported, ACK is not learning completion, and
+these controlled workers do not prove actual real-model loading, independent
+evaluation, settlement or installation. Complete-cycle qualification remains
+**HOLD_NO_GO**; preserve original actor-to-control association as an explicit
+unsatisfied obligation. Evidence: `evidence/cell-adoption-20261108/`.
+
+**Cell role-control material review, 2026-11-08 America/New_York:** Continue the
+ordinary-host adoption work from the exact #785 candidate. Add a
+[read-only seven-role control-material check](specs/pon/CELL_CONTROL_SEPARATION_V1.md)
+and compose it with the unchanged signed V3 parent/NoUpdate verifier. Preserve
+the original Hepta StableId controller mappings; merge known shared administrators,
+custodians and other control edges transitively. Freeze minimum separation pairs,
+reviewer separation, source/campaign/current-policy pins and missing inventories.
+Different keys, processes, hosts and replica labels do not create independent
+control. A complete review of supplied materials does not authenticate their
+documents, exclude hidden control, establish physical installation, authorize
+settlement or issue FinalUse. The protected-installed host and real next-task
+adoption gates remain separate and unqualified.
+
+
 **Multi-owner and current-native evidence continuation, 2026-11-07 America/New_York:**
 Compose research head `0a0ac0cc9d33f4ddea01c72938a131ad2a946105` with the
 original native funded-demand owner at `4a7e07e970d5bdb79626dda6bc98ae7906a02f18`.

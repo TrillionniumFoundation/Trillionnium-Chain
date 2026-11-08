@@ -1,0 +1,13 @@
+{
+  "branch": "codex/cell-learning-readback-20261108-3279",
+  "bytes": 8000,
+  "commit_output": "[codex/cell-learning-readback-20261108-3279 62bbb4c7] docs(hepta-agentd): define historical learning-use readback boundary\n 1 file changed, 135 insertions(+)\n create mode 100644 docs/hepta-generation-learning-readback.md",
+  "head": "62bbb4c7ba1394d66abe80c6397c386bf101f206",
+  "native_subtree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+  "parent": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+  "path": "docs/hepta-generation-learning-readback.md",
+  "sha256": "90ea8fefc2beef682d7da903d8200eb3788d083f8dd50f0cb99ca6d51ba75fe0",
+  "status": "DOCUMENTATION_COMMITTED",
+  "tree": "d7a9a7375d2a3213a962519ef7cedf169169045d",
+  "worktree_clean": true
+}

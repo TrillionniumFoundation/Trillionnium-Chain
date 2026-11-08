@@ -1,0 +1,106 @@
+{
+  "actor_fixture_cases": 2,
+  "actual_model_execution": false,
+  "independent_evaluation_established": false,
+  "machine": {
+    "boot_id_sha256": "b307c434f05d9ba52a7c477add1da56d90a59e372992ed1152fbf278a6e84eaf",
+    "configured_host": "rog",
+    "machine": "x86_64",
+    "machine_id_sha256": "c67efd30ee6bcef9fbbdedce3e127151262d01a4ee23068cdf9c4136d9b9421b",
+    "release": "7.0.0-42-generic",
+    "sysname": "Linux",
+    "version": "#42-Ubuntu SMP PREEMPT_DYNAMIC Thu Oct 15 08:06:44 UTC 2026"
+  },
+  "native_binary": [
+    {
+      "bytes": 240010480,
+      "device": 66306,
+      "inode": 48419014,
+      "mtime_ns": 1794116522680598319,
+      "path": "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/target/debug/deps/codex_hepta_agentd-d6345fda85a765d4",
+      "sha256": "2440beddc6b4059edc3fac389e6b8ab219cad276f809c815e4329ebcfec97bd6"
+    }
+  ],
+  "native_log": {
+    "bytes": 90678,
+    "device": 66306,
+    "inode": 34121002,
+    "mtime_ns": 1794116531439590735,
+    "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/readback-candidate-2c2a/native-controls.log",
+    "sha256": "752c7e73292e964253c84baab5ef521dbc5576ed6261faf29d2b892107616ece"
+  },
+  "native_result": {
+    "bytes": 7076,
+    "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/readback-candidate-2c2a/result.json",
+    "sha256": "6d27be2c46db8e26ab415ddc9248e14156710798b9a493281acc113cff5cc24b"
+  },
+  "native_run_id": "a9f9b028-83ba-43f6-afe0-2fb1ce3e42ca",
+  "portable_current_permission": false,
+  "production_final_use_qualified": false,
+  "raw_document_fields_rewritten": false,
+  "record_count": 4,
+  "records": [
+    {
+      "bytes": 13520,
+      "disposition": "adopted_model_reset",
+      "file": "adopted_acked.json",
+      "log_byte_end": 64536,
+      "log_byte_start": 51016,
+      "observation_kind": "next_use",
+      "payload_domain_digest": "96b77f852149f5c69192301bb3cc4c2ec8f218d931d09c7290c8d5b6bed43b20",
+      "payload_sha256": "ad08dac6654e974385d2e54fd7d9b004996dafa99f21bc273dbdc36565476e54",
+      "pending_output_present": false,
+      "phase": "adopted_acked",
+      "sha256": "69a80c932903c1685b7db9f83d544ef403da0c668f95480ce447c7aa955ab31c"
+    },
+    {
+      "bytes": 13823,
+      "disposition": "adopted_model_reset",
+      "file": "adopted_pending.json",
+      "log_byte_end": 50970,
+      "log_byte_start": 37147,
+      "observation_kind": "next_use",
+      "payload_domain_digest": "76391ec05d3a1fef8a4b9598aea488ca740953d854617194a9b9ed227e77e8b9",
+      "payload_sha256": "d9404a9be22b97d93f52e027fbd2ccdf4cf9ffa7d93a58a743a3f5362c16fd89",
+      "pending_output_present": true,
+      "phase": "adopted_pending",
+      "sha256": "3b3fe72584f128f369c18cd7dae0697ee93beca3404ace106ccd8446ede60f00"
+    },
+    {
+      "bytes": 11821,
+      "disposition": "retained_model",
+      "file": "retained_acked.json",
+      "log_byte_end": 89059,
+      "log_byte_start": 77238,
+      "observation_kind": "retained_model_next_use",
+      "payload_domain_digest": "555a78513219fa7f6dd969351e0963cc03fd293eaa850ebf323b9e64b15dd08b",
+      "payload_sha256": "901eec47b98c4b9f2a3867e9087fd28f7cdeebcd0b4daf6116f740f9060fbe20",
+      "pending_output_present": false,
+      "phase": "retained_acked",
+      "sha256": "67c11f0a957098a5db4c433452cffb1070bd7c220c18e947f9f7b7fe65e55d47"
+    },
+    {
+      "bytes": 12149,
+      "disposition": "retained_model",
+      "file": "retained_pending.json",
+      "log_byte_end": 77191,
+      "log_byte_start": 65042,
+      "observation_kind": "retained_model_next_use",
+      "payload_domain_digest": "c53132645f1f9bdb966d7cf809fcae64c95c35b673f3d0d69cc147d7696cad08",
+      "payload_sha256": "dc5673befd63d92b113d2377f57b0a92721c3451f6c2a603dd8a00becaae983f",
+      "pending_output_present": true,
+      "phase": "retained_pending",
+      "sha256": "8908ec58db9af8942f7215112cfae02ec93ab3bb36fe4fbfcc25bcd2bdd08fe8"
+    }
+  ],
+  "schema": "hepta-learning-readback-native-capture-v1",
+  "source": {
+    "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+    "index_tree": "319737f613f1a9f786df78c4fb79e9c32cac5542",
+    "native_tree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+    "runner_sha256": "6c5289054cab43f8c6fdac0b4ac743de56f9365d26da23f0d220471c592ef848",
+    "status": "",
+    "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+  },
+  "source_is_engineering_fixture": true
+}
