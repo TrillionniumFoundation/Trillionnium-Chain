@@ -1,0 +1,27 @@
+   Compiling libc v0.2.184
+   Compiling syn v2.0.117
+   Compiling cpufeatures v0.3.1
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling keccak v0.2.2
+   Compiling shake v0.1.0
+   Compiling ml-dsa v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling ed25519-dalek v2.2.0
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-research-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
+    Finished `release` profile [optimized] target(s) in 20.13s
+     Running tests/protocol_v1.rs (/home/runner/work/_temp/target-next-architecture/release/deps/protocol_v1-7e0547c03f5393d2)
+
+running 4 tests
+test hepta_admission_rejects_missing_parent_and_unbounded_payload ... ok
+test hepta_admission_requires_owner_facts_and_authority ... ok
+test hepta_handoff_limits_wire_before_decode_and_requires_its_signature_domain ... ok
+test hepta_handoff_rechecks_the_destination_and_fresh_owner_snapshot ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.00s
+

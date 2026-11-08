@@ -1,0 +1,9 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 1.91s
+     Running tests/native_growth_cli.rs (/home/runner/work/_temp/target-next-architecture/release/deps/native_growth_cli-450cb2dba15e6159)
+
+running 1 test
+test native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.15s
+

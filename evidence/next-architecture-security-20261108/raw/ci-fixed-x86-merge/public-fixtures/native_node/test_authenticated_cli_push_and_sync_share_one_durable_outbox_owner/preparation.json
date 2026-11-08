@@ -1,0 +1,124 @@
+{
+  "architecture_report_required": false,
+  "binary": {
+    "ctime_ns": 1794121523458534093,
+    "device": 2049,
+    "inode": 9713827,
+    "mtime_ns": 1794121523457534101,
+    "path": "/home/runner/work/_temp/target-next-architecture/release/deps/native_node-227f6e9802733dfd",
+    "sha256": "c7bbd0ecbe6cfb646574510a08a1a3c152d4fe5348629ad863cd71a2276a1f73",
+    "size_bytes": 10114440
+  },
+  "build_env": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/home/runner/work/_temp/cargo-next-architecture",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-next-architecture",
+    "OPENSSL_CONF": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_MODULES": null,
+    "OPENSSL_STATIC": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu",
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "cli_binary": {
+    "ctime_ns": 1794121519008567386,
+    "device": 2049,
+    "inode": 9713820,
+    "mtime_ns": 1794121518985567558,
+    "path": "/home/runner/work/_temp/target-next-architecture/release/trnm-pon-node",
+    "sha256": "5758ff3f64011c9ecc7db0b5d1095e7dc7f2de9c8570600d9fde5725f96014e1",
+    "size_bytes": 15051784
+  },
+  "cli_required": true,
+  "completed": true,
+  "failures": [],
+  "fixture_env": {
+    "EVALUATION_SYNC_OBSERVATION_EVIDENCE_DIR": null
+  },
+  "job": {
+    "GITHUB_JOB": "next-architecture",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "42456517352"
+  },
+  "native_cwd": {
+    "device": 2049,
+    "inode": 9456743,
+    "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node"
+  },
+  "native_output": null,
+  "native_tests_executed": false,
+  "nested_cargo_invoked": false,
+  "parent_pid": 8072,
+  "schema": "trnm-ci-public-fixture-current-elf-preparation-v1",
+  "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+  "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+  "source_after": {
+    "commit": "bdf2fe11b63d04210bc3853613356928ac85369b",
+    "test_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+    "tracked_source_identity": {
+      "base": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "candidate": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "kind": "prospective-merge",
+      "prospective_merge": "bdf2fe11b63d04210bc3853613356928ac85369b",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "bdf2fe11b63d04210bc3853613356928ac85369b",
+      "tested_tree": "2308fe2f486b68fd39d697fccabf6abae1bcc729",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1734126775,
+      "tracked_entries": 16760,
+      "tracked_worktree_verified": true
+    },
+    "tree": "2308fe2f486b68fd39d697fccabf6abae1bcc729"
+  },
+  "source_before": {
+    "commit": "bdf2fe11b63d04210bc3853613356928ac85369b",
+    "test_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+    "tracked_source_identity": {
+      "base": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "candidate": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "kind": "prospective-merge",
+      "prospective_merge": "bdf2fe11b63d04210bc3853613356928ac85369b",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "bdf2fe11b63d04210bc3853613356928ac85369b",
+      "tested_tree": "2308fe2f486b68fd39d697fccabf6abae1bcc729",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1734126775,
+      "tracked_entries": 16760,
+      "tracked_worktree_verified": true
+    },
+    "tree": "2308fe2f486b68fd39d697fccabf6abae1bcc729"
+  },
+  "supervisors": [
+    {
+      "process": {
+        "device": 25,
+        "gid": 1001,
+        "inode": 24473,
+        "parent_pid": 8065,
+        "pid": 8072,
+        "start_ticks": 45485,
+        "uid": 1001
+      },
+      "role": "libtest"
+    },
+    {
+      "process": {
+        "device": 25,
+        "gid": 1001,
+        "inode": 26876,
+        "parent_pid": 8072,
+        "pid": 8074,
+        "start_ticks": 45485,
+        "uid": 1001
+      },
+      "role": "launcher"
+    }
+  ],
+  "target": "native_node",
+  "timeout_seconds": null
+}

@@ -1,0 +1,22 @@
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running tests/native_node.rs (/home/runner/work/_temp/target-next-architecture/release/deps/native_node-227f6e9802733dfd)
+
+running 1 test
+test test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner ... {"passed": false, "failure": "ValueError:PUBLIC_FIXTURE_PREPARATION_FAILED"}
+FAILED
+
+failures:
+
+---- test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner stdout ----
+
+thread 'test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner' (8161) panicked at crates/trnm-pon-node/tests/support/current_elf_host.rs:70:5:
+source-bound public Host fixture failed; retained receipts: /home/runner/work/_temp/next-architecture-prospective-merge-42455215948-1/public-fixtures/native_node/test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.13s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test native_node`
