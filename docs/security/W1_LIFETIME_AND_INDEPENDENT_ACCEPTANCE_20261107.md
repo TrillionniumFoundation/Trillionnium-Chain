@@ -11,10 +11,25 @@ The new [ledger](../../scripts/w1_lifetime_ledger.py) and
 [19 controls](../../scripts/ci/test_w1_lifetime_ledger.py) make several obligations
 executable. They reproduce exact integer/rational accounting, refuse omitted
 budget classes and invalid extrapolation, and bind observations to 20 selected
-source files at base commit
+source files. The current integrated source survey is fixed at
+`7e044b65454f4c9ea505591727332acffb33e7e5`; the original 2026-11-07
+survey and its retained report remain attributed to
 `7150d96a2112875b4afcf3023361a5cef4a0e4b1`.
 They do not prove that an adversary obeys a supplied bound, instantiate QROM,
 verify a signature or receipt, or run a quantum device.
+
+The integrated candidate changed `trnm-pon-node/src/store.rs` but retained the
+old pin, so the original 19-method suite stopped in `setUpClass` with zero
+methods executed. The source-only correction retains that refusal and changes
+only the selected baseline and that file's SHA-256. The other 19 selected files,
+including the native W1 relation owner `pon_work.rs` and consensus arithmetic, are
+byte-identical. Direct/progress/arithmetic-fact W1 calls, exact header challenge
+encoding, the negative-cache hash inputs and the admission required-work
+expression were separately compared byte-for-byte. Broader store/codec/cache
+changes are not declared equivalent; runtime query counts and unexamined hash
+uses remain unqualified. The original tamper control now checks every selected
+file. These checks restore this source-survey entry point and do not import an
+older native execution or change any HOLD, null probability or activation flag.
 
 The actual project input leaves all lifetime counts and error bounds unknown.
 Its [reproducible report](../../evidence/pon-w1-lifetime-20261107/project-report.json)

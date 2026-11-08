@@ -235,11 +235,17 @@ class LifetimeLedgerTests(unittest.TestCase):
         self.assertEqual(example["hypothetical_weight_per_cost_advantage"], 4)
 
     def test_source_mutation_missing_source_and_symlink_are_refused(self):
+        # Every selected owner is pinned, including the integrated Node store;
+        # do not test only one unchanged crypto input while a stale store pin
+        # prevents the entire retained roster from reaching its first method.
+        for selected in ledger.SOURCE_PINS:
+            sources = dict(self.sources)
+            sources[selected] += b"\n"
+            with self.subTest(source=selected), self.assertRaisesRegex(
+                    ledger.LedgerError, "source identity"):
+                ledger.source_survey(sources)
         key = "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
         sources = dict(self.sources)
-        sources[key] += b"\n"
-        with self.assertRaisesRegex(ledger.LedgerError, "source identity"):
-            ledger.source_survey(sources)
         del sources[key]
         with self.assertRaises(ledger.LedgerError):
             ledger.source_survey(sources)
