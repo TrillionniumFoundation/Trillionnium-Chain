@@ -1,0 +1,9 @@
+{
+  "schema": "trnm-retained-raw-whitespace-observation-v1",
+  "full_staged_diff_check_exit": 2,
+  "non_evidence_diff_check_exit": 0,
+  "original_output_sha256": "49b185b5140b2b414b072ae2594c720b3d5a8da77ae1cb820b675d4c505760df",
+  "original_output_bytes": 14342,
+  "raw_evidence_modified_to_clean_whitespace": false,
+  "scope": "Original GitHub timestamp lines and frozen audit files retained byte-for-byte; this is not a whole-diff whitespace pass."
+}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "systemctl",
+    "show",
+    "trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+    "--property=RuntimeMaxUSec",
+    "--value"
+  ],
+  "complete_success": true,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 3694148,
+  "elapsed_seconds": 0.003694148,
+  "error": null,
+  "name": "service-runtime",
+  "outer_stage_timeout_seconds": 10,
+  "returncode": 0,
+  "stderr": "service-runtime.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "service-runtime.stdout.log",
+  "stdout_bytes": 6,
+  "stdout_sha256": "83eebea40b568a94f15cb4b979671afe4cb578c2d22efc198dd2198541872a59",
+  "stdout_truncated": false
+}

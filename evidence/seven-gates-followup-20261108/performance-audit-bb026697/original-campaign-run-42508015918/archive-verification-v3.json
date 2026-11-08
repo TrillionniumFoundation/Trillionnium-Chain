@@ -1,0 +1,426 @@
+{
+  "all_checks_completed": true,
+  "archive": {
+    "bytes": 71966725,
+    "sha256": "c696c8430a27d6c8a2ef5767c4e1f5dcfd4a48ee42fc044c8b0e966221ac3c43"
+  },
+  "binary": {
+    "actual_compiler_artifact_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448",
+    "build_separate_from_measured_campaign": true,
+    "bytes": 12391392,
+    "execution": "original cargo test command using the checked build artifact",
+    "retained": "public_v3_multiprocess.bin",
+    "sha256_after": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+    "sha256_before": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f"
+  },
+  "completed_utc": "2026-11-08T18:38:42.843683+00:00",
+  "controller_resources": [
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "resource-before-build.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "resource-after-native.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "run-1-resource-before.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "run-1-resource-after.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "run-2-resource-before.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "run-2-resource-after.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "run-3-resource-before.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    },
+    {
+      "all_ancestor_limits_validated": true,
+      "cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "file": "run-3-resource-after.json",
+      "leaf_cpu_max": "400000 100000",
+      "leaf_memory_max": "17179869184",
+      "nice": 10
+    }
+  ],
+  "expected_public_policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+  "failure": null,
+  "full_original_campaign_acceptance_reader_executed": false,
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "host_custody_authenticated": false,
+  "manifest": {
+    "all_zip_members_covered": true,
+    "listed_files": 1765,
+    "sha256": "9fca857f830ac5ad3b499452d0c0000c44f4bde2b3894612806c77aa67cb37cd",
+    "verified_bytes": 530903872,
+    "verified_files": 1765
+  },
+  "native_execution_performed": false,
+  "native_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "public_host_resources": [
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "baseline",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-4951.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 1,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "from-zero",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5040.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 1,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "late-product",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5110.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 1,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "baseline",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5257.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 2,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "from-zero",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5276.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 2,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "late-product",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5344.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 2,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "baseline",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5495.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 3,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "from-zero",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5516.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 3,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    },
+    {
+      "controller_cgroup": "/system.slice/trnm-native-campaign-42508015918-1.service",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "mode": "late-product",
+      "phase_cgroup": "/trnmponpublic.slice/trnm-phase-42508015918-1-original-campaign-5586.service",
+      "phase_job_binary_sha256": "9dfc5783ca20e453091cf7942f68840d69d83d9ee8bb8c14c51b62c5d71e216f",
+      "run": 3,
+      "sample_count": 4,
+      "validation_errors": {
+        "inside-after": [],
+        "inside-before": [],
+        "outside-after": [],
+        "outside-before": []
+      }
+    }
+  ],
+  "qualification": "HOLD",
+  "reader_source_pins": [
+    {
+      "bytes": 17265,
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    {
+      "bytes": 69313,
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482"
+    },
+    {
+      "bytes": 7277,
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+    },
+    {
+      "bytes": 5452,
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    {
+      "bytes": 21921,
+      "path": "config/pon/public-resource-profile-vectors-v1.json",
+      "sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da"
+    }
+  ],
+  "runs": [
+    {
+      "economics_complete_recorded": true,
+      "elapsed_seconds": 113.345704638,
+      "finite_experiment_criteria_met": false,
+      "number": 1,
+      "phase_readback_exactly_recomputed": true,
+      "raw_report_sha256": "2617a79ccd5eecf04a25cdce5e60f5cdd60be1609b9b6652ee304da3be43688f",
+      "returncode": 101
+    },
+    {
+      "economics_complete_recorded": true,
+      "elapsed_seconds": 113.083389905,
+      "finite_experiment_criteria_met": false,
+      "number": 2,
+      "phase_readback_exactly_recomputed": true,
+      "raw_report_sha256": "a340920a35cb7b2e5615c5615016e87a6f2ef945ec424318d6b3d704ca054f48",
+      "returncode": 101
+    },
+    {
+      "economics_complete_recorded": true,
+      "elapsed_seconds": 113.018614029,
+      "finite_experiment_criteria_met": false,
+      "number": 3,
+      "phase_readback_exactly_recomputed": true,
+      "raw_report_sha256": "99c2d6ec92f44313dda35b33b7863810211cdb930a2f855e0d725d9277ad625f",
+      "returncode": 101
+    }
+  ],
+  "schema": "trnm-original-campaign-archive-verification-v1",
+  "scope": "Full ZIP and all original manifest members verified; source/binary/resource receipts and failed native invocations checked; three original phase derivations recomputed with exact pinned source. No native rerun, host custody attestation, or passing campaign claim.",
+  "source_receipts": {
+    "all_identical": true,
+    "count": 8,
+    "receipt": {
+      "base": null,
+      "candidate": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "tested_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2382494143,
+      "tracked_entries": 23515,
+      "tracked_worktree_verified": true
+    }
+  },
+  "started_utc": "2026-11-08T18:38:34.393067+00:00",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+}

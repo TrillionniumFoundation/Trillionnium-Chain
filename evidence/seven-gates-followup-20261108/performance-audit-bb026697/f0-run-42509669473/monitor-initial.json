@@ -1,0 +1,26 @@
+{
+  "schema": "f0-independent-readonly-monitor-v1",
+  "captured_after_initial_reads_utc": "2026-11-08 18:24:27 UTC",
+  "run_id": 42509669473,
+  "job_id": 128819775064,
+  "workflow_id": 399731485,
+  "expected_head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "expected_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "run_attempt": 1,
+  "allowed_actions": [
+    "GET exact run/jobs/artifacts",
+    "download exact artifact archive",
+    "read and verify artifact bytes"
+  ],
+  "forbidden_actions": [
+    "dispatch",
+    "rerun",
+    "cancel",
+    "native execution",
+    "source mutation"
+  ],
+  "initial_status": "queued",
+  "artifacts_observed": 0,
+  "qualification": "HOLD",
+  "scope": "This monitor observes one previously authorized run; pending state is not success."
+}

@@ -1,0 +1,2890 @@
+{
+  "derived_from_retained_original_bytes": true,
+  "native_reexecution": false,
+  "qualification": "HOLD",
+  "rows": [
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 84104,
+          "calls_completed": 84104,
+          "calls_rejected": 0,
+          "calls_started": 84104,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1639630928,
+            "min_ns": 56405077,
+            "sum_known_ns": 4608550293,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 2257938875,
+            "min_ns": 56324012,
+            "sum_known_ns": 6539964402,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 80019,
+            "min_ns": 62567,
+            "sum_known_ns": 565385,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 80330,
+            "min_ns": 62527,
+            "sum_known_ns": 566446,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 81061,
+            "min_ns": 51847,
+            "sum_known_ns": 499471,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 80800,
+            "min_ns": 51776,
+            "sum_known_ns": 498367,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 182190,
+            "min_ns": 136685,
+            "sum_known_ns": 1255991,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 181959,
+            "min_ns": 136665,
+            "sum_known_ns": 1255310,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 8,
+        "max_ns": 8795982656,
+        "min_ns": 215852983,
+        "sum_known_ns": 24331249155,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 8,
+        "max_ns": 1978744545,
+        "min_ns": 60281529,
+        "sum_known_ns": 5402785518,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 7,
+      "mode": "baseline",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 512958853,
+            "min_ns": 483318237,
+            "sum_known_ns": 3452888214,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 2297483649,
+            "min_ns": 2194401841,
+            "sum_known_ns": 15493747291,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 136513114,
+            "min_ns": 134035841,
+            "sum_known_ns": 946583237,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 602638290,
+            "min_ns": 599545447,
+            "sum_known_ns": 4203957686,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 374617268,
+            "min_ns": 346947047,
+            "sum_known_ns": 2495141917,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 1695310630,
+            "min_ns": 1590344165,
+            "sum_known_ns": 11278621313,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1496342,
+            "min_ns": 926780,
+            "sum_known_ns": 9545501,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 1496080,
+            "min_ns": 926527,
+            "sum_known_ns": 9543644,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 5971,
+            "min_ns": 4218,
+            "sum_known_ns": 36549,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 6092,
+            "min_ns": 4348,
+            "sum_known_ns": 38463,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 126526,
+            "min_ns": 53480,
+            "sum_known_ns": 550868,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 2184473,
+            "min_ns": 53460,
+            "sum_known_ns": 2608625,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 1912368,
+            "min_ns": 1322858,
+            "sum_known_ns": 10752853,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 1912385,
+            "min_ns": 1322836,
+            "sum_known_ns": 10752866,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1977764336,
+            "min_ns": 59192848,
+            "sum_known_ns": 5380859020,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 8794475877,
+            "min_ns": 213807916,
+            "sum_known_ns": 23915714524,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 710645,
+            "min_ns": 508699,
+            "sum_known_ns": 4009320,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 710715,
+            "min_ns": 508769,
+            "sum_known_ns": 4009735,
+            "unknown_count": 0
+          }
+        },
+        "submit_result": {
+          "completed_records": 1,
+          "entered_records": 1,
+          "importer_thread_cpu_ns": {
+            "known_count": 1,
+            "max_ns": 1423474198,
+            "min_ns": 1423474198,
+            "sum_known_ns": 1423474198,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 1,
+            "max_ns": 6312548480,
+            "min_ns": 6312548480,
+            "sum_known_ns": 6312548480,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 63008737,
+            "min_ns": 57560963,
+            "sum_known_ns": 492993335,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 284935298,
+            "min_ns": 184177991,
+            "sum_known_ns": 2095859921,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "2617a79ccd5eecf04a25cdce5e60f5cdd60be1609b9b6652ee304da3be43688f",
+      "receiver_verifier_setup_thread_cpu_ns": 1081058082,
+      "recorded_history_calls": 8,
+      "retained_import_records": 8,
+      "run": 1,
+      "transport_history_call_wall_intervals": {
+        "known_count": 8,
+        "max_ns": 77955267,
+        "min_ns": 11709766,
+        "sum_known_ns": 162427656,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8369207539,
+      "whole_parent_phase_wall_ns": 34501647906,
+      "whole_public_host_cpu_delta_ns": 8396048000,
+      "whole_public_host_period_delta": 345,
+      "whole_public_host_throttled_period_delta": 332
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 36018,
+          "calls_completed": 36018,
+          "calls_rejected": 0,
+          "calls_started": 36018,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 608615503,
+            "min_ns": 39096515,
+            "sum_known_ns": 2402745094,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 1573692115,
+            "min_ns": 39399116,
+            "sum_known_ns": 5925619892,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 93284,
+            "min_ns": 68598,
+            "sum_known_ns": 404295,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 93294,
+            "min_ns": 68789,
+            "sum_known_ns": 404665,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 90499,
+            "min_ns": 62757,
+            "sum_known_ns": 369038,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 90428,
+            "min_ns": 62757,
+            "sum_known_ns": 368506,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 222014,
+            "min_ns": 165318,
+            "sum_known_ns": 959990,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 221753,
+            "min_ns": 165308,
+            "sum_known_ns": 959659,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 6701858970,
+        "min_ns": 400558439,
+        "sum_known_ns": 25278922962,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 5,
+        "max_ns": 713634757,
+        "min_ns": 42389765,
+        "sum_known_ns": 2811295551,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 4,
+      "mode": "from-zero",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 627673267,
+            "min_ns": 599020510,
+            "sum_known_ns": 2447346835,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 5598973298,
+            "min_ns": 5206453142,
+            "sum_known_ns": 21513965326,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 167812750,
+            "min_ns": 163750285,
+            "sum_known_ns": 661059246,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1492423311,
+            "min_ns": 1404230199,
+            "sum_known_ns": 5710793132,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 461027731,
+            "min_ns": 432648104,
+            "sum_known_ns": 1777425315,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 4103223736,
+            "min_ns": 3800392872,
+            "sum_known_ns": 15704196724,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 1411093,
+            "min_ns": 1141329,
+            "sum_known_ns": 6447851,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 84889363,
+            "min_ns": 1181934,
+            "sum_known_ns": 90539496,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 6683,
+            "min_ns": 3356,
+            "sum_known_ns": 23485,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 7374,
+            "min_ns": 3456,
+            "sum_known_ns": 24837,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 82394,
+            "min_ns": 53800,
+            "sum_known_ns": 305330,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 82203,
+            "min_ns": 53770,
+            "sum_known_ns": 305058,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 2817807,
+            "min_ns": 1744846,
+            "sum_known_ns": 8541596,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 91702774,
+            "min_ns": 1753349,
+            "sum_known_ns": 98649886,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 705458283,
+            "min_ns": 41121150,
+            "sum_known_ns": 2797234006,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 6297113859,
+            "min_ns": 398618238,
+            "sum_known_ns": 24776521750,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 1052885,
+            "min_ns": 741123,
+            "sum_known_ns": 3537091,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1052953,
+            "min_ns": 741222,
+            "sum_known_ns": 3537544,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 76521916,
+            "min_ns": 39606985,
+            "sum_known_ns": 342251052,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 699362769,
+            "min_ns": 397103865,
+            "sum_known_ns": 3170827251,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "2617a79ccd5eecf04a25cdce5e60f5cdd60be1609b9b6652ee304da3be43688f",
+      "receiver_verifier_setup_thread_cpu_ns": 1089500276,
+      "recorded_history_calls": 5,
+      "retained_import_records": 5,
+      "run": 1,
+      "transport_history_call_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 105738296,
+        "min_ns": 14831338,
+        "sum_known_ns": 408714833,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8858231429,
+      "whole_parent_phase_wall_ns": 35589106184,
+      "whole_public_host_cpu_delta_ns": 8896232000,
+      "whole_public_host_period_delta": 356,
+      "whole_public_host_throttled_period_delta": 353
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 35662,
+          "calls_completed": 35662,
+          "calls_rejected": 0,
+          "calls_started": 35662,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 602332183,
+            "min_ns": 14402544,
+            "sum_known_ns": 2369756632,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 1331411629,
+            "min_ns": 15412529,
+            "sum_known_ns": 5012760826,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 92443,
+            "min_ns": 67837,
+            "sum_known_ns": 401050,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 92432,
+            "min_ns": 67857,
+            "sum_known_ns": 401799,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 90249,
+            "min_ns": 61114,
+            "sum_known_ns": 365453,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 90098,
+            "min_ns": 60994,
+            "sum_known_ns": 364400,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 214891,
+            "min_ns": 147946,
+            "sum_known_ns": 929233,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 214811,
+            "min_ns": 147915,
+            "sum_known_ns": 928921,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 6608546539,
+        "min_ns": 191361160,
+        "sum_known_ns": 25096480543,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 5,
+        "max_ns": 706049887,
+        "min_ns": 16634174,
+        "sum_known_ns": 2770368888,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 4,
+      "mode": "late-product",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 625953920,
+            "min_ns": 598561940,
+            "sum_known_ns": 2440871453,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 5603180716,
+            "min_ns": 5302944595,
+            "sum_known_ns": 21902539862,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 165018490,
+            "min_ns": 160258257,
+            "sum_known_ns": 651972853,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1489853378,
+            "min_ns": 1307112869,
+            "sum_known_ns": 5603552922,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 458667928,
+            "min_ns": 434784037,
+            "sum_known_ns": 1780951474,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 4196268480,
+            "min_ns": 3903747746,
+            "sum_known_ns": 16200961495,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 1335592,
+            "min_ns": 1143012,
+            "sum_known_ns": 6281219,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 1335409,
+            "min_ns": 1142900,
+            "sum_known_ns": 6285828,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 4328,
+            "min_ns": 3336,
+            "sum_known_ns": 19446,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 4518,
+            "min_ns": 3497,
+            "sum_known_ns": 20408,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 100297,
+            "min_ns": 52267,
+            "sum_known_ns": 331027,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 100227,
+            "min_ns": 52308,
+            "sum_known_ns": 330958,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 2257873,
+            "min_ns": 1692578,
+            "sum_known_ns": 7656915,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 92026724,
+            "min_ns": 1692586,
+            "sum_known_ns": 97734184,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 699178707,
+            "min_ns": 15418435,
+            "sum_known_ns": 2757627535,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 6204528472,
+            "min_ns": 189295477,
+            "sum_known_ns": 24682413218,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 900860,
+            "min_ns": 655473,
+            "sum_known_ns": 3213234,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 90977849,
+            "min_ns": 655482,
+            "sum_known_ns": 93290450,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 76515798,
+            "min_ns": 13955405,
+            "sum_known_ns": 309330698,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 693828147,
+            "min_ns": 187832028,
+            "sum_known_ns": 2772440556,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "2617a79ccd5eecf04a25cdce5e60f5cdd60be1609b9b6652ee304da3be43688f",
+      "receiver_verifier_setup_thread_cpu_ns": 1064687732,
+      "recorded_history_calls": 5,
+      "retained_import_records": 5,
+      "run": 1,
+      "transport_history_call_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 101780409,
+        "min_ns": 96529399,
+        "sum_known_ns": 498833028,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8819708177,
+      "whole_parent_phase_wall_ns": 35403789664,
+      "whole_public_host_cpu_delta_ns": 8857021000,
+      "whole_public_host_period_delta": 355,
+      "whole_public_host_throttled_period_delta": 353
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 84154,
+          "calls_completed": 84154,
+          "calls_rejected": 0,
+          "calls_started": 84154,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1645941060,
+            "min_ns": 59267378,
+            "sum_known_ns": 4611174392,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 2563174214,
+            "min_ns": 59169577,
+            "sum_known_ns": 6225469555,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 81972,
+            "min_ns": 63689,
+            "sum_known_ns": 559771,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 82464,
+            "min_ns": 63688,
+            "sum_known_ns": 561104,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 68868,
+            "min_ns": 51847,
+            "sum_known_ns": 446454,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 68658,
+            "min_ns": 51757,
+            "sum_known_ns": 445580,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 190766,
+            "min_ns": 133159,
+            "sum_known_ns": 1189991,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 190836,
+            "min_ns": 133088,
+            "sum_known_ns": 1189588,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 8,
+        "max_ns": 8878314802,
+        "min_ns": 284963087,
+        "sum_known_ns": 24323102260,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 8,
+        "max_ns": 1986118662,
+        "min_ns": 63284241,
+        "sum_known_ns": 5406053884,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 7,
+      "mode": "baseline",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 511532634,
+            "min_ns": 485953065,
+            "sum_known_ns": 3455332676,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 2298811721,
+            "min_ns": 2116693722,
+            "sum_known_ns": 15407583477,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 136963974,
+            "min_ns": 132169521,
+            "sum_known_ns": 941549220,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 601592732,
+            "min_ns": 596684481,
+            "sum_known_ns": 4197719851,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 372483419,
+            "min_ns": 350785171,
+            "sum_known_ns": 2502602213,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 1695133410,
+            "min_ns": 1514831061,
+            "sum_known_ns": 11198679419,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1593152,
+            "min_ns": 943410,
+            "sum_known_ns": 9524610,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 68628790,
+            "min_ns": 943159,
+            "sum_known_ns": 76558703,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 4508,
+            "min_ns": 3767,
+            "sum_known_ns": 33461,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 4799,
+            "min_ns": 3867,
+            "sum_known_ns": 34966,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 141884,
+            "min_ns": 53630,
+            "sum_known_ns": 567728,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 2226732,
+            "min_ns": 53600,
+            "sum_known_ns": 2652304,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 2028465,
+            "min_ns": 1308070,
+            "sum_known_ns": 10762458,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 2028673,
+            "min_ns": 1308279,
+            "sum_known_ns": 10763515,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1984971412,
+            "min_ns": 62196902,
+            "sum_known_ns": 5385094015,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 8876407028,
+            "min_ns": 283458612,
+            "sum_known_ns": 23909286006,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 819509,
+            "min_ns": 519118,
+            "sum_known_ns": 4015962,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 819708,
+            "min_ns": 519438,
+            "sum_known_ns": 4016567,
+            "unknown_count": 0
+          }
+        },
+        "submit_result": {
+          "completed_records": 1,
+          "entered_records": 1,
+          "importer_thread_cpu_ns": {
+            "known_count": 1,
+            "max_ns": 1426985701,
+            "min_ns": 1426985701,
+            "sum_known_ns": 1426985701,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 1,
+            "max_ns": 6391299446,
+            "min_ns": 6391299446,
+            "sum_known_ns": 6391299446,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 62391266,
+            "min_ns": 60454791,
+            "sum_known_ns": 491396861,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 284875973,
+            "min_ns": 181491746,
+            "sum_known_ns": 2029903765,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "a340920a35cb7b2e5615c5615016e87a6f2ef945ec424318d6b3d704ca054f48",
+      "receiver_verifier_setup_thread_cpu_ns": 1093698036,
+      "recorded_history_calls": 8,
+      "retained_import_records": 8,
+      "run": 2,
+      "transport_history_call_wall_intervals": {
+        "known_count": 8,
+        "max_ns": 78846752,
+        "min_ns": 11710979,
+        "sum_known_ns": 162357504,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8384872299,
+      "whole_parent_phase_wall_ns": 34593404239,
+      "whole_public_host_cpu_delta_ns": 8414113000,
+      "whole_public_host_period_delta": 347,
+      "whole_public_host_throttled_period_delta": 334
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 36699,
+          "calls_completed": 36699,
+          "calls_rejected": 0,
+          "calls_started": 36699,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 602602406,
+            "min_ns": 83847566,
+            "sum_known_ns": 2427004045,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 1226324232,
+            "min_ns": 276290135,
+            "sum_known_ns": 4523533216,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 111418,
+            "min_ns": 67887,
+            "sum_known_ns": 444060,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 111478,
+            "min_ns": 67846,
+            "sum_known_ns": 414622,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 70592,
+            "min_ns": 54231,
+            "sum_known_ns": 307114,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 70422,
+            "min_ns": 54161,
+            "sum_known_ns": 306553,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 201065,
+            "min_ns": 183823,
+            "sum_known_ns": 957546,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 201085,
+            "min_ns": 183773,
+            "sum_known_ns": 957676,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 6399718123,
+        "min_ns": 991793883,
+        "sum_known_ns": 25093986556,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 5,
+        "max_ns": 706177803,
+        "min_ns": 95573742,
+        "sum_known_ns": 2832292204,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 4,
+      "mode": "from-zero",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 624395735,
+            "min_ns": 16527215,
+            "sum_known_ns": 2435707379,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 5393471511,
+            "min_ns": 194906484,
+            "sum_known_ns": 21198201240,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 167521087,
+            "min_ns": 16444019,
+            "sum_known_ns": 663948123,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 1495734113,
+            "min_ns": 194823109,
+            "sum_known_ns": 5792889516,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 460009504,
+            "min_ns": 430656979,
+            "sum_known_ns": 1764394843,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 3900491103,
+            "min_ns": 3708355735,
+            "sum_known_ns": 15311032437,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 1530976,
+            "min_ns": 1172918,
+            "sum_known_ns": 7088235,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 87746363,
+            "min_ns": 1172726,
+            "sum_known_ns": 93376238,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 4850,
+            "min_ns": 3577,
+            "sum_known_ns": 20620,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 5120,
+            "min_ns": 3717,
+            "sum_known_ns": 21610,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 162292,
+            "min_ns": 66103,
+            "sum_known_ns": 471729,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 2225969,
+            "min_ns": 66053,
+            "sum_known_ns": 2535196,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 2244978,
+            "min_ns": 1363103,
+            "sum_known_ns": 6980022,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 88271087,
+            "min_ns": 1638935,
+            "sum_known_ns": 93892968,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 700311010,
+            "min_ns": 94193668,
+            "sum_known_ns": 2820914958,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 6094170621,
+            "min_ns": 987451548,
+            "sum_known_ns": 24676878910,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 881564,
+            "min_ns": 542792,
+            "sum_known_ns": 2921631,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 87450587,
+            "min_ns": 669127,
+            "sum_known_ns": 89834211,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 76144568,
+            "min_ns": 74083629,
+            "sum_known_ns": 376600804,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 790842359,
+            "min_ns": 599465055,
+            "sum_known_ns": 3381716918,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "a340920a35cb7b2e5615c5615016e87a6f2ef945ec424318d6b3d704ca054f48",
+      "receiver_verifier_setup_thread_cpu_ns": 1073347709,
+      "recorded_history_calls": 5,
+      "retained_import_records": 5,
+      "run": 2,
+      "transport_history_call_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 102523480,
+        "min_ns": 91764223,
+        "sum_known_ns": 492877975,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8836215371,
+      "whole_parent_phase_wall_ns": 35484884653,
+      "whole_public_host_cpu_delta_ns": 8874378000,
+      "whole_public_host_period_delta": 356,
+      "whole_public_host_throttled_period_delta": 356
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 36104,
+          "calls_completed": 36104,
+          "calls_rejected": 0,
+          "calls_started": 36104,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 599716929,
+            "min_ns": 45999227,
+            "sum_known_ns": 2392577088,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 1677849701,
+            "min_ns": 53839010,
+            "sum_known_ns": 4694837598,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 100317,
+            "min_ns": 80721,
+            "sum_known_ns": 444239,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 100206,
+            "min_ns": 80961,
+            "sum_known_ns": 444136,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 78446,
+            "min_ns": 53049,
+            "sum_known_ns": 342327,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 78266,
+            "min_ns": 52989,
+            "sum_known_ns": 341767,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 214981,
+            "min_ns": 162834,
+            "sum_known_ns": 971343,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 214340,
+            "min_ns": 162713,
+            "sum_known_ns": 970330,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 6601500098,
+        "min_ns": 495265091,
+        "sum_known_ns": 25178208235,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 5,
+        "max_ns": 703943969,
+        "min_ns": 49651375,
+        "sum_known_ns": 2798258782,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 4,
+      "mode": "late-product",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 620520306,
+            "min_ns": 597562286,
+            "sum_known_ns": 2432447281,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 5494304628,
+            "min_ns": 5197222433,
+            "sum_known_ns": 21583756265,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 167838570,
+            "min_ns": 162965900,
+            "sum_known_ns": 662887403,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1594535179,
+            "min_ns": 1403728413,
+            "sum_known_ns": 5999074256,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 452330978,
+            "min_ns": 432805785,
+            "sum_known_ns": 1761842057,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 3903556919,
+            "min_ns": 3791703251,
+            "sum_known_ns": 15489597759,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 1457820,
+            "min_ns": 1101415,
+            "sum_known_ns": 6465753,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 2523447,
+            "min_ns": 1101163,
+            "sum_known_ns": 7569495,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 5790,
+            "min_ns": 3406,
+            "sum_known_ns": 22911,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 6041,
+            "min_ns": 3566,
+            "sum_known_ns": 23994,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 134672,
+            "min_ns": 73296,
+            "sum_known_ns": 451091,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 2203110,
+            "min_ns": 73247,
+            "sum_known_ns": 2519200,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 2235982,
+            "min_ns": 1659456,
+            "sum_known_ns": 7408863,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 89520346,
+            "min_ns": 1710709,
+            "sum_known_ns": 94773900,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 698691490,
+            "min_ns": 48251572,
+            "sum_known_ns": 2787062520,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 6198848703,
+            "min_ns": 492893350,
+            "sum_known_ns": 24686513396,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 819288,
+            "min_ns": 613134,
+            "sum_known_ns": 2958469,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 87969863,
+            "min_ns": 613294,
+            "sum_known_ns": 90189893,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 5,
+          "entered_records": 5,
+          "importer_thread_cpu_ns": {
+            "known_count": 5,
+            "max_ns": 76696181,
+            "min_ns": 46845298,
+            "sum_known_ns": 346720560,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 5,
+            "max_ns": 702521643,
+            "min_ns": 491486226,
+            "sum_known_ns": 3091687459,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "a340920a35cb7b2e5615c5615016e87a6f2ef945ec424318d6b3d704ca054f48",
+      "receiver_verifier_setup_thread_cpu_ns": 1071821921,
+      "recorded_history_calls": 5,
+      "retained_import_records": 5,
+      "run": 2,
+      "transport_history_call_wall_intervals": {
+        "known_count": 5,
+        "max_ns": 105194410,
+        "min_ns": 17653216,
+        "sum_known_ns": 410082064,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8825294921,
+      "whole_parent_phase_wall_ns": 35422801942,
+      "whole_public_host_cpu_delta_ns": 8863761000,
+      "whole_public_host_period_delta": 356,
+      "whole_public_host_throttled_period_delta": 354
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 83934,
+          "calls_completed": 83934,
+          "calls_rejected": 0,
+          "calls_started": 83934,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1642422594,
+            "min_ns": 46498603,
+            "sum_known_ns": 4600511231,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 2187008611,
+            "min_ns": 46429289,
+            "sum_known_ns": 5683647014,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 72014,
+            "min_ns": 62717,
+            "sum_known_ns": 528004,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 72224,
+            "min_ns": 62918,
+            "sum_known_ns": 529357,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 68488,
+            "min_ns": 51376,
+            "sum_known_ns": 437294,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 68318,
+            "min_ns": 51346,
+            "sum_known_ns": 436944,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 8,
+          "calls_completed": 8,
+          "calls_rejected": 0,
+          "calls_started": 8,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 187049,
+            "min_ns": 133409,
+            "sum_known_ns": 1191952,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 187109,
+            "min_ns": 133368,
+            "sum_known_ns": 1191379,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 8,
+        "max_ns": 8879605300,
+        "min_ns": 194196391,
+        "sum_known_ns": 24393545813,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 8,
+        "max_ns": 1983978542,
+        "min_ns": 49927318,
+        "sum_known_ns": 5400678988,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 7,
+      "mode": "baseline",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 508897143,
+            "min_ns": 487968387,
+            "sum_known_ns": 3455549048,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 2292070817,
+            "min_ns": 2194729177,
+            "sum_known_ns": 15490464935,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 136781606,
+            "min_ns": 133494181,
+            "sum_known_ns": 946068230,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 602678871,
+            "min_ns": 598141484,
+            "sum_known_ns": 4208752997,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 371150710,
+            "min_ns": 353051842,
+            "sum_known_ns": 2497322094,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 1611723585,
+            "min_ns": 1592863580,
+            "sum_known_ns": 11192631392,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1506981,
+            "min_ns": 1002310,
+            "sum_known_ns": 9588329,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 1506759,
+            "min_ns": 1001798,
+            "sum_known_ns": 9586262,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 4678,
+            "min_ns": 3447,
+            "sum_known_ns": 34072,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 4980,
+            "min_ns": 3677,
+            "sum_known_ns": 35747,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 76913,
+            "min_ns": 53200,
+            "sum_known_ns": 457104,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 76703,
+            "min_ns": 53159,
+            "sum_known_ns": 456751,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 2286405,
+            "min_ns": 1337436,
+            "sum_known_ns": 11679810,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 79206006,
+            "min_ns": 1337413,
+            "sum_known_ns": 88599409,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 1982851932,
+            "min_ns": 48886548,
+            "sum_known_ns": 5378098983,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 8878075631,
+            "min_ns": 192718466,
+            "sum_known_ns": 23978714744,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 7,
+          "entered_records": 7,
+          "importer_thread_cpu_ns": {
+            "known_count": 7,
+            "max_ns": 908966,
+            "min_ns": 528386,
+            "sum_known_ns": 4338224,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 7,
+            "max_ns": 909265,
+            "min_ns": 528425,
+            "sum_known_ns": 4339079,
+            "unknown_count": 0
+          }
+        },
+        "submit_result": {
+          "completed_records": 1,
+          "entered_records": 1,
+          "importer_thread_cpu_ns": {
+            "known_count": 1,
+            "max_ns": 1427773834,
+            "min_ns": 1427773834,
+            "sum_known_ns": 1427773834,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 1,
+            "max_ns": 6395422474,
+            "min_ns": 6395422474,
+            "sum_known_ns": 6395422474,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 8,
+          "entered_records": 8,
+          "importer_thread_cpu_ns": {
+            "known_count": 8,
+            "max_ns": 63953127,
+            "min_ns": 47248973,
+            "sum_known_ns": 483367718,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 8,
+            "max_ns": 286388863,
+            "min_ns": 186792332,
+            "sum_known_ns": 2081418160,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "99c2d6ec92f44313dda35b33b7863810211cdb930a2f855e0d725d9277ad625f",
+      "receiver_verifier_setup_thread_cpu_ns": 1072312921,
+      "recorded_history_calls": 8,
+      "retained_import_records": 8,
+      "run": 3,
+      "transport_history_call_wall_intervals": {
+        "known_count": 8,
+        "max_ns": 12380121,
+        "min_ns": 11619262,
+        "sum_known_ns": 96417476,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8361454847,
+      "whole_parent_phase_wall_ns": 34494596197,
+      "whole_public_host_cpu_delta_ns": 8389684000,
+      "whole_public_host_period_delta": 345,
+      "whole_public_host_throttled_period_delta": 332
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 35424,
+          "calls_completed": 35424,
+          "calls_rejected": 0,
+          "calls_started": 35424,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 610615640,
+            "min_ns": 579231681,
+            "sum_known_ns": 2373739584,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1471964550,
+            "min_ns": 970214940,
+            "sum_known_ns": 4768277503,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 4,
+          "calls_completed": 4,
+          "calls_rejected": 0,
+          "calls_started": 4,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 140592,
+            "min_ns": 70943,
+            "sum_known_ns": 390749,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 141403,
+            "min_ns": 71233,
+            "sum_known_ns": 392130,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 4,
+          "calls_completed": 4,
+          "calls_rejected": 0,
+          "calls_started": 4,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 97090,
+            "min_ns": 53360,
+            "sum_known_ns": 301091,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 97021,
+            "min_ns": 53299,
+            "sum_known_ns": 300730,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 4,
+          "calls_completed": 4,
+          "calls_rejected": 0,
+          "calls_started": 4,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 230861,
+            "min_ns": 184815,
+            "sum_known_ns": 839146,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 491336,
+            "min_ns": 184765,
+            "sum_known_ns": 1103568,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 4,
+        "max_ns": 6705525571,
+        "min_ns": 5996171732,
+        "sum_known_ns": 25184969094,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 4,
+        "max_ns": 716069540,
+        "min_ns": 675952787,
+        "sum_known_ns": 2777199706,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 3,
+      "mode": "from-zero",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 631837258,
+            "min_ns": 597033293,
+            "sum_known_ns": 2452180264,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 5608456188,
+            "min_ns": 5298291937,
+            "sum_known_ns": 21812152620,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 170601415,
+            "min_ns": 164136655,
+            "sum_known_ns": 669769735,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1590390339,
+            "min_ns": 1500027574,
+            "sum_known_ns": 6098223646,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 458707607,
+            "min_ns": 431265265,
+            "sum_known_ns": 1774715205,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 4101275669,
+            "min_ns": 3796632342,
+            "sum_known_ns": 15706232035,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 1615905,
+            "min_ns": 1133495,
+            "sum_known_ns": 5410495,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1678389,
+            "min_ns": 1133282,
+            "sum_known_ns": 5472152,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 4178,
+            "min_ns": 3346,
+            "sum_known_ns": 15278,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 4498,
+            "min_ns": 3546,
+            "sum_known_ns": 16110,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 85491,
+            "min_ns": 55674,
+            "sum_known_ns": 278961,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 374267,
+            "min_ns": 55724,
+            "sum_known_ns": 567737,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 2422510,
+            "min_ns": 1549070,
+            "sum_known_ns": 7375380,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 2422616,
+            "min_ns": 1549238,
+            "sum_known_ns": 7376021,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 710043951,
+            "min_ns": 674447738,
+            "sum_known_ns": 2765845875,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 6302148818,
+            "min_ns": 5992897848,
+            "sum_known_ns": 24515118388,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 1018440,
+            "min_ns": 538936,
+            "sum_known_ns": 2858714,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1018488,
+            "min_ns": 539035,
+            "sum_known_ns": 2859220,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 78009459,
+            "min_ns": 76015866,
+            "sum_known_ns": 307086994,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 700311973,
+            "min_ns": 610344106,
+            "sum_known_ns": 2696035107,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "99c2d6ec92f44313dda35b33b7863810211cdb930a2f855e0d725d9277ad625f",
+      "receiver_verifier_setup_thread_cpu_ns": 1069705362,
+      "recorded_history_calls": 4,
+      "retained_import_records": 4,
+      "run": 3,
+      "transport_history_call_wall_intervals": {
+        "known_count": 4,
+        "max_ns": 104334484,
+        "min_ns": 100484806,
+        "sum_known_ns": 412069247,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8834339183,
+      "whole_parent_phase_wall_ns": 35493392139,
+      "whole_public_host_cpu_delta_ns": 8872682000,
+      "whole_public_host_period_delta": 356,
+      "whole_public_host_throttled_period_delta": 355
+    },
+    {
+      "host_check_costs": {
+        "checkpoint": {
+          "calls_accepted": 35165,
+          "calls_completed": 35165,
+          "calls_rejected": 0,
+          "calls_started": 35165,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 608200892,
+            "min_ns": 566252131,
+            "sum_known_ns": 2338255633,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1339596874,
+            "min_ns": 1054527344,
+            "sum_known_ns": 4829044698,
+            "unknown_count": 0
+          }
+        },
+        "final": {
+          "calls_accepted": 4,
+          "calls_completed": 4,
+          "calls_rejected": 0,
+          "calls_started": 4,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 100368,
+            "min_ns": 71745,
+            "sum_known_ns": 352931,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 100598,
+            "min_ns": 71734,
+            "sum_known_ns": 352328,
+            "unknown_count": 0
+          }
+        },
+        "initial": {
+          "calls_accepted": 4,
+          "calls_completed": 4,
+          "calls_rejected": 0,
+          "calls_started": 4,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 71754,
+            "min_ns": 53089,
+            "sum_known_ns": 247912,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 71693,
+            "min_ns": 53029,
+            "sum_known_ns": 247470,
+            "unknown_count": 0
+          }
+        },
+        "resolve": {
+          "calls_accepted": 4,
+          "calls_completed": 4,
+          "calls_rejected": 0,
+          "calls_started": 4,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 213578,
+            "min_ns": 152735,
+            "sum_known_ns": 723289,
+            "unknown_count": 0
+          },
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 213589,
+            "min_ns": 152885,
+            "sum_known_ns": 723440,
+            "unknown_count": 0
+          }
+        }
+      },
+      "import_wall_intervals": {
+        "known_count": 4,
+        "max_ns": 6805052722,
+        "min_ns": 5997221505,
+        "sum_known_ns": 25199488130,
+        "unknown_count": 0
+      },
+      "importer_thread_cpu": {
+        "known_count": 4,
+        "max_ns": 715879127,
+        "min_ns": 662276608,
+        "sum_known_ns": 2738628862,
+        "unknown_count": 0
+      },
+      "imports_recorded_failed": 1,
+      "imports_recorded_succeeded": 3,
+      "mode": "late-product",
+      "packet_phase_costs": {
+        "admission": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 631167411,
+            "min_ns": 584415029,
+            "sum_known_ns": 2420094885,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 5703010345,
+            "min_ns": 5298304879,
+            "sum_known_ns": 22094027389,
+            "unknown_count": 0
+          }
+        },
+        "admission_prepare": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 169452375,
+            "min_ns": 165657303,
+            "sum_known_ns": 666979258,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1507967660,
+            "min_ns": 1406459333,
+            "sum_known_ns": 5921796899,
+            "unknown_count": 0
+          }
+        },
+        "commit": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 458642193,
+            "min_ns": 416765339,
+            "sum_known_ns": 1744472912,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 4106322213,
+            "min_ns": 3889850924,
+            "sum_known_ns": 15902320656,
+            "unknown_count": 0
+          }
+        },
+        "context": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 1501671,
+            "min_ns": 1268467,
+            "sum_known_ns": 5444127,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 1585877,
+            "min_ns": 1268234,
+            "sum_known_ns": 5527585,
+            "unknown_count": 0
+          }
+        },
+        "cpu_settle": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 5060,
+            "min_ns": 4067,
+            "sum_known_ns": 18253,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 5179,
+            "min_ns": 4228,
+            "sum_known_ns": 19106,
+            "unknown_count": 0
+          }
+        },
+        "cpu_wait": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 80730,
+            "min_ns": 64760,
+            "sum_known_ns": 287525,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 80690,
+            "min_ns": 64791,
+            "sum_known_ns": 287527,
+            "unknown_count": 0
+          }
+        },
+        "execution": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 2998314,
+            "min_ns": 1324471,
+            "sum_known_ns": 8362533,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 90716611,
+            "min_ns": 1916938,
+            "sum_known_ns": 269626656,
+            "unknown_count": 0
+          }
+        },
+        "history_import": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 709086086,
+            "min_ns": 660698535,
+            "sum_known_ns": 2727312383,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 6401995687,
+            "min_ns": 5993826683,
+            "sum_known_ns": 24783405430,
+            "unknown_count": 0
+          }
+        },
+        "root_commitment": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 1145557,
+            "min_ns": 549485,
+            "sum_known_ns": 3351172,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 87572490,
+            "min_ns": 705623,
+            "sum_known_ns": 90374671,
+            "unknown_count": 0
+          }
+        },
+        "work": {
+          "completed_records": 4,
+          "entered_records": 4,
+          "importer_thread_cpu_ns": {
+            "known_count": 4,
+            "max_ns": 76357572,
+            "min_ns": 74523352,
+            "sum_known_ns": 300615951,
+            "unknown_count": 0
+          },
+          "wall_ns": {
+            "known_count": 4,
+            "max_ns": 697423932,
+            "min_ns": 596404004,
+            "sum_known_ns": 2682690684,
+            "unknown_count": 0
+          }
+        }
+      },
+      "phase_service_contract_met": false,
+      "raw_report_sha256": "99c2d6ec92f44313dda35b33b7863810211cdb930a2f855e0d725d9277ad625f",
+      "receiver_verifier_setup_thread_cpu_ns": 1062770517,
+      "recorded_history_calls": 4,
+      "retained_import_records": 4,
+      "run": 3,
+      "transport_history_call_wall_intervals": {
+        "known_count": 4,
+        "max_ns": 99565796,
+        "min_ns": 97388517,
+        "sum_known_ns": 394720333,
+        "unknown_count": 0
+      },
+      "whole_parent_phase_cpu_ns": 8819780259,
+      "whole_parent_phase_wall_ns": 35492084214,
+      "whole_public_host_cpu_delta_ns": 8858114000,
+      "whole_public_host_period_delta": 355,
+      "whole_public_host_throttled_period_delta": 353
+    }
+  ],
+  "schema": "trnm-original-campaign-history-cost-projection-v1",
+  "scope": {
+    "host_cpu_and_importer_cpu_are_not_identical_scopes": true,
+    "host_cpu_sums_each_actual_calling_thread": true,
+    "import_wall_includes_recorded_failed_or_unfinished_business_work": true,
+    "importer_thread_cpu_excludes_scoped_workers": true,
+    "nested_phase_and_host_costs_are_not_additive": true,
+    "no_causal_share_or_optimization_speedup_proved": true,
+    "not_full_business_tail_latency": true,
+    "not_qualified_goodput": true
+  },
+  "source_commit": "bb026697a972521009bc133ae6ed2b653e18e931"
+}

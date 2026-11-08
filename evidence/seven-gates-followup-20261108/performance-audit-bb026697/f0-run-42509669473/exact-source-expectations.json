@@ -1,0 +1,143 @@
+{
+  "artifact_assessment": "pending; source expectations do not prove execution",
+  "constants": {
+    "CONTROLLER_RESOURCE_SCHEMA": "fixed-host-root-controller-resources-v1",
+    "INPUTS": {
+      "actor_call_cap": 480,
+      "attackers": 24,
+      "business_blocks": 21,
+      "confirmation_depth": 6,
+      "controller_resource_boundary_samples": 6,
+      "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+      "cpu_burst_ns": 2000000000,
+      "cpu_refill_ns_per_second": 250000000,
+      "f1_implemented": false,
+      "four_second_slo_ns": 4000000000,
+      "legacy_four_second_from_zero_epoch_changed": false,
+      "m06_workers": 1,
+      "phase_profile": "fixed-public-root-phase-external-actors-v1",
+      "phase_seconds": 30,
+      "planned_business_packets": 42,
+      "planned_complete_runs": 1,
+      "planned_confirmations": 6,
+      "planned_phases": [
+        "baseline",
+        "valid-work-root"
+      ],
+      "round_start_seconds": [
+        1,
+        5,
+        9
+      ],
+      "seed_blocks": 4,
+      "seed_transfers": 1024,
+      "slo_starts_at_scheduled_offset": true,
+      "start_reserve_ns": 100000000
+    },
+    "PHASE_PROFILE": "fixed-public-root-phase-external-actors-v1",
+    "QUALIFICATIONS": [
+      "original_campaign_qualified",
+      "work_profile_qualified",
+      "independent_operators",
+      "wan_qualified",
+      "production_candidate",
+      "production_activation"
+    ],
+    "SELECTOR": "fixed_public_host_root_rejection_and_signed_confirmation_diagnostic",
+    "SOURCE_CONTROLS": [
+      "phase_host::separate_broker_scope_clears_on_unwind_and_refuses_missing_actors",
+      "root_phase_host::fixed_root_denominators_retain_all_missing_failed_and_duplicate_rounds",
+      "root_phase_host::fixed_root_proc_identity_requires_exact_pid_and_start_despite_command_parentheses",
+      "root_phase_host::fixed_root_four_second_slo_cannot_remove_queue_or_prior_round_delay",
+      "root_phase_host::fixed_root_job_requires_its_exact_profile_and_complete_workload",
+      "root_phase_host::controller_resources::fixed_root_controller_resource_parser_rejects_missing_duplicate_and_unknown_counters",
+      "root_phase_host::controller_resources::fixed_root_controller_resource_interval_rejects_rewind_and_lifetime_peak_as_delta"
+    ]
+  },
+  "files": [
+    {
+      "bytes": 17173,
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093"
+    },
+    {
+      "bytes": 37318,
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "sha256": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca"
+    },
+    {
+      "bytes": 17265,
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    {
+      "bytes": 11231,
+      "path": "scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 27285,
+      "path": "scripts/ci/run_fixed_root_phase_host.py",
+      "sha256": "f572b12727d119f7d1c1490d2a8c70de69e596155e20a837ebf94d19e24911e7"
+    },
+    {
+      "bytes": 10381,
+      "path": "scripts/ci/fixed_root_f0_resources.py",
+      "sha256": "43b86bdab5715917cd7e7140765099a75178815e730a66d438b820b9cb370a4a"
+    },
+    {
+      "bytes": 9980,
+      "path": "scripts/ci/fixed_root_f0_ownership.py",
+      "sha256": "a6376e43166cd782a90ac782c1619ef6ec6cd5cbb8d25093aedaf870c2d5dba1"
+    },
+    {
+      "bytes": 17304,
+      "path": "scripts/ci/finalize_fixed_root_f0.py",
+      "sha256": "608ba877822f706b82427398c5f90d5811be47ab02f37f7ae09a59b8c1771866"
+    },
+    {
+      "bytes": 5452,
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    {
+      "bytes": 325,
+      "path": "config/systemd/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+    },
+    {
+      "bytes": 40332,
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+    },
+    {
+      "bytes": 2204,
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 111313,
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+    },
+    {
+      "bytes": 70379,
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+      "sha256": "22ba99066afa5afee448e180d33d9b2b5ad6fb6bf7e46ecc42206df2dd7ccb11"
+    },
+    {
+      "bytes": 14364,
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs",
+      "sha256": "0139f012f911953f34c6e90c55d60655ec6908825b105e4d7e139b8ceee4d449"
+    },
+    {
+      "bytes": 12378,
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+      "sha256": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9"
+    }
+  ],
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "schema": "exact-source-readonly-f0-audit-expectations-v1",
+  "source_basis": "immutable git objects read via git show at the full commit; no repository script executed",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+}

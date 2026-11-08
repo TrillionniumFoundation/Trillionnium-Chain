@@ -1,0 +1,23 @@
+{
+  "binary_sha256": "e38433c515bf93f0edfb6f4e61cefabf8d7266bcb425a596c788e183444e79e1",
+  "boot_id": "6fae7d78-0f76-4321-ab7d-01307f08f992",
+  "cgroup": "/trnmponpublic.slice/trnm-fixed-root-42509669473-1-fixed-host-root-f0-baseline-5392.service",
+  "cgroup_identity": {
+    "device": 31,
+    "gid": 0,
+    "inode": 7066,
+    "mode": 493,
+    "uid": 0
+  },
+  "gid": 1001,
+  "invocation_id": "d478986f284c45998feb0d18f4935dff",
+  "job_sha256": "0f295e603b84a6830a0ea2d93700447997866335f58664a896fa0d2269737378",
+  "observation_stage": "before any native phase invocation",
+  "parent_pid": 1,
+  "phase": "baseline",
+  "pid": 5463,
+  "process_start_ticks": 30663,
+  "schema": "fixed-root-owned-service-live-v1",
+  "service": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-baseline-5392.service",
+  "uid": 1001
+}

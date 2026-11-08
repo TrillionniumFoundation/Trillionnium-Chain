@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/prepared/public_v3_multiprocess.bin",
+    "--exact",
+    "root_phase_host::fixed_root_denominators_retain_all_missing_failed_and_duplicate_rounds",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "complete_success": true,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 1448392,
+  "elapsed_seconds": 0.001448392,
+  "error": null,
+  "name": "source-control-1",
+  "outer_stage_timeout_seconds": 30,
+  "returncode": 0,
+  "stderr": "source-control-1.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-control-1.stdout.log",
+  "stdout_bytes": 213,
+  "stdout_sha256": "c3647a542f332ffa205661ac19d8dad093b83d5e24b6e8481af164799cae37ca",
+  "stdout_truncated": false
+}

@@ -1,0 +1,54 @@
+{
+  "artifact_archive_downloaded": false,
+  "continuation_checks": [
+    "Do not dispatch, rerun, cancel, or execute another native workload.",
+    "Keep exact head, tree, workflow identity, and attempt 1.",
+    "Download terminal artifact bytes and verify SHA-256 against the GitHub artifact digest before parsing.",
+    "Check all artifact manifest hashes, source and retained executable binding, resources, and both phases.",
+    "Keep all 6 planned confirmation slots and 42 packet exposures, including failures and Unknown.",
+    "Check depth 6 and strictly less than 4 seconds from the scheduled offset; ACK is not confirmation.",
+    "Preserve original_campaign_qualified, work_profile_qualified, independent_operators, wan_qualified, production_candidate, and production_activation false scope."
+  ],
+  "crosscheck_files_prefix": "crosscheck-20261108T1844-",
+  "expected_attempt": 1,
+  "expected_head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "expected_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "handoff_created_utc": "2026-11-08T18:48:20.558836+00:00",
+  "job_id": 128819775064,
+  "latest_observation": {
+    "conclusion": null,
+    "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "jobs": [
+      {
+        "conclusion": null,
+        "id": 128819775064,
+        "status": "queued",
+        "steps": []
+      }
+    ],
+    "observed_utc": "2026-11-08 18:47:19 UTC",
+    "read_failure": null,
+    "run_attempt": 1,
+    "run_id": 42509669473,
+    "source_identity_matches": true,
+    "status": "queued"
+  },
+  "latest_observation_file": "snapshot-018-observation.json",
+  "monitor_stopped_at_parent_request": true,
+  "native_execution_observed": false,
+  "qualification": "HOLD; pending platform execution, no performance result",
+  "readonly_continuation_urls": {
+    "artifacts": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42509669473/artifacts?per_page=100",
+    "attempt": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42509669473/attempts/1",
+    "jobs": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42509669473/jobs?filter=all&per_page=100",
+    "run": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42509669473"
+  },
+  "run_id": 42509669473,
+  "schema": "f0-readonly-monitor-handoff-v1",
+  "snapshot_observation_count": 17,
+  "source_expectations_basis": "16 immutable files read from the exact bb git objects; not proof of CI execution",
+  "source_expectations_file": "exact-source-expectations.json",
+  "terminal_outcome_observed": false,
+  "workflow_id": 399731485,
+  "workflow_mutation_invoked_by_this_agent": false
+}

@@ -1,0 +1,984 @@
+{
+  "codeql": {
+    "archive": "artifact-13629186603.zip",
+    "artifact_id": 13629186603,
+    "bytes": 198416,
+    "classification": "UPSTREAM_EXACT_SOURCE_CODEQL_INPUT_ABSENT_UNTIL_EXPORT_DEADLINE",
+    "full_root_manifest_members_verified": 203,
+    "member_count": 205,
+    "nested_analysis_manifest_members_verified": 199,
+    "observed_permission_denial": false,
+    "polls": [
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-001",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-002",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-003",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-004",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-005",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-006",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-007",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-008",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-009",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-010",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-011",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-012",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-013",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-014",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-015",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-016",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-017",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-018",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-019",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-020",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-021",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-022",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-023",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-024",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-025",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-026",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-027",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-028",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-029",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-030",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-031",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-032",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-033",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-034",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-035",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-036",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-037",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-038",
+        "ready": false
+      },
+      {
+        "analyses": 0,
+        "head_checks": 0,
+        "merge_checks": 0,
+        "poll": "poll-039",
+        "ready": false
+      }
+    ],
+    "result": {
+      "all_branch_historical_alerts": false,
+      "analyses": [],
+      "check_annotations": [],
+      "complete": false,
+      "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+      "finished_utc": "2026-11-08T18:34:11.759191+00:00",
+      "full_original_sarif_upload": false,
+      "last_checks": [],
+      "schema": "codeql-exact-source-analysis-export-v2",
+      "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+      "security_gate_changed": false,
+      "started_utc": "2026-11-08T18:14:18.524484+00:00",
+      "target": {
+        "base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+        "event": "pull_request",
+        "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+        "head_ref": "refs/pull/817/head",
+        "merge": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+        "pr": 817,
+        "ref": "refs/pull/817/merge"
+      },
+      "target_pr_gate_authenticated": false,
+      "target_pr_gate_verdict": null
+    },
+    "selected_original_members": [
+      "analysis/result.json",
+      "analysis/target.json",
+      "exporter-source-before.json",
+      "exporter-source-after.json",
+      "exporter-offline-tests.log",
+      "preflight.log",
+      "analysis/poll-001/selection.json",
+      "analysis/poll-001/analyses-1.json",
+      "analysis/poll-001/checks-bb026697a972521009bc133ae6ed2b653e18e931-1.json",
+      "analysis/poll-001/checks-4b55e3b3a01ad44f4da37a76298232e4a29d031a-1.json",
+      "analysis/poll-039/selection.json",
+      "analysis/poll-039/analyses-1.json",
+      "analysis/poll-039/checks-bb026697a972521009bc133ae6ed2b653e18e931-1.json",
+      "analysis/poll-039/checks-4b55e3b3a01ad44f4da37a76298232e4a29d031a-1.json"
+    ],
+    "self_inventory_files_not_listed_by_root_manifest": [
+      "sha256.json",
+      "analysis/sha256.json"
+    ],
+    "sha256": "087095a9fe7703a089f5951cd17fde528e72f6db8b276f16dd89e2632b62fac5",
+    "source_before_after_equal": true,
+    "successful_empty_poll_count": 39,
+    "uncompressed_bytes": 952646
+  },
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "limits": [
+    "CodeQL empty upstream records do not independently explain Default Setup configuration.",
+    "Head and prospective-merge are separate commits despite equal trees and ELF hashes.",
+    "Archive verification and invariant native success do not qualify the finite performance target.",
+    "No independent operators, external WAN, full binary/load closure or production qualification claimed."
+  ],
+  "native_tests_rerun": false,
+  "observed_utc": "2026-11-08T18:59:31.513930+00:00",
+  "performance_contract_changed": false,
+  "prospective_merge": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+  "qualification": "HOLD",
+  "schema": "bb-codeql-and-w1-readonly-failure-triage-v1",
+  "source_contract_files": [
+    {
+      "bytes": 3293,
+      "git_blob": "6ff6dcc7adcb9005d1570e1dcf4064f2e1e05edc",
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136"
+    },
+    {
+      "bytes": 10423,
+      "git_blob": "3091f8efebaf7f7d1d232a7100d241e7963c8ed6",
+      "path": ".github/workflows/codeql-real-exact-source.yml",
+      "sha256": "28b462dd5c02b004302e763f08e4803d22d97939a437fd86b4ad736c50a15b40"
+    },
+    {
+      "bytes": 18932,
+      "git_blob": "1a72c9a94cd3879e9b59177fc1b72eff4114be47",
+      "path": "scripts/export_codeql_analysis.py",
+      "sha256": "31217ef028048e8e47ad71257a8978fe4971d9a97c664a96b0d311bb8e7a98bf"
+    },
+    {
+      "bytes": 43822,
+      "git_blob": "c9ab642e0f23194b32a7b283107d215deb534c7a",
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490"
+    },
+    {
+      "bytes": 28537,
+      "git_blob": "e3f68e023a9f958cb5fbf43e4584377a86cbcd03",
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+    },
+    {
+      "bytes": 11911,
+      "git_blob": "ec3a691ad8f9e1ae4d61c6dc10a27762cabbcf2c",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "sha256": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9"
+    }
+  ],
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "w1_fresh_service": [
+    {
+      "actual_reports": [
+        {
+          "bytes": 9512425,
+          "finite_target_met": false,
+          "path_in_original_zip": "fresh-service/original/report.json",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "business_started_ns": 139620,
+              "client_confirmation_latency_ns": 3483177149,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 3483316769,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "history_replays": 7,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": 6,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [],
+              "work_profile_qualified": false,
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "business_started_ns": 97796056,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "history_replays": 2,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 1,
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": null,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "work_profile_qualified": false,
+              "workers": 16
+            }
+          ],
+          "qualified_goodput": null,
+          "qualified_latency_tail": null,
+          "schema": "public-v3-signed-confirmation-pressure-v1",
+          "sha256": "0747de45921c59acdb5937ad69db8e62119d8ee293fcca3e5fd8ca9f92d6865c"
+        },
+        {
+          "bytes": 6560578,
+          "finite_target_met": false,
+          "path_in_original_zip": "fresh-service/fresh/report.json",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "business_started_ns": 164307,
+              "client_confirmation_latency_ns": 3400256343,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 3400420650,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "history_replays": 7,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": 6,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [],
+              "work_profile_qualified": false,
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "business_started_ns": 98697088,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "history_replays": 1,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": null,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "work_profile_qualified": false,
+              "workers": 16
+            }
+          ],
+          "qualified_goodput": null,
+          "qualified_latency_tail": null,
+          "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+          "sha256": "aac5b087102b0ab51298d5f28bcb2dc59aa7a3743a89e16ef93b531916c48f10"
+        }
+      ],
+      "archive": "artifact-13628771427.zip",
+      "artifact_id": 13628771427,
+      "build": {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 25990971522,
+        "executed": true,
+        "exit_code": 0,
+        "expected_source": "bb026697a972521009bc133ae6ed2b653e18e931",
+        "log": "build.log",
+        "process_exit_code": 0,
+        "source_after_verified": true,
+        "source_before_verified": true,
+        "source_verified": true,
+        "timed_out": false
+      },
+      "bytes": 5726125,
+      "classification": "ACTUAL_FINITE_BUSINESS_TARGET_FAILURE_UNDER_ORIGINAL_HOST",
+      "host_before_after_same_parent_and_cgroup": true,
+      "host_controller_reported_errors": [],
+      "host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_read_errors": [],
+      "member_count": 57,
+      "native_all_named_tests_passed": false,
+      "native_manifest_members_verified": 26,
+      "native_pair_passed": false,
+      "retained_elf_sha256": "4942d95ef6b826c38ac5e680cf76e04655bbddb35c43ba48bb1d851cac6271cf",
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "2dc13ffe7e7370d563ebe818487010b02e9f8884a82fd3d6fec18ab8fc7bf940",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-77260bdf1a282259",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 34315787021,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "bb026697a972521009bc133ae6ed2b653e18e931",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "293fa2c3bf186a3f967e10308d708bc7d77172f0b391dcb64c92c03873948db6",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-77260bdf1a282259",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 34190618673,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "bb026697a972521009bc133ae6ed2b653e18e931",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "selected_original_members": [
+        "source.json",
+        "source-after.json",
+        "fresh-service/manifest.json",
+        "fresh-service/original.log",
+        "fresh-service/fresh.log",
+        "fresh-service-host/inside-before.json",
+        "fresh-service-host/inside-after.json",
+        "fresh-service-host/controller-result.json",
+        "fresh-service-host/child-result.json",
+        "fresh-service-host/prepare-build.json",
+        "fresh-service-host/prepare-build/process.json",
+        "fresh-service-host/systemd-run.log",
+        "public-fixture-parent.json"
+      ],
+      "sha256": "207f91a2bd632941b38e97dc2ba3543409c595330dfc06562aefdf8a941234a3",
+      "source": {
+        "base": null,
+        "candidate": "bb026697a972521009bc133ae6ed2b653e18e931",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+        "tested_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2382494143,
+        "tracked_entries": 23515,
+        "tracked_worktree_verified": true
+      },
+      "source_and_binary_are_ci_receipt_bindings_not_external_custody_attestation": true,
+      "source_before_after_equal": true,
+      "uncompressed_bytes": 32308399
+    },
+    {
+      "actual_reports": [
+        {
+          "bytes": 9854763,
+          "finite_target_met": false,
+          "path_in_original_zip": "fresh-service/original/report.json",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "business_started_ns": 161523,
+              "client_confirmation_latency_ns": 3102359682,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 3102521205,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "history_replays": 7,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": 6,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [],
+              "work_profile_qualified": false,
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "business_started_ns": 17063674,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "history_replays": 3,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 2,
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": null,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "work_profile_qualified": false,
+              "workers": 16
+            }
+          ],
+          "qualified_goodput": null,
+          "qualified_latency_tail": null,
+          "schema": "public-v3-signed-confirmation-pressure-v1",
+          "sha256": "a428cec9e47606d0ae8387acb087cc504a4af3d0a736244c561e8f137c086458"
+        },
+        {
+          "bytes": 6791215,
+          "finite_target_met": false,
+          "path_in_original_zip": "fresh-service/fresh/report.json",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "business_started_ns": 123191,
+              "client_confirmation_latency_ns": 3096278267,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 3096401458,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "history_replays": 7,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": 6,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [],
+              "work_profile_qualified": false,
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "business_started_ns": 98258202,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "history_replays": 1,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "observed_confirmation_depth": null,
+              "production_activation": false,
+              "public_network_ready": false,
+              "requested_window_ns": 4000000000,
+              "resource_fairness_qualified": false,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "work_profile_qualified": false,
+              "workers": 16
+            }
+          ],
+          "qualified_goodput": null,
+          "qualified_latency_tail": null,
+          "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+          "sha256": "844d3e9d9fdd4599b2d32554b3f6ad42489105b02e3a05e8c32fb5135d98b480"
+        }
+      ],
+      "archive": "artifact-13628443294.zip",
+      "artifact_id": 13628443294,
+      "build": {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 23805230864,
+        "executed": true,
+        "exit_code": 0,
+        "expected_source": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+        "log": "build.log",
+        "process_exit_code": 0,
+        "source_after_verified": true,
+        "source_before_verified": true,
+        "source_verified": true,
+        "timed_out": false
+      },
+      "bytes": 5756162,
+      "classification": "ACTUAL_FINITE_BUSINESS_TARGET_FAILURE_UNDER_ORIGINAL_HOST",
+      "host_before_after_same_parent_and_cgroup": true,
+      "host_controller_reported_errors": [],
+      "host_limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "host_read_errors": [],
+      "member_count": 57,
+      "native_all_named_tests_passed": false,
+      "native_manifest_members_verified": 26,
+      "native_pair_passed": false,
+      "retained_elf_sha256": "4942d95ef6b826c38ac5e680cf76e04655bbddb35c43ba48bb1d851cac6271cf",
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 2,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "eb4a95cb63441fa674c9247ba1895a2015a8fec0aeb1f70df37f42078bf965b4",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-77260bdf1a282259",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 32012410595,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "eb29d603bb51156b91e205d1c6e7390af0fea8fddac4c4acfbb828e2e4305650",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-77260bdf1a282259",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 31989494762,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "selected_original_members": [
+        "source.json",
+        "source-after.json",
+        "fresh-service/manifest.json",
+        "fresh-service/original.log",
+        "fresh-service/fresh.log",
+        "fresh-service-host/inside-before.json",
+        "fresh-service-host/inside-after.json",
+        "fresh-service-host/controller-result.json",
+        "fresh-service-host/child-result.json",
+        "fresh-service-host/prepare-build.json",
+        "fresh-service-host/prepare-build/process.json",
+        "fresh-service-host/systemd-run.log",
+        "public-fixture-parent.json"
+      ],
+      "sha256": "a10c9bdebbd5432601e3899aa3f04c64f29d6556de43bf18ccb37f6088d61261",
+      "source": {
+        "base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+        "candidate": "bb026697a972521009bc133ae6ed2b653e18e931",
+        "kind": "prospective-merge",
+        "prospective_merge": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+        "tested_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2382494143,
+        "tracked_entries": 23515,
+        "tracked_worktree_verified": true
+      },
+      "source_and_binary_are_ci_receipt_bindings_not_external_custody_attestation": true,
+      "source_before_after_equal": true,
+      "uncompressed_bytes": 32930908
+    }
+  ]
+}

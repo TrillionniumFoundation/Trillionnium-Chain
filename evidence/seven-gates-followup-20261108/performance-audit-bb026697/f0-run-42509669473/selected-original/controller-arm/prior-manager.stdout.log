@@ -1,0 +1,15 @@
+Restart=no
+MainPID=0
+Slice=
+ControlGroup=
+WorkingDirectory=
+User=
+Group=
+KillMode=control-group
+Id=trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service
+Description=trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+Transient=no
+InvocationID=

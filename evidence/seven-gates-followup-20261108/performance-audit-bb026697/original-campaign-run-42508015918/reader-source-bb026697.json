@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "bytes": 17265,
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    {
+      "bytes": 69313,
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482"
+    },
+    {
+      "bytes": 7277,
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+    },
+    {
+      "bytes": 5452,
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    {
+      "bytes": 21921,
+      "path": "config/pon/public-resource-profile-vectors-v1.json",
+      "sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da"
+    }
+  ],
+  "origin_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "origin_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "partial_reader_source_only_not_native_source": true
+}

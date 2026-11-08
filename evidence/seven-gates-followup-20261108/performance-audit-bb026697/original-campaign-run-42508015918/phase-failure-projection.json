@@ -1,0 +1,340 @@
+{
+  "confirmed_in_30s": 3,
+  "derived_from_original_zip": true,
+  "hostile_phases_with_depletion": 0,
+  "missing_planned_rounds": 15,
+  "not_native_reexecution": true,
+  "not_qualified_goodput": true,
+  "observed_failed_rounds": 9,
+  "phase_passes": 0,
+  "planned_confirmation_slots": 27,
+  "planned_phases": 9,
+  "planned_runs": 3,
+  "rows": [
+    {
+      "actors_ready": 0,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 1,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 14,
+      "full_work_rejected": 0,
+      "history_attempts": 8,
+      "missing_planned_rounds": 1,
+      "mode": "baseline",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 2,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": true,
+          "depth": 6,
+          "elapsed_from_scheduled_ns": 26505864255,
+          "ended_ns": 27505864255,
+          "round": 0,
+          "started_ns": 1000231435
+        },
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 25000703636,
+          "ended_ns": 30000703636,
+          "round": 1,
+          "started_ns": 27505912875
+        }
+      ],
+      "run": 1,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 14,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 24,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 0,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 7,
+      "full_work_rejected": 2383,
+      "history_attempts": 5,
+      "missing_planned_rounds": 2,
+      "mode": "from-zero",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 1,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 29076952956,
+          "ended_ns": 30076952956,
+          "round": 0,
+          "started_ns": 1002065243
+        }
+      ],
+      "run": 1,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 7,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 24,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 0,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 7,
+      "full_work_rejected": 2340,
+      "history_attempts": 5,
+      "missing_planned_rounds": 2,
+      "mode": "late-product",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 1,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 29080497910,
+          "ended_ns": 30080497910,
+          "round": 0,
+          "started_ns": 1001841786
+        }
+      ],
+      "run": 1,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 7,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 0,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 1,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 14,
+      "full_work_rejected": 0,
+      "history_attempts": 8,
+      "missing_planned_rounds": 1,
+      "mode": "baseline",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 2,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": true,
+          "depth": 6,
+          "elapsed_from_scheduled_ns": 26496085309,
+          "ended_ns": 27496085309,
+          "round": 0,
+          "started_ns": 1000536881
+        },
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 25000581497,
+          "ended_ns": 30000581497,
+          "round": 1,
+          "started_ns": 27496137887
+        }
+      ],
+      "run": 2,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 14,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 24,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 0,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 7,
+      "full_work_rejected": 2348,
+      "history_attempts": 5,
+      "missing_planned_rounds": 2,
+      "mode": "from-zero",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 1,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 29063484497,
+          "ended_ns": 30063484497,
+          "round": 0,
+          "started_ns": 1001514829
+        }
+      ],
+      "run": 2,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 7,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 24,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 0,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 7,
+      "full_work_rejected": 2293,
+      "history_attempts": 5,
+      "missing_planned_rounds": 2,
+      "mode": "late-product",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 1,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 29087475449,
+          "ended_ns": 30087475449,
+          "round": 0,
+          "started_ns": 1001181579
+        }
+      ],
+      "run": 2,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 7,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 0,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 1,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 14,
+      "full_work_rejected": 0,
+      "history_attempts": 8,
+      "missing_planned_rounds": 1,
+      "mode": "baseline",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 2,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": true,
+          "depth": 6,
+          "elapsed_from_scheduled_ns": 26591701396,
+          "ended_ns": 27591701396,
+          "round": 0,
+          "started_ns": 1000471311
+        },
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 25000549671,
+          "ended_ns": 30000549671,
+          "round": 1,
+          "started_ns": 27591751920
+        }
+      ],
+      "run": 3,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 14,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 24,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 0,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 7,
+      "full_work_rejected": 2384,
+      "history_attempts": 4,
+      "missing_planned_rounds": 2,
+      "mode": "from-zero",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 1,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 29084732681,
+          "ended_ns": 30084732681,
+          "round": 0,
+          "started_ns": 1000258052
+        }
+      ],
+      "run": 3,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 7,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "actors_ready": 24,
+      "actors_successful_uncapped": true,
+      "confirmed_in_30s": 0,
+      "depleted": false,
+      "economics_complete": true,
+      "full_work_accepted": 7,
+      "full_work_rejected": 2341,
+      "history_attempts": 4,
+      "missing_planned_rounds": 2,
+      "mode": "late-product",
+      "observed_failed_rounds": 1,
+      "observed_rounds": 1,
+      "observer_complete": true,
+      "phase_pass": false,
+      "rounds": [
+        {
+          "confirmed": false,
+          "depth": null,
+          "elapsed_from_scheduled_ns": 29088533998,
+          "ended_ns": 30088533998,
+          "round": 0,
+          "started_ns": 1001354987
+        }
+      ],
+      "run": 3,
+      "state_equal": false,
+      "strict_4s_slots": 0,
+      "submit_attempts": 7,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    }
+  ],
+  "schema": "trnm-original-campaign-raw-failure-projection-v1",
+  "source_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "strict_4s_is_additional_audit_projection_not_original_campaign_predicate": true,
+  "strict_4s_successes_over_all_27_planned_slots": 0
+}

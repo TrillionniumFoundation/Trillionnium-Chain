@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/runner/.cargo/bin/cargo",
+    "+1.95.0",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--check"
+  ],
+  "complete_success": true,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 10849777630,
+  "elapsed_seconds": 10.84977763,
+  "error": null,
+  "name": "format",
+  "outer_stage_timeout_seconds": 60,
+  "returncode": 0,
+  "stderr": "format.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "format.stdout.log",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_truncated": false
+}

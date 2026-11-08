@@ -1,0 +1,100 @@
+{
+  "schema": "f0-readonly-parent-monitor-v1",
+  "observed_utc": "2026-11-08 18:53:51 UTC",
+  "run_id": 42509669473,
+  "workflow_id": 399731485,
+  "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "status": "in_progress",
+  "conclusion": null,
+  "run_attempt": 1,
+  "source_identity_matches": true,
+  "jobs": [
+    {
+      "id": 128819775064,
+      "name": "F0 (x64, head, one baseline and one ROOT phase)",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_id": 42509669473,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Freeze all denominators before checkout or preparation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Checkout exactly the event head without retained credentials",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 3
+        },
+        {
+          "name": "Verify the exact source and all independent parser controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 4
+        },
+        {
+          "name": "Install source-pinned compiler and fetch the locked graph",
+          "status": "pending",
+          "conclusion": null,
+          "number": 5
+        },
+        {
+          "name": "Prepare one source-bound ELF and execute five original plus two resource controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6
+        },
+        {
+          "name": "Arm a previously absent exact controller service",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7
+        },
+        {
+          "name": "Run exactly one pair in the declared controller and public Host",
+          "status": "pending",
+          "conclusion": null,
+          "number": 8
+        },
+        {
+          "name": "Always retain denominators and inspect only exact owned services",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9
+        },
+        {
+          "name": "Retain final source, workflow outcomes and every regular partial artifact",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10
+        },
+        {
+          "name": "Upload all available success, failure and unobserved evidence",
+          "status": "pending",
+          "conclusion": null,
+          "number": 11
+        },
+        {
+          "name": "Post Checkout exactly the event head without retained credentials",
+          "status": "pending",
+          "conclusion": null,
+          "number": 22
+        }
+      ]
+    }
+  ],
+  "artifact_count": 0,
+  "native_execution_observed": false,
+  "scope": "HOLD; current checkout progress is not a performance result",
+  "mutations_invoked": false
+}

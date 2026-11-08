@@ -1,0 +1,42 @@
+{
+  "binary_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/prepared/public_v3_multiprocess.bin",
+  "binary_sha256": "e38433c515bf93f0edfb6f4e61cefabf8d7266bcb425a596c788e183444e79e1",
+  "controller_identity": {
+    "cgroup": {
+      "device": 31,
+      "gid": 0,
+      "inode": 6942,
+      "mode": 493,
+      "uid": 0
+    },
+    "process": {
+      "boot_id": "6fae7d78-0f76-4321-ab7d-01307f08f992",
+      "cgroup": "/system.slice/trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+      "executable": {
+        "bytes": 12391424,
+        "device": 66305,
+        "inode": 9734124,
+        "modified_nanoseconds": 138041190,
+        "modified_seconds": 1794164283
+      },
+      "parent_pid": 5280,
+      "pid": 5389,
+      "start_ticks": 30395
+    }
+  },
+  "description": "Trillionnium F0 ROOT job 297e0d27d3ad515967164ec9c58d20d6dba00883d4e7eaa1d0495838e4f97864",
+  "expected_cgroup": "/trnmponpublic.slice/trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+  "gid": 1001,
+  "job_id": "fixed-host-root-f0",
+  "job_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/execution/raw/valid-work-root-fixed-root-host-control/root-phase-job.json",
+  "job_sha256": "297e0d27d3ad515967164ec9c58d20d6dba00883d4e7eaa1d0495838e4f97864",
+  "phase": "valid-work-root",
+  "prior_load_state": "not-found",
+  "run_attempt": "1",
+  "run_id": "42509669473",
+  "schema": "fixed-root-owned-service-v1",
+  "scope": "owned candidate unit; no zero-residual claim without final manager and cgroup readback",
+  "service": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+  "source_root": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "uid": 1001
+}

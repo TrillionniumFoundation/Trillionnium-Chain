@@ -1,0 +1,15 @@
+{
+  "schema": "readonly-auditor-attempt-v1",
+  "auditor_sha256": "069482fb2a2572193eac91cffb6c5837e153d891e89bea2c746406e8c5785639",
+  "native_test_executed": false,
+  "is_original_ci_failure": false,
+  "exit_code": 1,
+  "error": "ValueError: CodeQL full inventory coverage",
+  "reason": "Auditor initially assumed only root sha256.json was omitted. Original manifest also intentionally omits nested analysis/sha256.json. Actual provider ZIP digest matches; all original records remain unchanged.",
+  "root_manifest_count": 203,
+  "zip_member_count": 205,
+  "unlisted_manifest_files": [
+    "sha256.json",
+    "analysis/sha256.json"
+  ]
+}

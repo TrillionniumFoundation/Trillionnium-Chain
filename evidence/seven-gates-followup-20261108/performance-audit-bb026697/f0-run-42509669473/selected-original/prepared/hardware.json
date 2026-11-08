@@ -1,0 +1,15 @@
+{
+  "affinity": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "ceiling_is_not_reserved_physical_memory_or_cpu": true,
+  "controller_memory_max_bytes": 17179869184,
+  "kernel": "7.0.0-1017-azure",
+  "logical_cpu_count": 4,
+  "machine": "x86_64",
+  "meminfo": "MemTotal:       16367528 kB\nMemFree:         8548944 kB\nMemAvailable:   14938844 kB\nBuffers:           82584 kB\nCached:          6455064 kB\nSwapCached:            0 kB\nActive:           726436 kB\nInactive:        6070888 kB\nActive(anon):     313804 kB\nInactive(anon):        0 kB\nActive(file):     412632 kB\nInactive(file):  6070888 kB\nUnevictable:       46728 kB\nMlocked:           43656 kB\nSwapTotal:       3145724 kB\nSwapFree:        3145724 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:           1445128 kB\nWriteback:         16828 kB\nAnonPages:        306532 kB\nMapped:           328876 kB\nShmem:             45396 kB\nKReclaimable:     252308 kB\nSlab:             351760 kB\nSReclaimable:     252308 kB\nSUnreclaim:        99452 kB\nKernelStack:        4348 kB\nPageTables:         6400 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    11329488 kB\nCommitted_AS:    2100420 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       42820 kB\nVmallocChunk:          0 kB\nPercpu:             2336 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:    583680 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         1464320 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:             0 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      128128 kB\nDirectMap2M:     4061184 kB\nDirectMap1G:    14680064 kB\n",
+  "physical_memtotal_bytes": 16760348672
+}

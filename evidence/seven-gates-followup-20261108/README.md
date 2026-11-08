@@ -146,6 +146,38 @@ original 23 report controls remain, with eight additive controls and all 58
 original native cases retained. This later code change does not inherit a
 native pass from `bb026697`; the original failed workflows remain failed.
 
+## Complete original performance and CI failure records
+
+The [performance archive index](performance-audit-bb026697/README.md), its
+[original campaign audit](performance-audit-bb026697/original-campaign-run-42508015918/README.md),
+and [CodeQL/W1 failure triage](ci-failure-triage-bb026697/README.md) preserve the
+original ZIP bytes as well as source/resource/ELF identities and raw failures.
+The [publication inventory](performance-audit-bb026697/publication-manifest.json)
+binds 378 files plus itself, 115,336,172 bytes, including all six original ZIPs.
+Audit-time paths and download descriptions inside those records remain
+historical observations; the copies here are the complete published inventory.
+No Actions expiration is used as permanent storage for the original ZIPs.
+The [raw whitespace observation](performance-original-whitespace.json) retains
+the whole staged diff check's nonzero result: original timestamp/log lines and
+frozen audit files contain trailing whitespace or blank EOF lines. Their bytes
+and inventory hashes are preserved. The separate non-evidence source check
+passed; it is not presented as a whole-diff whitespace pass.
+
+| Original run | Retained native or collector outcome | Acceptance boundary |
+| --- | --- | --- |
+| [Three-run campaign 42508015918](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42508015918) | Three native exits 101; nine phases fail; 3/27 slots confirmed in the original 30-second phase windows | Strict scheduled-offset four-second projection is 0/27; 9 observed failures and 15 unobserved slots remain in the denominator |
+| [Single F0 42509669473](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42509669473) | Native exit 101; 0/6 strict four-second slots; 1 confirmation within 30 seconds, 2 observed failures, 3 unobserved slots | First confirmation took 22.602926924 seconds; finalization inherits the native failure while all three owned services are known empty |
+| [W1 service 42508015817](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42508015817) | Head and prospective-merge service lanes fail; original invariant selector exits 0 but its business reader refuses `CONFIRMATION_TARGET`; fresh selector exits 101 | Each baseline reaches its own depth-six target; hostile confirmation fails with `PUBLIC_REQUEST_DEADLINE`; sources and workloads remain separate |
+| [CodeQL export 42508015975](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42508015975) | Twenty-minute wait ends after 39 successful but empty upstream responses | No matching analysis or check is available to export; no 403 is claimed and local retained SARIF is not substituted |
+
+All observations retain their original quarter-core Host, 2 GiB, swap-zero,
+PID and confirmation contracts where applicable. Build success, completed
+accounting, ACKs, packet exposure, cleanup and record integrity do not establish
+qualified business goodput. Full-population tails and sustainable business TPS
+remain unknown. The high-frequency History/Host checkpoint observations identify
+a cost investigation path, not a proven speedup or permission to skip current
+resource, cancellation or full-state checks.
+
 ## Acceptance boundaries
 
 | Gate | What this source contributes | Evidence still required |

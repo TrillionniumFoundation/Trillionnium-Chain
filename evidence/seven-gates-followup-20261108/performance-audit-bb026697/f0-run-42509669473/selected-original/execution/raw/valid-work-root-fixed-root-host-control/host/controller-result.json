@@ -1,0 +1,174 @@
+{
+  "binary_sha256": "e38433c515bf93f0edfb6f4e61cefabf8d7266bcb425a596c788e183444e79e1",
+  "cleanup": {
+    "after": {
+      "group": {
+        "empty": true,
+        "evidence": "exact cgroup path absent after same-boot ownership validation",
+        "exists": false,
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service"
+      },
+      "manager": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "Description": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+        "Group": "",
+        "Id": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+        "InvocationID": "",
+        "KillMode": "control-group",
+        "LoadState": "not-found",
+        "MainPID": "0",
+        "Restart": "no",
+        "Slice": "",
+        "SubState": "dead",
+        "Transient": "no",
+        "User": "",
+        "WorkingDirectory": ""
+      }
+    },
+    "before": {
+      "group": {
+        "empty": true,
+        "evidence": "exact cgroup path absent after same-boot ownership validation",
+        "exists": false,
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service"
+      },
+      "manager": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "Description": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+        "Group": "",
+        "Id": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+        "InvocationID": "",
+        "KillMode": "control-group",
+        "LoadState": "not-found",
+        "MainPID": "0",
+        "Restart": "no",
+        "Slice": "",
+        "SubState": "dead",
+        "Transient": "no",
+        "User": "",
+        "WorkingDirectory": ""
+      }
+    },
+    "cleanup_attempted": false,
+    "failure": null,
+    "known_empty": true,
+    "ownership_validated": true,
+    "phase": "valid-work-root",
+    "remaining": "observed-empty",
+    "service": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+    "stop_step": null
+  },
+  "consensus_or_model_authority": false,
+  "controller_after": {
+    "actual_parent_required": true,
+    "identity": {
+      "cgroup": {
+        "device": 31,
+        "gid": 0,
+        "inode": 6942,
+        "mode": 493,
+        "uid": 0
+      },
+      "process": {
+        "boot_id": "6fae7d78-0f76-4321-ab7d-01307f08f992",
+        "cgroup": "/system.slice/trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+        "executable": {
+          "bytes": 12391424,
+          "device": 66305,
+          "inode": 9734124,
+          "modified_nanoseconds": 138041190,
+          "modified_seconds": 1794164283
+        },
+        "parent_pid": 5280,
+        "pid": 5389,
+        "start_ticks": 30395
+      }
+    },
+    "limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    },
+    "scope": "live external controller only; phase Host checked separately"
+  },
+  "controller_before": {
+    "actual_parent_required": true,
+    "identity": {
+      "cgroup": {
+        "device": 31,
+        "gid": 0,
+        "inode": 6942,
+        "mode": 493,
+        "uid": 0
+      },
+      "process": {
+        "boot_id": "6fae7d78-0f76-4321-ab7d-01307f08f992",
+        "cgroup": "/system.slice/trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+        "executable": {
+          "bytes": 12391424,
+          "device": 66305,
+          "inode": 9734124,
+          "modified_nanoseconds": 138041190,
+          "modified_seconds": 1794164283
+        },
+        "parent_pid": 5280,
+        "pid": 5389,
+        "start_ticks": 30395
+      }
+    },
+    "limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    },
+    "scope": "live external controller only; phase Host checked separately"
+  },
+  "failure": null,
+  "final_host_errors": [],
+  "host_readiness_only": true,
+  "job_sha256": "297e0d27d3ad515967164ec9c58d20d6dba00883d4e7eaa1d0495838e4f97864",
+  "parent_preexisting": true,
+  "passed": true,
+  "schema": "fixed-public-root-phase-external-actors-v1",
+  "service": "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+  "service_or_depletion_criteria_met": false,
+  "systemd_argv": [
+    "sudo",
+    "-n",
+    "systemd-run",
+    "--unit=trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+    "--description=Trillionnium F0 ROOT job 297e0d27d3ad515967164ec9c58d20d6dba00883d4e7eaa1d0495838e4f97864",
+    "--wait",
+    "--pipe",
+    "--collect",
+    "--service-type=exec",
+    "--expand-environment=no",
+    "--slice=trnmponpublic.slice",
+    "--uid=1001",
+    "--gid=1001",
+    "--working-directory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "--property=KillMode=control-group",
+    "--property=TimeoutStopSec=20s",
+    "--property=RuntimeMaxSec=300s",
+    "--property=Nice=10",
+    "--property=Delegate=no",
+    "--property=NoNewPrivileges=yes",
+    "--property=CapabilityBoundingSet=",
+    "--setenv=PATH=/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "--setenv=PYTHONDONTWRITEBYTECODE=1",
+    "/usr/bin/python3",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_fixed_root_phase_host.py",
+    "--inside",
+    "--job",
+    "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/execution/raw/valid-work-root-fixed-root-host-control/root-phase-job.json",
+    "--binary",
+    "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/prepared/public_v3_multiprocess.bin",
+    "--service",
+    "trnm-fixed-root-42509669473-1-fixed-host-root-f0-valid-work-root-5512.service",
+    "--uid",
+    "1001",
+    "--gid",
+    "1001"
+  ],
+  "systemd_run_exit": 0
+}
