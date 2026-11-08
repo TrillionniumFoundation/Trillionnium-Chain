@@ -1,0 +1,154 @@
+[
+  {
+    "certificate_sha256": "bfb9c320cd7f32d27b61384755794bac764985b0ddfd56fc77ab20dd72052651",
+    "checked": {
+      "bellman_checked": true,
+      "edges": 5236,
+      "native_W1_probabilities_certified": false,
+      "quantum_mining_qualified": false,
+      "states": 3361,
+      "status": "VERIFIED"
+    },
+    "fixed_policy_risks": {
+      "ever_private_replacement": {
+        "denominator": 32768,
+        "numerator": 343
+      },
+      "initial_public_block_orphaned_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      },
+      "private_ancestor_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      },
+      "private_tip_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      }
+    },
+    "general_settlement_security_proved": false,
+    "maximum_risks": {
+      "ever_private_replacement": {
+        "denominator": 32768,
+        "numerator": 343
+      },
+      "initial_public_block_orphaned_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      },
+      "private_ancestor_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      },
+      "private_tip_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      }
+    },
+    "native_probability_calibrated": false,
+    "process_cpu_ns": 1456511784,
+    "proof_ticks": 4,
+    "quantum_hardware_executed": false,
+    "samples": [
+      {
+        "seed": 9,
+        "sha256": "0389b8caab4e4c8a752581ece4fa826c4382e1e21059650b6f5b9ce871991507"
+      },
+      {
+        "seed": 17,
+        "sha256": "28a45a55a11a72db6641470ca5b00686d40e2a65fddd538fc37a5bcb57dc7887"
+      },
+      {
+        "seed": 41,
+        "sha256": "f844b8217bb747388d3a823f5da85b0b4997cadc4b2ad41ec8d448c6e006debb"
+      },
+      {
+        "seed": 73,
+        "sha256": "7ddfb614132f73af605f56d279c4cf409a74c48118d51cd28583aec63cf88e33"
+      },
+      {
+        "seed": 401,
+        "sha256": "6a504349ea6b61bcfcd086b32627ba6c68149fd763e3aacf3b033783934fbcb2"
+      }
+    ],
+    "scope": "CONDITIONAL_REDUCED_MODEL",
+    "wall_ns": 1492933042
+  },
+  {
+    "certificate_sha256": "aaf7f093df34cf37263b9289fddf3ca49e137ae7a2319f9a6744ab81c124201a",
+    "checked": {
+      "bellman_checked": true,
+      "edges": 5101,
+      "native_W1_probabilities_certified": false,
+      "quantum_mining_qualified": false,
+      "states": 2828,
+      "status": "VERIFIED"
+    },
+    "fixed_policy_risks": {
+      "ever_private_replacement": {
+        "denominator": 512,
+        "numerator": 7
+      },
+      "initial_public_block_orphaned_at_horizon": {
+        "denominator": 512,
+        "numerator": 7
+      },
+      "private_ancestor_at_horizon": {
+        "denominator": 512,
+        "numerator": 7
+      },
+      "private_tip_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      }
+    },
+    "general_settlement_security_proved": false,
+    "maximum_risks": {
+      "ever_private_replacement": {
+        "denominator": 512,
+        "numerator": 7
+      },
+      "initial_public_block_orphaned_at_horizon": {
+        "denominator": 512,
+        "numerator": 7
+      },
+      "private_ancestor_at_horizon": {
+        "denominator": 512,
+        "numerator": 7
+      },
+      "private_tip_at_horizon": {
+        "denominator": 32768,
+        "numerator": 343
+      }
+    },
+    "native_probability_calibrated": false,
+    "process_cpu_ns": 1349583938,
+    "proof_ticks": 1,
+    "quantum_hardware_executed": false,
+    "samples": [
+      {
+        "seed": 9,
+        "sha256": "6bb5af6fdfd2e5325ab17f851d395ad0077ae520cc7f2bb3755c08e246d87009"
+      },
+      {
+        "seed": 17,
+        "sha256": "be32f07fac48401d81ab90bac48e23a67960756ac4fdce5918f803d8c6d36008"
+      },
+      {
+        "seed": 41,
+        "sha256": "bc46515fef3e7ea880f678db25c207c35da792a48b6ceec9edb34c5fc486a98b"
+      },
+      {
+        "seed": 73,
+        "sha256": "c1df8a0b9fce2ed8c4522db377e7cc41db72a026ac343b9d7fef81bec3297641"
+      },
+      {
+        "seed": 401,
+        "sha256": "e0f2719526c5dd9a3679cede1ec11c71e8aabb3ad9352f884e0d86adf7997401"
+      }
+    ],
+    "scope": "CONDITIONAL_REDUCED_MODEL",
+    "wall_ns": 1381868819
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "configuration_sha256": "1f24f4144b6da01112cb5ec4e2992bdaa47a68f509c12217e6b05b03bc89a5c0",
+  "created_utc": "2026-11-08T01:07:06.096099+00:00",
+  "returncode": 0,
+  "stderr": "",
+  "stdout": "{\"archive_sha256\": \"ee5ea64823c0c72fd10960c4c0c9886ed3e64800c7abcdc4922d4fcde3ec1d37\", \"extracted_to\": null, \"regular_files\": 877, \"source_head\": \"bab83768b7c794b0127dc63d633f3e37a1be025a\", \"status\": \"PASS\", \"uncompressed_file_bytes\": 110890223}\n",
+  "verifier_sha256": "1246bb9b249e0cfde457451edef99b69cec0cea088866d90922d4e7dd8f881ae"
+}

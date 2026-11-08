@@ -1,0 +1,81 @@
+{
+  "allocation_key": "pon-r2-machine-c9b4-cpu-v1",
+  "assignment_readback": {
+    "observed_at": "2026-11-08T00:55:36.835049+00:00",
+    "owned_endpoint_present": true,
+    "status": "available"
+  },
+  "claims": {
+    "all_task_artifacts_fetched_before_release_attempts": true,
+    "allocation_closure_proved": false,
+    "foreign_or_uncertain_kernel_forced": false,
+    "ownership_or_credentials_modified": false,
+    "provider_billing_or_energy_calibrated": false,
+    "quantum_mining_qualified": false,
+    "runtime_release_confirmed": false,
+    "task_owned_runtime_only": true
+  },
+  "first_attempt": {
+    "response": {
+      "error_code": "RELEASE_BLOCKED_BY_FOREIGN_OR_BUSY_KERNEL",
+      "status": "blocked"
+    },
+    "returncode": 2,
+    "runtime_job_id": "1a1b89ae922-12894-104e",
+    "source_reason": "manager release checks foreign/busy kernels before writing release intent or calling unassign",
+    "unassign_reached": false
+  },
+  "frozen_implementation_commit": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "inventory_readback_return_unix_ns": 1794099339129244643,
+  "last_attempt": {
+    "command_return_unix_ns": 1794099332093080759,
+    "request_begin_unix_ns": 1794099326313816915,
+    "response": {
+      "error_code": "RELEASE_BLOCKED_BY_FOREIGN_OR_BUSY_KERNEL",
+      "status": "blocked"
+    },
+    "returncode": 2
+  },
+  "preconditions": [
+    {
+      "path": "colab-source-bab8376/downloads/download-readback.json",
+      "sha256": "ba4a2d2b810984b45d056dde7326dc3b3e0db63feda93206cb68cf6b7115c6b3"
+    },
+    {
+      "path": "colab-native-observe-bab8376/downloads/artifact-readback.json",
+      "sha256": "48b46298c1c09f71fa47b807996b8d2fefbcc1cd888eb9c1e713197c868a1dae"
+    },
+    {
+      "path": "colab-native-verify-bab8376/downloads/artifact-readback.json",
+      "sha256": "b4b1d73175f5a872bf0cc56449db24334b637a46ac59c56ebe31f50d110ee6e9"
+    }
+  ],
+  "readback_cutoff_utc": "2026-11-08T00:55:39.129245+00:00",
+  "reconciliation": {
+    "actual_spec": {
+      "accelerator": "NONE",
+      "shape": "STANDARD",
+      "variant": "DEFAULT"
+    },
+    "created_at": "2026-11-07T23:20:30.195367+00:00",
+    "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+    "kernel_id": "e5b396bb-f180-4fe1-97bc-4e639259415c",
+    "kernel_submit_attempts": 1,
+    "key": "pon-r2-machine-c9b4-cpu-v1",
+    "owned_kernel": true,
+    "owned_runtime": true,
+    "phase": "bound",
+    "profile_hash": "7167db81adadd3f9152d4b28ddfe8f858d510cf4c1d1fddc6eb0578c371b69d5",
+    "requested_spec": {
+      "accelerator": "NONE",
+      "shape": "STANDARD",
+      "variant": "DEFAULT"
+    },
+    "runtime_submit_attempts": 1,
+    "updated_at": "2026-11-08T00:53:07.824371+00:00"
+  },
+  "release_and_readback_monotonic_elapsed_ns": 12815604419,
+  "request_begin_utc": "2026-11-08T00:55:26.313817+00:00",
+  "schema": "trnm-pon-owned-colab-release-readback-v2",
+  "status": "ACTIVE_RELEASE_BLOCKED"
+}

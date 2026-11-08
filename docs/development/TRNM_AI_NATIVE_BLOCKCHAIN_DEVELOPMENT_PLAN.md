@@ -8487,3 +8487,69 @@ explicit responsive native tests, calibration/portfolio observation and
 independent verification. All four general quantum gates remain HOLD.
 Publication continues through the authorized local Mac GitHub channel on the
 existing review PR, with exact source/object/ref readback, no force and no merge.
+
+### 2026-11-08 — frozen responsive execution and Colab portfolio outcome (research / HOLD)
+
+Implementation `bab83768b7c794b0127dc63d633f3e37a1be025a`, tree
+`21afda717e4f6aaf6a119bbcdeee6f3c397d0d7e`, completed the declared scientific campaign
+from `bef17d632d1e40014167dba2a1089b85366b67b8`. The preceding preparation
+entry remains historical. Complete observations and preserved failures are in
+[the responsive evidence](../../evidence/pon-quantum-responsive-gates-20261107/README.md).
+The evidence descendant does not relabel earlier execution with a later source SHA.
+
+- The frozen ROG driver passed all 62 required commands: 861 non-skipped Python
+  tests; the complete Node outer inventory of 1251 passed, zero failed,
+  39 ignored and zero filtered; six separately selected ignored quantum native
+  tests; formatting, strict whole-workspace all-target/all-feature Clippy,
+  both main/fuzz locked-offline graphs, source pins, negative controls and links.
+  An independent audit verified all 410 inventory artifacts plus final metadata,
+  127 source-boundary records and all 11073 tracked source entries. Existing
+  build cache reuse remains explicit; this is not a clean-build attestation.
+- Twelve bounded native responsive runs and fresh receiver replays retained
+  93 starts, 72 completions including misses, nine cancellations, twelve
+  deadline-censored attempts, ninety actual candidate-proof generations and
+  sixteen admissions. The single private replacement and honest rebind onto
+  a private tip are the predeclared seed9 observer-advice control. Actual
+  completed stale honest arrivals number zero. CPU execution, eager proof
+  work and declared outcome clocks remain separate.
+- Two new responsive reduced certificates independently verify 3361/5236 and
+  2828/5101 states/edges, with four risk definitions. The illustrative one-tick
+  case separates a private ancestor at horizon from a private-owned final tip.
+  Ten samples, both certificates and fourteen ancillary files match byte for
+  byte between ROG and actual Colab CPU. The 1/8 law, constant-work abstraction,
+  sixteen quarter-second ticks and bounded action envelope are conditional,
+  not native DAA or long-horizon settlement claims.
+- Actual Colab CPU also passed the 85-test frozen added-suite subset and ran
+  the complete four-producer/four-payload/full-or-budgeted matrix. All 896
+  planned slots remain: 594 completely verified, ten partial and 292 unstarted.
+  The full sixteen runs verified all 448 candidates; the budgeted sixteen
+  completed 146, of which only 140 finished verification by four seconds.
+  Six late completions receive no timely credit. Independent relation
+  reexecution passes; non-preemptive overruns and outer/management costs remain.
+  Single-observation timing minima do not establish a global cheapest method.
+- Numerical calibration observation and independent replay remain
+  `OBSERVED_HOLD` / `VERIFIED_HOLD`: all nine active physical-event classes
+  lack admitted hardware samples. Conservative direct IID zero-fault sample
+  counts and confidence allocations do not prove an adaptive execution bound;
+  alternative error-correction/decoder proof routes also remain unsupported.
+- The old 18-cell construction frontier, 54 service configurations, three cache
+  capacities, eight prescribed-arrival certificates and complete historical
+  CPU ledger replay remain separately retained. Development refusals, wrong
+  source-pin refresh, unsafe-clock rejection, generated-cache quarantine and
+  runtime/readback failures are preserved instead of overwritten.
+- The prior GitHub PQ network TCP reset remains unresolved despite the present
+  full ROG pass. CodeQL deadlines and public-service resource limits remain
+  unchanged. Current remote CI is a distinct observation, never inferred green.
+
+The owned Colab allocation remains ACTIVE_RELEASE_BLOCKED after two normal guarded
+release refusals before unassign. Read-only inventory still bound the endpoint at
+2026-11-08T00:55:36.835049+00:00. All scientific jobs and downloads completed;
+actual release time is null and the allocation/cost interval after that cutoff
+remains open. The release refusal and timeline are retained in the evidence.
+
+Publication uses the user-authorized HeptaRuntime local Mac GitHub channel and
+the existing review PR, with exact source/evidence object identities, no force
+update, no merge and no production activation. All four general quantum gates
+remain HOLD: no complete calibrated quantum machine, global legal-cost lower
+bound/equal-resource proof, QPU adversarial execution or general hybrid
+settlement theorem is claimed.

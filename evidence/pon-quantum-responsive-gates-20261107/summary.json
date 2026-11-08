@@ -1,0 +1,496 @@
+{
+  "all_general_security_gates": "HOLD",
+  "calibration": {
+    "active_classes": 9,
+    "admitted_physical_sample_artifacts": 0,
+    "alternative_decoder_ECC_proof_route_complete": false,
+    "iid_to_adaptive_execution_transfer_proved": false,
+    "risk_upper": "1/1",
+    "risk_upper_is_not_observed_failure_probability": true,
+    "status": "VERIFIED_HOLD"
+  },
+  "copied_readable_artifacts": [
+    {
+      "path": "implementation-source.json",
+      "sha256": "67aa5026bc78bc9670cd602f4e76b38abb1b9a7fb0709fe4d9988647db0af55e",
+      "size_bytes": 5393,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/freeze/implementation.json"
+    },
+    {
+      "path": "validation-result.json",
+      "sha256": "8a4cedc51cbd4e9900a015060efefe9fe6a43d36d11a5227e9271fb90b24e3f4",
+      "size_bytes": 14219,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-responsive-bab8376/result.json"
+    },
+    {
+      "path": "validation-completion.json",
+      "sha256": "3f44cb15bf228ca36a7da1657ae43bec431cb6dfae097afbc1654ff8de92a70b",
+      "size_bytes": 647,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-responsive-bab8376/driver-completion.json"
+    },
+    {
+      "path": "validation-audit.json",
+      "sha256": "1e508eceb841574cf82e8dbf2fa91c37b6c04c45d3bedca42e56b388fe045292",
+      "size_bytes": 24401,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/consensus-lane/final-validation-artifact-audit.json"
+    },
+    {
+      "path": "native-responsive-audit.json",
+      "sha256": "5c47ed5a613dcf06d888e5c3ed0971c9d7d2c02c44ebb112a2fa5583337066d9",
+      "size_bytes": 56946,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/consensus-lane/native-responsive-actual-artifact-audit.json"
+    },
+    {
+      "path": "prior-ci-audit.json",
+      "sha256": "ee95eb6dd1fbb4b26c6e88716a5d5a4dcb32bcb1ea2be375ce8395b2cd263c2c",
+      "size_bytes": 4873,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/consensus-lane/prior-ci-pq-transport-audit.json"
+    },
+    {
+      "path": "calibration-observation.json",
+      "sha256": "f88d15b7421f7475f1275d2571292da7b26ee4ec4d21313f60d74ec550a2d50d",
+      "size_bytes": 17363,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/machine-lane/colab-native-observe-bab8376/downloads/extracted/calibration-observation.json"
+    },
+    {
+      "path": "colab-final-summary.json",
+      "sha256": "c7af3cf04c86568d0a53110df5be606abab02d373b12c7780ed0d4a2f5bac1f0",
+      "size_bytes": 15481,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/machine-lane/machine-colab-final-summary.json"
+    },
+    {
+      "path": "allocation-timeline.json",
+      "sha256": "f0de0cfc315ae3fc25df28d56d78920c818a5577c468dd5f79eb5b9be3b55ba5",
+      "size_bytes": 3574,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/machine-lane/colab-allocation-timeline-final.json"
+    },
+    {
+      "path": "allocation-release.json",
+      "sha256": "d5c495656ed7c9455697539d390d931b4ce5f7ea3142f4be09e68604d3ef268c",
+      "size_bytes": 2893,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/machine-lane/colab-owned-release-bab8376/release-receipt.json"
+    },
+    {
+      "path": "cross-environment-reduced.json",
+      "sha256": "c779491d9ccb7b27c5dd18c9f4da16c67b1d516b09fbc3204bb8dc282642d077",
+      "size_bytes": 13817,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/machine-lane/reduced-cross-host-comparison.json"
+    },
+    {
+      "path": "reduced-summary.json",
+      "sha256": "2e0c32658b2b39d64eff8097b8adf53cc7abdc8dd7f72366f712dd37b1e4e3d6",
+      "size_bytes": 4191,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-responsive-bab8376/reduced-responsive/summary.json"
+    },
+    {
+      "path": "portfolio-summary.json",
+      "sha256": "48b19d0fe8975dd50284e3c719098c210b62a0e474b9828f66ef2627b357eb21",
+      "size_bytes": 110260,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/machine-lane/colab-native-observe-bab8376/downloads/extracted/portfolio-matrix/summary.json"
+    },
+    {
+      "path": "portfolio/actual-portable-export-audit-bab83768.json",
+      "sha256": "3be0e57a053344cc23f0ee94cdf668454c89b705b2d30e0d7c8d22935d3ad80d",
+      "size_bytes": 6708,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/amortization-lane/actual-portable-export-audit-bab83768.json"
+    },
+    {
+      "path": "portfolio/actual-colab-portfolio-observation-audit-bab83768.json",
+      "sha256": "6c959e14ed5f3919326bfd944d05e18e9575d4ea944bb58a6f9dd1e20777ae09",
+      "size_bytes": 102020,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/amortization-lane/actual-colab-portfolio-observation-audit-bab83768.json"
+    },
+    {
+      "path": "portfolio/actual-colab-portfolio-replay-audit-bab83768.json",
+      "sha256": "673e3f40fc5a984da9dafebdb32ab262ee5fa00639ed1f3fc2182b715973c678",
+      "size_bytes": 3337,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/amortization-lane/actual-colab-portfolio-replay-audit-bab83768.json"
+    },
+    {
+      "path": "portfolio/portfolio-public-outcome-bab83768.json",
+      "sha256": "8dfa87833efc5146a398ef61d28458d5b9378ed14b1bd74e767883ee28410ad8",
+      "size_bytes": 15219,
+      "source_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-responsive-20261107/amortization-lane/portfolio-public-outcome-bab83768.json"
+    }
+  ],
+  "gates": {
+    "complete_calibrated_machine_cost_and_error": "HOLD",
+    "general_hybrid_settlement_security": "HOLD",
+    "globally_cheapest_legal_implementation_and_equal_resources": "HOLD",
+    "native_QPU_adversarial_execution": "HOLD"
+  },
+  "native": {
+    "CPU_inner_excludes": "surrounding source census, final report serialization, subsequent Node and temporary-directory teardown; outer command receipts retain process costs",
+    "CPU_inner_ns": {
+      "attempt_stages": 127914011,
+      "producer_receiver_admission_notification_events": 429181689,
+      "remaining_sampled_process_work": 4985677174,
+      "total": 5542772874
+    },
+    "actual_completed_stale_honest_arrivals": 0,
+    "actual_quantum_hardware_executed": false,
+    "attempts_started": 93,
+    "blind_search_probability_inferred": false,
+    "cancelled": 9,
+    "completed_including_misses": 72,
+    "database_instances_per_run": 3,
+    "deadline_censored": 12,
+    "eager_candidate_proof_generations": 90,
+    "fresh_matching_replays": 12,
+    "honest_rebinds_onto_private_tip": 1,
+    "honest_starts": 72,
+    "modeled_horizon_seconds": 4,
+    "native_processes_per_run": 1,
+    "only_replacement_control": "classical-observer-advice-seed9",
+    "opaque_attempts_without_candidate": 3,
+    "physical_nodes_claimed": false,
+    "private_replacements": 1,
+    "private_starts": 21,
+    "receiver_admissions": 16,
+    "runs": 12,
+    "selection_changes": 9
+  },
+  "portfolio": {
+    "actual_outcomes": {
+      "budgeted": {
+        "partial": 10,
+        "planned": 448,
+        "target_hits_among_completed": 16,
+        "target_misses_among_completed": 130,
+        "unstarted": 292,
+        "verified": 146,
+        "verified_after_4s": 6,
+        "verified_by_4s": 140
+      },
+      "combined": {
+        "derived_relation_only_attempts_verified": 192,
+        "full_proofs_materialized": 594,
+        "materialized_without_independent_verification": 0,
+        "noise_exhaustions": 0,
+        "original_native_fixture_attempts_verified": 402,
+        "partial": 10,
+        "planned": 896,
+        "unstarted": 292,
+        "verified": 594
+      },
+      "full": {
+        "deadline_ns": null,
+        "partial": 0,
+        "planned": 448,
+        "target_hits": 32,
+        "target_misses": 416,
+        "unstarted": 0,
+        "verified": 448
+      }
+    },
+    "costs": {
+      "all_32_cell_children_cpu_ns": 193081908000,
+      "all_32_cell_children_wall_ns_sum": 254106675344,
+      "controller_snapshot_cpu_ns": 73466738,
+      "different_host_CPU_seconds_not_assumed_economic_equivalents": true,
+      "export_preparation_count": 1,
+      "export_startup_and_serialization_have_separate_outer_receipt": true,
+      "observation_cpu_outside_cell_children_ns": 4620142000,
+      "observation_outer_cpu_ns_including_descendants": 197702050000,
+      "observation_outer_wall_ns": 258937060113,
+      "observation_plus_replay_portfolio_commands_cpu_ns": 379888677000,
+      "observation_plus_replay_portfolio_commands_wall_ns": 441964445804,
+      "outer_envelope_not_added_again_to_its_children": true,
+      "separate_replay_cpu_ns": 182186627000,
+      "separate_replay_wall_ns": 183027385691,
+      "shared_ROG_export_cpu_ns": 1578401403,
+      "shared_ROG_export_wall_ns": 1585308175
+    },
+    "deadline_accounting": {
+      "admission_budget_ns": 4000000000,
+      "admitted_stages_starting_at_or_after_4s": [
+        {
+          "capacity_payload_bytes": 65536,
+          "stage": [
+            10,
+            "challenge"
+          ],
+          "strategy": "sparse-ab"
+        }
+      ],
+      "hard_whole_command_4s_limit_proved": false,
+      "late_preparation_consumes_admission_budget": true,
+      "max_observation_overrun_ns": 155534050,
+      "max_whole_child_overrun_ns": 188023549,
+      "nonpreemptive_stages": true,
+      "on_time_credit_requires_independent_verification_finish_by_deadline": true,
+      "origin": "parent timestamp before start-receipt preparation, subprocess launch, imports and input/source validation"
+    },
+    "declared_workload": {
+      "attempt_slots_are_independent_mining_queries": false,
+      "attempts_per_run": 28,
+      "cache_payload_capacities_bytes": [
+        0,
+        4096,
+        65536,
+        262144
+      ],
+      "derived_relation_only_slots": 384,
+      "distinct_AB_cache_keys_in_plan": 5,
+      "distinct_target_hit_challenges_across_all_runs": 2,
+      "distinct_verified_proof_identities_across_all_runs": 25,
+      "full_runs": 16,
+      "independent_4s_admission_runs": 16,
+      "original_native_fixture_slots": 512,
+      "repeated_slots_per_plan": 3,
+      "same_fixed_order_in_every_run": true,
+      "strategies": 4,
+      "total_attempt_slots": 896,
+      "unique_headers_per_28slot_plan": 25
+    },
+    "global_minimum_or_statistical_speedup_proved": false,
+    "independent_relation_reexecution": "PASS",
+    "lowest_single_observed_full_run_CPU_per_payload_capacity": [
+      {
+        "ab_products_computed": 28,
+        "ab_products_reused": 0,
+        "cache_counters": {
+          "evictions": 0,
+          "hits": 0,
+          "insertion_refusals": 168,
+          "insertions": 0,
+          "key_and_value_bytes_evicted": 0,
+          "key_and_value_bytes_written": 0,
+          "key_bytes_compared": 0,
+          "lookups": 168,
+          "misses": 168,
+          "value_bytes_read": 0
+        },
+        "capacity_payload_bytes": 0,
+        "full_attempts_verified": 28,
+        "gap_to_next_lowest_cpu_ns": 46658000,
+        "next_lowest_cpu_strategy": "rank-aware-ab",
+        "peak_cache_payload_bytes": 0,
+        "peak_process_rss_bytes": 31252480,
+        "strategy": "trace-correction-ab",
+        "whole_child_cpu_ns": 8910238000,
+        "whole_child_wall_ns": 12082778450
+      },
+      {
+        "ab_products_computed": 28,
+        "ab_products_reused": 0,
+        "cache_counters": {
+          "evictions": 11,
+          "hits": 27,
+          "insertion_refusals": 28,
+          "insertions": 23,
+          "key_and_value_bytes_evicted": 2931,
+          "key_and_value_bytes_written": 6879,
+          "key_bytes_compared": 29682,
+          "lookups": 78,
+          "misses": 51,
+          "value_bytes_read": 864
+        },
+        "capacity_payload_bytes": 4096,
+        "full_attempts_verified": 28,
+        "gap_to_next_lowest_cpu_ns": 143283000,
+        "next_lowest_cpu_strategy": "direct-ab",
+        "peak_cache_payload_bytes": 4062,
+        "peak_process_rss_bytes": 31600640,
+        "strategy": "trace-correction-ab",
+        "whole_child_cpu_ns": 8790328000,
+        "whole_child_wall_ns": 11645639252
+      },
+      {
+        "ab_products_computed": 9,
+        "ab_products_reused": 19,
+        "cache_counters": {
+          "evictions": 35,
+          "hits": 45,
+          "insertion_refusals": 0,
+          "insertions": 38,
+          "key_and_value_bytes_evicted": 401459,
+          "key_and_value_bytes_written": 451331,
+          "key_bytes_compared": 643610,
+          "lookups": 83,
+          "misses": 38,
+          "value_bytes_read": 312128
+        },
+        "capacity_payload_bytes": 65536,
+        "full_attempts_verified": 28,
+        "gap_to_next_lowest_cpu_ns": 1447000,
+        "next_lowest_cpu_strategy": "rank-aware-ab",
+        "peak_cache_payload_bytes": 53991,
+        "peak_process_rss_bytes": 31649792,
+        "strategy": "trace-correction-ab",
+        "whole_child_cpu_ns": 8318015000,
+        "whole_child_wall_ns": 11099585696
+      },
+      {
+        "ab_products_computed": 5,
+        "ab_products_reused": 23,
+        "cache_counters": {
+          "evictions": 0,
+          "hits": 50,
+          "insertion_refusals": 0,
+          "insertions": 25,
+          "key_and_value_bytes_evicted": 0,
+          "key_and_value_bytes_written": 251850,
+          "key_bytes_compared": 781776,
+          "lookups": 75,
+          "misses": 25,
+          "value_bytes_read": 377696
+        },
+        "capacity_payload_bytes": 262144,
+        "full_attempts_verified": 28,
+        "gap_to_next_lowest_cpu_ns": 113283000,
+        "next_lowest_cpu_strategy": "trace-correction-ab",
+        "peak_cache_payload_bytes": 251850,
+        "peak_process_rss_bytes": 32112640,
+        "strategy": "rank-aware-ab",
+        "whole_child_cpu_ns": 8109524000,
+        "whole_child_wall_ns": 10750216788
+      }
+    ],
+    "memory": {
+      "cache_capacity_includes_exact_key_and_value_payload": true,
+      "cache_capacity_is_total_RSS_cap": false,
+      "equal_total_memory_budgets_proved": false,
+      "maximum_observed_peak_process_RSS_bytes": 32276480,
+      "minimum_observed_peak_process_RSS_bytes": 30859264
+    }
+  },
+  "public_raw_archive": {
+    "archive_sha256": "ee5ea64823c0c72fd10960c4c0c9886ed3e64800c7abcdc4922d4fcde3ec1d37",
+    "archive_size_bytes": 13798073,
+    "manifest_sha256": "ff105d1de4f95326e05a2eb2ddfe1efc6134f08ebf4fa996f449e9960c7b288b",
+    "parts": [
+      {
+        "path": "raw/raw-evidence.tar.gz.part-000",
+        "sha256": "51a3b77c45b9c3e42f91d3eb5c6c4de735a8c0bacd8fce197bb81fff6059d6ed",
+        "size_bytes": 8388608
+      },
+      {
+        "path": "raw/raw-evidence.tar.gz.part-001",
+        "sha256": "e412b8b57fa05a511d72712b5feffc24b788a6c097a6dc18b86c42309b842bf3",
+        "size_bytes": 5409465
+      }
+    ],
+    "regular_file_count": 877,
+    "uncompressed_file_bytes": 110890223
+  },
+  "publication_protocol": {
+    "base_branch": "fix/chain-quantum-cost-closure-20261106-c201",
+    "channel": "HeptaRuntime to local Mac GitHub",
+    "existing_review_PR": 781,
+    "merge_or_activation_authorized_by_this_record": false,
+    "non_force_linear_source_evidence_update": true,
+    "remote_GitData_update_is_not_atomic_expected_old_SHA_CAS": true,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "scientific_record_precedes_final_ref_receipt": true,
+    "target_branch": "fix/chain-quantum-competing-review-20261107-c9b4"
+  },
+  "qualification": {
+    "complete_machine_cost_closed": false,
+    "general_settlement_security_proved": false,
+    "globally_cheapest_legal_cost_proved": false,
+    "physical_hardware_calibrated": false,
+    "production_activation": false,
+    "quantum_mining_qualified": false,
+    "same_total_physical_resource_budget_proved": false,
+    "whole_chain_qualified": false
+  },
+  "reduced": {
+    "additional_responsive_certificates": 2,
+    "arbitrary_algorithms_timestamps_unbounded_horizon_covered": false,
+    "checked_samples": 10,
+    "cross_environment_byte_identical_artifacts": 26,
+    "native_DAA_probability_or_hardware_clock_calibrated": false,
+    "original_prescribed_arrival_certificates_retained": 8,
+    "proof1tick_illustrative": {
+      "edges": 5101,
+      "maximum_ever_replacement_private_ancestry_initial_public_orphan": "7/512",
+      "maximum_private_owned_tip": "343/32768",
+      "states": 2828
+    },
+    "proof4ticks": {
+      "all_four_maximum_risks": "343/32768",
+      "edges": 5236,
+      "states": 3361
+    }
+  },
+  "retained_prior_CI": {
+    "CodeQL_deadline_or_service_resource_limits_relaxed": false,
+    "Node_failed": 1,
+    "Node_ignored": 37,
+    "Node_passed": 1249,
+    "TCP_reset_cause": "UNRESOLVED",
+    "current_published_head_CI_requires_separate_readback": true,
+    "head": "bef17d632d1e40014167dba2a1089b85366b67b8",
+    "present_ROG_pass_does_not_prove_prior_failure_fixed": true
+  },
+  "runtime": {
+    "allocation_status": "ACTIVE_RELEASE_BLOCKED",
+    "allocation_window": {
+      "actual_release_time_utc": null,
+      "begin_utc": "2026-11-07T23:20:30.195367+00:00",
+      "complete_lifetime": false,
+      "last_confirmed_cutoff_utc": "2026-11-08T00:55:36.835049+00:00",
+      "observed_management_window_seconds": "5706.639682",
+      "observed_task_execution_seconds_sum": "500.8287182",
+      "release_error_code": "RELEASE_BLOCKED_BY_FOREIGN_OR_BUSY_KERNEL",
+      "release_receipt_sha256": "d5c495656ed7c9455697539d390d931b4ce5f7ea3142f4be09e68604d3ef268c",
+      "window_outside_recorded_execution_seconds": "5205.8109638"
+    },
+    "hardware_observation": {
+      "GPU_executed": false,
+      "Rust_toolchain_present": false,
+      "affinity_cpus": 2,
+      "cpu_model": "AMD EPYC 7B12",
+      "evidence_path": "colab-hardware-observation-v1.json",
+      "evidence_sha256": "22189c6f688f748b3da9d6cb123ab3369cd9da1d097ec218dffd9cd6319cb9c3",
+      "logical_cpus": 2,
+      "powercap_energy_counters_available": false,
+      "python": "3.13.18"
+    },
+    "provider": "HeptaRuntime configured Colab CPU",
+    "task_observation_is_not_full_machine_billing": true
+  },
+  "schema": "trnm-pon-responsive-four-gates-outcome-v1",
+  "scientific_campaign_status": "PASS",
+  "source": {
+    "evidence_descendant_does_not_relabel_execution_source": true,
+    "implementation_commit": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+    "inventory_sha256": "32df826245ec145f0b70f5421f70451a3e71c3b0bfb06ef9aa981bb9dd483f0b",
+    "predecessor": "bef17d632d1e40014167dba2a1089b85366b67b8",
+    "tracked_files": 11073,
+    "tree": "21afda717e4f6aaf6a119bbcdeee6f3c397d0d7e"
+  },
+  "validation": {
+    "Clippy_all_workspace_targets_features_warnings_denied": "PASS",
+    "Colab_subset_is_not_85_additional_unique_tests": true,
+    "Colab_subset_python_passed": 85,
+    "clean_reproducible_build_attested": false,
+    "current_ELF_sha256": "32b7931f7dfc93fe785a0228f7245919807ea648a07b2f655597c5697ed2b4ba",
+    "existing_build_cache_reused": true,
+    "explicit_ignored_native_tests_executed_and_passed": 6,
+    "formatting": "PASS",
+    "fuzz_locked_offline_graph": "PASS",
+    "independent_artifact_audit": {
+      "additional_final_metadata_files": 2,
+      "inventoried_files": 410,
+      "source_boundary_receipts": 127
+    },
+    "main_locked_offline_graph": "PASS",
+    "node_outer": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 39,
+      "nested_child_passes_not_added": true,
+      "passed": 1251
+    },
+    "publisher_offline_controls": {
+      "Mac": 16,
+      "ROG": 16
+    },
+    "python_passed": 861,
+    "python_skipped": 0,
+    "required_commands_passed": 62,
+    "source_integrity_CI_PQ_readiness_inventory_links": "PASS"
+  }
+}
