@@ -1,0 +1,15 @@
+{
+  "label": "selected-unit-tests",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_composition"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 1.8231111229397357,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "03b32ad3582d4e61f1cec55ef7d13f2e559e34924a44652da86e2b4851d4d1bb"
+}

@@ -1,0 +1,26 @@
+test_exact_hash_lengths (test_composition.EncodingChecks.test_exact_hash_lengths) ... ok
+test_framing_roundtrip_injectivity (test_composition.EncodingChecks.test_framing_roundtrip_injectivity) ... ok
+test_recovered_reference_pins (test_composition.EncodingChecks.test_recovered_reference_pins) ... ok
+test_selected_rows_distinct_all_coordinates (test_composition.EncodingChecks.test_selected_rows_distinct_all_coordinates) ... ok
+test_arithmetic_prices_and_amortization (test_composition.PricingChecks.test_arithmetic_prices_and_amortization) ... ok
+test_bounded_cache_eviction (test_composition.PricingChecks.test_bounded_cache_eviction) ... ok
+test_compression_padding_and_repeat (test_composition.PricingChecks.test_compression_padding_and_repeat) ... ok
+test_noise_prefix_64_to_33 (test_composition.PricingChecks.test_noise_prefix_64_to_33) ... ok
+test_prepared_producer_and_bounded_cache_schedule (test_composition.PricingChecks.test_prepared_producer_and_bounded_cache_schedule) ... ok
+test_recovered_native_observation_replay (test_composition.PricingChecks.test_recovered_native_observation_replay) ... ok
+test_adaptive_equality_uses_coverage (test_composition.ProbabilityChecks.test_adaptive_equality_uses_coverage) ... ok
+test_completion_never_gives_miner_H (test_composition.ProbabilityChecks.test_completion_never_gives_miner_H) ... ok
+test_exact_lottery_threshold (test_composition.ProbabilityChecks.test_exact_lottery_threshold) ... ok
+test_missing_row_exhaustive_scalar_analogue (test_composition.ProbabilityChecks.test_missing_row_exhaustive_scalar_analogue) ... ok
+test_rejection_sampling_distribution (test_composition.ProbabilityChecks.test_rejection_sampling_distribution) ... ok
+test_toy_reverse_pointer_probability (test_composition.ProbabilityChecks.test_toy_reverse_pointer_probability) ... ok
+test_typed_hash_budget (test_composition.ProbabilityChecks.test_typed_hash_budget) ... ok
+test_context_reversal_and_seed_alias (test_composition.TranscriptChecks.test_context_reversal_and_seed_alias) ... ok
+test_event_prequery_without_output_collision (test_composition.TranscriptChecks.test_event_prequery_without_output_collision) ... ok
+test_public_setup_belongs_in_lifetime_transcript (test_composition.TranscriptChecks.test_public_setup_belongs_in_lifetime_transcript) ... ok
+test_seed_prequery (test_composition.TranscriptChecks.test_seed_prequery) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 1.691s
+
+OK

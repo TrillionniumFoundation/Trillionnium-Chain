@@ -1,0 +1,13 @@
+{
+  "label": "rustc-version",
+  "command": [
+    "/home/qian-qi/.cargo/bin/rustc",
+    "+1.95.0",
+    "--version",
+    "--verbose"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.02281207707710564,
+  "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

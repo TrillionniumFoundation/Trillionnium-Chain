@@ -1,0 +1,106 @@
+{
+  "schema": "trnm-w1-run02-derived-measurements-v1",
+  "qualification": "HOLD_NO_GO",
+  "input_receipts": {
+    "results/retained-native-02/provenance.json": "887a3e288ebd50848ed7b3e102c7eeaec03f7978f8c0f8ce5822991d0b5645db",
+    "results/retained-native-02/generation.json": "3a9abe1914a0b85237c9a0b44b94ccbd8433c330f7cd4cff3c1abf06dfc0a2e2",
+    "results/retained-native-02/prover_report.json": "6eab0921a09706de98373e7e7a24060811fc5ba160f4035f9b87e177fa383f3e",
+    "results/retained-native-02/verification-campaign/summary.json": "58238d84be864c71506bfa32bd79cd9a357957c6b7f18493974c246ed4166201",
+    "results/retained-native-02/late-query-campaign/summary.json": "fac247c9a787cc8fb28a6412b7b0f9539ae4618e9e9e2915bb27c965d0eda110",
+    "results/native-baseline/native-summary.json": "59a1e8bf26e919304c5cadef9be5079eb51288498ed34f134c80236b8825c1f6",
+    "results/native-baseline/native-prefix-preparations.json": "d689557de53f28b9dc16b420bd4dbe33ccb0074324d3cb36a9d365f62bfe7aa0",
+    "results/native-baseline/native-campaign.json": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639"
+  },
+  "verifier_binary_sha256": "7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc",
+  "sha_air_source_sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+  "native_retained": {
+    "case": "retained",
+    "mode": "native_full_limb",
+    "count": 150,
+    "median_ns": 1913279.0,
+    "p95_observed_ns": 2630817,
+    "max_observed_ns": 2962699,
+    "min_observed_ns": 1850395,
+    "mean_ns": 2006813.8733333333
+  },
+  "stark_verify_outer_seconds": [
+    0.9492664039134979,
+    0.9364103279076517,
+    0.9482037830166519
+  ],
+  "stark_verify_process_ms": [
+    941.3463250000001,
+    930.1139149999999,
+    940.9443170000001
+  ],
+  "stark_verify_phase_medians_ms": {
+    "arith_stark_verify": 30.476445000000002,
+    "arith_verifier_independent_preprocessing_setup": 539.447565,
+    "bounded_read_decode_and_proof_shape": 17.505067999999998,
+    "canonical_plans_and_public_only_sha_air": 8.167715000000001,
+    "sha_stark_verify": 269.416277,
+    "sha_verifier_independent_preprocessing_setup": 44.402285
+  },
+  "stark_verify_two_key_setup_median_ms": 582.9972630000001,
+  "stark_verify_two_proof_checks_median_ms": 299.892722,
+  "stark_verify_outer_median_seconds": 0.9482037830166519,
+  "stark_verify_process_median_ms": 940.9443170000001,
+  "observed_outer_to_native_warm_ratio": 495.5909634803141,
+  "observed_process_to_native_warm_ratio": 491.7967097323496,
+  "new_wire_bytes": 5264276,
+  "original_wire_bytes": 49506,
+  "new_to_original_wire_ratio": 106.33612087423747,
+  "prepare_outer_seconds": 0.02544837398454547,
+  "prove_outer_seconds": 21.196110212942585,
+  "prove_process_ms": 21180.277754,
+  "prove_max_rss_kib": 2381440,
+  "positive_verify_max_rss_kib": 132996,
+  "synthetic_component_sum_seconds": 22.169762369943783,
+  "synthetic_component_sum_is_paired_end_to_end_statistic": false,
+  "synthetic_component_sum_excludes_original_candidate_and_prefix_generation": true,
+  "native_retained_prefix_construction_samples_ns": [
+    2655389,
+    2375195,
+    2448736
+  ],
+  "native_retained_prefix_construction_median_ns": 2448736,
+  "synthetic_component_sum_with_prefix_reconstruction_seconds": 22.172211105943784,
+  "largest_ordinary_negative_outer_seconds": 2.2384327568579465,
+  "largest_ordinary_negative_label": "arith-commitment-changed",
+  "largest_ordinary_negative_phase_events": [
+    {
+      "elapsed_ms": 965.89261,
+      "phase": "bounded_read_decode_and_proof_shape"
+    },
+    {
+      "elapsed_ms": 11.950134,
+      "phase": "canonical_plans_and_public_only_sha_air"
+    },
+    {
+      "elapsed_ms": 52.763665,
+      "phase": "sha_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 299.11524099999997,
+      "phase": "sha_stark_verify"
+    },
+    {
+      "elapsed_ms": 556.279635,
+      "phase": "arith_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 2.606757,
+      "phase": "arith_stark_verify"
+    }
+  ],
+  "largest_typed_late_outer_seconds": 1.0436571650207043,
+  "is_global_latest_rejection_bound": false,
+  "same_artifact_bytes_as_run01": {
+    "statement_sha256": true,
+    "sha_proof_sha256": true,
+    "arith_proof_sha256": true
+  },
+  "complete_noninteractive_security_established": false,
+  "economic_gain_established": false,
+  "cheapest_legal_physical_work_bound_established": false
+}

@@ -7248,3 +7248,82 @@ campaign; and the rejection collector's 30-second identity, 900-second build,
 campaign minimum of three administrators/failure domains and 72 hours is
 unchanged. No source-control, local component, model-quality, economic,
 public-service or activation claim is promoted by this entry.
+
+
+### 2026-11-08 complete W1 AIR/STARK research and selected-event composition
+
+The isolated [complete-W1 research report](../../formal/pon-nakamoto-v1/w1_public_stark_research/ROUND_REPORT.md)
+extends the C4 source at `8df4b21d893906570d48f5beafabb3b31e0aefbc`.
+Its final native run generated and independently verified both real
+Plonky3 0.8.0 PCS/FRI proof components for one complete retained W1 statement.
+The SHA component covers 519 original messages and 4,114 compression
+operations, including the original full-prefix trace. The arithmetic
+component covers every E/F factor, Ahat/Bhat addition, all eight complete
+noisy prefixes and full `AB=C`. Expected header/artifacts remain independent
+inputs, and the verifier rebuilds both public preprocessing keys. No native
+acceptance fallback, production Node wiring or task-admission change is added.
+
+The final 377,290-byte public statement and 4,886,986 proof bytes total
+5,264,276 bytes, 106.336121 times the original 49,506-byte input. The final
+native binary SHA-256 is
+`7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc`.
+Final-source proving took 21.196110 seconds of outer process wall time;
+three fresh verifier processes had median 0.948204 seconds. Peak prover
+RSS was 2,381,440 KiB. All three positive verifications, eleven original
+negative controls and four transcript-preserving typed late-FRI controls
+matched their required outcomes. The largest observed ordinary negative
+was 2.238433 seconds; the largest typed late control was 1.043657 seconds.
+Neither is a global rejection-cost bound. Failed build/lint/harness
+observations and the earlier source/run identities remain retained.
+
+The fresh same-host native comparison uses the frozen FullLimb harness from
+`e70f13448aad715286fb8eb56fc802b09db643a3`, with Rust 1.95.0 and native CPU
+flags. Its retained-fixture median is 1.913279 milliseconds over 150 warm
+calls; the research verifier includes a new process and both independently
+rebuilt keys. Across all five valid and six invalid fixtures and six modes,
+the native campaign made 9,900 measured calls, separately from its 143
+passing library tests. Its three retained complete-prefix reconstructions
+have median 2.448736 milliseconds. Raw records, original metadata caveats
+and the 39-equal/one-different/one-missing source comparison are preserved.
+The frozen whole crate is not relabelled current-C4 or a production Node.
+
+The measured receiver and wire costs do not show an end-to-end gain.
+Original task-to-candidate generation, nonce search, production queues,
+energy and WAN costs remain outside the measured component sum. Additional
+proving and prefix work cannot amortize into a gain across more receivers
+on this observed path because the research receiver is already slower.
+The final standalone crate passed strict Clippy, locked metadata, formatting,
+18 library and three actual small-proof integration tests; doc-test and
+all-target build commands passed, with zero doc tests. These observations
+are not a successful complete repository CI lane or an operating service.
+
+The separate [selected-event theorem](../../formal/pon-nakamoto-v1/selected_event_composition_research/THEOREM.md)
+now covers the actual framed Merkle/task/context/seed/event/ticket hash
+composition in a conditional classical full-message random-oracle model.
+It accounts for lifetime queries and reverse digest-pointer guesses, keeps
+verifier-internal noise out of the miner's paid H, and bounds distinct hits
+by a binomial tail plus explicit missing-row and hash-composition terms.
+Its newly executed 21 composition/cost checks and frozen original sources
+are distinct from lost earlier round-2 artifacts and from production tests.
+The [priced strategies](../../formal/pon-nakamoto-v1/selected_event_composition_research/PRICING.md)
+include exact SHA prefix reuse: with J=32 noise digests, 64 ordinary
+compressions become 33, and complete producer nonce costs are 57 then 47
+compressions with the stated cache; retries are charged through actual J.
+Useful-product precomputation, memory prices and exact fast arithmetic are
+also included. These achieved strategies are upper bounds, not a universal
+minimum physical cost over all legal strategies.
+
+Qualification remains **HOLD_NO_GO**. Complete concrete noninteractive
+security, PCS/hash/transcript composition and lifetime budgets, quantum
+security, globally bounded malicious receiver cost, cheapest legal physical
+work and production integration remain open. The conditional per-component
+round-by-round estimate near 63.95 bits is not PQ128 or a complete NIZK
+claim. The low-bit query sampler has a source-traced conditional density
+calculation, without proving Poseidon2's needed randomness assumptions.
+
+All eight existing system gates remain open. Preserve the original
+four-second, 16-hostile, seven-honest-submission, quarter-CPU, 2-GiB,
+no-swap and 256-PID service contract; original request/history limits; and
+the independent-administrator, 72-hour WAN acceptance requirements. The
+eight-thread research job does not replace those budgets. No qualification,
+activation, merge or release is performed by this entry.

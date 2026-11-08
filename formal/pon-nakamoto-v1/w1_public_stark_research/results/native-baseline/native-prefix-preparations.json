@@ -1,0 +1,110 @@
+{
+  "schema": "w1-native-prefix-preparations-v1",
+  "qualification": "HOLD_NO_GO",
+  "description": "Exact preparations arrays extracted from original raw files; no new measurements.",
+  "campaign_sha256": "ae1ab821b1c9f53dc11fecc70db7d44b43e77eb7fbf2b63bfcee748770436639",
+  "runs": [
+    {
+      "index": 0,
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/native-baseline/native-run-00.json",
+      "raw_bytes": 598875,
+      "raw_sha256": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592",
+      "campaign_raw_sha256": "6a297f056f544ca77a76e9b1f7c847c7125fccc76d125d0b02643897ca451592",
+      "preparations": [
+        {
+          "case": "retained",
+          "prefix_construction_wall_ns": 2655389,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "zero",
+          "prefix_construction_wall_ns": 2546382,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "maximum",
+          "prefix_construction_wall_ns": 2526071,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "identity",
+          "prefix_construction_wall_ns": 2513849,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "dense",
+          "prefix_construction_wall_ns": 2703724,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/native-baseline/native-run-01.json",
+      "raw_bytes": 598903,
+      "raw_sha256": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b",
+      "campaign_raw_sha256": "67920fcf10385ae058079d5417d695f0df4998307c8b8d748227c11a5dc0571b",
+      "preparations": [
+        {
+          "case": "retained",
+          "prefix_construction_wall_ns": 2375195,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "zero",
+          "prefix_construction_wall_ns": 2447031,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "maximum",
+          "prefix_construction_wall_ns": 2441202,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "identity",
+          "prefix_construction_wall_ns": 2254657,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "dense",
+          "prefix_construction_wall_ns": 3119727,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "path": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/native-baseline/native-run-02.json",
+      "raw_bytes": 598856,
+      "raw_sha256": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586",
+      "campaign_raw_sha256": "e714f40f9a2b62bbdf139cf28cf13fea43a6b8e3b2462e5e837ec0630004f586",
+      "preparations": [
+        {
+          "case": "retained",
+          "prefix_construction_wall_ns": 2448736,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "zero",
+          "prefix_construction_wall_ns": 2278573,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "maximum",
+          "prefix_construction_wall_ns": 2305056,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "identity",
+          "prefix_construction_wall_ns": 2260653,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        },
+        {
+          "case": "dense",
+          "prefix_construction_wall_ns": 2238311,
+          "scope": "parse full public input and construct complete prefix; excludes earlier Python fixture generation and lottery search"
+        }
+      ]
+    }
+  ]
+}
