@@ -1,0 +1,357 @@
+{
+  "schema": "selected-nonce-bank-native-acceptance-r4-v1",
+  "generated_utc": "2026-11-08T05:09:29.197604+00:00",
+  "binary_path": "/home/qian-qi/work/chain-selected-bank-r4-f16ac5/formal/pon-nakamoto-v1/selected_nonce_bank_research/native_selected/target/release/selected-event-native-research",
+  "binary_sha256": "0942ffba3591a20bd3822dc67a4755304aa8a017357ee74aaf559c676d2515ad",
+  "native_source_sha256": {
+    "native_selected/Cargo.toml": "01c5359788e35f6a44306e56853f329838ec74cb6aa26e6ba66ad32055c675f4",
+    "native_selected/Cargo.lock": "c8d66fe14008ffeb39a78f6d802ecac2255fe1eb1de58a423aa5d5824a31717c",
+    "native_selected/src/lib.rs": "4cf25237ed76dcd9bc0a10f4d4e3875f1ed2d6af32a7af1dbae83ee64f840f07",
+    "native_selected/src/main.rs": "3f14876f7f706149823fd686d868c9919e4ed571365a466fa6357c6fc6561431"
+  },
+  "expected_sha256": "16eea862f5955a0cb8b52a3eb1c8299d595446863c476571186b1837145bf474",
+  "observed_environment": {
+    "rustc": {
+      "exit_code": 0,
+      "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "stderr": ""
+    },
+    "cargo": {
+      "exit_code": 0,
+      "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+      "stderr": ""
+    },
+    "observed_git_head": {
+      "exit_code": 0,
+      "stdout": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0\n",
+      "stderr": ""
+    }
+  },
+  "observed_git_head_is_not_a_claim_that_new_directory_was_committed": true,
+  "accepted_invocations": 18,
+  "negative_controls": 2,
+  "unique_accepted_witnesses": 13,
+  "results": [
+    {
+      "name": "audit-561",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-561.bin",
+      "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "f16d41e0a4da0f1a2bc3671aac72f1305ef4567f7c3620c2a82aaeb19038bac4"
+    },
+    {
+      "name": "audit-605",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-605.bin",
+      "witness_sha256": "063ed6d47ec7fe20595373d259d487f0b909b4c87c4b370ef2fe8da840238c6e",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "07778e853cfd27e17c212511064d0e3c89ef1c92e71aed16b9dd86d542e1be99"
+    },
+    {
+      "name": "audit-644",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-644.bin",
+      "witness_sha256": "7dbc739e775c62b2517d8542cdd27e3a658408ed069cfcdd9462e67ccf3ca4d7",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "0556d34e08e1d4e081b889120083320bfe7ea33ecc1339c2be1243c01fae133e"
+    },
+    {
+      "name": "audit-654",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-654.bin",
+      "witness_sha256": "f12da7d53ee67ee9510b7c520a254fa7cd488d74ea4142c9ff58b82fe091cbed",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "1b389d70a6d4d8dd0106c22d495e55691ea42012cafca460a4a33eeb84b4a368"
+    },
+    {
+      "name": "audit-764",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-764.bin",
+      "witness_sha256": "8e0eb43c450468f1a59282bdd4faf4cf9822a2558abd5a622e98d98674b88b28",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "b8a50246dfdf463fb50e9d1e8ba10a84f3c41cc690a257e82d99da121253ac2e"
+    },
+    {
+      "name": "audit-770",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-770.bin",
+      "witness_sha256": "95d694dcdef47aaa33948d07aaaef0179bcdc43ceafc8b0e79aa99da4238197c",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "fb20de1d7d65427d10bcd31ff71cdb7507e3621e084c8e92d0a113c85d4348c3"
+    },
+    {
+      "name": "audit-775",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-775.bin",
+      "witness_sha256": "2d5157f103c40848db0d0d19d615ce5f73747ddc8ac08a89ee254540cbd7c869",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "19e95ca262f7a8fa7a5fb3163806a53e8ce84bc95d4a7766922a77a176ff9e1d"
+    },
+    {
+      "name": "audit-790",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-790.bin",
+      "witness_sha256": "65f0d1d19b13a123d169004881b1cccc2a150513c34f1f9fef36d39dd58e1cc3",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "f93cadf4ee34a5610621218b742f14606cb1de131f0616b609a527e2333a473e"
+    },
+    {
+      "name": "audit-835",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-835.bin",
+      "witness_sha256": "b1d55f3a732799e6289f958254c12d123ab19ded262a26e8cfe3c8c343df926f",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "2972df1aec9db809943951d31aa71e8748c403ebac6a46149bca93d06bf02b70"
+    },
+    {
+      "name": "audit-863",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-863.bin",
+      "witness_sha256": "f3f1e2ac9b2c9433c7147afed8d0e932c4c8925d0ef402668a9d86378ac14e6f",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "6101ad0c7d44892324877427647d6e3fcb4a4d988130b1f522ebc41c3919069d"
+    },
+    {
+      "name": "audit-918",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-918.bin",
+      "witness_sha256": "2538cd4f90ef73a9ef059ff6bbbd695ab8af7a848211dd4e07d1c151606e28d8",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "d7ae89114a81a0a4a128132ae79f0da6ec6c329143b71bf2d2b76f0bf98385fd"
+    },
+    {
+      "name": "audit-946",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-946.bin",
+      "witness_sha256": "dd2a730557cf4dff2e447aa9a4a444323bd9c197897ed8effd5de011ddc2b6ee",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "a7d627419b2351905050837b8c35b6e971108c409d3918ebf7528bcc9b88d760"
+    },
+    {
+      "name": "audit-998",
+      "witness_file": "results/full_range_audit/accepted_witnesses/nonce-998.bin",
+      "witness_sha256": "6d2f93e9dad89a674799c2923ebab99ea02d146443a0eb559095ec20354b0aa8",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "49b90bf5bf10b6448c9daad59b352267f82c237f844da9fb447f7c2553e37bbd"
+    },
+    {
+      "name": "dense_bank_cache1",
+      "witness_file": "results/dense_bank_cache1/witnesses/nonce-561.bin",
+      "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "6ba45805ad9b210be2b1203872ee09dac724d6cac21fd98f498641e351f341b5"
+    },
+    {
+      "name": "global_affine_bank_cache1",
+      "witness_file": "results/global_affine_bank_cache1/witnesses/nonce-561.bin",
+      "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "b682c14b748f6b27fe91ee896dcdb7f1e5f0ebf5cccb49aaddc135f4edeac731"
+    },
+    {
+      "name": "dense_online_direct",
+      "witness_file": "results/dense_online_direct/witnesses/nonce-561.bin",
+      "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "bc611247ab297fabd63d8a70a0f924fd428054c2c44a37a28f7498c7785b7cee"
+    },
+    {
+      "name": "dense_online_cache1",
+      "witness_file": "results/dense_online_cache1/witnesses/nonce-561.bin",
+      "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "4a2ea4be89887b1755c350f9d8492cb29172bf9fd94e9470b2f308cb3be1c415"
+    },
+    {
+      "name": "global_affine_online",
+      "witness_file": "results/global_affine_online/witnesses/nonce-561.bin",
+      "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+      "exit_code": 0,
+      "status": "ACCEPT_SELECTED_EVENT_ONLY",
+      "error": null,
+      "counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "stdout_sha256": "c599ccb9b9d8790d8492dd6d38684ea8b5a0fd57b7de390a0f0a37f4d3846473"
+    },
+    {
+      "name": "wrong_selected_coordinate",
+      "witness_file": "results/native_acceptance/wrong_selected_coordinate.bin",
+      "witness_sha256": "3f5a764a0a7671bb874478a5c9e0abc1ce160147e2005785e187754556e7d652",
+      "exit_code": 0,
+      "status": "REJECT",
+      "error": "SELECTED_COORD",
+      "counts": {
+        "scalar_additions": 0,
+        "scalar_multiplications": 0,
+        "sha256_calls": 4,
+        "sha256_compression_blocks": 12,
+        "sha256_input_bytes": 624
+      },
+      "stdout_sha256": "1cbc9d7f2ba57e65e71582df7b3b2363b252d995595fea573e60c0d135c59ac8"
+    },
+    {
+      "name": "wrong_original_input",
+      "witness_file": "results/native_acceptance/wrong_original_input.bin",
+      "witness_sha256": "019a72623fc9f86d374a36a963a32f7bfb830e29e053b1711c7999cf34c3c0cc",
+      "exit_code": 0,
+      "status": "REJECT",
+      "error": "MERKLE",
+      "counts": {
+        "scalar_additions": 0,
+        "scalar_multiplications": 0,
+        "sha256_calls": 11,
+        "sha256_compression_blocks": 36,
+        "sha256_input_bytes": 2023
+      },
+      "stdout_sha256": "5214bdc0bddc6af20ec9b07b9a4c6a01a40bbca1b0aeb09c0e667d483bac8ea5"
+    }
+  ],
+  "qualification": "COMPLETE_SELECTED_LOCAL_NATIVE_RELATION_ONLY_NOT_W1_NOT_STARK_NOT_NODE"
+}

@@ -1,0 +1,4 @@
+Parent checkout preflight PASS before worktree creation, durable job 1a1b980238b-12894-14b6.
+Detached checkout preflight FAILED: not an allowed development branch, durable job 1a1b981bf1e-12894-14c2.
+Own branch fix/chain-selected-bank-r4-f16ac5 preflight PASS, durable job 1a1b98220ee-12894-14c6.
+No edits or builds before successful own-branch preflight.
