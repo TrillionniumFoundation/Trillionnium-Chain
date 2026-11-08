@@ -141,6 +141,22 @@ why the three task-observation regressions remain a separate qualification
 input. The outbox selector tests one durable peer-transport owner, not external
 kernel.operations execution.
 
+The existing four-test
+[native settlement integration target](../../../../trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs)
+supplies an additional direct compatibility check:
+
+```bash
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test accepted_task_observation
+```
+
+Its `exact_acceptance_survives_restart_and_cli_readback_without_mutation` case
+uses the original reserve/provider-receipt/owner-accept transactions. For both
+Legacy and AuthenticatedV1, it compares complete live, cold API and CLI JSON,
+including all eight fields of a nonempty `accepted_task`, and checks source
+file bytes and identity without opening the source in SQLite. The output
+digest remains an explicit fixture binding. This is real native settlement
+readback, not evidence of an actual delivered model or external FinalUse.
+
 The remaining product completion requires actual fresh facts from the original
 artifact/evaluation/operations/runtime owners, a frozen paired-version contract,
 and the next ordinary task's actual loaded-model/generation readback. No local

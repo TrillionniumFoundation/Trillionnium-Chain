@@ -134,11 +134,20 @@ Source assertions compare file contents, names, inode/device identity,
 permissions, link count, ownership, mtime, and ctime without opening SQLite.
 Access time is excluded because reading a source file can update it.
 
+The existing `tests/accepted_task_observation.rs` integration fixture also
+performs a real native reserve, provider receipt and owner acceptance. For
+both selected backends, its exact-acceptance test compares the complete live
+Owner observation with the cold API and actual CLI output, including every
+field of a nonempty `accepted_task`, and checks the same source file identity
+and byte invariants. Its output digest is an explicit test binding, not an
+observation of delivered model quality or external Runtime FinalUse.
+
 Run from the repository root after the project preflight:
 
 ```bash
 bash scripts/project-preflight.sh
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_packet_observer
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test accepted_task_observation
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node packet_status
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib native_growth_v2_packet_observer
 cargo fmt --manifest-path trillionnium/Cargo.toml -p trnm-pon-node -- --check

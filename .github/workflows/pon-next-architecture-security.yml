@@ -180,6 +180,7 @@ jobs:
           bash "$OUT/run-command.sh" hepta-classical-receiver cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test protocol_v1 hepta_ -- --test-threads=1 || status=1
           bash "$OUT/run-command.sh" hepta-pq-receiver cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test hepta_handoff_pq -- --test-threads=1 || status=1
           bash "$OUT/run-command.sh" native-accepted-task cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::task_observation::tests:: -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" native-settlement-cold-readback cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test accepted_task_observation -- --test-threads=1 || status=1
           exit "$status"
       - name: Preserve existing growth packet and cold-observer controls
         id: growth_observers
@@ -206,6 +207,7 @@ jobs:
           root = Path(sys.argv[1])
           names = ["native-packet-observer", "native-node-packet-status",
                    "hepta-classical-receiver", "hepta-pq-receiver", "native-accepted-task",
+                   "native-settlement-cold-readback",
                    "native_growth_v2_exact_packet_observation",
                    "native_growth_v2_packet_observer", "native_growth_v2_cold_observer"]
           for name in names:
