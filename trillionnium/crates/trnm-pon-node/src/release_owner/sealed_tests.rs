@@ -206,7 +206,7 @@ fn elf(kind: u32, tag: u64) -> Vec<u8> {
     bytes[32..40].copy_from_slice(&64u64.to_le_bytes());
     bytes[52..54].copy_from_slice(&64u16.to_le_bytes());
     bytes[54..56].copy_from_slice(&56u16.to_le_bytes());
-    bytes[56..58].copy_from_slice(&2u16.to_le_bytes());
+    bytes[56..58].copy_from_slice(&3u16.to_le_bytes());
     bytes[64..68].copy_from_slice(&1u32.to_le_bytes());
     bytes[68..72].copy_from_slice(&5u32.to_le_bytes());
     bytes[80..88].copy_from_slice(&0x400000u64.to_le_bytes());
@@ -215,6 +215,8 @@ fn elf(kind: u32, tag: u64) -> Vec<u8> {
     bytes[120..124].copy_from_slice(&kind.to_le_bytes());
     bytes[128..136].copy_from_slice(&256u64.to_le_bytes());
     bytes[152..160].copy_from_slice(&32u64.to_le_bytes());
+    bytes[176..180].copy_from_slice(&0x6474e551u32.to_le_bytes());
+    bytes[180..184].copy_from_slice(&6u32.to_le_bytes());
     bytes[256..264].copy_from_slice(&tag.to_le_bytes());
     bytes
 }
@@ -374,4 +376,35 @@ fn sealed_ctime_only_change_refuses_all_held_uses() {
     // Every other captured identity field is equal. Dropping the ctime check
     // would incorrectly accept this object even though its bytes remain sealed.
     assert_changed_identity_is_refused(&sealed);
+}
+
+#[test]
+fn native_elf_requires_one_non_executable_stack_and_file_backed_code() {
+    let mut missing = elf(0, 0);
+    missing[56..58].copy_from_slice(&2u16.to_le_bytes());
+    assert!(!check_elf(&missing));
+    let mut executable = elf(0, 0);
+    executable[180..184].copy_from_slice(&7u32.to_le_bytes());
+    assert!(!check_elf(&executable));
+    assert!(!check_elf(&elf(0x6474e551, 0)));
+    let mut zero_filled_code = elf(0, 0);
+    zero_filled_code[104..112].copy_from_slice(&1024u64.to_le_bytes());
+    assert!(!check_elf(&zero_filled_code));
+    // The data segment may retain ordinary non-executable BSS.
+    let mut data = elf(1, 0);
+    data[124..128].copy_from_slice(&6u32.to_le_bytes());
+    data[160..168].copy_from_slice(&128u64.to_le_bytes());
+    assert!(check_elf(&data));
+}
+
+#[test]
+fn native_elf_refuses_both_encodings_of_text_relocation() {
+    assert!(!check_elf(&elf(2, 22)));
+    let mut text_relocation = elf(2, 30);
+    text_relocation[264..272].copy_from_slice(&4u64.to_le_bytes());
+    assert!(!check_elf(&text_relocation));
+    // DF_BIND_NOW alone does not request mutation of executable text.
+    let mut bind_now = elf(2, 30);
+    bind_now[264..272].copy_from_slice(&8u64.to_le_bytes());
+    assert!(check_elf(&bind_now));
 }

@@ -1,0 +1,27 @@
+{
+  "native_and_initial_clippy_overrides": {
+    "RUSTC": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "LD_LIBRARY_PATH": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "CARGO_HOME": "/workspace/scratch/d95a703b8dd6/toolchain/cargo",
+    "CARGO_TARGET_DIR": "/workspace/scratch/10366560c781/loader-target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "corrected_clippy_child_overlay": {
+    "RUSTUP_HOME": "/workspace/scratch/d95a703b8dd6/toolchain/rustup",
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu"
+  },
+  "versions": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n"
+  },
+  "program_sha256": {
+    "rustc": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "cargo": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+    "cargo-clippy": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb",
+    "clippy-driver": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729"
+  },
+  "original_optimization_and_resource_limits_unchanged": true,
+  "tracked_source_unchanged_by_environment_correction": true
+}

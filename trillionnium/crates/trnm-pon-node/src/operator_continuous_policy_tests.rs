@@ -2,6 +2,94 @@ use super::*;
 use crate::operator_continuous_test_support::{
     allocation, binding, identity, signed, signed_allocation,
 };
+
+#[test]
+fn loaded_material_is_not_redirected_by_a_shared_file_cursor() {
+    // A duplicated File shares the open-file description and its cursor. The
+    // callback models another legitimate holder seeking between read chunks;
+    // no bytes, pathname, length or filesystem metadata change.
+    use std::cell::{Cell, RefCell};
+    use std::io::{Seek, SeekFrom};
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("model");
+    let raw = [vec![0x41; 65536], vec![0x42; 65536]].concat();
+    fs::write(&path, &raw).unwrap();
+    let file = File::open(&path).unwrap();
+    let duplicate = RefCell::new(file.try_clone().unwrap());
+    let catalog = HeldCatalog {
+        rows: vec![(
+            path,
+            file,
+            same_meta_continuous(&duplicate.borrow().metadata().unwrap()),
+            sha(&raw),
+        )],
+        roles: vec!["model".into()],
+        catalog_sha256: "11".repeat(32),
+        domain: b"TRNM-RESTRICTED-NODE-CATALOG1",
+    };
+    let calls = Cell::new(0);
+    let loaded = catalog
+        .read_role("model", raw.len() as u64, &|| {
+            let offset = if calls.get() < 2 { 0 } else { raw.len() as u64 };
+            duplicate.borrow_mut().seek(SeekFrom::Start(offset))?;
+            calls.set(calls.get() + 1);
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(
+        sha(&loaded),
+        sha(&raw),
+        "actual loaded bytes differ from authenticated bytes"
+    );
+}
+
+#[test]
+fn loaded_material_refuses_wrong_digest_limit_cancellation_and_path_replacement() {
+    // Component-level guards. No metadata is forged to simulate a production
+    // attack: the wrong digest directly exercises the final read boundary.
+    for case in ["digest", "limit", "cancel", "replacement"] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("model");
+        let raw = b"bound native bytes";
+        fs::write(&path, raw).unwrap();
+        let file = File::open(&path).unwrap();
+        let identity = same_meta_continuous(&file.metadata().unwrap());
+        let expected = if case == "digest" {
+            sha(b"different bytes")
+        } else {
+            sha(raw)
+        };
+        let catalog = HeldCatalog {
+            rows: vec![(path.clone(), file, identity, expected)],
+            roles: vec!["model".into()],
+            catalog_sha256: "11".repeat(32),
+            domain: b"TRNM-RESTRICTED-NODE-CATALOG1",
+        };
+        let limit = if case == "limit" {
+            raw.len() - 1
+        } else {
+            raw.len()
+        };
+        let result = catalog.read_role("model", limit as u64, &|| {
+            if case == "cancel" {
+                return Err("budget stopped".into());
+            }
+            if case == "replacement" {
+                let replacement = directory.path().join("replacement");
+                fs::write(&replacement, raw)?;
+                fs::rename(replacement, &path)?;
+            }
+            Ok(())
+        });
+        let expected = match case {
+            "limit" => PolicyError::Capacity,
+            "cancel" => PolicyError::CpuUnknown,
+            _ => PolicyError::NativeBinding,
+        };
+        assert_eq!(result.unwrap_err(), expected, "must refuse {case}");
+    }
+}
+
 pub(crate) fn inputs() -> Inputs {
     let body = allocation("parent-reconcile");
     let (raw, authority) = signed_allocation(&body);

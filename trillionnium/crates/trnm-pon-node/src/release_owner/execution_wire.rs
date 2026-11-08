@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-pub(super) const PROFILE: &str = "trnm-operator-m15-sealed-native-elf-v1";
+pub(super) const LEGACY_PROFILE: &str = "trnm-operator-m15-sealed-native-elf-v1";
+pub(super) const PROFILE: &str = "trnm-operator-m15-sealed-native-elf-v2";
 pub(super) const MAX_PROGRAM_BYTES: u64 = 512 * 1024 * 1024;
 pub(super) const MAX_LAUNCH_RECORDS: usize = 4096;
 
@@ -89,13 +90,14 @@ pub(super) struct Contract {
 
 impl Contract {
     pub fn validate(&self) -> Result<()> {
-        let exact_environment = BTreeMap::from([
-            ("LANG".into(), "C".into()),
-            ("LC_ALL".into(), "C".into()),
-            ("TZ".into(), "UTC".into()),
-        ]);
+        // Preserve old signed records byte-for-byte for historical replay.
+        // Only require_closed_execution may turn a profile into current use.
+        let exact_environment = match self.profile.as_str() {
+            LEGACY_PROFILE => super::execution_environment::legacy_environment(),
+            PROFILE => super::execution_environment::restricted_environment(),
+            _ => return Err(invalid("M15 static execution profile unsupported")),
+        };
         if self.schema_version != 1
-            || self.profile != PROFILE
             || self.namespace == [0; 32]
             || self.protected_trust_sha256 == [0; 32]
             || self.node_bundle == [0; 32]
@@ -117,6 +119,16 @@ impl Contract {
                 .any(|v| v.len() > 4096 || v.as_bytes().contains(&0))
         {
             return Err(invalid("M15 complete sealed execution contract rejected"));
+        }
+        Ok(())
+    }
+
+    pub fn require_closed_execution(&self) -> Result<()> {
+        self.validate()?;
+        if self.profile != PROFILE {
+            return Err(invalid(
+                "M15 V2 closed execution requires a new current signed configuration",
+            ));
         }
         Ok(())
     }
