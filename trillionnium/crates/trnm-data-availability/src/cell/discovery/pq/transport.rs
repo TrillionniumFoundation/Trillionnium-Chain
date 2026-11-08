@@ -162,6 +162,11 @@ pub(super) fn discover(
     // and cannot manufacture a candidate when no bootstrap supplies one.
     directory.records(options.request, wall_now()?.as_secs(), transport.overall)?;
     for _round in 0..2 {
+        // Apply source fairness before the permanent per-manifest quota, not
+        // only when selecting already-admitted endpoints. Retain at most one
+        // bounded round of four MAX_REPLY_BYTES frames; original connection,
+        // byte, signature and deadline allowances remain unchanged.
+        let mut replies = Vec::with_capacity(MAX_DISCOVERY_BOOTSTRAPS);
         for (source, bootstrap) in options.bootstraps.iter().enumerate() {
             // Do not stop at eight temporary endpoints: a later bootstrap in
             // this same bounded round may carry their newer signed high water.
@@ -190,7 +195,14 @@ pub(super) fn discover(
             let received_at = Instant::now();
             let wall = wall_now()?;
             directory.records(options.request, wall.as_secs(), transport.overall)?;
-            for raw in wire[1..].chunks_exact(CELL_PROVIDER_RECORD_BYTES_V2) {
+            replies.push((source, *bootstrap, wire, received_at, wall));
+        }
+        for slot in 0..MAX_DISCOVERED_PROVIDERS {
+            for (source, bootstrap, wire, received_at, received_wall) in &replies {
+                let start = 1 + slot * CELL_PROVIDER_RECORD_BYTES_V2;
+                let Some(raw) = wire.get(start..start + CELL_PROVIDER_RECORD_BYTES_V2) else {
+                    continue;
+                };
                 check_deadline(transport.overall)?;
                 require(
                     observation.record_validation_attempts < MAX_DISCOVERY_RECORDS,
@@ -199,18 +211,20 @@ pub(super) fn discover(
                 observation.record_validation_attempts += 1;
                 let checked = (|| -> CellResultV1<_> {
                     let record = CellProviderRecordV2::decode(raw)?;
+                    // A later slow reply cannot erase a signed conflict that
+                    // was eligible when its original bytes were received.
                     let valid_until = record.verify_at(
                         options.request,
-                        wall.as_secs(),
+                        received_wall.as_secs(),
                         &options.addresses,
                         directory.keys(),
                     )?;
                     let remaining = Duration::from_secs(valid_until)
-                        .checked_sub(wall)
+                        .checked_sub(*received_wall)
                         .ok_or(CellErrorV1::Invalid("discovery expiry"))?;
-                    Ok((record, received_at + remaining))
+                    Ok((record, *received_at + remaining, valid_until))
                 })();
-                let (record, mut expiry) = match checked {
+                let (record, mut expiry, valid_until) = match checked {
                     Ok(value) => value,
                     Err(_) => {
                         observation.rejected_records += 1;
@@ -233,6 +247,18 @@ pub(super) fn discover(
                         "discovery verified-statement budget",
                     )?;
                     verified_statements.insert(identity, digest);
+                }
+                // Historical signature evidence is not current availability.
+                // Enforce both the original record/key expiry and the current
+                // wall clock before writing the durable directory; no second
+                // signature verification or new reservation is performed.
+                let wall = wall_now()?;
+                if record.live_at(wall.as_secs()).is_err()
+                    || wall.as_secs() >= valid_until
+                    || Instant::now() >= expiry
+                {
+                    observation.rejected_records += 1;
+                    continue;
                 }
                 match directory.accept_verified(
                     &record,
@@ -267,7 +293,7 @@ pub(super) fn discover(
                     continue;
                 }
                 check_deadline(expiry)?;
-                let mut sources = 1_u8 << source;
+                let mut sources = 1_u8 << *source;
                 if let Some(prior) = observed.get(&owner) {
                     if record.statement.sequence < prior.record.statement.sequence {
                         observation.rejected_records += 1;
