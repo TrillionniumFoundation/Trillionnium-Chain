@@ -183,6 +183,45 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
     #[test]
+    fn saved_full_v2_receipt_verifies_with_independent_artifacts() {
+        let root =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../evidence/pon-w1-full-v2-20261105");
+        let input = std::fs::read(root.join("input.bin")).unwrap();
+        let header = std::fs::read(root.join("header.bin")).unwrap();
+        let expected_bytes = std::fs::read(root.join("expected-artifacts.bin")).unwrap();
+        let receipt_bytes = std::fs::read(root.join("succinct.bin")).unwrap();
+        assert_eq!(input.len(), v2::INPUT_BYTES);
+        assert_eq!(header.len(), HEADER_BYTES);
+        assert_eq!(&input[..HEADER_BYTES], header.as_slice());
+        assert_eq!(
+            sha(&input),
+            "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+        );
+        assert_eq!(
+            sha(&expected_bytes),
+            "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+        );
+        assert_eq!(
+            sha(&receipt_bytes),
+            "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+        );
+        // Expectations come from the saved input and separate A/B file, never
+        // from the receipt. Replay checks the complete native relation too.
+        let expected = artifacts(&expected_bytes).unwrap();
+        let journal = v2::check_complete_relation(&input).unwrap();
+        assert_eq!(
+            expected_bytes.as_slice(),
+            &journal[v2::MODEL_OFFSET..v2::PRODUCT_OFFSET]
+        );
+        let receipt = wire::decode(&receipt_bytes).unwrap();
+        assert_eq!(receipt.journal.bytes, journal);
+        let identity = verify(&header, &expected, &receipt).unwrap();
+        assert_eq!(
+            hex::encode(identity),
+            "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+        );
+    }
+    #[test]
     fn expected_artifacts_are_exact_and_never_derived_from_receipt() {
         for n in [0, 32, 63, 65] {
             assert!(artifacts(&vec![0; n]).is_err());

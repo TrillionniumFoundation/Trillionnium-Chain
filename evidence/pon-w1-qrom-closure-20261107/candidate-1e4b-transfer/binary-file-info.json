@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gid": 1000,
+    "link_count": 1,
+    "metadata_platform": "linux",
+    "mode": 384,
+    "uid": 1000,
+    "xattr_names": [],
+    "xattr_sha256": {}
+  },
+  "mode": 384,
+  "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_native_fixes_1e4bffc371bc.bundle",
+  "sha256": "65835d8b22e2a506ace76a4adcae377499580ed72a0ad91ee7362f836a2a5084",
+  "size": 2348492,
+  "version": "2050:51045320:2348492:1794062628520350711:1794062628520350711"
+}

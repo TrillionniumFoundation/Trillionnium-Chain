@@ -1,0 +1,2954 @@
+{
+  "additional_dependency_helper_attempts": [
+    {
+      "command": [
+        "python3",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/check_dependencies.py",
+        "before"
+      ],
+      "elapsed_seconds": 0.23628484504297376,
+      "exit_code": 1,
+      "expectation_met": false,
+      "expected_exit": 0,
+      "name": "dependencies-before",
+      "record_file": "dependencies-before-stage.json",
+      "script_sha256": "6935ab52b36e6dfc8c052c0eb77c8d979b43042c00d6ef0e79ff93ff259dffd3",
+      "stderr_sha256": "09e5322126a6a56ce50bddd3d51c2b78345829b6895591cfc2dab998debaf67f",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/check_dependencies_v2.py",
+        "before"
+      ],
+      "elapsed_seconds": 14.762788675026968,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "dependencies-before-v2",
+      "record_file": "dependencies-before-v2-stage.json",
+      "script_sha256": "301c39565411bb6eb87e5200420c2f18ab76740e9e6675983ecef9678b6463b3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "519fb80e75334bcd0db12c4bdc965d4feefc5dcc9d846e7ec157369fe6086bb4"
+    }
+  ],
+  "all_recorded_command_expectations_met": false,
+  "compiled_feature_subscope": {
+    "all_recursive_semantics_closed": false,
+    "evidence": "compiled-feature-subscope.json",
+    "judgment": "Resolved risc0-zkvm features std + disable-dev-mode, default features disabled, the pinned release binary, native context excluding segment/Groth16/dev paths, fixed Poseidon2 succinct profile, and four explicit proof-environment refusals close this concrete build/profile observation. CLI --native is a separately labelled complete relation replay, not a proof fallback or consensus admission path.",
+    "other_builds_or_production_supply_chain_qualified": false,
+    "release_debug_symbols_are_not_dev_verification": true,
+    "scope": "Frozen 7150 v2 release build and its accepted outer succinct verification profile only.",
+    "status": "FIXED_V2_RELEASE_SUBSCOPE_COMPLETE"
+  },
+  "consensus_admission": false,
+  "dependency_identity": {
+    "all_supported_source_checks_pass": true,
+    "all_unarchived_files_are_cache_markers": true,
+    "before_after": {
+      "after_sha256": "44d17800b74ac8e19fa0334ebe59afce300d714b31a49b2b5d1fc78028558a58",
+      "before_sha256": "09bbdebe35184f3fee882734a03b3fa005bfa53f6884d20556bdfc0f1605bc5b",
+      "graphs_unchanged": true,
+      "packages_and_source_files_unchanged": true
+    },
+    "package_count": 310,
+    "post_run_unarchived_files": 281,
+    "registry_source_files": 16395
+  },
+  "evidence_directory": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150",
+  "executable_and_probe_identity_after": {
+    "all_match_recorded_execution_identities": true,
+    "files": [
+      {
+        "actual_sha256": "47840d410ef31fc15ea2475621c391d7091161bc8ddd030d3b4f4217bdd8c1b7",
+        "expected_sha256": "47840d410ef31fc15ea2475621c391d7091161bc8ddd030d3b4f4217bdd8c1b7",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2"
+      },
+      {
+        "actual_sha256": "4340d15477414abf383f1b8b213098c822f528db799aa1164bf9281d39cf8f8f",
+        "expected_sha256": "4340d15477414abf383f1b8b213098c822f528db799aa1164bf9281d39cf8f8f",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/official-image"
+      },
+      {
+        "actual_sha256": "1131ae9f23883b09bd86a65640e5c9042ca7ee3c5fd55765fafd20a492d930f1",
+        "expected_sha256": "1131ae9f23883b09bd86a65640e5c9042ca7ee3c5fd55765fafd20a492d930f1",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/official_image.rs"
+      },
+      {
+        "actual_sha256": "a5d3decbcec03c0486d3ed7b95814097280008ddc1f5f7677577c89319261754",
+        "expected_sha256": "a5d3decbcec03c0486d3ed7b95814097280008ddc1f5f7677577c89319261754",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release-context"
+      },
+      {
+        "actual_sha256": "6314f56394611d51711a4a159392624f475293e594624161ea016f65a61abaf4",
+        "expected_sha256": "6314f56394611d51711a4a159392624f475293e594624161ea016f65a61abaf4",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release_context.rs"
+      },
+      {
+        "actual_sha256": "63d0b6785899969cdb3c390aaf06ccbe5c65ab2d66318d743c4cc7438d3bed04",
+        "expected_sha256": "63d0b6785899969cdb3c390aaf06ccbe5c65ab2d66318d743c4cc7438d3bed04",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps/librisc0_zkvm-0dc5ed5752d24911.rlib"
+      },
+      {
+        "actual_sha256": "f94a96c267a417a883240468ab5cf4f5859b8d89b3b1ac98f04f9d04f65dc009",
+        "expected_sha256": "f94a96c267a417a883240468ab5cf4f5859b8d89b3b1ac98f04f9d04f65dc009",
+        "matches": true,
+        "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps/libtrnm_w1_hardened_verifier-3bccb92cabaa8810.rlib"
+      }
+    ],
+    "head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1"
+  },
+  "failed_command_expectations": [
+    "full-source-before",
+    "chain-workspace-tests",
+    "full-source-after",
+    "dependencies-before"
+  ],
+  "generated_utc": "2026-11-07T14:00:02.539209+00:00",
+  "host_alias": "desktop",
+  "initial_dependency_helper_failure": {
+    "preserved": true,
+    "reason": "The first helper assumed .cargo-checksum.json existed; the cache did not contain that file. The revised helper verified lock checksums against cached crate bytes and each archived file against extracted source.",
+    "record": "dependencies-before-stage.json"
+  },
+  "native_job_id": "1a1b61ee33d-12894-27e",
+  "official_image_id": {
+    "expected_fixed_words": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+    "matches": true,
+    "official_words": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "probe_binary_sha256": "4340d15477414abf383f1b8b213098c822f528db799aa1164bf9281d39cf8f8f",
+    "probe_source_sha256": "1131ae9f23883b09bd86a65640e5c9042ca7ee3c5fd55765fafd20a492d930f1",
+    "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+    "upstream_function": "risc0_zkvm::compute_image_id",
+    "upstream_rlib_sha256": "63d0b6785899969cdb3c390aaf06ccbe5c65ab2d66318d743c4cc7438d3bed04",
+    "whole_qrom_proof": false
+  },
+  "official_image_source_binding": {
+    "official_result_matches_source": true,
+    "official_result_sha256": "509cb37e1288257736cfecd0befc32da9880a955d8fb707aa92cbe1f6d1592cf",
+    "source_path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+    "source_sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+    "source_words": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ]
+  },
+  "passing_command_expectations": [
+    "preflight",
+    "toolchain",
+    "resources",
+    "preflight-audit",
+    "cargo-fmt",
+    "cargo-metadata-chain",
+    "cargo-metadata-v2",
+    "cargo-features-v2",
+    "v2-native-tests",
+    "v2-release-build",
+    "v2-fixed-receipt",
+    "v2-complete-native",
+    "v2-mutated-receipt",
+    "v2-mutated-artifacts",
+    "v2-native-mutated-artifacts",
+    "official-image-build",
+    "official-image",
+    "chain-strict-clippy",
+    "env-reject-risc0_dev_mode",
+    "env-reject-risc0_prover",
+    "env-reject-bonsai_api_url",
+    "env-reject-bonsai_api_key",
+    "release-context-build",
+    "release-context",
+    "dependencies-before-v2",
+    "dependencies-after-v2",
+    "rustc-version",
+    "cargo-version"
+  ],
+  "post_quantum_soundness_qualified": false,
+  "production_release_qualified": false,
+  "recorded_commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "preflight",
+      "record_file": "initial.json",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c7c16fa4063ae662f66ad87360110011edd94c2df0a2066a261de290db051c78"
+    },
+    {
+      "command": [
+        "cargo",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "toolchain",
+      "record_file": "initial.json",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "command": [
+        "free",
+        "-m"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "resources",
+      "record_file": "initial.json",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5bdc8180bc3faa7859af55a820db14f08f2ebfbafb94e425f83bcfcc53a524cd"
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.11497485218569636,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "preflight-audit",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:21.836374+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "--output",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/full-source-before-result.json"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.31557903601787984,
+      "exit_code": 1,
+      "expectation_met": false,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "full-source-before",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:21.957036+00:00",
+      "stderr_bytes": 761,
+      "stderr_sha256": "3ae9b7dbb6374adf3d43ab47a93dea3032f90891aed3347f0fcb37f14d1a35b8",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 19.719956799177453,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "cargo-fmt",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:23.723034+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.31619847496040165,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "cargo-metadata-chain",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:43.447894+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 831880,
+      "stdout_sha256": "9fa08bfca9d243b814668c17a656ac74d87f64ccd23266cce9bbdef66cc35f6c",
+      "timed_out": false,
+      "timeout_seconds": 900
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.4161032889969647,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "cargo-metadata-v2",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:43.774873+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 899474,
+      "stdout_sha256": "bd0f25122b2f76ac3144c0cc294ce0f025a2eaecb06b7a31154261386ce5e2d4",
+      "timed_out": false,
+      "timeout_seconds": 900
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "-e",
+        "features"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.26583827706053853,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "cargo-features-v2",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:44.238771+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 61717,
+      "stdout_sha256": "9301cf3bf2aa4ab5682435d530067879ef79d0f97be08a855c80a37c56efdae3",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 68.79513019905426,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "v2-native-tests",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:07:44.510092+00:00",
+      "stderr_bytes": 5489,
+      "stderr_sha256": "fa1bfa50af2247602054b6229ea288a6e0f1d612cad8fad534308b073015ae1f",
+      "stdout_bytes": 340,
+      "stdout_sha256": "2347def0d169a169a077f975ed189e9656d43e876b6ce8f3d0c472840af43b73",
+      "timed_out": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 103.04620323795825,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "v2-release-build",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:08:53.310548+00:00",
+      "stderr_bytes": 5331,
+      "stderr_sha256": "665a0af26d4ca8d8b9aef45cd355d8db688445538488ac3ae1c63faeada83c1b",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.06488352292217314,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "v2-fixed-receipt",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:36.362417+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 921,
+      "stdout_sha256": "5fe9c5c83f89b5572953fe5a1f578c28282fcc08e3c80c4b7db9035a826f484d",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "--native",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/input.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 2.01923593506217,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "v2-complete-native",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:36.431418+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 8816,
+      "stdout_sha256": "6d97437b07defb046720a43d27a09aa0cc94fde3f20e567a3fac153a134f1d9f",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/mutated-receipt.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.008606471121311188,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": "nonzero",
+      "launch_error": null,
+      "name": "v2-mutated-receipt",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:38.455870+00:00",
+      "stderr_bytes": 117,
+      "stderr_sha256": "944726b70ebd35234da966f3b1d0d6b55b4c1d4e42429c7d2e4406c75c514141",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/mutated-artifacts.bin"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.0040610129944980145,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": "nonzero",
+      "launch_error": null,
+      "name": "v2-mutated-artifacts",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:38.469132+00:00",
+      "stderr_bytes": 59,
+      "stderr_sha256": "7e41fd617c044eeba88285dde85ddbf7790373d47cd020128d9a1b155b318a93",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "--native",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/input.bin",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/mutated-artifacts.bin"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.008563813986256719,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": "nonzero",
+      "launch_error": null,
+      "name": "v2-native-mutated-artifacts",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:38.477492+00:00",
+      "stderr_bytes": 23,
+      "stderr_sha256": "7437b7700f38a5292df43be15ac550077ececf88b001b9c706ad44a441776a75",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "rustc",
+        "--edition=2021",
+        "-C",
+        "opt-level=2",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/official_image.rs",
+        "--extern",
+        "risc0_zkvm=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps/librisc0_zkvm-0dc5ed5752d24911.rlib",
+        "-L",
+        "dependency=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps",
+        "-o",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/official-image"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.3155134639237076,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "official-image-build",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:38.583181+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/official-image",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/guest.bin"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.06457726494409144,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "official-image",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:38.903598+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 158,
+      "stdout_sha256": "2dcfeb7c3717e473c9d3e64affb8426c10c991c84a47b4f973554fa92cae9da1",
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--",
+        "--test-threads=2"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 2700.0664454959333,
+      "exit_code": -9,
+      "expectation_met": false,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "chain-workspace-tests",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:10:39.050812+00:00",
+      "stderr_bytes": 55517,
+      "stderr_sha256": "bce799f158d802ae915bf633e41ad2f665b89eab127c3bea2cde4cd41725d2f9",
+      "stdout_bytes": 292446,
+      "stdout_sha256": "2ceabd7fed48450effe04219c991d4601d0ef7b4079cddfc4c50ed25d0c6bbaa",
+      "timed_out": true,
+      "timeout_seconds": 2700
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 197.56449101190083,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "chain-strict-clippy",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:55:39.227879+00:00",
+      "stderr_bytes": 5670,
+      "stderr_sha256": "4f2d01fbc3ba265791b0a96be866f8cbd76b7ea84037be8841f061bea8a537ca",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 2700
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "--output",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/full-source-after-result.json"
+      ],
+      "consensus_admission": false,
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 2.2206672900356352,
+      "exit_code": 1,
+      "expectation_met": false,
+      "expected_exit": 0,
+      "launch_error": null,
+      "name": "full-source-after",
+      "post_quantum_soundness_qualified": false,
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:58:58.835908+00:00",
+      "stderr_bytes": 761,
+      "stderr_sha256": "3ae9b7dbb6374adf3d43ab47a93dea3032f90891aed3347f0fcb37f14d1a35b8",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 600
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.013269635848701,
+      "environment_values_disclosed": false,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": 1,
+      "name": "env-reject-risc0_dev_mode",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "stderr_sha256": "a22ddfdbf8ae7bdc410cf1fcd535d1d519a68ee2eba62a708e0663d52af39c66",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.0022027159575372934,
+      "environment_values_disclosed": false,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": 1,
+      "name": "env-reject-risc0_prover",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "stderr_sha256": "0409e939e4ad34845eb370e5baa00bb4926e35f1c8bcca9257696399bd82f9ac",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.002041386906057596,
+      "environment_values_disclosed": false,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": 1,
+      "name": "env-reject-bonsai_api_url",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "stderr_sha256": "da69ec3b6aa92d3263b4b5d02a74d7da1d41fed0945456a13494442c0cf8dace",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/header.bin",
+        "/home/qian-qi/work/chain-qrom-local-20261107-7150/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.0021338339429348707,
+      "environment_values_disclosed": false,
+      "exit_code": 1,
+      "expectation_met": true,
+      "expected_exit": 1,
+      "name": "env-reject-bonsai_api_key",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "stderr_sha256": "7cf906a5621b93fc7a00e27230736b34d1800c7956ed42588590111a04bcac9b",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "rustc",
+        "--edition=2021",
+        "-C",
+        "opt-level=2",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release_context.rs",
+        "--extern",
+        "trnm_w1_hardened_verifier=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps/libtrnm_w1_hardened_verifier-3bccb92cabaa8810.rlib",
+        "-L",
+        "dependency=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/deps",
+        "-o",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release-context"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 2.218449179083109,
+      "environment_values_disclosed": false,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "release-context-build",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/release-context"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.0021255360916256905,
+      "environment_values_disclosed": false,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "release-context",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "00d23c43997b9d32fc51f165af8bb8402276a8aa0b7a550f2a1aa761f8780ecf"
+    },
+    {
+      "command": [
+        "python3",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/check_dependencies.py",
+        "before"
+      ],
+      "elapsed_seconds": 0.23628484504297376,
+      "exit_code": 1,
+      "expectation_met": false,
+      "expected_exit": 0,
+      "name": "dependencies-before",
+      "record_file": "dependencies-before-stage.json",
+      "script_sha256": "6935ab52b36e6dfc8c052c0eb77c8d979b43042c00d6ef0e79ff93ff259dffd3",
+      "stderr_sha256": "09e5322126a6a56ce50bddd3d51c2b78345829b6895591cfc2dab998debaf67f",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/check_dependencies_v2.py",
+        "before"
+      ],
+      "elapsed_seconds": 14.762788675026968,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "dependencies-before-v2",
+      "record_file": "dependencies-before-v2-stage.json",
+      "script_sha256": "301c39565411bb6eb87e5200420c2f18ab76740e9e6675983ecef9678b6463b3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "519fb80e75334bcd0db12c4bdc965d4feefc5dcc9d846e7ec157369fe6086bb4"
+    },
+    {
+      "command": [
+        "python3",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/check_dependencies_v2.py",
+        "after"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 47.93820206495002,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "dependencies-after-v2",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:59:01.601159+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 530,
+      "stdout_sha256": "6a08e158c1ffff413801e51bac01a50c19ce709e5d352eab1ec670e5895e1878",
+      "timeout_seconds": 900
+    },
+    {
+      "command": [
+        "rustc",
+        "-Vv"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.06526109296828508,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "rustc-version",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:59:49.544104+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 196,
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "timeout_seconds": 900
+    },
+    {
+      "command": [
+        "cargo",
+        "-Vv"
+      ],
+      "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+      "elapsed_seconds": 0.06535033509135246,
+      "exit_code": 0,
+      "expectation_met": true,
+      "expected_exit": 0,
+      "name": "cargo-version",
+      "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "started_utc": "2026-11-07T13:59:49.612518+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 336,
+      "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "timeout_seconds": 900
+    }
+  ],
+  "repository": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+  "schema": "TRNM-W1-NATIVE-7150-OBSERVATIONS1",
+  "scope_boundaries": [
+    "One fixed saved receipt is reverified; no fresh proof generation or independent proof trials are claimed.",
+    "Native replay executes the complete fixed relation; timing repetitions do not create independent proof trials.",
+    "Selected 2462 source/config/fixture byte identities are narrower than full tracked source cleanliness.",
+    "The strict original source verifier fails because the clone retains missing historical evidence; it is not weakened or relabelled as a pass.",
+    "Package archive matching and selected configuration hashes are not a hermetic build or production supply-chain attestation.",
+    "No post-quantum soundness, lifetime-query bound, consensus admission, release authorization, or permitted-recursion completeness follows from these native observations."
+  ],
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "source_identity": {
+    "all_worktree_changes_are_deleted_evidence": true,
+    "full_tracked_identity_passed": false,
+    "original_strict_tool_results_retained": true,
+    "selected": {
+      "full_tracked_identity_claimed": false,
+      "head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "mode_or_hermetic_build_identity_claimed": false,
+      "selected_after_sha256": "80d4008183ffc58bf140e1aa838c8c30ea64a9374c6ec532307f43b9c40effde",
+      "selected_before_after_same": true,
+      "selected_before_sha256": "80d4008183ffc58bf140e1aa838c8c30ea64a9374c6ec532307f43b9c40effde",
+      "selected_bytes_rechecked_at_packaging": true,
+      "selected_count": 2462,
+      "selected_match_HEAD": true
+    },
+    "worktree_record_count": 488
+  },
+  "tests": {
+    "chain-workspace-tests": {
+      "aggregate": {
+        "failed": 0,
+        "filtered_out": 3602,
+        "ignored": 8,
+        "measured": 0,
+        "passed": 1863
+      },
+      "blocks": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 11,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 11,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 15,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 15,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 160,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 353,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 7,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 33,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 262,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 41,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 153,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 46,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 17,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 12,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 8,
+          "measured": 0,
+          "passed": 141,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 16,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 17,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 118,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 88,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 8,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1200,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1200,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1200,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "result": "ok"
+        }
+      ],
+      "command_exit_code": -9,
+      "named_failed_tests": [
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+        "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+        "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement"
+      ],
+      "named_ignored_tests": [
+        {
+          "name": "continuity_v1::capacity_range_tests::capacity_range_full_return_abba_observation",
+          "reason": "paired complete-capacity observation; not original Host or confirmation acceptance"
+        },
+        {
+          "name": "pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost",
+          "reason": "explicit whole-test process RSS comparison; no Node or throughput qualification"
+        },
+        {
+          "name": "pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing",
+          "reason": "explicit encoder allocation A/B; excludes SQLite, roots, execution and networking"
+        },
+        {
+          "name": "pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation",
+          "reason": "explicit same-operation binding cost; not Node or network throughput"
+        },
+        {
+          "name": "pon_commitment::tests::immutable_parent_preview_component_timing",
+          "reason": "explicit component timing; excludes SQLite, M05 and Node lock wait"
+        },
+        {
+          "name": "pon_commitment::tests::warm_parent_binding_component_timing",
+          "reason": "explicit binding A/B timing; excludes execution, SQLite and Node locks"
+        },
+        {
+          "name": "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost",
+          "reason": "explicit paired component cost, including adversarial same-root hints; no throughput qualification"
+        },
+        {
+          "name": "pon_executor::streaming_root_tests::complete_root_encoding_cost",
+          "reason": "explicit paired complete-root cost; synthetic values, not native ledger growth"
+        },
+        {
+          "name": "account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile",
+          "reason": "explicit release-only 65,537 permanent-account growth relation; not native admission"
+        },
+        {
+          "name": "account_archive_prototype::account_prefix_tests::prefix_range_component_cost_abba",
+          "reason": "explicit paired parser wall observation; no Node/service performance gate"
+        },
+        {
+          "name": "account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation",
+          "reason": "explicit release branch hashing observation; not Node or WAN throughput"
+        },
+        {
+          "name": "account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+          "reason": "explicit release account-verification comparison; no full Node cost claim"
+        },
+        {
+          "name": "account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost",
+          "reason": "explicit same-binary codegen observation; not Node or network throughput"
+        },
+        {
+          "name": "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation",
+          "reason": "explicit paired complete-account-root cost; excludes current SQL/Host/business confirmation"
+        },
+        {
+          "name": "account_archive_prototype::native_store::apply_reader_tests::native_apply_reader_paired_complete_apply_cost_observation",
+          "reason": "fixed 12-pair complete-apply observation; not the original fixed-Host gate"
+        },
+        {
+          "name": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+          "reason": "explicit release full-capacity gate in both head and prospective-merge CI"
+        },
+        {
+          "name": "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+          "reason": "explicit paired SQL reader observation; not the public service acceptance gate"
+        },
+        {
+          "name": "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+          "reason": "explicit constant-table observation; not full-node performance"
+        },
+        {
+          "name": "account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation",
+          "reason": "explicit bounded-cache complete-graph diagnostic; not a business SLO"
+        },
+        {
+          "name": "ancestry_index::cost_tests::retained_4105_actual_history_index_cost",
+          "reason": "read-only retained #674 artifact: set TRNM_RETAINED_HISTORY_DIRECTORY; not original Host/cold-sync acceptance"
+        },
+        {
+          "name": "ingress::history_import::tests::history_kill_cut_child",
+          "reason": "subprocess fixture: parent selects a real SIGKILL cut"
+        },
+        {
+          "name": "ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost",
+          "reason": "paired PQ authentication cost; requires a fresh output directory"
+        },
+        {
+          "name": "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+          "reason": "actual original ten-second deadline and signed-socket honest-service gate; run explicitly"
+        },
+        {
+          "name": "operator_pq_startup::tests::m15_native_fixture::export_existing_npq6_inputs_for_isolated_m15_native_suite",
+          "reason": "helper requires explicit isolated M15 native-suite IPC; never a standalone qualification"
+        },
+        {
+          "name": "operator_task_policy::file_tests::held_file_substitution_child",
+          "reason": "run only by the bounded subprocess regression"
+        },
+        {
+          "name": "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation",
+          "reason": "requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace"
+        }
+      ],
+      "reported_test_result_blocks": 225,
+      "scope": "Only test result lines actually emitted by this command; not an independent expected-test roster.",
+      "stdout_sha256": "2ceabd7fed48450effe04219c991d4601d0ef7b4079cddfc4c50ed25d0c6bbaa",
+      "timed_out": true
+    },
+    "v2-native-tests": {
+      "aggregate": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 3
+      },
+      "blocks": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "result": "ok"
+        }
+      ],
+      "command_exit_code": 0,
+      "named_failed_tests": [],
+      "named_ignored_tests": [],
+      "reported_test_result_blocks": 1,
+      "scope": "Only test result lines actually emitted by this command; not an independent expected-test roster.",
+      "stdout_sha256": "2347def0d169a169a077f975ed189e9656d43e876b6ce8f3d0c472840af43b73",
+      "timed_out": false
+    }
+  },
+  "unconditional_project_security_bits": null,
+  "v2_features": {
+    "default_prover_client_features_absent": true,
+    "direct_dependency_declarations": {
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml": {
+        "default-features": false,
+        "features": [
+          "std",
+          "disable-dev-mode"
+        ],
+        "version": "=3.0.6"
+      },
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml": {
+        "default-features": false,
+        "features": [
+          "std",
+          "disable-dev-mode"
+        ],
+        "version": "=3.0.6"
+      }
+    },
+    "disable_dev_mode_active": true,
+    "environment_values_disclosed": false,
+    "features": [
+      "disable-dev-mode",
+      "std"
+    ],
+    "package_id": "registry+https://github.com/rust-lang/crates.io-index#risc0-zkvm@3.0.6",
+    "post_quantum_soundness_qualified": false,
+    "proof_environment_variable_names_present": []
+  },
+  "verifier_binary": {
+    "bytes": 20377328,
+    "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/release/w1-verify-v2",
+    "sha256": "47840d410ef31fc15ea2475621c391d7091161bc8ddd030d3b4f4217bdd8c1b7",
+    "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1"
+  }
+}

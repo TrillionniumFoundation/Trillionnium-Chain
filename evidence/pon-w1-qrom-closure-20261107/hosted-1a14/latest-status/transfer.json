@@ -1,0 +1,13 @@
+{
+  "bytes": 11399,
+  "chunk_sha256": "1b72d475d36c0c0f6fdb416213a915d3c9de08cd0d684b50491ab5d094604192",
+  "eof": true,
+  "kind": "latest-status",
+  "next_offset": 11399,
+  "offset": 0,
+  "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-latest-status-v1.tar.gz",
+  "sha256": "1b72d475d36c0c0f6fdb416213a915d3c9de08cd0d684b50491ab5d094604192",
+  "size": 11399,
+  "stage": "archive-created",
+  "version": "2050:51045309:11399:1794061321697914997:1794061321697914997"
+}

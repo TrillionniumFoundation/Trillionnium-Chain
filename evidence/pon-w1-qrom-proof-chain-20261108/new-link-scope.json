@@ -1,0 +1,54 @@
+{
+  "added_links_result": "PASS",
+  "added_local_links": [
+    {
+      "exists": true,
+      "target": "../security/W1_QROM_PROOF_CHAIN_20261108.md",
+      "within_repository": true
+    },
+    {
+      "exists": true,
+      "target": "../security/W1_QROM_MANUSCRIPT_REVIEW_20261108.md",
+      "within_repository": true
+    },
+    {
+      "exists": true,
+      "target": "../security/W1_FRI_QUERY_REPLAY_20261108.md",
+      "within_repository": true
+    },
+    {
+      "exists": true,
+      "target": "../security/W1_P3_QUERY_EXPRESSION_20261108.md",
+      "within_repository": true
+    },
+    {
+      "exists": true,
+      "target": "../../evidence/pon-w1-qrom-proof-chain-20261108/README.md",
+      "within_repository": true
+    }
+  ],
+  "final_packaged_documents_root_check": {
+    "all_targets_exist": true,
+    "documents": {
+      "docs/security/W1_FRI_QUERY_REPLAY_20261108.md": "489d590155acfc4493d6b85da1bb2f77952c202c5d4f555ec4f491ed81ec575c",
+      "docs/security/W1_P3_QUERY_EXPRESSION_20261108.md": "1560f468bb49946130e962fbb6b5b5d7875220d7822b112d645a72a305b2887f",
+      "docs/security/W1_QROM_MANUSCRIPT_REVIEW_20261108.md": "d51a63c3fa7a6060e00bf771c5191f580eafe1a491978c8da886d53e0de928f0",
+      "docs/security/W1_QROM_PROOF_CHAIN_20261108.md": "1f6e9fb71e318104a1fa458b92ba0b4e2671c9c89845a6a5603050e0e7634b0b",
+      "evidence/pon-w1-qrom-proof-chain-20261108/README.md": "d854d562c56e466fee45b40ddd19b7c813f58a343c417b7a49c42bb1a79531ae"
+    },
+    "full_repository_result_not_inferred": true,
+    "local_links_checked": 50,
+    "result": "PASS"
+  },
+  "full_repository_result_not_inferred": true,
+  "root_observation": {
+    "local_links_checked": 45,
+    "not_repeated_here": true,
+    "observer": "parent root agent",
+    "result": "PASS",
+    "scope": "4 new security documents plus new evidence README"
+  },
+  "schema": "TRNM-W1-NEW-LINK-SCOPE1",
+  "sole_plan_path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "sole_plan_sha256": "3cf4a491cef8e39d9491394fdf823e32476fa7ba896e6b434a4550564254f2e9"
+}

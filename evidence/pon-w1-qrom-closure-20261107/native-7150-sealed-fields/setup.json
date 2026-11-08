@@ -1,0 +1,13 @@
+{
+  "generated_utc": "2026-11-07T14:20:22.568237+00:00",
+  "kernel": "Linux 7.0.0-38-generic x86_64 GNU/Linux",
+  "preflight_exit": 0,
+  "rustix_rlibs": [
+    {
+      "features": "[\"alloc\", \"default\", \"event\", \"fs\", \"net\", \"process\", \"rand\", \"std\", \"time\"]",
+      "fingerprint": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/.fingerprint/rustix-2ddee526af794e19/lib-rustix.json",
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/librustix-2ddee526af794e19.rlib",
+      "sha256": "3958806e0a684fc0d03a27a744e237b5f86baf4525abda4e261fda8bdd3723ff"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "rustc",
+    "--edition=2021",
+    "-D",
+    "warnings",
+    "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/field_probe.rs",
+    "--extern",
+    "rustix=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/librustix-2ddee526af794e19.rlib",
+    "-L",
+    "dependency=/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps",
+    "-o",
+    "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150-sealed-fields/field-probe"
+  ],
+  "elapsed_seconds": 0.31572215794585645,
+  "exit_code": 0,
+  "started_utc": "2026-11-07T14:21:49.492722+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,183 @@
+{
+  "baseline": {
+    "archive_and_local_replacement": {
+      "accepted_original_locked_source": false,
+      "altered_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "archive_matches_lock": true,
+      "archive_path_sha256_after": "79b54ce165246e141b67b5a81062f7251e09db2daaf8a89e5abd5de1ef88311b",
+      "locked_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "mutation": "archive_and_local",
+      "mutation_performed": true,
+      "original_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "reported_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "reported_source_bytes": 42,
+      "reported_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "source_path_sha256_after": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "status": "ACCEPTED"
+    },
+    "archive_only_replacement": {
+      "altered_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "archive_path_sha256_after": "79b54ce165246e141b67b5a81062f7251e09db2daaf8a89e5abd5de1ef88311b",
+      "error": "risc0-core-3.0.2/src/field/baby_bear.rs: local source differs from locked archive",
+      "locked_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "mutation": "archive_only",
+      "mutation_performed": true,
+      "original_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "source_path_sha256_after": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "status": "REFUSED"
+    },
+    "history_snapshot": {
+      "digest_matches_parsed_snapshot": false,
+      "mutation_performed": true,
+      "original_sha256": "60cb36742552645cf37153574ff1e3b12341caf9c14dfa5452a527a73c84bcf9",
+      "parsed_snapshot": "original",
+      "replacement_sha256": "49ebc05eb8a6ee1152cc6d80b8b4a80d1608182ee14371b173eb6b9a9f5afcc8",
+      "reported_sha256": "49ebc05eb8a6ee1152cc6d80b8b4a80d1608182ee14371b173eb6b9a9f5afcc8"
+    },
+    "local_size": {
+      "archive_matches_lock": true,
+      "digest_is_original_snapshot": true,
+      "mutation_performed": true,
+      "original_source_bytes": 23,
+      "reported_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "reported_source_bytes": 42,
+      "reported_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "size_is_original_snapshot": false,
+      "source_path_bytes_after": 42,
+      "status": "ACCEPTED"
+    },
+    "lock_snapshot": {
+      "digest_matches_parsed_snapshot": false,
+      "mutation_performed": true,
+      "original_sha256": "ff161e1989fd6c194f1095bbe1e0e2931c7c1529a9c5e1c2a027ff1dc0da0032",
+      "parsed_checksums": [
+        "1111111111111111111111111111111111111111111111111111111111111111"
+      ],
+      "replacement_sha256": "06b31a44f02aae42eeb8b9cc16a824cfe792cccc83245addc56499b36cb4384c",
+      "reported_sha256": "06b31a44f02aae42eeb8b9cc16a824cfe792cccc83245addc56499b36cb4384c"
+    },
+    "manifest_snapshot": {
+      "digest_matches_parsed_snapshot": false,
+      "mutation_performed": true,
+      "original_sha256": "a5f086b089c3324fb437ebf4d8476caf2cf7e91390f09afa66f1b21103e2d582",
+      "parsed_snapshot": "original",
+      "replacement_sha256": "7221936fabdd930590449dd6430e62a1c81ec40623765df0792002d5673caeaf",
+      "reported_sha256": "7221936fabdd930590449dd6430e62a1c81ec40623765df0792002d5673caeaf"
+    },
+    "source_reread": {
+      "error": "risc0-zkp-3.0.5/src/lib.rs: source changed during inspection",
+      "packages_checked_before_mutation": 7,
+      "refused_at_source_digest_recheck": true,
+      "status": "REFUSED"
+    },
+    "unchanged": {
+      "accepted_original_locked_source": true,
+      "altered_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "archive_matches_lock": true,
+      "archive_path_sha256_after": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "locked_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "mutation": "none",
+      "mutation_performed": false,
+      "original_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "reported_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "reported_source_bytes": 23,
+      "reported_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "source_path_sha256_after": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "status": "ACCEPTED"
+    }
+  },
+  "baseline_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "baseline_script_sha256": "624685e3b9915b7b560fc065b8e949179f22625c1c5687dab420d9baad0c0bed",
+  "candidate": {
+    "archive_and_local_replacement": {
+      "altered_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "archive_path_sha256_after": "79b54ce165246e141b67b5a81062f7251e09db2daaf8a89e5abd5de1ef88311b",
+      "error": "risc0-core-3.0.2/src/field/baby_bear.rs: local source differs from locked archive",
+      "locked_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "mutation": "archive_and_local",
+      "mutation_performed": true,
+      "original_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "source_path_sha256_after": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "status": "REFUSED"
+    },
+    "archive_only_replacement": {
+      "accepted_original_locked_source": true,
+      "altered_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "archive_matches_lock": true,
+      "archive_path_sha256_after": "79b54ce165246e141b67b5a81062f7251e09db2daaf8a89e5abd5de1ef88311b",
+      "locked_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "mutation": "archive_only",
+      "mutation_performed": true,
+      "original_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "reported_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "reported_source_bytes": 23,
+      "reported_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "source_path_sha256_after": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "status": "ACCEPTED"
+    },
+    "history_snapshot": {
+      "digest_matches_parsed_snapshot": true,
+      "mutation_performed": true,
+      "original_sha256": "60cb36742552645cf37153574ff1e3b12341caf9c14dfa5452a527a73c84bcf9",
+      "parsed_snapshot": "original",
+      "replacement_sha256": "49ebc05eb8a6ee1152cc6d80b8b4a80d1608182ee14371b173eb6b9a9f5afcc8",
+      "reported_sha256": "60cb36742552645cf37153574ff1e3b12341caf9c14dfa5452a527a73c84bcf9"
+    },
+    "local_size": {
+      "archive_matches_lock": true,
+      "digest_is_original_snapshot": true,
+      "mutation_performed": true,
+      "original_source_bytes": 23,
+      "reported_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "reported_source_bytes": 23,
+      "reported_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "size_is_original_snapshot": true,
+      "source_path_bytes_after": 42,
+      "status": "ACCEPTED"
+    },
+    "lock_snapshot": {
+      "digest_matches_parsed_snapshot": true,
+      "mutation_performed": true,
+      "original_sha256": "ff161e1989fd6c194f1095bbe1e0e2931c7c1529a9c5e1c2a027ff1dc0da0032",
+      "parsed_checksums": [
+        "1111111111111111111111111111111111111111111111111111111111111111"
+      ],
+      "replacement_sha256": "06b31a44f02aae42eeb8b9cc16a824cfe792cccc83245addc56499b36cb4384c",
+      "reported_sha256": "ff161e1989fd6c194f1095bbe1e0e2931c7c1529a9c5e1c2a027ff1dc0da0032"
+    },
+    "manifest_snapshot": {
+      "digest_matches_parsed_snapshot": true,
+      "mutation_performed": true,
+      "original_sha256": "a5f086b089c3324fb437ebf4d8476caf2cf7e91390f09afa66f1b21103e2d582",
+      "parsed_snapshot": "original",
+      "replacement_sha256": "7221936fabdd930590449dd6430e62a1c81ec40623765df0792002d5673caeaf",
+      "reported_sha256": "a5f086b089c3324fb437ebf4d8476caf2cf7e91390f09afa66f1b21103e2d582"
+    },
+    "source_reread": {
+      "error": "risc0-zkp-3.0.5/src/lib.rs: source changed during inspection",
+      "packages_checked_before_mutation": 7,
+      "refused_at_source_digest_recheck": true,
+      "status": "REFUSED"
+    },
+    "unchanged": {
+      "accepted_original_locked_source": true,
+      "altered_source_sha256": "617540807ec80206c8e3612c2a8007f0c0790246bce5d97b334ab0000fe40397",
+      "archive_matches_lock": true,
+      "archive_path_sha256_after": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "locked_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "mutation": "none",
+      "mutation_performed": false,
+      "original_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "reported_archive_sha256": "2e2afa6364f395192d6e0a22ef1f080c01223062aafd324a530da6a32d59adeb",
+      "reported_source_bytes": 23,
+      "reported_source_sha256": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "source_path_sha256_after": "abbead003312094578e7084906819d9a0bfa0a7fdc963ebd8d99b24579b0eecb",
+      "status": "ACCEPTED"
+    }
+  },
+  "candidate_script_sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0",
+  "generated_at_utc": "2026-11-06T23:45:09.429482+00:00",
+  "purpose": "Independent source-evidence consistency controls; not a consensus, proof-soundness, or PQ qualification test.",
+  "scope": "Synthetic immutable-lock fixtures with deterministic path replacements. No source files, cached crates, or historical evidence are modified.",
+  "status": "PASS"
+}

@@ -750,8 +750,11 @@ on:
       - scripts/ci/**
       - scripts/project-preflight.sh
       - evidence/pon-w1-complete-succinct-20261028/**
+      - evidence/pon-w1-full-v2-20261105/**
       - evidence/pon-w1-verifier-hardening-20261028/**
       - evidence/pon-w1-transparent-profile-20261104/**
+      - evidence/pon-w1-stark-review-20261106/**
+      - evidence/pon-w1-source-snapshot-20261106/**
       - evidence/pon-w1-statement-v2-20261105/**
       - evidence/pon-w1-qrom-budget-20261105/**
       - config/**
@@ -811,7 +814,7 @@ W1_POSTWIN_CRITICAL_STEPS = {
           printf 'W1_PROFILE_OUT=%s\n' "$w1_profile_out" >> "$GITHUB_ENV"
           printf 'CARGO_HOME=%s/cargo-w1-transparent-profile-%s-%s-%s\n' "$RUNNER_TEMP" "$SOURCE_KIND" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
           printf 'CARGO_TARGET_DIR=%s/target-w1-transparent-profile-%s-%s-%s\n' "$RUNNER_TEMP" "$SOURCE_KIND" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
-          printf 'Continuous candidate checks and one saved-proof observation only. No new proof, end-to-end benefit, quantum soundness, production or consensus-admission qualification is established.\n' > "$w1_profile_out/SCOPE.txt"
+          printf 'Continuous candidate checks and saved-proof observations only. No new proof, end-to-end benefit, quantum soundness, production or consensus-admission qualification is established.\n' > "$w1_profile_out/SCOPE.txt"
           args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
           if test "$SOURCE_KIND" = prospective-merge; then
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
@@ -828,6 +831,88 @@ W1_POSTWIN_CRITICAL_STEPS = {
           rustc +1.95.0 -Vv > "$W1_PROFILE_OUT/rustc-version.txt"
           cargo +1.95.0 -Vv > "$W1_PROFILE_OUT/cargo-version.txt"
           python3 --version > "$W1_PROFILE_OUT/python-version.txt"
+''',
+    "mapper_tests": r'''      - name: Execute all 15 offline source-map controls
+        if: always() && steps.source.outcome == 'success'
+        id: mapper_tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/ci -p test_w1_profile_source_map.py -v 2>&1 | tee "$W1_PROFILE_OUT/mapper-tests.log"
+          python3 - "$W1_PROFILE_OUT/mapper-tests.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          expected = {
+              'test_archive_and_selected_members_match_locked_checksum',
+              'test_archive_replacement_does_not_change_the_inspected_snapshot',
+              'test_archive_replacement_with_matching_changed_sources_is_refused',
+              'test_duplicate_and_missing_locked_packages_are_refused',
+              'test_duplicate_archive_member_is_refused',
+              'test_existing_output_is_never_overwritten',
+              'test_json_snapshot_keeps_the_digest_of_the_parsed_bytes',
+              'test_json_snapshot_preserves_duplicate_key_refusal',
+              'test_lock_snapshot_keeps_the_digest_of_the_parsed_bytes',
+              'test_locked_archive_checksum_drift_is_refused',
+              'test_modified_extracted_source_is_refused',
+              'test_oversized_selected_archive_member_is_refused',
+              'test_provenance_is_parsed_from_the_hashed_source_snapshot',
+              'test_source_size_and_digest_describe_the_same_read',
+              'test_stark_value_or_declaration_drift_is_refused',
+          }
+          rows = re.findall(r'^(test_\S+) \(([^)]+)\) \.\.\. (.*)$', text, re.M)
+          required = sorted((name, f'test_w1_profile_source_map.SourceMapTests.{name}', 'ok')
+                            for name in expected)
+          if (sorted(rows) != required
+                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['15']
+                  or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
+              raise SystemExit('all 15 named source-map controls must execute exactly once without skips')
+          PY
+''',
+    "v2_gate_tests": r'''      - name: Execute all 23 saved-v2 report consistency controls
+        if: always() && steps.source.outcome == 'success'
+        id: v2_gate_tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/ci -p test_w1_v2_controls_gate.py -v 2>&1 | tee "$W1_PROFILE_OUT/v2-gate-tests.log"
+          python3 - "$W1_PROFILE_OUT/v2-gate-tests.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          expected = {
+              'test_budget_and_qualification_cannot_be_widened',
+              'test_case_command_must_use_pinned_verifier',
+              'test_case_command_must_use_planned_inputs',
+              'test_case_result_must_match_summary',
+              'test_incomplete_session_observation_is_rejected',
+              'test_integer_exit_codes_cannot_be_booleans',
+              'test_mutation_identity_must_match_planned_bytes',
+              'test_negative_process_acceptance_is_rejected',
+              'test_nested_timeout_is_rejected',
+              'test_original_control_order_and_count_are_required',
+              'test_output_hashes_must_match_saved_logs',
+              'test_positive_process_rejection_is_rejected',
+              'test_positive_stdout_must_match_summary',
+              'test_process_pid_must_belong_to_observed_groups',
+              'test_process_scan_errors_are_rejected',
+              'test_real_saved_controls_pass',
+              'test_rejection_layer_must_match_saved_stderr',
+              'test_required_rejection_text_must_be_present',
+              'test_retained_process_must_match_summary',
+              'test_saved_inputs_must_match_planned_bytes',
+              'test_truncated_output_scans_are_rejected',
+              'test_unsettled_owned_groups_are_rejected',
+              'test_verifier_hash_must_match_pinned_identity',
+          }
+          rows = re.findall(r'^(test_\S+) \(([^)]+)\) \.\.\. (.*)$', text, re.M)
+          required = sorted((name, f'test_w1_v2_controls_gate.V2ControlsGateTests.{name}', 'ok')
+                            for name in expected)
+          if (sorted(rows) != required
+                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['23']
+                  or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
+              raise SystemExit('all 23 named v2 report controls must execute exactly once without skips')
+          PY
 ''',
     "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls
         if: always() && steps.source.outcome == 'success'
@@ -866,13 +951,25 @@ W1_POSTWIN_CRITICAL_STEPS = {
               raise SystemExit('independent v2 verifier must not acquire a guest build dependency')
           PY
           cargo +1.95.0 fmt --manifest-path "$w1_manifest" --all -- --check 2>&1 | tee "$W1_PROFILE_OUT/v2-format.log"
-          cargo +1.95.0 test --locked --release --manifest-path "$w1_manifest" -- --test-threads=1 2>&1 | tee "$W1_PROFILE_OUT/v2-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path "$w1_manifest" -- --format=pretty --test-threads=1 2>&1 | tee "$W1_PROFILE_OUT/v2-tests.log"
           python3 - "$W1_PROFILE_OUT/v2-tests.log" <<'PY'
           from pathlib import Path
           import re, sys
-          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', Path(sys.argv[1]).read_text(), re.M)
-          if sum(int(passed) for passed, _ in rows) < 2 or any(int(ignored) for _, ignored in rows):
-              raise SystemExit('v2 expected-artifact and historical-proof rejection controls did not execute')
+          text = Path(sys.argv[1]).read_text()
+          expected = {
+              'tests::expected_artifacts_are_exact_and_never_derived_from_receipt',
+              'tests::historical_full_receipt_cannot_satisfy_v2_statement',
+              'tests::saved_full_v2_receipt_verifies_with_independent_artifacts',
+          }
+          rows = re.findall(r'^test ([A-Za-z0-9_:]+) \.\.\. (\S+)$', text, re.M)
+          summaries = re.findall(r'^test result: (.*)$', text, re.M)
+          if (len(rows) != 3 or {name for name, _ in rows} != expected
+                  or any(outcome != 'ok' for _, outcome in rows)
+                  or re.findall(r'^running ([0-9]+) tests$', text, re.M) != ['3']
+                  or len(summaries) != 1 or not re.fullmatch(
+                      r'ok\. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in [0-9]+(?:\.[0-9]+)?s',
+                      summaries[0])):
+              raise SystemExit('all three named v2 controls, including the actual saved proof, must execute without filtering')
           PY
           cargo +1.95.0 clippy --locked --release --manifest-path "$w1_manifest" --all-targets -- -D warnings 2>&1 | tee "$W1_PROFILE_OUT/v2-clippy.log"
           cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest" 2>&1 | tee "$W1_PROFILE_OUT/v2-build.log"
@@ -923,6 +1020,23 @@ W1_POSTWIN_CRITICAL_STEPS = {
                   or report.get("receipt_sha256") != "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"):
               raise SystemExit("all eleven actual receiver controls must execute with the declared saved receipt and zero proof generation")
           PY
+
+''',
+    "receipt_controls_v2": r'''      - name: Retain all 58 actual saved-v2 receipt controls
+        if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'
+        id: receipt_controls_v2
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_proof_dir="$GITHUB_WORKSPACE/evidence/pon-w1-full-v2-20261105"
+          w1_verifier="$W1_PROFILE_OUT/bin/w1-verify-v2"
+          RAYON_NUM_THREADS=8 python3 scripts/w1_v2_receipt_controls.py \
+            --verifier "$w1_verifier" --receipt "$w1_proof_dir/succinct.bin" \
+            --header "$w1_proof_dir/header.bin" --expected-artifacts "$w1_proof_dir/expected-artifacts.bin" \
+            --out "$W1_PROFILE_OUT/v2-controls" 2>&1 | tee "$W1_PROFILE_OUT/v2-receipt-controls.log"
+          python3 scripts/ci/w1_v2_controls_gate.py "$W1_PROFILE_OUT/v2-controls" "$w1_proof_dir" "$w1_verifier" \
+            2>&1 | tee "$W1_PROFILE_OUT/v2-controls-validation.log"
 ''',
     "source_after": r'''      - name: Verify measured source after execution
         if: always() && steps.source.outcome == 'success'
@@ -937,6 +1051,36 @@ W1_POSTWIN_CRITICAL_STEPS = {
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_PROFILE_OUT/source-after.json" 2>&1 | tee "$W1_PROFILE_OUT/source-after.log"
 ''',
 }
+W1_POSTWIN_REQUIRED_OUTCOMES_STEP = r'''      - name: Record completed, failed and skipped observations
+        if: always()
+        shell: bash
+        env:
+          W1_PROFILE_STEP_RESULTS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          w1_profile_out="$RUNNER_TEMP/pon-w1-transparent-profile-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$w1_profile_out"
+          python3 - "$w1_profile_out/ci-status.json" <<'PY'
+          import json, os, sys
+          report = {'schema': 'TRNM-W1-TRANSPARENT-CI-OBSERVATION1',
+              'source_kind': os.environ['SOURCE_KIND'], 'expected_source': os.environ['EXPECTED_SOURCE'],
+              'steps': json.loads(os.environ['W1_PROFILE_STEP_RESULTS']),
+              'scope': 'Continuous candidate checks; failed and partial observations are retained.',
+              'end_to_end_benefit_established': False, 'quantum_soundness_qualified': False,
+              'production_qualified': False, 'consensus_admission': False}
+          with open(sys.argv[1], 'x', encoding='utf-8') as stream:
+              json.dump(report, stream, indent=2, sort_keys=True)
+              stream.write('\n')
+          required = ('checkout', 'source', 'toolchain', 'source_controls', 'observer_tests',
+                      'mapper_tests', 'v2_gate_tests', 'staged_tests', 'budget_tests', 'native', 'hardened',
+                      'verifier_v2', 'real_receiver_controls', 'receipt_controls_v2', 'component_budget', 'source_map',
+                      'profile', 'receipt_controls', 'comparison', 'source_after')
+          incomplete = [name for name in required if report['steps'].get(name, {}).get('outcome') != 'success']
+          if incomplete:
+              raise SystemExit('required W1 observations failed or were skipped: ' + ', '.join(incomplete))
+          PY
+'''
+W1_POSTWIN_REQUIRED_STEP_IDS = ('checkout', 'source', 'toolchain', 'source_controls', 'observer_tests', 'mapper_tests', 'v2_gate_tests', 'staged_tests', 'budget_tests', 'native', 'hardened', 'verifier_v2', 'real_receiver_controls', 'receipt_controls_v2', 'component_budget', 'source_map', 'profile', 'receipt_controls', 'comparison', 'source_after')
 W1_POSTWIN_REQUIRED_TEST_FILES = (
     "scripts/ci/test_w1_cancellation_handoff.py",
     "scripts/ci/test_w1_coordinator_contract.py",
@@ -976,12 +1120,19 @@ def check_w1_postwin_workflow(text: str) -> None:
     for name, expected in W1_POSTWIN_CRITICAL_STEPS.items():
         require(steps.get(name) == expected,
                 'W1 post-win ' + name + ' retains its exact executable source/build/control block')
-    sequence = ('checkout', 'source', 'toolchain', 'staged_tests',
-                'verifier_v2', 'real_receiver_controls', 'source_after')
-    require([ordered.index(name) for name in sequence] == sorted(ordered.index(name) for name in sequence),
-            'W1 post-win receiver controls follow the current independent verifier build and precede source readback')
+    require(tuple(ordered) == W1_POSTWIN_REQUIRED_STEP_IDS,
+            'W1 post-win retains every original stage and both receiver suites in their reviewed order')
+    outcomes = [block for block in blocks if block.startswith(
+        '      - name: Record completed, failed and skipped observations\n')]
+    require(outcomes == [W1_POSTWIN_REQUIRED_OUTCOMES_STEP]
+            and text.index(W1_POSTWIN_REQUIRED_OUTCOMES_STEP) > text.index(steps['source_after']),
+            'W1 post-win final readback requires all stages, both receiver suites and retained failures')
     for command in ('python3 scripts/ci/test_w1_receiver_real.py',
-                    'python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v'):
+                    'python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v',
+                    'python3 -m unittest discover -s scripts/ci -p test_w1_profile_source_map.py -v',
+                    'python3 -m unittest discover -s scripts/ci -p test_w1_v2_controls_gate.py -v',
+                    'python3 scripts/w1_v2_receipt_controls.py',
+                    'python3 scripts/ci/w1_v2_controls_gate.py'):
         require(text.count(command) == 1,
                 'W1 post-win saved-receipt and retained staged controls execute once')
     for name in W1_POSTWIN_REQUIRED_TEST_FILES:

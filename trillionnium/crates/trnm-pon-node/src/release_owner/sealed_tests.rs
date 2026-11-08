@@ -1,10 +1,45 @@
-use super::sealed::{DataBuilder, Sealed};
+use super::sealed::{identity, DataBuilder, Sealed};
+use rustix::fs::{fcntl_get_seals, SealFlags};
+use rustix::io::{fcntl_getfd, FdFlags};
 use sha2::{Digest, Sha256};
 use std::fs::{self, FileTimes, OpenOptions};
 use std::io::Write;
 use std::os::fd::AsRawFd;
-use std::os::unix::fs::{FileExt, OpenOptionsExt, PermissionsExt};
+use std::os::unix::fs::{FileExt, MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::time::{Duration, Instant, UNIX_EPOCH};
+
+fn assert_payload_and_seals(sealed: &Sealed, expected: &[u8]) {
+    let mut bytes = vec![0; expected.len()];
+    sealed.file().read_exact_at(&mut bytes, 0).unwrap();
+    assert_eq!(bytes, expected);
+    assert_eq!(
+        sealed.file().metadata().unwrap().len(),
+        expected.len() as u64
+    );
+    assert_eq!(
+        sealed
+            .file()
+            .read_at(&mut [0; 1], expected.len() as u64)
+            .unwrap(),
+        0
+    );
+    assert!(fcntl_get_seals(sealed.file()).unwrap().contains(
+        SealFlags::WRITE | SealFlags::SHRINK | SealFlags::GROW | SealFlags::SEAL | SealFlags::EXEC
+    ));
+}
+
+fn assert_changed_identity_is_refused(sealed: &Sealed) {
+    assert!(sealed.recheck().is_err());
+    assert!(sealed.read(64).is_err());
+    let mut output = tempfile::tempfile().unwrap();
+    assert!(sealed.copy_to(&mut output).is_err());
+    assert_eq!(output.metadata().unwrap().len(), 0);
+    assert!(sealed.require_descriptor(sealed.raw_fd() as u32).is_err());
+    assert!(sealed.pass_to_exec().is_err());
+    assert!(fcntl_getfd(sealed.file())
+        .unwrap()
+        .contains(FdFlags::CLOEXEC));
+}
 
 #[test]
 fn sealed_copy_survives_in_place_source_rewrite_and_path_replacement() {
@@ -210,4 +245,133 @@ fn native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_ma
     let mut writable = elf(0, 0);
     writable[68..72].copy_from_slice(&7u32.to_le_bytes());
     assert!(!check_elf(&writable));
+}
+
+#[test]
+fn sealed_kernel_rejects_payload_extent_and_exec_mutations() {
+    let bytes = b"original authenticated bytes";
+    for executable in [false, true] {
+        let mut source = tempfile::tempfile().unwrap();
+        source.write_all(bytes).unwrap();
+        let sealed = Sealed::from_file(
+            &source,
+            Sha256::digest(bytes).into(),
+            bytes.len() as u64,
+            executable,
+        )
+        .unwrap();
+        let before = identity(sealed.file()).unwrap();
+        sealed.recheck().unwrap();
+        assert_eq!(before.mode & 0o7777, if executable { 0o500 } else { 0o400 });
+
+        assert!(sealed.file().write_at(b"bad", 0).is_err());
+        assert!(sealed.file().set_len(1).is_err());
+        assert!(sealed.file().set_len(100).is_err());
+        assert!(sealed
+            .file()
+            .set_permissions(fs::Permissions::from_mode(if executable {
+                0o400
+            } else {
+                0o700
+            }))
+            .is_err());
+
+        // A denied write may still advance mtime/ctime. Kernel immutability of
+        // bytes, extent and execution mode does not promise unchanged metadata.
+        let after = identity(sealed.file()).unwrap();
+        assert_eq!(
+            (after.device, after.inode, after.size, after.uid, after.mode),
+            (
+                before.device,
+                before.inode,
+                before.size,
+                before.uid,
+                before.mode
+            )
+        );
+        assert_payload_and_seals(&sealed, bytes);
+    }
+}
+
+#[test]
+fn sealed_mtime_and_nonexec_mode_changes_refuse_all_held_uses() {
+    let bytes = b"unchanged sealed data";
+    for change_mode in [false, true] {
+        let sealed = DataBuilder::new().unwrap().finish(bytes, 64).unwrap();
+        let before = identity(sealed.file()).unwrap();
+        sealed.recheck().unwrap();
+        if change_mode {
+            // EXEC sealing prevents changing executable bits, but not all mode
+            // changes. The complete identity must also retain the read-only mode.
+            sealed
+                .file()
+                .set_permissions(fs::Permissions::from_mode(0o600))
+                .unwrap();
+            assert_eq!(sealed.file().metadata().unwrap().mode() & 0o7777, 0o600);
+        } else {
+            sealed
+                .file()
+                .set_modified(UNIX_EPOCH + Duration::from_secs(1))
+                .unwrap();
+            let after = identity(sealed.file()).unwrap();
+            assert_eq!((after.mtime, after.mtime_nsec), (1, 0));
+            assert_ne!(
+                (after.mtime, after.mtime_nsec),
+                (before.mtime, before.mtime_nsec)
+            );
+            assert_eq!(after.mode, before.mode);
+        }
+        assert_payload_and_seals(&sealed, bytes);
+        assert_changed_identity_is_refused(&sealed);
+    }
+}
+
+#[test]
+fn sealed_ctime_only_change_refuses_all_held_uses() {
+    let bytes = b"unchanged sealed data";
+    let sealed = DataBuilder::new().unwrap().finish(bytes, 64).unwrap();
+    let before = identity(sealed.file()).unwrap();
+    sealed.recheck().unwrap();
+    let deadline = Instant::now() + Duration::from_secs(2);
+    let after = loop {
+        // A same-mode chmod supplies a real ctime-only change. Wait for the
+        // kernel timestamp tick instead of assuming one call changes its value.
+        sealed
+            .file()
+            .set_permissions(fs::Permissions::from_mode(0o400))
+            .unwrap();
+        let after = identity(sealed.file()).unwrap();
+        if (after.ctime, after.ctime_nsec) != (before.ctime, before.ctime_nsec) {
+            break after;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "kernel ctime change was not observed"
+        );
+        std::thread::sleep(Duration::from_millis(2));
+    };
+    assert_eq!(
+        (
+            after.device,
+            after.inode,
+            after.size,
+            after.uid,
+            after.mode,
+            after.mtime,
+            after.mtime_nsec
+        ),
+        (
+            before.device,
+            before.inode,
+            before.size,
+            before.uid,
+            before.mode,
+            before.mtime,
+            before.mtime_nsec
+        )
+    );
+    assert_payload_and_seals(&sealed, bytes);
+    // Every other captured identity field is equal. Dropping the ctime check
+    // would incorrectly accept this object even though its bytes remain sealed.
+    assert_changed_identity_is_refused(&sealed);
 }

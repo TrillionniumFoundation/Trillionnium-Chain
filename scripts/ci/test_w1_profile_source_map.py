@@ -10,6 +10,7 @@ import sys
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import w1_profile_source_map as mapper
@@ -72,6 +73,17 @@ class SourceMapTests(unittest.TestCase):
         path.write_text('\n'.join(rows))
         return path
 
+    def replacement_archive(self):
+        payloads = dict(self.payloads)
+        payloads['src/field/baby_bear.rs'] = b'// replacement after the archive checksum check\n'
+        output = io.BytesIO()
+        with tarfile.open(fileobj=output, mode='w:gz') as archive:
+            for relative, data in payloads.items():
+                info = tarfile.TarInfo(f'{self.package}/{relative}')
+                info.size = len(data)
+                archive.addfile(info, io.BytesIO(data))
+        return output.getvalue(), payloads
+
     def test_archive_and_selected_members_match_locked_checksum(self):
         record, files = mapper.inspect_package(self.src, self.cache, self.package, self.lock)
         self.assertTrue(record['archive_matches_lock'])
@@ -83,6 +95,78 @@ class SourceMapTests(unittest.TestCase):
         with self.assertRaisesRegex(mapper.SourceMapError, 'archive differs from Cargo.lock'):
             mapper.inspect_package(self.src, self.cache, self.package, changed)
 
+    def test_archive_replacement_with_matching_changed_sources_is_refused(self):
+        replacement, payloads = self.replacement_archive()
+        open_archive = tarfile.open
+
+        def replace_before_parse(*args, **kwargs):
+            # Deterministically replace the path after hashing, at the parser boundary.
+            self.archive.write_bytes(replacement)
+            for relative, data in payloads.items():
+                (self.src / self.package / relative).write_bytes(data)
+            return open_archive(*args, **kwargs)
+
+        with mock.patch.object(mapper.tarfile, 'open', side_effect=replace_before_parse):
+            with self.assertRaisesRegex(mapper.SourceMapError, 'local source differs from locked archive'):
+                mapper.inspect_package(self.src, self.cache, self.package, self.lock)
+        self.assertNotEqual(mapper.sha_file(self.archive), self.lock['checksum'])
+
+    def test_archive_replacement_does_not_change_the_inspected_snapshot(self):
+        replacement, _ = self.replacement_archive()
+        open_archive = tarfile.open
+
+        def replace_before_parse(*args, **kwargs):
+            self.archive.write_bytes(replacement)
+            return open_archive(*args, **kwargs)
+
+        with mock.patch.object(mapper.tarfile, 'open', side_effect=replace_before_parse):
+            record, files = mapper.inspect_package(self.src, self.cache, self.package, self.lock)
+        self.assertTrue(record['archive_matches_lock'])
+        self.assertEqual(record['observed_archive_sha256'], self.lock['checksum'])
+        self.assertNotEqual(mapper.sha_file(self.archive), self.lock['checksum'])
+        relative = 'src/field/baby_bear.rs'
+        self.assertEqual(files[f'{self.package}/{relative}']['sha256'],
+                         mapper.sha_bytes(self.payloads[relative]))
+
+    def test_source_size_and_digest_describe_the_same_read(self):
+        relative = 'src/field/baby_bear.rs'
+        path = self.src / self.package / relative
+        original = self.payloads[relative]
+        replacement = b'// a differently sized source installed after the read\n' * 3
+        read_bytes = mapper.bounded_bytes
+
+        def replace_after_read(selected, limit):
+            value = read_bytes(selected, limit)
+            if selected == path:
+                path.write_bytes(replacement)
+            return value
+
+        with mock.patch.object(mapper, 'bounded_bytes', side_effect=replace_after_read):
+            _, files = mapper.inspect_package(self.src, self.cache, self.package, self.lock)
+        self.assertEqual(path.read_bytes(), replacement)
+        self.assertEqual(files[f'{self.package}/{relative}']['bytes'], len(original))
+        self.assertEqual(files[f'{self.package}/{relative}']['sha256'], mapper.sha_bytes(original))
+
+    def test_provenance_is_parsed_from_the_hashed_source_snapshot(self):
+        relative = '.cargo_vcs_info.json'
+        path = self.src / self.package / relative
+        original = self.payloads[relative]
+        replacement = b'{"git":{"sha1":"1111111111111111111111111111111111111111"}}\n'
+        read_bytes = mapper.bounded_bytes
+
+        def replace_after_read(selected, limit):
+            value = read_bytes(selected, limit)
+            if selected == path:
+                path.write_bytes(replacement)
+            return value
+
+        with mock.patch.object(mapper, 'bounded_bytes', side_effect=replace_after_read):
+            record, files = mapper.inspect_package(self.src, self.cache, self.package, self.lock)
+        self.assertEqual(path.read_bytes(), replacement)
+        self.assertEqual(record['crate_vcs'], json.loads(original))
+        self.assertEqual(files[f'{self.package}/{relative}']['bytes'], len(original))
+        self.assertEqual(files[f'{self.package}/{relative}']['sha256'], mapper.sha_bytes(original))
+
     def test_modified_extracted_source_is_refused(self):
         (self.src / self.package / 'src/field/baby_bear.rs').write_text('// altered after extraction\n')
         with self.assertRaisesRegex(mapper.SourceMapError, 'local source differs'):
@@ -93,6 +177,14 @@ class SourceMapTests(unittest.TestCase):
         with self.assertRaisesRegex(mapper.SourceMapError, 'duplicate or nonregular'):
             mapper.inspect_package(self.src, self.cache, self.package, self.lock)
 
+    def test_oversized_selected_archive_member_is_refused(self):
+        relative = 'src/field/baby_bear.rs'
+        self.payloads[relative] = b'x' * (2 * 1024 * 1024 + 1)
+        (self.src / self.package / relative).write_bytes(self.payloads[relative])
+        self.write_archive()
+        with self.assertRaisesRegex(mapper.SourceMapError, 'archive member exceeds bound'):
+            mapper.inspect_package(self.src, self.cache, self.package, self.lock)
+
     def test_duplicate_and_missing_locked_packages_are_refused(self):
         names = list(mapper.SELECTED)
         self.assertEqual(len(mapper.load_locked_packages(self.write_lock(names))), 7)
@@ -100,6 +192,49 @@ class SourceMapTests(unittest.TestCase):
                                  (names[:-1], 'missing selected')]:
             with self.subTest(message=message), self.assertRaisesRegex(mapper.SourceMapError, message):
                 mapper.load_locked_packages(self.write_lock(changed))
+
+    def test_lock_snapshot_keeps_the_digest_of_the_parsed_bytes(self):
+        path = self.write_lock(list(mapper.SELECTED))
+        original = path.read_bytes()
+        replacement = original.replace(b'1' * 64, b'2' * 64)
+        parse_toml = mapper.tomllib.loads
+
+        def replace_before_parse(data):
+            path.write_bytes(replacement)
+            return parse_toml(data)
+
+        with mock.patch.object(mapper.tomllib, 'loads', side_effect=replace_before_parse):
+            locked, digest = mapper.load_locked_packages_snapshot(path)
+        self.assertTrue(all(item['checksum'] == '1' * 64 for item in locked.values()))
+        self.assertEqual(digest, mapper.sha_bytes(original))
+        self.assertEqual(path.read_bytes(), replacement)
+        self.assertNotEqual(digest, mapper.sha_file(path))
+
+    def test_json_snapshot_keeps_the_digest_of_the_parsed_bytes(self):
+        for name in ['stdout.log', 'manifest.json']:
+            with self.subTest(name=name):
+                path = self.root / name
+                original = b'{"source_commit":"retained","segments":[1,2]}\n'
+                replacement = b'{"source_commit":"substituted","segments":[]}\n'
+                path.write_bytes(original)
+                parse_json = json.loads
+
+                def replace_before_parse(data, **kwargs):
+                    path.write_bytes(replacement)
+                    return parse_json(data, **kwargs)
+
+                with mock.patch.object(mapper.json, 'loads', side_effect=replace_before_parse):
+                    value, digest = mapper.read_json_snapshot(path)
+                self.assertEqual(value, parse_json(original))
+                self.assertEqual(digest, mapper.sha_bytes(original))
+                self.assertEqual(path.read_bytes(), replacement)
+                self.assertNotEqual(digest, mapper.sha_file(path))
+
+    def test_json_snapshot_preserves_duplicate_key_refusal(self):
+        path = self.root / 'manifest.json'
+        path.write_bytes(b'{"source_commit":"original","source_commit":"replacement"}')
+        with self.assertRaisesRegex(mapper.SourceMapError, 'duplicate JSON key'):
+            mapper.read_json_snapshot(path)
 
     def test_stark_value_or_declaration_drift_is_refused(self):
         self.assertEqual(mapper.extract_stark_parameters(STARK_SOURCE)['QUERIES'], 50)

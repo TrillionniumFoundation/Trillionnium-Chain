@@ -1,0 +1,53 @@
+{
+  "schema": "TRNM-W1-ZKR-LOCAL-EXECUTION1",
+  "host": "desktop",
+  "job_id": "1a1b618e73c-12894-25a",
+  "execution_status": {
+    "at_unix_ms": 1794056463558,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b618e73c-12894-25a",
+    "launch_nonce": "5f59bd7be5ef317de02dab063553e2d9",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 442,
+        "stored": 442
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "audit_source": {
+    "path": "scripts/w1_zkr_artifact_audit.py",
+    "sha256": "6931e8241fcc63d6531b110fbf7b0e029a39deb676b5fb60746e4e1d47d5e799"
+  },
+  "report": {
+    "path": "evidence/pon-w1-qrom-semantics-20261107/zkr-programs.json",
+    "sha256": "d8a82a6535f946cbe90f9e8d4e67e87c01d56f420528e99b3b8d357da360971f",
+    "bytes": 35988
+  },
+  "zip_sha256": "744b999f0a35b3c86753311c7efb2a0054be21727095cf105af6ee7d3f4d8849",
+  "scope": "read-only ZIP audit in a dedicated temporary directory; no recursive bytecode execution"
+}

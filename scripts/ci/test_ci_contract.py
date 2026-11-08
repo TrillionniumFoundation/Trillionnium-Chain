@@ -2346,6 +2346,141 @@ class W1PostwinLaneTests(unittest.TestCase):
                     self.workflow_check(self.workflow + inserted)
 
 
+    def test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced(self):
+        for name, count, command in (
+            ('mapper_tests', 15, 'test_w1_profile_source_map.py'),
+            ('v2_gate_tests', 23, 'test_w1_v2_controls_gate.py'),
+        ):
+            block = self.step(name)
+            mutations = (
+                (f"!= ['{count}']", "!= ['0']"),
+                ('sorted(rows) != required', 'False'),
+                ("!= ['OK']", "!= ['OK (skipped=1)']"),
+                ('python3 -m unittest discover', 'true # python3 -m unittest discover'),
+                ("if: always() && steps.source.outcome == 'success'", 'if: false'),
+            )
+            for before, after in mutations:
+                with self.subTest(step=name, before=before):
+                    self.assertIn(before, block)
+                    with self.assertRaises(ValueError):
+                        self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+            for replacement in ('', block + block):
+                with self.subTest(step=name, replacement=replacement[:40]), self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, replacement, 1))
+            self.assertIn(command, block)
+
+    def test_verifier_keeps_all_three_exact_tests_and_independent_build(self):
+        block = self.step('verifier_v2')
+        mutations = (
+            ('tests::expected_artifacts_are_exact_and_never_derived_from_receipt', 'tests::unreviewed_artifacts'),
+            ('tests::historical_full_receipt_cannot_satisfy_v2_statement', 'tests::unreviewed_historical'),
+            ('tests::saved_full_v2_receipt_verifies_with_independent_artifacts', 'tests::unreviewed_saved_proof'),
+            ('len(rows) != 3', 'len(rows) < 2'),
+            ('{name for name, _ in rows} != expected', 'not expected.issubset({name for name, _ in rows})'),
+            ("!= ['3']", "!= ['0']"),
+            ('0 filtered out;', '1 filtered out;'),
+            ('-- --format=pretty --test-threads=1', '-- saved_full_v2_receipt --format=pretty --test-threads=1'),
+            ("packages.intersection({'risc0-build'", "packages.intersection({'unrelated-build'"),
+            ('cargo +1.95.0 metadata --locked', 'true # cargo +1.95.0 metadata --locked'),
+        )
+        for before, after in mutations:
+            with self.subTest(before=before):
+                self.assertIn(before, block)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+
+    def test_saved_58_suite_keeps_all_original_inputs_readback_and_four_minutes(self):
+        block = self.step('receipt_controls_v2')
+        mutations = (
+            ('        timeout-minutes: 4\n', ''),
+            ('        timeout-minutes: 4\n', '        timeout-minutes: 5\n'),
+            ('RAYON_NUM_THREADS=8', 'RAYON_NUM_THREADS=1'),
+            ('--verifier "$w1_verifier"', '--verifier /tmp/old-verifier'),
+            ('--receipt "$w1_proof_dir/succinct.bin"', '--receipt /tmp/other-receipt'),
+            ('--header "$w1_proof_dir/header.bin"', ''),
+            ('--expected-artifacts "$w1_proof_dir/expected-artifacts.bin"', ''),
+            ('--out "$W1_PROFILE_OUT/v2-controls"', '--out /tmp/prior-controls'),
+            ('python3 scripts/ci/w1_v2_controls_gate.py', 'true # python3 scripts/ci/w1_v2_controls_gate.py'),
+            ('python3 scripts/w1_v2_receipt_controls.py', 'true # python3 scripts/w1_v2_receipt_controls.py'),
+            ('          set -euo pipefail\n', '          set +e\n'),
+        )
+        for before, after in mutations:
+            with self.subTest(before=before):
+                self.assertIn(before, block)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+        for replacement in ('', block + block, block.replace('        shell: bash\n', '        if: false\n        shell: bash\n', 1)):
+            with self.subTest(replacement=replacement[:40]), self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(block, replacement, 1))
+
+    def test_both_receiver_suites_and_final_outcome_block_are_mandatory(self):
+        marker = '      - name: Record completed, failed and skipped observations\n'
+        footer = marker + self.workflow.split(marker, 1)[1].split('\n      - ', 1)[0] + '\n'
+        for before, after in (
+            ("'real_receiver_controls', ", ''),
+            ("'receipt_controls_v2', ", ''),
+            (".get('outcome') != 'success'", "False"),
+            ('          if incomplete:\n', '          if False:\n'),
+            ("'production_qualified': False", "'production_qualified': True"),
+            ('        if: always()\n', '        if: success()\n'),
+        ):
+            with self.subTest(before=before):
+                self.assertIn(before, footer)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(footer, footer.replace(before, after, 1), 1))
+        for replacement in ('', footer + footer):
+            with self.subTest(replacement=replacement[:40]), self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(footer, replacement, 1))
+        verifier, real, saved = (self.step(name) for name in ('verifier_v2', 'real_receiver_controls', 'receipt_controls_v2'))
+        for before, after in ((verifier + real, real + verifier), (real + saved, saved + real)):
+            self.assertIn(before, self.workflow)
+            with self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(before, after, 1))
+
+    def test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage(self):
+        marker = '      - name: Record completed, failed and skipped observations\n'
+        footer = self.workflow.split(marker, 1)[1].split('\n      - ', 1)[0]
+        code = textwrap.dedent(footer.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0]) + '\n'
+        required = ('checkout', 'source', 'toolchain', 'source_controls', 'observer_tests',
+                    'mapper_tests', 'v2_gate_tests', 'staged_tests', 'budget_tests', 'native', 'hardened',
+                    'verifier_v2', 'real_receiver_controls', 'receipt_controls_v2', 'component_budget', 'source_map',
+                    'profile', 'receipt_controls', 'comparison', 'source_after')
+        good = {name: {'outcome': 'success', 'conclusion': 'success'} for name in required}
+        with tempfile.TemporaryDirectory(prefix='w1-final-outcome-') as directory:
+            directory = Path(directory)
+            def run(index, steps):
+                path = directory / (str(index) + '.json')
+                env = dict(os.environ, W1_PROFILE_STEP_RESULTS=json.dumps(steps),
+                           SOURCE_KIND='head', EXPECTED_SOURCE='1' * 40)
+                result = subprocess.run([sys.executable, '-B', '-c', code, str(path)], env=env,
+                                        capture_output=True, text=True)
+                return result, json.loads(path.read_text())
+            result, report = run('positive', good)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIs(report['production_qualified'], False)
+            for name in required:
+                for state in ('failure', 'skipped', 'missing'):
+                    with self.subTest(stage=name, state=state):
+                        steps = {key: dict(value) for key, value in good.items()}
+                        if state == 'missing':
+                            steps.pop(name)
+                        else:
+                            steps[name]['outcome'] = state
+                        result, retained = run(name + '-' + state, steps)
+                        self.assertNotEqual(result.returncode, 0, result.stdout)
+                        self.assertIn(name, result.stderr)
+                        self.assertEqual(retained['steps'], steps)
+                        self.assertIs(retained['quantum_soundness_qualified'], False)
+
+    def test_added_source_snapshot_triggers_cannot_be_removed(self):
+        for path in ('evidence/pon-w1-stark-review-20261106/**', 'evidence/pon-w1-source-snapshot-20261106/**'):
+            before = '      - ' + path + '\n'
+            self.assertIn(before, self.workflow)
+            with self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(before, '', 1))
+
+
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

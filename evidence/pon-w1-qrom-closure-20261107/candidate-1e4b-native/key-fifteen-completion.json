@@ -1,0 +1,147 @@
+{
+  "all_fifteen_actual_pass": true,
+  "entire_release_owner_module_pass": false,
+  "key_count": 15,
+  "module_counts": {
+    "failed": 1,
+    "filtered": 1165,
+    "ignored": 1,
+    "measured": 0,
+    "passed": 40,
+    "result": "FAILED"
+  },
+  "module_failed_names": [
+    "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch"
+  ],
+  "module_ignored": [
+    {
+      "ignored_reason": "requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace",
+      "name": "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation",
+      "status": "ignored"
+    }
+  ],
+  "root_count": 7,
+  "rows": [
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::expired_root_recovery_requires_both_real_quorums_and_a_fresh_successor",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::canonical_root_roles_round_trip_through_publication_and_record",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::tagged_root_roles_reject_noncanonical_duplicate_and_out_of_range_keys",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::root_separation_tests::decoded_root_role_keys_do_not_bypass_complete_root_validation",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::sealed_kernel_rejects_payload_extent_and_exec_mutations",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::sealed_mtime_and_nonexec_mode_changes_refuse_all_held_uses",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::sealed_ctime_only_change_refuses_all_held_uses",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    },
+    {
+      "actual_outcome": "ok",
+      "ignored": false,
+      "name": "release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine",
+      "registered_once": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    }
+  ],
+  "sealed_count": 8
+}

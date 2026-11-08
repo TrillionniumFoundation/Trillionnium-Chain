@@ -1,0 +1,20 @@
+{
+  "bash_syntax_blocks": [
+    "observations",
+    "source_before",
+    "preflight",
+    "controls",
+    "completion",
+    "replay",
+    "query_expression",
+    "bcs",
+    "report_scopes",
+    "source_after",
+    "complete"
+  ],
+  "hosted_run_observed": false,
+  "schema": "TRNM-W1-WORKFLOW-SYNTAX1",
+  "workflow": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+  "workflow_sha256": "028b76e835ef3e381e0c4bc9e04a753584f4e783bf6a26f6fe2aeacbfcf1759c",
+  "yaml_base_loader_parse": "PASS"
+}

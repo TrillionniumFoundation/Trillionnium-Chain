@@ -1,0 +1,469 @@
+{
+  "checks": [
+    {
+      "check": {
+        "exit_code": 0,
+        "stderr_last_line": "",
+        "stdout_last_line": "{\"actual_successful_tests\": 6, \"qualification\": {\"complete_w1_soundness_qualified\": false, \"post_quantum_soundness_qualified\": false, \"production_qualified\": false, \"quantum_work_qualified\": false, \"unconditional_project_security_bits\": null}, \"result\": \"PASS\"}"
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "success",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 0,
+        "stderr_last_line": "OK",
+        "stdout_last_line": "{\"actual_successful_tests\": 6, \"qualification\": {\"complete_w1_soundness_qualified\": false, \"post_quantum_soundness_qualified\": false, \"production_qualified\": false, \"quantum_work_qualified\": false, \"unconditional_project_security_bits\": null}, \"result\": \"PASS\"}"
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: suite failed to complete",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "import_system_exit_zero",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: suite failed to complete",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "test_system_exit_zero",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: [Errno 2] No such file or directory: '/tmp/isolated-proof-chain-4foq13ku/output/named-controls.json'",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": false,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "hard_zero_exit",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 0,
+        "stderr_last_line": "",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: suite failed to complete",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "missing_test",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: suite failed to complete",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: suite failed to complete",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "duplicate_test",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: suite failed to complete",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "skipped_test",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "expected_failure",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": true,
+      "fixture_scope": "six isolated one-test modules; roster pin adapted only",
+      "id": "unexpected_success",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: registered",
+        "stdout_last_line": ""
+      },
+      "id": "missing_registered",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: registered",
+        "stdout_last_line": ""
+      },
+      "id": "duplicate_registered",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: started",
+        "stdout_last_line": ""
+      },
+      "id": "missing_started",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: started",
+        "stdout_last_line": ""
+      },
+      "id": "duplicate_started",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      },
+      "id": "missing_successful",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: missing/duplicate actual test: successful",
+        "stdout_last_line": ""
+      },
+      "id": "duplicate_successful",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: test count mismatch",
+        "stdout_last_line": ""
+      },
+      "id": "boolean_test_count",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: nonintegral JSON number: 1.0",
+        "stdout_last_line": ""
+      },
+      "id": "float_test_count",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: qualification types",
+        "stdout_last_line": ""
+      },
+      "id": "zero_instead_of_false",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: unsupported qualification",
+        "stdout_last_line": ""
+      },
+      "id": "invented_project_bits",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: unsuccessful control: skipped",
+        "stdout_last_line": ""
+      },
+      "id": "nonempty_skips",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: duplicate JSON key: schema",
+        "stdout_last_line": ""
+      },
+      "id": "duplicate_json_key",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: maximum recursion depth exceeded while decoding a JSON array from a unicode string",
+        "stdout_last_line": ""
+      },
+      "id": "deep_json",
+      "observed_expected_behavior": true
+    },
+    {
+      "check": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: record exceeds size limit",
+        "stdout_last_line": ""
+      },
+      "id": "oversized_record",
+      "observed_expected_behavior": true
+    },
+    {
+      "id": "existing_record_refuses_rerun",
+      "observed_expected_behavior": true,
+      "run": {
+        "exit_code": 2,
+        "stderr_last_line": "proof-chain controls refused: refusing to overwrite completion record",
+        "stdout_last_line": ""
+      }
+    },
+    {
+      "error": null,
+      "exit_code": 0,
+      "id": "query_default",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "arithmetic_only"
+    },
+    {
+      "error": null,
+      "exit_code": 0,
+      "id": "query_exact_boundary",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "arithmetic_only"
+    },
+    {
+      "error": {
+        "code": "RESOURCE_LIMIT",
+        "details": {
+          "maximum": 4096
+        },
+        "field": "target_bits",
+        "reason": "integer exceeds evaluator limit"
+      },
+      "exit_code": 2,
+      "id": "query_target_limit_plus_one",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "refused"
+    },
+    {
+      "error": {
+        "code": "INVALID_INPUT",
+        "details": {},
+        "field": "alpha",
+        "reason": "use a canonical integer or numerator/denominator"
+      },
+      "exit_code": 2,
+      "id": "query_float_alpha",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "refused"
+    },
+    {
+      "error": {
+        "code": "INVALID_INPUT",
+        "details": {},
+        "field": "hypothetical_case",
+        "reason": "supply both an explicit alpha and an explicit assumed multiplier"
+      },
+      "exit_code": 2,
+      "id": "query_missing_alpha",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "refused"
+    },
+    {
+      "error": {
+        "code": "RESOURCE_LIMIT",
+        "details": {
+          "maximum_integer_bits": 1024
+        },
+        "field": "alpha",
+        "reason": "fraction component exceeds evaluator bit limit"
+      },
+      "exit_code": 2,
+      "id": "query_oversized_reducible_fraction",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "refused"
+    },
+    {
+      "error": {
+        "code": "RESOURCE_LIMIT",
+        "details": {
+          "maximum_comparison_bits": 262144,
+          "maximum_queries_for_inputs": 255
+        },
+        "field": "query_search",
+        "reason": "Bernoulli bound excludes a solution inside the evaluator budget"
+      },
+      "exit_code": 2,
+      "id": "query_close_to_one",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "refused"
+    },
+    {
+      "error": null,
+      "exit_code": 0,
+      "id": "query_target_limit",
+      "observed_expected_behavior": true,
+      "qualification_false_or_null": true,
+      "status": "arithmetic_only"
+    },
+    {
+      "cases": 48,
+      "id": "independent_iterative_oracle",
+      "observed_expected_behavior": true
+    }
+  ],
+  "findings": [
+    {
+      "check": {
+        "exit_code": 0,
+        "stderr_last_line": "",
+        "stdout_last_line": "{\"actual_successful_tests\": 6, \"qualification\": {\"complete_w1_soundness_qualified\": false, \"post_quantum_soundness_qualified\": false, \"production_qualified\": false, \"quantum_work_qualified\": false, \"unconditional_project_security_bits\": null}, \"result\": \"PASS\"}"
+      },
+      "id": "runner_source_scope",
+      "kind": "workflow_integration_requirement",
+      "observation": "The completion checker hashes only roster test modules; it does not bind non-test helpers or its own runner bytes to the record.",
+      "recommended_action": "Keep the documented independent whole-Git/source identity check and a fresh output directory in the workflow; do not advertise the standalone checker as a complete source-identity check.",
+      "reproduction": "After a completed isolated run, create or alter a non-test scripts helper and invoke check: it still passes.",
+      "severity": "informational"
+    },
+    {
+      "check": {
+        "exit_code": 0,
+        "stderr_last_line": "",
+        "stdout_last_line": ""
+      },
+      "completion_record_present": false,
+      "id": "same_executable_early_zero",
+      "kind": "workflow_integration_requirement",
+      "observation": "The same runner implements run and check. An early SystemExit(0) in the runner itself makes both invocations exit zero without a record. Test-module early zero exits are correctly rejected by the independent invocation.",
+      "recommended_action": "In a separate workflow operation, require the completion record to exist and validate the checker result/count (or an independently maintained validator); preserve the whole-source check. Returning zero from the two modes alone is insufficient.",
+      "reproduction": "In an isolated runner copy, insert raise SystemExit(0) immediately after the future import; invoke run then check on a nonexistent output directory.",
+      "run": {
+        "exit_code": 0,
+        "stderr_last_line": "",
+        "stdout_last_line": ""
+      },
+      "severity": "medium_if_only_exit_codes_are_checked"
+    },
+    {
+      "final_error": {
+        "code": "INVALID_INPUT",
+        "details": {},
+        "field": "target_bits",
+        "reason": "repeated numerical option is ambiguous"
+      },
+      "final_exit_code": 2,
+      "id": "query_repeated_option_last_wins",
+      "initial_exit_code": 0,
+      "initial_observation": "The initial CLI accepted duplicate numerical flags and silently used the last one; the selected final value was bounded, so this was not an oversized-power bypass.",
+      "initial_target": 128,
+      "kind": "own_cli_input_ambiguity",
+      "qualification_false_or_null": true,
+      "repair": "A unique-option action rejects every repeated numerical option; abbreviated flag names are disabled.",
+      "reproduction_arguments": [
+        "--target-bits",
+        "4097",
+        "--target-bits",
+        "128"
+      ],
+      "resolution_status": "fixed_and_retested",
+      "severity": "low"
+    }
+  ],
+  "own_query_cli_ambiguity_repaired": true,
+  "parent_owned_files_modified": false,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "post_quantum_soundness_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "reviewed_sources": [
+    {
+      "path": "scripts/ci/w1_qrom_proof_chain_controls.py",
+      "sha256": "62d3149b4307af7ab0f2041106663544b4a169942007bb8f987ca2bf336ff53f"
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_proof_chain_controls.py",
+      "sha256": "1724003388114afb3f65dae3c5a9231a4af590251013afc1c39715122093ae30"
+    },
+    {
+      "path": "scripts/w1_query_expression_feasibility.py",
+      "sha256": "f2387b3b182fc4a2a3514c7f28b01ca10b4465563b81c4e94e76f059b582756f"
+    },
+    {
+      "path": "scripts/ci/test_w1_query_expression_feasibility.py",
+      "sha256": "731dc8cecb076720ffd5d4dd04a519f724bc6a616bced4d4e8b928e6d3ca84a8"
+    }
+  ],
+  "schema": "TRNM-W1-QROM-INDEPENDENT-REVIEW1",
+  "scope": "isolated control-runner fault injection and exact-query CLI review; not cryptographic qualification"
+}

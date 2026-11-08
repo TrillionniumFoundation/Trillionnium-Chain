@@ -1,0 +1,24 @@
+{
+  "future_revision_coverage": false,
+  "latest_pdf_independently_retrieved_and_equal_to_march": true,
+  "official_history_url": "https://eprint.iacr.org/archive/versions/2025/2166",
+  "pdfs": [
+    {
+      "byte_size": 927381,
+      "name": "january",
+      "pages": 102,
+      "sha256": "215a62b9a1b5144c89ae103aaabaf6049eab23f7ccb23130bc7d65d597c1eac9",
+      "url": "https://eprint.iacr.org/archive/2025/2166/1767247987.pdf",
+      "version_id": "20260101:061307"
+    },
+    {
+      "byte_size": 927435,
+      "name": "march",
+      "pages": 102,
+      "sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30",
+      "url": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+      "version_id": "20260302:160701"
+    }
+  ],
+  "schema": "TRNM-W1-CDHZ-PDF-IDENTITIES1"
+}

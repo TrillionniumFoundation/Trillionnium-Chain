@@ -1,0 +1,62 @@
+{
+  "artifact_id": 13519730993,
+  "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42239570130/artifacts/13519730993",
+  "artifact_zip_bytes": 30447108,
+  "artifact_zip_sha256": "c8ce63172958e8708e897032b7efe45b862da13687ec9e4281ed2773afe373bf",
+  "claim_scope": "Readback of already completed exact-source CI; no fresh compilation or proof trial in this readback",
+  "consensus_admission": false,
+  "head_job_conclusion": "success",
+  "head_job_id": 127965973405,
+  "lossless_compressed_members": {
+    "v2-controls/result.json": "original-ci/v2-controls/result.json.gz",
+    "v2-tests.log": "original-ci/v2-tests.log.gz"
+  },
+  "new_proofs_generated_by_this_followup": 0,
+  "production_qualified": false,
+  "prospective_merge_job_conclusion": "success",
+  "prospective_merge_job_id": 127965972972,
+  "quantum_soundness_qualified": false,
+  "run_id": 42239570130,
+  "schema": "trnm-w1-original-ci-readback-v1",
+  "selected_members": {
+    "ci-status.json": {
+      "bytes": 2416,
+      "sha256": "13116d4636995e1a006f54523b7be6d493636d2c829baff387eaf0507a04d28f"
+    },
+    "source-after.json": {
+      "bytes": 423,
+      "sha256": "a9893d19350dbd156ddf3a788240bf7045e7231ab737d8d31b76e026f0952d11"
+    },
+    "source-before.json": {
+      "bytes": 423,
+      "sha256": "a9893d19350dbd156ddf3a788240bf7045e7231ab737d8d31b76e026f0952d11"
+    },
+    "v2-binary.sha256": {
+      "bytes": 157,
+      "sha256": "81f5825a2529b267d27a797ebf552dd363c7bb361d472bdf0fa300632efc6dde"
+    },
+    "v2-controls-validation.log": {
+      "bytes": 84,
+      "sha256": "c0d8bec0d790bb1f6942cbb6d6a5ec46d5e9ce5f9220c2d67a897f020666b203"
+    },
+    "v2-controls/declaration.json": {
+      "bytes": 730,
+      "sha256": "d8eab17c3af6a35b4f3bfb55d860179c13ad0e839f80ce1bd542a422c06b52db"
+    },
+    "v2-controls/identity.json": {
+      "bytes": 1025,
+      "sha256": "80812ce5f4f7dad18b98fda20272dc55d03260e7d96d3d8af8090396a412b86f"
+    },
+    "v2-controls/result.json": {
+      "bytes": 227045,
+      "sha256": "7e7e5038b09c351fb54a8897c840e04363d053b1edd252f430f611ab5cc23dc6"
+    },
+    "v2-tests.log": {
+      "bytes": 2565,
+      "sha256": "6407f9c39c0a31ca3939f2345ee14b7eb46b6c5eb14757394e045e3e5f2b905e"
+    }
+  },
+  "source_commit": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "source_tree": "f9fa45acf0b7fe7b555d378fd17a8e0f2dd8332f",
+  "v2_verifier_sha256": "2db9669a1c9196885da8908bcaf3da8ccea9684a3fe048fbe2f614cbb093d4ba"
+}

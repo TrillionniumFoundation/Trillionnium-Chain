@@ -1,0 +1,37 @@
+{
+  "all_observed_tests_passed": true,
+  "archive": "local-validation-final.tar.gz",
+  "bytes": 9000,
+  "complete_local_tracked_source_verified": false,
+  "files": [
+    {
+      "bytes": 755,
+      "path": "closure-all-w1-final.json",
+      "sha256": "29aeb773b6c55622e8febf30486ccfcbf2f5cceea77178ceb5f14e2a018ecbb9"
+    },
+    {
+      "bytes": 0,
+      "path": "closure-all-w1-final.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 53599,
+      "path": "closure-all-w1-final.stderr.log",
+      "sha256": "0ddfd1cc10d0c99c90320e1bda9d34623f858ef6589764f6f07b2e2b4325ba83"
+    }
+  ],
+  "full_native_workspace_result": "PENDING_SEPARATE_FROZEN_7150_RUN",
+  "new_named_subset": 105,
+  "observed_retained_ci_and_source_tests": 147,
+  "observed_w1_tests": 314,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "pq_authorization_qualified": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false
+  },
+  "schema": "TRNM-W1-QROM-CLOSURE-FINAL-LOCAL1",
+  "sha256": "0f3c0a2442bdb60ae098c490ff5e6bf4d3f7452fe646305244c124d47c5ac2d6",
+  "strict_clippy_result": "PENDING_SEPARATE_FROZEN_7150_RUN",
+  "total_unique_test_names_across_disjoint_runs": 461
+}

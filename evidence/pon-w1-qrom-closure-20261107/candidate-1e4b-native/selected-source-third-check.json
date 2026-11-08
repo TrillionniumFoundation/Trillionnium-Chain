@@ -1,0 +1,11 @@
+{
+  "all_remaining_status_entries_deleted_evidence": true,
+  "full_tracked_identity_verified": false,
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "selected_before_after_same": true,
+  "selected_count": 2805,
+  "selected_current_bytes_modes_rechecked": true,
+  "snapshot_sha256": "06d49cf298ee945b34d9b11481fc01e65800f750947975eee815a6ba007cbc45",
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0",
+  "worktree_record_count": 488
+}

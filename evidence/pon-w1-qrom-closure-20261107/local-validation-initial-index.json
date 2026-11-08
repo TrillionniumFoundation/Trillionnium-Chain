@@ -1,0 +1,529 @@
+{
+  "archive": "local-validation-initial.tar.gz",
+  "bytes": 142872,
+  "files": [
+    {
+      "bytes": 1504,
+      "path": "independent-workflow/head/negative-status.json",
+      "sha256": "433b63b325238cf29007c74f5820dab855d5bd4e09a52cc3ec0dfe2319bed059"
+    },
+    {
+      "bytes": 0,
+      "path": "independent-workflow/head/negative.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 61,
+      "path": "independent-workflow/head/negative.stdout.log",
+      "sha256": "f27900c69a74d0bd64a3f387aab711980851f3f30e60a0d2b7b9637ba1fef89e"
+    },
+    {
+      "bytes": 1479,
+      "path": "independent-workflow/head/observations/ci-status.json",
+      "sha256": "8a0185bce925919008e7602c36eaced4c3d524ee8afe2b40273dd2caff452f9e"
+    },
+    {
+      "bytes": 92,
+      "path": "independent-workflow/head/observations/completion.log",
+      "sha256": "5a32eb7cb425803686919c2f6d408c3f44a7fa0684eee9716f34a4760ede935d"
+    },
+    {
+      "bytes": 347,
+      "path": "independent-workflow/head/observations/named-controls-check.log",
+      "sha256": "f5a9b6b10963d0d68709872798684aacefaa01a99bc81208f977bcc4a93df453"
+    },
+    {
+      "bytes": 3748,
+      "path": "independent-workflow/head/observations/named-controls.json",
+      "sha256": "e56330983379dc56fa5a5e3288c42f107305e1592d2041613e2324e49d319042"
+    },
+    {
+      "bytes": 1366,
+      "path": "independent-workflow/head/observations/named-controls.log",
+      "sha256": "2a71cb84065d0915eceb6b10618fda3afe1bc25ea811b04804dd199916c029b2"
+    },
+    {
+      "bytes": 415,
+      "path": "independent-workflow/head/observations/source-after.json",
+      "sha256": "6199a2837f3f56ba21cc12e634def12077eecb65ec5e5b9f0eec76bd2066aff8"
+    },
+    {
+      "bytes": 415,
+      "path": "independent-workflow/head/observations/source-after.log",
+      "sha256": "6199a2837f3f56ba21cc12e634def12077eecb65ec5e5b9f0eec76bd2066aff8"
+    },
+    {
+      "bytes": 415,
+      "path": "independent-workflow/head/observations/source-before.json",
+      "sha256": "6199a2837f3f56ba21cc12e634def12077eecb65ec5e5b9f0eec76bd2066aff8"
+    },
+    {
+      "bytes": 415,
+      "path": "independent-workflow/head/observations/source-before.log",
+      "sha256": "6199a2837f3f56ba21cc12e634def12077eecb65ec5e5b9f0eec76bd2066aff8"
+    },
+    {
+      "bytes": 0,
+      "path": "independent-workflow/head/positive.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 92,
+      "path": "independent-workflow/head/positive.stdout.log",
+      "sha256": "5a32eb7cb425803686919c2f6d408c3f44a7fa0684eee9716f34a4760ede935d"
+    },
+    {
+      "bytes": 9852,
+      "path": "independent-workflow/head/source/.github/workflows/pon-w1-qrom-closure.yml",
+      "sha256": "3b5de1c18ecb262edf59e275b44a33b4c6303ea5b6df9265670adf6166912806"
+    },
+    {
+      "bytes": 1299,
+      "path": "independent-workflow/head/source/config/pon/w1-qrom-closure-required-tests-v1.json",
+      "sha256": "12f80a9f32a2fbea2382b9eeaf436286a81c7c8cc6bfb6a1fdc9f3107bbdaa1c"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/head/source/scripts/ci/test_w1_lifetime_ledger.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/head/source/scripts/ci/test_w1_qrom_closure_controls.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/head/source/scripts/ci/test_w1_qrom_composition_budget.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/head/source/scripts/ci/test_w1_qrom_joint_oracle_diagnostic.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/head/source/scripts/ci/test_w1_qrom_semantics_audit.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/head/source/scripts/ci/test_w1_zkr_artifact_audit.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 11231,
+      "path": "independent-workflow/head/source/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 9462,
+      "path": "independent-workflow/head/source/scripts/ci/w1_qrom_closure_controls.py",
+      "sha256": "a971cfbf4b76cf22dbceecfe74e931581ecae846d6be58810041ebb02448c546"
+    },
+    {
+      "bytes": 1517,
+      "path": "independent-workflow/prospective-merge/negative-status.json",
+      "sha256": "a51dda7d123c8d54cf4a92efc0a7245d567cdf36fbdf74bd3c553502c017ce65"
+    },
+    {
+      "bytes": 0,
+      "path": "independent-workflow/prospective-merge/negative.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 61,
+      "path": "independent-workflow/prospective-merge/negative.stdout.log",
+      "sha256": "f27900c69a74d0bd64a3f387aab711980851f3f30e60a0d2b7b9637ba1fef89e"
+    },
+    {
+      "bytes": 1492,
+      "path": "independent-workflow/prospective-merge/observations/ci-status.json",
+      "sha256": "86c74b58ad81732dec56d29b6708a361d76c464d0f114cb771f06481a7633d6b"
+    },
+    {
+      "bytes": 92,
+      "path": "independent-workflow/prospective-merge/observations/completion.log",
+      "sha256": "5a32eb7cb425803686919c2f6d408c3f44a7fa0684eee9716f34a4760ede935d"
+    },
+    {
+      "bytes": 347,
+      "path": "independent-workflow/prospective-merge/observations/named-controls-check.log",
+      "sha256": "f5a9b6b10963d0d68709872798684aacefaa01a99bc81208f977bcc4a93df453"
+    },
+    {
+      "bytes": 3748,
+      "path": "independent-workflow/prospective-merge/observations/named-controls.json",
+      "sha256": "e56330983379dc56fa5a5e3288c42f107305e1592d2041613e2324e49d319042"
+    },
+    {
+      "bytes": 1366,
+      "path": "independent-workflow/prospective-merge/observations/named-controls.log",
+      "sha256": "5b3fea5dd394355f743c3e57ed38a696eadb129140f13874cdc0916bedf4ffbf"
+    },
+    {
+      "bytes": 504,
+      "path": "independent-workflow/prospective-merge/observations/source-after.json",
+      "sha256": "5801eb345c4a8b10ba33df958ceb4a3ed352320146bd8c0f4ceba01afffdd9af"
+    },
+    {
+      "bytes": 504,
+      "path": "independent-workflow/prospective-merge/observations/source-after.log",
+      "sha256": "5801eb345c4a8b10ba33df958ceb4a3ed352320146bd8c0f4ceba01afffdd9af"
+    },
+    {
+      "bytes": 504,
+      "path": "independent-workflow/prospective-merge/observations/source-before.json",
+      "sha256": "5801eb345c4a8b10ba33df958ceb4a3ed352320146bd8c0f4ceba01afffdd9af"
+    },
+    {
+      "bytes": 504,
+      "path": "independent-workflow/prospective-merge/observations/source-before.log",
+      "sha256": "5801eb345c4a8b10ba33df958ceb4a3ed352320146bd8c0f4ceba01afffdd9af"
+    },
+    {
+      "bytes": 0,
+      "path": "independent-workflow/prospective-merge/positive.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 92,
+      "path": "independent-workflow/prospective-merge/positive.stdout.log",
+      "sha256": "5a32eb7cb425803686919c2f6d408c3f44a7fa0684eee9716f34a4760ede935d"
+    },
+    {
+      "bytes": 9852,
+      "path": "independent-workflow/prospective-merge/source/.github/workflows/pon-w1-qrom-closure.yml",
+      "sha256": "3b5de1c18ecb262edf59e275b44a33b4c6303ea5b6df9265670adf6166912806"
+    },
+    {
+      "bytes": 20,
+      "path": "independent-workflow/prospective-merge/source/base-marker.txt",
+      "sha256": "ae14a76bca298defb9d1cffa5f62b58b5c12e1509e74de5daa5f3619e7c9408f"
+    },
+    {
+      "bytes": 25,
+      "path": "independent-workflow/prospective-merge/source/candidate-marker.txt",
+      "sha256": "d981186f5552b0f01bd9ced572d9d0e40e62532bfa48552c86c51a9e791adb47"
+    },
+    {
+      "bytes": 1299,
+      "path": "independent-workflow/prospective-merge/source/config/pon/w1-qrom-closure-required-tests-v1.json",
+      "sha256": "12f80a9f32a2fbea2382b9eeaf436286a81c7c8cc6bfb6a1fdc9f3107bbdaa1c"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/test_w1_lifetime_ledger.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/test_w1_qrom_closure_controls.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/test_w1_qrom_composition_budget.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/test_w1_qrom_joint_oracle_diagnostic.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/test_w1_qrom_semantics_audit.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 112,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/test_w1_zkr_artifact_audit.py",
+      "sha256": "0fa187e854db35c0ac07303b755c5ea382d82316b44654009aabf24eaaaeb0e3"
+    },
+    {
+      "bytes": 11231,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 9462,
+      "path": "independent-workflow/prospective-merge/source/scripts/ci/w1_qrom_closure_controls.py",
+      "sha256": "a971cfbf4b76cf22dbceecfe74e931581ecae846d6be58810041ebb02448c546"
+    },
+    {
+      "bytes": 1646,
+      "path": "independent-workflow/review.json",
+      "sha256": "e83061e6cc6b0a2119940d4d66c8a3b5599cf5f377544a48c91bde8f689e7e28"
+    },
+    {
+      "bytes": 9852,
+      "path": "independent-workflow/reviewed-workflow.yml",
+      "sha256": "3b5de1c18ecb262edf59e275b44a33b4c6303ea5b6df9265670adf6166912806"
+    },
+    {
+      "bytes": 755,
+      "path": "local/closure-all-w1-initial.json",
+      "sha256": "699d48161574d6b7b6c2cf22e80bac5a5b122b0dcb23420ff42b04a6601e3b96"
+    },
+    {
+      "bytes": 53599,
+      "path": "local/closure-all-w1-initial.stderr.log",
+      "sha256": "bef9f4d488fbb0484de70c67b3d1273d9d5bb6edc32c424de104e3df727ae9f5"
+    },
+    {
+      "bytes": 0,
+      "path": "local/closure-all-w1-initial.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 75704,
+      "path": "local/closure-markdown-initial.json",
+      "sha256": "6989d9d15f82606b14f001fce6476b4e6bc1200a850e47691ea82005c52507ab"
+    },
+    {
+      "bytes": 649,
+      "path": "local/closure-repository-current.json",
+      "sha256": "3f8b56b00e1685ef8f71029cf8adfd292a77122839a2746c36e778edc4c27f78"
+    },
+    {
+      "bytes": 0,
+      "path": "local/closure-repository-current.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "path": "local/closure-repository-current.stdout.log",
+      "sha256": "1c27c5f7edd68c6102d66daa30fd5bba4c3b10be2e06d7e786da09a33fef8e85"
+    },
+    {
+      "bytes": 749,
+      "path": "local/closure-retained-ci-and-source.json",
+      "sha256": "564b008f83590b25025d1204426d2083db7500c13c8ee0033adfa15aad37a2d7"
+    },
+    {
+      "bytes": 25174,
+      "path": "local/closure-retained-ci-and-source.stderr.log",
+      "sha256": "dcfb4a3c7705449a27ee257149d8dacb92f099bbe18797310a3974954aef3a1b"
+    },
+    {
+      "bytes": 484,
+      "path": "local/closure-retained-ci-and-source.stdout.log",
+      "sha256": "c7214c091f77a68decea30219b6091959bca10556f5bc04486917cd7678fe402"
+    },
+    {
+      "bytes": 2130,
+      "path": "reproduction-tools/observe.py",
+      "sha256": "9e932d8ceaf33c4b121f6b7ca0ebf3746baac2c10625cec2c741900237de6ba3"
+    },
+    {
+      "bytes": 11101,
+      "path": "workflow/closure-local-complete-yk5fa6ot/composition-example.json",
+      "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+    },
+    {
+      "bytes": 6878,
+      "path": "workflow/closure-local-complete-yk5fa6ot/composition-unknown.json",
+      "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+    },
+    {
+      "bytes": 3364,
+      "path": "workflow/closure-local-complete-yk5fa6ot/joint-oracle-alias.json",
+      "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+    },
+    {
+      "bytes": 3363,
+      "path": "workflow/closure-local-complete-yk5fa6ot/joint-oracle-separated.json",
+      "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+    },
+    {
+      "bytes": 2833,
+      "path": "workflow/closure-local-complete-yk5fa6ot/joint-oracle-unknown.json",
+      "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+    },
+    {
+      "bytes": 31311,
+      "path": "workflow/closure-local-complete-yk5fa6ot/lifetime.json",
+      "sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c"
+    },
+    {
+      "bytes": 1151,
+      "path": "workflow/closure-local-complete-yk5fa6ot/local-trial.json",
+      "sha256": "3d190613a45038823738f99aab596409b1c16609812110f8d0b85c0045f3a43d"
+    },
+    {
+      "bytes": 349,
+      "path": "workflow/closure-local-complete-yk5fa6ot/named-controls-check.log",
+      "sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+    },
+    {
+      "bytes": 41811,
+      "path": "workflow/closure-local-complete-yk5fa6ot/named-controls.json",
+      "sha256": "4a88cb6c1a253b1786e1bd44ed94a3336f6e5529568b7d9fdf6e7d05a32056a3"
+    },
+    {
+      "bytes": 20028,
+      "path": "workflow/closure-local-complete-yk5fa6ot/named-controls.log",
+      "sha256": "2eb61ded88c552153b6f79557fe3a3feb5dd24c6a9b0f524df0bd4b6e69c976e"
+    },
+    {
+      "bytes": 366,
+      "path": "workflow/closure-local-complete-yk5fa6ot/named_controls.sh",
+      "sha256": "80c10a0ba6b58a1649b3600641024e37f1292f435a154c5bd261120087114e6a"
+    },
+    {
+      "bytes": 0,
+      "path": "workflow/closure-local-complete-yk5fa6ot/named_controls.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 20377,
+      "path": "workflow/closure-local-complete-yk5fa6ot/named_controls.stdout.log",
+      "sha256": "ce9fc47e5b583c76dfb2834bed20c213e022010a2837476ab0ca51d3700d5086"
+    },
+    {
+      "bytes": 1147,
+      "path": "workflow/closure-local-complete-yk5fa6ot/reproduce.sh",
+      "sha256": "3749fa06ae03c837c4b870d62f755f7e5c2f11c6fc2e5496e58856f8807c8f2b"
+    },
+    {
+      "bytes": 0,
+      "path": "workflow/closure-local-complete-yk5fa6ot/reproduce.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "workflow/closure-local-complete-yk5fa6ot/reproduce.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 76729,
+      "path": "workflow/closure-local-complete-yk5fa6ot/semantics.json",
+      "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+    },
+    {
+      "bytes": 9875,
+      "path": "workflow/closure-local-complete-yk5fa6ot/workflow-executed.yml",
+      "sha256": "41b52424210f48a16a88312613762c9d0ab7470466877ba01d3d8c8d8ef7ba8a"
+    },
+    {
+      "bytes": 793,
+      "path": "workflow/closure-local-final-0eicf42r/local-trial.json",
+      "sha256": "980a4f1f8ca34cc03653602f562c855c8be29ca6ff95f6f9d35f3b729dbdffa4"
+    },
+    {
+      "bytes": 349,
+      "path": "workflow/closure-local-final-0eicf42r/named-controls-check.log",
+      "sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+    },
+    {
+      "bytes": 41811,
+      "path": "workflow/closure-local-final-0eicf42r/named-controls.json",
+      "sha256": "4a88cb6c1a253b1786e1bd44ed94a3336f6e5529568b7d9fdf6e7d05a32056a3"
+    },
+    {
+      "bytes": 20028,
+      "path": "workflow/closure-local-final-0eicf42r/named-controls.log",
+      "sha256": "13662a3c34e60260cffb44e37143b99cf044fca736274a3c5a28344067fc5eee"
+    },
+    {
+      "bytes": 5889,
+      "path": "workflow/closure-local-final-0eicf42r/named_controls.sh",
+      "sha256": "76831961c3be6ad5ecfc55061eb13e29905015e78ca2beb7ea553fa3c8f33356"
+    },
+    {
+      "bytes": 35,
+      "path": "workflow/closure-local-final-0eicf42r/named_controls.stderr.log",
+      "sha256": "7bd0e8b2f45587450e25f6b70d021f634ae5d29fa0ec1e21d3752715189e7b3d"
+    },
+    {
+      "bytes": 20377,
+      "path": "workflow/closure-local-final-0eicf42r/named_controls.stdout.log",
+      "sha256": "5a15dbb28862d2512d0f6e856d52e13c83ebe5476fed45461c090e1104afc4e4"
+    },
+    {
+      "bytes": 9875,
+      "path": "workflow/closure-local-final-0eicf42r/workflow-executed.yml",
+      "sha256": "41b52424210f48a16a88312613762c9d0ab7470466877ba01d3d8c8d8ef7ba8a"
+    },
+    {
+      "bytes": 11101,
+      "path": "workflow/closure-local-j0ghgf8i/composition-example.json",
+      "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+    },
+    {
+      "bytes": 6878,
+      "path": "workflow/closure-local-j0ghgf8i/composition-unknown.json",
+      "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+    },
+    {
+      "bytes": 3364,
+      "path": "workflow/closure-local-j0ghgf8i/joint-oracle-alias.json",
+      "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+    },
+    {
+      "bytes": 3363,
+      "path": "workflow/closure-local-j0ghgf8i/joint-oracle-separated.json",
+      "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+    },
+    {
+      "bytes": 2833,
+      "path": "workflow/closure-local-j0ghgf8i/joint-oracle-unknown.json",
+      "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+    },
+    {
+      "bytes": 31311,
+      "path": "workflow/closure-local-j0ghgf8i/lifetime.json",
+      "sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c"
+    },
+    {
+      "bytes": 1589,
+      "path": "workflow/closure-local-j0ghgf8i/local-trial.json",
+      "sha256": "d6f91a82bda370d5d3db330e2fc0c9e0ba6ea4e4862864bd7cd66caaaa122059"
+    },
+    {
+      "bytes": 348,
+      "path": "workflow/closure-local-j0ghgf8i/named-controls-check.log",
+      "sha256": "6b806509b7d540dcd8656683b0fe2b717b64269d69a70c6842bd66608982c265"
+    },
+    {
+      "bytes": 35554,
+      "path": "workflow/closure-local-j0ghgf8i/named-controls.json",
+      "sha256": "5cfbd93a40f563f08afdb8ab549a8cc477f12cfabf4575aaa40f094c9d736fe8"
+    },
+    {
+      "bytes": 17051,
+      "path": "workflow/closure-local-j0ghgf8i/named-controls.log",
+      "sha256": "0b0434420268e9e5bbba95633480e5d3ded9bf4708cfda28c595cedc0836dccf"
+    },
+    {
+      "bytes": 0,
+      "path": "workflow/closure-local-j0ghgf8i/named_controls.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17399,
+      "path": "workflow/closure-local-j0ghgf8i/named_controls.stdout.log",
+      "sha256": "ccc3cbf8ad8d0dc2eca329f6c30b67ae3b91e55cf3f0d7f96883b8592fb89039"
+    },
+    {
+      "bytes": 0,
+      "path": "workflow/closure-local-j0ghgf8i/reproduce.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "workflow/closure-local-j0ghgf8i/reproduce.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 76729,
+      "path": "workflow/closure-local-j0ghgf8i/semantics.json",
+      "sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+    }
+  ],
+  "schema": "TRNM-W1-QROM-CLOSURE-LOCAL-ARCHIVE1",
+  "scope": "Actual observations including early 90-test trial and local shell-extraction-harness failure. The failed harness overcaptured a YAML next-step marker after all 105 named controls passed; a separately retained corrected extraction ran both actual workflow blocks successfully. No main-repository complete-source pass is synthesized. The complete final W1 run is recorded separately if it finishes after this snapshot.",
+  "sha256": "3dd430f4f5d845e6c4f67a8f17f4f00ef4419f021e6c1a151240fd0b4050c37a"
+}

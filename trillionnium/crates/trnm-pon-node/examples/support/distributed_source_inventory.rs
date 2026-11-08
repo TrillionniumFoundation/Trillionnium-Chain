@@ -316,6 +316,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/w1-qrom-closure-required-tests-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-closure-required-tests-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-qrom-implementation-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-implementation-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-qrom-required-tests-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-required-tests-v1.json"
+        )),
+    ),
+    (
         "config/pon/w1-retained-disposition-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

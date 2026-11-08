@@ -1,0 +1,30 @@
+{
+  "default_prover_client_features_absent": true,
+  "direct_dependency_declarations": {
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml": {
+      "default-features": false,
+      "features": [
+        "std",
+        "disable-dev-mode"
+      ],
+      "version": "=3.0.6"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml": {
+      "default-features": false,
+      "features": [
+        "std",
+        "disable-dev-mode"
+      ],
+      "version": "=3.0.6"
+    }
+  },
+  "disable_dev_mode_active": true,
+  "environment_values_disclosed": false,
+  "features": [
+    "disable-dev-mode",
+    "std"
+  ],
+  "package_id": "registry+https://github.com/rust-lang/crates.io-index#risc0-zkvm@3.0.6",
+  "post_quantum_soundness_qualified": false,
+  "proof_environment_variable_names_present": []
+}

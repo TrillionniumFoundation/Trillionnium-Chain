@@ -1,0 +1,72 @@
+{
+  "disposition": "Incorrect test assumption; production complete-identity guard correctly refused changed memfd timestamps.",
+  "full_workspace_passed": false,
+  "kernel_observed": "Linux 7.0.0-38-generic x86_64 GNU/Linux",
+  "metadata_probe": {
+    "explicit_modified_time_and_nonexec_mode_changes_also_observed": true,
+    "path": "metadata-field-observations.json",
+    "same_mode_chmod_actual_changed_fields": [
+      "ctime_nsec"
+    ],
+    "same_mode_chmod_succeeded": true,
+    "sha256": "a9f3279d13e7a823d46633ae1793575f3efded7b57bbdb105297728425ff53d1"
+  },
+  "original_failure_source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "original_native_archive_unchanged": true,
+  "patch_source_files": [
+    {
+      "bytes": 9707,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs",
+      "sha256": "df66143307e13bf2c699e0a4a62487dade06847180115bf3bc29635b9c17754d"
+    },
+    {
+      "bytes": 11627,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    }
+  ],
+  "post_quantum_soundness_qualified": false,
+  "preserved_checks": [
+    "device",
+    "inode",
+    "size",
+    "uid",
+    "mode",
+    "mtime",
+    "mtime_nsec",
+    "ctime",
+    "ctime_nsec",
+    "required_file_seals"
+  ],
+  "production_executable_source_bytes_unchanged_after_removing_added_documentation": true,
+  "reviewed_utc": "2026-11-07T14:32:10.755685+00:00",
+  "schema": "TRNM-M15-SEALED-TEST-CORRECTION1",
+  "tests": {
+    "corrected_test_count": 8,
+    "ctime_only_regression": "A real same-mode chmod is repeated only until a ctime tick is observed; the other seven captured identity fields, payload and seals must remain identical, then held read/copy/descriptor/exec uses must all refuse.",
+    "does_not_mirror_guard_by_branching_expected_acceptance_on_identity_comparison": true,
+    "module": "release_owner::sealed_tests",
+    "new_tests": [
+      "sealed_kernel_rejects_payload_extent_and_exec_mutations",
+      "sealed_mtime_and_nonexec_mode_changes_refuse_all_held_uses",
+      "sealed_ctime_only_change_refuses_all_held_uses"
+    ],
+    "original_test_count": 5,
+    "source_rewrite_positive": "The copied source is rewritten and its pathname replaced; the held sealed copy is read and rechecked before any direct descriptor mutation."
+  },
+  "validation": {
+    "git_diff_check": "PASS",
+    "native_corrected_crate_tests": "PENDING_EXACT_COMMITTED_SOURCE_GATE",
+    "rustfmt_1_95_check": "PASS"
+  },
+  "write_probe": {
+    "actual_changed_fields": [
+      "mtime_nsec",
+      "ctime_nsec"
+    ],
+    "denied_write_errno": 1,
+    "immutable_payload_extent_mode_and_seals_unchanged": true,
+    "path": "field-observations.json",
+    "sha256": "c20cede2a5e1ec35f4e7030593632b34ccf6383c7b846ff0d0c9b5d775e9bbfa"
+  }
+}

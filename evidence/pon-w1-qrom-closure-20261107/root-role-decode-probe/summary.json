@@ -1,0 +1,51 @@
+{
+  "source_path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+  "base_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "old_source_sha256": "1c13779ee834de82f53ceb9a1618963b951a76f94bdaf57c71fd16254ce64566",
+  "changed_source_sha256": "58c6e4d21de46770911c38214c90cd4ae4373b1b786d326e04fab21935e4bd2f",
+  "probe_sha256": "d8cb71fda5a66682495b0e3e761dc1a26cdea88befeca8a36ea19dabcff8391e",
+  "schema": "trnm.m15.role-key-serde-reproduction.v1",
+  "observed_utc": "2026-11-07T14:24:00.536511+00:00",
+  "command": [
+    "/workspace/scratch/4a83c49617d8/root-role-decode-probe/probe"
+  ],
+  "exit_code": 0,
+  "stdout_sha256": "27f7c8ad8db16d042ffca2823d9d1ac83aa55ce108c1d403a2eb73ca2742e14a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "result": {
+    "duplicate_role_key_rejected": true,
+    "escaped_alias_requires_unchanged_codec_byte_comparison": true,
+    "new_record_decode_and_bytes_equal_old_encoding": true,
+    "noncanonical_or_out_of_range_key_rejections": 10,
+    "old_direct_root_decode": true,
+    "old_nested_publication_error": "invalid type: string \"1\", expected u8",
+    "old_nested_record_error": "invalid type: string \"1\", expected u8",
+    "scope": "Reduced Serde mechanism probe using extracted exact old/new Root, Keys, PublicKey declarations and changed role decoder; not production proof/authority or full regression execution"
+  },
+  "full_native_regressions_executed_here": false,
+  "original_native_failure_preserved": true,
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+      "bytes": 6898,
+      "sha256": "58c6e4d21de46770911c38214c90cd4ae4373b1b786d326e04fab21935e4bd2f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "bytes": 11567,
+      "sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    }
+  ],
+  "existing_rlibs": [
+    {
+      "filename": "libserde-0e044a46a977e748.rlib",
+      "bytes": 1148330,
+      "sha256": "9209fde40944b7d1738b0574b1e9c44ad69bc7d51172aa8cc8f0ab2facbb005e"
+    },
+    {
+      "filename": "libserde_json-f0d4891802ba697c.rlib",
+      "bytes": 4443604,
+      "sha256": "3703e0128b7d4e0dd53ce3ac683596bb6001df3603cbcd413fdf151d6542e388"
+    }
+  ]
+}
