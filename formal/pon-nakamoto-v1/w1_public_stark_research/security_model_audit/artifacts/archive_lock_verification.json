@@ -1,0 +1,41 @@
+{
+  "archives": [
+    {
+      "crate": "p3-symmetric",
+      "version": "0.8.0",
+      "sha256": "cb7b7cc37b4f9592c57bfceabc737de757267b23ae956b2e648d24461f93fb42",
+      "matches_lock_checksum": true
+    },
+    {
+      "crate": "p3-goldilocks",
+      "version": "0.8.0",
+      "sha256": "325a854e1232dd1ce270245d9c978b71897c286f072d2fa31740956a800e70c5",
+      "matches_lock_checksum": true
+    },
+    {
+      "crate": "p3-poseidon2",
+      "version": "0.8.0",
+      "sha256": "3950061c69b220c60f76c72e6de54be97e2e5dc169a5374e9b57d6118114c8cf",
+      "matches_lock_checksum": true
+    },
+    {
+      "crate": "p3-commit",
+      "version": "0.8.0",
+      "sha256": "7e53fe56a74c49a5511a68d0953527b8efc7e68d729bf773be5d1f34998b81e7",
+      "matches_lock_checksum": true
+    },
+    {
+      "crate": "p3-uni-stark",
+      "version": "0.8.0",
+      "sha256": "d0992185743e8e406eeb1dd8ca4704d1f5246ccf2790f9b521c5455585bfa479",
+      "matches_lock_checksum": true
+    },
+    {
+      "crate": "p3-fri",
+      "version": "0.8.0",
+      "sha256": "9571ee760e131fc7f63115ded567d3b3d0f6d587c35b16818e266c9d6bd3bc9d",
+      "matches_lock_checksum": true
+    }
+  ],
+  "lock_sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+}

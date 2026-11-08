@@ -1,0 +1,15 @@
+{
+  "label": "run02-prove",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "run_campaign.py",
+    "prove",
+    "fixtures/retained",
+    "results/retained-native-02"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 21.32056426582858,
+  "stdout_sha256": "98624d34d95641217acbb0a952382c37621c9ad547c89a8df1e2f63485fcbb68",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

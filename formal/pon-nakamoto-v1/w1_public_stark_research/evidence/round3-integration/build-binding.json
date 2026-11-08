@@ -1,0 +1,34 @@
+{
+  "schema": "w1-integrated-build-source-binding-v1",
+  "qualification": "HOLD_NO_GO",
+  "source_files": {
+    "src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+    "src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+    "src/lib.rs": "558c88cb7ef72aba1fbc95ea5a9aeb0e811ebaeb11485d1c7cb2a67c83e817e9",
+    "src/main.rs": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76",
+    "src/proof_config.rs": "b39c2405e8c2263cfd52fc162e6a92ccfdc7c83ce8ebaca179b32e2187b8137d",
+    "src/proof_wire.rs": "5933e95cc02e35ca33348728ca57cbca87ac52bc4c3e2ee6a39045aba85cc70b",
+    "src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+    "src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "tests/carry_proof.rs": "96659e082dd50dacdc08856576e4cbb47ebabf32786bb3c44a2f24620f1b3639",
+    "tests/proof_smoke.rs": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b",
+    "tests/wire_admission.rs": "45bcce0d49d0cefcac1748977ad5b22d95d7172115a02676cd3e95d4e724d247",
+    "examples/carry_backend.rs": "7540a86eff7d2496fd1a2c4f9d2aebecd782c6b1c1ad79c8dc7facb523a04f99",
+    "examples/hash_role_probe.rs": "93072125eca6661bd2b2f8ee44d3209d1ac8b13f17f7e69569dccca90aea8144",
+    "examples/mutate_last_query.rs": "83093cbb54842cc3000a2e44e0e3f558df42d722c599c9359f839ba45b960834",
+    "examples/mutate_structure.rs": "557fea51de7637c2b74e29251cf5e585b29a001e280abcca6ee5c52c1482e011",
+    "examples/packed_carry_backend.rs": "43049ce43de27d02335a14ccc39fe5c51ba32d66651ae39235d7526224be65ea",
+    "Cargo.toml": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+    "Cargo.lock": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+  },
+  "binaries": {
+    "target/release/w1-full-public-stark-research": "eb34aad37935559ce2811f7f3325c32ed7f73eb869c944de82917c15cee0fa15",
+    "target/release/examples/carry_backend": "22eddf6d210398ae2eedfc3402a8c1111d22e54edf77dceed0d584b52d8e5da8",
+    "target/release/examples/packed_carry_backend": "2774f3d718bf3831a79b3e348747be1117255b433219e8d2bad5c299da6462ad",
+    "target/release/examples/mutate_structure": "2c5ea9a36c5ba3ab9339d73d4a9ea4fc1b38ab319a8764c1db617e025dfc313f",
+    "target/release/examples/mutate_last_query": "028c2ddc9dfccffa802971478b72de54df39094ec265763dd2f01e0c9fc0163f",
+    "target/release/examples/hash_role_probe": "e1d637b4e31cc0379b2cd22957ca075cc28400234255a25a34062053385a5707"
+  },
+  "final_commit_binding_recorded_by_delivery_checks": true
+}

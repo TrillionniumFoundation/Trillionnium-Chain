@@ -1,0 +1,88 @@
+{
+  "schema": "w1-staged-repository-gates-v1",
+  "base_head": "8df4b21d893906570d48f5beafabb3b31e0aefbc",
+  "branch": "fix/chain-w1-stark-selected-20261107-89f4dd",
+  "commands": [
+    {
+      "label": "preflight-staged",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit_code": 0,
+      "outer_wall_seconds": 0.7960962739307433,
+      "stdout_sha256": "0759ce6292f5770999b32563e747d32befaac6f24bb5e6f4d168d677285bfd7c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "check-repository",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "outer_wall_seconds": 87.87944745202549,
+      "stdout_sha256": "95f7413bee63140b83cdb479d235a6d6c49abbd149f2dd55afa112f86b153db1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "test-repository",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_repository.py"
+      ],
+      "exit_code": 0,
+      "outer_wall_seconds": 400.2581020731013,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "432001b2ea007f430a81acba7942a26242b186e40d7548ecfa6745f0b8a70c94"
+    },
+    {
+      "label": "test-ci-source-integrity",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "outer_wall_seconds": 34.84483951400034,
+      "stdout_sha256": "700311f9bfa863280bad72756a43de159b0d12d1cd0add52e69b3aef46be0653",
+      "stderr_sha256": "323513b63574f5f49b2a70231f0f2436b02f20811474be6779714bf401dcb9e2"
+    },
+    {
+      "label": "selected-unit-tests",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_composition"
+      ],
+      "exit_code": 0,
+      "outer_wall_seconds": 1.8231111229397357,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "03b32ad3582d4e61f1cec55ef7d13f2e559e34924a44652da86e2b4851d4d1bb"
+    },
+    {
+      "label": "selected-sha256sums",
+      "command": [
+        "/usr/bin/sha256sum",
+        "-c",
+        "SHA256SUMS"
+      ],
+      "exit_code": 0,
+      "outer_wall_seconds": 0.0531238061375916,
+      "stdout_sha256": "1120abc7a572aec574aaf369bafdfc9d2fdf2bec6d6f1595b13438cf047d5302",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "final_rust_source_manifest_sha256": "0bbfc5a3f062956d17ef97dc77916c096345c1016ffdac6bf451cbb64d1b22c6",
+  "selected_sha256sums_sha256": "a5680efbea9604706feb354d2c3e65dd21565ee668e1fe7b6708971f161f05c7",
+  "qualification": "HOLD_NO_GO",
+  "source_state": "staged-candidate-not-yet-committed",
+  "complete_repository_ci_lane": false,
+  "production_activation": false
+}

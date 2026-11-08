@@ -1,0 +1,23 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+    "--example",
+    "r4_lifecycle_probe",
+    "--target-dir",
+    "/home/qian-qi/work/w1-security-r4-target-f16ac"
+  ],
+  "source_revision": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+  "probe_sha256": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e",
+  "exit_code": 0,
+  "seconds": 42.520756006240845,
+  "environment": {
+    "RUSTFLAGS": "-C target-cpu=native",
+    "CARGO_BUILD_JOBS": "2"
+  }
+}

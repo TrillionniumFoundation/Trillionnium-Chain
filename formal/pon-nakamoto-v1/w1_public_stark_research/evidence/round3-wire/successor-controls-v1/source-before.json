@@ -1,0 +1,78 @@
+{
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research": {
+    "bytes": 2212368,
+    "sha256": "44c0d3b88a1d8198c4db0ba3b27ed1072faf69377773fa97e835c8ccb8e2bd94"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query": {
+    "bytes": 603280,
+    "sha256": "6ec77adfb18fc2b3cfa41963a9d83c2169de20d73b510b411e3aa54862db28fb"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin": {
+    "bytes": 318,
+    "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin": {
+    "bytes": 64,
+    "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/run_successor_controls.py": {
+    "bytes": 8247,
+    "sha256": "f315c0d1ee9fa8694af5dd121e4f248f9a4ef32bb3393f7d1d31662155d90ce2"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/run_campaign.py": {
+    "bytes": 11224,
+    "sha256": "3ee33ef097d3b1f63c368726ff02beacb5333729d061e8be5801f0694141c39d"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/run_wire_admission_campaign.py": {
+    "bytes": 6914,
+    "sha256": "f9493e06add07bc3a13787c97661f99bc2c483f55dc84fa7f2e9d983c927d8d1"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml": {
+    "bytes": 780,
+    "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock": {
+    "bytes": 17799,
+    "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs": {
+    "bytes": 8516,
+    "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs": {
+    "bytes": 272,
+    "sha256": "0397a275bb9cfee522f568329c20b12b10e9282b3844704f6ab0db1d5867bcc9"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs": {
+    "bytes": 14089,
+    "sha256": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": {
+    "bytes": 9547,
+    "sha256": "f27541c4a456841e4a391327a907a6758f428947e3bc8792d7c164bdb29954a1"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs": {
+    "bytes": 9898,
+    "sha256": "a97e99da294471e807fd962bf307d62d5c8a9ad979525a019404b0bcfb8565ee"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs": {
+    "bytes": 14959,
+    "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs": {
+    "bytes": 12219,
+    "sha256": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs": {
+    "bytes": 13300,
+    "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/examples/mutate_last_query.rs": {
+    "bytes": 9617,
+    "sha256": "c0f7fd99615fb25442422e6986503143ad6a4a791e67202d338b78f2668fa4fc"
+  },
+  "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/examples/mutate_structure.rs": {
+    "bytes": 3454,
+    "sha256": "635c3f58b7b14995ff9051b43dc57fcb63cf6a69ed29d62bdd39a5ef168b9ced"
+  }
+}

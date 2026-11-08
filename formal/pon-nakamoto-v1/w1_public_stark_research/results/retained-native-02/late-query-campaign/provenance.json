@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-w1-typed-late-fri-controls-v1",
+  "qualification": "HOLD_NO_GO",
+  "verifier_binary_sha256": "7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc",
+  "mutator_binary_sha256": "6ec77adfb18fc2b3cfa41963a9d83c2169de20d73b510b411e3aa54862db28fb",
+  "mutator_source_sha256": "c0f7fd99615fb25442422e6986503143ad6a4a791e67202d338b78f2668fa4fc",
+  "campaign_source_sha256": "e88389909a40d94e941cc82817972765b3c219ab9cb6bcd19b09e5cdc9bcc0ab",
+  "retained_campaign_module_sha256": "3ee33ef097d3b1f63c368726ff02beacb5333729d061e8be5801f0694141c39d",
+  "original_artifact_sha256": {
+    "statement.bin": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "sha.proof.bin": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "arith.proof.bin": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+  },
+  "scope": "one typed value or digest element in a valid public proof; no from-zero attacker cost floor"
+}

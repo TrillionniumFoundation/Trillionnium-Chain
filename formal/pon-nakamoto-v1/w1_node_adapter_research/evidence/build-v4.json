@@ -1,0 +1,83 @@
+{
+  "schema": "trnm-w1-r4-node-build-v4",
+  "parent_commit": "7a7dfb9002406f4345a57e416d7a36504461c0df",
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "changes": [
+    "admission-receipt-v2-fresh-versus-exact-duplicate-semantics",
+    "archive-entry-io-errors-fail-closed"
+  ],
+  "commands": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--all"
+      ],
+      "exit_code": 0,
+      "seconds": 22.550151088042185
+    },
+    {
+      "name": "tests",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 119.71899146796204
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 1.7895557170268148
+    },
+    {
+      "name": "build",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--bin",
+        "w1-node-adapter-research"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2890522568486631
+    }
+  ],
+  "source_formatted": {
+    "Cargo.toml": "c64b9a09215a74df5dcebe8e0a153d1b4b633b80b4e5fb61a78af3fb3037e7e2",
+    "src/lib.rs": "69457c74801b2ac7b42d5a95edb4a17c32d1664bc00d14d7235415863e891ec6",
+    "src/main.rs": "ec8fc3116c4e5a17f134c1c9c61a0cfaa84a51de7306f9ce46fef9b358494c92",
+    "tests/node_bridge.rs": "9035dead75db8b2f66bfd8ce629ef78721647f096bc4d7c85e12fcb9a5ab9d66"
+  },
+  "cargo_lock_sha256": "9583c2eb4b81ae16716a71f8bca743c86001fe1a1a62de5ef8bc499ca6f65cf5",
+  "binary": {
+    "path": "/home/qian-qi/work/chain-w1-node-r4-f16ac/formal/pon-nakamoto-v1/w1_node_adapter_research/target/release/w1-node-adapter-research",
+    "sha256": "271ac45cc709d1d6e91e9ff78c004668e5e4d2a690e3b4e963220e750bcbeb1b"
+  }
+}

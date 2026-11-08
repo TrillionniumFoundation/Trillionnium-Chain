@@ -1,0 +1,2 @@
+{"elapsed_ms":19.347088,"phase":"bounded_read_decode_and_proof_shape"}
+{"error":"IndependentHeader","process_wall_ms":20.367156,"qualification":"HOLD_NO_GO","schema":"trnm-w1-complete-public-stark-run-v1","status":"REJECTED_OR_FAILED"}

@@ -1,0 +1,490 @@
+{
+  "schema": "trnm-w1-typed-late-fri-rejection-summary-v1",
+  "qualification": "HOLD_NO_GO",
+  "control_count": 4,
+  "observations": [
+    {
+      "label": "sha-last-fold-query-value",
+      "mutation": {
+        "label": "mutate-sha-last-fold-query-value",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query",
+          "last-fold-query-value",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/sha.proof.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value/sha.proof.bin"
+        ],
+        "exit_code": 0,
+        "outer_wall_seconds": 0.19228449603542686,
+        "expected_success": true,
+        "matched_exit_expectation": true,
+        "final": {
+          "changed_byte_count": 1,
+          "component": "sha",
+          "cost_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound",
+          "degree_bits": 13,
+          "input": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/sha.proof.bin",
+          "mode": "last-fold-query-value",
+          "mutation": {
+            "control_scope": "last fold of the last query; the verifier walks all query fold chains and final-polynomial checks before commit-phase MMCS authentication; actual rejection subtype must be observed",
+            "field_encoding_after_hex": "04a323a3d44d811ad3615525f8e1ae5f",
+            "field_encoding_before_hex": "03a323a3d44d811ad3615525f8e1ae5f",
+            "query_index_zero_based": 63,
+            "round_index_zero_based": 12,
+            "sibling_value_index_zero_based": 0,
+            "typed_path": "opening_proof.commit_phase_openings[12].sibling_values[63][0]"
+          },
+          "output": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value/sha.proof.bin",
+          "proof_bytes_after": 4356101,
+          "proof_bytes_before": 4356101,
+          "proof_sha256_after": "762ed0feb2cfb4cdcda708d15588d5ccd718f0d58318b385d4c77658b4629a9f",
+          "proof_sha256_before": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+          "public_and_expected_inputs_must_remain_unchanged": true,
+          "qualification": "HOLD_NO_GO",
+          "queries": 64,
+          "retained_verifier_order": "input multiproofs; all 64 query fold chains and final-polynomial checks; shared commit-phase authentication in round order",
+          "status": "MUTATED_RESEARCH_PROOF_ONLY",
+          "transcript_fields_sha256": "6fac6c36f1e0a4d7ad056e49a4d50714059d3a255c0ce8f1119a077c14c18cdf",
+          "transcript_fields_unchanged": true,
+          "verification_pending": true
+        },
+        "phase_events": [],
+        "resource_text": "\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query last-fold-query-value /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/sha.proof.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value/sha.proof.bin\"\n\tUser time (seconds): 0.07\n\tSystem time (seconds): 0.01\n\tPercent of CPU this job got: 51%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.18\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 19116\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 5544\n\tVoluntary context switches: 4\n\tInvoluntary context switches: 0\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 8512\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "combined_log_sha256": "2aefd5f60a4bf0fa3b5e9b03f9b02e760579e3aa8689d28579643a55e899964a"
+      },
+      "verification": {
+        "label": "verify-sha-last-fold-query-value",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+          "verify",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value/statement.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value"
+        ],
+        "exit_code": 1,
+        "outer_wall_seconds": 0.39214153098873794,
+        "expected_success": false,
+        "matched_exit_expectation": true,
+        "final": {
+          "error": "sha proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+          "process_wall_ms": 383.67962300000005,
+          "qualification": "HOLD_NO_GO",
+          "schema": "trnm-w1-complete-public-stark-run-v1",
+          "status": "REJECTED_OR_FAILED"
+        },
+        "phase_events": [
+          {
+            "elapsed_ms": 16.926078,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 8.241981000000001,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 48.924147,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 307.770117,
+            "phase": "sha_stark_verify"
+          }
+        ],
+        "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-query-value\"\n\tUser time (seconds): 0.64\n\tSystem time (seconds): 0.04\n\tPercent of CPU this job got: 178%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.39\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 39740\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 11938\n\tVoluntary context switches: 192\n\tInvoluntary context switches: 21\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+        "combined_log_sha256": "2e282cefa174767f2310cbb4ea215ba2a8e788dddf838aa9bf7cae24f8327efd"
+      },
+      "input_manifest": {
+        "statement.bin": {
+          "bytes": 377290,
+          "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+        },
+        "sha.proof.bin": {
+          "bytes": 4356101,
+          "sha256": "762ed0feb2cfb4cdcda708d15588d5ccd718f0d58318b385d4c77658b4629a9f"
+        },
+        "arith.proof.bin": {
+          "bytes": 530885,
+          "sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+        }
+      },
+      "expected_subtype": "FinalPolyMismatch",
+      "rejection_frontier_matched": true
+    },
+    {
+      "label": "sha-last-fold-auth-sibling",
+      "mutation": {
+        "label": "mutate-sha-last-fold-auth-sibling",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query",
+          "last-fold-auth-sibling",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/sha.proof.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling/sha.proof.bin"
+        ],
+        "exit_code": 0,
+        "outer_wall_seconds": 0.181271867826581,
+        "expected_success": true,
+        "matched_exit_expectation": true,
+        "final": {
+          "changed_byte_count": 1,
+          "component": "sha",
+          "cost_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound",
+          "degree_bits": 13,
+          "input": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/sha.proof.bin",
+          "mode": "last-fold-auth-sibling",
+          "mutation": {
+            "control_scope": "last round with external authentication digests, last shared digest, last field element; this is a shared multiproof frontier, not an independent path for the last query",
+            "digest_element_index_zero_based": 3,
+            "field_encoding_after_hex": "333dcffa69221ac6",
+            "field_encoding_before_hex": "323dcffa69221ac6",
+            "query_index_zero_based": null,
+            "round_index_zero_based": 9,
+            "sibling_hash_counts_by_round": [
+              449,
+              385,
+              321,
+              259,
+              200,
+              147,
+              94,
+              53,
+              19,
+              4,
+              0,
+              0,
+              0
+            ],
+            "sibling_hash_index_zero_based": 3,
+            "typed_path": "opening_proof.commit_phase_openings[9].opening_proof.sibling_hashes[3][3]"
+          },
+          "output": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling/sha.proof.bin",
+          "proof_bytes_after": 4356101,
+          "proof_bytes_before": 4356101,
+          "proof_sha256_after": "aefadf10d1bc8da1cedde4bb84301f076aa511802716b91af252fcb76418a136",
+          "proof_sha256_before": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+          "public_and_expected_inputs_must_remain_unchanged": true,
+          "qualification": "HOLD_NO_GO",
+          "queries": 64,
+          "retained_verifier_order": "input multiproofs; all 64 query fold chains and final-polynomial checks; shared commit-phase authentication in round order",
+          "status": "MUTATED_RESEARCH_PROOF_ONLY",
+          "transcript_fields_sha256": "6fac6c36f1e0a4d7ad056e49a4d50714059d3a255c0ce8f1119a077c14c18cdf",
+          "transcript_fields_unchanged": true,
+          "verification_pending": true
+        },
+        "phase_events": [],
+        "resource_text": "\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query last-fold-auth-sibling /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/sha.proof.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling/sha.proof.bin\"\n\tUser time (seconds): 0.08\n\tSystem time (seconds): 0.01\n\tPercent of CPU this job got: 57%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.17\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 19148\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 5543\n\tVoluntary context switches: 5\n\tInvoluntary context switches: 0\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 8512\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "combined_log_sha256": "6f967168d29f69552f62b60c0c412edc15500843c7ddf8bcbb1e063b7c53d4ca"
+      },
+      "verification": {
+        "label": "verify-sha-last-fold-auth-sibling",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+          "verify",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling/statement.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling"
+        ],
+        "exit_code": 1,
+        "outer_wall_seconds": 0.3711050779093057,
+        "expected_success": false,
+        "matched_exit_expectation": true,
+        "final": {
+          "error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+          "process_wall_ms": 359.57696300000003,
+          "qualification": "HOLD_NO_GO",
+          "schema": "trnm-w1-complete-public-stark-run-v1",
+          "status": "REJECTED_OR_FAILED"
+        },
+        "phase_events": [
+          {
+            "elapsed_ms": 17.973617,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 8.475865,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 48.923649,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 282.50341699999996,
+            "phase": "sha_stark_verify"
+          }
+        ],
+        "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/sha-last-fold-auth-sibling\"\n\tUser time (seconds): 0.62\n\tSystem time (seconds): 0.04\n\tPercent of CPU this job got: 182%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.36\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 39120\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 11944\n\tVoluntary context switches: 187\n\tInvoluntary context switches: 3\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+        "combined_log_sha256": "71ed37f7489be255a0e0fdacd610f79cf07c36af3a9593194203638875c84219"
+      },
+      "input_manifest": {
+        "statement.bin": {
+          "bytes": 377290,
+          "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+        },
+        "sha.proof.bin": {
+          "bytes": 4356101,
+          "sha256": "aefadf10d1bc8da1cedde4bb84301f076aa511802716b91af252fcb76418a136"
+        },
+        "arith.proof.bin": {
+          "bytes": 530885,
+          "sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+        }
+      },
+      "expected_subtype": "CommitPhaseMmcsError(CapMismatch)",
+      "rejection_frontier_matched": true
+    },
+    {
+      "label": "arith-last-fold-query-value",
+      "mutation": {
+        "label": "mutate-arith-last-fold-query-value",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query",
+          "last-fold-query-value",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/arith.proof.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/arith.proof.bin"
+        ],
+        "exit_code": 0,
+        "outer_wall_seconds": 0.0397080248221755,
+        "expected_success": true,
+        "matched_exit_expectation": true,
+        "final": {
+          "changed_byte_count": 1,
+          "component": "arithmetic",
+          "cost_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound",
+          "degree_bits": 17,
+          "input": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/arith.proof.bin",
+          "mode": "last-fold-query-value",
+          "mutation": {
+            "control_scope": "last fold of the last query; the verifier walks all query fold chains and final-polynomial checks before commit-phase MMCS authentication; actual rejection subtype must be observed",
+            "field_encoding_after_hex": "2f1c4c3ca32e46920fd9807928f67708",
+            "field_encoding_before_hex": "2e1c4c3ca32e46920fd9807928f67708",
+            "query_index_zero_based": 63,
+            "round_index_zero_based": 16,
+            "sibling_value_index_zero_based": 0,
+            "typed_path": "opening_proof.commit_phase_openings[16].sibling_values[63][0]"
+          },
+          "output": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/arith.proof.bin",
+          "proof_bytes_after": 530885,
+          "proof_bytes_before": 530885,
+          "proof_sha256_after": "fdd8d324ed68caec5495376b9007c2177d7e85e968e28267367ad7049fe5d8ac",
+          "proof_sha256_before": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+          "public_and_expected_inputs_must_remain_unchanged": true,
+          "qualification": "HOLD_NO_GO",
+          "queries": 64,
+          "retained_verifier_order": "input multiproofs; all 64 query fold chains and final-polynomial checks; shared commit-phase authentication in round order",
+          "status": "MUTATED_RESEARCH_PROOF_ONLY",
+          "transcript_fields_sha256": "163fff08f49807aa972db414ef91d9459d97d88e5da09b0c63fc24048e559821",
+          "transcript_fields_unchanged": true,
+          "verification_pending": true
+        },
+        "phase_events": [],
+        "resource_text": "\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query last-fold-query-value /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/arith.proof.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/arith.proof.bin\"\n\tUser time (seconds): 0.01\n\tSystem time (seconds): 0.00\n\tPercent of CPU this job got: 43%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.03\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 3968\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 759\n\tVoluntary context switches: 3\n\tInvoluntary context switches: 0\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 1040\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "combined_log_sha256": "1034704b597ec98056da6354b4018b115f9965b6fd14f1f8c811743d51b7b5a6"
+      },
+      "verification": {
+        "label": "verify-arith-last-fold-query-value",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+          "verify",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/statement.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value"
+        ],
+        "exit_code": 1,
+        "outer_wall_seconds": 0.9926563471090049,
+        "expected_success": false,
+        "matched_exit_expectation": true,
+        "final": {
+          "error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+          "process_wall_ms": 983.700485,
+          "qualification": "HOLD_NO_GO",
+          "schema": "trnm-w1-complete-public-stark-run-v1",
+          "status": "REJECTED_OR_FAILED"
+        },
+        "phase_events": [
+          {
+            "elapsed_ms": 17.669034,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 8.417710999999999,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 53.702932000000004,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 296.69941700000004,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 568.6838389999999,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 36.030055999999995,
+            "phase": "arith_stark_verify"
+          }
+        ],
+        "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value\"\n\tUser time (seconds): 4.74\n\tSystem time (seconds): 0.15\n\tPercent of CPU this job got: 495%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.99\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 131676\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 35070\n\tVoluntary context switches: 357\n\tInvoluntary context switches: 262\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+        "combined_log_sha256": "68ddbf6c325e0b9f14c2fd23cb5478d53bbf5a228e415a7b01714e7b2c0b43d9"
+      },
+      "input_manifest": {
+        "statement.bin": {
+          "bytes": 377290,
+          "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+        },
+        "sha.proof.bin": {
+          "bytes": 4356101,
+          "sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+        },
+        "arith.proof.bin": {
+          "bytes": 530885,
+          "sha256": "fdd8d324ed68caec5495376b9007c2177d7e85e968e28267367ad7049fe5d8ac"
+        }
+      },
+      "expected_subtype": "FinalPolyMismatch",
+      "rejection_frontier_matched": true
+    },
+    {
+      "label": "arith-last-fold-auth-sibling",
+      "mutation": {
+        "label": "mutate-arith-last-fold-auth-sibling",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query",
+          "last-fold-auth-sibling",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/arith.proof.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling/arith.proof.bin"
+        ],
+        "exit_code": 0,
+        "outer_wall_seconds": 0.11049925698898733,
+        "expected_success": true,
+        "matched_exit_expectation": true,
+        "final": {
+          "changed_byte_count": 1,
+          "component": "arithmetic",
+          "cost_scope": "one controlled path only; last nonempty multiproof round is not a global worst-case rejection bound",
+          "degree_bits": 17,
+          "input": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/arith.proof.bin",
+          "mode": "last-fold-auth-sibling",
+          "mutation": {
+            "control_scope": "last round with external authentication digests, last shared digest, last field element; this is a shared multiproof frontier, not an independent path for the last query",
+            "digest_element_index_zero_based": 3,
+            "field_encoding_after_hex": "6bb3a39665b10738",
+            "field_encoding_before_hex": "6ab3a39665b10738",
+            "query_index_zero_based": null,
+            "round_index_zero_based": 13,
+            "sibling_hash_counts_by_round": [
+              714,
+              650,
+              586,
+              522,
+              458,
+              396,
+              333,
+              270,
+              207,
+              148,
+              99,
+              52,
+              21,
+              2,
+              0,
+              0,
+              0
+            ],
+            "sibling_hash_index_zero_based": 1,
+            "typed_path": "opening_proof.commit_phase_openings[13].opening_proof.sibling_hashes[1][3]"
+          },
+          "output": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling/arith.proof.bin",
+          "proof_bytes_after": 530885,
+          "proof_bytes_before": 530885,
+          "proof_sha256_after": "028d242b194f2fcb91d3a30c5970954966975c3e96e3fc44e29c02a4459544d7",
+          "proof_sha256_before": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+          "public_and_expected_inputs_must_remain_unchanged": true,
+          "qualification": "HOLD_NO_GO",
+          "queries": 64,
+          "retained_verifier_order": "input multiproofs; all 64 query fold chains and final-polynomial checks; shared commit-phase authentication in round order",
+          "status": "MUTATED_RESEARCH_PROOF_ONLY",
+          "transcript_fields_sha256": "163fff08f49807aa972db414ef91d9459d97d88e5da09b0c63fc24048e559821",
+          "transcript_fields_unchanged": true,
+          "verification_pending": true
+        },
+        "phase_events": [],
+        "resource_text": "\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_last_query last-fold-auth-sibling /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/arith.proof.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling/arith.proof.bin\"\n\tUser time (seconds): 0.01\n\tSystem time (seconds): 0.00\n\tPercent of CPU this job got: 16%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.10\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 3972\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 758\n\tVoluntary context switches: 4\n\tInvoluntary context switches: 0\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 1040\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+        "combined_log_sha256": "0a291a722d0e08075a222e94150c428915f706cc34b065ebbabfa86992f6038f"
+      },
+      "verification": {
+        "label": "verify-arith-last-fold-auth-sibling",
+        "command": [
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+          "verify",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling/statement.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+          "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling"
+        ],
+        "exit_code": 1,
+        "outer_wall_seconds": 0.990253017982468,
+        "expected_success": false,
+        "matched_exit_expectation": true,
+        "final": {
+          "error": "arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+          "process_wall_ms": 980.529047,
+          "qualification": "HOLD_NO_GO",
+          "schema": "trnm-w1-complete-public-stark-run-v1",
+          "status": "REJECTED_OR_FAILED"
+        },
+        "phase_events": [
+          {
+            "elapsed_ms": 17.505720999999998,
+            "phase": "bounded_read_decode_and_proof_shape"
+          },
+          {
+            "elapsed_ms": 8.268263,
+            "phase": "canonical_plans_and_public_only_sha_air"
+          },
+          {
+            "elapsed_ms": 47.401516,
+            "phase": "sha_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 285.915697,
+            "phase": "sha_stark_verify"
+          },
+          {
+            "elapsed_ms": 568.609976,
+            "phase": "arith_verifier_independent_preprocessing_setup"
+          },
+          {
+            "elapsed_ms": 50.640468,
+            "phase": "arith_stark_verify"
+          }
+        ],
+        "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-auth-sibling\"\n\tUser time (seconds): 4.68\n\tSystem time (seconds): 0.15\n\tPercent of CPU this job got: 490%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.98\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 131452\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 35081\n\tVoluntary context switches: 369\n\tInvoluntary context switches: 16\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+        "combined_log_sha256": "e4452457ab0e6211ac57fc60cc374abe30e1deab5ab4cb56ffb239e6c8b0d167"
+      },
+      "input_manifest": {
+        "statement.bin": {
+          "bytes": 377290,
+          "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c"
+        },
+        "sha.proof.bin": {
+          "bytes": 4356101,
+          "sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+        },
+        "arith.proof.bin": {
+          "bytes": 530885,
+          "sha256": "028d242b194f2fcb91d3a30c5970954966975c3e96e3fc44e29c02a4459544d7"
+        }
+      },
+      "expected_subtype": "CommitPhaseMmcsError(CapMismatch)",
+      "rejection_frontier_matched": true
+    }
+  ],
+  "largest_observed_outer_seconds": 0.9926563471090049,
+  "is_global_latest_rejection_bound": false,
+  "verifier_order": "input multiproofs, all query fold chains and final-polynomial checks, then shared commit-phase authentication in round order"
+}

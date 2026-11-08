@@ -1,0 +1,233 @@
+[
+  {
+    "ordinal": 0,
+    "nonce": 587,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "cache_hit": false,
+    "event": "4798cd7d690f7f745966b663c086f476b3fefe1d6de67cdfcdcfdfff3362b65e",
+    "ticket": "d24d07374474d415c3ee330a86720cceb4834971036511f19472d32a2a74dbfc",
+    "target_passes": false,
+    "witness_sha256": "e7919d385bd7476c314db41e67325d8cb3c0095e5f8a61fe13983ac535f2ee3f",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 2048,
+      "scalar_additions": 1920,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 1
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 753869
+  },
+  {
+    "ordinal": 1,
+    "nonce": 666,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "cache_hit": true,
+    "event": "7c39ae5718590648761ac3a9f07027371e6e74afeeb20b77168360cbd8f3ce79",
+    "ticket": "4be77eb3fdf9f52dcde14545721d62e81378ed15d328b36d23b6b6aade4791ef",
+    "target_passes": false,
+    "witness_sha256": "fc8f0872067dfeda47f344e95939cc0e40ab82e9657658b6a5f4ae67b28cd291",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 1536,
+      "scalar_additions": 1472,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 0
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 459695
+  },
+  {
+    "ordinal": 2,
+    "nonce": 797,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "cache_hit": true,
+    "event": "fc9da039d0aba943895c87c604009fa80335b66775442d016b43db7b93476588",
+    "ticket": "2c8f439baa01a89a6522e56c32caf7b8578b42be4d89d92e4c341793850f4cea",
+    "target_passes": false,
+    "witness_sha256": "92bcd45c3263b7787ca330638fe40f30e50a852bc5b75fc9949d21ba6ed5ffaf",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 1536,
+      "scalar_additions": 1472,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 0
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 533245
+  },
+  {
+    "ordinal": 3,
+    "nonce": 917,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "cache_hit": true,
+    "event": "d62dbccaaf1ef8bc6b36ed71a5773cdb814786339350bb680ea92d5f5217b328",
+    "ticket": "62ffb24350e657ba4fb50bf9f15f7becf88c82c7ea8e45d2dca26f87f101e6e8",
+    "target_passes": false,
+    "witness_sha256": "5a4f6738a0eda3575a4d9de72f322bb2eca9fa39cb515e384f5051bf02b0d3dc",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 1536,
+      "scalar_additions": 1472,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 0
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 488358
+  },
+  {
+    "ordinal": 4,
+    "nonce": 990,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "cache_hit": true,
+    "event": "927eb45b47bc6d710a77f097a608545f50e65cd014b953a977b7d899f458e5b3",
+    "ticket": "354a013327d2d46cfdcfaf9e04563f724edbfc0277e1dc082c7e38442f47acd2",
+    "target_passes": false,
+    "witness_sha256": "a56c99cdf3766a97be378f41c24fbaeb146415624ff0ae31d8d3262ee005a34b",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 1536,
+      "scalar_additions": 1472,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 0
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 486085
+  },
+  {
+    "ordinal": 5,
+    "nonce": 519,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "cache_hit": false,
+    "event": "f5bb583defa6c8e9b43baea4aa1874d56dc08ba79bb7f52adefd8ff0071281af",
+    "ticket": "5d05069620553c2b4640783a28c3b23fb37480ad82deaa758a6b739b66f0129f",
+    "target_passes": false,
+    "witness_sha256": "7af8249d32c6b38d7bbf9f679b54b15dc9c18731c2267321813a42296dc4cd50",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 2048,
+      "scalar_additions": 1920,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 1
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 529280
+  },
+  {
+    "ordinal": 6,
+    "nonce": 561,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "cache_hit": true,
+    "event": "083bde38e2a44f8f488e614ff4b47ae9d895e9fec33a7966a16d2d18f92415da",
+    "ticket": "0064f72c54274e2db008608d934f0ca6381918be7ef0b176b4695405c624effa",
+    "target_passes": true,
+    "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72",
+    "candidate_counts": {
+      "sha256_calls": 36,
+      "sha256_input_bytes": 4269,
+      "sha256_compression_blocks": 84,
+      "scalar_multiplications": 1536,
+      "scalar_additions": 1472,
+      "field_equality_checks": 0,
+      "recognition_words": 0,
+      "compiled_table_reads": 0,
+      "useful_product_acquisitions": 0
+    },
+    "candidate_tag_counts": {
+      "noise-eight": 32,
+      "task": 1,
+      "context": 1,
+      "event": 1,
+      "ticket": 1
+    },
+    "instrumented_producer_phase_ns": 486785
+  }
+]

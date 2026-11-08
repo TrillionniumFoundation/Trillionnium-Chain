@@ -1,0 +1,24 @@
+{
+  "at_unix_ms": 1794095054023,
+  "job_id": "1a1b865d5be-12894-f09",
+  "state": "failed",
+  "exit_code": 101,
+  "output_complete": true,
+  "output_durable": true,
+  "timed_out": false,
+  "cancelled": false,
+  "log_truncated": {
+    "stderr": false,
+    "stdout": false
+  },
+  "log_bytes": {
+    "stderr": {
+      "seen": 1241,
+      "stored": 1241
+    },
+    "stdout": {
+      "seen": 16795,
+      "stored": 16795
+    }
+  }
+}

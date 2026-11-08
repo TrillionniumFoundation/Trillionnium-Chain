@@ -1,0 +1,30 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling version_check v0.9.5
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling generic-array v0.14.7
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling typenum v1.20.1
+   Compiling syn v2.0.117
+   Compiling cc v1.2.59
+   Compiling serde_core v1.0.228
+   Compiling sha2-asm v0.6.4
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling zmij v1.0.21
+   Compiling thiserror v1.0.69
+   Compiling serde v1.0.228
+   Compiling digest v0.10.7
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling serde_json v1.0.149
+   Compiling sha2 v0.10.9
+   Compiling memchr v2.8.0
+   Compiling hex v0.4.3
+   Compiling itoa v1.0.18
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/pon-w1-round1-baseline-89f4dd/vendor/trnm-protocol)
+   Compiling w1-prefix-native-research v0.1.0 (/home/qian-qi/work/pon-w1-round1-baseline-89f4dd)
+    Finished `release` profile [optimized] target(s) in 34.52s

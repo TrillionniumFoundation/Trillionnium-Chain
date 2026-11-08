@@ -1,0 +1,1156 @@
+{"phase": "start", "command": ["bash", "scripts/project-preflight.sh"]}
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-w1-stark-selected-20261107-89f4dd", "remote_policy_mutated": false}
+{"phase": "end", "command": ["bash", "scripts/project-preflight.sh"], "exit_code": 0}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock", "sha256": "9e28bf0b3912ca692b0f80842a3f20323b212b2a1c5bbaa85d7503654c069c2e", "bytes": 17783}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c", "bytes": 780}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin", "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683", "bytes": 64}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin", "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f", "bytes": 318}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.input.bin", "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb", "bytes": 49506}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.prefix.bin", "sha256": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96", "bytes": 131072}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/run_campaign.py", "sha256": "859af5ca06394d0a33da5a62e257f7816cba1af89d854753515e50c42ed03499", "bytes": 9497}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs", "sha256": "58b449817db1b1f9575d9ce64651469ecfe6d6e4e165db26be2ecef5bada0882", "bytes": 7937}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs", "sha256": "556ddf2d7c74c000399c5d190ebcb57d9eb27f8019b143143b5756686376e6c2", "bytes": 252}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs", "sha256": "27b0360c9cdac88b6b7ee106142c48493a25117cf7370097a2320b0fecfc2b55", "bytes": 12512}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs", "sha256": "4880d81c6548e831714cb9f42dc3d98705b8f3dee07be665744ba49418efe81f", "bytes": 9585}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs", "sha256": "36e04e65fdeb843e309b688d5203a61a164b3e4d795d8361ea4ea925ce2f8e85", "bytes": 12170}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs", "sha256": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5", "bytes": 12176}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs", "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3", "bytes": 13300}
+{"staged": "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs", "sha256": "b88e678f7b4aa3d6e4fd26f027b8273d54b9d953938053577e0d35dcd54671c3", "bytes": 6775}
+{"phase": "start", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "fmt", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--", "--check"]}
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:34:
+         left[1] = 1;
+         right[0] = a;
+         right[1] = b;
+-        Self { left, right, start: 0, goal }
++        Self {
++            left,
++            right,
++            start: 0,
++            goal,
++        }
+     }
+ 
+     pub fn canonical(&self) -> bool {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:41:
+-        self.left.iter().chain(self.right.iter()).chain([&self.start, &self.goal])
++        self.left
++            .iter()
++            .chain(self.right.iter())
++            .chain([&self.start, &self.goal])
+             .all(|&word| u64::from(word) < Q)
+     }
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:45:
+     /// Independent integer diagnostic, never called by STARK verification.
+     pub fn integer_holds(&self) -> bool {
+-        let total = self.left.iter().zip(self.right).fold(u128::from(self.start), |sum, (&a, b)| {
+-            sum + u128::from(a) * u128::from(b)
+-        });
++        let total = self
++            .left
++            .iter()
++            .zip(self.right)
++            .fold(u128::from(self.start), |sum, (&a, b)| {
++                sum + u128::from(a) * u128::from(b)
++            });
+         self.canonical() && total % u128::from(Q) == u128::from(self.goal)
+     }
+ }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:69:
+         Ok(Self { rows, height })
+     }
+ 
+-    pub fn real_rows(&self) -> usize { self.rows.len() }
+-    pub fn trace_height(&self) -> usize { self.height }
+-    pub fn rows(&self) -> &[Dot8Row] { &self.rows }
++    pub fn real_rows(&self) -> usize {
++        self.rows.len()
++    }
++    pub fn trace_height(&self) -> usize {
++        self.height
++    }
++    pub fn rows(&self) -> &[Dot8Row] {
++        &self.rows
++    }
+ 
+     pub fn generate_trace(&self) -> RowMajorMatrix<Goldilocks> {
+         let mut values = vec![Goldilocks::ZERO; self.height * DOT8_WIDTH];
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:99:
+ }
+ 
+ impl BaseAir<Goldilocks> for Dot8Air {
+-    fn width(&self) -> usize { DOT8_WIDTH }
+-    fn preprocessed_width(&self) -> usize { DOT8_PREPROCESSED_WIDTH }
++    fn width(&self) -> usize {
++        DOT8_WIDTH
++    }
++    fn preprocessed_width(&self) -> usize {
++        DOT8_PREPROCESSED_WIDTH
++    }
+     fn preprocessed_trace(&self) -> Option<RowMajorMatrix<Goldilocks>> {
+         let mut values = vec![Goldilocks::ZERO; self.height * DOT8_PREPROCESSED_WIDTH];
+         for (i, row) in self.rows.iter().enumerate() {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:114:
+         }
+         Some(RowMajorMatrix::new(values, DOT8_PREPROCESSED_WIDTH))
+     }
+-    fn main_next_row_columns(&self) -> Vec<usize> { Vec::new() }
+-    fn preprocessed_next_row_columns(&self) -> Vec<usize> { Vec::new() }
+-    fn max_constraint_degree(&self) -> Option<usize> { Some(2) }
+-    fn num_public_values(&self) -> usize { 0 }
++    fn main_next_row_columns(&self) -> Vec<usize> {
++        Vec::new()
++    }
++    fn preprocessed_next_row_columns(&self) -> Vec<usize> {
++        Vec::new()
++    }
++    fn max_constraint_degree(&self) -> Option<usize> {
++        Some(2)
++    }
++    fn num_public_values(&self) -> usize {
++        0
++    }
+ }
+ 
+ impl<AB: AirBuilder<F = Goldilocks>> Air<AB> for Dot8Air {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:131:
+         let q = Goldilocks::from_u64(Q);
+         let mut sum = AB::Expr::from(public[16]);
+         for i in 0..8 {
+-            let quotient = pack_bits_le::<AB::Expr, _, _>(bits[i * 64..i * 64 + 32].iter().copied());
+-            let remainder = pack_bits_le::<AB::Expr, _, _>(bits[i * 64 + 32..(i + 1) * 64].iter().copied());
+-            builder.assert_eq(public[2 * i] * public[2 * i + 1], quotient * q + remainder.clone());
++            let quotient =
++                pack_bits_le::<AB::Expr, _, _>(bits[i * 64..i * 64 + 32].iter().copied());
++            let remainder =
++                pack_bits_le::<AB::Expr, _, _>(bits[i * 64 + 32..(i + 1) * 64].iter().copied());
++            builder.assert_eq(
++                public[2 * i] * public[2 * i + 1],
++                quotient * q + remainder.clone(),
++            );
+             sum += remainder;
+         }
+         let carry = pack_bits_le::<AB::Expr, _, _>(bits[512..516].iter().copied());
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:152:
+ 
+     #[test]
+     fn maximum_inputs_and_addition_are_integer_exact() {
+-        let rows = vec![Dot8Row { left: [Q as u32 - 1; 8], right: [Q as u32 - 1; 8],
+-            start: Q as u32 - 1, goal: 7 }, Dot8Row::addition(Q as u32 - 1, Q as u32 - 1, Q as u32 - 2)];
++        let rows = vec![
++            Dot8Row {
++                left: [Q as u32 - 1; 8],
++                right: [Q as u32 - 1; 8],
++                start: Q as u32 - 1,
++                goal: 7,
++            },
++            Dot8Row::addition(Q as u32 - 1, Q as u32 - 1, Q as u32 - 2),
++        ];
+         assert!(rows.iter().all(Dot8Row::integer_holds));
+         let air = Dot8Air::new(rows).unwrap();
+         check_constraints(&air, &air.generate_trace(), &[]);
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:161:
+ 
+     #[test]
+     fn prior_whole_dot_goldilocks_alias_is_rejected() {
+-        let air = Dot8Air::new(vec![Dot8Row { left: [Q as u32 - 1; 8], right: [Q as u32 - 1; 8],
+-            start: 0, goal: 4_294_967_278 }]).unwrap();
++        let air = Dot8Air::new(vec![Dot8Row {
++            left: [Q as u32 - 1; 8],
++            right: [Q as u32 - 1; 8],
++            start: 0,
++            goal: 4_294_967_278,
++        }])
++        .unwrap();
+         assert!(!air.rows()[0].integer_holds());
+         rejects(&air, &air.generate_trace());
+     }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs:186:
+ 
+     #[test]
+     fn bounded_noncanonical_intermediate_is_an_equivalent_representation() {
+-        let mut left = [0; 8]; let mut right = [0; 8];
+-        left[0] = Q as u32 - 1; right[0] = Q as u32 - 1;
+-        let air = Dot8Air::new(vec![Dot8Row { left, right, start: 0, goal: 1 }]).unwrap();
++        let mut left = [0; 8];
++        let mut right = [0; 8];
++        left[0] = Q as u32 - 1;
++        right[0] = Q as u32 - 1;
++        let air = Dot8Air::new(vec![Dot8Row {
++            left,
++            right,
++            start: 0,
++            goal: 1,
++        }])
++        .unwrap();
+         let mut trace = air.generate_trace();
+         // (q-1)^2 = q(q-3) + (q+1). Its sum quotient is one.
+         for bit in 0..32 {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs:2:
+ //! No production consensus or security qualification is granted by this crate.
+ 
+ pub mod arith_air;
+-pub mod public;
+ pub mod proof_config;
++pub mod public;
+ pub mod sha_air;
+ pub mod sha_plan;
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs:19:
+ use p3_security::stark::proven_security_report;
+ use p3_symmetric::{PaddingFreeSponge, TruncatedPermutation};
+ use p3_uni_stark::{
+-    ConjecturedSecurity, GrindingSites, OpeningShape, Proof, StarkConfig,
+-    StarkGenericConfig, StarkSecurityParams,
++    ConjecturedSecurity, GrindingSites, OpeningShape, Proof, StarkConfig, StarkGenericConfig,
++    StarkSecurityParams,
+ };
+ use serde_json::{Value, json};
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs:32:
+ pub type Perm = Poseidon2Goldilocks<8>;
+ pub type Hasher = PaddingFreeSponge<Perm, 8, 4, 4>;
+ pub type Compressor = TruncatedPermutation<Perm, 2, 4, 8>;
+-pub type ValMmcs = MerkleTreeMmcs<
+-    <Val as Field>::Packing,
+-    <Val as Field>::Packing,
+-    Hasher,
+-    Compressor,
+-    2,
+-    4,
+->;
++pub type ValMmcs =
++    MerkleTreeMmcs<<Val as Field>::Packing, <Val as Field>::Packing, Hasher, Compressor, 2, 4>;
+ pub type ChallengeMmcs = ExtensionMmcs<Val, Challenge, ValMmcs>;
+ pub type Challenger = DuplexChallenger<Val, Perm, 8, 4>;
+ pub type Dft = Radix2DitParallel<Val>;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs:125:
+         num_periodic_columns: air.num_periodic_columns(),
+         ..Default::default()
+     };
+-    let domain = <Pcs as PcsTrait<Challenge, Challenger>>::natural_domain_for_degree(
+-        cfg.pcs(),
+-        height,
+-    );
++    let domain =
++        <Pcs as PcsTrait<Challenge, Challenger>>::natural_domain_for_degree(cfg.pcs(), height);
+     let params = StarkSecurityParams::from_air::<Val, Challenge, A>(
+         fri_regime(),
+         air,
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:5:
+ //! a native hash, matrix product, or accept a proof-supplied verification key.
+ 
+ use crate::arith_air::{Dot8Air, Dot8Row, FULL_REAL_ROWS, Q};
+-use crate::sha_plan::{HashClaims, ShaPlan, W1ShaPublic, HEADER_BYTES, INPUT_BYTES, PREFIX_BYTES, honest_claims};
++use crate::sha_plan::{
++    HEADER_BYTES, HashClaims, INPUT_BYTES, PREFIX_BYTES, ShaPlan, W1ShaPublic, honest_claims,
++};
+ 
+ pub const N: usize = 64;
+ pub const CELLS: usize = N * N;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:12:
+ pub const PUBLIC_MAGIC: &[u8; 8] = b"W1P3PUB1";
+ pub const HASH_CLAIMS_BYTES: usize = 32 * (1 + 4 * 128 + 2);
+ pub const ARITHMETIC_CLAIMS_WORDS: usize = (4 + 7) * CELLS;
+-pub const PUBLIC_BYTES: usize = 8 + INPUT_BYTES + PREFIX_BYTES + HASH_CLAIMS_BYTES + 4 * ARITHMETIC_CLAIMS_WORDS;
++pub const PUBLIC_BYTES: usize =
++    8 + INPUT_BYTES + PREFIX_BYTES + HASH_CLAIMS_BYTES + 4 * ARITHMETIC_CLAIMS_WORDS;
+ 
+ #[derive(Clone, Debug)]
+ pub struct ArithmeticClaims {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:39:
+ 
+ impl Expected {
+     pub fn from_bytes(header: &[u8], artifacts: &[u8]) -> Result<Self, &'static str> {
+-        Ok(Self { header: header.try_into().map_err(|_| "expected header length")?,
+-            artifacts: artifacts.try_into().map_err(|_| "expected artifacts length")? })
++        Ok(Self {
++            header: header.try_into().map_err(|_| "expected header length")?,
++            artifacts: artifacts
++                .try_into()
++                .map_err(|_| "expected artifacts length")?,
++        })
+     }
+ }
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:47:
+ fn canonical_words(bytes: &[u8]) -> Result<Vec<u32>, &'static str> {
+-    if !bytes.len().is_multiple_of(4) { return Err("word alignment"); }
+-    bytes.chunks_exact(4).map(|x| {
+-        let word = u32::from_le_bytes(x.try_into().unwrap());
+-        if u64::from(word) < Q { Ok(word) } else { Err("noncanonical public word") }
+-    }).collect()
++    if !bytes.len().is_multiple_of(4) {
++        return Err("word alignment");
++    }
++    bytes
++        .chunks_exact(4)
++        .map(|x| {
++            let word = u32::from_le_bytes(x.try_into().unwrap());
++            if u64::from(word) < Q {
++                Ok(word)
++            } else {
++                Err("noncanonical public word")
++            }
++        })
++        .collect()
+ }
+ 
+ /// This public deterministic sampler selects exactly the original accepted
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:62:
+                 let word = u32::from_le_bytes(bytes.try_into().unwrap());
+                 if u64::from(word) < Q {
+                     factor.push(word);
+-                    if factor.len() == 512 { break 'digests; }
++                    if factor.len() == 512 {
++                        break 'digests;
++                    }
+                 }
+             }
+         }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:69:
+-        if factor.len() != 512 { return Err("original noise budget exhausted"); }
++        if factor.len() != 512 {
++            return Err("original noise budget exhausted");
++        }
+     }
+     Ok(factors)
+ }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:73:
+ 
+ fn unpack_original_prefix(bytes: &[u8]) -> Result<Vec<u32>, &'static str> {
+-    if bytes.len() != PREFIX_BYTES { return Err("prefix length"); }
++    if bytes.len() != PREFIX_BYTES {
++        return Err("prefix length");
++    }
+     let words = canonical_words(bytes)?;
+     let mut out = vec![0; 8 * CELLS];
+     let mut offset = 0;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:79:
+-    for bi in 0..8 { for bj in 0..8 { for bk in 0..8 { for i in 0..8 { for j in 0..8 {
+-        out[bk * CELLS + (8 * bi + i) * N + 8 * bj + j] = words[offset];
+-        offset += 1;
+-    }}}}}
++    for bi in 0..8 {
++        for bj in 0..8 {
++            for bk in 0..8 {
++                for i in 0..8 {
++                    for j in 0..8 {
++                        out[bk * CELLS + (8 * bi + i) * N + 8 * bj + j] = words[offset];
++                        offset += 1;
++                    }
++                }
++            }
++        }
++    }
+     Ok(out)
+ }
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:86:
+ impl PublicStatement {
+     pub fn decode(bytes: &[u8]) -> Result<Self, &'static str> {
+-        if bytes.len() != PUBLIC_BYTES || &bytes[..8] != PUBLIC_MAGIC { return Err("public framing"); }
++        if bytes.len() != PUBLIC_BYTES || &bytes[..8] != PUBLIC_MAGIC {
++            return Err("public framing");
++        }
+         let mut pos = 8;
+-        let raw = bytes[pos..pos + INPUT_BYTES].to_vec(); pos += INPUT_BYTES;
+-        let prefix = bytes[pos..pos + PREFIX_BYTES].to_vec(); pos += PREFIX_BYTES;
+-        let mut hash = || { let out = bytes[pos..pos + 32].try_into().unwrap(); pos += 32; out };
++        let raw = bytes[pos..pos + INPUT_BYTES].to_vec();
++        pos += INPUT_BYTES;
++        let prefix = bytes[pos..pos + PREFIX_BYTES].to_vec();
++        pos += PREFIX_BYTES;
++        let mut hash = || {
++            let out = bytes[pos..pos + 32].try_into().unwrap();
++            pos += 32;
++            out
++        };
+         let challenge = hash();
+         let noise = core::array::from_fn(|_| core::array::from_fn(|_| hash()));
+-        let ticket = hash(); let work_id = hash();
+-        let hashes = HashClaims { challenge, noise, ticket, work_id };
+-        let mut words = |n: usize| { let out = canonical_words(&bytes[pos..pos + 4 * n]); pos += 4 * n; out };
+-        let arithmetic = ArithmeticClaims { e: words(CELLS)?, f: words(CELLS)?,
+-            a_hat: words(CELLS)?, b_hat: words(CELLS)?, ab_prefixes: words(7 * CELLS)? };
++        let ticket = hash();
++        let work_id = hash();
++        let hashes = HashClaims {
++            challenge,
++            noise,
++            ticket,
++            work_id,
++        };
++        let mut words = |n: usize| {
++            let out = canonical_words(&bytes[pos..pos + 4 * n]);
++            pos += 4 * n;
++            out
++        };
++        let arithmetic = ArithmeticClaims {
++            e: words(CELLS)?,
++            f: words(CELLS)?,
++            a_hat: words(CELLS)?,
++            b_hat: words(CELLS)?,
++            ab_prefixes: words(7 * CELLS)?,
++        };
+         debug_assert_eq!(pos, bytes.len());
+-        Ok(Self { raw, prefix, hashes, arithmetic })
++        Ok(Self {
++            raw,
++            prefix,
++            hashes,
++            arithmetic,
++        })
+     }
+ 
+     pub fn encode(&self) -> Result<Vec<u8>, &'static str> {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:105:
+         self.check_lengths_and_words()?;
+         let mut out = Vec::with_capacity(PUBLIC_BYTES);
+         out.extend_from_slice(PUBLIC_MAGIC);
+-        out.extend_from_slice(&self.raw); out.extend_from_slice(&self.prefix);
++        out.extend_from_slice(&self.raw);
++        out.extend_from_slice(&self.prefix);
+         out.extend_from_slice(&self.hashes.challenge);
+-        for label in &self.hashes.noise { for digest in label { out.extend_from_slice(digest); } }
+-        out.extend_from_slice(&self.hashes.ticket); out.extend_from_slice(&self.hashes.work_id);
+-        for words in [&self.arithmetic.e, &self.arithmetic.f, &self.arithmetic.a_hat,
+-            &self.arithmetic.b_hat, &self.arithmetic.ab_prefixes] {
+-            for word in words { out.extend_from_slice(&word.to_le_bytes()); }
++        for label in &self.hashes.noise {
++            for digest in label {
++                out.extend_from_slice(digest);
++            }
+         }
++        out.extend_from_slice(&self.hashes.ticket);
++        out.extend_from_slice(&self.hashes.work_id);
++        for words in [
++            &self.arithmetic.e,
++            &self.arithmetic.f,
++            &self.arithmetic.a_hat,
++            &self.arithmetic.b_hat,
++            &self.arithmetic.ab_prefixes,
++        ] {
++            for word in words {
++                out.extend_from_slice(&word.to_le_bytes());
++            }
++        }
+         assert_eq!(out.len(), PUBLIC_BYTES);
+         Ok(out)
+     }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:119:
+ 
+     fn check_lengths_and_words(&self) -> Result<(), &'static str> {
+-        if self.raw.len() != INPUT_BYTES || self.prefix.len() != PREFIX_BYTES { return Err("statement length"); }
+-        for data in [&self.arithmetic.e, &self.arithmetic.f, &self.arithmetic.a_hat, &self.arithmetic.b_hat] {
+-            if data.len() != CELLS { return Err("matrix claim length"); }
++        if self.raw.len() != INPUT_BYTES || self.prefix.len() != PREFIX_BYTES {
++            return Err("statement length");
+         }
+-        if self.arithmetic.ab_prefixes.len() != 7 * CELLS { return Err("AB prefix claim length"); }
+-        for data in [&self.arithmetic.e, &self.arithmetic.f, &self.arithmetic.a_hat,
+-            &self.arithmetic.b_hat, &self.arithmetic.ab_prefixes] {
+-            if data.iter().any(|&x| u64::from(x) >= Q) { return Err("noncanonical arithmetic claim"); }
++        for data in [
++            &self.arithmetic.e,
++            &self.arithmetic.f,
++            &self.arithmetic.a_hat,
++            &self.arithmetic.b_hat,
++        ] {
++            if data.len() != CELLS {
++                return Err("matrix claim length");
++            }
+         }
++        if self.arithmetic.ab_prefixes.len() != 7 * CELLS {
++            return Err("AB prefix claim length");
++        }
++        for data in [
++            &self.arithmetic.e,
++            &self.arithmetic.f,
++            &self.arithmetic.a_hat,
++            &self.arithmetic.b_hat,
++            &self.arithmetic.ab_prefixes,
++        ] {
++            if data.iter().any(|&x| u64::from(x) >= Q) {
++                return Err("noncanonical arithmetic claim");
++            }
++        }
+         canonical_words(&self.raw[HEADER_BYTES + 4..INPUT_BYTES - 32])?;
+         canonical_words(&self.prefix)?;
+         Ok(())
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:136:
+     /// No SHA digest or matrix product is evaluated by this function.
+     pub fn plans(&self, expected: &Expected) -> Result<(ShaPlan, Dot8Air), String> {
+         self.check_lengths_and_words()?;
+-        let sha = ShaPlan::from_w1(W1ShaPublic { raw: &self.raw, prefix: &self.prefix,
+-            expected_header: &expected.header, expected_artifacts: &expected.artifacts,
+-            claims: &self.hashes }).map_err(|x| x.to_string())?;
++        let sha = ShaPlan::from_w1(W1ShaPublic {
++            raw: &self.raw,
++            prefix: &self.prefix,
++            expected_header: &expected.header,
++            expected_artifacts: &expected.artifacts,
++            claims: &self.hashes,
++        })
++        .map_err(|x| x.to_string())?;
+         let target: [u8; 32] = expected.header[118..150].try_into().unwrap();
+-        if target == [0; 32] { return Err("zero target".into()); }
+-        if self.hashes.ticket > target { return Err("ticket target".into()); }
++        if target == [0; 32] {
++            return Err("zero target".into());
++        }
++        if self.hashes.ticket > target {
++            return Err("ticket target".into());
++        }
+         let factors = selected_noise(&self.hashes)?;
+         let matrices = canonical_words(&self.raw[HEADER_BYTES + 4..INPUT_BYTES - 32])?;
+-        let a = &matrices[..CELLS]; let b = &matrices[CELLS..2 * CELLS]; let c = &matrices[2 * CELLS..];
++        let a = &matrices[..CELLS];
++        let b = &matrices[CELLS..2 * CELLS];
++        let c = &matrices[2 * CELLS..];
+         let prefix = unpack_original_prefix(&self.prefix)?;
+         let claims = &self.arithmetic;
+         let mut rows = Vec::with_capacity(FULL_REAL_ROWS);
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:151:
+         // Every dense factor product E and F is constrained.
+-        for (left, right, goal) in [(&factors[0], &factors[1], &claims.e), (&factors[2], &factors[3], &claims.f)] {
+-            for i in 0..N { for j in 0..N {
+-                rows.push(Dot8Row { left: core::array::from_fn(|k| left[i * 8 + k]),
+-                    right: core::array::from_fn(|k| right[k * N + j]), start: 0, goal: goal[i * N + j] });
+-            }}
++        for (left, right, goal) in [
++            (&factors[0], &factors[1], &claims.e),
++            (&factors[2], &factors[3], &claims.f),
++        ] {
++            for i in 0..N {
++                for j in 0..N {
++                    rows.push(Dot8Row {
++                        left: core::array::from_fn(|k| left[i * 8 + k]),
++                        right: core::array::from_fn(|k| right[k * N + j]),
++                        start: 0,
++                        goal: goal[i * N + j],
++                    });
++                }
++            }
+         }
+         // Public Ahat/Bhat claims are linked by constrained additions.
+         for cell in 0..CELLS {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:160:
+-            rows.push(Dot8Row::addition(a[cell], claims.e[cell], claims.a_hat[cell]));
+-            rows.push(Dot8Row::addition(b[cell], claims.f[cell], claims.b_hat[cell]));
++            rows.push(Dot8Row::addition(
++                a[cell],
++                claims.e[cell],
++                claims.a_hat[cell],
++            ));
++            rows.push(Dot8Row::addition(
++                b[cell],
++                claims.f[cell],
++                claims.b_hat[cell],
++            ));
+         }
+         // Every original cumulative noisy prefix and its predecessor is used.
+-        for group in 0..8 { for i in 0..N { for j in 0..N {
+-            let cell = i * N + j;
+-            rows.push(Dot8Row { left: core::array::from_fn(|k| claims.a_hat[i * N + group * 8 + k]),
+-                right: core::array::from_fn(|k| claims.b_hat[(group * 8 + k) * N + j]),
+-                start: if group == 0 { 0 } else { prefix[(group - 1) * CELLS + cell] },
+-                goal: prefix[group * CELLS + cell] });
+-        }}}
++        for group in 0..8 {
++            for i in 0..N {
++                for j in 0..N {
++                    let cell = i * N + j;
++                    rows.push(Dot8Row {
++                        left: core::array::from_fn(|k| claims.a_hat[i * N + group * 8 + k]),
++                        right: core::array::from_fn(|k| claims.b_hat[(group * 8 + k) * N + j]),
++                        start: if group == 0 {
++                            0
++                        } else {
++                            prefix[(group - 1) * CELLS + cell]
++                        },
++                        goal: prefix[group * CELLS + cell],
++                    });
++                }
++            }
++        }
+         // Complete AB=C, in eight exact reductions. No projection is used.
+-        for group in 0..8 { for i in 0..N { for j in 0..N {
+-            let cell = i * N + j;
+-            rows.push(Dot8Row { left: core::array::from_fn(|k| a[i * N + group * 8 + k]),
+-                right: core::array::from_fn(|k| b[(group * 8 + k) * N + j]),
+-                start: if group == 0 { 0 } else { claims.ab_prefixes[(group - 1) * CELLS + cell] },
+-                goal: if group == 7 { c[cell] } else { claims.ab_prefixes[group * CELLS + cell] } });
+-        }}}
++        for group in 0..8 {
++            for i in 0..N {
++                for j in 0..N {
++                    let cell = i * N + j;
++                    rows.push(Dot8Row {
++                        left: core::array::from_fn(|k| a[i * N + group * 8 + k]),
++                        right: core::array::from_fn(|k| b[(group * 8 + k) * N + j]),
++                        start: if group == 0 {
++                            0
++                        } else {
++                            claims.ab_prefixes[(group - 1) * CELLS + cell]
++                        },
++                        goal: if group == 7 {
++                            c[cell]
++                        } else {
++                            claims.ab_prefixes[group * CELLS + cell]
++                        },
++                    });
++                }
++            }
++        }
+         assert_eq!(rows.len(), FULL_REAL_ROWS);
+         Ok((sha, Dot8Air::new(rows)?))
+     }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:182:
+ 
+     /// Honest public witness construction. This is prover work and is timed.
+     pub fn honest(raw: Vec<u8>, prefix: Vec<u8>) -> Result<Self, String> {
+-        if raw.len() != INPUT_BYTES || prefix.len() != PREFIX_BYTES { return Err("fixture length".into()); }
++        if raw.len() != INPUT_BYTES || prefix.len() != PREFIX_BYTES {
++            return Err("fixture length".into());
++        }
+         let hashes = honest_claims(&raw).map_err(|x| x.to_string())?;
+         let factors = selected_noise(&hashes)?;
+         let matrices = canonical_words(&raw[HEADER_BYTES + 4..INPUT_BYTES - 32])?;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:189:
+-        let a = &matrices[..CELLS]; let b = &matrices[CELLS..2 * CELLS];
++        let a = &matrices[..CELLS];
++        let b = &matrices[CELLS..2 * CELLS];
+         let dense = |l: &[u32], r: &[u32]| -> Vec<u32> {
+-            (0..CELLS).map(|cell| {
+-                let i = cell / N; let j = cell % N;
+-                let sum: u128 = (0..8).map(|k| u128::from(l[i * 8 + k]) * u128::from(r[k * N + j])).sum();
+-                (sum % u128::from(Q)) as u32
+-            }).collect()
++            (0..CELLS)
++                .map(|cell| {
++                    let i = cell / N;
++                    let j = cell % N;
++                    let sum: u128 = (0..8)
++                        .map(|k| u128::from(l[i * 8 + k]) * u128::from(r[k * N + j]))
++                        .sum();
++                    (sum % u128::from(Q)) as u32
++                })
++                .collect()
+         };
+-        let e = dense(&factors[0], &factors[1]); let f = dense(&factors[2], &factors[3]);
+-        let a_hat = a.iter().zip(&e).map(|(&x, &y)| ((u64::from(x) + u64::from(y)) % Q) as u32).collect();
+-        let b_hat = b.iter().zip(&f).map(|(&x, &y)| ((u64::from(x) + u64::from(y)) % Q) as u32).collect();
++        let e = dense(&factors[0], &factors[1]);
++        let f = dense(&factors[2], &factors[3]);
++        let a_hat = a
++            .iter()
++            .zip(&e)
++            .map(|(&x, &y)| ((u64::from(x) + u64::from(y)) % Q) as u32)
++            .collect();
++        let b_hat = b
++            .iter()
++            .zip(&f)
++            .map(|(&x, &y)| ((u64::from(x) + u64::from(y)) % Q) as u32)
++            .collect();
+         let mut ab_prefixes = vec![0; 7 * CELLS];
+-        for group in 0..7 { for i in 0..N { for j in 0..N {
+-            let cell = i * N + j;
+-            let old = if group == 0 { 0 } else { ab_prefixes[(group - 1) * CELLS + cell] };
+-            let sum = (0..8).fold(u128::from(old), |s, k| s + u128::from(a[i * N + group * 8 + k]) * u128::from(b[(group * 8 + k) * N + j]));
+-            ab_prefixes[group * CELLS + cell] = (sum % u128::from(Q)) as u32;
+-        }}}
+-        Ok(Self { raw, prefix, hashes, arithmetic: ArithmeticClaims { e, f, a_hat, b_hat, ab_prefixes } })
++        for group in 0..7 {
++            for i in 0..N {
++                for j in 0..N {
++                    let cell = i * N + j;
++                    let old = if group == 0 {
++                        0
++                    } else {
++                        ab_prefixes[(group - 1) * CELLS + cell]
++                    };
++                    let sum = (0..8).fold(u128::from(old), |s, k| {
++                        s + u128::from(a[i * N + group * 8 + k])
++                            * u128::from(b[(group * 8 + k) * N + j])
++                    });
++                    ab_prefixes[group * CELLS + cell] = (sum % u128::from(Q)) as u32;
++                }
++            }
++        }
++        Ok(Self {
++            raw,
++            prefix,
++            hashes,
++            arithmetic: ArithmeticClaims {
++                e,
++                f,
++                a_hat,
++                b_hat,
++                ab_prefixes,
++            },
++        })
+     }
+ }
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs:214:
+ 
+     #[test]
+     fn original_noise_rejection_selection_and_budget_are_preserved() {
+-        let mut claims = HashClaims { challenge: [0; 32], noise: [[[0; 32]; 128]; 4], ticket: [0; 32], work_id: [0; 32] };
++        let mut claims = HashClaims {
++            challenge: [0; 32],
++            noise: [[[0; 32]; 128]; 4],
++            ticket: [0; 32],
++            work_id: [0; 32],
++        };
+         claims.noise[0][0][..4].copy_from_slice(&(Q as u32).to_le_bytes());
+         claims.noise[0][0][4..8].copy_from_slice(&7u32.to_le_bytes());
+         let factors = selected_noise(&claims).unwrap();
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:20:
+ const SHA_MAGIC: &[u8; 8] = b"W1P3SHA1";
+ const ARITH_MAGIC: &[u8; 8] = b"W1P3ARI1";
+ 
+-fn digest(bytes: &[u8]) -> String { hex::encode(Sha256::digest(bytes)) }
++fn digest(bytes: &[u8]) -> String {
++    hex::encode(Sha256::digest(bytes))
++}
+ 
+ fn read_bounded(path: &Path, max: usize, exact: Option<usize>) -> Result<Vec<u8>, String> {
+     let file = File::open(path).map_err(|e| format!("open {}: {e}", path.display()))?;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:29:
+         return Err(format!("bounded file length {}: {size}", path.display()));
+     }
+     let mut bytes = Vec::with_capacity(size as usize);
+-    file.take(max as u64 + 1).read_to_end(&mut bytes).map_err(|e| e.to_string())?;
++    file.take(max as u64 + 1)
++        .read_to_end(&mut bytes)
++        .map_err(|e| e.to_string())?;
+     if bytes.len() > max || exact.is_some_and(|n| bytes.len() != n) {
+         return Err("file changed during bounded read".into());
+     }
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:37:
+ }
+ 
+ fn write_new(path: &Path, bytes: &[u8]) -> Result<(), String> {
+-    let mut out = OpenOptions::new().write(true).create_new(true).open(path)
++    let mut out = OpenOptions::new()
++        .write(true)
++        .create_new(true)
++        .open(path)
+         .map_err(|e| format!("create {}: {e}", path.display()))?;
+     out.write_all(bytes).map_err(|e| e.to_string())?;
+     out.sync_all().map_err(|e| e.to_string())
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:62:
+ }
+ 
+ fn encode_proof(proof: &W1Proof, magic: &[u8; 8]) -> Result<Vec<u8>, String> {
+-    let encoded = bincode::DefaultOptions::new().with_fixint_encoding()
+-        .with_limit((MAX_PROOF_BYTES - 8) as u64).reject_trailing_bytes()
+-        .serialize(proof).map_err(|e| format!("proof encoding: {e}"))?;
+-    if encoded.len() > MAX_PROOF_BYTES - 8 { return Err("proof exceeds envelope limit".into()); }
++    let encoded = bincode::DefaultOptions::new()
++        .with_fixint_encoding()
++        .with_limit((MAX_PROOF_BYTES - 8) as u64)
++        .reject_trailing_bytes()
++        .serialize(proof)
++        .map_err(|e| format!("proof encoding: {e}"))?;
++    if encoded.len() > MAX_PROOF_BYTES - 8 {
++        return Err("proof exceeds envelope limit".into());
++    }
+     let mut bytes = Vec::with_capacity(8 + encoded.len());
+     bytes.extend_from_slice(magic);
+     bytes.extend_from_slice(&encoded);
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:77:
+         return Err("proof envelope".into());
+     }
+     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+-        bincode::DefaultOptions::new().with_fixint_encoding()
+-            .with_limit((MAX_PROOF_BYTES - 8) as u64).reject_trailing_bytes()
++        bincode::DefaultOptions::new()
++            .with_fixint_encoding()
++            .with_limit((MAX_PROOF_BYTES - 8) as u64)
++            .reject_trailing_bytes()
+             .deserialize::<W1Proof>(&bytes[8..])
+-    })).map_err(|_| "proof decode panic contained".to_owned())?;
++    }))
++    .map_err(|_| "proof decode panic contained".to_owned())?;
+     let proof = result.map_err(|e| format!("proof decoding: {e}"))?;
+-    if proof.degree_bits != degree_bits { return Err("proof trace degree".into()); }
++    if proof.degree_bits != degree_bits {
++        return Err("proof trace degree".into());
++    }
+     Ok(proof)
+ }
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:89:
+ fn prepare(args: &[String]) -> Result<Value, String> {
+-    if args.len() != 5 { return Err("prepare RAW PREFIX EXPECTED_HEADER EXPECTED_ARTIFACTS OUT_DIR".into()); }
++    if args.len() != 5 {
++        return Err("prepare RAW PREFIX EXPECTED_HEADER EXPECTED_ARTIFACTS OUT_DIR".into());
++    }
+     let mut timings = Vec::new();
+     let start = Instant::now();
+     let raw = read_bounded(Path::new(&args[0]), INPUT_BYTES, Some(INPUT_BYTES))?;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:104:
+     let out = Path::new(&args[4]);
+     fs::create_dir_all(out).map_err(|e| e.to_string())?;
+     write_new(&out.join("statement.bin"), &bytes)?;
+-    Ok(json!({"status":"PUBLIC_WITNESS_PREPARED_NOT_PROVED", "statement_sha256":digest(&bytes),
++    Ok(
++        json!({"status":"PUBLIC_WITNESS_PREPARED_NOT_PROVED", "statement_sha256":digest(&bytes),
+         "public_bytes":bytes.len(), "hash_messages":sha.messages().len(),
+-        "sha_real_compressions":sha.real_compressions(),"arith_real_rows":arith.real_rows(),"timings":timings}))
++        "sha_real_compressions":sha.real_compressions(),"arith_real_rows":arith.real_rows(),"timings":timings}),
++    )
+ }
+ 
+ fn prove(args: &[String]) -> Result<Value, String> {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:113:
+-    if args.len() != 4 { return Err("prove PUBLIC EXPECTED_HEADER EXPECTED_ARTIFACTS OUT_DIR".into()); }
++    if args.len() != 4 {
++        return Err("prove PUBLIC EXPECTED_HEADER EXPECTED_ARTIFACTS OUT_DIR".into());
++    }
+     let mut timings = Vec::new();
+     let start = Instant::now();
+     let (public_bytes, statement) = load_statement(&args[0])?;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:128:
+     let sha_config = config(1);
+     let start = Instant::now();
+     let (sha_pp, _) = setup_preprocessed(&sha_config, &sha, sha_height.ilog2() as usize)
+-        .map_err(|e| format!("sha setup: {e:?}"))?.ok_or("missing sha preprocessing")?;
++        .map_err(|e| format!("sha setup: {e:?}"))?
++        .ok_or("missing sha preprocessing")?;
+     elapsed("sha_prover_preprocessing_setup", start, &mut timings);
+     let start = Instant::now();
+     let trace = sha.generate_trace();
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:141:
+     let sha_bytes = encode_proof(&proof, SHA_MAGIC)?;
+     write_new(&out.join("sha.proof.bin"), &sha_bytes)?;
+     elapsed("sha_proof_serialize_and_persist", start, &mut timings);
+-    drop(proof); drop(sha_pp); drop(sha);
++    drop(proof);
++    drop(sha_pp);
++    drop(sha);
+     let arith_config = config(2);
+     let start = Instant::now();
+     let (arith_pp, _) = setup_preprocessed(&arith_config, &arith, arith_height.ilog2() as usize)
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:148:
+-        .map_err(|e| format!("arith setup: {e:?}"))?.ok_or("missing arithmetic preprocessing")?;
++        .map_err(|e| format!("arith setup: {e:?}"))?
++        .ok_or("missing arithmetic preprocessing")?;
+     elapsed("arith_prover_preprocessing_setup", start, &mut timings);
+     let start = Instant::now();
+     let trace = arith.generate_trace();
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:164:
+         "arith_proof_bytes":arith_bytes.len(),"arith_proof_sha256":digest(&arith_bytes),
+         "sha_trace_height":sha_height,"arith_trace_height":arith_height,
+         "security":security,"timings":timings});
+-    write_new(&out.join("prover_report.json"), &serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?)?;
++    write_new(
++        &out.join("prover_report.json"),
++        &serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?,
++    )?;
+     Ok(summary)
+ }
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:171:
+ fn verify(args: &[String]) -> Result<Value, String> {
+-    if args.len() != 4 { return Err("verify PUBLIC EXPECTED_HEADER EXPECTED_ARTIFACTS PROOF_DIR".into()); }
++    if args.len() != 4 {
++        return Err("verify PUBLIC EXPECTED_HEADER EXPECTED_ARTIFACTS PROOF_DIR".into());
++    }
+     let mut timings = Vec::new();
+     let start = Instant::now();
+     let (public_bytes, statement) = load_statement(&args[0])?;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:176:
+     let expected = expected(&args[1], &args[2])?;
+-    let sha_bytes = read_bounded(&Path::new(&args[3]).join("sha.proof.bin"), MAX_PROOF_BYTES, None)?;
+-    let arith_bytes = read_bounded(&Path::new(&args[3]).join("arith.proof.bin"), MAX_PROOF_BYTES, None)?;
++    let sha_bytes = read_bounded(
++        &Path::new(&args[3]).join("sha.proof.bin"),
++        MAX_PROOF_BYTES,
++        None,
++    )?;
++    let arith_bytes = read_bounded(
++        &Path::new(&args[3]).join("arith.proof.bin"),
++        MAX_PROOF_BYTES,
++        None,
++    )?;
+     // Reject malformed envelopes and wrong fixed degrees before costly setup.
+     let sha_proof = decode_proof(&sha_bytes, SHA_MAGIC, 13)?;
+     let arith_proof = decode_proof(&arith_bytes, ARITH_MAGIC, 17)?;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:183:
+     let start = Instant::now();
+     let (sha_plan, arith) = statement.plans(&expected)?;
+     let sha = W1ShaAir::public_only(&sha_plan);
+-    elapsed("canonical_plans_and_public_only_sha_air", start, &mut timings);
++    elapsed(
++        "canonical_plans_and_public_only_sha_air",
++        start,
++        &mut timings,
++    );
+     let sha_config = config(1);
+     let start = Instant::now();
+     let (pp, vk) = setup_preprocessed(&sha_config, &sha, sha.trace_height().ilog2() as usize)
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:190:
+-        .map_err(|e| format!("sha verifier setup: {e:?}"))?.ok_or("missing sha verifier key")?;
++        .map_err(|e| format!("sha verifier setup: {e:?}"))?
++        .ok_or("missing sha verifier key")?;
+     drop(pp);
+-    elapsed("sha_verifier_independent_preprocessing_setup", start, &mut timings);
++    elapsed(
++        "sha_verifier_independent_preprocessing_setup",
++        start,
++        &mut timings,
++    );
+     let start = Instant::now();
+-    std::panic::catch_unwind(std::panic::AssertUnwindSafe(||
+-        verify_with_preprocessed(&sha_config, &sha, &sha_proof, &[], Some(&vk))))
+-        .map_err(|_| "sha verifier panic contained".to_owned())?
+-        .map_err(|e| format!("sha proof rejected: {e:?}"))?;
++    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
++        verify_with_preprocessed(&sha_config, &sha, &sha_proof, &[], Some(&vk))
++    }))
++    .map_err(|_| "sha verifier panic contained".to_owned())?
++    .map_err(|e| format!("sha proof rejected: {e:?}"))?;
+     elapsed("sha_stark_verify", start, &mut timings);
+     let arith_config = config(2);
+     let start = Instant::now();
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:201:
+     let (pp, vk) = setup_preprocessed(&arith_config, &arith, arith.trace_height().ilog2() as usize)
+-        .map_err(|e| format!("arithmetic verifier setup: {e:?}"))?.ok_or("missing arithmetic verifier key")?;
++        .map_err(|e| format!("arithmetic verifier setup: {e:?}"))?
++        .ok_or("missing arithmetic verifier key")?;
+     drop(pp);
+-    elapsed("arith_verifier_independent_preprocessing_setup", start, &mut timings);
++    elapsed(
++        "arith_verifier_independent_preprocessing_setup",
++        start,
++        &mut timings,
++    );
+     let start = Instant::now();
+-    std::panic::catch_unwind(std::panic::AssertUnwindSafe(||
+-        verify_with_preprocessed(&arith_config, &arith, &arith_proof, &[], Some(&vk))))
+-        .map_err(|_| "arithmetic verifier panic contained".to_owned())?
+-        .map_err(|e| format!("arithmetic proof rejected: {e:?}"))?;
++    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
++        verify_with_preprocessed(&arith_config, &arith, &arith_proof, &[], Some(&vk))
++    }))
++    .map_err(|_| "arithmetic verifier panic contained".to_owned())?
++    .map_err(|e| format!("arithmetic proof rejected: {e:?}"))?;
+     elapsed("arith_stark_verify", start, &mut timings);
+-    Ok(json!({"status":"VERIFIED_COMPLETE_W1_RESEARCH_ONLY", "statement_sha256":digest(&public_bytes),
++    Ok(
++        json!({"status":"VERIFIED_COMPLETE_W1_RESEARCH_ONLY", "statement_sha256":digest(&public_bytes),
+         "public_bytes":public_bytes.len(), "sha_proof_bytes":sha_bytes.len(),"sha_proof_sha256":digest(&sha_bytes),
+         "arith_proof_bytes":arith_bytes.len(),"arith_proof_sha256":digest(&arith_bytes),"timings":timings,
+         "preprocessing_source":"canonical public statement plus independent expected inputs; rebuilt in this process",
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs:215:
+-        "security_claim":"research execution only; no concrete noninteractive security qualification"}))
++        "security_claim":"research execution only; no concrete noninteractive security qualification"}),
++    )
+ }
+ 
+ fn main() {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:21:
+ }
+ 
+ fn encode(proof: &W1Proof) -> Vec<u8> {
+-    proof_codec().serialize(proof).expect("bounded proof encoding")
++    proof_codec()
++        .serialize(proof)
++        .expect("bounded proof encoding")
+ }
+ 
+ fn decode(bytes: &[u8]) -> W1Proof {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:28:
+     assert!((bytes.len() as u64) <= TEST_PROOF_CAP);
+-    proof_codec().deserialize(bytes).expect("bounded proof decoding")
++    proof_codec()
++        .deserialize(bytes)
++        .expect("bounded proof decoding")
+ }
+ 
+ fn sha_messages() -> Vec<HashMessage> {
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:58:
+         prover_air.generate_trace(),
+         &[],
+         Some(&pp),
+-    ).unwrap();
++    )
++    .unwrap();
+     let wire = encode(&proof);
+     drop(pp);
+     drop(prover_air);
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:72:
+     let mut messages = sha_messages();
+     messages[1].expected_digest[31] ^= 1;
+     let changed_digest_air = W1ShaAir::public_only(&sha_plan(messages));
+-    let (other_pp, other_vk) = setup_preprocessed(&cfg, &changed_digest_air, 2).unwrap().unwrap();
++    let (other_pp, other_vk) = setup_preprocessed(&cfg, &changed_digest_air, 2)
++        .unwrap()
++        .unwrap();
+     drop(other_pp);
+-    assert!(verify_with_preprocessed(&cfg, &changed_digest_air, &decode(&wire), &[], Some(&other_vk)).is_err());
++    assert!(
++        verify_with_preprocessed(
++            &cfg,
++            &changed_digest_air,
++            &decode(&wire),
++            &[],
++            Some(&other_vk)
++        )
++        .is_err()
++    );
+     // Supplying a different canonical public table's key is also rejected.
+-    assert!(verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], Some(&other_vk)).is_err());
++    assert!(
++        verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], Some(&other_vk))
++            .is_err()
++    );
+ 
+     let mut messages = sha_messages();
+     messages[1].bytes[0] ^= 1;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:83:
+     messages[1].expected_digest = Sha256::digest(&messages[1].bytes).into();
+     let changed_message_air = W1ShaAir::public_only(&sha_plan(messages));
+-    let (other_pp, changed_vk) = setup_preprocessed(&cfg, &changed_message_air, 2).unwrap().unwrap();
++    let (other_pp, changed_vk) = setup_preprocessed(&cfg, &changed_message_air, 2)
++        .unwrap()
++        .unwrap();
+     drop(other_pp);
+-    assert!(verify_with_preprocessed(&cfg, &changed_message_air, &decode(&wire), &[], Some(&changed_vk)).is_err());
++    assert!(
++        verify_with_preprocessed(
++            &cfg,
++            &changed_message_air,
++            &decode(&wire),
++            &[],
++            Some(&changed_vk)
++        )
++        .is_err()
++    );
+ 
+     let mut changed = decode(&wire);
+     changed.opened_values.trace_local[0] += Challenge::ONE;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:95:
+     let mut changed = decode(&wire);
+     changed.degree_bits += 1;
+     assert!(verify_with_preprocessed(&cfg, &verifier_air, &changed, &[], Some(&vk)).is_err());
+-    assert!(verify_with_preprocessed(&config(ARITH_COMPONENT), &verifier_air, &decode(&wire), &[], Some(&vk)).is_err());
++    assert!(
++        verify_with_preprocessed(
++            &config(ARITH_COMPONENT),
++            &verifier_air,
++            &decode(&wire),
++            &[],
++            Some(&vk)
++        )
++        .is_err()
++    );
+     assert!(verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], None).is_err());
+ 
+     let mut trailing = wire.clone();
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:102:
+     trailing.push(0);
+     assert!(proof_codec().deserialize::<W1Proof>(&trailing).is_err());
+-    assert!(proof_codec().deserialize::<W1Proof>(&wire[..wire.len() - 1]).is_err());
++    assert!(
++        proof_codec()
++            .deserialize::<W1Proof>(&wire[..wire.len() - 1])
++            .is_err()
++    );
+ }
+ 
+ #[test]
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:109:
+     let cfg = config(ARITH_COMPONENT);
+     let prover_air = Dot8Air::new(vec![Dot8Row::addition(7, 9, 16)]).unwrap();
+     let (pp, _) = setup_preprocessed(&cfg, &prover_air, 2).unwrap().unwrap();
+-    let proof = prove_with_preprocessed(&cfg, &prover_air, prover_air.generate_trace(), &[], Some(&pp)).unwrap();
++    let proof = prove_with_preprocessed(
++        &cfg,
++        &prover_air,
++        prover_air.generate_trace(),
++        &[],
++        Some(&pp),
++    )
++    .unwrap();
+     let wire = encode(&proof);
+     drop(pp);
+ 
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:121:
+     let changed_air = Dot8Air::new(vec![Dot8Row::addition(7, 9, 17)]).unwrap();
+     let (other_pp, other_vk) = setup_preprocessed(&cfg, &changed_air, 2).unwrap().unwrap();
+     drop(other_pp);
+-    assert!(verify_with_preprocessed(&cfg, &changed_air, &decode(&wire), &[], Some(&other_vk)).is_err());
+-    assert!(verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], Some(&other_vk)).is_err());
++    assert!(
++        verify_with_preprocessed(&cfg, &changed_air, &decode(&wire), &[], Some(&other_vk)).is_err()
++    );
++    assert!(
++        verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], Some(&other_vk))
++            .is_err()
++    );
+ 
+     let mut changed = decode(&wire);
+     changed.opened_values.trace_local[0] += Challenge::ONE;
+Diff in /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/tests/proof_smoke.rs:130:
+     let mut changed = decode(&wire);
+     changed.degree_bits += 1;
+     assert!(verify_with_preprocessed(&cfg, &verifier_air, &changed, &[], Some(&vk)).is_err());
+-    assert!(verify_with_preprocessed(&config(SHA_COMPONENT), &verifier_air, &decode(&wire), &[], Some(&vk)).is_err());
++    assert!(
++        verify_with_preprocessed(
++            &config(SHA_COMPONENT),
++            &verifier_air,
++            &decode(&wire),
++            &[],
++            Some(&vk)
++        )
++        .is_err()
++    );
+ }
+ 
+ #[test]
+{"phase": "end", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "fmt", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--", "--check"], "exit_code": 1}
+{"phase": "start", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "update", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--offline"]}
+{"phase": "end", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "update", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--offline"], "exit_code": 0}
+{"lock_sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1", "lock_bytes": 17799, "lock_diff": "--- before/Cargo.lock\n+++ after/Cargo.lock\n@@ -732,6 +732,7 @@\n  \"p3-matrix\",\n  \"p3-maybe-rayon\",\n  \"p3-merkle-tree\",\n+ \"p3-security\",\n  \"p3-sha256-air\",\n  \"p3-symmetric\",\n  \"p3-uni-stark\",\n"}
+{"phase": "start", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "check", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--release", "--all-targets", "--locked", "--offline", "--jobs", "2"]}
+{"phase": "end", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "check", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--release", "--all-targets", "--locked", "--offline", "--jobs", "2"], "exit_code": 0}
+{"phase": "start", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "test", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--release", "--lib", "--test", "proof_smoke", "--locked", "--offline", "--jobs", "2"]}
+
+running 18 tests
+test arith_air::tests::bounded_noncanonical_intermediate_is_an_equivalent_representation ... ok
+test arith_air::tests::prior_whole_dot_goldilocks_alias_is_rejected ... ok
+test arith_air::tests::nonboolean_bit_and_wrong_quotient_are_rejected ... ok
+test arith_air::tests::maximum_inputs_and_addition_are_integer_exact ... ok
+test arith_air::tests::public_noncanonical_words_are_refused ... ok
+test public::tests::original_noise_rejection_selection_and_budget_are_preserved ... ok
+test public::tests::public_parser_refuses_wrong_length_before_allocation ... ok
+test public::tests::original_prefix_order_is_grouped_without_losing_any_word ... ok
+test sha_air::tests::changed_compression_bit_rejects ... ok
+test sha_plan::tests::exact_padding_boundaries ... ok
+test sha_plan::tests::complete_plan_binds_independent_outputs_without_host_hash_checks ... ok
+test sha_plan::tests::framing_has_original_lengths_and_endianness ... ok
+test sha_air::tests::honest_complete_messages_and_hash_free_public_construction ... ok
+test sha_air::tests::changed_public_digest_rejects_valid_compressions ... ok
+test sha_air::tests::recomputed_compression_with_wrong_padding_rejects ... ok
+test sha_air::tests::changed_public_message_rejects_valid_compressions ... ok
+test sha_air::tests::recomputed_compressions_with_wrong_iv_reject ... ok
+test sha_air::tests::recomputed_compressions_with_broken_chain_reject ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test tiny_arithmetic_real_proof_rejects_changed_goal_vk_and_opening ... ok
+test metadata_uses_actual_widths_and_keeps_noninteractive_bound_open ... ok
+test tiny_sha_real_proof_rejects_changed_public_vk_opening_and_domain ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+{"phase": "end", "command": ["/home/qian-qi/.cargo/bin/cargo", "+1.95.0", "test", "--manifest-path", "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml", "--release", "--lib", "--test", "proof_smoke", "--locked", "--offline", "--jobs", "2"], "exit_code": 0}
+{"result": "SMALL_REAL_PROOF_VALIDATION_COMPLETE", "fmt_check_exit": 1, "full_w1_trace_built": false, "full_w1_proof_run": false, "qualification": "HOLD_NO_GO"}

@@ -1,0 +1,157 @@
+{
+  "schema": "trnm-p3-primary-source-pins-v1",
+  "cargo_lock_sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+  "all_downloaded_archives_match_retained_cargo_lock": true,
+  "archives": [
+    {
+      "crate": "p3-symmetric",
+      "version": "0.8.0",
+      "url": "https://static.crates.io/crates/p3-symmetric/p3-symmetric-0.8.0.crate",
+      "archive_sha256": "cb7b7cc37b4f9592c57bfceabc737de757267b23ae956b2e648d24461f93fb42"
+    },
+    {
+      "crate": "p3-goldilocks",
+      "version": "0.8.0",
+      "url": "https://static.crates.io/crates/p3-goldilocks/p3-goldilocks-0.8.0.crate",
+      "archive_sha256": "325a854e1232dd1ce270245d9c978b71897c286f072d2fa31740956a800e70c5"
+    },
+    {
+      "crate": "p3-poseidon2",
+      "version": "0.8.0",
+      "url": "https://static.crates.io/crates/p3-poseidon2/p3-poseidon2-0.8.0.crate",
+      "archive_sha256": "3950061c69b220c60f76c72e6de54be97e2e5dc169a5374e9b57d6118114c8cf"
+    },
+    {
+      "crate": "p3-commit",
+      "version": "0.8.0",
+      "url": "https://static.crates.io/crates/p3-commit/p3-commit-0.8.0.crate",
+      "archive_sha256": "7e53fe56a74c49a5511a68d0953527b8efc7e68d729bf773be5d1f34998b81e7"
+    },
+    {
+      "crate": "p3-uni-stark",
+      "version": "0.8.0",
+      "url": "https://static.crates.io/crates/p3-uni-stark/p3-uni-stark-0.8.0.crate",
+      "archive_sha256": "d0992185743e8e406eeb1dd8ca4704d1f5246ccf2790f9b521c5455585bfa479"
+    },
+    {
+      "crate": "p3-fri",
+      "version": "0.8.0",
+      "url": "https://static.crates.io/crates/p3-fri/p3-fri-0.8.0.crate",
+      "archive_sha256": "9571ee760e131fc7f63115ded567d3b3d0f6d587c35b16818e266c9d6bd3bc9d"
+    }
+  ],
+  "files": [
+    {
+      "file": "goldilocks_poseidon2.rs",
+      "crate": "p3-goldilocks",
+      "version": "0.8.0",
+      "upstream_path": "src/poseidon2.rs",
+      "sha256": "f6154a75152391481a44d6bd9ed3dc540ed2001bbdba323c278c2ff61430faa4",
+      "primary_url": "https://docs.rs/crate/p3-goldilocks/0.8.0/source/src/poseidon2.rs"
+    },
+    {
+      "file": "poseidon2_external.rs",
+      "crate": "p3-poseidon2",
+      "version": "0.8.0",
+      "upstream_path": "src/external.rs",
+      "sha256": "4f2dc9c69280c5a8ecd78cbee84c95a0029f16c8c7a19444c9a9371be115f754",
+      "primary_url": "https://docs.rs/crate/p3-poseidon2/0.8.0/source/src/external.rs"
+    },
+    {
+      "file": "poseidon2_internal.rs",
+      "crate": "p3-poseidon2",
+      "version": "0.8.0",
+      "upstream_path": "src/internal.rs",
+      "sha256": "952644bcdcefcb5792a29187dfef95ad1149c1bde1f598459991394d603b73fd",
+      "primary_url": "https://docs.rs/crate/p3-poseidon2/0.8.0/source/src/internal.rs"
+    },
+    {
+      "file": "symmetric_sponge.rs",
+      "crate": "p3-symmetric",
+      "version": "0.8.0",
+      "upstream_path": "src/sponge.rs",
+      "sha256": "2f74ff9049e96a23d3d26aa1c0dc6cffb471b5b271bfe37af8dc34ff75d6ac97",
+      "primary_url": "https://docs.rs/crate/p3-symmetric/0.8.0/source/src/sponge.rs"
+    },
+    {
+      "file": "symmetric_compression.rs",
+      "crate": "p3-symmetric",
+      "version": "0.8.0",
+      "upstream_path": "src/compression.rs",
+      "sha256": "fb4ddd15d6808ed240efdfb838607de2fda18cb7825749fd96f025ba410ee84b",
+      "primary_url": "https://docs.rs/crate/p3-symmetric/0.8.0/source/src/compression.rs"
+    },
+    {
+      "file": "commit_extension_mmcs.rs",
+      "crate": "p3-commit",
+      "version": "0.8.0",
+      "upstream_path": "src/adapters/extension_mmcs.rs",
+      "sha256": "84c93692a9955aa2ee9aed5f756dc460d24d9f6eca3076b7cf99935dc06fca07",
+      "primary_url": "https://docs.rs/crate/p3-commit/0.8.0/source/src/adapters/extension_mmcs.rs"
+    },
+    {
+      "file": "uni_stark_prover.rs",
+      "crate": "p3-uni-stark",
+      "version": "0.8.0",
+      "upstream_path": "src/prover.rs",
+      "sha256": "30e23c852abc4a2d88b953be80754d851144eed921e022ae98a159f668a298f3",
+      "primary_url": "https://docs.rs/crate/p3-uni-stark/0.8.0/source/src/prover.rs"
+    },
+    {
+      "file": "uni_stark_proof.rs",
+      "crate": "p3-uni-stark",
+      "version": "0.8.0",
+      "upstream_path": "src/proof.rs",
+      "sha256": "73aa8cd250bdd7ebc8045bbdbcea883d79a391dd44a22be46a733765e3932aec",
+      "primary_url": "https://docs.rs/crate/p3-uni-stark/0.8.0/source/src/proof.rs"
+    },
+    {
+      "file": "fri_prover.rs",
+      "crate": "p3-fri",
+      "version": "0.8.0",
+      "upstream_path": "src/prover.rs",
+      "sha256": "26c595b377a25947fbabe132653947cf2f56b0a2fe78f6c7187fe697fde0878a",
+      "primary_url": "https://docs.rs/crate/p3-fri/0.8.0/source/src/prover.rs"
+    },
+    {
+      "file": "fri_proof.rs",
+      "crate": "p3-fri",
+      "version": "0.8.0",
+      "upstream_path": "src/proof.rs",
+      "sha256": "9c6efe2f05ec8f89f43ea1f2e706bf0fd826d9191d20d12b24ea2da10ad494a6",
+      "primary_url": "https://docs.rs/crate/p3-fri/0.8.0/source/src/proof.rs"
+    },
+    {
+      "file": "commit_pcs_univariate.rs",
+      "crate": "p3-commit",
+      "version": "0.8.0",
+      "upstream_path": "src/pcs/univariate.rs",
+      "sha256": "4f149de68f6c6d6a32c78a1c845e66ed0cc40d25543a922982d55565a4613771",
+      "primary_url": "https://docs.rs/crate/p3-commit/0.8.0/source/src/pcs/univariate.rs"
+    },
+    {
+      "file": "w1_proof_config.rs",
+      "origin": "recovered W1 research source / retained native-02 output",
+      "observed_path": "/workspace/scratch/89f4ddbb3fd2/round2_w1_stark/src/proof_config.rs",
+      "sha256": "f27541c4a456841e4a391327a907a6758f428947e3bc8792d7c164bdb29954a1",
+      "commit_association_reported_by_parent": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+      "commit_source_match_independently_verified_here": false
+    },
+    {
+      "file": "w1_prover_report.json",
+      "origin": "recovered W1 research source / retained native-02 output",
+      "observed_path": "/workspace/scratch/89f4ddbb3fd2/round2_results/retained-native-02/prover_report.json",
+      "sha256": "6eab0921a09706de98373e7e7a24060811fc5ba160f4035f9b87e177fa383f3e",
+      "commit_association_reported_by_parent": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+      "commit_source_match_independently_verified_here": false
+    },
+    {
+      "file": "w1_Cargo.lock",
+      "origin": "recovered W1 research source / retained native-02 output",
+      "observed_path": "/workspace/scratch/89f4ddbb3fd2/round2_w1_stark/Cargo.lock",
+      "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+      "commit_association_reported_by_parent": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+      "commit_source_match_independently_verified_here": false
+    }
+  ]
+}

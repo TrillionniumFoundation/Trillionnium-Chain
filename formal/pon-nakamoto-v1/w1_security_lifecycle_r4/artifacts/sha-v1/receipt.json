@@ -1,0 +1,628 @@
+{
+  "adversary_query_upper_bound": null,
+  "component": 1,
+  "concrete_noninteractive_bits": null,
+  "counter_semantics": "total scalar-equivalent evaluations, including repeated inputs and SIMD padding; all three roles share one permutation",
+  "degree_bits": 13,
+  "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+  "expected_header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+  "fri_rounds": 13,
+  "instrumented_positive_verified": true,
+  "instrumented_serialization_identical": true,
+  "native_positive_verified": true,
+  "negative_controls": [
+    {
+      "bytes": 4356101,
+      "changed_byte_offsets": [
+        4356093
+      ],
+      "error": "InvalidProofShape(NonCanonicalOodPowWitness)",
+      "field": "ood",
+      "file": "ood-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "16ca664a76d759b2279d3e4cff306e8e2bc32fbc739271df90cb82ce4de84f85",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 4356101,
+      "changed_byte_offsets": [
+        247933
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: Batch })",
+      "field": "batch",
+      "file": "batch-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "132c71c2382b5c20c1ef16d1aeaee75a321a8ad54575dbaf13fd9bcd676c5ef3",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 4356101,
+      "changed_byte_offsets": [
+        248477
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: CommitPhase })",
+      "field": "commit-first",
+      "file": "commit-first-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "8cb492f8740cf72a7ecb64fbd168cfe53862651e93fe89cbf200595bf802cdd1",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 4356101,
+      "changed_byte_offsets": [
+        248573
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: CommitPhase })",
+      "field": "commit-last",
+      "file": "commit-last-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "d33f4236597e6b1a03be850623bd5fff8f1bfe43eda4874ccc9f9aefcfb095c9",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 4356101,
+      "changed_byte_offsets": [
+        4356077
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: Query })",
+      "field": "query",
+      "file": "query-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "e30e4944905e7cb456f8414db50aebdab8a6d8d27fd21a9c0854c46da278f810",
+      "structural_admission": true,
+      "value": 1
+    }
+  ],
+  "permutation_evaluations": {
+    "cold_verification_total": {
+      "branch_compressor": 36986,
+      "leaf_sponge": 354109,
+      "shared_total": 398909,
+      "transcript": 7814
+    },
+    "config_initialization": {
+      "branch_compressor": 0,
+      "leaf_sponge": 0,
+      "shared_total": 12,
+      "transcript": 12
+    },
+    "independent_preprocessing": {
+      "branch_compressor": 32767,
+      "leaf_sponge": 229376,
+      "shared_total": 262143,
+      "transcript": 0
+    },
+    "one_verification": {
+      "branch_compressor": 4219,
+      "leaf_sponge": 124733,
+      "shared_total": 136754,
+      "transcript": 7802
+    },
+    "same_proof_reverification": {
+      "branch_compressor": 4219,
+      "leaf_sponge": 124733,
+      "shared_total": 136754,
+      "transcript": 7802
+    }
+  },
+  "preprocessed_commitment_identical": true,
+  "proof_bytes": 4356101,
+  "proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+  "proves_new_false_statement_attack": false,
+  "qualification": "HOLD_NO_GO",
+  "quantum_bits": null,
+  "repeated_challenge_values_identical": true,
+  "repeated_evaluation_counts_identical": true,
+  "schema": "trnm-w1-native-lifecycle-probe-v1",
+  "source_base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+  "transcript_including_initialization": {
+    "diagnostic_stream_sha256": "3b2afd7ef17dae946f31e8a3e877d0694ab171eaa5df7611986e20f5e7d16499",
+    "index_samples": [
+      [
+        15,
+        9592
+      ],
+      [
+        15,
+        245
+      ],
+      [
+        15,
+        32547
+      ],
+      [
+        15,
+        31493
+      ],
+      [
+        15,
+        694
+      ],
+      [
+        15,
+        13534
+      ],
+      [
+        15,
+        4976
+      ],
+      [
+        15,
+        662
+      ],
+      [
+        15,
+        1675
+      ],
+      [
+        15,
+        460
+      ],
+      [
+        15,
+        27509
+      ],
+      [
+        15,
+        12405
+      ],
+      [
+        15,
+        1351
+      ],
+      [
+        15,
+        13283
+      ],
+      [
+        15,
+        8031
+      ],
+      [
+        15,
+        29346
+      ],
+      [
+        15,
+        22034
+      ],
+      [
+        15,
+        31667
+      ],
+      [
+        15,
+        21942
+      ],
+      [
+        15,
+        11351
+      ],
+      [
+        15,
+        3804
+      ],
+      [
+        15,
+        25446
+      ],
+      [
+        15,
+        7330
+      ],
+      [
+        15,
+        20839
+      ],
+      [
+        15,
+        17894
+      ],
+      [
+        15,
+        14848
+      ],
+      [
+        15,
+        2018
+      ],
+      [
+        15,
+        13975
+      ],
+      [
+        15,
+        25832
+      ],
+      [
+        15,
+        21150
+      ],
+      [
+        15,
+        6407
+      ],
+      [
+        15,
+        9422
+      ],
+      [
+        15,
+        13853
+      ],
+      [
+        15,
+        19192
+      ],
+      [
+        15,
+        31867
+      ],
+      [
+        15,
+        23610
+      ],
+      [
+        15,
+        4602
+      ],
+      [
+        15,
+        12442
+      ],
+      [
+        15,
+        29189
+      ],
+      [
+        15,
+        6392
+      ],
+      [
+        15,
+        1721
+      ],
+      [
+        15,
+        30135
+      ],
+      [
+        15,
+        27835
+      ],
+      [
+        15,
+        2275
+      ],
+      [
+        15,
+        19991
+      ],
+      [
+        15,
+        10106
+      ],
+      [
+        15,
+        27593
+      ],
+      [
+        15,
+        31578
+      ],
+      [
+        15,
+        21016
+      ],
+      [
+        15,
+        19952
+      ],
+      [
+        15,
+        14695
+      ],
+      [
+        15,
+        11492
+      ],
+      [
+        15,
+        29687
+      ],
+      [
+        15,
+        6490
+      ],
+      [
+        15,
+        31823
+      ],
+      [
+        15,
+        18602
+      ],
+      [
+        15,
+        7312
+      ],
+      [
+        15,
+        31575
+      ],
+      [
+        15,
+        16254
+      ],
+      [
+        15,
+        10519
+      ],
+      [
+        15,
+        4126
+      ],
+      [
+        15,
+        25320
+      ],
+      [
+        15,
+        9573
+      ],
+      [
+        15,
+        13515
+      ]
+    ],
+    "observed_base_fields": 31191,
+    "operations": [
+      {
+        "fields": 87,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 31004,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 46,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 2,
+        "kind": "absorb"
+      },
+      {
+        "fields": 64,
+        "kind": "squeeze"
+      }
+    ],
+    "pow_check_bits": [],
+    "sampled_base_fields_including_index_samples": 96,
+    "sampled_values": [
+      [
+        3332724085414051546
+      ],
+      [
+        11825945842331333140
+      ],
+      [
+        14135680742527451807
+      ],
+      [
+        14522696728709353888
+      ],
+      [
+        5217956656424517055
+      ],
+      [
+        15909250118215959889
+      ],
+      [
+        18161134961991798775
+      ],
+      [
+        3181766006953621
+      ],
+      [
+        16796848502830673343
+      ],
+      [
+        4636590057472127694
+      ],
+      [
+        16197050600017731943
+      ],
+      [
+        5460423163944163357
+      ],
+      [
+        12085184801441345907
+      ],
+      [
+        4277070169820031703
+      ],
+      [
+        18044977380690369513
+      ],
+      [
+        4222033765503016164
+      ],
+      [
+        8282844434059286273
+      ],
+      [
+        17620564764159554371
+      ],
+      [
+        183780122685817070
+      ],
+      [
+        9416122393194141194
+      ],
+      [
+        2576239212685583010
+      ],
+      [
+        7029726766127220336
+      ],
+      [
+        90884191255860903
+      ],
+      [
+        3939884160661398059
+      ],
+      [
+        18171989711099653140
+      ],
+      [
+        13760782326499268015
+      ],
+      [
+        5457272243561400398
+      ],
+      [
+        11780219819108325176
+      ],
+      [
+        6512962595288623651
+      ],
+      [
+        5058273499360603025
+      ],
+      [
+        9784313466660063804
+      ],
+      [
+        8363016137957536472
+      ]
+    ]
+  }
+}

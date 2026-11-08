@@ -1,0 +1,60 @@
+{
+  "schema": "w1-two-resource-batches-integration-v1",
+  "qualification": "HOLD_NO_GO",
+  "comparable_performance_abba": false,
+  "production_node": false,
+  "batches": {
+    "baseline": {
+      "summary": {
+        "requested": 16,
+        "spawned": 16,
+        "verifier_exec_observed": 16,
+        "rejection_completed_by_deadline": 0,
+        "controlled_rejection_after_deadline": 0,
+        "killed_incomplete": 16,
+        "unobserved_exit": 0,
+        "sum_worker_user_cpu_seconds": 0.6692,
+        "sum_worker_system_cpu_seconds": 0.417083,
+        "cleanup_confirmed": true,
+        "fatal_error": null,
+        "qualification": "HOLD_NO_GO"
+      },
+      "observer_total_since_campaign_seconds": 4.360192811,
+      "observer_outside_workload_cgroup": true,
+      "observer_cost_excluded_from_quota": true,
+      "source_result_sha256": "50488314e765fb2225c02e630fc09afb0edb8973ebabf8fa7672e022917c1e79",
+      "actual_limits": {
+        "cpu.max": "25000 100000",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      }
+    },
+    "packed": {
+      "summary": {
+        "requested": 16,
+        "spawned": 16,
+        "verifier_exec_observed": 16,
+        "rejection_completed_by_deadline": 0,
+        "controlled_rejection_after_deadline": 0,
+        "killed_incomplete": 16,
+        "unobserved_exit": 0,
+        "sum_worker_user_cpu_seconds": 0.6474799999999999,
+        "sum_worker_system_cpu_seconds": 0.456978,
+        "cleanup_confirmed": true,
+        "fatal_error": null,
+        "qualification": "HOLD_NO_GO"
+      },
+      "observer_total_since_campaign_seconds": 4.368416075,
+      "observer_outside_workload_cgroup": true,
+      "observer_cost_excluded_from_quota": true,
+      "source_result_sha256": "b087547b3b6fe954b8bb5a4322fe7d04326508bd0aa41ef22c57650354960612",
+      "actual_limits": {
+        "cpu.max": "25000 100000",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      }
+    }
+  }
+}

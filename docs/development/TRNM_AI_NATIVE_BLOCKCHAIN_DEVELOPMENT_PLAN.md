@@ -7248,3 +7248,262 @@ campaign; and the rejection collector's 30-second identity, 900-second build,
 campaign minimum of three administrators/failure domains and 72 hours is
 unchanged. No source-control, local component, model-quality, economic,
 public-service or activation claim is promoted by this entry.
+
+
+### 2026-11-08 complete W1 AIR/STARK research and selected-event composition
+
+The isolated [complete-W1 research report](../../formal/pon-nakamoto-v1/w1_public_stark_research/ROUND_REPORT.md)
+extends the C4 source at `8df4b21d893906570d48f5beafabb3b31e0aefbc`.
+Its final native run generated and independently verified both real
+Plonky3 0.8.0 PCS/FRI proof components for one complete retained W1 statement.
+The SHA component covers 519 original messages and 4,114 compression
+operations, including the original full-prefix trace. The arithmetic
+component covers every E/F factor, Ahat/Bhat addition, all eight complete
+noisy prefixes and full `AB=C`. Expected header/artifacts remain independent
+inputs, and the verifier rebuilds both public preprocessing keys. No native
+acceptance fallback, production Node wiring or task-admission change is added.
+
+The final 377,290-byte public statement and 4,886,986 proof bytes total
+5,264,276 bytes, 106.336121 times the original 49,506-byte input. The final
+native binary SHA-256 is
+`7700eff6ea4a3ff1f8f6551c323ac5b90b2bb5a96d1eaeca41e108bc54a7e3fc`.
+Final-source proving took 21.196110 seconds of outer process wall time;
+three fresh verifier processes had median 0.948204 seconds. Peak prover
+RSS was 2,381,440 KiB. All three positive verifications, eleven original
+negative controls and four transcript-preserving typed late-FRI controls
+matched their required outcomes. The largest observed ordinary negative
+was 2.238433 seconds; the largest typed late control was 1.043657 seconds.
+Neither is a global rejection-cost bound. Failed build/lint/harness
+observations and the earlier source/run identities remain retained.
+
+The fresh same-host native comparison uses the frozen FullLimb harness from
+`e70f13448aad715286fb8eb56fc802b09db643a3`, with Rust 1.95.0 and native CPU
+flags. Its retained-fixture median is 1.913279 milliseconds over 150 warm
+calls; the research verifier includes a new process and both independently
+rebuilt keys. Across all five valid and six invalid fixtures and six modes,
+the native campaign made 9,900 measured calls, separately from its 143
+passing library tests. Its three retained complete-prefix reconstructions
+have median 2.448736 milliseconds. Raw records, original metadata caveats
+and the 39-equal/one-different/one-missing source comparison are preserved.
+The frozen whole crate is not relabelled current-C4 or a production Node.
+
+The measured receiver and wire costs do not show an end-to-end gain.
+Original task-to-candidate generation, nonce search, production queues,
+energy and WAN costs remain outside the measured component sum. Additional
+proving and prefix work cannot amortize into a gain across more receivers
+on this observed path because the research receiver is already slower.
+The final standalone crate passed strict Clippy, locked metadata, formatting,
+18 library and three actual small-proof integration tests; doc-test and
+all-target build commands passed, with zero doc tests. These observations
+are not a successful complete repository CI lane or an operating service.
+
+The separate [selected-event theorem](../../formal/pon-nakamoto-v1/selected_event_composition_research/THEOREM.md)
+now covers the actual framed Merkle/task/context/seed/event/ticket hash
+composition in a conditional classical full-message random-oracle model.
+It accounts for lifetime queries and reverse digest-pointer guesses, keeps
+verifier-internal noise out of the miner's paid H, and bounds distinct hits
+by a binomial tail plus explicit missing-row and hash-composition terms.
+Its newly executed 21 composition/cost checks and frozen original sources
+are distinct from lost earlier round-2 artifacts and from production tests.
+The [priced strategies](../../formal/pon-nakamoto-v1/selected_event_composition_research/PRICING.md)
+include exact SHA prefix reuse: with J=32 noise digests, 64 ordinary
+compressions become 33, and complete producer nonce costs are 57 then 47
+compressions with the stated cache; retries are charged through actual J.
+Useful-product precomputation, memory prices and exact fast arithmetic are
+also included. These achieved strategies are upper bounds, not a universal
+minimum physical cost over all legal strategies.
+
+Qualification remains **HOLD_NO_GO**. Complete concrete noninteractive
+security, PCS/hash/transcript composition and lifetime budgets, quantum
+security, globally bounded malicious receiver cost, cheapest legal physical
+work and production integration remain open. The conditional per-component
+round-by-round estimate near 63.95 bits is not PQ128 or a complete NIZK
+claim. The low-bit query sampler has a source-traced conditional density
+calculation, without proving Poseidon2's needed randomness assumptions.
+
+All eight existing system gates remain open. Preserve the original
+four-second, 16-hostile, seven-honest-submission, quarter-CPU, 2-GiB,
+no-swap and 256-PID service contract; original request/history limits; and
+the independent-administrator, 72-hour WAN acceptance requirements. The
+eight-thread research job does not replace those budgets. No qualification,
+activation, merge or release is performed by this entry.
+
+
+## 2026-11-08 W1 structural admission continuation
+
+Starting from PR783 commit `3bbd072e4983eceee4531d7576d329da5b0d0900`,
+the standalone complete W1 research verifier now scans both fixed P3 0.8.0
+proof buffers before either allocation-owning decode or preprocessing. The
+unchanged component profiles have envelope caps of 4,550,213 and 778,437 bytes;
+the pair plus the exact public statement is at most 5,705,940 encoded bytes.
+This is an allocation-free structural operation/encoded-input bound, not a
+bound on total heap, CPU, wall time, queues, cleanup or all malicious proofs.
+
+The new native wire suite passed 13 cases, in addition to the original 18+3
+tests. The retained full-proof comparison completed three positive fresh
+verifier processes and 96 structural-negative processes in ABBA order; eight
+negative-shape medians were 8.25--10.92 ms versus 144.65--978.08 ms with the
+old pinned binary. A separately identified successor replay passed one full
+positive, 11 ordinary negatives and four original typed late FRI negatives.
+Historical proof-generation provenance was not rewritten; new proof count
+for these campaigns is zero. Raw source/binary/resource observations and
+the precise scope are in the research crate's `evidence/round3-wire/` and
+`WIRE_ADMISSION.md`.
+
+All five substantive gates remain open: complete concrete noninteractive
+PCS/hash/Fiat--Shamir lifecycle proof; positive production end-to-end backend
+benefit; global malicious rejection cost under the production budget;
+universal cheapest-legal-strategy physical work; production Node admission
+and qualification. Approximately 63.95 conditional RBR bits are not NI or
+PQ128 qualification. Status remains **HOLD_NO_GO**; no production dispatch,
+chainwork activation or main-branch merge is introduced here.
+
+
+## 2026-11-08 W1 carry backend and remaining five-gate audit
+
+The bounded-wire continuation now includes actual component-3/4 carry AIRs,
+with fresh transcript/envelope namespaces and independent reconstruction of
+all public preprocessing. The five-lane AIR retains all 81,920 logical Dot8
+relations in 16,384 rows, 370/180 main/preprocessed columns and 385 quadratic
+constraints. Separate integer-bound and lane-mapping review found no blocking
+AIR-relation defect; it does not certify PCS/hash/Fiat--Shamir security.
+
+The final guarded four-execution ABBA comparison observed full pipeline
+medians 23.961509 -> 13.764899 seconds and independent verifier medians
+0.943004 -> 0.887252 seconds, with source/binary hashes unchanged. Payload is
+5,187,252 bytes versus 5,264,276 for the old STARK, still 104.780269 times the
+49,506-byte native candidate. The public statement alone is 377,290 bytes.
+This is a positive research-STARK comparison on one input, not native or
+production benefit. The first unpacked candidate's verifier regression,
+all earlier samples and the pre-guard one-sample 2 GiB cap result remain
+retained without selection or relabeling. There are 21 fresh complete proving
+executions across these campaigns, all on the same retained input task.
+
+The integrated native graph/format/strict-Clippy/build and 45 Rust tests passed.
+Two new-profile positives, 22 ordinary negatives, four typed late negatives
+and eight shape negatives also passed as 36 independent verifier processes;
+these are historical-proof replays and generate no new proofs. Exact encoded
+caps and scanner operation counts now cover all four fixed profiles.
+
+The shared-Poseidon2 audit supplies exact inverse witnesses and native P3
+confirmation: arbitrary-input raw-compressor collision resistance and an
+independent-role oracle substitution are invalid models for this primitive.
+This is not a Merkle or W1 forgery. Ten Python checks, actual native forward
+evaluation, eleven registry source matches and six Cargo-lock archive pins
+passed. Approximately 63.95 conditional RBR bits remain conditional; concrete
+restricted-tree binding, NI, quantum and lifecycle security bits remain null.
+
+Two isolated user-cgroup batches enforced 0.25 CPU, 2 GiB, swap0 and 256 tasks
+for sixteen correct-shape hostile verifier processes over four seconds.
+Both batches had zero completed cryptographic rejections and sixteen killed
+incomplete requests; all exits and cleanup were observed after approximately
+4.36 seconds. The source/input combinations differ and are not performance
+A/B evidence. Observer/setup costs are outside that quota, the units are not
+the root-owned production slice, and no Node queue or seven-benign-submission
+service gate is exercised. No global rejection bound follows.
+
+The new selected-event physical-strategy namespace recognizes the exact
+affine input family and implements useful products with 5M+71A after charged
+setup. Twenty-four new tests, 3,072 full witness byte comparisons and 42
+complete reference acceptance replays pass; all 37 upstream files match actual
+baseline Git objects. Exact Bellman/finite-success lower bounds cover an
+explicit closed auxiliary cache-policy class. A cheaper legal affine producer
+falls below the dense-class optimum, so it is not a universal physical bound.
+
+Runtime, configuration and qualification directories remain unchanged from
+the published baseline. The fixed Node source still uses native PNW1 dispatch;
+research example verification supplies no production admission evidence.
+Complete details, scripts, reviews and immutable evidence are linked from
+`formal/pon-nakamoto-v1/w1_public_stark_research/ROUND3_REPORT.md` and
+`formal/pon-nakamoto-v1/physical_strategy_frontier_research/README.md`.
+All five substantive production gates remain **HOLD_NO_GO**.
+
+## W1 successor R4: public schedules, lifecycle accounting and actual development Node admission
+
+Starting from published PR783 head `cc836dfc13ef0006eb0878abd8cb5eca9a76bec0`,
+this successor retains **HOLD_NO_GO for all five substantive production gates**.
+The original four-second, 0.25-CPU, 2-GiB, zero-swap, 256-PID, sixteen-hostile,
+seven-honest service contract, request/history rules and independent administrator
+and WAN acceptance requirements remain unchanged.
+
+Component 5 independently reconstructs public SHA schedules and proves all
+original compression rounds, with 5,392 main and 139 preprocessing columns.
+The existing public parser, message planner and original SHA AIR are unchanged.
+Two task inputs received ABBA blocks, eight fresh complete proving executions.
+Aggregate medians are full pipeline 14.519395 -> 11.862382 seconds, peak RSS
+2,035,728 -> 1,463,658 KiB, and statement-plus-proof payload 5,187,028 -> 3,978,068
+bytes. Independent verification **regresses** 0.972321 -> 1.068500 seconds on
+aggregate, with both input families regressing. The enlarged preprocessing cost
+is paid and reported. A separate six-process/600-call current native reference
+has inner medians about 1.7933/1.7988 ms, with different timing scope and no Node
+admission; it is not folded into ABBA. Payload remains about 80.36 native
+candidates. Production benefit is unproved.
+
+A new classical ideal-permutation lemma bounds collision probability for the
+actual restricted four-field FRI leaf, including adaptive forward/inverse
+queries. It does not prove raw-compressor collision resistance, Merkle/vector
+extraction, complete PCS/Fiat--Shamir or a quantum/concrete instantiation.
+Source-bound native counters measure 113,961 shared Poseidon2 evaluations for
+one new-profile pair verification and 4,308,287 including fresh preprocessing
+and initialization. These are exact retained workloads, not malicious maxima.
+The lifecycle accountant merges roles/versions and requires explicit offline
+budgets. Conditional RBR remains about 63.95 bits; NI, lifetime and quantum
+security fields remain null and PQ128 remains false. Twenty-four new Python
+checks, 57 source pins, four native receipts and eleven scenario calculations
+are retained, including the falsified arbitrary-zero-PoW-witness hypothesis.
+
+A separate research Cargo workspace now connects both real P3 proofs to actual
+`trnm-pon-node` development admission. It binds independent expected inputs,
+checks both proof frames before allocation, verifies before opening/recovering
+the receiver Node, rechecks live context and invokes the original admission.
+Fresh packets retain native W1 checks; exact duplicates reuse original admitted
+state. Twelve real integration tests cover admission, duplicate state, cold
+recovery, reorg, cancellation, independent input binding and archive integrity.
+A new actual Node-generated candidate received one fresh complete proof, separate
+from the eight ABBA proofs. Postcommit cancellation remains true admission;
+original cold recovery can activate the committed packet. Receipt v2 corrects
+an early duplicate-replay label. The native-target build's actual owned-I/O
+UNQUALIFIED warning is retained. Production runtime/config/qualification,
+PNH1/PNW1 dispatch and PGH2/growth behavior are unchanged; production ingress and
+qualification are still open.
+
+The original two limited sixteen-request studies remain negative evidence, not
+cryptographic rejections. A separately labeled successor shared-cgroup study
+uses sixteen typed bad proofs plus seven replays of one valid Node fixture,
+with controller and setup outside the quota; this is not one production Node
+serving seven independent honest submissions. Its exact outcomes and process
+cleanup remain in the research report. Local start/archive limits and phase
+cancellation do not establish a global malicious-work bound.
+
+The selected-local relation successor implements paid nonce banking and an
+exact global-affine compiler. A finite positive-price example achieves success
+3/4 at expected cost 104.5, strictly below the old online-class lower certificate
+109.625; the old theorem is not generalized to the larger class. The new compiler
+checks all 8,192 input fields, charges 26M+8,533A setup and retains 1,316 field
+bytes; each useful block uses 0M+73A. The fixed 512--1023 nonce campaign charges
+all 512 selectors, including 505 unattempted ones. Full hashlib compression work
+increases, while a separate prefix-reuse replay decreases; the two are not
+conflated. Seventeen new tests, 243 scheduling comparisons, 2,048 dense-product
+comparisons and eighteen fresh full selected-local native accepts plus two
+rejections are retained. None is full W1/STARK/production Node qualification or
+a universal physical lower bound.
+
+Details and immutable evidence are linked from
+`formal/pon-nakamoto-v1/w1_public_stark_research/ROUND4_REPORT.md`,
+`formal/pon-nakamoto-v1/w1_security_lifecycle_r4/README.md`,
+`formal/pon-nakamoto-v1/w1_node_adapter_research/README.md` and
+`formal/pon-nakamoto-v1/selected_nonce_bank_research/README.md`.
+No production activation, self-approval, main-branch merge or acceptance-budget
+relaxation is performed by this entry.
+
+### R4 final-check historical fixture correction
+
+The first R4 final-commit check reached the retained physical-strategy Python
+suite and failed because seven original `.log` fixtures were absent from the
+tracked tree. Restore their original proposal-archive bytes, including three
+originally empty budget logs, and retain the failed gate attempt. The existing
+53-file hash manifest and 37-entry upstream source manifest remain unchanged;
+no historical measurement or expected result is regenerated. Repeat the focused
+final-source gate set on the repair commit before the ordinary draft-PR push.
+All five production gates remain HOLD_NO_GO. See the R4 report and
+`formal/pon-nakamoto-v1/physical_strategy_frontier_research/R4_FIXTURE_REPAIR.json`.

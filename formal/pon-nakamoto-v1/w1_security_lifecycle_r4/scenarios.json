@@ -1,0 +1,276 @@
+[
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "retained_R3_cold_verifier_workload_only",
+    "epochs": [
+      {
+        "label": "R3 components 1 and 4",
+        "runs": [
+          {
+            "receipt": "r3-sha1",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          },
+          {
+            "receipt": "r3-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          }
+        ],
+        "offline_forward_queries": 0,
+        "offline_inverse_queries": 0,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "retained_R4_cold_verifier_workload_only",
+    "epochs": [
+      {
+        "label": "R4 components 5 and 4",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          }
+        ],
+        "offline_forward_queries": 0,
+        "offline_inverse_queries": 0,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "hypothetical_R4_million_reverifications_reusing_preprocessing",
+    "epochs": [
+      {
+        "label": "one retained statement and proof pair",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1000000
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1000000
+          }
+        ],
+        "offline_forward_queries": 0,
+        "offline_inverse_queries": 0,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "hypothetical_two_protocol_epochs_share_one_permutation",
+    "epochs": [
+      {
+        "label": "R3 old component domains",
+        "runs": [
+          {
+            "receipt": "r3-sha1",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 10000
+          },
+          {
+            "receipt": "r3-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 10000
+          }
+        ],
+        "offline_forward_queries": 4294967296,
+        "offline_inverse_queries": 2147483648,
+        "other_honest_evaluations": 16777216
+      },
+      {
+        "label": "R4 new component domain same permutation",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 10000
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 10000
+          }
+        ],
+        "offline_forward_queries": 4294967296,
+        "offline_inverse_queries": 2147483648,
+        "other_honest_evaluations": 16777216
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "hypothetical_2pow64_offline_queries",
+    "epochs": [
+      {
+        "label": "explicit assumed unmeasured budget",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          }
+        ],
+        "offline_forward_queries": 9223372036854775808,
+        "offline_inverse_queries": 9223372036854775808,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "hypothetical_2pow128_offline_queries",
+    "epochs": [
+      {
+        "label": "explicit assumed unmeasured budget",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          }
+        ],
+        "offline_forward_queries": 170141183460469231731687303715884105728,
+        "offline_inverse_queries": 170141183460469231731687303715884105728,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "hypothetical_2pow129_offline_queries_saturates_leaf_bound",
+    "epochs": [
+      {
+        "label": "explicit assumed unmeasured budget",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1,
+            "preprocessing_builds": 1,
+            "verification_calls": 1
+          }
+        ],
+        "offline_forward_queries": 340282366920938463463374607431768211456,
+        "offline_inverse_queries": 340282366920938463463374607431768211456,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "hypothetical_long_lifetime_2pow40_cold_verifications",
+    "epochs": [
+      {
+        "label": "no caching",
+        "runs": [
+          {
+            "receipt": "r4-sha5",
+            "config_initializations": 1099511627776,
+            "preprocessing_builds": 1099511627776,
+            "verification_calls": 1099511627776
+          },
+          {
+            "receipt": "r4-packed4",
+            "config_initializations": 1099511627776,
+            "preprocessing_builds": 1099511627776,
+            "verification_calls": 1099511627776
+          }
+        ],
+        "offline_forward_queries": 0,
+        "offline_inverse_queries": 0,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "ideal_oracle_domain_exhaustion_returns_trivial_bound",
+    "epochs": [
+      {
+        "label": "query count exceeds finite oracle domain",
+        "runs": [],
+        "offline_forward_queries": 13407807904968608723212281202841119622236618273039694023524124302519438897008088122680625462946347946790432608105011691604414360592606126580786095991029761,
+        "offline_inverse_queries": 0,
+        "other_honest_evaluations": 0
+      }
+    ],
+    "abstract_conditional_opportunities": []
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "abstract_conditional_hazard_demo_not_a_P3_bound",
+    "epochs": [],
+    "abstract_conditional_opportunities": [
+      {
+        "count": 4294967296,
+        "error_numerator": 1,
+        "error_denominator": 18446744073709551616
+      }
+    ]
+  },
+  {
+    "schema": "trnm-w1-lifetime-scenario-v1",
+    "name": "abstract_conditional_hazard_saturation_not_a_P3_bound",
+    "epochs": [],
+    "abstract_conditional_opportunities": [
+      {
+        "count": 1267650600228229401496703205376,
+        "error_numerator": 1,
+        "error_denominator": 18446744073709551616
+      }
+    ]
+  }
+]

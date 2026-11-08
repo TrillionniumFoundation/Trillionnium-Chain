@@ -1,0 +1,12 @@
+{
+  "label": "test-repository",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/test_repository.py"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 400.2581020731013,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "432001b2ea007f430a81acba7942a26242b186e40d7548ecfa6745f0b8a70c94"
+}

@@ -1,0 +1,7 @@
+{"elapsed_ms":15.317615,"phase":"bounded_read_decode_and_proof_shape"}
+{"elapsed_ms":13.419708,"phase":"canonical_plans_and_public_only_sha_air"}
+{"elapsed_ms":45.762919,"phase":"sha_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":267.21084499999995,"phase":"sha_stark_verify"}
+{"elapsed_ms":476.204719,"phase":"arith_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":24.42282,"phase":"arith_stark_verify"}
+{"arith_proof_bytes":453861,"arith_proof_sha256":"2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988","preprocessing_source":"canonical public statement plus independent expected inputs; rebuilt in this process","process_wall_ms":874.381301,"public_bytes":377290,"qualification":"HOLD_NO_GO","schema":"trnm-w1-complete-public-packed-carry-stark-run-v3","security_claim":"research execution only; no concrete noninteractive security qualification","sha_proof_bytes":4356101,"sha_proof_sha256":"ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c","statement_sha256":"d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c","status":"VERIFIED_COMPLETE_W1_RESEARCH_ONLY","timings":[{"elapsed_ms":15.317615,"phase":"bounded_read_decode_and_proof_shape"},{"elapsed_ms":13.419708,"phase":"canonical_plans_and_public_only_sha_air"},{"elapsed_ms":45.762919,"phase":"sha_verifier_independent_preprocessing_setup"},{"elapsed_ms":267.21084499999995,"phase":"sha_stark_verify"},{"elapsed_ms":476.204719,"phase":"arith_verifier_independent_preprocessing_setup"},{"elapsed_ms":24.42282,"phase":"arith_stark_verify"}]}
