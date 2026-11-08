@@ -592,6 +592,17 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs',
     'trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs',
 ))
+# Explicit current report observers retain their exact sources and tests.
+# This coverage does not promote selected-byte observations or retained controls
+# to cryptographic, independent Host, or complete lifetime qualification.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/w1_v2_controls_gate.py",
+    "scripts/ci/test_w1_v2_current_stage_gate.py",
+    "scripts/w1_current_source_observation.py",
+    "scripts/ci/test_w1_current_source_observation.py",
+    "config/pon/w1-qrom-current-source-observation-v1.json",
+    "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

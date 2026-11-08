@@ -19,6 +19,23 @@ import sys
 import time
 import traceback
 
+from verify_amortized_independent_roster import SOURCE as AMORTIZED_SOURCE, verify_frame
+
+
+def read_amortized_independent(row, stdout, stderr, source, expected_count):
+    """Bind this fixed stage to its original six identities and two docstrings."""
+    row.update(unittest_count=expected_count, named_success_count=0)
+    try:
+        if type(expected_count) is not int or expected_count != 6:
+            raise ValueError("the original amortized independent roster has six tests")
+        frame = verify_frame(stdout.read_bytes(), stderr.read_bytes(),
+                             row["exit_code"], source.read_bytes())
+        row["named_success_count"] = frame["executed_ok"]
+        row["named_reader"] = frame
+    except Exception as error:
+        row["passed"] = False
+        row["reader_error"] = {"type": type(error).__name__, "message": str(error)}
+
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
@@ -53,7 +70,7 @@ def main() -> int:
     native = cargo + ["test", *manifest, "--release"]
     rows = []
     result = {
-        "schema": "chain-six-unified-root-campaign-v2", "expected_head": args.head,
+        "schema": "chain-six-unified-root-campaign-v3", "expected_head": args.head,
         "scope": "local exact-source research controls and native executions",
         "started_unix_seconds": time.time(), "stages": rows,
         "whole_chain_pq_qualified": False, "quantum_soundness_qualified": False,
@@ -83,7 +100,9 @@ def main() -> int:
         text = stdout.read_text(errors="replace") + "\n" + stderr.read_text(errors="replace")
         row["passed"] = row["exit_code"] == 0
         row["outcome"] = "PASS" if row["passed"] else "FAIL"
-        if python_count is not None:
+        if python_count is not None and label == "amortized-independent":
+            read_amortized_independent(row, stdout, stderr, root / AMORTIZED_SOURCE, python_count)
+        elif python_count is not None:
             summaries = re.findall(r"^Ran (\d+) tests? in .*?$", text, re.M)
             oks = re.findall(r"^OK(?: \(.*\))?$", text, re.M)
             names = re.findall(r"^(test_\S+) \([^)]+\) \.\.\. ok$", text, re.M)

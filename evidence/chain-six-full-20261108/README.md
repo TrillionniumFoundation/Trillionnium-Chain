@@ -2,6 +2,8 @@
 
 **Research integration. The broad qualification remains HOLD / NO-GO.**
 
+[Observed results and remaining gates](OBSERVED_RESULTS.md) records the completed F3 campaigns, original failures, fresh supplements, real positive learning adoption and actual hosted counterexamples. [Archive manifest](archive-manifest.json) identifies the preserved original evidence.
+
 This directory records a composed continuation of the exact original heads
 listed in `inputs.json`. The original merged heads remain in normal Git ancestry;
 explicit continuation cherry-picks are recorded separately. Current
@@ -17,8 +19,8 @@ The sole development plan remains
 | Native ledger and consensus | Complete W1 validation, persistent fork history, bounded observation, Growth confirmation routing, joint schedule research and retained recovery controls | General work-cost lower bound; joint time/difficulty security; independent confirmation and public-host acceptance |
 | Verifiable computation | Existing actual W1 AIR/STARK verification, actual MMCS adapter controls, native bridge and durable verification-start owner | New proof generation in this campaign; equal-resource net gain; full quantum soundness; whole-system admission qualification |
 | Tasks and settlement | Current/historical active payment anchors, signed service contracts, v3 witness and money-observation epoch recheck across transaction exit | Independent complete real-payment and irreversible external-effect reconciliation |
-| Hepta learning | Frozen evaluation profile, original checkpoint codec, Selection-to-completion readback and independently pinned native actor receipts | Genuine process-backed model iteration is reported separately at its own exact private source; no model gain or generalization follows from a finite fixture |
-| Cell network | Complete content/version/chunk/retention and custody controls, actual-device model handoff evidence when supplied | Independent operators, public discovery, long-term custody, complete base-model distribution and production Fleet loading |
+| Hepta learning | Frozen evaluation, original checkpoints and actual NoUpdate / ResearchExternalTrainedArtifactV1 adoption through next-task use and recovery | Independent evaluation, general model gain, original ParameterV3/Product OPE and production qualification; actual research branches retain their own exact private source |
+| Cell network | 496 native controls plus a separately source-bound actual adapter transport, device loading, next task and worker recovery | Independent operators, public discovery, long-term custody, complete base-model distribution and production Fleet loading |
 | Post-quantum composition | Actual ML-DSA and hybrid transport foundations, source-bound effect/lifetime registers, pure root recovery policy and explicit unknown terms | Complete dependency/reachable-path closure, proof-system and consensus composition, authenticated provenance and lifetime probability bound |
 
 ## Exact-source execution
