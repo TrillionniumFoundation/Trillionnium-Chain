@@ -107,3 +107,26 @@ Actual P3 pruned/mixed-height binding, concrete shared-primitive analysis,
 Fiat-Shamir knowledge soundness, quantum/advice/lifecycle composition,
 recursive AIR cost and production admission remain open as described in the
 [security contract](SECURITY_CONTRACT.md).
+
+## Evidence closure correction
+
+A final commit-content check found that the first candidate and the merge
+candidate retained native logs on disk while Git ignore rules omitted 32 v1
+and 14 v2 indexed log files from their commits. The original failed
+[closure observation](evidence/integration-v1/evidence-git-closure-initial-failure.json)
+is retained. Earlier source receipts correctly checked tracked bytes; they did
+not establish that every indexed evidence file was tracked. Local evidence
+materialization therefore did not, by itself, establish published Git closure.
+
+The exact missing original logs are now explicitly tracked. The focused runner
+also invokes [the Git closure gate](verify_evidence_git_closure.py): it reads the
+index and all storage directly from the requested commit, disables replacement
+objects, requires ordinary blobs, checks compressed and original lengths/hashes,
+and verifies aggregate counts. Nine focused regression tests cover the actual
+ignored-file failure and relevant integrity boundaries. The gate checks both
+historical stores without rewriting their observations or source identities.
+
+Four immutable stdout logs contain terminal blank lines. Their original bytes
+are preserved; the [cosmetic whitespace observation](evidence/integration-v1/immutable-log-whitespace-observation.json)
+records that check failure. The staged diff check excludes only those four raw
+log paths, while the Git closure gate verifies every indexed log byte.

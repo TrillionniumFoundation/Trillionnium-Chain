@@ -76,6 +76,8 @@ def main() -> None:
     source = ["python3", "-B", "scripts/ci/verify_ci_source.py", "--kind", "head",
               "--expected-head", args.expected_head, "--output"]
     run("source-before", source + [output / "source-before.json"])
+    run("evidence-git-closure", ["python3", "-B", scope / "verify_evidence_git_closure.py",
+                                 "--expected-head", args.expected_head])
     run("repository-and-markdown", ["python3", "-B", "scripts/ci/check_repository.py"])
     counts = {}
     for label, command, directory, minimum in (
@@ -84,6 +86,7 @@ def main() -> None:
         ("historical-hash-audit", ["python3", "-B", "-m", "unittest", "-v", "test_hash_role_audit.py"], research / "security_model_audit", 10),
         ("model-budget", ["python3", "-B", "-m", "unittest", "discover", "-s", ".", "-p", "test_*.py", "-v"], scope / "budget", 40),
         ("ordinary-path-extractor", ["python3", "-B", "-m", "unittest", "-v", "test_opening_collision_extractor.py"], scope / "restricted_tree", 6),
+        ("evidence-closure-negatives", ["python3", "-B", "-m", "unittest", "-v", "test_evidence_git_closure.py"], scope, 9),
     ):
         log = run(label, command, directory)
         matches = re.findall(r"Ran\s+(\d+)\s+tests?\b", log)
@@ -113,7 +116,7 @@ def main() -> None:
     log = run("rust-tests", cargo + ["test", *flags])
     rust = [tuple(map(int, row)) for row in re.findall(
         r"test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored; (\d+) measured; (\d+) filtered out;", log)]
-    if not rust or any(any(row[1:]) for row in rust) or sum(row[0] for row in rust) < 56:
+    if not rust or any(any(row[1:]) for row in rust) or sum(row[0] for row in rust) < 68:
         raise SystemExit("Unexpected Rust test result")
     if "independent_python_hashlib_vectors_match_actual_hash_roles ... ok" not in log:
         raise SystemExit("Independent Rust role-vector test did not pass")
@@ -137,6 +140,7 @@ def main() -> None:
         "finite_origin_control": enumeration, "source_receipts_equal": True,
         "independent_reference_vectors_sha256": sha(fixture),
         "source_receipt_sha256": sha(output / "source-after.json"),
+        "evidence_git_closure_receipt_sha256": sha(output / "evidence-git-closure.stdout.txt"),
         "binary_sha256": {name: sha(target / "release/examples" / name)
                           for name in ("tagged_sha3_backend", "packed_carry_backend")},
         "qualification": "HOLD_NO_GO", "complete_repository_ci": False,

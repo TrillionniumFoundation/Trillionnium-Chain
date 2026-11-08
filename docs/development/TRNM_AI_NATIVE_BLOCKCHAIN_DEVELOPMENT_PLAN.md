@@ -7608,3 +7608,16 @@ The [base integration report](../../formal/pon-nakamoto-v1/p3_shared_primitive_q
 records the merge snapshot, exact executable hashes and the requirement for
 post-commit source/test/replay checks. Existing security and production gates
 remain **HOLD_NO_GO**.
+
+### P3 shared-primitive evidence Git closure follow-up
+
+The final publication check detected 46 indexed native log files (32 v1, 14 v2)
+that were present locally but ignored by Git. Preserve the failed observation,
+explicitly track those exact original logs, and add a commit-object-only closure
+gate with nine regression tests to the existing focused runner. Both the index
+and referenced storage must be ordinary blobs in the exact commit; replacement
+objects are disabled, and compressed/original lengths, hashes and aggregate
+counts are checked. Re-run the final committed-source gates and integrated-v2
+proof replay before the ordinary feature-branch push. This changes evidence
+preservation and validation only; all security and activation decisions remain
+HOLD_NO_GO.
