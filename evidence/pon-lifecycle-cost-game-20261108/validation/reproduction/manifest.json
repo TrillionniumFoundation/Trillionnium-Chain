@@ -1,0 +1,36 @@
+{
+  "actual_W1_all_algorithm_lower_bound": null,
+  "artifacts": [
+    {
+      "bytes": 423,
+      "path": "source-before.json",
+      "sha256": "15714004e92f112f3374bf410c18391252aa4daee17ad45576e2530906d00010"
+    },
+    {
+      "bytes": 1684149,
+      "path": "finite-lifecycle.json",
+      "sha256": "37a78255ddc176375f2aebcfa4117112344036d2eaf65c617748c35a3a30c49b"
+    },
+    {
+      "bytes": 3946,
+      "path": "cell-conformance.json",
+      "sha256": "4eeb420ee6a0695e345646520b11822d1e2f9012c5a8b675fb4d880dfc8204a0"
+    },
+    {
+      "bytes": 6379,
+      "path": "service-separation.json",
+      "sha256": "eee446904a906c983ead33422c18244e4fa374d95707af1256d94f874313be5a"
+    },
+    {
+      "bytes": 423,
+      "path": "source-after.json",
+      "sha256": "15714004e92f112f3374bf410c18391252aa4daee17ad45576e2530906d00010"
+    }
+  ],
+  "driver_status": "PASS",
+  "native_chain_security_probability": null,
+  "native_owner_settlement_executed": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "pon-lifecycle-cost-game-reproduction-v1",
+  "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3"
+}

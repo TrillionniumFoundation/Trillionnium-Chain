@@ -1,0 +1,68 @@
+PROVENANCE: complete transcription of the exec_command tool's displayed output field.
+This file was written after the observation; it is NOT an original shell-redirected log.
+The original tool combined the command output; separate stdout/stderr files were not retained.
+This is the review's pre-fix negative control, not a failure on the final fixed source.
+
+Original tool: exec_command
+Original chunk_id: 51faf5
+Original exit_code: 1
+Original wall_time_seconds: 0.177059444
+Original original_token_count: 1098
+Original command:
+python3 -m unittest -v test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window
+Original working directory:
+/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1
+Pre-fix service_work_settlement_v1.py SHA-256:
+120c94c0f393ec550e3fffc1208412bf8f3b16a366e9399d3fa03d4035b51f27
+New regression test file SHA-256 (unchanged by the subsequent implementation fix):
+a513574c97fa9c63977f5b9f905def26903f1cd546424cbcbf16933ef05d23ff
+The original invocation did not record a wall-clock timestamp or repository-wide source manifest.
+
+BEGIN COMPLETE DISPLAYED OUTPUT FIELD
+test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) ... 
+  test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='evaluation', maturity=2) ... FAIL
+  test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='evaluation', maturity=41) ... FAIL
+  test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='contribution', maturity=2) ... FAIL
+  test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='contribution', maturity=41) ... FAIL
+
+======================================================================
+FAIL: test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='evaluation', maturity=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 258, in test_each_budget_must_mature_before_the_entire_service_window
+    with self.assertRaisesRegex(ValueError, 'SERVICE_BUDGET_IMMATURE_AT_ISSUE'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='evaluation', maturity=41)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 258, in test_each_budget_must_mature_before_the_entire_service_window
+    with self.assertRaisesRegex(ValueError, 'SERVICE_BUDGET_IMMATURE_AT_ISSUE'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='contribution', maturity=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 258, in test_each_budget_must_mature_before_the_entire_service_window
+    with self.assertRaisesRegex(ValueError, 'SERVICE_BUDGET_IMMATURE_AT_ISSUE'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) (lane='contribution', maturity=41)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 258, in test_each_budget_must_mature_before_the_entire_service_window
+    with self.assertRaisesRegex(ValueError, 'SERVICE_BUDGET_IMMATURE_AT_ISSUE'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.156s
+
+FAILED (failures=4)
+END COMPLETE DISPLAYED OUTPUT FIELD

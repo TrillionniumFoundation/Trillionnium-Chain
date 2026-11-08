@@ -1,0 +1,8 @@
+test_fresh_full_transcripts_can_have_identical_complete_useful_products (__main__.CellLotteryCostAuditTests.test_fresh_full_transcripts_can_have_identical_complete_useful_products) ... ok
+test_nonce_and_independent_context_still_require_original_verification (__main__.CellLotteryCostAuditTests.test_nonce_and_independent_context_still_require_original_verification) ... ok
+test_padded_relation_counts_do_not_create_work_or_model_credit (__main__.CellLotteryCostAuditTests.test_padded_relation_counts_do_not_create_work_or_model_credit) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 6.895s
+
+OK
