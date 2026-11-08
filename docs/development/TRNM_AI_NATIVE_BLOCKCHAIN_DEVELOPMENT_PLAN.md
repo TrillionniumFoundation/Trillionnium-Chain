@@ -7679,3 +7679,24 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+
+### 2026-11-08 classical and quantum credit feasibility
+
+Continue the existing work-scale and stateful-tail research with the
+[public-credit envelope contract](../../formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md)
+and [project applicability review](../protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md).
+A bounded exact-rational solver either supplies common positive credits for
+all declared cost intervals or a separately verified constraint cycle with
+product below one. The paired search-cost component checks actual normalized
+success mass and separates repeated attempts, shared preparation, failed
+restarts and success-only proofs. Exact mathematical feasibility does not
+authenticate the intervals as all-algorithm lower bounds.
+
+Register both suites in repository-truth and the CI omission/duplication/
+relocation contract. Retain named execution, source hashes, independent credit
+witness verification, normalized-cost report readback and head/prospective-merge checks in the
+[evidence packet](../../evidence/pon-credit-envelope-20261108/README.md).
+All W1 minimum-cost, adaptive portfolio, complete initial-state, mixed-mining
+CP/CG/CQ, original Host/WAN and production gates retain their existing HOLD.
+No native consensus parameter or activation is changed.
