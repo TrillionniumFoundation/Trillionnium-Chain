@@ -36,7 +36,11 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 INPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-INPUT1"
 OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
-SOURCE_BASE = "7150d96a2112875b4afcf3023361a5cef4a0e4b1"
+# This is the selected source survey's frozen input, not the commit that ran
+# any historical native experiment. Nineteen of the twenty selected files are
+# unchanged from the original survey; the integrated store is reviewed at this
+# exact revision. Query bounds stay unknown and all three qualifications false.
+SOURCE_BASE = "7e044b65454f4c9ea505591727332acffb33e7e5"
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -117,7 +121,7 @@ SOURCE_PINS = {
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
-    "trillionnium/crates/trnm-pon-node/src/store.rs": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "e6e322d670d28ca86c3c94a19bb3b5d53feab3265631d3c83a278e9d5892fb8e",
     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
     "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
