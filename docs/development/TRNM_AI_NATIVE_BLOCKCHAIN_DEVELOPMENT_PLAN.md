@@ -17,6 +17,21 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Original frozen learning iteration to native use, 2026-11-08 America/New_York:**
+Continue #787 with the [bounded checkpoint/readback join](specs/pon/CELL_LEARNING_ITERATION_JOIN_V2.md).
+Hepta #5357 adds a mandatory owner-frozen evaluation-profile commitment before
+training and refuses lineage/evaluation drift or profile substitution during
+recovery. Its explicit HEPLCP02 format does not reinterpret historical HEPLCP01.
+The Chain reader replays exact native checkpoint bytes and joins the complete
+original request, owners, budgets, learning receipts and Selection cut to the
+existing native next-use readback. Preserve evaluated and proposal-rejected
+NoUpdate, original complete parent retention and current owner authority.
+Hash consistency cannot authenticate pre-dispatch custody, learning signatures,
+independent control, actual model execution or settlement. The original funded
+Task/M12/work/confirmation/loader adapters remain responsible for their real
+effects; this read-only join does not replace them or create FinalUse. Keep the
+complete-cycle gate at **HOLD_NO_GO** pending same-source original evidence.
+
 
 **Cell original native use readbacks, 2026-11-08:** Preserve the original
 Hepta actor as the owner of retained-parent and adopted-candidate next-use.

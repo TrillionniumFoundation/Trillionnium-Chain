@@ -1,0 +1,31 @@
+{
+  "all_job_steps_reported_success": true,
+  "files": [
+    {
+      "bytes": 14993,
+      "file": "workflow.json",
+      "representation": "connector-returned GitHub API JSON text",
+      "sha256": "3e4a64a9d4049728a48280897a3b9d72e976c421a94c45e5b972d944f38fab19"
+    },
+    {
+      "bytes": 3809,
+      "file": "jobs.json",
+      "representation": "connector-returned GitHub API JSON text",
+      "sha256": "89c57bb0e6a91c09aad4d7934a9acd0fb47acd7bf1bb56bd182e5ac54ac88254"
+    }
+  ],
+  "github_reported_conclusion": "success",
+  "github_reported_status": "completed",
+  "job_id": 128730448818,
+  "job_name": "ACL, anti-reparse, signed-owner durability and recovery on Windows",
+  "logs_downloaded_for_this_successful_run": false,
+  "native_test_count_not_inferred": true,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "qualification_of_newer_heads_not_inferred": true,
+  "run_id": 42480262145,
+  "run_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/42480262145",
+  "schema": "hepta-hosted-windows-source-observation-v1",
+  "scope": "existing-windows-private-state-security-qualification-workflow-only",
+  "source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63"
+}
