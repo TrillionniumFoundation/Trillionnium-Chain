@@ -1,0 +1,3 @@
+Remote job 1a1bb399214-13c47-141 stopped before any final commit.
+AssertionError: inventory refresh added the two new research files plus retained upstream tests/history_stage_diagnostic.rs; removed none.
+The follow-up verifies the upstream file's Git blob is unchanged from integration 8d538974 and accepts exactly those three additions.

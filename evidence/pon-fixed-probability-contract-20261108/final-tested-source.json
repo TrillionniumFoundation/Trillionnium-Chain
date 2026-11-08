@@ -1,0 +1,13 @@
+{
+  "head": "103cdf67108a667d8570388f9dd402210c160157",
+  "tree": "6910f1838a5801f7c0e6d0c5de544a4c3161713e",
+  "initial_tested_source": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "native_and_reader_blobs_unchanged_from_initial": {
+    "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs": "e5ae0fdd9bd18693106f2acc7413c95f63d0968f",
+    "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs": "fd23b1651f993c0453e8f9c8bdf5156b80272d48",
+    "scripts/pon_branch_work_schedule_reader.py": "48de242a9d4eb4f28da43a8c239cef6f42004fab",
+    "scripts/ci/test_pon_branch_work_schedule_reader.py": "0ba4a8c4ace7081059ecfc119915fe534630b694"
+  },
+  "pythonpath_removed": true,
+  "production_activation": false
+}

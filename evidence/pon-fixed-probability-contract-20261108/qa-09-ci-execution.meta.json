@@ -1,0 +1,13 @@
+{
+  "label": "qa-09-ci-execution",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_execution.py"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 28.060216308105737,
+  "unittest_count": [
+    "77"
+  ]
+}

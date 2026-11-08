@@ -1,0 +1,24 @@
+{
+  "label": "final-18-strict-clippy",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "exit": 0,
+  "duration_seconds": 158.9843398379162,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": []
+}

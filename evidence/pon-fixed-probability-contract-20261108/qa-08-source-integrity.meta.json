@@ -1,0 +1,13 @@
+{
+  "label": "qa-08-source-integrity",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 5.095091575058177,
+  "unittest_count": [
+    "43"
+  ]
+}

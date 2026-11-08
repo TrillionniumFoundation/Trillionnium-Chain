@@ -1,0 +1,12 @@
+{
+  "label": "qa-11-inventory",
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit": 1,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "duration_seconds": 0.6027004548814148,
+  "unittest_count": []
+}

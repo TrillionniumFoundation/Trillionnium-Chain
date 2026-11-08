@@ -1,0 +1,13 @@
+{
+  "label": "qa2-10-project-boundary",
+  "argv": [
+    "python3",
+    "scripts/ci/test_project_boundary.py"
+  ],
+  "exit": 0,
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "duration_seconds": 6.013641515979543,
+  "unittest_count": [
+    "16"
+  ]
+}

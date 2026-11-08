@@ -1,0 +1,26 @@
+{
+  "label": "final-17-reorg-readback",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::reorg_readback_tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit": 0,
+  "duration_seconds": 20.4666974961292,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [
+    6
+  ],
+  "unittest_counts": []
+}

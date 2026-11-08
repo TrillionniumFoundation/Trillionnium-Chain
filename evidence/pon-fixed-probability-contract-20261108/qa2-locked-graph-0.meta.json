@@ -1,0 +1,19 @@
+{
+  "label": "qa2-locked-graph-0",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--all-features",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "exit": 0,
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "duration_seconds": 0.20454619289375842,
+  "unittest_count": []
+}
