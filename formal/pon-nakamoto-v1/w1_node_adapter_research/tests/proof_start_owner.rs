@@ -53,8 +53,7 @@ fn result(output: &Output) -> Value {
     let line = output
         .stdout
         .split(|byte| *byte == b'\n')
-        .filter(|line| !line.is_empty())
-        .next_back()
+        .rfind(|line| !line.is_empty())
         .unwrap();
     serde_json::from_slice::<Value>(line).unwrap()["result"].clone()
 }

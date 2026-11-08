@@ -135,8 +135,11 @@ pub struct ProofStartSnapshot {
 
 /// A fixed owner directory with no reset, delete, refund, or quota-update API.
 /// Concurrent processes arbitrate each slot through the filesystem, not a
-/// process-local counter. The enclosing filesystem must be locally durable and
-/// the configured owner path must be protected from deletion/backup rollback.
+/// process-local counter. Local durability and protection of the owner directory
+/// and every ancestor against untrusted namespace mutation are preconditions.
+/// The path/inode probes are observations, not an ABA-race or same-UID defense.
+/// Deletion, backup rollback and selecting a replacement owner remain outside
+/// this local accounting contract.
 pub struct ProofStartOwner {
     path: PathBuf,
     policy: ProofStartPolicy,

@@ -32,6 +32,8 @@ processes share atomic create-once slots. The complete contract, new diagnostic
 namespaces and explicit rollback/QROM limits are in
 [PROOF_START_OWNER.md](PROOF_START_OWNER.md). This replaces the old per-process
 CLI counter, while all historical measurements below keep their original scope.
+The owner directory and every ancestor must remain protected; same-UID and
+attacker-writable-ancestor namespace races are outside this local contract.
 
 ## What is bound before Node admission
 

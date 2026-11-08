@@ -44,10 +44,18 @@ The owner contains exactly these entries:
 | `complete-v1` | Policy digest written after initialization data |
 | `starts-v1/01.start` through the fixed maximum | Create-once, nonrefundable reservation slots |
 
+The owner directory and **every ancestor** must remain protected from untrusted
+namespace mutation for the owner lifetime. This is an operator precondition,
+not a property established by canonicalization. An owner mode of 0700 alone
+does not protect it when an ancestor can be renamed or replaced by an attacker.
+
 Owner and slot directories require Unix mode `0700`; files require `0600` and
 one hard link. The configured path must be absolute and canonical. Symlinks,
 unexpected entries, extra slots, loose permissions, oversized metadata and
-replacement of an already opened owner or slot-directory inode are refused.
+an observed replacement of an already opened owner or slot-directory inode
+are refused at the explicit checks. Those path and inode checks do not pin the
+whole ancestry, authenticate its history or defeat rename/exchange/ABA races.
+No malicious same-UID or attacker-writable-ancestor isolation is claimed.
 The small fixed slot inventory bounds each scan. No signature or success flag
 inside a slot can replenish the allowance.
 
@@ -76,7 +84,8 @@ silently deleting its record or reinitializing its owner.
 
 This argument assumes the filesystem honors local create-once and
 synchronization semantics and the configured owner storage is preserved. It
-does **not** defend against a privileged or malicious same-UID process deleting
+does **not** defend against privileged or malicious same-UID actions, an attacker
+with write access to an ancestor, or any such process deleting
 slots, restoring an older backup, cloning an owner, or selecting a new owner
 path. Reopening an authentic-looking rolled-back directory does not prove its
 history. Those require an external monotonic/authenticated storage design and
