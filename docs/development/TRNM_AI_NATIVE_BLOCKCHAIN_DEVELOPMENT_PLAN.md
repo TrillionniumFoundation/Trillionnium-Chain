@@ -7721,3 +7721,46 @@ byte-identical to the measured source; the original failed CI observation
 and the original component HOLD remain separate from this metadata repair.
 
 The post-integration inventory repair passed 333 selected tests and all 17 recorded validation commands. Its [exact-source validation and retained CI distinctions](../../evidence/pon-native-fullpath-20261108-inventory-reconciliation/README.md) preserve the original measurement and HOLD.
+
+### 2026-11-08 four-metric throughput continuation
+
+The [four-metric readers and reproduction contract](../../formal/throughput-v1/README.md)
+now keep independent transaction confirmation, complete Cell distribution,
+physical model loading, and model computation/adoption separate. Exact
+transaction identities, the installed depth-and-work rule, strict original
+deadline, duplicate/reorg retention and one common canonical cut precede any
+aggregate observation. Conflicting forks and contradictory zero/native-positive
+reports produce unknown counts. Growth readback is not a native confirmation
+return. The original Host confirmation reader remains the separate owner.
+
+The SmolLM research runner now retains original command and partial-output
+receipts for timeout/failure without changing its timeout. The historical
+projection checks complete release membership, one-to-one materialization,
+provider/cache bindings, controlled refusal, the 32+32 forward denominator,
+training-stage coverage and NoUpdate. Action-scoring forwards are not generated
+tokens; CPU model-load substages are not complete cold or GPU loading. The
+original failed cold-transfer cohort remains distinct.
+
+The [dated evidence](../../evidence/pon-throughput-20261108/README.md) preserves
+the eight-run proof corpus and recomputes the tagged verifier's 2.36 CPU-second
+pooled median. Its eight-thread wall-time result does not qualify the original
+one-CPU-second nominal service envelope. Historical scheduled-SHA and tagged
+improvements are not multiplied. A new four-arm, source/profile-separated,
+same-resource combination experiment is still required.
+
+A new release-built same-host development run retained four starts and nine
+processes, one transaction/block, exact duplicate, late-product rejection and
+terminal cancellation. It ended at depth zero after about 0.2067 seconds and
+therefore did not complete the original four-second observation window.
+All 2,365 non-evidence source files matched exact source `812589d9bb189b6abbf33b916a424121199dee75`
+before/after; historical-evidence sparse omissions keep whole-tree qualification
+false. Current cloud/desktop prerequisite observations both lack the required
+root-owned original Host slice. Original pressure is NOT_RUN, with admission
+and cryptographic-refusal counts unknown.
+
+Dedicated exact-head CI retains the original raw-source, corpus, inventory,
+resource and repository guards. Reader/test success is not public TPS, a risk
+bound, independent custody, complete History/capacity/churn, physical loading,
+actual adoption, cryptographic closure or production activation. These gates
+remain HOLD until the corresponding original owners and complete campaigns
+supply source-bound evidence.

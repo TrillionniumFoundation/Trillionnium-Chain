@@ -1,0 +1,6 @@
+{
+  "production_activation": false,
+  "qualified_confirmed_tps": null,
+  "schema": "trnm-throughput-validation-v1",
+  "status": "PENDING_FINAL_EXACT_SOURCE_VALIDATION"
+}

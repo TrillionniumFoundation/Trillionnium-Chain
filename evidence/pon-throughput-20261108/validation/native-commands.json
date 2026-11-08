@@ -1,0 +1,156 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_ns": 92215067,
+      "exit_code": 0,
+      "name": "preflight",
+      "started_utc": "2026-11-08T11:29:48.020643+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 278992683,
+      "exit_code": 0,
+      "name": "default-locked-graph",
+      "started_utc": "2026-11-08T11:29:48.113354+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "9be71b930b43462ce2911db1feb567c4cb7f99af03c0683ee24f20c1aa5efa9e",
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 142250301,
+      "exit_code": 0,
+      "name": "all-features-locked-graph",
+      "started_utc": "2026-11-08T11:29:48.393584+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "79864e50797684c36ba65ca47d7416ea148b3d15af4f29db2253840f42bff489",
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/fuzz/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 29098815,
+      "exit_code": 101,
+      "name": "fuzz-locked-graph",
+      "started_utc": "2026-11-08T11:29:48.536942+00:00",
+      "stderr_sha256": "17a729c2449391e7219ef32fc39598b04ec0c6d88420549b4d70b6d440817385",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "elapsed_ns": 16161193589,
+      "exit_code": 0,
+      "name": "format",
+      "started_utc": "2026-11-08T11:29:48.566404+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_full_relation_context",
+        "--example",
+        "native_fullpath_v1",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_ns": 65628508194,
+      "exit_code": 0,
+      "name": "strict-focused-clippy",
+      "started_utc": "2026-11-08T11:30:04.727985+00:00",
+      "stderr_sha256": "357cc494513dd05dd65f816865fcd3b2f7cd4e3648c7479a5ee2bc37eb729976",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_full_relation_context",
+        "--test",
+        "work_header_binding",
+        "--test",
+        "growth_persistence_cancellation",
+        "--",
+        "--test-threads=1"
+      ],
+      "elapsed_ns": 188133796999,
+      "exit_code": 0,
+      "name": "retained-native-context",
+      "started_utc": "2026-11-08T11:31:10.357177+00:00",
+      "stderr_sha256": "becb69e93fad59ec375122aa0f311f590a316e1b8fe0b2e92fb71205943e0cc0",
+      "stdout_sha256": "fb29c558d26510c37d100e384631c47219e547b0561fd0e98103a5f52d792076",
+      "timed_out": false,
+      "timeout_seconds": 900
+    }
+  ],
+  "full_tree_source_gate_passed": false,
+  "scope": "non-evidence source verified; sparse historical evidence omitted",
+  "source_commit": "812589d9bb189b6abbf33b916a424121199dee75"
+}

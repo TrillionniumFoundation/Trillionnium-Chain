@@ -1,0 +1,66 @@
+name: PoN four-axis throughput evidence controls
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-throughput-evidence.yml
+      - formal/throughput-v1/**
+      - formal/pon-native-fullpath-v1/**
+      - scripts/run_smollm_cell_replica_research.py
+      - scripts/ci/test_smollm_command_receipts.py
+      - evidence/pon-throughput-20261108/**
+      - config/pon/pq-cross-branch-corpus-v1.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: throughput-evidence-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+jobs:
+  evidence-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check original boundary and exact raw source
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/throughput-evidence/source-before.json"
+      - name: Verify failure denominators and native confirmation distinctions
+        run: |
+          set -euo pipefail
+          test -f formal/pon-native-fullpath-v1/test_transaction_throughput.py
+          python3 -m unittest discover -s formal/pon-native-fullpath-v1 -p 'test_*.py' -v
+          python3 formal/throughput-v1/test_proof_cpu_metrics.py -v
+          python3 formal/throughput-v1/test_cell_model_metrics.py -v
+          python3 scripts/ci/test_smollm_command_receipts.py -v
+      - name: Reproduce original records without granting throughput qualification
+        run: python3 formal/throughput-v1/reproduce_reports.py --output "$RUNNER_TEMP/throughput-evidence/reproduced"
+      - name: Verify unchanged source guards and original resource controls
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_pq_research_integration.py
+          python3 scripts/refresh_distributed_source_inventory.py --check
+          python3 scripts/ci/check_ci_contract.py
+          python3 scripts/ci/check_repository.py
+          python3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py -v
+          python3 -m unittest discover -s scripts/ci -p test_from_zero_host_ci.py -v
+      - name: Verify exact raw source after execution
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/throughput-evidence/source-after.json"
+      - name: Retain reproduction and source evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: throughput-evidence-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/throughput-evidence/
+          if-no-files-found: error
+          retention-days: 30
