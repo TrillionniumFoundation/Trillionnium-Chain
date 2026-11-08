@@ -1,0 +1,14 @@
+{
+  "name": "02-original-effect-refusal",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/pq_authority_effect_register.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-mmcs-composition-d9fb-20261108",
+  "source_revision": "0f0592ace4b08a1d39e1ffad31beee76ddc4fd66",
+  "exit_code": 2,
+  "expected_exit_code": 2,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "58bea8ca40011468a1536549488f50c69f7a58d21400b5c16375d04bc53a1439"
+}

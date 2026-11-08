@@ -3,8 +3,8 @@
 **HOLD. Curated source consistency only; incomplete authority coverage.**
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
-routes to the source baseline
-`88568e2511fcf166e6824947ac97b06b72104385`. The
+routes to the current reviewed source
+`0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -68,12 +68,28 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Fixed source lock and its limits
+## Current source mapping and original record
+
+The [composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md) preserves the old lock's actual refusal,
+reviews every changed curated path against exact Git blobs, and fixes the
+current table digest to:
+
+```text
+4638bd340c2456dd735418f74ec27e01953432c2495b3db596f57d9fc31acb04
+```
+
+All seven route definitions and all 44 required paths are retained. The
+checker and its positive test use the new exact source revision; that test
+keeps an independent literal expected revision. The source mapping does not
+expand a comparator, cache, observer or portable kernel into a new authority.
+Newly exported child modules are not automatically part of this curated set.
+
+## Original fixed source lock and continuing limits
 
 For each required path, the initial SHA-256 was computed from
 `git show 88568e2511fcf166e6824947ac97b06b72104385:<path>` and compared with the
-working file before this register was created. The checker fixes both that
-revision label and the digest of the entire path/hash table:
+working file before this register was created. The original checker fixed
+that revision label and the digest of the entire path/hash table:
 
 ```text
 aa8d0fd93a6917b6a4685673c1a286575df026b3cc144750aaef4a95bf77e773
@@ -94,7 +110,7 @@ the Git commit or reviewed lock.** `source_revision_binding` is
 Reviewing or changing the checker and lock together is outside this local
 consistency check; neither self-reported hashes nor a review label are an
 independent trust root. A later tree may pass only while all 44 curated files
-still equal these exact baseline bytes. Unlisted files and dependency changes
+still equal the active reviewed baseline bytes. Unlisted files and dependency changes
 are not checked and do not acquire the baseline's scope.
 
 The checker reuses the bounded strict JSON parser from

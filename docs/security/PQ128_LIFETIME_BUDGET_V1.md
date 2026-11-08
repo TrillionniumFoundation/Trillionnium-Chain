@@ -214,9 +214,21 @@ Its source hashes describe the bytes read for the example only. All security,
 theorem-applicability, composition-coverage, and activation flags remain false
 in both modes, and the actual lifetime failure bound remains null.
 
-### Source-lock generation record
+### Current composed-source mapping
 
-The checked-in lock was generated from the 15 declared event paths at commit
+The current 15-path lock is reviewed against exact source
+`0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. Its current lock-byte SHA-256 is
+`8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`. The
+[composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md) retains the old lock's actual refusal,
+the old mapping, every old/new Git-blob comparison and each changed-path review.
+Only the reviewed path mapping and experiment revision changed. The eight
+unknown event terms, four unknown shared-primitive query budgets, null actual
+lifetime bound and HOLD remain unchanged. Complete dependency coverage and
+cryptographic provenance are still not established.
+
+### Original source-lock generation record
+
+The original lock was generated from the 15 declared event paths at commit
 `12e510b211110d93d9ead07e02c07a1eecc28ae9`. For every path, generation checked
 the exact `git ls-tree` entry was a regular blob with mode `100644` or `100755`,
 read `git show <revision>:<path>`, and compared those bytes with the current
@@ -228,8 +240,9 @@ or a theorem about the complete program. A future source change requires a
 new reviewed mapping; CI must not silently regenerate the lock from whatever
 bytes it is checking.
 
-With that commit available, reproduce the generation checks without rewriting
-the lock:
+The following historical command requires the original source/lock checkout.
+The current mapping has its own exact revision and per-path generation record
+in the composition review above. No command silently rewrites the lock:
 
 ```sh
 python3 - <<'PY'
