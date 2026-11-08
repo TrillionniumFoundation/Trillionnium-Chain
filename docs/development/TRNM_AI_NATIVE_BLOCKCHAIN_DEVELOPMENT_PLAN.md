@@ -7679,3 +7679,45 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+### 2026-11-08 native full relation and complete-path qualification
+
+The [native qualification](specs/pon/NATIVE_FULL_RELATION_QUALIFICATION_V1.md)
+retains the original FullLimb/PNW1 verifier, PGH2/PNP2 statement and Node
+admission/activation rules. A new real-Node regression seals fresh mathematically
+valid work for sixteen incorrect contexts, including an active-tip target that
+differs from the candidate parent target, a matching but ineligible matrix task,
+new signed body, stale state/receipts and account witness. Both FullLimb and
+scalar reference must accept the changed work statement before Node refuses it;
+SQLite rows, active/generation and nonce remain unchanged, and the valid control
+continues through activation and cold reopening.
+
+The [complete-path component tools](../../formal/pon-native-fullpath-v1/README.md)
+retain frozen offered starts and actual producer, receiver and cold-observer
+processes. One parent monotonic clock covers native candidate generation, packet
+export, complete same-host pipe delivery, full W1/execution/admission, activation
+and readback. Exact resubmission is distinct from fresh replay. A last-C-element
+mutation and actual BeforeVerifiedWork cancellation preserve their unsuccessful
+terminal records and resource cost; no partial result is promoted.
+
+Raw packet/statement/source/binary identities, native ancestry/readback and
+resource denominators are reconciled by a bounded reader with adversarial
+controls. It deliberately reports COMPONENT_OBSERVATION_ONLY and HOLD: one
+depth-zero accepted development block does not close the original four-second,
+six-successor, 0.25-CPU/2-GiB/zero-swap/256-PID/16-hostile contract, WAN, full
+history or production gates. Full native correctness does not establish
+physical or quantum search cost. Compression still requires both complete
+instance-specific cryptographic security and end-to-end performance/availability
+qualification; neither can be inferred from an isolated verifier benchmark.
+
+Actual exact-source evidence is now retained in [the 2026-11-08 native complete-path observation](../../evidence/pon-native-fullpath-20261108-a1a69c624/README.md). All 290 selected tests passed. The one new development block required 7.322108454 seconds through independent readback, remained at depth 0, and produced zero progress under the original four-second/six-successor condition. All four starts, native rejection/cancellation outcomes and resource costs remain recorded; security and performance qualification stay HOLD.
+
+The initial publication's native full-path CI passed, while the retained PQ
+network CI refused its generated source inventory. The follow-up integrates
+the current history-diagnostic candidate, regenerates the native inventory
+with the official script and updates its exact PQ blob pin. No guard is
+relaxed. The measured native implementation and complete-path tools remain
+byte-identical to the measured source; the original failed CI observation
+and the original component HOLD remain separate from this metadata repair.
+
+The post-integration inventory repair passed 333 selected tests and all 17 recorded validation commands. Its [exact-source validation and retained CI distinctions](../../evidence/pon-native-fullpath-20261108-inventory-reconciliation/README.md) preserve the original measurement and HOLD.
