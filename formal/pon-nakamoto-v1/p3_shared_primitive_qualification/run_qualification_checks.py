@@ -16,6 +16,9 @@ import re
 import subprocess
 import time
 
+from composition_observation import (accepted_exit_codes, build_observation,
+                                     frozen_crypto_sources, runtime_scope_command)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -23,6 +26,8 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--target-dir", required=True, type=Path)
     parser.add_argument("--cargo", default="cargo")
+    parser.add_argument("--composition-observation", action="store_true",
+                        help="observe a changed runtime explicitly; keep the original failed scope gate and HOLD")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[3]
     research = root / "formal/pon-nakamoto-v1/w1_public_stark_research"
@@ -62,7 +67,7 @@ def main() -> None:
         records.append(record)
         save(name + ".status.json", record)
         print(json.dumps(record), flush=True)
-        if result.returncode:
+        if result.returncode not in accepted_exit_codes(name, args.composition_observation):
             print(stdout.read_text(errors="replace")[-5000:], flush=True)
             print(stderr.read_text(errors="replace")[-5000:], flush=True)
             raise SystemExit(result.returncode)
@@ -76,6 +81,8 @@ def main() -> None:
     source = ["python3", "-B", "scripts/ci/verify_ci_source.py", "--kind", "head",
               "--expected-head", args.expected_head, "--output"]
     run("source-before", source + [output / "source-before.json"])
+    if args.composition_observation:
+        frozen_crypto_sources(root)
     run("evidence-git-closure", ["python3", "-B", scope / "verify_evidence_git_closure.py",
                                  "--expected-head", args.expected_head])
     run("repository-and-markdown", ["python3", "-B", "scripts/ci/check_repository.py"])
@@ -87,6 +94,7 @@ def main() -> None:
         ("model-budget", ["python3", "-B", "-m", "unittest", "discover", "-s", ".", "-p", "test_*.py", "-v"], scope / "budget", 40),
         ("ordinary-path-extractor", ["python3", "-B", "-m", "unittest", "-v", "test_opening_collision_extractor.py"], scope / "restricted_tree", 6),
         ("evidence-closure-negatives", ["python3", "-B", "-m", "unittest", "-v", "test_evidence_git_closure.py"], scope, 9),
+        ("composition-observation-negatives", ["python3", "-B", "-m", "unittest", "-v", "test_composition_observation.py"], scope, 20),
     ):
         log = run(label, command, directory)
         matches = re.findall(r"Ran\s+(\d+)\s+tests?\b", log)
@@ -160,7 +168,7 @@ def main() -> None:
     if not (probe["actual_p3_api"] and probe["arbitrary_compressor_collision"]
             and not probe["merkle_or_w1_forgery"] and probe["qualification"] == "HOLD_NO_GO"):
         raise SystemExit("Historical audit outcome drift")
-    run("unchanged-runtime-scope", ["git", "diff", "--exit-code", "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0", "HEAD", "--", "trillionnium", "config", "qualification"])
+    run("unchanged-runtime-scope", runtime_scope_command())
     run("pruned-mmcs-source-after", ["python3", "-B", scope / "pruned_mmcs/verify_upstream_source.py",
                                        "--repository", root, "--cargo-metadata",
                                        output / "locked-offline-graph.stdout.txt"])
@@ -171,8 +179,13 @@ def main() -> None:
         raise SystemExit("Source changed while checking")
     if git("rev-parse", "HEAD") != args.expected_head or git("status", "--porcelain", "--untracked-files=all"):
         raise SystemExit("Head/worktree changed while checking")
+    composition = None
+    if args.composition_observation:
+        composition = build_observation(root, args.expected_head, output, records)
+        save("composition-observation.json", composition)
     summary = {
-        "schema": "p3.shared-primitive.focused-gates.v1", "commit": args.expected_head,
+        "schema": ("p3.shared-primitive.composition-focused-gates.v1" if composition
+                   else "p3.shared-primitive.focused-gates.v1"), "commit": args.expected_head,
         "tree": git("rev-parse", "HEAD^{tree}"), "records": records, "tests": counts,
         "finite_origin_control": enumeration, "source_receipts_equal": True,
         "pruned_mmcs_source_identity_sha256": sha(output / "pruned-mmcs-source-identity.stdout.txt"),
@@ -185,12 +198,18 @@ def main() -> None:
         "qualification": "HOLD_NO_GO", "complete_repository_ci": False,
         "production_activation": False, "production_node_invocations": 0,
     }
+    if composition:
+        summary.update(
+            original_unchanged_runtime_scope_passed=composition["original_unchanged_runtime_scope_passed"],
+            composition_observation_sha256=sha(output / "composition-observation.json"),
+            runtime_changes_qualified=False,
+        )
     save("focused-gates.json", summary)
-    print(json.dumps({"result": "FOCUSED_CHECKS_PASS", "commit": args.expected_head,
+    print(json.dumps({"result": ("COMPOSITION_OBSERVATION_COMPLETE_HOLD" if composition
+                                 else "FOCUSED_CHECKS_PASS"), "commit": args.expected_head,
                       "tests": counts, "summary_sha256": sha(output / "focused-gates.json"),
                       "qualification": "HOLD_NO_GO"}), flush=True)
 
 
 if __name__ == "__main__":
     main()
-
