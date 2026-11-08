@@ -1,0 +1,18 @@
+{
+  "schema": "TRNM-W1-INDEPENDENT-COMPARISON-ORDER-REVIEW1",
+  "observation": "The initial comparator concatenated main replay denominators in numerical combo order and compared that digest with the reviewer's register encounter order. This preliminary comparison failed.",
+  "main_combo_order": [0, 1, 2, 3, 4, "check"],
+  "review_register_encounter_order": [1, 0, 2, 3, 4, "check"],
+  "cause": "Representation order mismatch, not disagreement in any named field denominator or numerical proof equation.",
+  "correction": "Compare every (query, combo) identity and its complete denominator digest first; only then concatenate in the reviewer's declared traversal order for the ordered digest check.",
+  "independent_recheck": {
+    "query_goal_traces_equal": 50,
+    "named_denominator_digests_equal": 300,
+    "generated_air_total_equals_independent_check_side": true
+  },
+  "raw_initial_failure_log_available_in_this_record": false,
+  "initial_failure_provenance": "Initial comparator failure and correction were reported by the primary agent; this reviewer independently verified the two traversal orders and every named numerical value.",
+  "full_receipt_verified": false,
+  "qrom_instantiated": false,
+  "security_bits_quantum": null
+}

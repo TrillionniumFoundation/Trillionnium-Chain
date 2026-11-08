@@ -8431,3 +8431,34 @@ Fresh named controls, exact input identities, negative observations and the
 remaining obligations are recorded in the
 [new evidence packet](../../evidence/pon-w1-qrom-proof-chain-20261108/README.md).
 No historical failed run or original evidence is relabeled as a success.
+
+### 2026-11-08 W1 fixed mixed-AIR, DEEP and FRI equation replay
+
+Continue the exact #792 candidate
+`2e5150c41484a8b3196b33de2e997794145edd7c`. The
+[algebra continuation](../security/W1_FRI_ALGEBRA_REPLAY_20261108.md) preserves
+the preceding transcript and Merkle-opening replay byte-for-byte and evaluates
+the previously omitted equations on the same pinned historical join seal.
+The generated 12,359-operation mixed AIR program, all 50 DEEP starting values,
+150 incoming FRI equalities and 50 terminal-polynomial equalities are now
+numerically checked. The first 50 DEEP equalities are already part of the 150
+FRI equalities; the total is 201 algebraic equalities including the AIR check.
+
+A separate register-expanded implementation independently reproduces all
+DEEP and fold values, the 50 terminal values and 300 nonzero denominator
+identities, without importing the new combo-batched algebra implementation.
+The new exact-source workflow checks the head and prospective merge, runs a
+fixed named test roster, preserves unsuccessful observations and refuses
+promotion of fixed-input observations to complete proof/security claims.
+The [evidence packet](../../evidence/pon-w1-fri-algebra-20261108/README.md)
+records raw observations, the additional source identities and review limits.
+
+This closes only the named fixed-input numerical checks. It does not prove
+intended W1/guest/VM/compiler/AIR semantics, equivalence on every accepted
+receipt, any of the 27 recursive programs, RBR knowledge extraction, quantum
+state restoration, shared-oracle/Merkle extraction or lifetime composition.
+Zero DEEP denominators are refused by the audit while the SDK defines a zero
+inverse, so general language equivalence is explicitly not claimed. The eight
+full proof interfaces remain open, their complete bound remains unknown and
+production activation remains HOLD. P3 #795 and content-binding #789 remain
+separate candidates; no cross-branch qualification is inferred.
