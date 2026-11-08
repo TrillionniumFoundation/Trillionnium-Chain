@@ -1,5 +1,70 @@
 [
   {
+    "path": "delivery-attempt-01/complete-cell-tests.log",
+    "bytes": 60454,
+    "sha256": "4b78aedb6e33ef6dad33b3ffa846ddfbcc75263082b97fe435b2247a31fd20f5"
+  },
+  {
+    "path": "delivery-attempt-01/format.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "delivery-attempt-01/graph-fuzz.log",
+    "bytes": 722892,
+    "sha256": "a36127511ef4f29e482f60c90812eefb48a5e2092646639044465a9a0b5a90d7"
+  },
+  {
+    "path": "delivery-attempt-01/graph-workspace-all-features.log",
+    "bytes": 855471,
+    "sha256": "03045afea83de451f6d1e2839d9ae889821ffcc5430c973c17400bfbc17c7d6f"
+  },
+  {
+    "path": "delivery-attempt-01/graph-workspace-default.log",
+    "bytes": 840321,
+    "sha256": "5d9261d3ad6b4221a44f4e748d095e09d5c4bab065de8da006b3c11bed9d94cc"
+  },
+  {
+    "path": "delivery-attempt-01/independent-version-vector.log",
+    "bytes": 43,
+    "sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d"
+  },
+  {
+    "path": "delivery-attempt-01/pq-source-negative-controls.log",
+    "bytes": 338508,
+    "sha256": "f2a5bad4ed9bc769fda27afb875f3cb99ee03efc2178a35f99df6d1d10b7e30a"
+  },
+  {
+    "path": "delivery-attempt-01/preflight.log",
+    "bytes": 178,
+    "sha256": "9d7d491625803521ee8da8cc6a8752f5a5aed2ba84fd714fc6bfea00102fe6b9"
+  },
+  {
+    "path": "delivery-attempt-01/source-before.json",
+    "bytes": 423,
+    "sha256": "2811a4e5742355f95357fb2136f19322ec1d1726f529eec12d6eec142260c2b4"
+  },
+  {
+    "path": "delivery-attempt-01/source-before.log",
+    "bytes": 423,
+    "sha256": "2811a4e5742355f95357fb2136f19322ec1d1726f529eec12d6eec142260c2b4"
+  },
+  {
+    "path": "delivery-attempt-01/source-negative-controls.log",
+    "bytes": 6898,
+    "sha256": "9ba849e08b99c62ed3d29e2667f0304ecb5e736dc7ae8a6312e96b93fd5eedfd"
+  },
+  {
+    "path": "delivery-attempt-01/summary.json",
+    "bytes": 5656,
+    "sha256": "8bef6d029f6c2b68c95695d78f07dd3e4e1dae61805e47503e2c8f9be236d9b3"
+  },
+  {
+    "path": "delivery-attempt-01/workspace-strict-clippy.log",
+    "bytes": 60,
+    "sha256": "970c742910792bfbe48abef0e530c79a74dbeaab153744556de13c44dbdb2074"
+  },
+  {
     "path": "development-01/complete-cell-tests.log",
     "bytes": 56918,
     "sha256": "f74dfa5f82faf667105795517846256b1a130e4570329f601bf5cbd3e70b6182"
@@ -131,8 +196,8 @@
   },
   {
     "path": "failure-ledger.json",
-    "bytes": 1739,
-    "sha256": "40f05d2b06767b01a2937cb16917cb724df9119b9e0423a4c6da4d311c95922d"
+    "bytes": 2975,
+    "sha256": "7df3697874cde1b90a95549903d02169dbc4f3aed67c9e37196a6683f4375f95"
   },
   {
     "path": "initial-targeted-compile-failure.txt",

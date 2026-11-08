@@ -33,6 +33,22 @@
       "original_timeout_seconds": 240,
       "reason": "Direct full clone did not complete within original job deadline; no published ref was updated.",
       "runtime_job": "1a1bc389e60-138b0-f6"
+    },
+    {
+      "id": "evidence-initial-log-omission",
+      "outcome": "PUBLICATION_HELD",
+      "source": "6e2b93a966cf324a63971f4a9dbe03a1c10eaf38",
+      "reason": "Repository *.log ignore rule omitted 22 raw logs from the first evidence commit, although local files and files.json existed. Independent tracked-tree review caught the omission before push. Explicitly stage all named evidence files and verify each committed Git blob against its recorded byte size and SHA256. The staged transfer of this incomplete commit was aborted before publication.",
+      "qualified_exact_source": false
+    },
+    {
+      "id": "exact-delivery-01",
+      "outcome": "ENVIRONMENT_ENOSPC",
+      "source": "6e2b93a966cf324a63971f4a9dbe03a1c10eaf38",
+      "reason": "Full Cell tests and strict workspace Clippy passed, then PQ-source negative controls failed when shared /tmp tmpfs ran out of space. The incomplete campaign is not a pass. Later rerun uses a task-owned TMPDIR on the workspace filesystem, with unchanged source tests and budgets. No other task files are removed.",
+      "summary": "delivery-attempt-01/summary.json",
+      "log": "delivery-attempt-01/pq-source-negative-controls.log",
+      "qualified_exact_source": false
     }
   ],
   "failed_observations_erased": false,

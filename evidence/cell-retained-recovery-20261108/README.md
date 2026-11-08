@@ -109,6 +109,22 @@ is retained separately. The local promisor-clone bootstrap failure and original
 240-second full-clone timeout affected only a publication relay; no existing
 checkout or published ref was changed by either attempt.
 
+Publication review caught an evidence-packaging error in the first evidence-only
+commit: the repository `*.log` ignore rule had omitted raw command logs from Git
+while retaining their local files and hash index. Publication was held, the staged
+transfer was aborted, and the exact logs were explicitly included. The final
+publication check verifies every indexed file against its committed Git blob.
+
+The [first delivery recheck](delivery-attempt-01/summary.json), on
+`6e2b93a966cf324a63971f4a9dbe03a1c10eaf38`, passed the full Cell tests and strict
+workspace Clippy but stopped in PQ-source negative controls with
+[original `ENOSPC` errors](delivery-attempt-01/pq-source-negative-controls.log)
+from the shared `/tmp` filesystem. This incomplete campaign is not counted as
+a successful delivery gate. The subsequent full recheck uses a task-owned
+`TMPDIR` on the workspace filesystem; source tests, limits and deadlines are
+unchanged. The successful implementation-source campaign above remains a
+separate original observation.
+
 Independent code review also found and corrected two bounded-cost issues before
 the frozen campaign: repeated enumeration for the per-chunk cost estimate, and
 revalidating/hashing a complete manifest on every chunk. Cost is now cached in
