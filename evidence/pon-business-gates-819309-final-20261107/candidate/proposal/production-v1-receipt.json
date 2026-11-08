@@ -1,0 +1,55 @@
+{
+  "schema": "trnm-admission-final-fence-production-proposal-v1",
+  "utc": "2026-11-07T19:09:35.380222+00:00",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "applied_to_worktree": false,
+  "compiled": false,
+  "native_tests_executed": false,
+  "project_git_identity": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com"
+  },
+  "project_git_common_dir": "/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+  "global_git_config_changed": false,
+  "preflight": {
+    "exit_code": 0,
+    "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b"
+  },
+  "patch": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/production-v1.patch",
+    "bytes": 8181,
+    "sha256": "8e93c923fd0379e37cd79fe430fb2e686cafcf9fc6d461697e211cc165ecb9a8"
+  },
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "original_bytes": 374585,
+      "original_sha256": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99",
+      "proposed_bytes": 374820,
+      "proposed_sha256": "61f610c1af045e58799c36f664e238b6afe38a704bc6b4af2537af1f7a4a630e",
+      "helper_renames": 6
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs",
+      "original_bytes": 14844,
+      "original_sha256": "f9cd639ace2619dc46f40dd6b5475b3b280ff40935c04523d1d9d871c32516a7",
+      "proposed_bytes": 14872,
+      "proposed_sha256": "c38d076d57631d773176c6ae6ab7504bfb97aff635cde5c27753109d848c2f4b",
+      "helper_renames": 7
+    }
+  ],
+  "git_apply_check": {
+    "exit_code": 0,
+    "output": ""
+  },
+  "unchanged_frozen_head_tree_status_and_source_files": true,
+  "pending": [
+    "independent regression patch",
+    "frozen 819309 full-native terminal",
+    "isolated application and exact validation",
+    "real unchanged business gates"
+  ],
+  "scope": "Only final ordinary-admission active fence opts into the existing bounded complete-input arithmetic under the unchanged Legacy/non-PQ/non-Growth predicate; generic wrapper and all original SQL, progress, continuity, ancestry, owner and atomic checks stay in place.",
+  "performance_not_claimed": true
+}

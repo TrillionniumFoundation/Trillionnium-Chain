@@ -1,0 +1,1047 @@
+{
+  "schema": "trnm-d26-original-business-readback-v1",
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+  "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "status": "HOLD",
+  "original_budgets_changed": false,
+  "service_lane_denominator": 4,
+  "service_lanes": [
+    {
+      "workflow_run_id": 42383368690,
+      "job_id": 128435695005,
+      "artifact_id": 13579620050,
+      "artifact_name": "priority-ubuntu-24.04-head-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "artifact_zip_sha256": "sha256:c3f582743158f811b74130d1acb5953662c2e2a557c88b68cb631c10c6d2ac10",
+      "architecture": "x64",
+      "source_kind": "head",
+      "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        }
+      ],
+      "native_execution_completed": true,
+      "wrapper_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "schema": "trnm-ci-original-public-host-child-v1",
+          "passed": null,
+          "failure": null,
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null,
+          "cleanup": null,
+          "preparation_execution_binding": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "failure": null,
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1,
+          "cleanup": "already-collected",
+          "preparation_execution_binding": null
+        }
+      },
+      "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/service-artifact-read-v2/13579620050/from-zero-native/confirmation/report.json",
+      "report_sha256": "5ae16b042fd6165d53012c592ac07ed1aec731fd753b5c76a13fa614278bd7f1",
+      "strict_pure_error": "ValueError: CONFIRMATION_TARGET",
+      "original_gate_validated": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 0,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history_requests": 7,
+          "independently_confirmed_transactions": 1,
+          "required_transactions": 1,
+          "business_started_ns": 175509,
+          "confirmation_ended_ns": 3090046730,
+          "client_confirmation_latency_ns": 3089871221,
+          "verification_errors": []
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 16,
+          "attack_calls": 323,
+          "honest_submissions": 7,
+          "honest_history_requests": 3,
+          "independently_confirmed_transactions": 0,
+          "required_transactions": 1,
+          "business_started_ns": 149612816,
+          "confirmation_ended_ns": null,
+          "client_confirmation_latency_ns": null,
+          "verification_errors": []
+        }
+      ]
+    },
+    {
+      "workflow_run_id": 42383368690,
+      "job_id": 128435695013,
+      "artifact_id": 13579291550,
+      "artifact_name": "priority-ubuntu-24.04-arm-head-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "artifact_zip_sha256": "sha256:d1631f17851ed112b6b4d395898d6f0dc37c1949c137ad505e1c08012218cdb1",
+      "architecture": "arm64",
+      "source_kind": "head",
+      "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "source_binding": {
+        "kind": "head",
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        }
+      ],
+      "native_execution_completed": true,
+      "wrapper_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "schema": "trnm-ci-original-public-host-child-v1",
+          "passed": null,
+          "failure": null,
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null,
+          "cleanup": null,
+          "preparation_execution_binding": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "failure": null,
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1,
+          "cleanup": "already-collected",
+          "preparation_execution_binding": null
+        }
+      },
+      "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/service-artifact-read-v2/13579291550/from-zero-native/confirmation/report.json",
+      "report_sha256": "358dcd468342cff8d5c89ab12171c4a21cd8777370ff00eaaca7c4ef045a0789",
+      "strict_pure_error": "ValueError: CONFIRMATION_TARGET",
+      "original_gate_validated": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 0,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history_requests": 7,
+          "independently_confirmed_transactions": 1,
+          "required_transactions": 1,
+          "business_started_ns": 196550,
+          "confirmation_ended_ns": 1880427709,
+          "client_confirmation_latency_ns": 1880231159,
+          "verification_errors": []
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 16,
+          "attack_calls": 433,
+          "honest_submissions": 7,
+          "honest_history_requests": 7,
+          "independently_confirmed_transactions": 0,
+          "required_transactions": 1,
+          "business_started_ns": 60356207,
+          "confirmation_ended_ns": null,
+          "client_confirmation_latency_ns": null,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ]
+    },
+    {
+      "workflow_run_id": 42383368690,
+      "job_id": 128435695112,
+      "artifact_id": 13578932781,
+      "artifact_name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "artifact_zip_sha256": "sha256:25c261dec21fb0564425ad7e133d81e763e86e5a5a6e2b27828c0ed36e52b688",
+      "architecture": "arm64",
+      "source_kind": "prospective-merge",
+      "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        }
+      ],
+      "native_execution_completed": true,
+      "wrapper_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "host": {
+        "from-zero-native-host/child-result.json": {
+          "schema": "trnm-ci-original-public-host-child-v1",
+          "passed": null,
+          "failure": null,
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null,
+          "cleanup": null,
+          "preparation_execution_binding": null
+        },
+        "from-zero-native-host/controller-result.json": {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "failure": null,
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1,
+          "cleanup": "already-collected",
+          "preparation_execution_binding": null
+        }
+      },
+      "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/service-arm-merge-artifact-read-v3/13578932781/from-zero-native/confirmation/report.json",
+      "report_sha256": "263c83741e5deace1fc5044d9a691f065e37e36bb0de016b88437912476c19a9",
+      "strict_pure_error": "ValueError: CONFIRMATION_TARGET",
+      "original_gate_validated": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 0,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history_requests": 7,
+          "independently_confirmed_transactions": 1,
+          "required_transactions": 1,
+          "business_started_ns": 177124,
+          "confirmation_ended_ns": 1813577293,
+          "client_confirmation_latency_ns": 1813400169,
+          "verification_errors": []
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 16,
+          "attack_calls": 427,
+          "honest_submissions": 7,
+          "honest_history_requests": 6,
+          "independently_confirmed_transactions": 0,
+          "required_transactions": 1,
+          "business_started_ns": 76901914,
+          "confirmation_ended_ns": null,
+          "client_confirmation_latency_ns": null,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ]
+    },
+    {
+      "workflow_run_id": 42383368690,
+      "job_id": 128435695024,
+      "artifact_id": 13578359852,
+      "artifact_name": "priority-ubuntu-24.04-prospective-merge-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "artifact_zip_sha256": "sha256:60dfe6224be8dfef98680b878b8305bfcd3ea763c5dd538157ec98d9647f6d80",
+      "architecture": "x64",
+      "source_kind": "prospective-merge",
+      "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "source_binding": {
+        "kind": "prospective-merge",
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+        "before_after_equal": true,
+        "resolver_context_equal": true,
+        "log_source_identity_count": 2
+      },
+      "manifest_files_verified": 50,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "exit_code": 0,
+          "timed_out": false,
+          "passed": true
+        }
+      ],
+      "native_execution_completed": true,
+      "wrapper_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "host": {
+        "from-zero-native-host/controller-result.json": {
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "passed": false,
+          "failure": null,
+          "host_errors": null,
+          "final_host_errors": [],
+          "native_child_exit": null,
+          "systemd_run_exit": 1,
+          "cleanup": "already-collected",
+          "preparation_execution_binding": null
+        },
+        "from-zero-native-host/child-result.json": {
+          "schema": "trnm-ci-original-public-host-child-v1",
+          "passed": null,
+          "failure": null,
+          "host_errors": [],
+          "final_host_errors": null,
+          "native_child_exit": 1,
+          "systemd_run_exit": null,
+          "cleanup": null,
+          "preparation_execution_binding": null
+        }
+      },
+      "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/service-artifact-read-v2/13578359852/from-zero-native/confirmation/report.json",
+      "report_sha256": "cd10ebe4c1d4f39ba4809d1e5fd85c0c73a533ff1fcb23bbe1bee4683047b192",
+      "strict_pure_error": "ValueError: CONFIRMATION_TARGET",
+      "original_gate_validated": false,
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 0,
+          "attack_calls": 0,
+          "honest_submissions": 7,
+          "honest_history_requests": 7,
+          "independently_confirmed_transactions": 1,
+          "required_transactions": 1,
+          "business_started_ns": 94612,
+          "confirmation_ended_ns": 2200688919,
+          "client_confirmation_latency_ns": 2200594307,
+          "verification_errors": []
+        },
+        {
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "attack_worker_count": 16,
+          "attack_calls": 446,
+          "honest_submissions": 7,
+          "honest_history_requests": 6,
+          "independently_confirmed_transactions": 0,
+          "required_transactions": 1,
+          "business_started_ns": 75752793,
+          "confirmation_ended_ns": null,
+          "client_confirmation_latency_ns": null,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ]
+    }
+  ],
+  "fresh_lane_denominator": 2,
+  "fresh_cohorts_per_lane": 2,
+  "fresh_lanes": [
+    {
+      "workflow_run_id": 42383368504,
+      "job_id": 128435635920,
+      "artifact_id": 13579195615,
+      "source_binding": {
+        "before_after_equal": true,
+        "kind": "prospective-merge",
+        "resolver_context_equal": true,
+        "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+      },
+      "zip_sha256": "c732158f899431143fc022a841c485db227d9a2ba00cd5433a7d1a1a9b132ace",
+      "host": {
+        "child-result.json": {
+          "cleanup": null,
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_w1_fresh_service_v1.py",
+            "--out",
+            "/home/runner/work/_temp/w1-fresh-service-prospective-merge-42383368504-1/fresh-service"
+          ],
+          "failure": null,
+          "final_host_errors": null,
+          "host_errors": [],
+          "native_child_exit": 1,
+          "passed": null,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-child-v1",
+          "systemd_run_exit": null
+        },
+        "controller-result.json": {
+          "cleanup": "already-collected",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_w1_fresh_service_v1.py",
+            "--out",
+            "/home/runner/work/_temp/w1-fresh-service-prospective-merge-42383368504-1/fresh-service"
+          ],
+          "failure": null,
+          "final_host_errors": [],
+          "host_errors": null,
+          "native_child_exit": null,
+          "passed": false,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "systemd_run_exit": 1
+        },
+        "inside-after.json": {
+          "retained": true,
+          "sha256": "7b2962cd44c177d03c1940ea98883e5a9f4e19971eb9413a80963a2ceedcb07a"
+        },
+        "inside-before.json": {
+          "retained": true,
+          "sha256": "041cf1995043cbb8cbf6d35e103e17a1e8cee6d5f94d9ce7cb9301cb8e224bff"
+        }
+      },
+      "manifest_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "native_runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 3,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "argv": null,
+            "executed": true,
+            "exit_code": 0,
+            "process_cpu_ns": null,
+            "process_exit_code": 0,
+            "signal": null,
+            "source_verified": true,
+            "timed_out": false,
+            "wall_ns": null
+          },
+          "report": null,
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "argv": null,
+            "executed": true,
+            "exit_code": 101,
+            "process_cpu_ns": null,
+            "process_exit_code": 101,
+            "signal": null,
+            "source_verified": true,
+            "timed_out": false,
+            "wall_ns": null
+          },
+          "report": null,
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "cohorts": {
+        "original": {
+          "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13579195615/fresh-service/original/report.json",
+          "sha256": "bfccb69f222d47c81f1993799de161d4332cbaaf79e04c8749586f4ca776eebb",
+          "strict_report_error": "ValueError: CONFIRMATION_TARGET",
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 0,
+              "attack_calls": 0,
+              "honest_submissions": 7,
+              "honest_history_requests": 7,
+              "independently_confirmed_transactions": 1,
+              "required_transactions": 1,
+              "business_started_ns": 121272,
+              "confirmation_ended_ns": 2809301156,
+              "client_confirmation_latency_ns": 2809179884,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 16,
+              "attack_calls": 375,
+              "honest_submissions": 7,
+              "honest_history_requests": 4,
+              "independently_confirmed_transactions": 0,
+              "required_transactions": 1,
+              "business_started_ns": 84435165,
+              "confirmation_ended_ns": null,
+              "client_confirmation_latency_ns": null,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        },
+        "fresh": {
+          "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13579195615/fresh-service/fresh/report.json",
+          "sha256": "9e6ca962f1e1accefbe5814266f593c0352d156c46d63e015a19d054a2d4cc6f",
+          "strict_report_error": "ValueError: FRESH_BUSINESS_TARGET",
+          "cache_read": {
+            "schema": "public-v3-fresh-negative-cache-readback-v1",
+            "enabled": true,
+            "configuration": {
+              "slots": 256,
+              "retained_software_bytes": 14400,
+              "lifetime_ms": 30000,
+              "lifetime_seconds": 30,
+              "lifetime_subsec_nanos": 0
+            },
+            "phases": [
+              {
+                "mode": "attack-free-baseline",
+                "relation_attempts": 7,
+                "completed_cache_observations": 7,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 7,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 7,
+                "native_verifier_returned": 7,
+                "full_replay_started": 7
+              },
+              {
+                "mode": "from-zero-pressure",
+                "relation_attempts": 243,
+                "completed_cache_observations": 243,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 243,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 243,
+                "native_verifier_returned": 243,
+                "full_replay_started": 243
+              }
+            ],
+            "scope": "actual relation-attempt path observations; native verifier entry is not full replay, started replay is not completion; path counters cover only completed observations, incomplete paths remain unknown; CPU remains nested"
+          },
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 0,
+              "attack_calls": 0,
+              "honest_submissions": 7,
+              "honest_history_requests": 7,
+              "independently_confirmed_transactions": 1,
+              "required_transactions": 1,
+              "business_started_ns": 106689,
+              "confirmation_ended_ns": 2681937949,
+              "client_confirmation_latency_ns": 2681831260,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 16,
+              "attack_calls": 247,
+              "honest_submissions": 7,
+              "honest_history_requests": 2,
+              "independently_confirmed_transactions": 0,
+              "required_transactions": 1,
+              "business_started_ns": 148964807,
+              "confirmation_ended_ns": null,
+              "client_confirmation_latency_ns": null,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "workflow_run_id": 42383368504,
+      "job_id": 128435635921,
+      "artifact_id": 13578867108,
+      "source_binding": {
+        "before_after_equal": true,
+        "kind": "head",
+        "resolver_context_equal": true,
+        "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+      },
+      "zip_sha256": "83e5b2f7241a77ba483c4b069e7e193c08f363661de60b638be7abf43e7217d9",
+      "host": {
+        "child-result.json": {
+          "cleanup": null,
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_w1_fresh_service_v1.py",
+            "--out",
+            "/home/runner/work/_temp/w1-fresh-service-head-42383368504-1/fresh-service"
+          ],
+          "failure": null,
+          "final_host_errors": null,
+          "host_errors": [],
+          "native_child_exit": 1,
+          "passed": null,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-child-v1",
+          "systemd_run_exit": null
+        },
+        "controller-result.json": {
+          "cleanup": "already-collected",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_w1_fresh_service_v1.py",
+            "--out",
+            "/home/runner/work/_temp/w1-fresh-service-head-42383368504-1/fresh-service"
+          ],
+          "failure": null,
+          "final_host_errors": [],
+          "host_errors": null,
+          "native_child_exit": null,
+          "passed": false,
+          "preparation_execution_binding": null,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "systemd_run_exit": 1
+        },
+        "inside-after.json": {
+          "retained": true,
+          "sha256": "5a0657e861ddc004aae4a4423535d38e633e9bcab7ea92b2b0dbdde18b3d0795"
+        },
+        "inside-before.json": {
+          "retained": true,
+          "sha256": "861771762dda8b05e976097527f536f0e117389e4b747ea1ef834037a2cb2686"
+        }
+      },
+      "manifest_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "native_runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": true,
+              "replay_error": null
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "argv": null,
+            "executed": true,
+            "exit_code": 0,
+            "process_cpu_ns": null,
+            "process_exit_code": 0,
+            "signal": null,
+            "source_verified": true,
+            "timed_out": false,
+            "wall_ns": null
+          },
+          "report": null,
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "argv": null,
+            "executed": true,
+            "exit_code": 101,
+            "process_cpu_ns": null,
+            "process_exit_code": 101,
+            "signal": null,
+            "source_verified": true,
+            "timed_out": false,
+            "wall_ns": null
+          },
+          "report": null,
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "cohorts": {
+        "original": {
+          "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13578867108/fresh-service/original/report.json",
+          "sha256": "fe9281dd293ad9497cc19a29ffc8947497e8a85c410d021966dc89725a5dcab8",
+          "strict_report_error": "ValueError: CONFIRMATION_TARGET",
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 0,
+              "attack_calls": 0,
+              "honest_submissions": 7,
+              "honest_history_requests": 7,
+              "independently_confirmed_transactions": 1,
+              "required_transactions": 1,
+              "business_started_ns": 151082,
+              "confirmation_ended_ns": 3091636945,
+              "client_confirmation_latency_ns": 3091485863,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 16,
+              "attack_calls": 310,
+              "honest_submissions": 7,
+              "honest_history_requests": 3,
+              "independently_confirmed_transactions": 0,
+              "required_transactions": 1,
+              "business_started_ns": 98718941,
+              "confirmation_ended_ns": null,
+              "client_confirmation_latency_ns": null,
+              "verification_errors": []
+            }
+          ]
+        },
+        "fresh": {
+          "report_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T145800Z-d26e047dedfc-3ca4a7ff/fresh-artifact-read-v1/13578867108/fresh-service/fresh/report.json",
+          "sha256": "a73b842c90db8d29cca14a420979c49774588c5941dab7d286f4524d846f5bf3",
+          "strict_report_error": "ValueError: FRESH_BUSINESS_TARGET",
+          "cache_read": {
+            "schema": "public-v3-fresh-negative-cache-readback-v1",
+            "enabled": true,
+            "configuration": {
+              "slots": 256,
+              "retained_software_bytes": 14400,
+              "lifetime_ms": 30000,
+              "lifetime_seconds": 30,
+              "lifetime_subsec_nanos": 0
+            },
+            "phases": [
+              {
+                "mode": "attack-free-baseline",
+                "relation_attempts": 7,
+                "completed_cache_observations": 7,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 7,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 7,
+                "native_verifier_returned": 7,
+                "full_replay_started": 7
+              },
+              {
+                "mode": "from-zero-pressure",
+                "relation_attempts": 202,
+                "completed_cache_observations": 202,
+                "incomplete_cache_observations": 0,
+                "key_hashed": 202,
+                "lookup_contended": 0,
+                "lookup_poisoned": 0,
+                "exact_fact_found": 0,
+                "cached_rejection_returned": 0,
+                "native_verifier_started": 202,
+                "native_verifier_returned": 202,
+                "full_replay_started": 202
+              }
+            ],
+            "scope": "actual relation-attempt path observations; native verifier entry is not full replay, started replay is not completion; path counters cover only completed observations, incomplete paths remain unknown; CPU remains nested"
+          },
+          "phases": [
+            {
+              "mode": "attack-free-baseline",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 0,
+              "attack_calls": 0,
+              "honest_submissions": 7,
+              "honest_history_requests": 7,
+              "independently_confirmed_transactions": 1,
+              "required_transactions": 1,
+              "business_started_ns": 71988570,
+              "confirmation_ended_ns": 3087184802,
+              "client_confirmation_latency_ns": 3015196232,
+              "verification_errors": []
+            },
+            {
+              "mode": "from-zero-pressure",
+              "requested_window_ns": 4000000000,
+              "attack_workers": 16,
+              "attack_calls": 205,
+              "honest_submissions": 7,
+              "honest_history_requests": 1,
+              "independently_confirmed_transactions": 0,
+              "required_transactions": 1,
+              "business_started_ns": 103903642,
+              "confirmation_ended_ns": null,
+              "client_confirmation_latency_ns": null,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "pending_native_lanes": [
+    {
+      "id": 128435695023,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695055,
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695075,
+      "name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695076,
+      "name": "native priorities (ubuntu-24.04, head, state)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute original native full-capacity test"
+      ]
+    },
+    {
+      "id": 128435695082,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute original native full-capacity test"
+      ]
+    },
+    {
+      "id": 128435695086,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute 4105 real work blocks and paid public full sync"
+      ]
+    },
+    {
+      "id": 128435695117,
+      "name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute original native full-capacity test"
+      ]
+    },
+    {
+      "id": 128435695218,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "status": "in_progress",
+      "conclusion": null,
+      "failed_steps": [],
+      "active_steps": [
+        "Execute original native full-capacity test"
+      ]
+    }
+  ],
+  "metadata_snapshot": "/home/qian-qi/throughput-ci-observation-20261107/20261107T152614Z-d26e047dedfc-ee385060",
+  "metadata_finished_utc": "2026-11-07T15:27:16.258226+00:00",
+  "whole_job_denominator": 37,
+  "whole_job_counts": {
+    "success": 18,
+    "failure": 11,
+    "in_progress": 8
+  },
+  "native_lane_denominator": 34,
+  "native_gate_validated": false,
+  "scope": "Read original retained bytes and exact pinned pure validators; no native reexecution or fake CI environment; earlier independent observer import/pretty-JSON/GET failures remain retained."
+}

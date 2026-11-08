@@ -1,0 +1,11 @@
+{
+  "files": [
+    {
+      "bytes": 1528,
+      "path": "w1-resource-probe.json",
+      "sha256": "58deb46f2e6f78f2f40b81bd659459c45db0ad6615a1501c544532902d6a6407"
+    }
+  ],
+  "request_id": "trnm-w1-7d418660-kaggle-probe-01",
+  "schema": "hepta-artifact-manifest-v1"
+}

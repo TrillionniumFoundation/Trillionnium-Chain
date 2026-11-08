@@ -1,0 +1,2 @@
+{"schema":"sealed-template-url-classification-v1","created_utc":"2026-11-07T22:07:56.261272+00:00","operation":"classify_only_preexisting_match_offsets_no_new_pattern_scan","files":20,"preexisting_matches":280,"compressed_bytes_read":1841848,"decoded_prefix_bytes_read":13629968,"credential_candidates":[],"values_not_retained":true}
+{"path":"/home/qian-qi/throughput-final-ci-observation-20261107/publication-secret-review-v1/template-url-classification.json","bytes":119985,"sha256":"8147b1405f81ece6881820ea32579f60e2a826d73b74bd0e003b1fa19699761e"}

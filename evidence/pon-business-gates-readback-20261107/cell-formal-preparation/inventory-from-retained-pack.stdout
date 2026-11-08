@@ -1,0 +1,642 @@
+{
+  "schema": "trnm-portability-inventory-v1",
+  "source_commit": "93b07653b595100263a3fdf567095462253fa462",
+  "selected_target": "pon-nakamoto-v1",
+  "scope": "tracked-tree-only; no deployed database/key/state or Git history changed",
+  "old_protocol_compatibility": false,
+  "runtime_implemented": false,
+  "packages": [
+    {
+      "package": "trnm-types",
+      "module": "M00",
+      "path": "trillionnium/crates/trnm-types",
+      "role": "Shared task/identity/transcript/transaction data; delete consumption-consensus governance controls.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-executor",
+      "module": "M06",
+      "path": "trillionnium/crates/trnm-executor",
+      "role": "Deterministic conflict scheduling independent of consensus.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-bench",
+      "module": "M17",
+      "path": "trillionnium/crates/trnm-bench",
+      "role": "Retained executor microbenchmark; not ledger throughput.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-mempool",
+      "module": "M05",
+      "path": "trillionnium/crates/trnm-mempool",
+      "role": "Bounded admission, nonce reservations and durable handoff independent of BFT.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-worker-agent",
+      "module": "M10",
+      "path": "trillionnium/crates/trnm-worker-agent",
+      "role": "Bounded real child process, task workflow and evidence adapters; not a miner.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-oracle",
+      "module": "M11",
+      "path": "trillionnium/crates/trnm-oracle",
+      "role": "Application evidence aggregation, not ledger quorum or voting.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-research-protocol",
+      "module": "M10",
+      "path": "trillionnium/crates/trnm-research-protocol",
+      "role": "Contribution/evaluation/lineage contracts independent of ledger consensus.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-protocol",
+      "module": "M00",
+      "path": "trillionnium/crates/trnm-protocol",
+      "role": "Canonical transaction and fee contracts; fresh portable task schema.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-peer-lease",
+      "module": "M04",
+      "path": "trillionnium/crates/trnm-peer-lease",
+      "role": "Cross-process scope/generation fencing, append-only replay and bounded Unix transport.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-data-availability",
+      "module": "M09",
+      "path": "trillionnium/crates/trnm-data-availability",
+      "role": "Signed storage responsibility, chunk retrieval, repair and retention; no block consensus.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-task-kernel",
+      "module": "M10",
+      "path": "trillionnium/crates/trnm-task-kernel",
+      "role": "Task/lease/capability/escrow local kernel; monotonic local sequence is not chain finality.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "module": "M06",
+      "path": "trillionnium/crates/trnm-mvcc-fee",
+      "role": "Deterministic serial/parallel execution, fee deltas and incremental storage.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-service-settlement",
+      "module": "M12",
+      "path": "trillionnium/crates/trnm-service-settlement",
+      "role": "Bilateral usage/escrow conservation; no consumption-derived voting power.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-control-plane",
+      "module": "M16",
+      "path": "trillionnium/crates/trnm-control-plane",
+      "role": "Observer/planner/guard only; does not grant consensus authority.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-state-import",
+      "module": "M13",
+      "path": "trillionnium/crates/trnm-state-import",
+      "role": "Bounded independently admitted export/import and root checks; no old proof decoder.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-release-bundle",
+      "module": "M15",
+      "path": "trillionnium/crates/trnm-release-bundle",
+      "role": "Build/SBOM/provenance contracts independent of consensus.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-checkpoint-store",
+      "module": "M03",
+      "path": "trillionnium/crates/trnm-checkpoint-store",
+      "role": "Independent exact CAS and durable Unix service; generalized owner frontier only.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-checkpoint-types",
+      "module": "M03",
+      "path": "trillionnium/crates/trnm-checkpoint-types",
+      "role": "Extract canonical checkpoint/CAS record; remove safety-vote and validator types.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-crypto-primitives",
+      "module": "M01",
+      "path": "trillionnium/crates/trnm-crypto-primitives",
+      "role": "Extract domain hash, strict Ed25519 and canonical fixed-width decoding.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-verification-profiles",
+      "module": "M11",
+      "path": "trillionnium/crates/trnm-verification-profiles",
+      "role": "Extract profile/challenge lifecycle; delete stake-quorum backend and weight permission.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-transport",
+      "module": "M04",
+      "path": "trillionnium/crates/trnm-transport",
+      "role": "Extract generation-bound authenticated frame admission; delete pacemaker and node scaffold.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-audit-events",
+      "module": "M17",
+      "path": "trillionnium/crates/trnm-audit-events",
+      "role": "Normalized local audit event data; no consensus or durable owner.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-governance-guard",
+      "module": "M01",
+      "path": "trillionnium/crates/trnm-governance-guard",
+      "role": "Local proposal/timelock, role separation and optimistic version checks; no network governance authority.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "trnm-escrow-vault",
+      "module": "M12",
+      "path": "trillionnium/crates/trnm-escrow-vault",
+      "role": "Pure in-memory escrow conservation reference; no second production ledger or durability claim.",
+      "consensus_authority": false,
+      "production_activation": false
+    }
+  ],
+  "source_disposition": [
+    {
+      "source_package": "trnm-consensus-core",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-safety-rules",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-safety-store",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-signer-journal",
+      "destination": null,
+      "decision": "extract-portable-subset-delete-remainder",
+      "reason": "Only neutral crypto/CAS/profile/frame portions retained; old engine and protocol not carried."
+    },
+    {
+      "source_package": "trnm-consensus-remote-signer-protocol",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-unix-remote-signer",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-unix-fleet-signer",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-external-watermark",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-peer-lease",
+      "destination": "trnm-peer-lease",
+      "decision": "retain-and-decouple",
+      "reason": "Cross-process scope/generation fencing, append-only replay and bounded Unix transport."
+    },
+    {
+      "source_package": "trnm-consensus-external-node-checkpoint",
+      "destination": "trnm-checkpoint-store",
+      "decision": "retain-and-decouple",
+      "reason": "Independent exact CAS and durable Unix service; generalized owner frontier only."
+    },
+    {
+      "source_package": "trnm-consensus-remote-signer-service",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-whole-node-checkpoint-types",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-native-application",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-native-application-sqlite",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-native-execution-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-core-restart-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-da-v1",
+      "destination": "trnm-data-availability",
+      "decision": "retain-and-decouple",
+      "reason": "Signed storage responsibility, chunk retrieval, repair and retention; no block consensus."
+    },
+    {
+      "source_package": "trnm-poco-agent-market-v1",
+      "destination": "trnm-task-kernel",
+      "decision": "retain-and-decouple",
+      "reason": "Task/lease/capability/escrow local kernel; monotonic local sequence is not chain finality."
+    },
+    {
+      "source_package": "trnm-poco-verify-challenge-v1",
+      "destination": null,
+      "decision": "extract-portable-subset-delete-remainder",
+      "reason": "Only neutral crypto/CAS/profile/frame portions retained; old engine and protocol not carried."
+    },
+    {
+      "source_package": "trnm-poco-mvcc-fee-v1",
+      "destination": "trnm-mvcc-fee",
+      "decision": "retain-and-decouple",
+      "reason": "Deterministic serial/parallel execution, fee deltas and incremental storage."
+    },
+    {
+      "source_package": "trnm-poco-consumption-settlement-v1",
+      "destination": "trnm-service-settlement",
+      "decision": "retain-and-decouple",
+      "reason": "Bilateral usage/escrow conservation; no consumption-derived voting power."
+    },
+    {
+      "source_package": "trnm-poco-cross-plane-readback-v1",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-global-execution-v1",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-order-application-v1",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-order-finality-verifier-v1",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-order-state-v1",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-order-types-v1",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-lab-validator",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-node",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-node-authority",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-node-io",
+      "destination": null,
+      "decision": "extract-portable-subset-delete-remainder",
+      "reason": "Only neutral crypto/CAS/profile/frame portions retained; old engine and protocol not carried."
+    },
+    {
+      "source_package": "trnm-poco-node-host",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-poco-node-cli",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-crypto",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-sim",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-consensus-types",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-types",
+      "destination": "trnm-types",
+      "decision": "retain-and-decouple",
+      "reason": "Shared task/identity/transcript/transaction data; delete consumption-consensus governance controls."
+    },
+    {
+      "source_package": "trnm-state",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-pouw",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-executor",
+      "destination": "trnm-executor",
+      "decision": "retain-and-decouple",
+      "reason": "Deterministic conflict scheduling independent of consensus."
+    },
+    {
+      "source_package": "trnm-mempool",
+      "destination": "trnm-mempool",
+      "decision": "retain-and-decouple",
+      "reason": "Bounded admission, nonce reservations and durable handoff independent of BFT."
+    },
+    {
+      "source_package": "trnm-rpc",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-bench",
+      "destination": "trnm-bench",
+      "decision": "retain-and-decouple",
+      "reason": "Retained executor microbenchmark; not ledger throughput."
+    },
+    {
+      "source_package": "trnm-worker-agent",
+      "destination": "trnm-worker-agent",
+      "decision": "retain-and-decouple",
+      "reason": "Bounded real child process, task workflow and evidence adapters; not a miner."
+    },
+    {
+      "source_package": "trnm-cli",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-bridge-poc",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-oracle",
+      "destination": "trnm-oracle",
+      "decision": "retain-and-decouple",
+      "reason": "Application evidence aggregation, not ledger quorum or voting."
+    },
+    {
+      "source_package": "trnm-research-protocol",
+      "destination": "trnm-research-protocol",
+      "decision": "retain-and-decouple",
+      "reason": "Contribution/evaluation/lineage contracts independent of ledger consensus."
+    },
+    {
+      "source_package": "trnm-finality-types",
+      "destination": null,
+      "decision": "extract-portable-subset-delete-remainder",
+      "reason": "Only neutral crypto/CAS/profile/frame portions retained; old engine and protocol not carried."
+    },
+    {
+      "source_package": "trnm-application-tx-builder-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-finality-verifier",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-protocol",
+      "destination": "trnm-protocol",
+      "decision": "retain-and-decouple",
+      "reason": "Canonical transaction and fee contracts; fresh portable task schema."
+    },
+    {
+      "source_package": "trnm-runtime",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-node-boundary-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-tx-lifecycle-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-state-sync-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-migration-v0",
+      "destination": "trnm-state-import",
+      "decision": "retain-and-decouple",
+      "reason": "Bounded independently admitted export/import and root checks; no old proof decoder."
+    },
+    {
+      "source_package": "trnm-control-plane-v0",
+      "destination": "trnm-control-plane",
+      "decision": "retain-and-decouple",
+      "reason": "Observer/planner/guard only; does not grant consensus authority."
+    },
+    {
+      "source_package": "trnm-poco-node-production-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-production-adapter-conformance-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    },
+    {
+      "source_package": "trnm-release-bundle-v0",
+      "destination": "trnm-release-bundle",
+      "decision": "retain-and-decouple",
+      "reason": "Build/SBOM/provenance contracts independent of consensus."
+    },
+    {
+      "source_package": "trnm-durable-file-adapters-v0",
+      "destination": null,
+      "decision": "delete",
+      "reason": "Retired consensus/validator/finality coupling or obsolete product path superseded by retained standalone component; original recoverable only from Git."
+    }
+  ],
+  "extractions": [
+    {
+      "source": "trnm-poco-node-io/src/authenticated_p2p.rs",
+      "target": "trnm-transport"
+    },
+    {
+      "source": "trnm-finality-types/src/crypto.rs",
+      "target": "trnm-crypto-primitives"
+    },
+    {
+      "source": "trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs",
+      "target": "trnm-verification-profiles"
+    },
+    {
+      "source": "trnm-consensus-signer-journal/src/external_node_checkpoint.rs",
+      "target": "trnm-checkpoint-types"
+    }
+  ],
+  "auxiliary_disposition": [
+    {
+      "source": "contracts/audit-events",
+      "destination": "trnm-audit-events",
+      "decision": "retain-portable-local-state-machine"
+    },
+    {
+      "source": "contracts/governance-guard",
+      "destination": "trnm-governance-guard",
+      "decision": "retain-portable-local-state-machine"
+    },
+    {
+      "source": "contracts/settlement-vault",
+      "destination": "trnm-escrow-vault",
+      "decision": "retain-portable-local-state-machine"
+    },
+    {
+      "source": "contracts/bridge-relay",
+      "destination": null,
+      "decision": "delete-legacy-validator-threshold-bridge"
+    }
+  ],
+  "removed_surfaces": [
+    {
+      "path": "docs/protocol/poco-bft-v0",
+      "reason": "retired ledger semantics and byte registries"
+    },
+    {
+      "path": "docs/protocol/poco-convergence-v1",
+      "reason": "retired authority integration"
+    },
+    {
+      "path": "docs/protocol/poco-ai-native-v1",
+      "reason": "old protocol/application coupling; neutral kernels extracted"
+    },
+    {
+      "path": "web4-frontend",
+      "reason": "old RPC/consumption UI has no qualified new-protocol endpoint"
+    },
+    {
+      "path": "scripts/poco-fleet",
+      "reason": "old validator commissioning and deployment"
+    },
+    {
+      "path": "docs/audits",
+      "reason": "old active-tree evidence archives; history retained in Git"
+    }
+  ]
+}

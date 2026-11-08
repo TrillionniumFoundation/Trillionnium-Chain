@@ -1,0 +1,148 @@
+{
+  "files": [
+    {
+      "bytes": 32354,
+      "capture": "complete file",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    },
+    {
+      "bytes": 3760,
+      "capture": "complete file",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+      "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+    },
+    {
+      "bytes": 10535,
+      "capture": "complete file",
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+      "sha256": "ee1a573012568b1f104d66f37ff08a083719d8745031c6904929899217e9d7d1"
+    },
+    {
+      "bytes": 32872,
+      "capture": "complete file",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "sha256": "e00f2b736cb22c42468cd494eece859eb78fe1005a7c83c621f14c319c74f743"
+    },
+    {
+      "bytes": 1997,
+      "capture": "complete file",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs",
+      "sha256": "ffaa9eadfbbe04c6990b4cdf5bc21f79ef5930b7083df41bf0071d3dcd03a3c9"
+    },
+    {
+      "bytes": 374898,
+      "capture": "selected exact line ranges only",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "ranges": [
+        [
+          2935,
+          2985
+        ],
+        [
+          3520,
+          3625
+        ],
+        [
+          3970,
+          4540
+        ],
+        [
+          5180,
+          5350
+        ]
+      ],
+      "sha256": "342fb65e068d24e2d8259aba9074c4dae230ddd5765bc767d960a2cdaf3076b2"
+    }
+  ],
+  "schema": "TRNM-W1-HEADER-DIAGNOSIS-SOURCE-PINS1",
+  "source_references": {
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs": {
+      "native_challenge": [
+        165
+      ],
+      "native_header_bytes": [
+        16
+      ],
+      "native_nonce_change": [
+        164
+      ],
+      "native_parent_flag": [
+        143,
+        200
+      ]
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "growth_backend_rejects_pnh1_packet": [
+        4309,
+        4312
+      ],
+      "legacy_admit": [
+        4277
+      ],
+      "legacy_header_context": [
+        4118,
+        4184,
+        4203
+      ],
+      "legacy_maintenance_builder": [
+        5221
+      ],
+      "legacy_parent_task_artifacts": [
+        4247,
+        4267,
+        4268
+      ],
+      "legacy_registered_task_prepare": [
+        5279
+      ],
+      "parent_record": [
+        2953,
+        2966
+      ]
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": {
+      "growth_admit": [
+        205
+      ],
+      "growth_builder": [
+        80
+      ],
+      "growth_context": [
+        163
+      ]
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs": {
+      "growth_work_verify": [
+        23
+      ]
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": {
+      "challenge": [
+        34
+      ],
+      "header_decode": [
+        20
+      ],
+      "header_encode": [
+        13
+      ]
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "challenge": [
+        170
+      ],
+      "header_decode": [
+        147,
+        297
+      ],
+      "header_encode": [
+        125,
+        286
+      ],
+      "native_header_bytes": [
+        9
+      ]
+    }
+  }
+}

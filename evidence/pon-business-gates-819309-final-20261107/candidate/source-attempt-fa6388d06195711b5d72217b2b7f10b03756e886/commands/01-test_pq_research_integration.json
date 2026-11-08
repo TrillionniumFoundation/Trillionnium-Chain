@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T21:52:32.756337+00:00",
+  "exit_code": 0,
+  "log": "logs/01-test_pq_research_integration.log",
+  "log_bytes": 5326,
+  "log_sha256": "4def3c3cfaf4e590874db58749e0d7dc74fbf4ac96df0b5bb042215536f33bfc",
+  "name": "01-test_pq_research_integration",
+  "pid": 1870363,
+  "start_utc": "2026-11-07T21:51:27.805944+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 64950414830
+}

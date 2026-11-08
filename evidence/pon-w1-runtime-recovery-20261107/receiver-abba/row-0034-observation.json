@@ -1,0 +1,114 @@
+{
+  "accepted": true,
+  "dispatched": true,
+  "index": 34,
+  "inner_ns": 34474013,
+  "kind": "proof",
+  "observation_error": null,
+  "stage": {
+    "aggregate_process_tree_peak_rss_bytes": null,
+    "canceled_signal": null,
+    "cancellation_event": null,
+    "cancellation_schema": "TRNM-W1-CANCELLATION-HANDOFF1",
+    "cleanup_errors": [],
+    "command": [
+      "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2",
+      "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/header.bin",
+      "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+    ],
+    "complete_proof_claim": false,
+    "completion_observed_before_deadline": true,
+    "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo",
+    "deadline_exhausted_at_snapshot": false,
+    "effective_deadline_monotonic": 1150563.858641758,
+    "effective_remaining_seconds": 583.538728332147,
+    "environment": {
+      "RAYON_NUM_THREADS": "2",
+      "RISC0_HOME": null,
+      "RUST_LOG": null
+    },
+    "error": null,
+    "explicit_environment_override_names": [],
+    "final_known_group_probes": [
+      {
+        "group": 1124218,
+        "state": "ABSENT"
+      }
+    ],
+    "final_owned_session_members": [],
+    "finished_unix_ns": 1794072314623010881,
+    "group_probe_errors": [],
+    "known_owned_groups": [
+      1124218
+    ],
+    "max_bytes_per_output_log": 4194304,
+    "members_after_child_exit": [],
+    "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+    "observer_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "owned_session_observation_complete": true,
+    "pid": 1124218,
+    "proc_clock_ticks_per_second": 100,
+    "proc_disappearance_races": [],
+    "proc_scan_errors": [],
+    "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+    "process_group_remaining_after_child_exit": false,
+    "prover_resource_completeness_established": false,
+    "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+    "result_is_pre_handoff_snapshot": true,
+    "returncode": 0,
+    "rusage": {
+      "involuntary_context_switches": 0,
+      "major_faults": 0,
+      "max_single_process_rss_bytes": 24756224,
+      "minor_faults": 297,
+      "system_seconds": 0.000992,
+      "user_seconds": 0.037715,
+      "voluntary_context_switches": 1
+    },
+    "sample_log_truncated": false,
+    "sampled_max_single_process_rss_bytes": 0,
+    "schema": "TRNM-W1-STAGE-MEASUREMENT3",
+    "shared_cgroup": {},
+    "signal_attempts": [],
+    "stage_process_complete": true,
+    "started_monotonic": 1149980.319913426,
+    "started_unix_ns": 1794072314327630801,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "d6e6d83e2d29d92953c44ace9af751bef28269ae6323582f461ce03972dce140",
+    "termination_grace_seconds": 5,
+    "termination_reasons": [],
+    "timed_out": false,
+    "wall_limit_seconds": 583.5390726691112,
+    "wall_seconds": 0.29541019815951586
+  },
+  "verifier_report": {
+    "admission_authorized": false,
+    "decode_and_verify_ns": [
+      34474013
+    ],
+    "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+    "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "image_id": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "independent_proof_trials": 1,
+    "iterations": 1,
+    "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+    "parent_eligibility_checked": false,
+    "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+    "receipt_bytes": 257014,
+    "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+    "sample_scope": "bounded receipt decode, public statement binding and full cryptographic verify; receipt destruction follows sample",
+    "schema": "TRNM-W1-V2-FULL-VERIFY1",
+    "sdk": "3.0.6",
+    "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+  }
+}

@@ -1,0 +1,1837 @@
+{
+  "schema": "trnm-final819-initial-ci-core-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "snapshot": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T184658Z-819309fd3122-78a49720",
+  "snapshot_sha256": "5ca57b8dcd7301c79720c452ba0b7e22910a1f1b85b69152d628779f00492c9a",
+  "started_utc": "2026-11-07T18:46:58.556091+00:00",
+  "finished_utc": "2026-11-07T18:47:29.028548+00:00",
+  "authority": {
+    "identity_after": {
+      "login": "ProfHepta",
+      "user_id": 102159240
+    },
+    "login": "ProfHepta",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    },
+    "repository_id": 1323087357,
+    "user_id": 102159240
+  },
+  "metadata_coverage_complete": true,
+  "issues": [],
+  "runs": [
+    {
+      "id": 42402618462,
+      "workflow_id": 403419146,
+      "name": "PoN W1 work security observations",
+      "event": "push",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:34Z",
+      "updated_at": "2026-11-07T18:43:34Z",
+      "actor": "ProfHepta",
+      "triggering_actor": "ProfHepta"
+    },
+    {
+      "id": 42402618518,
+      "workflow_id": 378180520,
+      "name": "PoN priority acceptance",
+      "event": "push",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:35Z",
+      "updated_at": "2026-11-07T18:43:28Z",
+      "actor": "ProfHepta",
+      "triggering_actor": "ProfHepta"
+    }
+  ],
+  "jobs_count": 37,
+  "job_counts": {
+    "completed/success": 2,
+    "in_progress/None": 34,
+    "completed/failure": 1
+  },
+  "jobs": [
+    {
+      "id": 128493479159,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "Freeze actual integration push source",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T18:42:38Z",
+      "completed_at": "2026-11-07T18:43:28Z"
+    },
+    {
+      "id": 128493695647,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 false trace reuse (x64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:30Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695650,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695658,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 false trace reuse (arm64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695680,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695687,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v1, arm64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695689,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 paid rank and batch v5 (arm64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695691,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695693,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695708,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695710,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695715,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695716,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 fresh challenge service (x64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695717,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v2, arm64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695730,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695738,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 factorial legal strategies v3 (x64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695743,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695748,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v1, x64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695753,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 paid rank and batch v5 (x64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695759,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v2, x64, head)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695770,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695771,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:33Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493695831,
+      "run_id": 42402618462,
+      "run_attempt": 1,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493479963,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "retained-pressure-failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-07T18:42:38Z",
+      "completed_at": "2026-11-07T18:42:42Z"
+    },
+    {
+      "id": 128493480004,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "Freeze actual integration push source",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-07T18:42:38Z",
+      "completed_at": "2026-11-07T18:43:22Z"
+    },
+    {
+      "id": 128493671755,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04, head, state)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:24Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671759,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:27Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671763,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:27Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671778,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:24Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671802,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:25Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671818,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:27Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671825,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:27Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671829,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:27Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671830,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:25Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671835,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:25Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671854,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:27Z",
+      "completed_at": null
+    },
+    {
+      "id": 128493671940,
+      "run_id": 42402618518,
+      "run_attempt": 1,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-07T18:43:25Z",
+      "completed_at": null
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13584974949,
+      "name": "integration-push-source-42402618462-1",
+      "size_in_bytes": 1363,
+      "digest": "sha256:3e309a7049f917ec0aa9680066afab2e939bc597512bb44b1806a92970eceeca",
+      "expired": false,
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    {
+      "id": 13585647797,
+      "name": "integration-push-source-42402618518-1",
+      "size_in_bytes": 1362,
+      "digest": "sha256:9c5ef9faf60ce9e36a817633fc10493b3f11d12248fb39c977d4bee1d2d96a1e",
+      "expired": false,
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    }
+  ],
+  "source_steps": [
+    {
+      "job_id": 128493479159,
+      "job_name": "Freeze actual integration push source",
+      "steps": [
+        {
+          "name": "Require source-context refusal controls and unchanged resolver bytes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve resolved and failed push context",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "job_id": 128493695647,
+      "job_name": "W1 false trace reuse (x64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695650,
+      "job_name": "W1 false trace reuse (arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695658,
+      "job_name": "W1 false trace reuse (arm64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695680,
+      "job_name": "W1 factorial legal strategies v3 (arm64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695687,
+      "job_name": "W1 complete legal strategies (v1, arm64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695689,
+      "job_name": "W1 paid rank and batch v5 (arm64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve records and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695691,
+      "job_name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve records and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695693,
+      "job_name": "W1 false trace reuse (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695708,
+      "job_name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695710,
+      "job_name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve records and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695715,
+      "job_name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695716,
+      "job_name": "W1 fresh challenge service (x64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original and fresh service with original Host resources",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "name": "Verify observed source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact observed source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695717,
+      "job_name": "W1 complete legal strategies (v2, arm64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695730,
+      "job_name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695738,
+      "job_name": "W1 factorial legal strategies v3 (x64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695743,
+      "job_name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695748,
+      "job_name": "W1 complete legal strategies (v1, x64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695753,
+      "job_name": "W1 paid rank and batch v5 (x64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve records and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695759,
+      "job_name": "W1 complete legal strategies (v2, x64, head)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695770,
+      "job_name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695771,
+      "job_name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493695831,
+      "job_name": "W1 fresh challenge service (x64, prospective-merge)",
+      "steps": [
+        {
+          "name": "Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original and fresh service with original Host resources",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "name": "Verify observed source after execution",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Post Checkout exact observed source",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493479963,
+      "job_name": "retained-pressure-failure",
+      "steps": []
+    },
+    {
+      "job_id": 128493480004,
+      "job_name": "Freeze actual integration push source",
+      "steps": [
+        {
+          "name": "Require source-context refusal controls and unchanged resolver bytes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve resolved and failed push context",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "job_id": 128493671755,
+      "job_name": "native priorities (ubuntu-24.04, head, state)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671759,
+      "job_name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671763,
+      "job_name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671778,
+      "job_name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671802,
+      "job_name": "native priorities (ubuntu-24.04, head, history)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671818,
+      "job_name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671825,
+      "job_name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671829,
+      "job_name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671830,
+      "job_name": "native priorities (ubuntu-24.04, head, service-model)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671835,
+      "job_name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671854,
+      "job_name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "job_id": 128493671940,
+      "job_name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "steps": [
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify source and original project boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the source-pinned native toolchain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Execute original source-preserving migration tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Reverify exact unchanged source",
+          "status": "pending",
+          "conclusion": null
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "pending",
+          "conclusion": null
+        }
+      ]
+    }
+  ],
+  "native_gate_validated": false
+}

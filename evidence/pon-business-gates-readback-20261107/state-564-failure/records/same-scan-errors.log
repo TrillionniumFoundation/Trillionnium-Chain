@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized] target(s) in 0.13s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test store::canonical_row_reuse_tests::same_bytes_keep_current_sql_types_grammar_limits_and_error_priority ... 
+thread 'store::canonical_row_reuse_tests::same_bytes_keep_current_sql_types_grammar_limits_and_error_priority' (989416) panicked at crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:128:14:
+called `Result::unwrap()` on an `Err` value: SqliteFailure(Error { code: ConstraintViolation, extended_code: 1299 }, Some("NOT NULL constraint failed: kv.value"))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    store::canonical_row_reuse_tests::same_bytes_keep_current_sql_types_grammar_limits_and_error_priority
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1199 filtered out; finished in 0.15s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

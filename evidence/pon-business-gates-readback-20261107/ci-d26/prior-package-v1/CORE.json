@@ -1,0 +1,11 @@
+{
+  "directory": "/home/qian-qi/throughput-ci-observation-20261107/light-business-evidence-d26-v1",
+  "manifest": "/home/qian-qi/throughput-ci-observation-20261107/light-business-evidence-d26-v1/COPY_PLAN.json",
+  "manifest_sha256": "794465bdb9615f283e40d3c02b06e433fd94f00aa454118b3fcca405bfc351fb",
+  "file_count": 200,
+  "retained_bytes": 10751806,
+  "original_bytes": 183812844,
+  "all_raw_bytes_verified": true,
+  "status": "HOLD",
+  "native_gate_validated": false
+}

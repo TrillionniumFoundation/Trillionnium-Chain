@@ -1,0 +1,33 @@
+{
+  "arm": "funded-balanced",
+  "complete_resource_accounting_established": false,
+  "cross_host_clock_subtraction_performed": false,
+  "deadline_renewed": false,
+  "deployed_wan_qualified": false,
+  "errors": [],
+  "full_remote_bundle_observed_ns": 1162183249672782,
+  "native_winner_ns": 1155534490086143,
+  "node_admission_established": false,
+  "observed_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "observed_within_original_deadline": true,
+  "original_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_ns": 1162725467096441,
+  "parent_operation": "e92c0bfb3f87c738f20719ab73e6933a5fad706e69bf754e2e20f7ecb090f308",
+  "parent_operation_kind": "original funded provider operation",
+  "payment_authorized": false,
+  "production_qualified": false,
+  "pure_network_latency_established": false,
+  "remaining_original_budget_ns": 542217423659,
+  "remote_complete_with_terminal_readback": true,
+  "remote_job_id": "1a1b7c3943b-12894-c32",
+  "remote_readback_job_id": "1a1b7c42bb0-12894-c37",
+  "request": {
+    "bytes": 1101,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/funded-balanced/outgoing/request.json",
+    "sha256": "1b0110b5714e8660436067311ef2cd7ef3a47b826aa7f0fbde7ba6a4e41b24fb"
+  },
+  "same_original_parent_clock": true,
+  "schema": "TRNM-W1-PARENT-REMOTE-ACK-OBSERVATION2",
+  "timing_scope": "parent CLOCK_MONOTONIC after the complete remote ACK, actual terminal status and terminal readback bytes reached this collector; includes operator/tool scheduling and transfer",
+  "winner_to_observed_remote_ack_ns": 6648759586639
+}

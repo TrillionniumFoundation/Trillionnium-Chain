@@ -1,0 +1,74 @@
+   Compiling typenum v1.20.1
+   Compiling zeroize v1.8.2
+   Compiling cmov v0.5.4
+   Compiling bitflags v2.11.0
+   Compiling libc v0.2.184
+   Compiling sha2-asm v0.6.4
+   Compiling serde_core v1.0.228
+   Compiling curve25519-dalek v4.1.3
+   Compiling foldhash v0.2.0
+   Compiling hashbrown v0.16.1
+   Compiling signature v2.2.0
+   Compiling subtle v2.6.1
+   Compiling ctutils v0.4.6
+   Compiling ed25519 v2.2.3
+   Compiling libsqlite3-sys v0.37.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling serde_json v1.0.149
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.21
+   Compiling keccak v0.2.2
+   Compiling memchr v2.8.0
+   Compiling sponge-cursor v0.1.0
+   Compiling hashlink v0.11.1
+   Compiling foreign-types-shared v0.1.1
+   Compiling itoa v1.0.18
+   Compiling foreign-types v0.3.2
+   Compiling thiserror v1.0.69
+   Compiling borsh v1.8.0
+   Compiling generic-array v0.14.7
+   Compiling hybrid-array v0.4.15
+   Compiling rusqlite v0.39.0
+   Compiling openssl-sys v0.9.117
+   Compiling hex v0.4.3
+   Compiling sha2 v0.10.9
+   Compiling anyhow v1.0.103
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling openssl v0.10.81
+   Compiling crypto-common v0.2.2
+   Compiling module-lattice v0.2.3
+   Compiling serde v1.0.228
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-verification-profiles)
+   Compiling digest v0.11.3
+   Compiling ed25519-dalek v2.2.0
+   Compiling signature v3.0.0
+   Compiling shake v0.1.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-protocol)
+   Compiling rustix v1.1.4
+   Compiling ml-dsa v0.1.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-task-kernel)
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling once_cell v1.21.4
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-mempool)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-service-settlement)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-followup-d26/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 3m 30s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1195 filtered out; finished in 0.00s
+

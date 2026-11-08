@@ -1,0 +1,129 @@
+{
+  "base": {
+    "head": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tracked_status": "",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "changed_repo_paths_if_applied": [
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs"
+  ],
+  "compiled": false,
+  "created_utc": "2026-11-07T19:16:28.403574+00:00",
+  "executed": false,
+  "files": {
+    "regression-v1-design.md": {
+      "bytes": 5741,
+      "sha256": "5bf51d15abcdef822dac9ea91f5ff457a4805a08cf0b1d382bc7355bbe3597a5"
+    },
+    "regression-v1-test.rs": {
+      "bytes": 10064,
+      "sha256": "b3c88d1838f9fb091c4cf2f87220bf2366646ff752cd44748256277d44ad5e19"
+    },
+    "regression-v1.patch": {
+      "bytes": 11057,
+      "sha256": "416a86230434742de34406220342a2eb56efbe9160262d39c5e9c02abc290a32"
+    }
+  },
+  "git_writes": false,
+  "helper_renamed": false,
+  "native_test_outcome": "pending",
+  "parallel_fault_cases": [
+    "CurrentCell",
+    "StoredRoot"
+  ],
+  "planned_added_test_count": 1,
+  "preflight": {
+    "authoritative": {
+      "at_unix_ms": 1794078526356,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b769b449-12894-ab2",
+      "launch_nonce": "f8317a8ba5771713cfe1ab55733d5bc5",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 170,
+          "stored": 170
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "stderr": "",
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-local-business-final-20261107\", \"remote_policy_mutated\": false}\n"
+  },
+  "reference_source": {
+    "AGENTS.md": {
+      "bytes": 1416,
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631"
+    },
+    "scripts/project-preflight.sh": {
+      "bytes": 242,
+      "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs": {
+      "bytes": 111392,
+      "sha256": "624b2fb4bb9bd511999ff94883dc4e76891565d2c9beaf43a735b8ae1fea0fe6"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "bytes": 149789,
+      "sha256": "87d101a83be745f851c38fedf4e6f4366ec2b7c6d037403a9641eb35c343dd3c"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 374585,
+      "sha256": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs": {
+      "bytes": 23850,
+      "sha256": "0c263944f1117cadd6f209adf26160a6c98457d7518dd0287ddb3c51a5f9898d"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": {
+      "bytes": 14844,
+      "sha256": "f9cd639ace2619dc46f40dd6b5475b3b280ff40935c04523d1d9d871c32516a7"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": {
+      "bytes": 21244,
+      "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb"
+    }
+  },
+  "root_callsite_changed": false,
+  "schema": "ordinary-legacy-admission-final-root-regression-proposal-v1",
+  "scope": "external test proposal only; production final-fence change is owned by parent",
+  "source_after": {
+    "head": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tracked_status": "",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+  },
+  "source_file_writes": false,
+  "source_unchanged": true,
+  "static_checks": {
+    "full_source_verifier_rerun": false,
+    "module_precondition_unique": true,
+    "new_source_absent": true,
+    "patch_constructed_from_exact_source": true,
+    "rustfmt_or_cargo_run": false
+  },
+  "test_selector": "store::legacy_admission_root_tests::ordinary_admission_final_root_rechecks_warm_active_state_and_claim"
+}

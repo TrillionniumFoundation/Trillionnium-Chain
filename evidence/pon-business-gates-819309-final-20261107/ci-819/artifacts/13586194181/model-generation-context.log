@@ -1,0 +1,13 @@
+test_complete_real_signatures_and_all_false_acceptance_flags (__main__.ContextBoundGenerationSequenceTests.test_complete_real_signatures_and_all_false_acceptance_flags) ... ok
+test_each_context_role_signature_is_required (__main__.ContextBoundGenerationSequenceTests.test_each_context_role_signature_is_required) ... ok
+test_false_exposure_rejects_even_with_valid_new_context_signatures (__main__.ContextBoundGenerationSequenceTests.test_false_exposure_rejects_even_with_valid_new_context_signatures) ... ok
+test_missing_or_extra_contexts_fail_before_acceptance (__main__.ContextBoundGenerationSequenceTests.test_missing_or_extra_contexts_fail_before_acceptance) ... ok
+test_no_update_owner_hold_and_no_gain_are_preserved (__main__.ContextBoundGenerationSequenceTests.test_no_update_owner_hold_and_no_gain_are_preserved) ... ok
+test_original_initial_model_signature_and_chronology_guards_still_run (__main__.ContextBoundGenerationSequenceTests.test_original_initial_model_signature_and_chronology_guards_still_run) ... ok
+test_rehashed_assessment_cannot_transplant_old_context_signatures (__main__.ContextBoundGenerationSequenceTests.test_rehashed_assessment_cannot_transplant_old_context_signatures) ... ok
+test_reused_actual_evaluation_prompt_cannot_hide_behind_fresh_history (__main__.ContextBoundGenerationSequenceTests.test_reused_actual_evaluation_prompt_cannot_hide_behind_fresh_history) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.108s
+
+OK

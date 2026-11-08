@@ -1,0 +1,2 @@
+[fix/chain-local-state-cell-20261107 564bd23a6] test(store): import json macro for canonical row reuse controls
+ 2 files changed, 2 insertions(+), 1 deletion(-)

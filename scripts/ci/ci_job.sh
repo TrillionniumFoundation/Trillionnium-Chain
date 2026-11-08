@@ -48,9 +48,53 @@ case "${1:?required job}" in
     python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_six_workpackage_native_rosters.py
     python3 scripts/ci/test_w1_full_v2_disposition.py
+    # Historical clocks and finite screening do not qualify a proof for block admission.
+    python3 scripts/ci/test_pon_proof_latency.py
+    python3 scripts/ci/test_w1_proof_latency_readback.py
+    # Real signal/deadline controls and provider contracts do not generate a proof.
+    (
+      w1_contract_out="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/w1-postwin-contracts"
+      test ! -e "$w1_contract_out"
+      test ! -L "$w1_contract_out"
+      mkdir -p "$(dirname "$w1_contract_out")"
+      mkdir "$w1_contract_out"
+      w1_contract_tmp="$(mktemp -d /dev/shm/trnm-w1-contract-XXXXXXXX)"
+      trap 'rm -rf -- "$w1_contract_tmp"' EXIT
+      export TMPDIR="$w1_contract_tmp"
+      export PYTHONDONTWRITEBYTECODE=1
+      python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee "$w1_contract_out/cancellation-handoff.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"
+      python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"
+      python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"
+      python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"
+      python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"
+      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
+      python3 - "$w1_contract_out" <<'PY'
+from pathlib import Path
+import re, sys
+root = Path(sys.argv[1])
+expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
+            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 8),
+            ("source-builder", 8),
+            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+            ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+            ("owned-process-collector", 14))
+for name, count in expected:
+    text = (root / (name + ".log")).read_text()
+    if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]
+            or not re.search(r"^OK$", text, re.M) or "skipped=" in text):
+        raise SystemExit(f"{name}: all {count} controls must execute without skips")
+PY
+    )
     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
+    python3 scripts/ci/test_run_legacy_reorg_root_abba.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
@@ -98,7 +142,7 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
     python3 scripts/ci/run_account_execution_conformance.py
     python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root "$(pwd -P)"
-    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles --test cell_native_v1
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
@@ -141,9 +185,15 @@ case "${1:?required job}" in
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
     python3 formal/pon-nakamoto-v1/test_model_contract.py
-    # Complete source-router relation controls are research checks, not native/work-security qualification.
-    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_numeric_v1.py' -v
-    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_relation_v1.py' -v
+    # Complete Cell relation controls are research checks, not native/work-security qualification.
+    python3 formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py

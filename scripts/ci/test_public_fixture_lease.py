@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import stat
 import subprocess
+import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -367,6 +368,38 @@ class PublicFixtureLockControls(unittest.TestCase):
                 patch.object(Path, 'lstat', autospec=True, side_effect=self.lstat):
             yield
 
+    def test_creator_sets_only_new_lock_mode_under_restrictive_child_umask(self):
+        real_run = subprocess.run
+        actual_uid, actual_gid = os.getuid(), os.getgid()
+
+        for child_umask in (0o077, 0o777):
+            def restrictive_creator(command, **kwargs):
+                self.assertEqual(command[:6], ['sudo', '-n', '/usr/bin/python3', '-I', '-S', '-c'])
+                self.assertEqual(command[-1], str(self.path))
+                self.assertEqual(kwargs['timeout'], 30)
+                # Run the unchanged creator as the actual test user. Only this
+                # child's umask changes; no sudo or parent-process umask change.
+                return real_run([sys.executable, *command[3:]], umask=child_umask, **kwargs)
+
+            with self.subTest(child_umask=oct(child_umask)), self.simulated_root(), \
+                    patch.object(lease.subprocess, 'run', side_effect=restrictive_creator):
+                with lease.parent_lock():
+                    created = self.real_lstat(self.path)
+                    self.assertEqual(stat.S_IMODE(created.st_mode), 0o444)
+                    self.assertEqual((created.st_uid, created.st_gid), (actual_uid, actual_gid))
+                # O_EXCL's existing-file path must leave a wrong mode untouched.
+                self.path.chmod(0o400)
+                before = self.real_lstat(self.path)
+                with self.assertRaisesRegex(ValueError, 'FIXTURE_PARENT_LOCK_OWNER'):
+                    with lease.parent_lock():
+                        self.fail('existing wrong mode must not be repaired')
+                after = self.real_lstat(self.path)
+                fields = ('st_dev', 'st_ino', 'st_mode', 'st_uid', 'st_gid',
+                          'st_size', 'st_mtime_ns', 'st_ctime_ns')
+                self.assertEqual(tuple(getattr(after, key) for key in fields),
+                                 tuple(getattr(before, key) for key in fields))
+            self.path.unlink()
+
     def test_stable_lock_conflicts_across_receipt_roots_without_replacing_inode(self):
         with self.simulated_root():
             with lease.parent_lock():
@@ -409,6 +442,7 @@ class PublicFixtureLockControls(unittest.TestCase):
             self.real_flock(fd, operation)
             self.path.unlink()
             self.path.touch(mode=0o444)
+            self.path.chmod(0o444)  # Keep non-inode fields equal under any caller umask.
         with self.simulated_root(), patch.object(lease.fcntl, 'flock', side_effect=changed), \
                 self.assertRaisesRegex(ValueError, 'LOCK_CHANGED'):
             with lease.parent_lock():

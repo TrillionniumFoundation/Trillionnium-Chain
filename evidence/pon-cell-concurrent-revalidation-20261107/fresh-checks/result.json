@@ -1,0 +1,41 @@
+{
+  "all_11070_raw_git_blob_ids_verified": true,
+  "branch": "fix/chain-cell-evidence-recovery-20261107",
+  "cache_references": [
+    {
+      "object_directory": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final/.git/objects",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "repository": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final"
+    },
+    {
+      "object_directory": "/home/qian-qi/work/chain-qrom-closure-publish-20261107/.git/objects",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "repository": "/home/qian-qi/work/chain-qrom-closure-publish-20261107"
+    }
+  ],
+  "calculation_tests_rerun": false,
+  "control_dir": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-complete-v3",
+  "fresh_source": {
+    "base": null,
+    "candidate": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+    "tested_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1035950468,
+    "tracked_entries": 11070,
+    "tracked_worktree_verified": true
+  },
+  "materialized_raw_source_manifest_sha256": "c28c641ee3fa50434b3574d946d2de8570e7c4a3992d10f96851ede4e0bc5ee5",
+  "missing_before_checkout": 75,
+  "missing_unique_blob_oids": 70,
+  "new_complete_checkout": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-evidence-recovery-cache-93ddee66-v3",
+  "old_root_raw_records_reconstructed": false,
+  "prior_detached_failure_was_ci_test_failure": false,
+  "prior_detached_preflight_failed_record": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/evidence-recovery-control-20261107-v1/cached-prepare-v3/checkout-preflight.stderr",
+  "result": "PASS",
+  "source": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe"
+}

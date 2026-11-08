@@ -1,0 +1,1768 @@
+{
+  "schema": "trnm-throughput-exact-source-failed-workflow-jobs-v1",
+  "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "scope": "All jobs of each failed original workflow; per_page100/page1, filter=all. Successful jobs remain counted; skipped steps are not execution successes.",
+  "runs": [
+    {
+      "run_id": 42352433638,
+      "event": "pull_request",
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "total_count": 1,
+      "observed_count": 1,
+      "jobs": [
+        {
+          "id": 128343245095,
+          "name": "F0 (x64, head, one baseline and one ROOT phase)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433638/job/128343245095",
+          "failed_steps": [
+            {
+              "number": 8,
+              "name": "Run exactly one pair in the declared controller and public Host"
+            },
+            {
+              "number": 9,
+              "name": "Always retain denominators and inspect only exact owned services"
+            }
+          ],
+          "skipped_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42352433649,
+      "event": "pull_request",
+      "name": "PoN PQ network and rollback witness",
+      "total_count": 4,
+      "observed_count": 4,
+      "jobs": [
+        {
+          "id": 128343245324,
+          "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433649/job/128343245324",
+          "failed_steps": [
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control"
+            },
+            {
+              "number": 9,
+              "name": "Require original transaction scope controls"
+            },
+            {
+              "number": 10,
+              "name": "Require actual build-fence cache requalification"
+            },
+            {
+              "number": 11,
+              "name": "Preserve native control records before the complete regression"
+            },
+            {
+              "number": 12,
+              "name": "Preserve the complete original Node library regression suite"
+            },
+            {
+              "number": 13,
+              "name": "Check strict Clippy without rewriting source"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete component costs with unchanged native budgets"
+            }
+          ]
+        },
+        {
+          "id": 128343245485,
+          "name": "PQ network and witness (ubuntu-24.04, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433649/job/128343245485",
+          "failed_steps": [
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control"
+            },
+            {
+              "number": 9,
+              "name": "Require original transaction scope controls"
+            },
+            {
+              "number": 10,
+              "name": "Require actual build-fence cache requalification"
+            },
+            {
+              "number": 11,
+              "name": "Preserve native control records before the complete regression"
+            },
+            {
+              "number": 12,
+              "name": "Preserve the complete original Node library regression suite"
+            },
+            {
+              "number": 13,
+              "name": "Check strict Clippy without rewriting source"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete component costs with unchanged native budgets"
+            }
+          ]
+        },
+        {
+          "id": 128343245569,
+          "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433649/job/128343245569",
+          "failed_steps": [
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control"
+            },
+            {
+              "number": 9,
+              "name": "Require original transaction scope controls"
+            },
+            {
+              "number": 10,
+              "name": "Require actual build-fence cache requalification"
+            },
+            {
+              "number": 11,
+              "name": "Preserve native control records before the complete regression"
+            },
+            {
+              "number": 12,
+              "name": "Preserve the complete original Node library regression suite"
+            },
+            {
+              "number": 13,
+              "name": "Check strict Clippy without rewriting source"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete component costs with unchanged native budgets"
+            }
+          ]
+        },
+        {
+          "id": 128343245595,
+          "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433649/job/128343245595",
+          "failed_steps": [
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control"
+            },
+            {
+              "number": 9,
+              "name": "Require original transaction scope controls"
+            },
+            {
+              "number": 10,
+              "name": "Require actual build-fence cache requalification"
+            },
+            {
+              "number": 11,
+              "name": "Preserve native control records before the complete regression"
+            },
+            {
+              "number": 12,
+              "name": "Preserve the complete original Node library regression suite"
+            },
+            {
+              "number": 13,
+              "name": "Check strict Clippy without rewriting source"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete component costs with unchanged native budgets"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42352433857,
+      "event": "pull_request",
+      "name": "PoN original native campaign",
+      "total_count": 1,
+      "observed_count": 1,
+      "jobs": [
+        {
+          "id": 128343246152,
+          "name": "original native campaign (x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433857/job/128343246152",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Run three original campaigns under verified actual limits"
+            }
+          ],
+          "skipped_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42352433630,
+      "event": "pull_request",
+      "name": "CodeQL exact-source analysis and SARIF retention",
+      "total_count": 6,
+      "observed_count": 6,
+      "jobs": [
+        {
+          "id": 128343245216,
+          "name": "CodeQL local SARIF (rust, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245216",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343245414,
+          "name": "CodeQL local SARIF (python, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245414",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343245416,
+          "name": "CodeQL local SARIF (actions, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245416",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343245431,
+          "name": "CodeQL local SARIF (rust, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245431",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343245440,
+          "name": "CodeQL local SARIF (python, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245440",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343245474,
+          "name": "CodeQL local SARIF (actions, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245474",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42352433650,
+      "event": "pull_request",
+      "name": "CodeQL exact-source analysis export",
+      "total_count": 1,
+      "observed_count": 1,
+      "jobs": [
+        {
+          "id": 128343245309,
+          "name": "export",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433650/job/128343245309",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Export exact PR analyses with the existing read-only token"
+            }
+          ],
+          "skipped_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42352433680,
+      "event": "pull_request",
+      "name": "PoN W1 work security observations",
+      "total_count": 22,
+      "observed_count": 22,
+      "jobs": [
+        {
+          "id": 128343245460,
+          "name": "W1 false trace reuse (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245460",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245539,
+          "name": "W1 factorial legal strategies v3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245539",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245544,
+          "name": "W1 false trace reuse (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245544",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245556,
+          "name": "W1 false trace reuse (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245556",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245562,
+          "name": "W1 fresh challenge service (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245562",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Execute original and fresh service with original Host resources"
+            }
+          ],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245573,
+          "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245573",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245587,
+          "name": "W1 complete legal strategies (v2, x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245587",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245593,
+          "name": "W1 fresh challenge service (x64, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245593",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Execute original and fresh service with original Host resources"
+            }
+          ],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245600,
+          "name": "W1 complete legal strategies (v1, arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245600",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245603,
+          "name": "W1 false trace reuse (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245603",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245606,
+          "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245606",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245608,
+          "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245608",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245609,
+          "name": "W1 paid rank and batch v5 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245609",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245650,
+          "name": "W1 factorial legal strategies v3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245650",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245663,
+          "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245663",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245668,
+          "name": "W1 paid rank and batch v5 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245668",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245682,
+          "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245682",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245689,
+          "name": "W1 complete legal strategies (v1, x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245689",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245697,
+          "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245697",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245715,
+          "name": "W1 complete legal strategies (v2, arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245715",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245724,
+          "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245724",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128343245745,
+          "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/job/128343245745",
+          "failed_steps": [],
+          "skipped_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42352433738,
+      "event": "pull_request",
+      "name": "PoN priority acceptance",
+      "total_count": 13,
+      "observed_count": 13,
+      "jobs": [
+        {
+          "id": 128343246009,
+          "name": "retained-pressure-failure",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246009",
+          "failed_steps": [
+            {
+              "number": 2,
+              "name": "Retrieve exact historical failed artifact without reclassifying it"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 3,
+              "name": "Expose bounded original honest-submit and state diagnostics"
+            }
+          ]
+        },
+        {
+          "id": 128343246115,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246115",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246130,
+          "name": "native priorities (ubuntu-24.04, head, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246130",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246131,
+          "name": "native priorities (ubuntu-24.04-arm, head, history)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246131",
+          "failed_steps": [
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            }
+          ]
+        },
+        {
+          "id": 128343246155,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246155",
+          "failed_steps": [
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            }
+          ]
+        },
+        {
+          "id": 128343246165,
+          "name": "native priorities (ubuntu-24.04-arm, head, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246165",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246174,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246174",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246198,
+          "name": "native priorities (ubuntu-24.04, head, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246198",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246227,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246227",
+          "failed_steps": [
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            }
+          ]
+        },
+        {
+          "id": 128343246257,
+          "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246257",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246263,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246263",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        },
+        {
+          "id": 128343246264,
+          "name": "native priorities (ubuntu-24.04, head, history)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246264",
+          "failed_steps": [
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Execute original window owner and context-bound consumer controls"
+            },
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            },
+            {
+              "number": 7,
+              "name": "Execute actual CLI observation boundaries and retain every child result"
+            },
+            {
+              "number": 8,
+              "name": "Execute isolated original debug pressure regression"
+            },
+            {
+              "number": 9,
+              "name": "Execute original public service cancellation and actual CPU accounting controls"
+            },
+            {
+              "number": 10,
+              "name": "Reject valid W1 state-root replay without durable admission"
+            },
+            {
+              "number": 11,
+              "name": "Require actual shared CPU depletion and native public recovery"
+            },
+            {
+              "number": 12,
+              "name": "Execute real native model lifecycle and adverse decisions"
+            },
+            {
+              "number": 13,
+              "name": "Require native replay, packet encoding and admissible DAA controls"
+            },
+            {
+              "number": 14,
+              "name": "Observe complete native history and packet response cost"
+            },
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            }
+          ]
+        },
+        {
+          "id": 128343246265,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/job/128343246265",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Execute original release from-zero controls"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 15,
+              "name": "Execute original large-state CPU-budget tests"
+            },
+            {
+              "number": 16,
+              "name": "Execute original native full-capacity test"
+            },
+            {
+              "number": 17,
+              "name": "Execute original source-preserving migration tests"
+            },
+            {
+              "number": 18,
+              "name": "Execute actual obligation ranges and native reorganization regressions"
+            },
+            {
+              "number": 19,
+              "name": "Build the original long-history test separately from measurement"
+            },
+            {
+              "number": 20,
+              "name": "Execute 4105 real work blocks and paid public full sync"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 42352433711,
+      "event": "pull_request",
+      "name": "trnm-required-baseline",
+      "total_count": 21,
+      "observed_count": 21,
+      "jobs": [
+        {
+          "id": 128344390973,
+          "name": "repository-truth",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344390973",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391048,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391048",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391085,
+          "name": "external-evidence-contract",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391085",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391104,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391104",
+          "failed_steps": [
+            {
+              "number": 11,
+              "name": "Execute the same lane on the prospective merge"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 7,
+              "name": "Install pinned coverage-guided fuzz tools"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor"
+            },
+            {
+              "number": 9,
+              "name": "Check PQ provider CI wiring and failure controls"
+            }
+          ]
+        },
+        {
+          "id": 128344391113,
+          "name": "protocol-contract",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391113",
+          "failed_steps": [
+            {
+              "number": 8,
+              "name": "Run actual protocol-contract checks"
+            }
+          ],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391116,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391116",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls"
+            }
+          ],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391126,
+          "name": "prospective-merge (repository-truth)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391126",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Install pinned compiler and tools in isolated hosted runner"
+            },
+            {
+              "number": 6,
+              "name": "Install isolated conformance and evidence Python environment"
+            },
+            {
+              "number": 7,
+              "name": "Install pinned coverage-guided fuzz tools"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor"
+            },
+            {
+              "number": 10,
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider"
+            }
+          ]
+        },
+        {
+          "id": 128344391132,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391132",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Install isolated conformance and evidence Python environment"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor"
+            },
+            {
+              "number": 9,
+              "name": "Check PQ provider CI wiring and failure controls"
+            },
+            {
+              "number": 10,
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider"
+            }
+          ]
+        },
+        {
+          "id": 128344391145,
+          "name": "prospective Rust shard (runtime)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391145",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391147,
+          "name": "prospective Rust shard (quality)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391147",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391165,
+          "name": "rust-baseline shard (quality)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391165",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391168,
+          "name": "fuzz-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391168",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391175,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391175",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391177,
+          "name": "rust-baseline shard (runtime)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391177",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391181,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391181",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls"
+            }
+          ],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391209,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391209",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128344391228,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391228",
+          "failed_steps": [],
+          "skipped_steps": [
+            {
+              "number": 5,
+              "name": "Install pinned compiler and tools in isolated hosted runner"
+            },
+            {
+              "number": 7,
+              "name": "Install pinned coverage-guided fuzz tools"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor"
+            },
+            {
+              "number": 9,
+              "name": "Check PQ provider CI wiring and failure controls"
+            },
+            {
+              "number": 10,
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider"
+            }
+          ]
+        },
+        {
+          "id": 128344391239,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128344391239",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128346514386,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128346514386",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128366335242,
+          "name": "prospective-merge (rust-baseline)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128366335242",
+          "failed_steps": [],
+          "skipped_steps": []
+        },
+        {
+          "id": 128368172447,
+          "name": "rust-baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433711/job/128368172447",
+          "failed_steps": [],
+          "skipped_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42352425768,
+      "event": "push",
+      "name": "CodeQL exact-source analysis and SARIF retention",
+      "total_count": 3,
+      "observed_count": 3,
+      "jobs": [
+        {
+          "id": 128343221732,
+          "name": "CodeQL local SARIF (actions, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352425768/job/128343221732",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343221885,
+          "name": "CodeQL local SARIF (python, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352425768/job/128343221885",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        },
+        {
+          "id": 128343221894,
+          "name": "CodeQL local SARIF (rust, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352425768/job/128343221894",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Generate local exact-source SARIF for exact source SHA"
+            }
+          ],
+          "skipped_steps": [
+            {
+              "number": 6,
+              "name": "Verify generated SARIF is present and parseable"
+            },
+            {
+              "number": 7,
+              "name": "Retain exact-source local SARIF for independent review"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "raw_log_diagnostics": [
+    {
+      "job_id": 128343245431,
+      "run_id": 42352433630,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433630/job/128343245431",
+      "observed_exact_excerpt": [
+        "2026-11-07T08:03:30.3073814Z ##[error]Code Scanning could not process the submitted SARIF file:",
+        "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled"
+      ]
+    },
+    {
+      "job_id": 128343245485,
+      "run_id": 42352433649,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433649/job/128343245485",
+      "observed_exact_excerpt": [
+        "2026-11-07T07:45:02.1723886Z HOLD_NO_GO: changed source: scripts/ci/check_sqlite_build_requalification.py"
+      ]
+    },
+    {
+      "job_id": 128343245309,
+      "run_id": 42352433650,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433650/job/128343245309",
+      "observed_exact_excerpt": [
+        "2026-11-07T08:06:40.9103651Z CodeQL analysis export failed: CodeQL analyses/checks did not complete and stabilize before the deadline"
+      ]
+    }
+  ]
+}

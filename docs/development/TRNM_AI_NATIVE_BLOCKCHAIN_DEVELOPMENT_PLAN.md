@@ -1,6 +1,53 @@
+**Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
+
+> Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.
+
+
+> Frozen candidate fa6388d completed 666/666 named controls but its overall source check failed on one stale workflow blob binding. The full failed attempt and source-before/after are retained in [the final evidence record](../../evidence/pon-business-gates-819309-final-20261107/README.md#8-first-frozen-candidate-source-control-failure-retained). The follow-up fixes that one corpus pin without changing the checker, workflow or production Rust. Native validation starts only on the corrected frozen commit; original business gates remain HOLD.
+
+
+> Final 819 evidence readback: all 14 core lanes and 20/20 original W1 artifacts are independently retained and verified (24 native manifests, 632 campaigns). Transport v1/v2 failures and Range v3 recovery remain separate. Business qualification is still HOLD. The ordinary Legacy final admission-root candidate requires its own frozen-source 666 controls and 16 library plus one independent History exact run; no earlier result certifies this candidate. See [complete final evidence](../../evidence/pon-business-gates-819309-final-20261107/README.md).
+
+The [complete 819 record](../../evidence/pon-business-gates-819309-final-20261107/README.md)
+binds real push 819309fd312298e099642e1253b1d4ba07113e98 and its original H/M
+matrix through ProfHepta and the HeptaRuntime local GitHub channel. All 666 source
+controls, strict workspace Clippy and linked inventory passed. One complete Node
+package then finished with 1,504 native passes, 12 failures and 57 ignored tests
+across all 67 harnesses; doc-tests separately passed four. Full source and binaries
+matched before/after. Three failures directly report CPU-budget refusal, eight
+report PUBLIC_HOST_KERNEL_PARENT, and one retains a thread panic/Disconnected
+without a confirmed Host cause. Preserve every original failure and denominator.
+
+Real CI closed 37 jobs at 26 success / 11 failure and 34 native lanes at
+24 success / 10 failure; all 136 source steps passed. Four service and both fresh
+jobs still failed pressure confirmation. History returned x64 H/M 2,791 / 3,386
+of 4,105 imports; ARM H/M returned 4,104, stored all packets and cancelled
+activation at cursors 3,782 / 3,701. Every confirmer remained active at genesis.
+These are separate observations from e70 and d26, not paired speed comparisons.
+
+The follow-up connects complete-input arithmetic only to classical Legacy
+ordinary admission's final current-active-State root fence. Keep every actual
+SQL/claim, writer/schema, callback, CPU and commit obligation. Require the new
+warm-corruption/rollback/cold-open regression, retained exact controls and the
+separately declared affected Legacy History test on the new frozen source.
+PQ/Growth/Authenticated semantics and original business gates are unchanged;
+touched-set/COW migration remains a distinct unclosed requirement.
+
+**Prior combined-source control attempt (93277), 2026-11-07 UTC — retained failure:** The frozen
+93277a001f4f8a42be65166f6513177b46cddf5b source completed all 665 controls:
+663 passed, one failure and one error in the exact Host lock controls. Cell's
+202 controls passed; strict Clippy and the complete 1,573-test linked inventory
+also passed preparation, with no native bodies executed. Preserve
+[the complete attempt and reviewed lock-construction correction](../../evidence/pon-business-gates-readback-20261107/README.md).
+Canonicalize only a newly O_EXCL-created lock descriptor to the already required
+0444 mode; never repair existing locks or relax Host checks. One real-child
+umask regression raised the source roster to 666. The later 819 execution and
+real CI outcomes are retained above; no previous pressure, History, CPU-budget,
+missing-artifact or qualification failure is discarded.
+
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 22).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 23).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -83,6 +130,209 @@ raw command receipts and independent complete readbacks. A matching registry
 digest cannot establish prior ownership or binding time; independent checkpoint
 custody must also remain current for each protected business effect. Keep
 running-network migration, whole-chain and production acceptance false.
+
+**Funded W1 generation runtime continuation, 2026-11-07 UTC:** Continue the
+existing integration lineage from recovered commit
+`b6c730c2a81b932266c9a8b93858e2641aafd9f7`. The
+[runtime evidence record](../../evidence/pon-w1-runtime-recovery-20261107/README.md)
+keeps actual native winner/receiver identity, original deadlines, complete backend
+plans, NativeTask/M12 ownership and deployment/security qualification separate.
+GenerationV2 does not replace NativeTask V1 or rewind local revocation history.
+The new fixed-claim verifier ABBA still fails verification and raw-payload benefit.
+Cloud GPU presence is not proof acceleration: the fixed r0vm release is CPU-only,
+and a separate CUDA build request was rejected before dispatch by the normal
+provider ownership guard. No new full proof is claimed by component checks.
+The original business limits and all production activation gates remain unchanged.
+
+**Proof publication latency, 2026-11-07 America/New_York:** Continue the existing
+#688 candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66` with the
+[full-W1 latency contract](specs/pon/PROOF_PUBLICATION_LATENCY_V1.md) and
+[asynchronous settlement boundary](specs/pon/ASYNC_PROOF_SETTLEMENT_BOUNDARY_V1.md).
+Retain the complete v2 statement and independent expected-artifact binding.
+Read the original byte-pinned pipeline into exclusive stage intervals and
+separately nested clocks; do not relabel its 6,248.484-second fresh pipeline as
+a measured winner-to-publication or WAN clock. Separately screen predeclared
+finite campaigns against explicit competing-arrival assumptions, complete
+winner/receiver endpoints and original absolute deadlines. Keep failed,
+late, canceled and unknown observations in their proper denominators; finite
+screening cannot establish population p99, fresh-proof independence or admission.
+The [reproduction record](../../evidence/pon-proof-publication-latency-20261107/README.md)
+retains the 43 segment stages and 43-lift/42-join compression costs. It supplies
+no new proof or performance improvement. Full native W1 remains the current
+work gate; owner-authorized task payment and a future independently verified
+canonical proof settlement are distinct interfaces. Original four-second/16,
+PQ, funding/reorg, WAN, proof-benefit and model-adoption gates remain open.
+
+**Original business readback and component follow-up, 2026-11-07 UTC — HOLD:**
+The [retained business readback](../../evidence/pon-business-gates-readback-20261107/README.md)
+records real push head `d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89`,
+resolver-observed main `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`
+and ordered-parent merge `7805f1445aec6a31152b50c3d28f5eb6db63305c`.
+Both workflows used those same identities: 37 jobs ended 22 success / 15 failure;
+34 native lanes ended 20 success / 14 failure. All 136 source-control steps
+passed, without converting any business failure into success.
+
+All four original 4-second/16-worker service lanes and both fresh-challenge jobs
+still failed confirmation under the original Host budgets. Every cohort retained
+7/7 successful honest submissions but only 0/1 pressure confirmations.
+All four State lanes passed six named controls and 40 main migration tests each;
+the two one-test FIFO subprocess summaries are not extra main tests.
+History x64 H/M returned 3,917/4,105 imports before the original server lifetime
+expired. ARM H/M returned 4,104/4,105, stored all 4,105 packets, and cancelled
+activation at cursors 3,916 / 3,923. All four confirmer active states remained
+genesis. Rows, RPC returns and activated state remain separate obligations.
+
+Preserve local d26's 1,161 pass / three failure / 31 ignored result. Two later
+one-attempt PQ passes do not erase its failures. The 619 lexical-scope lint fix
+has exact native and strict-Clippy evidence, including the rejected zero-test
+selector. The 205 borrowed-packet component passed 22 exact tests and strict
+Clippy; its 768-trial observation retained 384 expected codec errors and about
+13% component CPU savings. The 5fdf adjacent-Cell scan memo passed seven exact
+tests and strict Clippy plus four predeclared criteria across 128 ABBA trials.
+Its original >8 MiB test nevertheless failed the paid-CPU gate at
+3,376,700,755 ns. Original History offers little adjacent-value reuse.
+Neither component establishes service TPS, complete touched-set state or COW.
+
+CodeQL execution passed with Rust 568 findings, Python two, an internal Rust
+extraction error and 19 extraction warnings retained. Historical artifact
+`11531476198` remains unavailable/UNKNOWN; its cause is not inferred.
+Preserve acc2's concurrent Cell work and all original failures. Final combined
+202 formal tests, 103 CI contract controls, 12 native Cell tests, retained
+readers, exact source/graph checks, native/Clippy suites and the real H/M
+business matrix remain pending. Later remote changes require their own review.
+Publication uses the user-designated ProfHepta administrator through the
+HeptaRuntime local GitHub channel, preserving the existing integration branch
+and normal protections; no local result authorizes runtime activation.
+
+**Finite multimodal computation and native Cell consumers, 2026-11-07:**
+Continue the same integration candidate with two separately named profiles.
+The [multimodal V3 relation](specs/pon/USEFUL_CELL_MULTIMODAL_V3.md) reexecutes raw
+UTF-8/RGB8/PCM16 preprocessing, parameterized encoders, a residual MLP, routed
+rank-two adapters, the head and an explicit integer training surrogate. Every
+forward dense operator has its own complete W1 proof bound to its actual
+intermediate tensor. The [native Cell profile](specs/pon/USEFUL_CELL_NATIVE_V1.md)
+adds real Rust Node/CLI verification of the bounded stateful source router;
+expected task bytes come from the owner channel and parent state/time from
+verified Node history. Preserve native historical UNIX-second consensus
+semantics and V3's declared millisecond lane separately from current use and
+Hepta monotonic-microsecond owner effects.
+These profiles do not silently share proof domains or constitute arbitrary
+multimodal runtime support. Ordinary runtime owner-context wiring, genuine
+FinalUse/checkpoint composition and later model use require their own actual
+consumer evidence. External delivery, production adoption, independent quality
+and cheapest-legal-work qualification remain open. No local pass activates a
+new consensus rule or lifts these distinct gates.
+The [multimodal evidence](../../evidence/pon-useful-cell-multimodal-v3-20261107/README.md)
+retains the finite controls and complete proof material without promoting
+generated arithmetic labels into task-quality evidence.
+The [native evidence](../../evidence/pon-native-cell-v1-20261107/README.md)
+retains full owner inputs, claims and verified-parent packets plus fresh-process
+historical replay. The separate private Hepta owner path does not consume this
+public native proof; proof-to-owner composition remains an explicit open gate.
+The [integration record](../../evidence/pon-cell-integration-v1-20261107/README.md)
+retains original-source preparation, the unchanged V1/V2 replay, mandatory CI
+controls, raw source checks and failed observations without changing qualification.
+The [recovered concurrent record](../../evidence/pon-cell-concurrent-revalidation-20261107/README.md)
+pins combined source `acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030`, retains its
+affected native/CI controls and actual non-force candidate publication, and
+separates sparse build inputs from complete-tree checks. Its recovery disclosure
+distinguishes restored original archives from new checks and unavailable local
+sidecars. Native cold replay covers two claims/ten proofs across six verifier
+invocations and three stores; repeats change none of the open gates above.
+
+**Original business gates, continued 2026-11-07 America/New_York:**
+Continue the same integration branch after published
+`96e1eede091153199894532c91430bfc0f8e4572`. ProfHepta is the project
+administrator and the designated local GitHub publication identity. Ordinary
+classical V3 service startup installs a bounded exact mathematical refusal
+cache (256 slots, 30 seconds, at most 32 KiB retained Rust objects); a prior
+explicit positive configuration wins. Only completed Transcript/Product failures
+may be reused. Full proof bytes, profile, challenge, task and target identify a
+fact; new proofs and valid work retain native verification. Original caller,
+current context, cancellation, deadline and actual CPU ownership still apply.
+PQ, Growth and the separate arithmetic profile do not acquire this default.
+Per-request observations distinguish a found fact, a returned cached refusal,
+native-verifier entry and actual replay, including incomplete observations.
+The fresh-challenge reader must refuse every exact-fact hit and inconsistent
+path; it preserves the original business requirement and legacy records.
+
+Classical Legacy admission may lend a fully read-back historical parent State
+once to its child's readback in the same original writer transaction, after
+all intended writes. This excludes active-parent KV reads, all PQ/Growth/
+Authenticated profiles, and a child's actual snapshot path. Actual SQL linkage,
+delta values, roots, complete parent equality, closed schema, no-write epoch,
+transaction identity and final callback checks remain required. Failure to
+qualify the closed schema retains both original reads; changed transaction
+identity remains an integrity error. See [State recovery](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md)
+and the [business continuation record](../../evidence/pon-original-business-continuation-20261107/README.md).
+These changes do not complete touched-set migration or close the original
+4-second/16-worker service or 4,105-block History gates. Preserve the e70
+baseline 1/1 at 3.098539910 seconds, pressure 0/1, x64 2,362/4,105 and ARM
+4,104/4,105 with all rows but active genesis and cancelled cursor 3,404.
+
+Preserve the existing PR path and add a separate real push source entry only
+for the same integration branch. Freeze the pushed head and resolver-observed
+main, reproduce the canonical ordered-parent merge in every worker, and retain
+both success and attempted/unverified failure contexts. The original complete
+source verifier, 54 native command scripts and all 34 original priority/W1
+matrix lanes remain required. The two workflows may contribute to one merged
+result only when their head, base and merge identities all agree. These source
+controls do not substitute for original-resource business observations.
+
+**Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
+Continue the existing #688 candidate from
+`e70f13448aad715286fb8eb56fc802b09db643a3`. Strict packet envelopes may construct
+the identical request after complete lowercase-hex/framing checks; bounded
+socket reads use the already reserved initialized buffer. Preserve every ticket,
+signature, work replay, live Host check, original deadline and resource ceiling.
+Classical mixed-sender execution skips speculative state work whose sender nonce
+already has an earlier transaction; every signature and canonical state effect
+still executes, with the old complete-speculation path retained as a test oracle.
+PQ and Growth keep their existing serial state-owner semantics.
+
+Classical Legacy reorganization and ordinary admission's final current-active
+State fence may reuse the existing bounded full-input root arithmetic. Actual SQL rows, canonical grammar, untouched corruption,
+current stored roots, atomic owner/cursor checks and cancellation remain checked;
+PQ, Growth and Authenticated profiles retain their original root validation.
+This still traverses complete State and is not touched-set/COW completion.
+The [continuation record](../../evidence/pon-throughput-closure-20261107/README.md)
+separates exact-source component controls, paired cost observations and the
+unchanged original 4-second/16-worker and 4,105-block business gates. Failed
+confirmation summaries retain all available hostile attempts, late/error returns,
+repeated inputs, missing observations and nested CPU ownership. Review existing
+SQLite source pins, actual accept-loop readiness and local CodeQL SARIF ownership
+without importing sibling-branch qualification. No parameter, consensus choice,
+production activation or original failed result is promoted by this work.
+
+Frozen native tree `807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7` completed eight
+512-block Legacy observations with identical final and cold-reopened State.
+Activation wall median decreased about 25.3%, while complete-process cost stayed
+approximately unchanged; repeated-sender reexecution decreases likewise do not
+establish confirmed throughput. Full Node lib execution retains three
+environment-denied Unix-socket startup failures alongside 1,150 passes and 31
+ignored tests. Preserve the concurrent `271a87f...` and `3d1b650...` source/evidence
+changes and the strict CodeQL source guard; separately index the later historical
+crypto scan lock rather than rewriting its original capture. Exact outcomes,
+all failed setup attempts and remaining original-resource gates are in the
+continuation record above.
+
+**Stateful useful-Cell computation, 2026-11-07 America/New_York:** Continue
+the existing #688 candidate with the separately named
+[V2 reference relation](specs/pon/USEFUL_CELL_RELATION_V2.md). Replay actual
+source preprocessing, feature/expert masks, all five W1 products, recurrent
+memory, sampling state, STOP/abstention/tool proposals and an optional exact
+masked/clipped momentum update. Bind actual intermediate values to one task
+and reject independently valid segments from another task. Separate historical
+parent/protocol-time verification from current-clock verification; neither
+pure result grants owner authority. Integrate consumer expected context with
+the existing Hepta guarded generation journal, CURRENT and FinalUse boundaries,
+not a second operation/checkpoint store. Preserve V1 source and semantics.
+The finite integer source-router profile is not ordinary multimodal Hepta,
+a native Node work entry, a succinct proof, a training-quality result or work
+hardness qualification. Existing service, History, recovery and PQ gates remain
+independent and their failed evidence remains retained.
+The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
+contains the complete local replay, counterexample/repair and source-pinned gates.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
@@ -8443,3 +8693,128 @@ the execution evidence must bind any pass to the corrected source. See the
 [authority report](../security/PQ_AUTHORITY_PREFLIGHT_20261108.md) for this
 omission and the distinct hosted historical-evidence and business-target
 failures. No whole-chain or production claim is promoted by this follow-up.
+
+### 2026-11-07 funded W1 generation and matched runtime gates
+
+The recovered baseline preserves the complete v2 independent expected-artifacts
+binding. The native winner records the actual target predicate event and original
+Linux monotonic clock/boot before downstream proof work. The independent receiver
+verifies raw complete receipts against the original header and external 64-byte
+artifact selection. Cancellation after an ACK or the final ABBA row retains the
+completed fact while vetoing operation success. The nested equal-five-second
+reaper race was reproduced with real distinct sessions; an explicit outer cleanup
+budget and recursive owner cgroup checks preserve terminal truth. Cleanup time
+does not restore proof eligibility or replace the original deadline.
+
+The staged backend adds bounded segment parallelism, balanced recursion and
+explicit worker/Rayon plans while retaining complete claim continuity, every
+issued worker's drain, strict SDK seals and independent v2 verification. The
+explicit retained-guest feature checks the actual historical ProgramBinary and
+image ID; it does not claim a fresh guest compilation. Startup/loading remain
+inside the observed execution path. Neither API object reuse nor thread joins
+prove that backend processes terminated or resources were released.
+
+GenerationV2 connects existing NativeTask funding/operation owners and M12
+holds/effects to real local and provider target interfaces. Its task fence is
+persistent across generation journals and reorganization. Pending operations
+observe their original dispatch; cancellation does not create a replacement
+request, settlement entitlement or legal native tag. The isolated research Node
+and its height window are not an active production chain. Unknown GPU/resource
+usage remains unknown, retains its hold, and cannot authorize payment.
+
+The actual ten-block ABBA campaign records twenty full native replays and twenty
+complete historical-receipt verifications. Inner medians are 2.5871055 ms and
+34.7207115 ms: the proof path is 13.420678631 times the native path. Raw receipt
+bytes are 5.191572739 times the native input. Supervisor/polling outer time is a
+separate clock. Repeated verification of one receipt adds no fresh generation
+sample and establishes no prover or publication population p99.
+
+The [detailed evidence and limitations](../../evidence/pon-w1-runtime-recovery-20261107/README.md)
+retain failed observations, actual provider refusals, source/build identities and
+original business/security gates. Same-host equal quotas alone do not remove
+cache, bandwidth or background-load interference. Fresh full executions, funded
+expensive-generation observations and later remote receipt handoffs must each
+supply their own original operation, process, clock and complete artifact evidence.
+
+## 2026-11-07：W1 显式 owner 撤销与原操作冷恢复候选
+
+在独立 integration 工作树接入昂贵 generation 的显式研究 owner 撤销。原完整入口维持原成功条件；新增精确 ignored 入口仅在固定 runner 的首个真实 prove 命令及固定 r0vm 子进程被观察为存活后，按“持久 owner 请求 → 既有 M12 cancel 与原状态读回 → 一次原 target cancel → 原 operation reconciliation”处理。Provider 失败不构成 owner 授权；已有撤销只核对，TooLate／Unknown 不授权新的 target 操作。
+
+Target 终态必须观察绑定 inode/device 的完整 child cgroup 子树与层级 populated=0，直接 cgroup.procs 为空不足以成立。直接 child wait、递归无存活任务和全部后代均已 wait/reaped 分开记录；后者及 GPU 计量仍未知，M12 完整 resource cap 不释放，provider payment 不被授权。
+
+显式 cancel-reserved 仅用于新建研究 Node：精确 owner-signed NativeTask tag 3 wire、packet、nonce 与 operation 在唯一提交前持久化。冷入口先核已有 dispatch intent 及完整绑定，只观察同一 provider job 与同一 native wire 的当前 canonical 状态，不重签、不换 nonce、不重新派发。原本地撤销历史不随链 reorg 回滚。M12 既有 API 不能证明同 reason 并发 Replay 本次新追加事件，因此结果为 CancellationObserved，new_event_proven=false；不冒称 AcceptedNew。
+
+候选第三轮实际通过 Node 15 项（新增 6 项，3 个重型／cold 入口仍 ignored）、M12 原 10 项、Python target 7 项与 owner helper 5 项，以及两 crate 的 strict Clippy、自有 Rust fmt 和实际 Cargo artifact 发现。前两轮的真实编译失败及 14/15 测试失败原件保留；reorg 控制已改为构造更长有效 fork，不削弱节点 canonical 权威。Python mandatory 合同由 86 增至 94，新增源路径通过原 inventory／corpus 机制注册。
+
+此条仅记录代码与候选控制进展。新的提交仍须完成精确 committed-source 资格，随后才运行独立新 Node、原 operation、新 600 秒研究 deadline 下的真实昂贵取消及进程重启后的冷核对。当前没有据此宣称该重型试验、生产 owner 服务、原业务预算或完整密码学安全资格通过。
+
+冻结 source A d3037ca5dfb6f301757c159b7888dca9b0317be0 的两条完整 fresh pipeline 保持原源码、各自原 7200 秒研究 deadline、原 target 与资源；此刻仍在递归阶段，其终态与本候选资格分开记录。A 上一条原配额窄探测已实际以 DEADLINE_EXHAUSTED／124 退出：4 秒、0.25 CPU、2 GiB，native winner 成立但无完整证明／receiver ACK；该样本不替代 16 hostile／6 confirmations 的完整业务矩阵，也不把含清场的 7.402288287 秒称为证明生成时间。
+
+### 2026-11-07：C1 实际 owner 试验保留失败，统一本地 W1 请求容量
+
+C1 提交 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11` 的五角色开发资格已经实际闭合；原 native 汇总器因沿用 A 的 240 项预期而失败的原件仍然保留，后续精确枚举确认原 240 项全部保留，integration 原有三项新增测试使 C1 为 243 项。此项开发资格不等同于昂贵取消执行已经通过。
+
+随后唯一实际 owner 试验 `1a1b7db09a3-12894-c8e` 在原 600 秒研究期限内以 exit 101 结束；实际选择的 ignored 入口执行了 1 项、失败 1 项。目标请求含 339 个完整文件 pins，原始 UTF-8 为 68,909 bytes，紧凑 canonical 仍为 66,550 bytes，均超过旧本地 reader/target 的 65,536-byte 上限。helper 在派发前报 `bounded JSON`；原 target root、proof 目录和外层进程 cgroup 均观察为不存在，本次新增完整证明为 0，未形成 owner 取消成功事实。原请求 SHA256 为 `eff76555c5166818cbf7b833e12c43d315f6fd6bb684d8031f09e70982910071`，原 operation 为 `285bbcda30e7b735bdb828c1d2d838ab3f01501b00166a8074e271d83d0dc654`，原 deadline `1164217362239646` 没有重选。
+
+对已关闭原件的独立只读检查确认：M12 仅有 Prepare、Intent 各一条，完整 payload/statement/hash chain 一致；没有 BindJob、Cancel、Verified、Settlement 或 Payment。隔离研究 Node 仍只有原 Reserve，NativeTask 为 Reserved、remaining 1000。原 CPU/GPU/内存/receipt 资源 cap 全部保留，GPU 使用量仍未确证；没有资源 credit 或 provider 付款。这个失败操作及其资金、配置、请求、deadline、数据库原件均保留；后续修复只用于新 source qualification 和全新的 operation/Node/target/output。
+
+容量修复将 target、普通 generation runtime、owner cancellation helper 接入同一个严格请求 loader，明确把**本地入站 raw UTF-8 文件上限设为 128 KiB**，并限制一次最多读取上限加一字节。重复 JSON key、非有限值（含指数溢出）、非 UTF-8 和错误 shape 在派发前拒绝。全部 source pins 保留。原 V2 namespace、字段、canonical 排序/分隔符/UTF-8 编码、哈希算法、clock domain、SQLite application_id/user_version/SQL 及原 stored BLOB 读回保持不变；这是一项由新源码身份绑定的本地 admission 容量修复，没有新增 canonical BLOB 上限，也没有改变共识域或旧操作内容。
+
+六个 owned 文件的 desktop 候选短控已实际完成：target 13、owned runtime reader 7、owner helper 7，合计 27 项通过、0 skip、0 full proof。控制覆盖真实 339 文件 pins 的大请求、既有 preflight/dispatch/replay 路径中的有限非 proof 子进程、精确容量边界及有界读取、严格 JSON 与原身份替换拒绝。旧 68,909-byte 请求只作只读回归；新 target 的源码 pin 检查仍拒绝其旧执行身份，没有重派。候选 manifest SHA256 为 `befc16bb6c00b676356daa17a8fbea3bc839ca62e0ffb8e7157c4e06edb7f0f7`，原失败资金读回 SHA256 为 `93374756a3ca5e5e9b5ff18ec641a3c2304c1a8a64579c57179d2c089604de16`。
+
+本条记录形成时，新提交的完整精确资格和新的实际昂贵取消/独立冷恢复尚未完成。原业务的 4 秒、0.25 CPU、2 GiB 预算及完整密码学安全资格仍未通过；新的 600 秒研究试验不会替代这些门槛。
+
+
+### 2026-11-07：W1 两份 fresh 证明、ROG 原钟接收与真实 owner 取消终态（C2 证据收口）
+
+本轮测量源码分开固定为 A `d3037ca5dfb6f301757c159b7888dca9b0317be0`、取消集成 C1 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11`、请求容量修复 C1b `0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf`。完整原件、源资格、最终 receipt、成本及状态审计收口到 [W1 fresh runtime 证据](../../evidence/pon-w1-fresh-runtime-20261107/README.md) 与 [机器可读结论](../../evidence/pon-w1-fresh-runtime-20261107/summary.json)。当前提交只追加本计划和该新 evidence 目录；runtime、Cargo graph/lock、CI 与 corpus 保持 C1b 的字节。
+
+- 两组固定输入各完成 1 份 fresh 完整证明；每份均为 43 个新 segment、43 次 lift、42 次 join、0 递归 checkpoint 复用。分段／平衡的 pipeline 为 6,044.373854 秒，顺序为 5,939.121782 秒；本对样本前者慢 105.252072 秒。各配置 8 CPU／8 GiB，但共享主机、不同 CPU 集合与 worker 计划，不能据此宣称因果加速或总体 p99。
+- 本地独立验证及新 ROG receiver 均完成。原父时钟的 winner→完整远端返回包为 6,648.759587／6,658.476311 秒，仍分别距原始 deadline 有 542.217424／533.531039 秒。未跨主机相减时钟，未延长 proof deadline；该时间包含调度、传输和取回，不是部署 WAN 或中奖区块 Node admission 资格。
+- 共同 Rayon=2、2 CPU／8 GiB 的新 ABBA 实际 80 行全部完成；两份 receipt 的 proof/native 内层验证中位数比为 13.063490／13.430828，receipt/native payload 字节比均为 5.191573。每份只有 20 次 proof 重复验证，p99 是样本最大值；这些不是新增生成样本。内层验证与载荷体积未优于 native，部署传输收益未建立。
+- 原业务 4 秒／0.25 CPU／2 GiB 实测退出 124，没有完整 proof 或 ACK；总观察 7.402 秒含终止清理。原业务 hostile 输入、唯一确认交易与 6 次确认全流程仍未执行，宽研究窗口不替代原预算。
+- 昂贵完整生成确已接入 NativeTask Reserve 和 M12 Prepare→Intent→BindJob，并完成独立完整验证；该原操作仍 Pending，NativeTask Reserved／1,000、GPU UNKNOWN、资源 cap 保留、provider 未付款。没有把完整 proof 通过转换为自动资金许可。
+- 原 C1 真实取消试验在分发前因 68,909 字节请求（canonical 66,550）超过旧 64 KiB 而 exit 101，原操作、原 deadline、Prepare/Intent/Reserve 和全 cap 保留。C1b 采用显式 128 KiB 原始 UTF-8 容量与共享严格有界解析；27 项候选测试及精确已提交源码资格均通过，V2 canonical/hash/stored domains 未改变。
+- C1b 新 operation `ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e` 真实启动固定 r0vm 后接受 owner 取消。原 target terminal/cancelled、sticky veto、不可重派，子 cgroup 递归为空；主 job 和新进程 cold job 均实际 exit 0、输出完整持久，各通过 1 个精确入口。Cold 沿同一 statement/operation/原 deadline，0 新生成、0 target cancel 请求、0 native 交易。后读回列出的 4 个 PID birth identity 与 3 个原 scope 均 ABSENT；完整历史全部后代 wait/reap 与资源计费仍 UNKNOWN。
+- 独立私有副本审计核到 M12 Prepare/Intent/BindJob/Cancel 各 1 条、完整序号与哈希链绑定、没有 Verified/Settlement/Payment，cap 不释放。实际请求完整保留 339 pins，raw 68,944／canonical 66,585 字节，确实走通旧容量以上的新路径。原 Cancel packet 在 canonical height 2 一次包含、nonce 0→1→2；本金退回 1,000，Cancel 账户净增 709，全程净变 −710。291/419 是费用相关算术残差，未独立解码 fee 字段；未实际重发旧 wire，也未把本金退款当成 provider 付款或资源 credit。
+- C1b 精确源码四门为 67 条成功命令和 770 项实际测试方法结果，聚合另有 4 条只读检查；CI 471 项含 mandatory 104。短控中 3 个 heavy 入口明确 ignored，真实取消和 cold 另行单独执行。旧 A/C1 qualified ELF 及失败原件保留；复制缓存如实标记非独立 cleanroom build，guest 未重编。
+- 公开包只含最终证明、源绑定输入、列明的小型原件、审计与 SHA 清单；四库私有页及完整私有 dump 不公开。准备／采集／辅助观察和包内成员数检查失败均保留，修正不重跑资金操作或证明。Kaggle CUDA 探针成功但 build-only 请求正常 guard 拒绝、Colab 原绑定/释放冲突及后续只读状态均维持原记录，0 GPU W1 proof。
+
+四门仍分别保留部署 HOLD：中奖 W1 的真实网络 Node admission、完整历史资源归属、昂贵任务重组/超时全路径与正向一次性 provider 付款、原业务预算、总体生成尾延迟、验证/传输部署收益及完整密码学/PQ/语义/DA/模型效用条件未完成。最终发布提交的精确资格由独立外部 attestation 引用实际被测 commit；事后资格结果不写回并改变该被测提交。没有部署、激活、force push、自审批准或受保护主分支绕过。
+
+### 2026-11-08：原始 deadline 终态对账与独立研究重组入口
+
+本候选修正已持久化 M12 Cancel 的派发重放结果为 Done，保留原资源 charge；没有修改旧实验记录。新增 owned terminal V3 以独立观测摘要域绑定同一 job、operation、request、source、原 clock/deadline，已记录 Failure 的冷恢复不再访问 runtime。资源未知写 Failure Unknown 并保留全 cap；已知超额原值保留，不裁剪，不授权 Positive、provider 付款或本金退款。
+
+新研究计划域 TRNM-W1-OWNER-TIMEOUT-PLAN1 严格区分原 target worker 的 original-deadline 与主动 cancelled。入口只在实际固定 r0vm 已启动后等待同一原 deadline，由目标自己的原期限终止；actual helper 和 Rust caller 退出证据通过窄 terminal adapter 后，先写 Failure Unknown，再单独记录 owner veto 与普通 NativeTask tag 3。本金退款后构造不含该 Cancel 的更长有效分支，实际关闭再冷开 Node 和 M12，确认不重派且 cap 不回滚；仅追加空子块恢复原 Cancel packet 的 ancestry，不重签、不另造资金动作。
+
+候选实际控制为 Python owner helper 8 项、Node async 20 项、M12 11 项通过，两个 crate 的 strict Clippy 通过；重型入口在普通控制中仍 ignored。新的 120 秒、8 CPU／8 GiB 试验须在本候选冻结的干净提交上另行执行并保留原 config、source、唯一 operation、deadline 与全套成功或失败原件。此段仅记录实现与候选控制，不预先声称昂贵 timeout、退款重组、完整历史 wait/reap、GPU 计量或资源结算已经通过；固定 guest 不重编，原业务预算及部署资格仍 HOLD。
+
+
+### 2026-11-08：W1 四门整合、证据绑定与前瞻式进程回收
+
+本轮从 C3 `abab79dac0cb89eb2753d3f579119ac135650eb5` 整合 M12 topic `a5ec1ba30916400c345cb47679602cfb1b30a65f`，并修复实际 stdout 摘要未绑定、整数/布尔类型别名及最终输入 pin 闭合缺口。提交前完整树已实际执行 12 项证据绑定、20 项审计、10 项 CI 接线负控、11 项真实 receiver；独立桌面 collector 14/14 及后续 startup 等待窗定向控制均通过。mandatory W1 command block 固定 151 项，真实 receiver 11 项；最终精确提交资格单独固定，不把开发树控制充作精确提交资格。
+
+[四门原件与边界](../../evidence/pon-w1-four-gates-20261108/README.md) 包含原 80 行 ABBA 严格重审、旧取消费用独立验算、所有 collector 首轮失败/修正、新 system-scope CPU 隔离探针和 C3 业务 CI 原始失败。短隔离探针实际 12/12 通过，但未运行完整 zkVM；旧 GPU 未知与 full cap 均不回填。所有 80 行仍是 verification-only，完整生成两方案仍各 n=1。
+
+M12 新 typed terminal 接口仅在原 job/source/clock/deadline 绑定满足时写入失败终态；持久化 owner cancel 禁止再次派发；资源未知保持全额 cap，重组不回退本地操作/取消历史。新的真实 timeout/refund/reorg 需独立操作记录，旧两项 M12 状态保持其原事实。本轮首个新 timeout operation 因旧 C3 runner 的编译时 checkout 身份被严格拒绝，不延长原 deadline、不重派失败操作；重新构建新源码 runner 后只能启动全新预声明操作。
+
+四门继续 HOLD：合法原 winner 的 Node admission、部署 WAN、完整历史树/资源计费、正向 provider 付款、匹配完整生成重复实验、业务预算以及完整密码学/协议安全资格尚未闭合。原业务失败不可被新的短控制覆盖。
+
+
+C4 精确候选 `5c489cc2064c3edfc6641f21fea4b46cb0c8e24e` 的原始资格发现旧 PQ source pins 拒绝新 workflow/M12/source bytes，以及既有 200ms late-observation 控制在启动前耗尽预算。后续最小修正将 8 个新源加入 required 与独立负控镜像，更新 21 个既有 pin，维持 645 个精确 blob 校验及所有 HOLD/false 资格字段；不删除或放松 reader 校验。该既有 observer 方法改为真实启动、WNOWAIT 保留原退出0，再于预声明原 deadline 之后交给真实 wait4 观察，method 仍为32，生产计时源码不变。全部 C4 失败原件保留。
+
+
+### 2026-11-08：保持 C5 原件，整合并发推进的 base62
+
+C5 034aa74358e0a5fa33f33e83cb63669e9738da4b 已完成精确本地资格及新的真实昂贵 original-deadline→Failure Unknown→owner取消/本金退款→原Cancel重组恢复→独立cold；[冻结C5事后证据](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/05d8bb25dacab1d6589fa86061e6c23220b96b1d/evidence/pon-w1-four-gates-20261108/README.md) 保留570普通测试通过、4个ignored另列及全部原操作/deadline。Done只闭合派发，资源未知且全cap保留，无provider付款；本轮完整生成样本仍未增加。
+
+发布读回发现integration base从cb314bb4656e5da4844325cd83994ab4764fe8e9并发推进至62d2d90c9e1f4c8450c89843f1e08360a24283ce。新的隔离候选整合genesis ReorgStep的staging arithmetic缓存保护及既有legacy reorg负控加强，保留完整SQL/root/ancestry校验。两份精确pin文件的三处冲突必须绑定合并后的实际store/workflow/test bytes，并保留C5全部645pins及新增profile路径；不通过选取旧一侧pin来冒充合并身份。
+
+C5 checkout、原目标缓存、两个已发布证据分支身份和所有旧操作均保持原事实。当前旧PR merge ref991168a783c3bf82e04f978091adbdc740998c47仍基于旧base，不能作为本新候选资格。新合并须在冻结提交后独立核对source、构建、严格控制和新的120秒研究操作，所有新clock/operation/二进制另行记录。此处不预先声称新候选资格、原业务预算或部署安全门通过；四门继续HOLD。
+
+
+**2026-11-08：C7 固定 base96 最小整合，等待新事件与精确源码资格。** 已冻结 C6 `2bdd252aa6c300b7431b9ee897b254b7953cf562` 在独立新研究 Node/M12 operation 实际完成原 120 秒自然 deadline→Failure Unknown→独立 owner veto／本金退款→同一原 Cancel 的重组恢复及独立 cold；main 与 cold 各有 1 个实际 heavy 入口通过，Done 仅闭合派发，consumed=null、全 cap 保留、无 provider 付款、0 新完整 proof，确定性 NativeTask Cancel 与 C5 同 wire/packet，不能累计两轮本金。C6 首轮 staged 两项失败、原 backend 900 秒／124、唯一同源码同参数 32 项隔离复核及新 cached backend attempt 均各自保留，不把原失败改为通过。本 C7 将固定 base `96a241bf43f6a46d35dfb3d4ced9594ed8ceca75` 正常合入 C6：新增 4 个独立 History 诊断路径、Host helper 增加 6 行、corpus 增加 5 项 pin／required；集成检查保留了 embedded source inventory 的原失败，随后使用仓库原生成器仅注册新增 Rust integration test，并将该既有 inventory pin 精确重绑；全部既有 pin 路径和拒绝条件保留。生产 Rust src、M12 与 W1 生成代码不变，最终 C7 tree 不以未加计划段和清单修复的静态 d73 预览替代。已观察的 39 项远端 CI source-context 前置拒绝（38 个 prospective-merge lane 与 1 个 CodeQL export）绑定事件 base62，而实际 merge 父提交使用 base96/C6，属于正确拒绝；不更改 guard/context、不重写原事件，也不将其他 artifact／业务失败归入该原因。C7 必须独立核验新事件的 base/head/merge 有序父提交与 canonical tree，并在冻结的新 source commit/tree 上另取精确资格；本段不授予新候选、原业务预算、完整资源或部署安全资格，四门继续 HOLD。
+
+
+2026-11-08 C8 固定 9417 整合候选：C7 `40a3a45d6b8afc5c4706c5235fec47634f4aabbe` 的独立精确资格实际为 69 commands、655 普通 PASS、4 ignored；其昂贵 operation 仅保留 launch-Unknown，未取得 heavy/cold 执行证据，C5/C6 既有真实路径不转记为 C7。本候选从冻结 C7 正常合入固定 `9417e495165865ef6c1288b39084856e31020634`（直接父 `91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c`），理由是实际 prospective 整合在 recent-batch workflow 与 PQ corpus 出现精确 pin 冲突，且上游包含真实生产 historical commitment 的有界 replay-prefix／current-parent 算术保留变化。保留双方 W1/M12 与原缓存边界控制、上游两组既有方法内的新增子例、History source.json 自引用修正及全部必要 pins／required 路径；仅按自动合并后的实际 store.rs、最终 workflow 字节重绑冲突 pin。生成清单为已有路径的 include_bytes 登记，保持原字节并独立 --check；不改 source guard、事件上下文、原 deadline 或接受条件。C8 尚待其最终 commit/tree 的全量精确构建与执行资格以及新 event/base/head/merge tuple；候选检查不继承 C7 PASS，不新增完整 proof、正向付款、完整资源结算或四门资格。冻结仅针对本固定 base，不自动追随以后远端 base 漂移。

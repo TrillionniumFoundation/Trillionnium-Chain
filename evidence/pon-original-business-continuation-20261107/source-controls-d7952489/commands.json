@@ -1,0 +1,299 @@
+[
+  {
+    "name": "source-before",
+    "argv": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+      "--output",
+      "/workspace/scratch/ae364bcbabfb/continuation-validation/d7952489/source-before.json"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 3.3237969875335693,
+    "log": "source-before.log",
+    "bytes": 423,
+    "sha256": "449eb9dd35d8e79ad89b1f3b6749e06122585ebca4dd1f1b7d175bb6f9377b19",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "pq-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 27.78342890739441,
+    "log": "pq-controls.log",
+    "bytes": 137,
+    "sha256": "a9ac4bc804859bc53bea01484bbfa279a330b90d18d086cb45cdf17b39971ccf",
+    "expected_tests": 37,
+    "observed_tests": 37,
+    "passed": true
+  },
+  {
+    "name": "source-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 3.373745918273926,
+    "log": "source-controls.log",
+    "bytes": 6898,
+    "sha256": "1793be55d7cdbae9ea0474eb088968db84bdd5e677b8f187fa3c8a2753c31711",
+    "expected_tests": 43,
+    "observed_tests": 43,
+    "passed": true
+  },
+  {
+    "name": "push-source-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_integration_push_source.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 2.6222596168518066,
+    "log": "push-source-controls.log",
+    "bytes": 112,
+    "sha256": "8e6fbff4fcd0204bf6e3a2e636a42016df26775cb17386d3d515234a85c673b7",
+    "expected_tests": 13,
+    "observed_tests": 13,
+    "passed": true
+  },
+  {
+    "name": "from-zero-reader",
+    "argv": [
+      "python3",
+      "scripts/ci/test_run_from_zero_native.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 19.89948534965515,
+    "log": "from-zero-reader.log",
+    "bytes": 24541,
+    "sha256": "ee62969d13f9649c223f4eef5e2fc792339655f04453bd49855bc39e74867711",
+    "expected_tests": 149,
+    "observed_tests": 149,
+    "passed": true
+  },
+  {
+    "name": "fresh-reader",
+    "argv": [
+      "python3",
+      "scripts/ci/test_run_w1_fresh_service_v1.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 3.9772398471832275,
+    "log": "fresh-reader.log",
+    "bytes": 128,
+    "sha256": "4c9888e6b5a90497598278659b6960e1dd3ac12923115bce27201dd046bab286",
+    "expected_tests": 29,
+    "observed_tests": 29,
+    "passed": true
+  },
+  {
+    "name": "host-history-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_from_zero_host_ci.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 1.4678058624267578,
+    "log": "host-history-controls.log",
+    "bytes": 177,
+    "sha256": "7ea7671e3a9faed49bfd8bd8227a756e787aebda432403a540bfa36c9cbba601",
+    "expected_tests": 78,
+    "observed_tests": 78,
+    "passed": true
+  },
+  {
+    "name": "process-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_observation_process.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 6.032474994659424,
+    "log": "process-controls.log",
+    "bytes": 1102,
+    "sha256": "15e623e8e2e4fbd4682e5c5f80994f41ca18ad8e9c3335fc3b9dde26b2362278",
+    "expected_tests": 7,
+    "observed_tests": 7,
+    "passed": true
+  },
+  {
+    "name": "command-recorder-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_record_pq_native_command.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 0.41527366638183594,
+    "log": "command-recorder-controls.log",
+    "bytes": 576,
+    "sha256": "929bc9c292256d74234b8fb4a90806260eeb0592228b2933dd8e5e7731a19d91",
+    "expected_tests": null,
+    "observed_tests": 4,
+    "passed": true
+  },
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11413002014160156,
+    "log": "ci-contract.log",
+    "bytes": 180,
+    "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "pq-source",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 0.2646760940551758,
+    "log": "pq-source.log",
+    "bytes": 557,
+    "sha256": "9d1f08792191c903aed024ee021ae6a756750431f1fe8226c9b63005b2a09227",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06413030624389648,
+    "log": "inventory.log",
+    "bytes": 35,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "repository-links",
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 47.49336218833923,
+    "log": "repository-links.log",
+    "bytes": 307,
+    "sha256": "2712d61af1c2b804140d640e728e14e40635ee54fdbf904b4f9793293180894d",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "cargo-graph",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 0.2759842872619629,
+    "log": "cargo-graph.log",
+    "bytes": 853219,
+    "sha256": "78636ecb6008a42209a17fa8f7075647ccf7c04243d7af5d7edd65fa72d88bd4",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "format",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 12.131522417068481,
+    "log": "format.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  },
+  {
+    "name": "source-after",
+    "argv": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+      "--output",
+      "/workspace/scratch/ae364bcbabfb/continuation-validation/d7952489/source-after.json"
+    ],
+    "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "head": "d7952489ceaa5ae191a7bbcd96a3d3cc8350f785",
+    "exit_code": 0,
+    "elapsed_seconds": 2.8217642307281494,
+    "log": "source-after.log",
+    "bytes": 423,
+    "sha256": "449eb9dd35d8e79ad89b1f3b6749e06122585ebca4dd1f1b7d175bb6f9377b19",
+    "expected_tests": null,
+    "observed_tests": null,
+    "passed": true
+  }
+]

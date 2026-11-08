@@ -1,0 +1,30 @@
+{
+  "files": [
+    {
+      "path": "scripts/audit_w1_deployment_comparison.py",
+      "base_sha256": "bd687aaef2d566bfb2aaff92df0e86480e36d1142166d814931c8a34d3faf1ab",
+      "new_sha256": "b881f25f78e2cafabcb1453f8e27645dc34dfe046134dfd76d508963f91b3de0"
+    },
+    {
+      "path": "scripts/ci/test_w1_deployment_comparison_audit.py",
+      "base_sha256": "d2eec15fcb3428ae7def7b08d247769a88a144e1eac252330d5971838c49be8c",
+      "new_sha256": "780731e6086839b0ed3286e25b7842f902dbad401dfa6e933ef8111300564fd1"
+    }
+  ],
+  "patch_sha256": "8a03ff9db4555e03592ee4d86351f04957f480e1348c3914da01bedce838389b",
+  "controls_passed": 20,
+  "actual_readback_rows": 80,
+  "actual_receipts": 2,
+  "fresh_proofs": 0,
+  "attack": {
+    "scope": "modified raw type in isolated copy of actual retained ABBA records; no new verification or proof",
+    "pinned_report_unchanged": true,
+    "old_audit_accepted_false_index": true,
+    "new_audit_rejected_false_index": true,
+    "new_error": "embedded row/stage/stdout differs from retained raw bytes"
+  },
+  "actual_recomputed_ratios": [
+    13.063490487315951,
+    13.430827786834168
+  ]
+}

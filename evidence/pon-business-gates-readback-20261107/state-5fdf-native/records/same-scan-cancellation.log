@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized] target(s) in 0.14s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test store::canonical_row_reuse_tests::every_original_scan_cancellation_and_late_corruption_still_refuses ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1199 filtered out; finished in 9.66s
+

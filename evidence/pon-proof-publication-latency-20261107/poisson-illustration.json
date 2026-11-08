@@ -1,0 +1,38 @@
+{
+  "assumptions": [
+    "competitor arrivals are homogeneous Poisson",
+    "latency is independent of competitor arrivals",
+    "rate describes competing complete eligible work, not an asserted DAA interval"
+  ],
+  "competitor_rate_per_second": 0.1,
+  "consensus_admission": false,
+  "latency_budget_seconds": 0.10050335853501441,
+  "max_competition_probability": 0.01,
+  "production_activation": false,
+  "rows": [
+    {
+      "at_least_one_competitor_probability": 0.009950166250831949,
+      "latency_seconds": 0.1,
+      "log_no_competitor_probability": -0.010000000000000002,
+      "no_competitor_probability": 0.9900498337491681,
+      "within_model_budget": true
+    },
+    {
+      "at_least_one_competitor_probability": 0.09516258196404043,
+      "latency_seconds": 1.0,
+      "log_no_competitor_probability": -0.1,
+      "no_competitor_probability": 0.9048374180359595,
+      "within_model_budget": false
+    },
+    {
+      "at_least_one_competitor_probability": 0.6321205588285577,
+      "latency_seconds": 10.0,
+      "log_no_competitor_probability": -1.0,
+      "no_competitor_probability": 0.36787944117144233,
+      "within_model_budget": false
+    }
+  ],
+  "schema": "trnm-pon-proof-publication-poisson-model-v1",
+  "scope": "conditional homogeneous-Poisson illustration; not a fork model",
+  "stale_block_probability": null
+}

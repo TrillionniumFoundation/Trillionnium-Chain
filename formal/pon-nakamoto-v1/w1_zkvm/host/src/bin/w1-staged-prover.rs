@@ -1,5 +1,12 @@
 //! Checkpoint actual full-W1 STARK segments, then require recursive compression.
 //! Checkpoints are experiment artifacts, never consensus admission capabilities.
+#[path = "w1_staged_prover/guest_identity.rs"]
+mod guest_identity;
+#[path = "w1_staged_prover/parallel_segments.rs"]
+mod parallel_segments;
+#[path = "w1_staged_prover/schedule.rs"]
+mod schedule;
+
 use anyhow::{bail, ensure, Context, Result};
 use bincode::Options;
 use risc0_zkvm::{
@@ -15,6 +22,7 @@ use std::{
     io::{Read, Write},
     path::{Path, PathBuf},
     process::Command,
+    sync::Mutex,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 #[cfg(not(feature = "statement-v2"))]
@@ -57,7 +65,7 @@ fn check_staged_journal(input: &[u8], journal: &[u8]) -> Result<[u8; 32]> {
 const R0VM_SHA256: &str = "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6";
 const MAX_ASSET: u64 = 64 * 1024 * 1024;
 const MAX_RECEIPT: u64 = 16 * 1024 * 1024;
-const MAX_SEGMENTS: usize = 4096;
+const MAX_SEGMENTS: usize = schedule::MAX_ITEMS;
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -105,6 +113,13 @@ fn write_new(path: &Path, bytes: &[u8]) -> Result<()> {
 }
 
 fn event(out: &Path, value: serde_json::Value) -> Result<()> {
+    // A parallel stage shares one log. Serialize the whole JSON row, including
+    // its fsync, so concurrent workers cannot interleave a syntactically valid
+    // event into unrelated fragments.
+    static EVENT_LOCK: Mutex<()> = Mutex::new(());
+    let _guard = EVENT_LOCK
+        .lock()
+        .map_err(|_| anyhow::anyhow!("stage event writer was poisoned"))?;
     let mut log = OpenOptions::new()
         .create(true)
         .append(true)
@@ -232,23 +247,20 @@ fn decode_segment(bytes: &[u8]) -> Result<SegmentReceipt> {
         .deserialize(bytes)?)
 }
 
-fn validate_segment(
+// Integrity and termination checks for an individual receipt. This deliberately
+// does not authenticate its link to the original image or an earlier prefix.
+fn verify_unlinked_segment(
     receipt: &SegmentReceipt,
     index: usize,
     count: usize,
-    expected_pre: Digest,
     journal: &[u8],
     ctx: &VerifierContext,
-) -> Result<Digest> {
+) -> Result<()> {
     ensure!(
         receipt.index as usize == index,
         "segment receipt index mismatch"
     );
     receipt.verify_integrity_with_context(ctx)?;
-    ensure!(
-        receipt.claim.pre.digest() == expected_pre,
-        "segment continuation mismatch"
-    );
     if index + 1 == count {
         ensure!(
             receipt.claim.exit_code == ExitCode::Halted(0),
@@ -264,6 +276,22 @@ fn validate_segment(
             "nonfinal segment cannot end or commit output"
         );
     }
+    Ok(())
+}
+
+fn validate_segment(
+    receipt: &SegmentReceipt,
+    index: usize,
+    count: usize,
+    expected_pre: Digest,
+    journal: &[u8],
+    ctx: &VerifierContext,
+) -> Result<Digest> {
+    verify_unlinked_segment(receipt, index, count, journal, ctx)?;
+    ensure!(
+        receipt.claim.pre.digest() == expected_pre,
+        "segment continuation mismatch"
+    );
     Ok(receipt.claim.post.digest())
 }
 
@@ -562,6 +590,7 @@ fn recursive_checkpoint(
 ) -> Result<SuccinctReceipt<ReceiptClaim>> {
     let path = out.join(format!("{name}.bin"));
     if path.exists() {
+        let reverify_started = Instant::now();
         let bytes = bounded(&path, MAX_RECEIPT)?;
         let receipt: SuccinctReceipt<ReceiptClaim> = bincode::DefaultOptions::new()
             .with_fixint_encoding()
@@ -575,7 +604,13 @@ fn recursive_checkpoint(
         );
         event(
             out,
-            json!({"stage":"RECURSIVE_CHECKPOINT_CRYPTOGRAPHICALLY_REVERIFIED","name":name,"eligible_as_final":false}),
+            json!({
+                "stage":"RECURSIVE_CHECKPOINT_CRYPTOGRAPHICALLY_REVERIFIED",
+                "name":name,"elapsed_ns":reverify_started.elapsed().as_nanos(),
+                "receipt_bytes":bytes.len(),"receipt_sha256":sha(&bytes),
+                "checkpoint_reused":true,"eligible_as_fresh_recursive_operation":false,
+                "eligible_as_final":false
+            }),
         )?;
         return Ok(receipt);
     }
@@ -596,9 +631,19 @@ fn recursive_checkpoint(
     let bytes = bincode::serialize(&receipt)?;
     ensure!(bytes.len() as u64 <= MAX_RECEIPT, "recursive receipt bound");
     write_new(&path, &bytes)?;
+    ensure!(
+        bounded(&path, MAX_RECEIPT)? == bytes,
+        "saved recursive bytes changed"
+    );
     event(
         out,
-        json!({"stage":"REAL_RECURSIVE_STARK_SAVED_VERIFIED","operation":operation,"name":name,"prover_ns":prover_ns,"verifier_ns":verifier_ns,"receipt_bytes":bytes.len(),"receipt_sha256":sha(&bytes),"eligible_as_final":false}),
+        json!({
+            "stage":"REAL_RECURSIVE_STARK_SAVED_VERIFIED","operation":operation,"name":name,
+            "prover_ns":prover_ns,"verifier_ns":verifier_ns,
+            "prover_ns_scope":"SDK proving call, including any startup or loading it performs; excludes constructor, verification and publication",
+            "receipt_bytes":bytes.len(),"receipt_sha256":sha(&bytes),
+            "checkpoint_reused":false,"eligible_as_final":false
+        }),
     )?;
     Ok(receipt)
 }
@@ -638,7 +683,261 @@ fn lift(r0vm: &Path, out: &Path, index: usize, commit: &str, runner: &str) -> Re
     )
 }
 
-fn compress(r0vm: &Path, out: &Path, commit: &str, runner: &str) -> Result<()> {
+struct RecursiveNode {
+    range: schedule::Range,
+    claim: ReceiptClaim,
+    receipt: SuccinctReceipt<ReceiptClaim>,
+}
+
+fn validate_join_boundary(
+    left: schedule::Range,
+    right: schedule::Range,
+    left_post: Digest,
+    right_pre: Digest,
+    left_exit: ExitCode,
+    left_output_is_none: bool,
+) -> Result<()> {
+    ensure!(
+        left.start < left.end && left.end == right.start && right.start < right.end,
+        "recursive ranges must be nonempty and adjacent"
+    );
+    ensure!(left_post == right_pre, "recursive state discontinuity");
+    ensure!(
+        left_exit == ExitCode::SystemSplit && left_output_is_none,
+        "a completed claim cannot precede another segment"
+    );
+    Ok(())
+}
+
+fn join_claims(left: &RecursiveNode, right: &RecursiveNode) -> Result<ReceiptClaim> {
+    ensure!(
+        left.receipt.claim.digest() == left.claim.digest()
+            && right.receipt.claim.digest() == right.claim.digest(),
+        "recursive node metadata changed its verified claim"
+    );
+    validate_join_boundary(
+        left.range,
+        right.range,
+        left.claim.post.digest(),
+        right.claim.pre.digest(),
+        left.claim.exit_code,
+        left.claim.output.is_none(),
+    )?;
+    // SDK 3.0.3 ReceiptClaim::join composes fields; it does not itself check
+    // continuity. The checks above remain required, as do the actual recursive
+    // proof and its full claim comparison in recursive_checkpoint.
+    Ok(left.claim.join(&right.claim))
+}
+
+fn parallel_backend<T: Send>(
+    r0vm: &Path,
+    out: &Path,
+    operation: &str,
+    count: usize,
+    resources: schedule::Resources,
+    perform: impl Fn(&ApiClient, usize) -> Result<T> + Sync,
+) -> Result<Vec<T>> {
+    ensure!(
+        (1..=MAX_SEGMENTS).contains(&count),
+        "bounded backend work required"
+    );
+    let active_workers = resources.workers.min(count);
+    let started = Instant::now();
+    event(
+        out,
+        json!({
+            "stage":"BACKEND_WORKERS_STARTED",
+            "schema":"TRNM-W1-BACKEND-SCHEDULE1",
+            "operation":operation,"items":count,"workers":active_workers,
+            "rayon_threads_per_worker":resources.rayon_threads,
+            "requested_rayon_threads":active_workers * resources.rayon_threads,
+            "os_resource_limit_verified":false,"persistent_backend_established":false
+        }),
+    )?;
+    let result = schedule::scoped_items(
+        count,
+        resources.workers,
+        |worker| {
+            let constructor_started = Instant::now();
+            let client = ApiClient::new_sub_process(r0vm)?;
+            event(
+                out,
+                json!({
+                    "stage":"BACKEND_CLIENT_CONSTRUCTED",
+                    "schema":"TRNM-W1-BACKEND-SCHEDULE1",
+                    "operation":operation,"worker":worker,
+                    "constructor_ns":constructor_started.elapsed().as_nanos(),
+                    "constructor_scope":"SDK 3.0.3 r0vm --version subprocess and listener setup; each later proving call starts its own backend subprocess",
+                    "persistent_backend_established":false
+                }),
+            )?;
+            Ok(client)
+        },
+        |client, _worker, index| perform(client, index),
+    );
+    match result {
+        Ok(rows) => {
+            event(
+                out,
+                json!({
+                    "stage":"BACKEND_WORKERS_JOINED",
+                    "schema":"TRNM-W1-BACKEND-SCHEDULE1",
+                    "operation":operation,"items":count,"elapsed_ns":started.elapsed().as_nanos(),
+                    "all_started_rust_workers_joined":true,"native_child_reaping_verified":false
+                }),
+            )?;
+            Ok(rows)
+        }
+        Err(error) => {
+            let recorded = event(
+                out,
+                json!({
+                    "stage":"BACKEND_WORKERS_FAILED_AND_JOINED",
+                    "schema":"TRNM-W1-BACKEND-SCHEDULE1",
+                    "operation":operation,"elapsed_ns":started.elapsed().as_nanos(),
+                    "error":format!("{error:#}"),
+                    "all_started_rust_workers_joined":true,"native_child_reaping_verified":false,
+                    "eligible_as_final":false
+                }),
+            );
+            if let Err(record_error) = recorded {
+                return Err(error.context(format!(
+                    "worker failure event could not be published: {record_error:#}"
+                )));
+            }
+            Err(error)
+        }
+    }
+}
+
+fn balanced_compression(
+    r0vm: &Path,
+    out: &Path,
+    segments: &[SegmentReceipt],
+    resources: schedule::Resources,
+) -> Result<SuccinctReceipt<ReceiptClaim>> {
+    let opts = ProverOpts::succinct();
+    let namespace = resources.checkpoint_namespace();
+    let mut nodes = parallel_backend(
+        r0vm,
+        out,
+        "lift",
+        segments.len(),
+        resources,
+        |client, index| {
+            let segment = &segments[index];
+            let receipt = recursive_checkpoint(
+                out,
+                &format!("{namespace}-lift-{index:04}"),
+                "lift",
+                segment.claim.digest(),
+                || client.lift(&opts, segment.clone().try_into()?, AssetRequest::Inline),
+            )?;
+            Ok(RecursiveNode {
+                range: schedule::Range {
+                    start: index,
+                    end: index + 1,
+                },
+                claim: segment.claim.clone(),
+                receipt,
+            })
+        },
+    )?;
+    let mut round = 0;
+    let mut joins = 0;
+    while nodes.len() > 1 {
+        let ranges: Vec<_> = nodes.iter().map(|node| node.range).collect();
+        let plan = schedule::plan_round(&ranges, segments.len())?;
+        let claims: Vec<_> = plan
+            .pairs
+            .iter()
+            .map(|pair| join_claims(&nodes[pair.left], &nodes[pair.right]))
+            .collect::<Result<_>>()?;
+        let pairs = plan.pairs.len();
+        let mut joined = parallel_backend(r0vm, out, "join", pairs, resources, |client, index| {
+            let pair = &plan.pairs[index];
+            let left = &nodes[pair.left];
+            let right = &nodes[pair.right];
+            let claim = claims[index].clone();
+            let receipt = recursive_checkpoint(
+                out,
+                &format!(
+                    "{namespace}-join-{round:02}-{:04}-{:04}",
+                    pair.range.start, pair.range.end
+                ),
+                "join",
+                claim.digest(),
+                || {
+                    client.join(
+                        &opts,
+                        left.receipt.clone().try_into()?,
+                        right.receipt.clone().try_into()?,
+                        AssetRequest::Inline,
+                    )
+                },
+            )?;
+            Ok(RecursiveNode {
+                range: pair.range,
+                claim,
+                receipt,
+            })
+        })?;
+        let carry_range = plan.carry.map(|index| ranges[index]);
+        if let Some(index) = plan.carry {
+            // An odd final range is carried unchanged, never duplicated or
+            // replaced by an empty claim.
+            ensure!(
+                index + 1 == nodes.len(),
+                "only the final range can be carried"
+            );
+            joined.push(nodes.pop().context("odd recursive carry")?);
+        }
+        let completed_ranges: Vec<_> = joined.iter().map(|node| node.range).collect();
+        schedule::validate_partition(&completed_ranges, segments.len())?;
+        joins += pairs;
+        event(
+            out,
+            json!({
+                "stage":"BALANCED_RECURSION_ROUND_COMPLETE",
+                "schema":"TRNM-W1-RECURSION-SCHEDULE2",
+                "round":round,"joins":pairs,"remaining_ranges":joined.len(),
+                "carried_range":carry_range.map(|range| [range.start, range.end]),
+                "eligible_as_final":false
+            }),
+        )?;
+        nodes = joined;
+        round += 1;
+    }
+    let root = nodes.pop().context("missing balanced recursive root")?;
+    schedule::validate_partition(&[root.range], segments.len())?;
+    ensure!(
+        joins == segments.len() - 1,
+        "balanced recursion join count mismatch"
+    );
+    ensure!(
+        root.receipt.claim.digest() == root.claim.digest(),
+        "balanced root no longer binds its complete claim"
+    );
+    event(
+        out,
+        json!({
+            "stage":"BALANCED_RECURSION_ROOT_COMPLETE",
+            "schema":"TRNM-W1-RECURSION-SCHEDULE2",
+            "logical_lifts":segments.len(),"logical_joins":joins,"rounds":round,
+            "checkpoint_reuse_must_be_accounted_for":true,"eligible_as_final":false
+        }),
+    )?;
+    Ok(root.receipt)
+}
+
+fn compress(
+    r0vm: &Path,
+    out: &Path,
+    commit: &str,
+    runner: &str,
+    balanced_resources: Option<schedule::Resources>,
+) -> Result<()> {
+    let compression_started = Instant::now();
     let (manifest, input, journal) = load(out, commit, runner)?;
     let ctx = VerifierContext::default();
     let mut segments = Vec::with_capacity(manifest.segments.len());
@@ -695,53 +994,72 @@ fn compress(r0vm: &Path, out: &Path, commit: &str, runner: &str) -> Result<()> {
         out,
         json!({"stage":"FULL_COMPOSITE_VERIFIED_INTERNAL_ONLY","bytes":composite_bytes.len(),"segments":manifest.segments.len(),"eligible_as_final":false}),
     )?;
+    let pre_recursion_ns = compression_started.elapsed().as_nanos();
     event(out, json!({"stage":"REAL_SUCCINCT_COMPRESSION_STARTED"}))?;
     let started = Instant::now();
-    let client = ApiClient::new_sub_process(r0vm)?;
-    let opts = ProverOpts::succinct();
-    let mut accumulated: Option<SuccinctReceipt<ReceiptClaim>> = None;
-    for (index, segment) in segments.iter().enumerate() {
-        let lifted = recursive_checkpoint(
+    let final_inner = if let Some(resources) = balanced_resources {
+        event(
             out,
-            &format!("lift-{index:04}"),
-            "lift",
-            segment.claim.digest(),
-            || client.lift(&opts, segment.clone().try_into()?, AssetRequest::Inline),
+            json!({
+                "stage":"RECURSION_SCHEDULE_DECLARED",
+                "schema":"TRNM-W1-RECURSION-SCHEDULE2",
+                "schedule":"adjacent-balanced","workers":resources.workers,
+                "rayon_threads_per_worker":resources.rayon_threads,
+                "maximum_requested_rayon_threads":resources.workers * resources.rayon_threads,
+                "checkpoint_namespace":resources.checkpoint_namespace(),
+                "expected_lifts":segments.len(),"expected_joins":segments.len() - 1,
+                "os_resource_limit_verified":false,"persistent_backend_established":false
+            }),
         )?;
-        accumulated = Some(match accumulated {
-            None => lifted,
-            Some(left) => {
-                let claim = ReceiptClaim {
-                    pre: segments[0].claim.pre.clone(),
-                    post: segment.claim.post.clone(),
-                    exit_code: segment.claim.exit_code,
-                    input: segments[0].claim.input.clone(),
-                    output: segment.claim.output.clone(),
-                };
-                recursive_checkpoint(
-                    out,
-                    &format!("join-through-{index:04}"),
-                    "join",
-                    claim.digest(),
-                    || {
-                        client.join(
-                            &opts,
-                            left.try_into()?,
-                            lifted.try_into()?,
-                            AssetRequest::Inline,
-                        )
-                    },
-                )?
-            }
-        });
-    }
-    let final_inner = accumulated.context("missing recursive completion")?;
+        balanced_compression(r0vm, out, &segments, resources)?
+    } else {
+        let client = ApiClient::new_sub_process(r0vm)?;
+        let opts = ProverOpts::succinct();
+        let mut accumulated: Option<SuccinctReceipt<ReceiptClaim>> = None;
+        for (index, segment) in segments.iter().enumerate() {
+            let lifted = recursive_checkpoint(
+                out,
+                &format!("lift-{index:04}"),
+                "lift",
+                segment.claim.digest(),
+                || client.lift(&opts, segment.clone().try_into()?, AssetRequest::Inline),
+            )?;
+            accumulated = Some(match accumulated {
+                None => lifted,
+                Some(left) => {
+                    let claim = ReceiptClaim {
+                        pre: segments[0].claim.pre.clone(),
+                        post: segment.claim.post.clone(),
+                        exit_code: segment.claim.exit_code,
+                        input: segments[0].claim.input.clone(),
+                        output: segment.claim.output.clone(),
+                    };
+                    recursive_checkpoint(
+                        out,
+                        &format!("join-through-{index:04}"),
+                        "join",
+                        claim.digest(),
+                        || {
+                            client.join(
+                                &opts,
+                                left.try_into()?,
+                                lifted.try_into()?,
+                                AssetRequest::Inline,
+                            )
+                        },
+                    )?
+                }
+            });
+        }
+        accumulated.context("missing recursive completion")?
+    };
     ensure!(
         final_inner.claim.digest() == original_claim(&journal).digest(),
         "recursive completion omits original relation"
     );
     let succinct = Receipt::new(InnerReceipt::Succinct(final_inner), journal.clone());
     let prover_ns = started.elapsed().as_nanos();
+    let final_verify_started = Instant::now();
     succinct
         .inner
         .succinct()
@@ -752,15 +1070,35 @@ fn compress(r0vm: &Path, out: &Path, commit: &str, runner: &str) -> Result<()> {
         "succinct full journal mismatch"
     );
     let work_id = check_staged_journal(&input, &succinct.journal.bytes)?;
+    let final_verify_ns = final_verify_started.elapsed().as_nanos();
+    let publication_started = Instant::now();
     let bytes = bincode::serialize(&succinct)?;
     ensure!(
         bytes.len() as u64 <= MAX_RECEIPT && bytes.get(..4) == Some(1u32.to_le_bytes().as_slice()),
         "strict final wire bound/tag"
     );
-    write_new(&out.join("succinct.bin"), &bytes)?;
+    let final_path = out.join("succinct.bin");
+    write_new(&final_path, &bytes)?;
+    ensure!(
+        bounded(&final_path, MAX_RECEIPT)? == bytes,
+        "saved final receipt bytes changed"
+    );
+    let publication_ns = publication_started.elapsed().as_nanos();
+    let entry_to_receipt_readback_ns = compression_started.elapsed().as_nanos();
     event(
         out,
-        json!({"stage":"FULL_SUCCINCT_STARK_SAVED_VERIFIED","compression_prover_ns":prover_ns,"receipt_bytes":bytes.len(),"receipt_sha256":sha(&bytes),"work_id":hex::encode(work_id),"proof_randomness_tickets":0,"consensus_admission":false,"fresh_process_verification_required":true}),
+        json!({
+            "stage":"FULL_SUCCINCT_STARK_SAVED_VERIFIED",
+            "compression_prover_ns":prover_ns,
+            "compression_prover_ns_scope":"recursive schedule, including checkpoint reuse verification and publication; excludes full composite preparation and final verification/publication",
+            "pre_recursion_ns":pre_recursion_ns,"final_verify_ns":final_verify_ns,
+            "final_serialization_publication_readback_ns":publication_ns,
+            "compress_entry_to_receipt_readback_ns":entry_to_receipt_readback_ns,
+            "compress_entry_scope":"load and verify all segments, full composite, recursion, final verify, serialize, fsync, readback; excludes CLI/source checks and this final event publication",
+            "receipt_bytes":bytes.len(),"receipt_sha256":sha(&bytes),"work_id":hex::encode(work_id),
+            "proof_randomness_tickets":0,"consensus_admission":false,
+            "fresh_process_verification_required":true
+        }),
     )
 }
 
@@ -776,8 +1114,13 @@ fn run() -> Result<()> {
             "unexpected proof-selection environment: {name}"
         );
     }
+    let guest_provenance = guest_identity::verify_selected()?;
+    println!(
+        "{}",
+        json!({"stage":"EMBEDDED_GUEST_IDENTITY_VERIFIED","identity":guest_provenance})
+    );
     let mut args = std::env::args().skip(1);
-    ensure!(args.next().as_deref() == Some("--r0vm"), "usage: --r0vm PINNED_BINARY prepare NEW_DIR INPUT [po2=18] | prove DIR [max_new=1] | compress DIR");
+    ensure!(args.next().as_deref() == Some("--r0vm"), "usage: --r0vm PINNED_BINARY prepare NEW_DIR INPUT [po2=18] | prove DIR [max_new=1] | prove-parallel DIR MAX_NEW WORKERS | compress DIR | compress-balanced DIR WORKERS (parallel commands require explicit RAYON_NUM_THREADS)");
     let r0vm = PathBuf::from(args.next().context("explicit local prover")?);
     ensure!(
         r0vm.is_absolute() && sha(&bounded(&r0vm, 256 * 1024 * 1024)?) == R0VM_SHA256,
@@ -799,6 +1142,23 @@ fn run() -> Result<()> {
             ensure!(args.next().is_none(), "unexpected arguments");
             prove(&r0vm, &out, max_new, &commit, &runner)
         }
+        "prove-parallel" => {
+            let max_new = args
+                .next()
+                .context("explicit new segment budget")?
+                .parse()?;
+            let workers = args
+                .next()
+                .context("explicit segment worker count")?
+                .parse()?;
+            ensure!(args.next().is_none(), "unexpected arguments");
+            let rayon_threads = std::env::var("RAYON_NUM_THREADS")
+                .context("parallel segment proving requires explicit RAYON_NUM_THREADS")?
+                .parse()
+                .context("RAYON_NUM_THREADS must be a positive integer")?;
+            let resources = schedule::Resources::new(workers, rayon_threads)?;
+            parallel_segments::prove_parallel(&r0vm, &out, max_new, resources, &commit, &runner)
+        }
         "adopt-execution" => {
             let previous =
                 PathBuf::from(args.next().context("original frozen execution directory")?);
@@ -817,7 +1177,20 @@ fn run() -> Result<()> {
         }
         "compress" => {
             ensure!(args.next().is_none(), "unexpected arguments");
-            compress(&r0vm, &out, &commit, &runner)
+            compress(&r0vm, &out, &commit, &runner, None)
+        }
+        "compress-balanced" => {
+            let workers = args
+                .next()
+                .context("explicit recursion worker count")?
+                .parse()?;
+            ensure!(args.next().is_none(), "unexpected arguments");
+            let rayon_threads = std::env::var("RAYON_NUM_THREADS")
+                .context("balanced compression requires explicit RAYON_NUM_THREADS")?
+                .parse()
+                .context("RAYON_NUM_THREADS must be a positive integer")?;
+            let resources = schedule::Resources::new(workers, rayon_threads)?;
+            compress(&r0vm, &out, &commit, &runner, Some(resources))
         }
         _ => bail!("unknown stage"),
     }
@@ -826,6 +1199,10 @@ fn run() -> Result<()> {
 fn main() -> Result<()> {
     run()
 }
+
+#[cfg(test)]
+#[path = "w1_staged_prover/recursion_tests.rs"]
+mod recursion_tests;
 
 #[cfg(test)]
 mod tests {

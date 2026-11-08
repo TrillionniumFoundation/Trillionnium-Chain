@@ -1,0 +1,133 @@
+{
+  "binary_after": {
+    "ctime_ns": 1794063214772020670,
+    "device": 2049,
+    "inode": 6062397,
+    "mtime_ns": 1794063214771490184,
+    "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+    "sha256": "a7714e010d66a0e026aa2fedb5e01af7c81ac1e7c35d66cc9f7ec14c7fe8e274",
+    "size_bytes": 8779896
+  },
+  "binary_before": {
+    "ctime_ns": 1794063214772020670,
+    "device": 2049,
+    "inode": 6062397,
+    "mtime_ns": 1794063214771490184,
+    "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+    "sha256": "a7714e010d66a0e026aa2fedb5e01af7c81ac1e7c35d66cc9f7ec14c7fe8e274",
+    "size_bytes": 8779896
+  },
+  "compilation_in_native_measurement": false,
+  "failures": [
+    "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+    "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+    "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+  ],
+  "hardness_accepted": false,
+  "independent_accepted": false,
+  "job": {
+    "GITHUB_JOB": "native-priorities",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "42383368690"
+  },
+  "log": {
+    "ctime_ns": 1794066113731740393,
+    "device": 2049,
+    "inode": 6062399,
+    "mtime_ns": 1794066113731740393,
+    "path": "/home/runner/work/_temp/priority-observations/history-native/history.log",
+    "sha256": "f2b0c6719dc2355edfda761332ad91ff7c7f63353b492aca4894a36c3e56f510",
+    "size_bytes": 11498
+  },
+  "named_execution": null,
+  "native_execution_authenticated": false,
+  "passed": false,
+  "preparation_sha256": "88cbcadd56c46d782f1222307389f970f64595ee6089cbfc763347e719ef9eb3",
+  "process": {
+    "cleanup_errors": [],
+    "command": [
+      "/usr/bin/time",
+      "-v",
+      "-o",
+      "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+      "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+      "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+      "--exact",
+      "--ignored",
+      "--show-output"
+    ],
+    "exit_code": 101,
+    "failure": null,
+    "pid": 5145,
+    "started": true
+  },
+  "production_activation": false,
+  "public_network_ready": false,
+  "resources": {
+    "ctime_ns": 1794066113731740393,
+    "device": 2049,
+    "inode": 6062400,
+    "mtime_ns": 1794066113731740393,
+    "path": "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+    "sha256": "f0c01022b197a1ab472f83ae6ee29bca3b49676dea2bcc6d5e7047f8807e2a11",
+    "size_bytes": 971
+  },
+  "schema": "trnm-ci-history-native-execution-v1",
+  "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+  "source_after": {
+    "commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "tracked_source_identity": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "kind": "prospective-merge",
+      "prospective_merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1031001045,
+      "tracked_entries": 11017,
+      "tracked_worktree_verified": true
+    },
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+  },
+  "source_before": {
+    "commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "tracked_source_identity": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "kind": "prospective-merge",
+      "prospective_merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1031001045,
+      "tracked_entries": 11017,
+      "tracked_worktree_verified": true
+    },
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+  },
+  "summary": {
+    "error": "PUBLIC_REQUEST_DEADLINE",
+    "hardness_accepted": false,
+    "independent_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "schema": "native-ancestry-long-sync-observation-v1"
+  },
+  "summary_file": {
+    "ctime_ns": 1794066113730740459,
+    "device": 2049,
+    "inode": 6291631,
+    "mtime_ns": 1794066113730740459,
+    "path": "/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json",
+    "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb",
+    "size_bytes": 245
+  },
+  "target": "ancestry_long_sync",
+  "whole_test_command_preserved": true
+}

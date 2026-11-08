@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/workspace/scratch/ae364bcbabfb/validation/reorg-candidate-a9efd4c"
+  ],
+  "cwd": "/workspace/scratch/ae364bcbabfb/chain-throughput",
+  "elapsed_ns": 71057935499,
+  "executed": true,
+  "exit_code": 0,
+  "global_cpu_complete": false,
+  "global_memory_peak_observed": false,
+  "process_exit_code": 0,
+  "stderr": "attempt-03-candidate.stderr",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "attempt-03-candidate.stdout",
+  "stdout_bytes": 8516,
+  "stdout_sha256": "225972934d09c114bcf065e75030e82ec03c90937280fa27854b6e7a9d142494",
+  "termination_grace_seconds": 5,
+  "termination_signal": null,
+  "timed_out": false,
+  "timeout_seconds": 300,
+  "wait4_cpu_ns": 69879722000,
+  "wait4_maxrss_kib": 23580,
+  "wait4_system_ns": 8931797000,
+  "wait4_user_ns": 60947925000
+}

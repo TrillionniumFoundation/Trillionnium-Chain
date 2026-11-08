@@ -1,0 +1,84 @@
+[
+  {
+    "properties": [
+      "DynamicUser=yes",
+      "PrivateDevices=yes",
+      "DevicePolicy=strict",
+      "DeviceAllow=/dev/null rw",
+      "DeviceAllow=/dev/zero r",
+      "DeviceAllow=/dev/random r",
+      "DeviceAllow=/dev/urandom r"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "properties": [
+      "PrivateNetwork=yes",
+      "RestrictAddressFamilies=none",
+      "PrivateIPC=yes",
+      "PrivateTmp=yes",
+      "ProtectProc=invisible",
+      "ProcSubset=pid",
+      "ProtectSystem=strict",
+      "ProtectHome=yes"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Failed to start transient service unit: Failed to set unit properties: Invalid argument\n"
+  },
+  {
+    "properties": [
+      "ProtectKernelTunables=yes",
+      "ProtectKernelModules=yes",
+      "ProtectControlGroups=yes",
+      "RestrictNamespaces=yes",
+      "RestrictSUIDSGID=yes",
+      "NoNewPrivileges=yes",
+      "CapabilityBoundingSet=",
+      "AmbientCapabilities="
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "properties": [
+      "SystemCallFilter=~@debug",
+      "SystemCallErrorNumber=EPERM",
+      "LockPersonality=yes"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "properties": [
+      "MemoryMax=268435456",
+      "MemorySwapMax=0",
+      "TasksMax=16",
+      "CPUQuota=25%",
+      "RuntimeMaxSec=20s",
+      "TimeoutStopSec=5s",
+      "KillMode=control-group"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "properties": [
+      "BindReadOnlyPaths=/dev/nvidia-modeset:/run/w1-gpu-denial-probe/device-0",
+      "BindReadOnlyPaths=/dev/nvidia-uvm:/run/w1-gpu-denial-probe/device-1",
+      "BindReadOnlyPaths=/dev/nvidia-uvm-tools:/run/w1-gpu-denial-probe/device-2",
+      "BindReadOnlyPaths=/dev/nvidia0:/run/w1-gpu-denial-probe/device-3",
+      "BindReadOnlyPaths=/dev/nvidiactl:/run/w1-gpu-denial-probe/device-4",
+      "BindReadOnlyPaths=/dev/dri/card0:/run/w1-gpu-denial-probe/device-5",
+      "BindReadOnlyPaths=/dev/dri/renderD128:/run/w1-gpu-denial-probe/device-6"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

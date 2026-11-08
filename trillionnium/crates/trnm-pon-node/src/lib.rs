@@ -1,6 +1,8 @@
 //! Experimental native composition; never imports Python or activates production.
 #![forbid(unsafe_code)]
 mod ancestry_index;
+/// Explicit bounded native Cell replay; never installs a consensus work rule.
+pub mod cell_native_v1;
 pub mod consensus;
 mod error;
 /// One fixed Linux cgroup-v2 parent checker, shared by CLI and public V3 library.
@@ -32,6 +34,11 @@ pub mod release_owner;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
+pub use store::async_w1_generation_v2::{
+    NodeGenerationOwnerV2, OwnedFullGenerationV2, OwnedGenerationRuntimeV2,
+    OwnedTerminalExecutionV3, OwnedTerminalGenerationRuntimeV3, OwnedVerifierRunV2,
+    TerminalReasonV3,
+};
 pub use store::authenticated_migration::{
     verify_growth_rehearsal_v2, verify_growth_rehearsal_v2_with_snapshot_byte_limit,
     AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, GrowthMigrationPlanV2,

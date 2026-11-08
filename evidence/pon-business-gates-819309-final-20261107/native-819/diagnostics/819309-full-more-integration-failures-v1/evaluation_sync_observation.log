@@ -1,0 +1,21 @@
+     Running tests/evaluation_sync_observation.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/deps/evaluation_sync_observation-df2e06600d9aa6bd)
+
+running 3 tests
+test actual_public_full_sync_query_partial_refusals_reorg_and_retirement ... sync phase=full-sync elapsed=68.358137ms command="/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/trnm-pon-node" "sync" "--development" "--genesis-time" "1794077665" "--evaluation-policy" "native-public-evaluation-dev-v1" "--store" "/tmp/.tmpKPCq3g/receiver" "--admission-profile" "public-protected-development-v3" "--peer" "127.0.0.1:46341" "--server-public" "6b734a8eff246fe734b38d4046c148eee5f04fe87b3a0a423955a77956de066b" "--admission-bits" "8" "--tip" "ee6d982e8165648ffac93459c456085a0961966bdba116b6dd8e5cd1e18eeb37" "--auth-secret" "/tmp/.tmpKPCq3g/development-caller.key" "--evaluation-candidate" "a0595d6541a9865f2cbecfae58b9772976486e0b8b3b6d159be8d29d09ebcaa8" "--evaluation-round-blocks" "64" address=127.0.0.1:46341 server_exited_before_stop=false server_result=Ok(Ok(PublicMetrics { mutation_cpu_reservations: 0, mutation_cpu_refusals: 0, mutation_cpu_clock_failures: 0, mutation_cpu_charged_ns: 0, mutation_full_work_cpu_ns: 0, mutation_dispatch_excluding_work_cpu_ns: 0, mutation_body_decode_cpu_ns: 0, mutation_response_cpu_ns: 0, mutation_cpu_in_flight_after_shutdown: 0, mutation_cpu_credit_ns_after_shutdown: 2000000000, mutation_cpu_debt_ns_after_shutdown: 0, mutation_cpu_unavailable_after_shutdown: false, accepted_connections: 0, capacity_refusals: 0, unpaid_pressure_cancel_requests: 0, unpaid_pressure_connections_closed: 0, preface_refusals: 0, challenge_budget_refusals: 0, pending_challenge_entered: 0, pending_challenge_granted: 0, pending_challenge_closed: 0, pending_challenge_wait_ns: 0, peak_pending_challenge: 0, issued_challenges: 0, ticket_refusals: 0, signature_refusals: 0, pq_authentication_attempts: 0, pq_authentication_bytes: 0, pq_authentication_thread_cpu_ns: 0, pq_authentication_unavailable: false, spent_capacity_refusals: 0, paid_body_capacity_refusals: 0, lane_capacity_refusals: 0, pending_grant_entered: 0, pending_grant_granted: 0, pending_grant_closed: 0, pending_grant_wait_ns: 0, peak_pending_grant: 0, disconnected_await_requests: 0, tasks_skipped_before_dispatch: 0, abandoned_tasks: 0, tasks_enqueued: 0, tasks_dequeued: 0, replay_refusals: 0, queue_refusals: 0, queue_backpressure_events: 0, enqueued_after_backpressure: 0, queue_wait_ns: 0, peak_pending_enqueue: 0, disconnected_before_enqueue: 0, parse_refusals: 0, work_started: 0, work_finished: 0, work_failed: 0, work_ns: 0, executor_refusals: 0, completed_submit: 0, completed_pool_submit: 0, completed_pool_status: 0, pool_submit_started: 0, pool_submit_finished: 0, pool_submit_failed: 0, pool_submit_ns: 0, completed_read: 0, expired_connections: 0, expired_phase_counts: {}, connections_closed_on_shutdown: 0, response_write_failures: 0, output_serialization_failures: 0, peak_connections: 0, peak_paid_body_bytes: 0, peak_mutating_grants: 0, peak_read_grants: 0, peak_spent: 0, spent_reservations: 0, peak_output_reserved_bytes: 0, delivered_response_frames: 0, retained_phase_errors: {}, body_bytes_received: 0, response_bytes_written: 0, cleanup_scans: 2, unknown_caller_durable_rows: 0, paid_body_reserved_bytes_after_shutdown: 0, output_reserved_bytes_after_shutdown: 0, mutating_grants_after_shutdown: 0, read_grants_after_shutdown: 0 })) child=Ok((ExitStatus(unix_wait_status(512)), "", "PUBLIC_HOST_KERNEL_PARENT\n"))
+
+thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (1626399) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:
+PUBLIC_HOST_KERNEL_PARENT
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test optional_sync_inputs_reject_before_open_without_changing_old_defaults ... ok
+test prepared_forks_keep_original_public_cpu_after_listener_join_and_restart ... ok
+
+failures:
+
+failures:
+    actual_public_full_sync_query_partial_refusals_reorg_and_retirement
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.83s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test evaluation_sync_observation`

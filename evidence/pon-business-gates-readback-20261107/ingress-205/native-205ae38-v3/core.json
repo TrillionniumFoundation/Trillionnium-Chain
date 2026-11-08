@@ -1,0 +1,80 @@
+{
+  "schema": "ingress-canonical-native-core-v1",
+  "scope": "local component/native regression and full-workspace strict Clippy; no original 4s or History business acceptance",
+  "head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "tree": "0f4b77d3db7ed718195a212b7d805f9334aab2f5",
+  "parent": "6193489c2fb2a1bdab1128ebed2296f19176401b",
+  "author_and_committer": "ProfHepta",
+  "published": false,
+  "terminal_job_id": "1a1b6d3ed02-12894-722",
+  "terminal_exit_code": 0,
+  "summary_path": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/summary.json",
+  "source_before": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/source-before.json",
+  "source_after": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/source-after.json",
+  "source_manifests_identical": true,
+  "source_manifest_sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f",
+  "tracked_file_count": 11019,
+  "source_status": "",
+  "cargo_tests_requested": 22,
+  "cargo_tests_passed": 22,
+  "exact_denominator_checks_passed": 22,
+  "groups": {
+    "new_borrowed_native_codec_and_order": 3,
+    "input_grammar_and_real_socket": 4,
+    "default_negative_cache": 4,
+    "explicit_arithmetic": 5,
+    "existing_paid_v3": 2,
+    "public_cache_modes_integration": 4
+  },
+  "exact_selectors_path": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/requested-tests.json",
+  "strict_clippy": {
+    "exit_code": 0,
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/strict-workspace-clippy.log",
+    "sha256": "93b448e7e3e7f30453daf584986e00c5547c708d74d8d40e22f6415f1fd34f54"
+  },
+  "toolchain": {
+    "rust": "1.95.0",
+    "test_profile": "unoptimized",
+    "debug_information": 0,
+    "build_jobs": 8,
+    "incremental": false,
+    "test_threads": 1,
+    "provider_version": "3.5.9",
+    "provider_sha256": "79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437",
+    "environment_path": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/build-environment.json"
+  },
+  "retained_prior_attempts": [
+    {
+      "job_id": "1a1b6cce6dd-12894-6de",
+      "exit_code": 1,
+      "stage": "runner module path discovery; no Cargo executed",
+      "receipt": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38/runner-start-failure-actual-read.json"
+    },
+    {
+      "job_id": "1a1b6cf9d6a-12894-6f5",
+      "exit_code": 1,
+      "stage": "Cargo compile failed because provider KEY=value assignments were not exported; no tests executed",
+      "summary": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/summary.json",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/test-01.log",
+      "source_after_identical": true
+    }
+  ],
+  "component_benchmark_executed": false,
+  "original_service_gate_passed": false,
+  "original_resource_deadlines_or_host_checks_changed": false
+}

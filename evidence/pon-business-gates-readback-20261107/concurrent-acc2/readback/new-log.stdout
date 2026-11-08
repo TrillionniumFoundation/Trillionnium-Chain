@@ -1,0 +1,20 @@
+acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030 644a6c04450804f0ea3575beef7c964bf7a1da6b d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89
+Codex <codex@openai.com>> merge: preserve concurrent admission and history continuation with complete Cell consumers
+644a6c04450804f0ea3575beef7c964bf7a1da6b 313f8e9cb38354fc046eb009f43f48d7ef428a4f
+Codex <codex@openai.com>> test(pon): retain merged Cell source gates, original replay and all integration observations
+313f8e9cb38354fc046eb009f43f48d7ef428a4f 1dcd925badfef079b4d75604480463672f0b4895
+Codex <codex@openai.com>> test(pon): retain full native Cell claims, parent history and fresh-process verification
+1dcd925badfef079b4d75604480463672f0b4895 a9838e2dce53882b84ea7409777b826152323efe 09524fa469e8d989e983ae1a1100d5932ba6a9ee
+Codex <codex@openai.com>> merge: preserve concurrent throughput work with complete Cell consumers
+a9838e2dce53882b84ea7409777b826152323efe b1d390d8112216db1030a24973be075876c6a366
+Codex <codex@openai.com>> test(ci): require multimodal and native Cell controls and retain qualification boundaries
+b1d390d8112216db1030a24973be075876c6a366 f6a3d05217ac15c7f43a8f2d6cacc27d01d8b6f7
+Codex <codex@openai.com>> feat(pon): verify stateful Cell in native Node against independent owner and parent context
+f6a3d05217ac15c7f43a8f2d6cacc27d01d8b6f7 d5c93eeff4fc7baf644eedced436dd7ee51685c7
+Codex <codex@openai.com>> feat(pon): execute finite multimodal Cell V3 with complete dense proofs
+09524fa469e8d989e983ae1a1100d5932ba6a9ee 96e1eede091153199894532c91430bfc0f8e4572 d5c93eeff4fc7baf644eedced436dd7ee51685c7
+Tomasrgbsf <tomasbraynt@gmail.com>> feat(pon): compose complete Cell V2 with concurrent throughput candidate
+d5c93eeff4fc7baf644eedced436dd7ee51685c7 837ab80d2b0454a3b226d13ac270f9496f8d7f96
+Codex <codex@openai.com>> test(pon): retain complete Cell V2 replay, counterexamples, and exact-source gates
+837ab80d2b0454a3b226d13ac270f9496f8d7f96 adebe0bd78e6e1bdb55a599179ffe2313997170e
+Codex <codex@openai.com>> feat(pon): replay bounded stateful Cell V2 with independent context and source guards

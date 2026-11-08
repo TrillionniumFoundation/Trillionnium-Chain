@@ -1,0 +1,179 @@
+{
+  "schema": "trnm-state-cell-macro-repair-preparation-v1",
+  "parent": "d5ccac5691355c3d0616a3cbb45080d273f08c8e",
+  "qualification": false,
+  "performance_claimed": false,
+  "steps": [
+    {
+      "label": "preflight-before-commit",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09344466286711395,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preflight-before-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce"
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.01497050398029387,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "format-check",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 1,
+      "seconds": 0.09216663404367864,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/format-check.log",
+      "bytes": 786,
+      "sha256": "ea7d34b3cb236f13a17fe0b0fcc3b117848c084a581f0dd3828f5891b99357c8"
+    },
+    {
+      "label": "format-check-corrected",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 19.510008360026404,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/format-check-corrected.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "inventory-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.10548519296571612,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "corpus-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.41842691297642887,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/corpus-check.log",
+      "bytes": 557,
+      "sha256": "bd2380956217c7b0b6fc86e59a936eccdfa10128c8f7cade2cd324e20ee3686f"
+    },
+    {
+      "label": "preflight-commit",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09217474912293255,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/preflight-commit.log",
+      "bytes": 166,
+      "sha256": "81734e4c77b0868eb81396d628fcac16a0e3d6b11ac0d1a71f3cbc977e9f9dce"
+    },
+    {
+      "label": "final-diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.013334840070456266,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/final-diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "stage-macro-and-pin",
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.026555908145383,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/stage-macro-and-pin.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit-macro-fix",
+      "argv": [
+        "/usr/bin/git",
+        "-c",
+        "user.name=ProfHepta",
+        "-c",
+        "user.email=102159240+ProfHepta@users.noreply.github.com",
+        "commit",
+        "-m",
+        "test(store): import json macro for canonical row reuse controls"
+      ],
+      "exit_code": 0,
+      "seconds": 0.4873979368712753,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/commit-macro-fix.log",
+      "bytes": 161,
+      "sha256": "9ff1779adf05541865e63b0933e72b2a9c92f31199287a164a23ff4c9171213d"
+    }
+  ],
+  "production_store_blob": "6769b89e1544d82fb41d418adf11d6b26ef01cc3",
+  "production_store_unchanged": true,
+  "test_blob": "22082b7f0d87040096c8de16579f96c23b7f9a64",
+  "commit": "564bd23a656061e272c4af22029a4829d71b4f64",
+  "tree": "0ad0ea567056ee523c8e28e09ed32af813aa0dc2",
+  "status": "",
+  "native_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "6769b89e1544d82fb41d418adf11d6b26ef01cc3",
+      "bytes": 374585,
+      "sha256": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs",
+      "git_blob": "22082b7f0d87040096c8de16579f96c23b7f9a64",
+      "bytes": 12899,
+      "sha256": "2d5a958f2a41212bb9ff5243aa8618119d8cace8bf4377fbad443263eac11072"
+    }
+  ],
+  "adoption_contract": {
+    "original_path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-20261107/adoption-contract-v2.json",
+    "copy_path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/adoption-contract-v2.json",
+    "sha256": "270d029283f07152da8feff2ceba6f23208289e820c9eb5d77eb5a7fc819279c",
+    "unchanged": true
+  },
+  "state": "MACRO_FIX_COMMITTED_COMPONENTS_PENDING",
+  "original_failures_retained": true
+}

@@ -1,0 +1,35 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-c",
+      "import pathlib,subprocess,json,os,hashlib,tarfile,shutil,time\nB=pathlib.Path(\"/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107\")\nSRC=B/\"chain-final\"; CTRL=B/\"evidence-recovery-control-20261107-v1\"; DEST=B/\"chain-evidence-recovery-93ddee66-v1\"\nACC=\"acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030\"; TREE=\"e59270db7fe6ea77e01362b591dd98e4e93d62fe\"\nENV={**os.environ,\"PYTHONDONTWRITEBYTECODE\":\"1\",\"GIT_TERMINAL_PROMPT\":\"0\"}\nassert not CTRL.exists() and not DEST.exists()\npre=subprocess.run([\"bash\",\"scripts/project-preflight.sh\"],cwd=SRC,env=ENV,capture_output=True)\nassert pre.returncode==0,pre.stderr.decode(errors=\"replace\")\nCTRL.mkdir(); (CTRL/\"source-preflight.stdout\").write_bytes(pre.stdout);(CTRL/\"source-preflight.stderr\").write_bytes(pre.stderr)\nsteps=[{\"name\":\"source-preflight\",\"args\":[\"bash\",\"scripts/project-preflight.sh\"],\"cwd\":str(SRC),\"exit_code\":pre.returncode}]\ndef save(): (CTRL/\"prepare-steps.json\").write_text(json.dumps(steps,sort_keys=True,indent=2)+\"\\n\")\ndef run(name,args,cwd):\n t=time.monotonic();p=subprocess.run(args,cwd=cwd,env=ENV,capture_output=True)\n (CTRL/(name+\".stdout\")).write_bytes(p.stdout);(CTRL/(name+\".stderr\")).write_bytes(p.stderr)\n steps.append({\"name\":name,\"args\":args,\"cwd\":str(cwd),\"exit_code\":p.returncode,\"seconds\":time.monotonic()-t});save()\n if p.returncode:raise RuntimeError(name+\" exit \"+str(p.returncode))\n return p.stdout\ndef h(data):return hashlib.sha256(data).hexdigest()\nassert run(\"base-head\",[\"git\",\"rev-parse\",\"HEAD\"],SRC).decode().strip()==ACC\nassert run(\"base-tree\",[\"git\",\"rev-parse\",\"HEAD^{tree}\"],SRC).decode().strip()==TREE\nassert not run(\"base-status\",[\"git\",\"status\",\"--porcelain\"],SRC)\nassert shutil.disk_usage(B).free>3*1024**3\narchives=[]\nfor name,expect,prefix in [\n (\"concurrent-ci-acc2ec24-20261107-v1.tar.gz\",\"07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2\",\"\"),\n (\"concurrent-native-acc2-evidence.tar.gz\",\"6fffb1e9538bd2a8fd0809488018694c1bd9b65225a8ac359dcdaa0d0888053b\",\"concurrent-native-acc2/\")]:\n path=B/name;assert h(path.read_bytes())==expect\n with tarfile.open(path,\"r:gz\") as tf:\n  ms=tf.getmembers();assert len(ms)==len({m.name for m in ms})\n  payload={}\n  for m in ms:\n   p=pathlib.PurePosixPath(m.name)\n   assert m.isfile() and not p.is_absolute() and \"..\" not in p.parts and \"\\\\\" not in m.name\n   assert m.name.startswith(prefix)\n   payload[m.name[len(prefix):]]=tf.extractfile(m).read()\n  index=json.loads(payload[\"FILES.json\"])[\"files\"]\n  assert {x[\"path\"] for x in index}==set(payload)-{\"FILES.json\"}\n  for x in index:assert len(payload[x[\"path\"]])==x[\"bytes\"] and h(payload[x[\"path\"]])==x[\"sha256\"],x[\"path\"]\n archives.append({\"path\":str(path),\"bytes\":path.stat().st_size,\"sha256\":expect,\"members\":len(ms),\"indexed_payloads\":len(index),\"safe_manifest_verified\":True})\n(CTRL/\"archive-inputs.json\").write_text(json.dumps(archives,sort_keys=True,indent=2)+\"\\n\")\npub=B/\"publication-public-acc2\"\nreceipt=json.loads((pub/\"receipt.json\").read_bytes())\n(CTRL/\"available-publication-inputs.json\").write_text(json.dumps({\"receipt\":receipt,\"files\":[{\"path\":p.name,\"bytes\":p.stat().st_size,\"sha256\":h(p.read_bytes())} for p in sorted(pub.iterdir()) if p.is_file()]},sort_keys=True,indent=2)+\"\\n\")\nprint(\"ARCHIVE_INPUTS_VERIFIED\",json.dumps(archives),flush=True)\nremote=run(\"origin-url\",[\"git\",\"remote\",\"get-url\",\"origin\"],SRC).decode().strip()\nassert remote in [\"https://github.com/TrillionniumFoundation/Trillionnium-Chain.git\",\"https://github.com/TrillionniumFoundation/Trillionnium-Chain\"],remote\nauth=[\"git\",\"-c\",\"credential.helper=\",\"-c\",\"credential.helper=!gh auth git-credential\"]\nrun(\"clone-full-worktree\",auth+[\"clone\",\"--filter=blob:none\",\"--no-checkout\",\"--single-branch\",\"--branch\",\"fix/chain-six-axis-performance-20261103\",remote,str(DEST)],B)\nrun(\"select-acc2\",auth+[\"checkout\",\"--detach\",ACC],DEST)\nassert run(\"checkout-head\",[\"git\",\"rev-parse\",\"HEAD\"],DEST).decode().strip()==ACC\nassert run(\"checkout-tree\",[\"git\",\"rev-parse\",\"HEAD^{tree}\"],DEST).decode().strip()==TREE\nassert not run(\"checkout-status\",[\"git\",\"status\",\"--porcelain\"],DEST)\nrun(\"checkout-preflight\",[\"bash\",\"scripts/project-preflight.sh\"],DEST)\nfor name,args in [\n (\"fresh-acc2-source-before\",[\"python3\",\"scripts/ci/verify_ci_source.py\",\"--kind\",\"head\",\"--expected-head\",ACC]),\n (\"fresh-acc2-repository-links\",[\"python3\",\"scripts/ci/check_repository.py\"]),\n (\"fresh-acc2-ci-contract\",[\"python3\",\"scripts/ci/check_ci_contract.py\"]),\n (\"fresh-acc2-source-after\",[\"python3\",\"scripts/ci/verify_ci_source.py\",\"--kind\",\"head\",\"--expected-head\",ACC])]:\n run(name,args,DEST)\na=json.loads((CTRL/\"fresh-acc2-source-before.stdout\").read_bytes());b=json.loads((CTRL/\"fresh-acc2-source-after.stdout\").read_bytes())\nassert a==b and a[\"tracked_worktree_verified\"] and a[\"tracked_entries\"]==11070 and a[\"tracked_bytes\"]==1035950468\nassert not a[\"tests_executed_by_identity_check\"]\nresult={\"result\":\"PASS\",\"source\":ACC,\"tree\":TREE,\"new_complete_checkout\":str(DEST),\"control_dir\":str(CTRL),\"fresh_source\":a,\"archives\":archives,\"calculation_tests_rerun\":False,\"old_root_raw_records_reconstructed\":False}\n(CTRL/\"prepare-result.json\").write_text(json.dumps(result,sort_keys=True,indent=2)+\"\\n\")\nprint(json.dumps(result,sort_keys=True))\n"
+    ],
+    "created_unix_ms": 1794067183715,
+    "cwd": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107",
+    "env_keys": [
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/usr/bin/python3",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1b6bcb863-12894-653",
+    "idempotency_key": "cell-public-evidence-recovery-prepare-20261107-v1",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6bcb863-12894-653",
+    "request_digest": "ff46c56a00eee5bc5d484fec4b026130f5a9c011ccdc6b34f418271fcc4bc5a1",
+    "request_fingerprint": 18394606787114232000,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b6bcb863-12894-653"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b6bcb863-12894-653"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

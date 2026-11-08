@@ -1,0 +1,84 @@
+{
+  "launch": {
+    "audit_recorded": true,
+    "job": {
+      "args": [
+        "-B",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-experiment-tools-01/launch_owner_cancel_02.py",
+        "--plan",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-launch-plans-02/plan.json",
+        "--plan-sha256",
+        "65dfcf935393c9802a5cc73569c74b35755eaa7bb2736635a586e556d6f01c1c",
+        "--expected-commit",
+        "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf",
+        "--config",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-launch-plans-02/config.json"
+      ],
+      "created_unix_ms": 1794089067628,
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "env_keys": [
+        "PYTHONDONTWRITEBYTECODE",
+        "RAYON_NUM_THREADS"
+      ],
+      "executable": "/usr/bin/python3.12",
+      "execution_mode": "operator",
+      "host": "desktop",
+      "id": "1a1b80aa46c-12894-d18",
+      "idempotency_key": "w1-C1b-owner-explicit-cancel-after-live-r0vm-trial02",
+      "launch_error": null,
+      "launch_state": "launched",
+      "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b80aa46c-12894-d18",
+      "request_digest": "e61253cf1b505d34d780e2e24cf839a60c27b7f23222df501405d0d3099895d2",
+      "request_fingerprint": 16578405327285805000,
+      "ssh_target": "desktop-ts",
+      "system_jobctl": false,
+      "unit": "hepta-runtime-job-1a1b80aa46c-12894-d18"
+    },
+    "launch": {
+      "backend": "systemd",
+      "launcher_pid": null,
+      "ok": true,
+      "unit": "hepta-runtime-job-1a1b80aa46c-12894-d18"
+    },
+    "local_record_pending": false,
+    "reused": false
+  },
+  "schema": "TRNM-W1-OWNER-CANCEL-ORIGINAL-JOB-RECEIPT1",
+  "terminal_status": {
+    "at_unix_ms": 1794089107099,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b80aa46c-12894-d18",
+    "launch_nonce": "3420807a7a5f1852ff895953c02111bd",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 238,
+        "stored": 238
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "ancestor_guard_exit_code": 1,
+  "archive_bytes": 1803594,
+  "archive_sha256": "07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2",
+  "commands": [
+    {
+      "exit_code": 0,
+      "name": "identity-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "status-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "sparse-paths"
+    },
+    {
+      "exit_code": 0,
+      "name": "preflight"
+    },
+    {
+      "exit_code": 0,
+      "name": "tree-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "index-before"
+    },
+    {
+      "exit_code": 0,
+      "name": "unchanged-source-integrity-dependencies"
+    },
+    {
+      "exit_code": 0,
+      "name": "affected-ci-diff"
+    },
+    {
+      "exit_code": 0,
+      "name": "check-ci-contract"
+    },
+    {
+      "exit_code": 0,
+      "name": "test-ci-contract"
+    },
+    {
+      "exit_code": 0,
+      "name": "test-integration-push-source"
+    },
+    {
+      "exit_code": 0,
+      "name": "tree-after"
+    },
+    {
+      "exit_code": 0,
+      "name": "index-after"
+    },
+    {
+      "exit_code": 0,
+      "name": "identity-after"
+    },
+    {
+      "exit_code": 0,
+      "name": "status-after"
+    }
+  ],
+  "commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "failure": null,
+  "integration_context_files": 44,
+  "integration_guard_refusal_is_test_failure": false,
+  "local_archive": "concurrent-ci-acc2ec24-v1.tar.gz",
+  "local_context_files_verified": 44,
+  "local_readback_archive_members": 97,
+  "local_readback_manifest_members": 96,
+  "materialized_source_files": 2322,
+  "native_retested_by_this_runner": false,
+  "preserved_stash": "132112817f122c09388651b28bd396537dadfe1b",
+  "prior_644_source_fences_verified": 18,
+  "production_or_consensus_activation": false,
+  "recorded_push_steps": [],
+  "result": "PASS",
+  "schema": "concurrent-cell-ci-acc2ec24-v1",
+  "scope": "exact commit/tree; raw-byte verification of all materialized tracked entries; sparse absent paths explicitly retained",
+  "source_before_after_identical": true,
+  "source_edits": 0,
+  "source_integrity_43_rerun": false,
+  "source_switch_receipt": "integration-context/concurrent-integration-acc2/receipt.json",
+  "sparse_absent_files": 8748,
+  "tests": {
+    "test-ci-contract": {
+      "expected": 103,
+      "observed": [
+        [
+          "103",
+          "15.820"
+        ]
+      ]
+    },
+    "test-integration-push-source": {
+      "expected": 13,
+      "observed": [
+        [
+          "13",
+          "3.748"
+        ]
+      ]
+    }
+  },
+  "transport_file": "concurrent-ci-acc2ec24-v1.transport.json",
+  "transport_sha256": "bd9197ab598f2eba625368f982c94d829202e8dd6bd98c519e87a8824ef5a5e0",
+  "tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+  "unchanged_v3_and_native_source_files_verified": 15,
+  "v3_computation_rerun": false,
+  "whole_tree_materialized": false
+}

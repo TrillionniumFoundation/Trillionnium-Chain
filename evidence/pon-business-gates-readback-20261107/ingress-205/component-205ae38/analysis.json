@@ -1,0 +1,975 @@
+{
+  "schema": "ingress-canonical-component-analysis-v1",
+  "head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "plan_sha256": "82f087389dd27519cb4e1fe2568ba2e1988f200d187d7fd9e922a18d7e63e820",
+  "records_complete": true,
+  "total_trials": 768,
+  "accepted": 384,
+  "original_codec_errors_retained": 384,
+  "oracle_mismatches": 0,
+  "missing_cpu": 0,
+  "groups": [
+    {
+      "fixture": "native-empty",
+      "exposure": "new-body-allocation",
+      "body_bytes": 99043,
+      "packet_bytes": 49508,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1042033.0,
+            "median_fraction": {
+              "numerator": 1042033,
+              "denominator": 1
+            },
+            "p95_ns": 1131247,
+            "min_ns": 1034911,
+            "max_ns": 1406107,
+            "sum_ns": 33942408
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1043422.5,
+            "median_fraction": {
+              "numerator": 2086845,
+              "denominator": 2
+            },
+            "p95_ns": 1132803,
+            "min_ns": 1036295,
+            "max_ns": 1433285,
+            "sum_ns": 34017228
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 903634.5,
+            "median_fraction": {
+              "numerator": 1807269,
+              "denominator": 2
+            },
+            "p95_ns": 1026263,
+            "min_ns": 892253,
+            "max_ns": 1036548,
+            "sum_ns": 29280877
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 905009.5,
+            "median_fraction": {
+              "numerator": 1810019,
+              "denominator": 2
+            },
+            "p95_ns": 1027714,
+            "min_ns": 893545,
+            "max_ns": 1038272,
+            "sum_ns": 29328918
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8671841486785927,
+          "median_fraction": {
+            "numerator": 1807269,
+            "denominator": 2084066
+          },
+          "p95": 0.9071962179789206
+        },
+        "wall": {
+          "median": 0.8673471196950421,
+          "median_fraction": {
+            "numerator": 1810019,
+            "denominator": 2086845
+          },
+          "p95": 0.9072310013303284
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "native-empty",
+      "exposure": "reused-body-allocation",
+      "body_bytes": 99043,
+      "packet_bytes": 49508,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1060794.0,
+            "median_fraction": {
+              "numerator": 1060794,
+              "denominator": 1
+            },
+            "p95_ns": 1074934,
+            "min_ns": 1044005,
+            "max_ns": 1081206,
+            "sum_ns": 33942159
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1062170.5,
+            "median_fraction": {
+              "numerator": 2124341,
+              "denominator": 2
+            },
+            "p95_ns": 1076553,
+            "min_ns": 1045483,
+            "max_ns": 1082511,
+            "sum_ns": 33989043
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 921015.5,
+            "median_fraction": {
+              "numerator": 1842031,
+              "denominator": 2
+            },
+            "p95_ns": 931477,
+            "min_ns": 909827,
+            "max_ns": 933509,
+            "sum_ns": 29477695
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 922562.5,
+            "median_fraction": {
+              "numerator": 1845125,
+              "denominator": 2
+            },
+            "p95_ns": 932739,
+            "min_ns": 911103,
+            "max_ns": 935101,
+            "sum_ns": 29522798
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8682321921127005,
+          "median_fraction": {
+            "numerator": 1842031,
+            "denominator": 2121588
+          },
+          "p95": 0.8665434342945706
+        },
+        "wall": {
+          "median": 0.8685634745080945,
+          "median_fraction": {
+            "numerator": 1845125,
+            "denominator": 2124341
+          },
+          "p95": 0.8664125221888751
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "native-transfers-1",
+      "exposure": "new-body-allocation",
+      "body_bytes": 99445,
+      "packet_bytes": 49709,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1067891.0,
+            "median_fraction": {
+              "numerator": 1067891,
+              "denominator": 1
+            },
+            "p95_ns": 1095187,
+            "min_ns": 1052720,
+            "max_ns": 1163570,
+            "sum_ns": 34302837
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1069458.0,
+            "median_fraction": {
+              "numerator": 1069458,
+              "denominator": 1
+            },
+            "p95_ns": 1096964,
+            "min_ns": 1054492,
+            "max_ns": 1165758,
+            "sum_ns": 34357316
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 926448.5,
+            "median_fraction": {
+              "numerator": 1852897,
+              "denominator": 2
+            },
+            "p95_ns": 935414,
+            "min_ns": 913674,
+            "max_ns": 936699,
+            "sum_ns": 29621711
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 928041.0,
+            "median_fraction": {
+              "numerator": 928041,
+              "denominator": 1
+            },
+            "p95_ns": 937104,
+            "min_ns": 915341,
+            "max_ns": 938411,
+            "sum_ns": 29679274
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8675496843779,
+          "median_fraction": {
+            "numerator": 1852897,
+            "denominator": 2135782
+          },
+          "p95": 0.8541134984253831
+        },
+        "wall": {
+          "median": 0.8677675981665479,
+          "median_fraction": {
+            "numerator": 309347,
+            "denominator": 356486
+          },
+          "p95": 0.8542705138910666
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "native-transfers-1",
+      "exposure": "reused-body-allocation",
+      "body_bytes": 99445,
+      "packet_bytes": 49709,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1044219.0,
+            "median_fraction": {
+              "numerator": 1044219,
+              "denominator": 1
+            },
+            "p95_ns": 1068648,
+            "min_ns": 1038037,
+            "max_ns": 1077827,
+            "sum_ns": 33512678
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1045447.5,
+            "median_fraction": {
+              "numerator": 2090895,
+              "denominator": 2
+            },
+            "p95_ns": 1070008,
+            "min_ns": 1039259,
+            "max_ns": 1079120,
+            "sum_ns": 33553636
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 907428.5,
+            "median_fraction": {
+              "numerator": 1814857,
+              "denominator": 2
+            },
+            "p95_ns": 917704,
+            "min_ns": 895536,
+            "max_ns": 931511,
+            "sum_ns": 29048624
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 908703.5,
+            "median_fraction": {
+              "numerator": 1817407,
+              "denominator": 2
+            },
+            "p95_ns": 918898,
+            "min_ns": 896806,
+            "max_ns": 932718,
+            "sum_ns": 29089940
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8690020963035532,
+          "median_fraction": {
+            "numerator": 164987,
+            "denominator": 189858
+          },
+          "p95": 0.8587523674774107
+        },
+        "wall": {
+          "median": 0.8692005098295228,
+          "median_fraction": {
+            "numerator": 1817407,
+            "denominator": 2090895
+          },
+          "p95": 0.8587767568092949
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "native-transfers-64",
+      "exposure": "new-body-allocation",
+      "body_bytes": 124771,
+      "packet_bytes": 62372,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1318978.0,
+            "median_fraction": {
+              "numerator": 1318978,
+              "denominator": 1
+            },
+            "p95_ns": 1353528,
+            "min_ns": 1308351,
+            "max_ns": 1444051,
+            "sum_ns": 42457201
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1320462.5,
+            "median_fraction": {
+              "numerator": 2640925,
+              "denominator": 2
+            },
+            "p95_ns": 1355267,
+            "min_ns": 1309772,
+            "max_ns": 1446140,
+            "sum_ns": 42505859
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1142128.0,
+            "median_fraction": {
+              "numerator": 1142128,
+              "denominator": 1
+            },
+            "p95_ns": 1172355,
+            "min_ns": 1135268,
+            "max_ns": 1173411,
+            "sum_ns": 36699901
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1143543.0,
+            "median_fraction": {
+              "numerator": 1143543,
+              "denominator": 1
+            },
+            "p95_ns": 1174089,
+            "min_ns": 1136715,
+            "max_ns": 1174988,
+            "sum_ns": 36747714
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8659189160092132,
+          "median_fraction": {
+            "numerator": 571064,
+            "denominator": 659489
+          },
+          "p95": 0.8661475787719205
+        },
+        "wall": {
+          "median": 0.8660170205515113,
+          "median_fraction": {
+            "numerator": 2287086,
+            "denominator": 2640925
+          },
+          "p95": 0.8663156411245903
+        }
+      },
+      "adoption_cpu_median_max": 0.9,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "native-transfers-64",
+      "exposure": "reused-body-allocation",
+      "body_bytes": 124771,
+      "packet_bytes": 62372,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1353587.5,
+            "median_fraction": {
+              "numerator": 2707175,
+              "denominator": 2
+            },
+            "p95_ns": 1374937,
+            "min_ns": 1336566,
+            "max_ns": 1376316,
+            "sum_ns": 43333843
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1354998.0,
+            "median_fraction": {
+              "numerator": 1354998,
+              "denominator": 1
+            },
+            "p95_ns": 1376312,
+            "min_ns": 1338006,
+            "max_ns": 1377701,
+            "sum_ns": 43382599
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 1172344.5,
+            "median_fraction": {
+              "numerator": 2344689,
+              "denominator": 2
+            },
+            "p95_ns": 1198810,
+            "min_ns": 1158921,
+            "max_ns": 1204369,
+            "sum_ns": 37599000
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 1173946.0,
+            "median_fraction": {
+              "numerator": 1173946,
+              "denominator": 1
+            },
+            "p95_ns": 1200343,
+            "min_ns": 1160424,
+            "max_ns": 1205941,
+            "sum_ns": 37647973
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8661017481322781,
+          "median_fraction": {
+            "numerator": 2344689,
+            "denominator": 2707175
+          },
+          "p95": 0.8719017671355124
+        },
+        "wall": {
+          "median": 0.8663820906008718,
+          "median_fraction": {
+            "numerator": 586973,
+            "denominator": 677499
+          },
+          "p95": 0.8721445428071541
+        }
+      },
+      "adoption_cpu_median_max": 0.9,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "malformed-header",
+      "exposure": "new-body-allocation",
+      "body_bytes": 99043,
+      "packet_bytes": 49508,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 943350.0,
+            "median_fraction": {
+              "numerator": 943350,
+              "denominator": 1
+            },
+            "p95_ns": 972179,
+            "min_ns": 917805,
+            "max_ns": 1002428,
+            "sum_ns": 30249226
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 944834.5,
+            "median_fraction": {
+              "numerator": 1889669,
+              "denominator": 2
+            },
+            "p95_ns": 973810,
+            "min_ns": 918876,
+            "max_ns": 1004250,
+            "sum_ns": 30296331
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 816186.5,
+            "median_fraction": {
+              "numerator": 1632373,
+              "denominator": 2
+            },
+            "p95_ns": 841279,
+            "min_ns": 793357,
+            "max_ns": 842698,
+            "sum_ns": 26151173
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 817634.0,
+            "median_fraction": {
+              "numerator": 817634,
+              "denominator": 1
+            },
+            "p95_ns": 842788,
+            "min_ns": 799402,
+            "max_ns": 844399,
+            "sum_ns": 26210234
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8652000848041554,
+          "median_fraction": {
+            "numerator": 1632373,
+            "denominator": 1886700
+          },
+          "p95": 0.8653540140241663
+        },
+        "wall": {
+          "median": 0.8653727187142298,
+          "median_fraction": {
+            "numerator": 1635268,
+            "denominator": 1889669
+          },
+          "p95": 0.8654542467216397
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "malformed-header",
+      "exposure": "reused-body-allocation",
+      "body_bytes": 99043,
+      "packet_bytes": 49508,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 921014.0,
+            "median_fraction": {
+              "numerator": 921014,
+              "denominator": 1
+            },
+            "p95_ns": 945151,
+            "min_ns": 903501,
+            "max_ns": 959815,
+            "sum_ns": 29526408
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 922054.0,
+            "median_fraction": {
+              "numerator": 922054,
+              "denominator": 1
+            },
+            "p95_ns": 946146,
+            "min_ns": 904534,
+            "max_ns": 960733,
+            "sum_ns": 29558250
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 802635.5,
+            "median_fraction": {
+              "numerator": 1605271,
+              "denominator": 2
+            },
+            "p95_ns": 842592,
+            "min_ns": 779664,
+            "max_ns": 843279,
+            "sum_ns": 25742175
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 803721.5,
+            "median_fraction": {
+              "numerator": 1607443,
+              "denominator": 2
+            },
+            "p95_ns": 843678,
+            "min_ns": 780647,
+            "max_ns": 844227,
+            "sum_ns": 25773944
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8714693804871587,
+          "median_fraction": {
+            "numerator": 1605271,
+            "denominator": 1842028
+          },
+          "p95": 0.8914892964193023
+        },
+        "wall": {
+          "median": 0.8716642409229828,
+          "median_fraction": {
+            "numerator": 1607443,
+            "denominator": 1844108
+          },
+          "p95": 0.8916995897039146
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "malformed-count",
+      "exposure": "new-body-allocation",
+      "body_bytes": 99043,
+      "packet_bytes": 49508,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 924841.5,
+            "median_fraction": {
+              "numerator": 1849683,
+              "denominator": 2
+            },
+            "p95_ns": 964288,
+            "min_ns": 910656,
+            "max_ns": 976156,
+            "sum_ns": 29792025
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 926199.5,
+            "median_fraction": {
+              "numerator": 1852399,
+              "denominator": 2
+            },
+            "p95_ns": 965596,
+            "min_ns": 911936,
+            "max_ns": 977743,
+            "sum_ns": 29834344
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 803376.5,
+            "median_fraction": {
+              "numerator": 1606753,
+              "denominator": 2
+            },
+            "p95_ns": 827659,
+            "min_ns": 784196,
+            "max_ns": 828820,
+            "sum_ns": 25796971
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 805102.0,
+            "median_fraction": {
+              "numerator": 805102,
+              "denominator": 1
+            },
+            "p95_ns": 829002,
+            "min_ns": 785345,
+            "max_ns": 830400,
+            "sum_ns": 25840099
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8686639818823009,
+          "median_fraction": {
+            "numerator": 1606753,
+            "denominator": 1849683
+          },
+          "p95": 0.858311002522068
+        },
+        "wall": {
+          "median": 0.8692533304109967,
+          "median_fraction": {
+            "numerator": 1610204,
+            "denominator": 1852399
+          },
+          "p95": 0.8585391820181525
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "malformed-count",
+      "exposure": "reused-body-allocation",
+      "body_bytes": 99043,
+      "packet_bytes": 49508,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 943476.0,
+            "median_fraction": {
+              "numerator": 943476,
+              "denominator": 1
+            },
+            "p95_ns": 962846,
+            "min_ns": 907991,
+            "max_ns": 974649,
+            "sum_ns": 30233602
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 944577.0,
+            "median_fraction": {
+              "numerator": 944577,
+              "denominator": 1
+            },
+            "p95_ns": 963987,
+            "min_ns": 909093,
+            "max_ns": 975711,
+            "sum_ns": 30272272
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 819451.5,
+            "median_fraction": {
+              "numerator": 1638903,
+              "denominator": 2
+            },
+            "p95_ns": 841615,
+            "min_ns": 799990,
+            "max_ns": 844853,
+            "sum_ns": 26231012
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 820536.5,
+            "median_fraction": {
+              "numerator": 1641073,
+              "denominator": 2
+            },
+            "p95_ns": 842795,
+            "min_ns": 801177,
+            "max_ns": 846378,
+            "sum_ns": 26268420
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8685451458224692,
+          "median_fraction": {
+            "numerator": 546301,
+            "denominator": 628984
+          },
+          "p95": 0.8740909761270235
+        },
+        "wall": {
+          "median": 0.8686814309473976,
+          "median_fraction": {
+            "numerator": 1641073,
+            "denominator": 1889154
+          },
+          "p95": 0.8742804622883918
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "truncated-proof",
+      "exposure": "new-body-allocation",
+      "body_bytes": 99041,
+      "packet_bytes": 49507,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 940704.0,
+            "median_fraction": {
+              "numerator": 940704,
+              "denominator": 1
+            },
+            "p95_ns": 966173,
+            "min_ns": 897058,
+            "max_ns": 974557,
+            "sum_ns": 29990509
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 942793.5,
+            "median_fraction": {
+              "numerator": 1885587,
+              "denominator": 2
+            },
+            "p95_ns": 967922,
+            "min_ns": 898648,
+            "max_ns": 976036,
+            "sum_ns": 30050650
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 818061.5,
+            "median_fraction": {
+              "numerator": 1636123,
+              "denominator": 2
+            },
+            "p95_ns": 840391,
+            "min_ns": 776430,
+            "max_ns": 843249,
+            "sum_ns": 26108448
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 819631.0,
+            "median_fraction": {
+              "numerator": 819631,
+              "denominator": 1
+            },
+            "p95_ns": 841788,
+            "min_ns": 777859,
+            "max_ns": 844702,
+            "sum_ns": 26156721
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.869626896452019,
+          "median_fraction": {
+            "numerator": 1636123,
+            "denominator": 1881408
+          },
+          "p95": 0.869814205116475
+        },
+        "wall": {
+          "median": 0.8693642881500562,
+          "median_fraction": {
+            "numerator": 1639262,
+            "denominator": 1885587
+          },
+          "p95": 0.8696857804657814
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    },
+    {
+      "fixture": "truncated-proof",
+      "exposure": "reused-body-allocation",
+      "body_bytes": 99041,
+      "packet_bytes": 49507,
+      "statistics": {
+        "owned": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 933009.5,
+            "median_fraction": {
+              "numerator": 1866019,
+              "denominator": 2
+            },
+            "p95_ns": 952136,
+            "min_ns": 895578,
+            "max_ns": 959468,
+            "sum_ns": 29815530
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 934107.5,
+            "median_fraction": {
+              "numerator": 1868215,
+              "denominator": 2
+            },
+            "p95_ns": 953345,
+            "min_ns": 896867,
+            "max_ns": 960559,
+            "sum_ns": 29851697
+          }
+        },
+        "borrowed": {
+          "cpu": {
+            "count": 32,
+            "median_ns": 812834.5,
+            "median_fraction": {
+              "numerator": 1625669,
+              "denominator": 2
+            },
+            "p95_ns": 838389,
+            "min_ns": 782199,
+            "max_ns": 853930,
+            "sum_ns": 25951711
+          },
+          "wall": {
+            "count": 32,
+            "median_ns": 813829.5,
+            "median_fraction": {
+              "numerator": 1627659,
+              "denominator": 2
+            },
+            "p95_ns": 839500,
+            "min_ns": 783115,
+            "max_ns": 855428,
+            "sum_ns": 25986310
+          }
+        }
+      },
+      "ratios": {
+        "cpu": {
+          "median": 0.8711963811729677,
+          "median_fraction": {
+            "numerator": 1625669,
+            "denominator": 1866019
+          },
+          "p95": 0.8805349235823454
+        },
+        "wall": {
+          "median": 0.8712375181657357,
+          "median_fraction": {
+            "numerator": 1627659,
+            "denominator": 1868215
+          },
+          "p95": 0.8805836292213207
+        }
+      },
+      "adoption_cpu_median_max": 1.05,
+      "adoption_criterion_passed": true
+    }
+  ],
+  "component_cpu_adoption_criteria_passed": true,
+  "whole_node_or_original_service_acceptance": false
+}

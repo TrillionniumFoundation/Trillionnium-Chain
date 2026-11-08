@@ -1,0 +1,216 @@
+{
+  "all_case_files_equal": true,
+  "case_count": 12,
+  "claim_sha256_sets_equal": true,
+  "counts_are_not_additive_across_runs": true,
+  "current_case_root": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/concurrent-native-acc2/a5-cli/native-cases",
+  "file_count": 40,
+  "files": [
+    {
+      "bytes": 549097,
+      "path": "abstain_before_rng/claim.json",
+      "sha256": "3eb2e1a9e33d1d7fe7b232848bf2bcc8066bb2cff23d14e5797d6a248fd8cfff"
+    },
+    {
+      "bytes": 16457,
+      "path": "abstain_before_rng/owner-admission.json",
+      "sha256": "059cc7f7864a99b1d18e51e4726d3a25c9c093dc2ea259b772b437b10398760e"
+    },
+    {
+      "bytes": 1256,
+      "path": "abstain_before_rng/settings-and-context.json",
+      "sha256": "2f0aaa14d8f64ac9f7b79b3510ef55fbdd913552474f3840268d5dfd69b781e3"
+    },
+    {
+      "bytes": 628705,
+      "path": "all_stop_training_preserves/claim.json",
+      "sha256": "09ea466bac287053087457bb31b2a8f57fdf9d744d621b1b42b9eb7037145537"
+    },
+    {
+      "bytes": 43532,
+      "path": "all_stop_training_preserves/owner-admission.json",
+      "sha256": "4eaee3c17f2cb1ad74f025b2452bea21b77309a0562ea0a712c95ebff2ceadee"
+    },
+    {
+      "bytes": 1256,
+      "path": "all_stop_training_preserves/settings-and-context.json",
+      "sha256": "e41f065263066b394ea42e6fc849abc5321a2fa559aba1af68bb5dea9ba7047f"
+    },
+    {
+      "bytes": 596949,
+      "path": "coefficient_boundary/claim.json",
+      "sha256": "f3cdfc3edab4e6a459d271255e48c4f0c3bc450d8db930a366ec8ef93f3417c2"
+    },
+    {
+      "bytes": 31831,
+      "path": "coefficient_boundary/owner-admission.json",
+      "sha256": "446640dc0d10c419ce59b15c22178e2a6347fabc7d399e23382d2657189a314a"
+    },
+    {
+      "bytes": 1256,
+      "path": "coefficient_boundary/settings-and-context.json",
+      "sha256": "95183584c470d596b03a49d000f704d8e44a23a6e6da3276148f17d45e52d390"
+    },
+    {
+      "bytes": 673794,
+      "path": "following-task/claim.json",
+      "sha256": "82ebae9a0a225e3971f45713902272974ce564d9b9bc992dbe1917f06f8909c6"
+    },
+    {
+      "bytes": 43838,
+      "path": "following-task/owner-admission.json",
+      "sha256": "c3c734d7e0ddd946410dc574a3c1536529f74f6eafc30096d86ec22750a6f6e5"
+    },
+    {
+      "bytes": 1256,
+      "path": "following-task/settings-and-context.json",
+      "sha256": "2e45a9d2f45899847227fe4d347363a28af0034f44fad3ad904aba3ff8975f4f"
+    },
+    {
+      "bytes": 549097,
+      "path": "history-authenticated/claim.json",
+      "sha256": "595318e2bf675f410bbf2da94f560a22485abec941a2b6da090ceecb65270520"
+    },
+    {
+      "bytes": 16457,
+      "path": "history-authenticated/owner-admission.json",
+      "sha256": "059cc7f7864a99b1d18e51e4726d3a25c9c093dc2ea259b772b437b10398760e"
+    },
+    {
+      "bytes": 49508,
+      "path": "history-authenticated/parent.packet",
+      "sha256": "174bbdc0ebe09ad2260a931adac2f656fa4e08c0ac2d7b8d23374f308ca7baa4"
+    },
+    {
+      "bytes": 1263,
+      "path": "history-authenticated/settings-and-context.json",
+      "sha256": "6a6ed10c01f36489cedd763e37cfb27ce58b18935c04b9f02e083aed31739e02"
+    },
+    {
+      "bytes": 49508,
+      "path": "history-authenticated/successor.packet",
+      "sha256": "05e0c6c615a8f2903f462292756bc82365ed217a45065e801c8f73c403c04210"
+    },
+    {
+      "bytes": 549097,
+      "path": "history-legacy/claim.json",
+      "sha256": "595318e2bf675f410bbf2da94f560a22485abec941a2b6da090ceecb65270520"
+    },
+    {
+      "bytes": 16457,
+      "path": "history-legacy/owner-admission.json",
+      "sha256": "059cc7f7864a99b1d18e51e4726d3a25c9c093dc2ea259b772b437b10398760e"
+    },
+    {
+      "bytes": 49508,
+      "path": "history-legacy/parent.packet",
+      "sha256": "174bbdc0ebe09ad2260a931adac2f656fa4e08c0ac2d7b8d23374f308ca7baa4"
+    },
+    {
+      "bytes": 1256,
+      "path": "history-legacy/settings-and-context.json",
+      "sha256": "a59069d5821feb77abbb23157eff8a831b8ef11d1c13538929888d8f71079d6f"
+    },
+    {
+      "bytes": 49508,
+      "path": "history-legacy/successor.packet",
+      "sha256": "05e0c6c615a8f2903f462292756bc82365ed217a45065e801c8f73c403c04210"
+    },
+    {
+      "bytes": 672817,
+      "path": "masked_sampling_training/claim.json",
+      "sha256": "95cfe68aeff14b36562f97437c4608790757405a30a9b3d4fd27bb2cae6c4b84"
+    },
+    {
+      "bytes": 43575,
+      "path": "masked_sampling_training/owner-admission.json",
+      "sha256": "6d7801acf3dbe617ccf97e6a36d8ee7bc36fc2b0efdca72c6df80b62758585ca"
+    },
+    {
+      "bytes": 1256,
+      "path": "masked_sampling_training/settings-and-context.json",
+      "sha256": "dd4d12bcb67f60bb360dade7f03a8be1f959c22a4a4aaacf969a4bcb15efe804"
+    },
+    {
+      "bytes": 1876300,
+      "path": "maximum-batch/claim.json",
+      "sha256": "01e0489578c510782885e0c4ff002795604da772ec11d6632589780f1d3cc08c"
+    },
+    {
+      "bytes": 561463,
+      "path": "maximum-batch/owner-admission.json",
+      "sha256": "e5acd018d8081688aa256df1685371ac785f669ce34fdb4f5b03766d4afd120b"
+    },
+    {
+      "bytes": 1256,
+      "path": "maximum-batch/settings-and-context.json",
+      "sha256": "1a65692e5caad5585c4fc3d9cce70b0933bbe779bf83d264ff659d2ece1c35dd"
+    },
+    {
+      "bytes": 544251,
+      "path": "negative_floor_and_ties/claim.json",
+      "sha256": "3ff0c64dfc3d3a4904836799e5b6d988f74a04e09113179d8cbb751c5a483233"
+    },
+    {
+      "bytes": 14478,
+      "path": "negative_floor_and_ties/owner-admission.json",
+      "sha256": "612228ad853aac04c70891b0aa52316227e3863c7d2bed331868b967a0b2dc6d"
+    },
+    {
+      "bytes": 1256,
+      "path": "negative_floor_and_ties/settings-and-context.json",
+      "sha256": "a2cf32bb07a636970c92d2eee691c33fbb4d2329e316be10dae9fc0a3fd7331e"
+    },
+    {
+      "bytes": 673711,
+      "path": "retired-model-control/claim.json",
+      "sha256": "36ddec8be856a0e3bb11683e005e84c4fcda826dc5a4b59f94baf3d5733897bb"
+    },
+    {
+      "bytes": 43815,
+      "path": "retired-model-control/owner-admission.json",
+      "sha256": "3930d809d1ec3989d60ce9b538687d9b5127c9fc0f64c682eda85b5874c7bdad"
+    },
+    {
+      "bytes": 1256,
+      "path": "retired-model-control/settings-and-context.json",
+      "sha256": "35223903a3dbda5574c2fb2cddbf68a7b43bb81f7cd87288646ac10758963264"
+    },
+    {
+      "bytes": 632487,
+      "path": "stop_prefix/claim.json",
+      "sha256": "b448724828f23bb8767df522ebe96b3ff99ab829566f5544ee944d2018773f74"
+    },
+    {
+      "bytes": 32527,
+      "path": "stop_prefix/owner-admission.json",
+      "sha256": "a220687aa7682264da79a157c2f8ba4a56c02f42af6719c3101a2fde578f6e33"
+    },
+    {
+      "bytes": 1256,
+      "path": "stop_prefix/settings-and-context.json",
+      "sha256": "73461fc9373ec170e6138923b19d89f9b8b7ff5c1d11d7ebf891b4de68f5f7fa"
+    },
+    {
+      "bytes": 550951,
+      "path": "tool_proposal/claim.json",
+      "sha256": "ec2f629ad882687e18b5b1bedd3b4828ac6e606c355b5ef738f1bbf9253c1b94"
+    },
+    {
+      "bytes": 16459,
+      "path": "tool_proposal/owner-admission.json",
+      "sha256": "97bcd8166a06a761d834193c50694d090d558df8749ace2176ddc2011d60fbd9"
+    },
+    {
+      "bytes": 1256,
+      "path": "tool_proposal/settings-and-context.json",
+      "sha256": "5e0975bc836a0d6249af9835150a33ade98d842751a3c5ae9c2c769db0721110"
+    }
+  ],
+  "full_w1_proof_sha256_sets_equal": true,
+  "prior_archive": "native-cell-evidence-a4-final.tar.gz",
+  "prior_archive_sha256": "fee7f1aa1022e978f13c2453d9431fab81d776ff7a56c3154e522130305c056b",
+  "prior_case_root": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/native-validation/a4-cli/native-cases",
+  "unique_claim_count": 11,
+  "unique_full_w1_tile_proof_count": 55
+}

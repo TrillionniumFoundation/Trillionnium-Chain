@@ -160,6 +160,11 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_run_w1_reused_cost_v3.py',
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
+    'python3 scripts/ci/test_run_legacy_reorg_root_abba.py',
+)
+PROOF_LATENCY_READER_COMMANDS = (
+    'python3 scripts/ci/test_pon_proof_latency.py',
+    'python3 scripts/ci/test_w1_proof_latency_readback.py',
 )
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'
@@ -305,7 +310,7 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
     python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
     python3 scripts/ci/run_account_execution_conformance.py
     python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root "$(pwd -P)"
-    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles --test cell_native_v1
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
@@ -348,8 +353,14 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
     python3 formal/pon-nakamoto-v1/test_model_contract.py
-    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_numeric_v1.py' -v
-    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_relation_v1.py' -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
@@ -512,6 +523,399 @@ PQ_ROOT_HARNESS_STEP = r'''      - name: Run root-quorum codec and policy test d
 PQ_RELEASE_REGRESSION_COMMAND = '          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label recovery-release-components --output "$out" -- \\\n            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -p trnm-release-bundle --all-targets --no-fail-fast -- --test-threads=1\n'
 
 
+# Required post-win controls retain one literal executable lane and one actual
+# saved-receipt verifier step. These source guards do not qualify a proof.
+REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
+    python3 scripts/ci/test_project_boundary.py
+    # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+    python3 scripts/ci/test_pq_chain_claim_guard.py
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+    python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
+    # Public-input framing only: no seed proof or signature qualification.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_recovery_v1.py' -v
+
+    # Conditional resource/event models retain unknown W1 hardware and protocol gates.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_marked_domain.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fast_daa_reference_component.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v
+    # Finite ordering and report consistency do not qualify a successor protocol.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_ghostdag_order_reference.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_architecture_compare.py' -v
+    python3 scripts/ci/pq_chain_claim_guard.py
+    python3 scripts/ci/check_repository.py
+    python3 scripts/refresh_distributed_source_inventory.py --check
+    python3 scripts/ci/test_repository.py
+    python3 scripts/ci/test_invariants_registry.py
+    python3 scripts/ci/test_responsibility_evidence.py
+    python3 scripts/ci/test_applicability.py
+    python3 scripts/ci/test_ci_contract.py
+    python3 scripts/ci/test_ci_execution.py
+    python3 -B scripts/ci/test_llm_hosted_once.py
+    "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
+    python3 scripts/ci/test_replay_pinned_native.py
+    python3 scripts/ci/test_cross_arch_cost.py
+    python3 scripts/ci/test_zero_locality_cost.py
+    python3 scripts/ci/test_zero_paired_cost.py
+    python3 scripts/ci/test_one_zero_locality_cost.py
+    python3 scripts/ci/test_maintenance_cost.py
+    python3 scripts/ci/test_work_rejection_report.py
+    python3 scripts/ci/test_six_workpackage_native_rosters.py
+    python3 scripts/ci/test_w1_full_v2_disposition.py
+    # Historical clocks and finite screening do not qualify a proof for block admission.
+    python3 scripts/ci/test_pon_proof_latency.py
+    python3 scripts/ci/test_w1_proof_latency_readback.py
+    # Real signal/deadline controls and provider contracts do not generate a proof.
+    (
+      w1_contract_out="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/w1-postwin-contracts"
+      test ! -e "$w1_contract_out"
+      test ! -L "$w1_contract_out"
+      mkdir -p "$(dirname "$w1_contract_out")"
+      mkdir "$w1_contract_out"
+      w1_contract_tmp="$(mktemp -d /dev/shm/trnm-w1-contract-XXXXXXXX)"
+      trap 'rm -rf -- "$w1_contract_tmp"' EXIT
+      export TMPDIR="$w1_contract_tmp"
+      export PYTHONDONTWRITEBYTECODE=1
+      python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee "$w1_contract_out/cancellation-handoff.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"
+      python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"
+      python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"
+      python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"
+      python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"
+      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
+      python3 - "$w1_contract_out" <<'PY'
+from pathlib import Path
+import re, sys
+root = Path(sys.argv[1])
+expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
+            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 8),
+            ("source-builder", 8),
+            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+            ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+            ("owned-process-collector", 14))
+for name, count in expected:
+    text = (root / (name + ".log")).read_text()
+    if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]
+            or not re.search(r"^OK$", text, re.M) or "skipped=" in text):
+        raise SystemExit(f"{name}: all {count} controls must execute without skips")
+PY
+    )
+    python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
+    python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
+    python3 scripts/ci/test_run_w1_rank_batch_v5.py
+    python3 scripts/ci/test_run_legacy_reorg_root_abba.py
+    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
+    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
+    python3 scripts/ci/test_pon_public_v3_phase_read.py
+    python3 scripts/ci/test_pon_public_v3_policy_read.py
+    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/ci/test_run_pon_w1_native_campaign.py
+    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
+    python3 scripts/ci/test_run_w1_reused_cost_v3.py
+    python3 scripts/ci/test_llm_cell_handoff_deadline.py
+    python3 scripts/ci/test_read_original_native_campaign.py \
+      --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
+      --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
+      --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 \
+      --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset
+    python3 scripts/ci/test_account_archive_conformance.py
+    python3 scripts/ci/test_run_account_execution_conformance.py
+    python3 scripts/ci/report_current_implementation.py --check
+    python3 scripts/ci/test_work_cost_report.py
+    python3 scripts/test_qualification_runtime.py
+'''
+
+W1_POSTWIN_WORKFLOW_PREFIX = r'''name: PoN W1 transparent candidate observations
+on:
+  pull_request:
+    paths:
+      - formal/pon-nakamoto-v1/w1_hardened_verifier/**
+      - formal/pon-nakamoto-v1/w1_v2_verifier/**
+      - formal/pon-nakamoto-v1/w1_native_cost/**
+      - formal/pon-nakamoto-v1/w1_zkvm/**
+      - formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py
+      - formal/pon-nakamoto-v1/experiments/w1_stage_measure.py
+      - formal/pon-nakamoto-v1/experiments/w1_local_payload.py
+      - trillionnium/**
+      - scripts/w1_transparent_compare.py
+      - scripts/w1_profile_source_map.py
+      - scripts/w1_security_budget.py
+      - scripts/w1_v2_receipt_controls.py
+      - scripts/run_w1_receiver.py
+      - scripts/run_w1_postwin_proof.py
+      - scripts/run_w1_deployment_comparison.py
+      - scripts/audit_w1_deployment_comparison.py
+      - scripts/build_w1_kaggle_source.py
+      - scripts/kaggle_generation_contract_v2.py
+      - scripts/test_kaggle_generation_contract_v2.py
+      - scripts/w1_generation_target_v2.py
+      - scripts/test_w1_generation_target_v2.py
+      - scripts/w1_owner_cancellation_v1.py
+      - scripts/test_w1_owner_cancellation_v1.py
+      - scripts/w1_owned_generation_runtime_v2.py
+      - scripts/test_w1_owned_generation_runtime_v2.py
+      - scripts/w1_owned_process_collector_v1.py
+      - scripts/test_w1_owned_process_collector_v1.py
+      - evidence/pon-w1-full-v2-20261105/**
+      - evidence/pon-w1-fresh-runtime-20261107/**
+      - evidence/pon-w1-backend-sdk-20261107/**
+      - scripts/w1_kaggle_worker_template.py
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - evidence/pon-w1-complete-succinct-20261028/**
+      - evidence/pon-w1-verifier-hardening-20261028/**
+      - evidence/pon-w1-transparent-profile-20261104/**
+      - evidence/pon-w1-statement-v2-20261105/**
+      - evidence/pon-w1-qrom-budget-20261105/**
+      - config/**
+      - .cargo/**
+      - rust-toolchain.toml
+      - AGENTS.md
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+      - .github/workflows/pon-w1-transparent-profile.yml
+permissions:
+  contents: read
+concurrency:
+  group: pon-w1-transparent-profile-${{ github.event.pull_request.number }}
+  # Preserve failed and partial observations when a newer source arrives.
+  cancel-in-progress: false
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  transparent-profile:
+    name: W1 transparent candidate (${{ matrix.source }}, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+'''
+
+W1_POSTWIN_CRITICAL_STEPS = {
+    "checkout": r'''      - name: Checkout exact candidate without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+''',
+    "source": r'''      - name: Reserve observations and verify ordered source identity
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_profile_out="$RUNNER_TEMP/pon-w1-transparent-profile-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_profile_out"
+          mkdir "$w1_profile_out/bin"
+          printf 'W1_PROFILE_OUT=%s\n' "$w1_profile_out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-w1-transparent-profile-%s-%s-%s\n' "$RUNNER_TEMP" "$SOURCE_KIND" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-w1-transparent-profile-%s-%s-%s\n' "$RUNNER_TEMP" "$SOURCE_KIND" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
+          printf 'Continuous candidate checks and one saved-proof observation only. No new proof, end-to-end benefit, quantum soundness, production or consensus-admission qualification is established.\n' > "$w1_profile_out/SCOPE.txt"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$w1_profile_out/source-before.json" 2>&1 | tee "$w1_profile_out/source-before.log"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$w1_profile_out/preflight.log"
+''',
+    "toolchain": r'''      - name: Install pinned compiler and retain tool identities
+        id: toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy 2>&1 | tee "$W1_PROFILE_OUT/toolchain-install.log"
+          rustc +1.95.0 -Vv > "$W1_PROFILE_OUT/rustc-version.txt"
+          cargo +1.95.0 -Vv > "$W1_PROFILE_OUT/cargo-version.txt"
+          python3 --version > "$W1_PROFILE_OUT/python-version.txt"
+''',
+    "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls
+        if: always() && steps.source.outcome == 'success'
+        id: staged_tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_staged_tmp="$(mktemp -d /dev/shm/trnm-w1-staged-ci-XXXXXXXX)"
+          trap 'rm -rf -- "$w1_staged_tmp"' EXIT
+          export TMPDIR="$w1_staged_tmp"
+          python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v 2>&1 | tee "$W1_PROFILE_OUT/staged-observer-tests.log"
+          python3 - "$W1_PROFILE_OUT/staged-observer-tests.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          counts = re.findall(r'^Ran ([0-9]+) tests in ', text, re.M)
+          if counts != ['32'] or not re.search(r'^OK$', text, re.M) or 'skipped=' in text:
+              raise SystemExit('all 32 retained staged-observer controls must execute without skips')
+          PY
+''',
+    "verifier_v2": r'''      - name: Verify and build the independent v2 verifier without a guest build
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        id: verifier_v2
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_manifest=formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml
+          cargo +1.95.0 metadata --locked --manifest-path "$w1_manifest" --format-version 1 > "$W1_PROFILE_OUT/v2-cargo-graph.json" 2> "$W1_PROFILE_OUT/v2-metadata.stderr.log"
+          python3 - "$W1_PROFILE_OUT/v2-cargo-graph.json" <<'PY'
+          from pathlib import Path
+          import json, sys
+          graph = json.loads(Path(sys.argv[1]).read_text())
+          packages = {package['name'] for package in graph['packages']}
+          if packages.intersection({'risc0-build', 'trnm-w1-zk-methods', 'trnm-w1-zk-methods-v2',
+                                    'trnm-w1-full-guest', 'trnm-w1-full-guest-v2'}):
+              raise SystemExit('independent v2 verifier must not acquire a guest build dependency')
+          PY
+          cargo +1.95.0 fmt --manifest-path "$w1_manifest" --all -- --check 2>&1 | tee "$W1_PROFILE_OUT/v2-format.log"
+          cargo +1.95.0 test --locked --release --manifest-path "$w1_manifest" -- --test-threads=1 2>&1 | tee "$W1_PROFILE_OUT/v2-tests.log"
+          python3 - "$W1_PROFILE_OUT/v2-tests.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', Path(sys.argv[1]).read_text(), re.M)
+          if sum(int(passed) for passed, _ in rows) < 2 or any(int(ignored) for _, ignored in rows):
+              raise SystemExit('v2 expected-artifact and historical-proof rejection controls did not execute')
+          PY
+          cargo +1.95.0 clippy --locked --release --manifest-path "$w1_manifest" --all-targets -- -D warnings 2>&1 | tee "$W1_PROFILE_OUT/v2-clippy.log"
+          cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest" 2>&1 | tee "$W1_PROFILE_OUT/v2-build.log"
+          cp "$CARGO_TARGET_DIR/release/w1-verify-v2" "$W1_PROFILE_OUT/bin/w1-verify-v2"
+          sha256sum "$W1_PROFILE_OUT/bin/w1-verify-v2" > "$W1_PROFILE_OUT/v2-binary.sha256"
+''',
+    "real_receiver_controls": r'''      - name: Execute eleven actual full-v2 receiver and cancellation controls
+        if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'
+        id: real_receiver_controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_v2_fixture="$GITHUB_WORKSPACE/evidence/pon-w1-full-v2-20261105"
+          w1_v2_verifier="$W1_PROFILE_OUT/bin/w1-verify-v2"
+          w1_v2_verifier_sha="$(sha256sum "$w1_v2_verifier")"
+          w1_v2_verifier_sha="${w1_v2_verifier_sha%% *}"
+          python3 - "$w1_v2_fixture" <<'PY'
+          from pathlib import Path
+          import hashlib, sys
+          root = Path(sys.argv[1])
+          expected = {
+              "succinct.bin": (257014, "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"),
+              "input.bin": (49506, "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"),
+              "header.bin": (318, "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"),
+              "expected-artifacts.bin": (64, "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"),
+          }
+          for name, (size, digest) in expected.items():
+              raw = (root / name).read_bytes()
+              if len(raw) != size or hashlib.sha256(raw).hexdigest() != digest:
+                  raise SystemExit("historical full-v2 fixture changed: " + name)
+          if (root / "input.bin").read_bytes()[:318] != (root / "header.bin").read_bytes():
+              raise SystemExit("full-v2 input/header binding changed")
+          PY
+          python3 scripts/ci/test_w1_receiver_real.py \
+            --verifier "$w1_v2_verifier" --verifier-sha256 "$w1_v2_verifier_sha" \
+            --receipt "$w1_v2_fixture/succinct.bin" --input "$w1_v2_fixture/input.bin" \
+            --header "$w1_v2_fixture/header.bin" --expected-artifacts "$w1_v2_fixture/expected-artifacts.bin" \
+            --out "$W1_PROFILE_OUT/real-receiver-controls" 2>&1 | tee "$W1_PROFILE_OUT/real-receiver-controls.log"
+          python3 - "$W1_PROFILE_OUT/real-receiver-controls/summary.json" "$w1_v2_verifier_sha" <<'PY'
+          from pathlib import Path
+          import json, sys
+          report = json.loads(Path(sys.argv[1]).read_text())
+          counts = {"tests_run": 11, "failures": 0, "errors": 0, "skipped": 0, "fresh_proof_generations": 0}
+          if (report.get("schema") != "TRNM-W1-REAL-RECEIVER-CONTROLS1"
+                  or any(type(report.get(key)) is not int or report[key] != value for key, value in counts.items())
+                  or report.get("result") != "PASS" or report.get("actual_complete_receipt_used") is not True
+                  or report.get("verifier_sha256") != sys.argv[2]
+                  or report.get("receipt_sha256") != "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"):
+              raise SystemExit("all eleven actual receiver controls must execute with the declared saved receipt and zero proof generation")
+          PY
+''',
+    "source_after": r'''      - name: Verify measured source after execution
+        if: always() && steps.source.outcome == 'success'
+        id: source_after
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_PROFILE_OUT/source-after.json" 2>&1 | tee "$W1_PROFILE_OUT/source-after.log"
+''',
+}
+W1_POSTWIN_REQUIRED_TEST_FILES = (
+    "scripts/ci/test_w1_cancellation_handoff.py",
+    "scripts/ci/test_w1_coordinator_contract.py",
+    "scripts/test_kaggle_generation_contract_v2.py",
+    "scripts/test_w1_generation_target_v2.py",
+    "scripts/test_w1_owner_cancellation_v1.py",
+    "scripts/ci/test_w1_kaggle_source_builder.py",
+    "scripts/test_w1_owned_generation_runtime_v2.py",
+    "scripts/ci/test_w1_kaggle_worker_contract.py",
+    "scripts/ci/test_w1_postwin_identity.py",
+    "scripts/ci/test_w1_deployment_evidence_binding.py",
+    "scripts/ci/test_w1_deployment_comparison_audit.py",
+    "scripts/test_w1_owned_process_collector_v1.py",
+)
+
+def check_w1_postwin_workflow(text: str) -> None:
+    """Require the real saved-v2 verifier controls after their successful build."""
+    require(text.startswith(W1_POSTWIN_WORKFLOW_PREFIX),
+            'W1 post-win workflow retains exact triggers, source matrix, permissions and budgets')
+    require(text.count('\njobs:\n') == 1
+            and re.findall(r'^  ([a-z][a-z0-9-]*):\n', text.split('\njobs:\n')[1], re.M)
+                == ['transparent-profile'],
+            'W1 post-win controls retain their one transparent-profile job')
+    require('continue-on-error' not in text and 'pull_request_target' not in text
+            and 'contents: write' not in text and 'self-hosted' not in text,
+            'W1 post-win workflow may not soften failures or gain privileges')
+    blocks = re.findall(r'(?ms)^      - name: .*?(?=^      - name: |\Z)', text)
+    steps = {}
+    ordered = []
+    for block in blocks:
+        ids = re.findall(r'^        id: ([a-z][a-z0-9_]*)$', block, re.M)
+        require(len(ids) <= 1, 'W1 post-win step has one identity')
+        if ids:
+            require(ids[0] not in steps, 'W1 post-win step identity is unique')
+            steps[ids[0]] = block
+            ordered.append(ids[0])
+    for name, expected in W1_POSTWIN_CRITICAL_STEPS.items():
+        require(steps.get(name) == expected,
+                'W1 post-win ' + name + ' retains its exact executable source/build/control block')
+    sequence = ('checkout', 'source', 'toolchain', 'staged_tests',
+                'verifier_v2', 'real_receiver_controls', 'source_after')
+    require([ordered.index(name) for name in sequence] == sorted(ordered.index(name) for name in sequence),
+            'W1 post-win receiver controls follow the current independent verifier build and precede source readback')
+    for command in ('python3 scripts/ci/test_w1_receiver_real.py',
+                    'python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v'):
+        require(text.count(command) == 1,
+                'W1 post-win saved-receipt and retained staged controls execute once')
+    for name in W1_POSTWIN_REQUIRED_TEST_FILES:
+        require(name.rsplit('/', 1)[1] not in ''.join(blocks),
+                'W1 post-win required repository-truth controls cannot be duplicated into an optional workflow')
+
+
 def code_lines(text: str) -> list[str]:
     """The fixed lane permits whole-line comments, not alternate shell control flow."""
     return [line.strip() for line in text.splitlines() if line.strip() and not line.lstrip().startswith('#')]
@@ -536,6 +940,15 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    for command in PROOF_LATENCY_READER_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'proof latency controls must execute exactly once in repository-truth')
+    for path in W1_POSTWIN_REQUIRED_TEST_FILES:
+        name = path.rsplit('/', 1)[1]
+        require(sum(line.count(name) for line in code_lines(lanes['repository-truth'])) == 1
+                and sum(line.count(name) for line in code_lines(script)) == 1,
+                'W1 post-win controls must execute exactly once globally and in repository-truth')
     runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1
@@ -603,6 +1016,8 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'full-capacity, reference-growth, bounded-growth and account-verification release controls must execute once sequentially')
     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
+    require(code_lines(lanes['repository-truth']) == code_lines(REPOSITORY_TRUTH_BLOCK),
+            'W1 post-win controls and all retained repository-truth commands require one straight-line lane without skipped or swallowed failures')
     dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'
                        'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"\n'
                        'case "${1:?required job}" in\n')
@@ -633,9 +1048,86 @@ HISTORY_HOST_STEPS = '''      - name: Build the original long-history test separ
         if: ${{ !cancelled() && steps.history_build.outcome == 'success' && matrix.campaign == 'history' }}
         run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out "$TRNM_CI_RECEIPT_DIR/history-native"
 '''
-HISTORY_EXPECTED_SOURCE = (
-    "      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && "
-    "github.event.pull_request.head.sha || github.sha }}\n")
+PUSH_SOURCE_HEAD = "${{ github.event_name == 'push' && needs.push-source-context.outputs.head || github.event.pull_request.head.sha }}"
+PUSH_SOURCE_BASE = "${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}"
+PUSH_SOURCE_MERGE = "${{ github.event_name == 'push' && needs.push-source-context.outputs.merge || github.sha }}"
+PUSH_SOURCE_SELECTED = ("${{ matrix.source == 'head' && (github.event_name == 'push' && "
+    "needs.push-source-context.outputs.head || github.event.pull_request.head.sha) || "
+    "(github.event_name == 'push' && needs.push-source-context.outputs.merge || github.sha) }}")
+PUSH_SOURCE_JOB_GUARD = (
+    "    needs: push-source-context\n"
+    "    if: ${{ !cancelled() && (github.event_name == 'pull_request' || "
+    "needs.push-source-context.result == 'success') }}\n")
+HISTORY_EXPECTED_SOURCE = "      TRNM_EXPECTED_SOURCE_SHA: " + PUSH_SOURCE_SELECTED + "\n"
+PUSH_SOURCE_LANES = {
+    'pon-priority-acceptance.yml': {
+        'native-priorities': '$RUNNER_TEMP/priority-observations'},
+    'pon-w1-work-security.yml': {
+        'false-trace-reuse': '$RUNNER_TEMP/w1-security-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'legal-strategy': '$RUNNER_TEMP/$LEGAL_CAPTURE_PREFIX-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'legal-factorial': '$RUNNER_TEMP/w1-legal-factorial-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'fresh-challenge-service': '$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'rank-batch-v5': '$RUNNER_TEMP/w1-rank-batch-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT'},
+}
+
+
+def check_integration_push_workflow(text: str, name: str) -> None:
+    """The added event must preserve PR sources and every original native lane."""
+    header, body = text.split('\njobs:\n', 1)
+    events = header.split('on:\n', 1)[1].split('\npermissions:', 1)[0]
+    require(re.findall(r'(?m)^  ([a-z_]+):', events) == ['push', 'pull_request']
+            and events.startswith('  push:\n    branches:\n      - fix/chain-six-axis-performance-20261103\n'),
+            'only the original integration push is added alongside pull_request')
+    require(all(value not in text for value in ('pull_request_target', 'continue-on-error',
+                'contents: write', 'GITHUB_EVENT_NAME=', 'GITHUB_SHA=')),
+            'push cannot gain writes, hide failures or impersonate a PR event')
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs, lanes = dict(pairs), PUSH_SOURCE_LANES[name]
+    retained = {'retained-pressure-failure'} if name == 'pon-priority-acceptance.yml' else set()
+    require(len(jobs) == len(pairs) and set(jobs) == set(lanes) | retained | {'push-source-context'},
+            'all original jobs and one push resolver remain explicit')
+    resolver = jobs['push-source-context']
+    require("    if: github.event_name == 'push'\n" in resolver
+            and '          ref: ${{ github.sha }}\n' in resolver
+            and '          fetch-depth: 0\n' in resolver
+            and '          persist-credentials: false\n' in resolver
+            and 'integration_push_source.py resolve --output "$RUNNER_TEMP/integration-push-source/context.json"' in resolver
+            and 'python3 scripts/ci/test_integration_push_source.py' in resolver
+            and 'verify_ci_source.py --kind head --expected-head "$GITHUB_SHA"' in resolver
+            and '        if: always()\n' in resolver,
+            'one real push resolver freezes and retains independently checked source')
+    for key in ('head', 'base', 'merge', 'context', 'context_sha256'):
+        require(f'      {key}: ${{{{ steps.resolve.outputs.{key} }}}}\n' in resolver,
+                'source outputs come only from the resolver')
+    for lane, output in lanes.items():
+        block = jobs[lane]
+        require(PUSH_SOURCE_JOB_GUARD in block and 'source: [head, prospective-merge]\n' in block,
+                'native head and merge lanes require their push resolver without skipping PRs')
+        for key, expression in (('HEAD', PUSH_SOURCE_HEAD), ('BASE', PUSH_SOURCE_BASE),
+                                ('MERGE', PUSH_SOURCE_MERGE)):
+            require('      EXPECTED_' + key + ': ' + expression + '\n' in block,
+                    'native lane preserves PR inputs and exact frozen push outputs')
+        selected_key = 'TRNM_EXPECTED_SOURCE_SHA' if lane == 'native-priorities' else 'EXPECTED_SOURCE'
+        require('      ' + selected_key + ': ' + PUSH_SOURCE_SELECTED + '\n' in block,
+                'selected head or merge is bound to its source context')
+        require("        if: github.event_name == 'push'\n" in block
+                and 'PUSH_SOURCE_CONTEXT: ${{ needs.push-source-context.outputs.context }}\n' in block
+                and 'PUSH_SOURCE_CONTEXT_SHA256: ${{ needs.push-source-context.outputs.context_sha256 }}\n' in block
+                and block.count('integration_push_source.py materialize --kind "$SOURCE_KIND" --context-json "$PUSH_SOURCE_CONTEXT" --context-sha256 "$PUSH_SOURCE_CONTEXT_SHA256" --output "$RUNNER_TEMP/integration-push-context.json"') == 1
+                and block.count('python3 scripts/ci/verify_ci_source.py "${args[@]}"') == 2,
+                'each push lane reproduces the real merge before both original source checks')
+        require("        if: always() && github.event_name == 'push'\n" in block
+                and '          push_context_out="' + output + '"\n' in block
+                and '          cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"\n' in block,
+                'each lane retains its context even after native or materialization failure')
+        if lane == 'native-priorities':
+            require('runner: [ubuntu-24.04, ubuntu-24.04-arm]\n' in block
+                    and 'campaign: [service-model, state, history]\n' in block,
+                    'all twelve original priority lanes remain')
+        elif lane != 'fresh-challenge-service':
+            require('arch: [x64, arm64]\n' in block, 'both original W1 architectures remain')
+    require('version: [v1, v2]\n' in jobs.get('legal-strategy', '')
+            or name == 'pon-priority-acceptance.yml', 'both original legal-strategy versions remain')
 
 
 def check_history_host_call(text: str) -> str:
@@ -651,6 +1143,8 @@ def check_history_host_call(text: str) -> str:
 
 
 def check_from_zero_host_callsites(root: Path) -> None:
+    for name in PUSH_SOURCE_LANES:
+        check_integration_push_workflow((root / '.github/workflows' / name).read_text(), name)
     command = ('python3 scripts/ci/run_from_zero_host.py -- '
                'python3 scripts/ci/run_from_zero_native.py --out ')
     workflow_command = '        run: ' + command + '"$TRNM_CI_RECEIPT_DIR/from-zero-native"\n'
@@ -789,9 +1283,20 @@ def check_pq_release_authority_controls(root: Path) -> dict:
 
 
 def validate(root: Path = ROOT) -> dict:
+    # Discovery can exit successfully with zero tests when a pattern disappears.
+    # These mandatory files are executed explicitly and must also exist at review.
+    for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                 'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
+                 'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                 'test_useful_cell_multimodal_execution_v3.py',
+                 'test_useful_cell_multimodal_relation_v3.py'):
+        source = root / 'formal/pon-nakamoto-v1' / name
+        require(source.is_file() and not source.is_symlink(),
+                'required useful Cell test source is missing: ' + name)
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
     check_from_zero_host_callsites(root)
+    check_w1_postwin_workflow((root / '.github/workflows/pon-w1-transparent-profile.yml').read_text())
     text = (root / WORKFLOW).read_text()
     body = text.split('\njobs:\n', 1)
     require(len(body) == 2, 'one explicit jobs mapping required')

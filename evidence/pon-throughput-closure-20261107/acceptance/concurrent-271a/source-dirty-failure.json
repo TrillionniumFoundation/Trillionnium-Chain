@@ -1,0 +1,61 @@
+{
+  "schema": "trnm-codeql-source-after-failure-observation-v1",
+  "source_head": "271a87f831aa7e08f3c2024f738504c1422122dd",
+  "prospective_merge": "3851387e5015a51f119bca9d24bf845aac05e870",
+  "workflow_run": 42364678169,
+  "jobs": [
+    {
+      "id": 128380125550,
+      "source": "head",
+      "failed_step": "Verify analyzed source stayed unchanged"
+    },
+    {
+      "id": 128380125435,
+      "source": "prospective-merge",
+      "failed_step": "Verify analyzed source stayed unchanged"
+    }
+  ],
+  "exact_error": "ValueError: source is not clean",
+  "sarif_parse_check_passed": true,
+  "identity_checker_checks_untracked_files": true,
+  "changed_paths_retained": false,
+  "tracked_cargo_lock_change_proven": false,
+  "root_cause": "unknown; source status/diff was not retained by the original run",
+  "artifact": {
+    "id": 13571835350,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42364678169/artifacts/13571835350",
+    "bytes": 124960,
+    "sha256": "fc5222469c377fd1e589709d62153f74abfc5359516cb61683f0fe37c1c2238f",
+    "members": [
+      {
+        "path": "codeql-results/rust/head/rust.sarif",
+        "bytes": 4128200
+      },
+      {
+        "path": "codeql-identity/rust/head/source-before.json",
+        "bytes": 423
+      }
+    ],
+    "source_after_present": false
+  },
+  "codeql_action_commit": "1fc58d04a4d4374f921bdac573c3811c240f9c26",
+  "codeql_cli_bundle": "2.27.4",
+  "upload_semantics_correction": {
+    "source_url": "https://github.com/github/codeql-action/blob/1fc58d04a4d4374f921bdac573c3811c240f9c26/src/actions-util.ts#L175-L197",
+    "false": "failure-only",
+    "never": "never",
+    "pr760_upload_false_is_unconditional_no_upload": false
+  },
+  "diagnostic_change": {
+    "worktree": "/workspace/scratch/ae364bcbabfb/publication-check",
+    "path": ".github/workflows/codeql-real-exact-source.yml",
+    "status_file": "worktree-status-after.txt",
+    "tracked_worktree_patch": "tracked-worktree-after.patch",
+    "tracked_index_patch": "tracked-index-after.patch",
+    "before_strict_source_check": true,
+    "strict_check_retained": true,
+    "source_restored_or_deleted": false,
+    "source_after_acceptance_granted": false,
+    "hosted_reexecution": false
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "acc2_actual_publication": {
+    "activation": false,
+    "before": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "candidate": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+    "candidate_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+    "channel": "existing HeptaRuntime desktop local git/gh",
+    "force": false,
+    "observed_candidate_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+    "observed_remote_after": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+    "principal": "ProfHepta",
+    "push_attempted": true,
+    "pushed": true,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain"
+  },
+  "native_build": {
+    "binary_sha256": "dd1f7cce43e4bbfcd5c34d857a6babf17681ebdc4c4e6e3370e5810e5fbf38f9",
+    "cargo_lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "openssl_provider": "3.5.9",
+    "rust_toolchain": "1.95.0"
+  },
+  "native_materials": {
+    "a4_archive_sha256": "fee7f1aa1022e978f13c2453d9431fab81d776ff7a56c3154e522130305c056b",
+    "arithmetic_or_cryptographic_verifier_rerun": false,
+    "bytes_per_full_w1_proof": 49188,
+    "case_directories": 12,
+    "case_files_byte_identical_a4_a5": 40,
+    "cold_distinct_claims": 2,
+    "cold_distinct_full_w1_proofs": 10,
+    "cold_fresh_stores": 3,
+    "cold_logical_now_override_used": false,
+    "cold_new_proofs": 0,
+    "cold_verifier_invocations": 6,
+    "counts_additive_across_repeats": false,
+    "every_proof_hex_decoded_and_hash_compared": true,
+    "unique_claim_byte_strings": 11,
+    "unique_full_w1_proof_byte_strings": 55
+  },
+  "observations": {
+    "calculation_suites_repeated_during_recovery": false,
+    "existing_ci_passed": 103,
+    "existing_ci_seconds": 15.82,
+    "locked_offline_metadata_exit_code": 0,
+    "native_cargo_command_seconds": 257.9309210218489,
+    "native_rust_failed": 0,
+    "native_rust_ignored": 0,
+    "native_rust_passed": 12,
+    "native_test_execution_seconds": 3.34,
+    "new_upstream_push_source_passed": 13,
+    "new_upstream_push_source_seconds": 3.748,
+    "original_source_integrity_43_repeated": false,
+    "repeats_added_to_counts": false,
+    "strict_clippy_exit_code": 0,
+    "v3_computation_repeated": false,
+    "workspace_fmt_exit_code": 0
+  },
+  "older_644_guard": {
+    "ci_test_failure": false,
+    "exit_code": 1,
+    "push_step_present": false
+  },
+  "qualification": {
+    "arbitrary_model_graph_support": false,
+    "arbitrary_multimodal_encoder_support": false,
+    "bounded_synthetic_correctness_observed": true,
+    "cheapest_legal_work_eligibility": false,
+    "external_delivery": false,
+    "final_use_granted": false,
+    "independent_quality": false,
+    "new_consensus_admission_or_reward_rule": false,
+    "ordinary_runtime_proof_to_owner_composition": false,
+    "owner_checkpoint_committed": false,
+    "production_model_adoption": false,
+    "production_or_consensus_activation": false,
+    "public_proof_consumed_by_private_hepta_owner": false,
+    "real_owner_operation_consumed": false
+  },
+  "recovery_disclosure": "RECOVERY.json",
+  "schema": "pon-cell-concurrent-recovery-review-v1",
+  "source_commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "source_scopes": {
+    "ci": {
+      "before_after_identical": true,
+      "materialized_bytes": 42631117,
+      "materialized_files": 2322,
+      "raw_bytes_and_git_blobs_match": true,
+      "sparse_absent_files": 8748,
+      "whole_tree_materialized_in_original_ci_run": false
+    },
+    "fresh_complete_checkout": {
+      "source_before_after_equal": true,
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1035950468,
+      "tracked_entries": 11070,
+      "tracked_worktree_verified": true
+    },
+    "native": {
+      "before_after_gates_final_file_arrays_identical": true,
+      "entire_repository_materialization_claimed_by_native_run": false,
+      "materialized_build_scope_files": 1369,
+      "materialized_bytes": 21925836,
+      "missing_in_declared_scope": [],
+      "raw_bytes_and_git_blobs_match": true,
+      "scope_prefixes": [
+        "trillionnium",
+        "config/pon",
+        "tests/fuzz",
+        "formal/pon-nakamoto-v1/vectors"
+      ],
+      "source_set_sha256": "95c8094b8248615554a202f936e5d6d72ba3a6792b87e19f3bc2470e85ab61b8"
+    },
+    "overlapping_counts_added": false
+  },
+  "source_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe",
+  "time_domains": {
+    "automatic_conversion": false,
+    "hepta_owner": "separate monotonic microseconds",
+    "native": "verified parent Header UNIX seconds",
+    "v3": "declared UNIX milliseconds"
+  }
+}

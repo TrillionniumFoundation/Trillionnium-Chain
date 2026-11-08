@@ -2774,7 +2774,9 @@ dependencies = [
 name = "trnm-w1-zk-methods-v2"
 version = "0.1.0"
 dependencies = [
+ "risc0-binfmt",
  "risc0-build",
+ "sha2",
 ]
 
 [[package]]

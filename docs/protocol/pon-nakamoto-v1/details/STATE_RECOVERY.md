@@ -207,6 +207,76 @@ schema, genesis, reward, rollback or root rule changes. This removes repeated Ru
 packet materialization but does not turn the complete-state root into persistent
 incremental authenticated storage or qualify physical power loss.
 
+### Complete-State arithmetic during Legacy persistence
+
+The classical Legacy owner's staging, reorganization pre-COMMIT and final
+publication root checks, plus ordinary admission's final current-active-State
+fence, can reuse the existing M06 `FullRootArithmetic`. Its single retained
+mathematical payload remains bounded to 2 MiB; every invocation supplies the complete
+current State. Reuse requires the complete current leaf inputs for a partition to
+match, with original canonical grammar, limits and collision checks. A contention,
+poison or arithmetic failure uses the original full-root calculation. No stored
+block id, expected root, cursor, cached State or validation verdict supplies the
+answer. All actual SQL rows, including keys untouched by the block, are still read
+and checked at their original transactional boundaries.
+
+The ordinary-admission extension is restricted to that final active-State fence;
+the generic readback wrapper and other direct-append call sites keep their
+existing root paths. PQ profiles retain their complete account-State validation,
+and authenticated storage and the distinct Growth commitment keep their own
+relations. Original before-images,
+step/cursor transactions, generation/slot checks, cancellation callbacks and one
+atomic active/events publication remain. Signed-history process-cut, cold-resume,
+untouched-corruption and original-error controls exercise this composition. Every
+current State row and its bytes are still traversed, and the complete leaf set
+is sorted. This is not touched-set authenticated execution or a COW storage
+migration, and it does not qualify the original 4,105-block deadline,
+four-second hostile-load screen, physical power loss or production throughput.
+
+The ordinary-admission regression requires warmed arithmetic to reject both a
+changed untouched active cell and a changed current stored root claim, after a
+matched no-op trigger control succeeds. Its complete callback trace, SQL rollback,
+child absence and cold reopen must preserve the original State and ROOT/owner-stop
+semantics. [The source-bound continuation record](../../../../evidence/pon-business-gates-819309-final-20261107/README.md)
+keeps prior native/CI failures and the new-source verification scope separate.
+
+### Same-writer Legacy admission prefix
+
+Classical Legacy admission may reuse one common parent prefix inside its original
+post-write IMMEDIATE transaction. This is limited to a non-active parent and a
+child outside the unchanged 128-height snapshot cadence. The original parent
+reader first reconstructs actual SQL snapshot/delta data, checking every required
+intermediate before-image, complete State root and continuity rule, then compares
+that State with the executed parent. Only the following child read can consume
+this private, single-use prefix. Its actual record/link, delta and complete child
+root checks remain. An actual child snapshot is always read and validated when
+present, including a snapshot at another height.
+
+An active-parent read comes from KV; the child's original historical read may
+instead require snapshots and intervening deltas. These are different SQL sources,
+so an active parent cannot issue this prefix. PQ, Growth and Authenticated state
+relations retain their original admission readers. No State or successful SQL
+verdict survives the admission, and no new stored schema or commitment is created.
+
+The original executed-transaction owner is captured before callbacks or writes.
+After all intended writes and triggers, the existing `PostWriteReadback` constructor
+checks the closed ordinary-table schema, normalizes prepared-schema state and
+captures the no-write epoch. Prefix construction, consumption and the final check
+AFTER active/ancestry/control callbacks require that same original writer. No-row
+writes, DDL and transaction-control ABA invalidate reuse; the scope is never
+re-stamped. An ineligible schema keeps the original two full reads, while a
+replaced writer remains an integrity error, including when cancellation is its
+original source. This observation is not a general immutability certificate:
+Blob/backup APIs, arbitrary UDFs, virtual tables and external filesystem changes
+are outside its admitted SQL graph.
+
+Execution's prior parent check, actual inserted packet/delta readback, snapshot
+retention, cancellation rollback and atomic publication remain. The component
+controls compare complete SQL/State with the original reader and inject historical
+corruption and same-connection writes. They do not establish the original 4,105
+successful imports and cold activation under the unchanged 1,800-second server
+lifetime and 30-second import deadline, or the four-second hostile-load gate.
+
 ## PN2 / P1 bounded-state delivery at the existing owner
 
 This specifies the I03–I05 work order in the
