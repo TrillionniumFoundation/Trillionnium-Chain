@@ -221,6 +221,43 @@ A successful focused runner is not the complete repository CI lane. Raw
 observations, failed development attempts and source/binary identities must
 remain distinguishable from the final exact-commit verification receipt.
 
+### Explicit observation of an integrated runtime
+
+The default command still requires the original runtime/configuration/
+qualification comparison against `cc836dfc13ef0006eb0878abd8cb5eca9a76bec0`
+to exit zero. A composed candidate with changes in those paths fails that
+guard; its nonzero status, stdout patch and stderr remain in the output.
+
+For a deliberately composed candidate, add `--composition-observation` to
+the same command. This mode runs every original gate, including the original
+`git diff --exit-code` comparison. Only that comparison may return 1. Other
+failures and Git errors still stop the run. Twenty additional controls check
+missing gates, replaced commands, changed source identities, forged patches
+and altered cryptographic inputs using real temporary Git repositories.
+Those fixture controls do not execute native proofs.
+
+The new `p3.shared-primitive.composition-observation.v1` receipt binds the
+fixed runtime reference and tree, current exact source and tree, identical
+complete source receipts, the actual full binary-capable runtime patch, and
+the complete executed gate roster. It reproduces the comparison before
+recording `original_unchanged_runtime_scope_passed`; a recorded exit 1 stays
+false. Its companion summary uses the separate
+`p3.shared-primitive.composition-focused-gates.v1` namespace and reports
+`COMPOSITION_OBSERVATION_COMPLETE_HOLD`, without qualifying runtime changes.
+
+The four original frozen R1 files still match the #795 baseline and all seven
+locked dependency archives retain their original checks. In this explicit
+mode, the public-STARK `Cargo.toml`, `Cargo.lock`, `src/tagged_sha3.rs`,
+`src/tagged_sha3_wire.rs`, and `examples/tagged_sha3_mmcs_binding.rs` must also
+match exact #803 commit `ebc31f07f96060fe1e9fb165aae0123de0fcbc1a` before and
+after the campaign. Missing history or source refuses the observation.
+
+These are local execution records under a trusted runner and local account,
+not independently authenticated attestations. Completion grants no runtime,
+noninteractive, quantum, lifecycle or production qualification. The original
+scope failure remains a failure, and its runtime patch still requires review
+under the candidate's own system validation contract.
+
 The initial native implementation campaign passed 56 Rust tests: 24 library,
 three carry-proof, three original proof-smoke, 11 new-profile and 15 retained
 wire-admission tests. One new-profile test exercises all 31 independent
