@@ -10271,3 +10271,27 @@ deployed root or production permission. Exact-source integration receipts remain
 separate from native and independent end-to-end qualification. All seven layers
 retain their open composition obligations; the complete actual lifetime bound
 stays null and whole-chain PQ/activation stay false.
+
+### 2026-11-08 unified PQ composition and actual cached-payload binding
+
+Continue the fixed #812 head `7e044b65454f4c9ea505591727332acffb33e7e5`
+with true merges of #799, #800, #801, #803, #798 and #806. The
+[composition contract](../security/PQ_COMPOSITION_20261108.md) lists every exact
+input and preserves each predecessor's evidence and limits. Concurrent root V2
+work and #807's separate version specification are not imported or counted.
+
+Add a TCM2/CCH1 cached-materialization API that binds the same owned payload
+buffers to output and the complete SHA-512 observer. Its independent pin,
+nonrefundable cumulative budget, original deadline, no-replace publication and
+sixteen negative/positive controls do not grant installation or FinalUse.
+Add per-call MMCS complete-frame and padded-block-equivalent accounting, plus
+an independent report reader. This closes a units/coverage ambiguity without
+inventing measured permutations, adversary query limits or security bits.
+
+The first composition source checks correctly refuse stale inventories and
+source locks. Rebind reviewed records to a committed combined source and retain
+these refusals. Then execute the retained affected suites, explicit owner guard
+green/red controls, locked Cargo graphs, strict Clippy and source/Markdown
+checks on a single clean revision. Preliminary component successes are not
+final combined-source results. Whole-chain PQ, production, quantum extraction
+and final-use qualification remain false throughout this work.

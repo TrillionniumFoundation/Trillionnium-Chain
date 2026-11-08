@@ -736,6 +736,17 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture/tasks.rs",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_feature_off.rs",
 ))
+# The real cached-payload consumer and the per-call MMCS accounting are separate
+# source obligations. Neither establishes loader authority or quantum extraction.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached/tests.rs",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/examples/tagged_sha3_mmcs_binding.rs",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/check_sponge_accounting.py",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/test_sponge_accounting.py",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/SPONGE_ACCOUNTING.md",
+    "docs/security/PQ_COMPOSITION_20261108.md",
+))
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
