@@ -119,3 +119,24 @@ the missing original contracts-package or composed-deployment acceptance.
 Local Chain governance role strings and host-injected release-verifier contracts
 are not deployed PQ trust roots. The three-table witness scope above remains
 unchanged. All six original qualification gates remain open.
+
+## 2026-11-08 lifetime accounting continuation
+
+The [PQ128 lifetime budget contract](PQ128_LIFETIME_BUDGET_V1.md) adds a seventh
+research accounting gate while preserving the original six security gates.
+Its machine-readable register separates planned allocations, exact arithmetic
+over declared bounds and actual security qualification. All eight current audit
+domains have unknown bounds; the whole-chain lifetime bound remains `null`.
+The eight-domain checklist does not prove complete event coverage.
+
+The guard now executes the budget checker and binds the manifest and event-owner
+source reads. It also refuses explicitly reserved whole-chain qualification and
+probability aliases that contradict HOLD, including claims nested in the five
+configuration objects it reads. This does not purport to interpret arbitrary
+prose or every possible invented field name. Source identities and theorem
+references are not attestations. The checker cannot promote any profile, even
+when an illustrative table exactly sums to `2^-128`.
+
+Run `python3 scripts/ci/test_pq_lifetime_budget.py -v` and
+`python3 scripts/ci/pq_lifetime_budget.py` alongside the existing guard and
+source-integrity controls. The repository-truth lane requires both commands.

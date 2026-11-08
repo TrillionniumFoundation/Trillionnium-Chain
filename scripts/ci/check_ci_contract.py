@@ -733,6 +733,11 @@ def validate(root: Path = ROOT) -> dict:
     require('    python3 scripts/ci/test_cross_arch_cost.py\n' in script,
             'cross-architecture evidence negative checks missing')
     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
+    for budget_command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+                           '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+        require(budget_command in dict(lane_pairs)['repository-truth'] and
+                script.count(budget_command) == 1,
+                'PQ lifetime arithmetic and refusal controls execute once in repository-truth')
     require(RUNTIME_RELEASE_COMMAND in dict(lane_pairs)['repository-truth']
             and script.count(RUNTIME_RELEASE_COMMAND) == 1,
             'runtime material controls execute once with the configured verifier interpreter')

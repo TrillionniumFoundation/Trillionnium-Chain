@@ -6,6 +6,8 @@ case "${1:?required job}" in
     bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+    python3 scripts/ci/test_pq_lifetime_budget.py
+    python3 scripts/ci/pq_lifetime_budget.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
