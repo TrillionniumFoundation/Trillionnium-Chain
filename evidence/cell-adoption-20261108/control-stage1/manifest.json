@@ -8,7 +8,7 @@
     },
     {
       "bytes": 17454,
-      "retained": "committed-finality-tests.log",
+      "retained": "committed-finality-tests.txt",
       "sha256": "f2620a58b14d2e2bfbda37934c75a56f24d916e7d785ac08bc66ec4e6095b62a",
       "source_relative_path": "committed-finality/tests.log"
     },
@@ -26,19 +26,19 @@
     },
     {
       "bytes": 6898,
-      "retained": "source-integrity-tests.log",
+      "retained": "source-integrity-tests.txt",
       "sha256": "a888db010c22b378e61ca1caccdee8ac30c617f61ad8f19d134987da03b0f5cb",
       "source_relative_path": "source-integrity-tests.log"
     },
     {
       "bytes": 1821,
-      "retained": "original-parent-tests.log",
+      "retained": "original-parent-tests.txt",
       "sha256": "2c1fdbded2c8e1c64883206488f1d28074d6bb04f068d215e630f2ecf7a40a47",
       "source_relative_path": "original-parent-tests.log"
     },
     {
       "bytes": 105,
-      "retained": "original-learning.log",
+      "retained": "original-learning.txt",
       "sha256": "5a6abd032bd2e9e4fd4254ed96bd3f838e47a9b1717807f43f6efbd9a0004ba9",
       "source_relative_path": "original-learning.log"
     }

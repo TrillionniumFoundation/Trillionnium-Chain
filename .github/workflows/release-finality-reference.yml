@@ -7,6 +7,10 @@ on:
       - config/release-finality-v2.json
       - scripts/ci/test_finality_profile.py
       - scripts/ci/check_required_native_test.py
+      - scripts/cell_adoption_readback.py
+      - scripts/test_cell_adoption_readback.py
+      - evidence/cell-adoption-20261108/native-readbacks/**
+      - evidence/smollm-cell-replica-research-v1/actual/research-result.json
       - docs/protocol/release-finality-v2/**
       - trillionnium/crates/trnm-pon-node/**
       - trillionnium/crates/trnm-crypto-primitives/**
@@ -62,6 +66,7 @@ jobs:
           py="$RUNNER_TEMP/finality-env/bin/python"
           "$py" scripts/ci/test_finality_profile.py
           "$py" formal/release-finality-v2/run_conformance.py --out "$RUNNER_TEMP/release-finality/conformance"
+          "$py" scripts/test_cell_adoption_readback.py -v
       - name: Preserve original signed learning suites and execute actual V3 join
         run: |
           set -euo pipefail
