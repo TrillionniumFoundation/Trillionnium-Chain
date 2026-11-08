@@ -1,0 +1,101 @@
+{
+  "schema": "trnm-hosted-archive-copy-batch-v1",
+  "batch": "native-and-protocol-final-assembly",
+  "completed_at": "2026-11-08T01:31:32.857757+00:00",
+  "preflight": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"chore/chain-pon-pr784-hosted-observations-20261108\", \"remote_policy_mutated\": false}\n",
+    "stderr": ""
+  },
+  "canonical_before": {
+    "HEAD": {
+      "bytes": 63,
+      "sha256": "06102f06952d28e369f7e0fb41c65d716a1c2cf8354f3b1bf29edf9d459851ff"
+    },
+    "config": {
+      "bytes": 531,
+      "sha256": "ca7677847bc641a64f816ecf8d358a0959d006bfba36a4a9399be59fc3634ffd"
+    },
+    "index": {
+      "bytes": 2820109,
+      "sha256": "850772274dc07a14d6e303b538401e7291fcf0ab29e90852ddd7269f3065e191"
+    },
+    "info/sparse-checkout": {
+      "bytes": 287,
+      "sha256": "97f0e78daaf5fb6ded42a831bac8c1e4bb82eaab13b2ac9fadd55cbb33eada66"
+    }
+  },
+  "canonical_after": {
+    "HEAD": {
+      "bytes": 63,
+      "sha256": "06102f06952d28e369f7e0fb41c65d716a1c2cf8354f3b1bf29edf9d459851ff"
+    },
+    "config": {
+      "bytes": 531,
+      "sha256": "ca7677847bc641a64f816ecf8d358a0959d006bfba36a4a9399be59fc3634ffd"
+    },
+    "index": {
+      "bytes": 2820109,
+      "sha256": "850772274dc07a14d6e303b538401e7291fcf0ab29e90852ddd7269f3065e191"
+    },
+    "info/sparse-checkout": {
+      "bytes": 287,
+      "sha256": "97f0e78daaf5fb6ded42a831bac8c1e4bb82eaab13b2ac9fadd55cbb33eada66"
+    }
+  },
+  "canonical_unchanged": true,
+  "archive_head_before_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "archive_tree_before_commit": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+  "copied": [
+    {
+      "label": "retained-historical",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-retained-failure-review",
+      "archive_relative_directory": "reviews/retained-historical",
+      "file_count": 45,
+      "payload_bytes": 131481,
+      "source_before_after_equal": true,
+      "selected_destination_exactly_equal": true,
+      "all_source_files_copied": true,
+      "omitted_expanded_file_count": 0,
+      "omitted_expanded_bytes": 0,
+      "copy_completed_at": "2026-11-08T01:31:30.841309+00:00",
+      "selection_receipt": "preparation/retained-historical-copy-receipt.json"
+    },
+    {
+      "label": "w1-fresh-service",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-w1-fresh-service-review",
+      "archive_relative_directory": "reviews/w1-fresh-service",
+      "file_count": 140,
+      "payload_bytes": 12794932,
+      "source_before_after_equal": true,
+      "selected_destination_exactly_equal": true,
+      "all_source_files_copied": false,
+      "omitted_expanded_file_count": 46,
+      "omitted_expanded_bytes": 68085955,
+      "copy_completed_at": "2026-11-08T01:31:31.990237+00:00",
+      "selection_receipt": "preparation/w1-fresh-service-copy-receipt.json"
+    },
+    {
+      "label": "protocol-contract",
+      "source_directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-protocol-contract-review",
+      "archive_relative_directory": "reviews/protocol-contract",
+      "file_count": 80,
+      "payload_bytes": 19373496,
+      "source_before_after_equal": true,
+      "selected_destination_exactly_equal": true,
+      "all_source_files_copied": false,
+      "omitted_expanded_file_count": 25,
+      "omitted_expanded_bytes": 34644244,
+      "copy_completed_at": "2026-11-08T01:31:32.746657+00:00",
+      "selection_receipt": "preparation/protocol-contract-copy-receipt.json"
+    }
+  ],
+  "protocol_freeze_source": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-protocol-contract-review-freeze.json",
+  "protocol_freeze_sha256": "c9d345ee8bb9cb9fc9d273d0129b76df28352fdd1cdbaa3a3892f17e0806988e",
+  "committed": false,
+  "pushed": false
+}

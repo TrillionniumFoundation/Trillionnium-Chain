@@ -1,0 +1,55 @@
+Base commit cb314bb4656e5da4844325cd83994ab4764fe8e9; plan blob 950f0341f3cc9fa711f805d6a300f71ec9a552c3
+
+65: ## 0. One authority and explicit retirement
+66: 
+67: **Original business readback and component follow-up, 2026-11-07 UTC — HOLD:**
+68: The [retained business readback](../../evidence/pon-business-gates-readback-20261107/README.md)
+69: records real push head `d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89`,
+70: resolver-observed main `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`
+71: and ordered-parent merge `7805f1445aec6a31152b50c3d28f5eb6db63305c`.
+72: Both workflows used those same identities: 37 jobs ended 22 success / 15 failure;
+73: 34 native lanes ended 20 success / 14 failure. All 136 source-control steps
+74: passed, without converting any business failure into success.
+75: 
+76: All four original 4-second/16-worker service lanes and both fresh-challenge jobs
+77: still failed confirmation under the original Host budgets. Every cohort retained
+78: 7/7 successful honest submissions but only 0/1 pressure confirmations.
+79: All four State lanes passed six named controls and 40 main migration tests each;
+80: the two one-test FIFO subprocess summaries are not extra main tests.
+81: History x64 H/M returned 3,917/4,105 imports before the original server lifetime
+82: expired. ARM H/M returned 4,104/4,105, stored all 4,105 packets, and cancelled
+83: activation at cursors 3,916 / 3,923. All four confirmer active states remained
+84: genesis. Rows, RPC returns and activated state remain separate obligations.
+85: 
+
+375: reader correctly refuses it. One same-source/binary/parameters diagnostic retry
+376: completes all nine cohorts, 72 measured blocks, 153 stage returns, nine original
+377: cancellations and nine cold reopens. All three touched owners remain fixed;
+378: cold work, the 101.686 ms maximum admission and the 210.997 ms cancellation are
+379: retained separately. This is local wall observation, not p99 or confirmed TPS.
+380: 
+381: The unchanged release F0 runner's five named invocations return successfully,
+382: but original business acceptance fails CONFIRMATION_TARGET. Baseline and
+383: pressure each retain 7/7 ACKs, 16/16 History responses and 0/1 independent
+384: confirmation; separate execution/inclusion and successful latency remain null.
+385: All 32 independent replays stop in Host resolve with PUBLIC_HOST_KERNEL_PARENT,
+386: before native import. The separate original Host readiness check refused local
+387: provisioning. All 644 requests remain; 449 have known original CPU and 195 keep
+388: unknown costs, including actual CPU for all 435 rejected pressure requests.
+389: Later integrations contain additional production changes and do not inherit
+390: these frozen-source results. Combined configuration, original hosted and
+
+1125: root currently covers only the three PNQ2 resource/peer/request tables and its
+1126: binding; it does not cover balances, settlement, task state, active History,
+1127: CURRENT or FinalUse. An external checkpoint API is not an independently operated
+1128: monotonic root, and whole-effect uncertain-CAS reconciliation remains open.
+1129: Historical account migration cannot retroactively establish pre-quantum
+1130: ownership or source finality. Public confirmation remains blocked until the
+1131: independent client meets the unchanged original budget and deadline together
+1132: with its no-attack baseline. Arithmetic caches cannot replace complete current
+1133: state validation or establish touched-state complexity. Cell availability needs
+1134: real independent provider failures and verified repair/collection obligations.
+1135: Prospective model acceptance retains untouched held-out tasks, equal cumulative
+1136: training budgets, regression/resource measurements and legitimate long
+1137: `no-update`. Existing serial/concurrent/reference-DAG measurements use the same
+1138: PoN consensus and must not be renamed NG/Prism/full-DAG consensus results. All

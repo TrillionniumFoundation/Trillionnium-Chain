@@ -1,0 +1,37 @@
+{
+  "head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+  "tested_code_commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "non_evidence_paths": 2415,
+  "non_evidence_identical": true,
+  "source_clean": true,
+  "pushed": false,
+  "groups": {
+    "b66-local": {
+      "files": 22,
+      "bytes": 1902229,
+      "source": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/delivery-staging/b66-local"
+    },
+    "b66-remote": {
+      "files": 85,
+      "bytes": 1695553,
+      "source": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/delivery-staging/b66-remote"
+    },
+    "merge-review": {
+      "files": 4,
+      "bytes": 6276503,
+      "source": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/delivery-staging/merge-review"
+    },
+    "merged-python": {
+      "files": 99,
+      "bytes": 6199738,
+      "source": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/delivery-staging/merged-python"
+    },
+    "merged-native": {
+      "files": 210,
+      "bytes": 15523063,
+      "source": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/delivery-staging/merged-native"
+    }
+  },
+  "awaiting_final_commit_tree_markdown_check": true
+}

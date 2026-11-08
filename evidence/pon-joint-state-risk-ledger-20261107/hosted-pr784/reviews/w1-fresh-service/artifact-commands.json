@@ -1,0 +1,161 @@
+[
+  {
+    "name": "run-artifacts",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209904/artifacts?per_page=100"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.6177234600763768,
+    "stdout_bytes": 14981,
+    "stdout_sha256": "9269342360b7aa14eb7973bde70976e5af0f69df86ae11ebe84d48ab9a70b350"
+  },
+  {
+    "name": "artifact-128580281914",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13597676542/zip"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 144.89794031600468,
+    "stdout_bytes": 5629079,
+    "stdout_sha256": "f7ed4b59dc5c8f435fc475a43907f367766457ab92408d85179fc74cf2d3dfad"
+  },
+  {
+    "name": "artifact-128580282001",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13597946101/zip"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 138.73362276796252,
+    "stdout_bytes": 5643607,
+    "stdout_sha256": "4b87ab491989d30ace5b06c6d6e719ae33415cc942630eaf5bad111ede37b6fd"
+  },
+  {
+    "name": "runner-head",
+    "args": [
+      "git",
+      "show",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3:scripts/ci/run_w1_fresh_service_v1.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.005056740017607808,
+    "stdout_bytes": 28537,
+    "stdout_sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+  },
+  {
+    "name": "runner-base",
+    "args": [
+      "git",
+      "show",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9:scripts/ci/run_w1_fresh_service_v1.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.003713635029271245,
+    "stdout_bytes": 28537,
+    "stdout_sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+  },
+  {
+    "name": "runner-diff",
+    "args": [
+      "git",
+      "diff",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--",
+      "scripts/ci/run_w1_fresh_service_v1.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0034526519011706114,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "host-head",
+    "args": [
+      "git",
+      "show",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3:scripts/ci/run_from_zero_host.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.00431324215605855,
+    "stdout_bytes": 24743,
+    "stdout_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791"
+  },
+  {
+    "name": "host-base",
+    "args": [
+      "git",
+      "show",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9:scripts/ci/run_from_zero_host.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0035300441086292267,
+    "stdout_bytes": 24743,
+    "stdout_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791"
+  },
+  {
+    "name": "host-diff",
+    "args": [
+      "git",
+      "diff",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--",
+      "scripts/ci/run_from_zero_host.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0033529200591146946,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "native-test-head",
+    "args": [
+      "git",
+      "show",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0037013269029557705,
+    "stdout_bytes": 79067,
+    "stdout_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  {
+    "name": "native-test-base",
+    "args": [
+      "git",
+      "show",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9:trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0037980698980391026,
+    "stdout_bytes": 79067,
+    "stdout_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  {
+    "name": "native-test-diff",
+    "args": [
+      "git",
+      "diff",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--",
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.004129203036427498,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

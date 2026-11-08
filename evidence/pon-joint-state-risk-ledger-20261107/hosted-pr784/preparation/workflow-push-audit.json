@@ -1,0 +1,456 @@
+{
+  "schema": "trnm-hosted-archive-push-trigger-audit-v1",
+  "candidate_head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "candidate_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+  "archive_branch": "chore/chain-pon-pr784-hosted-observations-20261108",
+  "workflow_count": 20,
+  "workflows_with_push": 6,
+  "matching_push_workflows": [],
+  "source_defined_workflow_push_expected": false,
+  "scope": "Static audit of all workflows present in the fixed b5 source; no push, dispatch, rerun, cancellation or new PR performed.",
+  "workflows": [
+    {
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "git_blob_oid": "6ff6dcc7adcb9005d1570e1dcf4064f2e1e05edc",
+      "bytes": 3293,
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      "events": {
+        "pull_request": "",
+        "workflow_dispatch": {
+          "inputs": {
+            "pr_number": {
+              "description": "Same-repository open PR whose current source should be exported",
+              "required": "true",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/codeql-real-exact-source.yml",
+      "git_blob_oid": "fb5236320eb9897be10f13e47ce3d39dfdb5c7a4",
+      "bytes": 7522,
+      "sha256": "380342ee51055f99bd06da806cf00d5053cb9082013dcca8e92c045e5907cb1d",
+      "events": {
+        "push": {
+          "branches": [
+            "main",
+            "fix/chain-six-axis-performance-20261103",
+            "fix/chain-native-codeql-source-scan-20261106-gpt6"
+          ]
+        },
+        "pull_request": {
+          "branches": [
+            "main",
+            "fix/chain-six-axis-performance-20261103"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "literal branch list excludes archive branch"
+    },
+    {
+      "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      "git_blob_oid": "c758f5d0e10be8972e9b9fcc250e07d3a852877d",
+      "bytes": 26186,
+      "sha256": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf",
+      "events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-baseline-diagnostic-readback.yml",
+            "trillionnium/**"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "git_blob_oid": "b459945f8b071c70f83cc5fce0fa895225d5c8d0",
+      "bytes": 14754,
+      "sha256": "e38ad01a63e7496ae547de02ae14ee8fada006dbeadae7b98899e4919b14ea86",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+            "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**",
+            "scripts/ci/check_native_constants_roster.py",
+            "scripts/ci/test_native_constants_roster.py",
+            "scripts/ci/test_branch_migration_count.py",
+            "evidence/branch-migration-count-20261106/**",
+            ".github/workflows/pon-branch-encoding-acceptance.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-cloud-build-inputs.yml",
+      "git_blob_oid": "36d0cdef797a21aca7e6884082ffb2a8d861b8a6",
+      "bytes": 3991,
+      "sha256": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+      "events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-cloud-build-inputs.yml",
+            "rust-toolchain.toml",
+            "trillionnium/Cargo.lock",
+            "trillionnium/**/Cargo.toml"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "git_blob_oid": "733184b54aba30ab56c5a076bcfefdea31e1e2b1",
+      "bytes": 17173,
+      "sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+      "events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-fixed-host-root-f0.yml",
+            "scripts/run_fixed_host_root_f0.py",
+            "scripts/ci/run_fixed_root_phase_host.py",
+            "scripts/ci/fixed_root_f0_ownership.py",
+            "scripts/ci/fixed_root_f0_resources.py",
+            "scripts/ci/finalize_fixed_root_f0.py",
+            "scripts/ci/test_fixed_root_f0.py",
+            "scripts/ci/test_fixed_root_phase_host.py",
+            "scripts/ci/test_fixed_root_resources.py",
+            "scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+            "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+            "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs",
+            "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+            "docs/security/PUBLIC_V3_FIXED_HOST_ROOT_EXPERIMENT_R10.md"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-legacy-reorg-cost-20261104.yml",
+      "git_blob_oid": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
+      "bytes": 30361,
+      "sha256": "0bc8164028072eb1328965466de6a21302c228c40500f121282488e0b1ac588a",
+      "events": {
+        "push": {
+          "branches": [
+            "fix/chain-legacy-reorg-cost-20261104"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "literal branch list excludes archive branch"
+    },
+    {
+      "path": ".github/workflows/pon-model-parent-acceptance.yml",
+      "git_blob_oid": "9305c93f54dfee7d8ad6fd88df6df5e881ca7d0c",
+      "bytes": 3948,
+      "sha256": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            ".github/workflows/pon-model-parent-acceptance.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "git_blob_oid": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7",
+      "bytes": 22343,
+      "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "formal/pon-nakamoto-v1/bounded_process*.py",
+            "scripts/run_pon_w1_native_campaign.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/pon_public_v3_policy_read.py",
+            "scripts/ci/test_pon_public_v3_policy_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/ci/run_native_phase_host.py",
+            "scripts/ci/test_native_phase_host.py",
+            "scripts/ci/public_host_ci_observation.py",
+            ".github/workflows/pon-native-campaign-qualification.yml"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-original-large-state-cpu.yml",
+      "git_blob_oid": "a1be1f095683f90ff6ee0c4d6d14bb7b95aaa364",
+      "bytes": 9649,
+      "sha256": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+      "events": {
+        "pull_request": {}
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "git_blob_oid": "516ca1abb0dfeb6c52b3a99efc8f041390d78223",
+      "bytes": 29673,
+      "sha256": "bd2faa31cc326d8f23435fc4cf45de18310a8ffea4162ec67bb3839510e960e3",
+      "events": {
+        "pull_request": {}
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "git_blob_oid": "3ed5bff6e3ec2a9451cd3834289a5d83b59eb4f5",
+      "bytes": 12058,
+      "sha256": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "scripts/**",
+            ".github/workflows/pon-owned-process-cleanup.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "git_blob_oid": "f6b862182b361eefef62a553f59c3e79e90e1868",
+      "bytes": 12858,
+      "sha256": "f364ad07f09b80fdf5ab8a349364356fa6c57e75daa35fd4bf1da3634a7e1120",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "config/pon/pq-cross-branch-corpus-v1.json",
+            "config/pon/pq-system-required-tests-v1.json",
+            "scripts/ci/record_pq_native_command.py",
+            "scripts/ci/test_record_pq_native_command.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/ci/check_sqlite_build_requalification.py",
+            ".github/workflows/pon-pq-system-continuation.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "git_blob_oid": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+      "bytes": 24989,
+      "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+      "events": {
+        "push": {
+          "branches": [
+            "fix/chain-six-axis-performance-20261103"
+          ]
+        },
+        "pull_request": ""
+      },
+      "push_branch_match": false,
+      "decision_reason": "literal branch list excludes archive branch"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "git_blob_oid": "92d03597f3bcac48daedda52b140f15f6c07f907",
+      "bytes": 35956,
+      "sha256": "644eff70a066a3dabb425b4fe45554eaed0005beae747e81fcf5efa68ec1ce57",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+            "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+            "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs",
+            "formal/pon-nakamoto-v1/work_query_bound.py",
+            "formal/pon-nakamoto-v1/test_work_query_bound.py",
+            "scripts/ci/read_native_cache_observation.py",
+            "scripts/ci/test_read_native_cache_observation.py",
+            "scripts/ci/test_recent_batch_suite_count.py",
+            "scripts/ci/test_authenticated_suite_count.py",
+            "evidence/authenticated-suite-count-20261106/**",
+            "evidence/recent-batch-suite-count-20261106/**",
+            ".github/workflows/pon-recent-batch-acceptance.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-smollm-hosted-once.yml",
+      "git_blob_oid": "15638b7be5eb2448f56a434fd99fe944febb71aa",
+      "bytes": 1988,
+      "sha256": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+      "events": {
+        "push": {
+          "branches": [
+            "fix/chain-model-owner-hosted-once-20261105"
+          ],
+          "paths": [
+            "config/pon/hosted-model-intents-v1/*.json"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "literal branch list excludes archive branch"
+    },
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "git_blob_oid": "343843d2f462bc44a6266e3384a0990e3607889e",
+      "bytes": 23862,
+      "sha256": "0dd9bcc90b1a6056e183ec417825f5451591c5a9aa6725b872543c4e369c9827",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/w1_hardened_verifier/**",
+            "formal/pon-nakamoto-v1/w1_v2_verifier/**",
+            "formal/pon-nakamoto-v1/w1_native_cost/**",
+            "formal/pon-nakamoto-v1/w1_zkvm/**",
+            "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+            "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+            "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+            "trillionnium/**",
+            "scripts/w1_transparent_compare.py",
+            "scripts/w1_profile_source_map.py",
+            "scripts/w1_security_budget.py",
+            "scripts/w1_v2_receipt_controls.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-complete-succinct-20261028/**",
+            "evidence/pon-w1-verifier-hardening-20261028/**",
+            "evidence/pon-w1-transparent-profile-20261104/**",
+            "evidence/pon-w1-statement-v2-20261105/**",
+            "evidence/pon-w1-qrom-budget-20261105/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-transparent-profile.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "git_blob_oid": "c9ab642e0f23194b32a7b283107d215deb534c7a",
+      "bytes": 43822,
+      "sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490",
+      "events": {
+        "push": {
+          "branches": [
+            "fix/chain-six-axis-performance-20261103"
+          ]
+        },
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "tests/fuzz/**",
+            "scripts/ci/**",
+            "scripts/pon_w1_*.py",
+            "formal/pon-nakamoto-v1/work_query_bound.py",
+            "formal/pon-nakamoto-v1/test_work_query_bound.py",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            ".github/workflows/pon-w1-work-security.yml",
+            ".github/workflows/pon-recent-batch-acceptance.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "literal branch list excludes archive branch"
+    },
+    {
+      "path": ".github/workflows/release-finality-reference.yml",
+      "git_blob_oid": "23746e01d1f4a35987f87e5491b247e931d59782",
+      "bytes": 7852,
+      "sha256": "a833e4554eb61c9c3de5704d1af87fbc467a81106da0c5ea76c0d8f013d2c0b8",
+      "events": {
+        "pull_request": {
+          "paths": [
+            "formal/release-finality-v2/**",
+            "config/finality-profile-v1.json",
+            "config/release-finality-v2.json",
+            "scripts/ci/test_finality_profile.py",
+            "scripts/ci/check_required_native_test.py",
+            "docs/protocol/release-finality-v2/**",
+            "trillionnium/crates/trnm-pon-node/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/Cargo.toml",
+            "trillionnium/Cargo.lock",
+            ".github/workflows/release-finality-reference.yml"
+          ]
+        }
+      },
+      "push_branch_match": false,
+      "decision_reason": "no push event"
+    },
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "git_blob_oid": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+      "bytes": 34136,
+      "sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+      "events": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "push_branch_match": false,
+      "decision_reason": "literal branch list excludes archive branch"
+    }
+  ]
+}

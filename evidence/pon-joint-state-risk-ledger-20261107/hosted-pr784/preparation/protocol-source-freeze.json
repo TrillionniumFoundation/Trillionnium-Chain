@@ -1,0 +1,20 @@
+{
+  "artifact_manifest_sha256": "b2c90f3ccf78e920aea26516df9adf47cf89ae3ac1fb936f2b883babcbe0ac9c",
+  "diagnosis_sha256": "73c42146c316fe836bdc8cf2b23360689ff05a6c6c6d3c28281fcb7b683b5d3e",
+  "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-protocol-contract-review",
+  "file_count": 105,
+  "frozen_utc": "2026-11-08T01:23:40.785526+00:00",
+  "head_unverified_partial": {
+    "bytes": 2177980,
+    "expected_complete_sha256": "965cacdc613d27a1243d8619ce397f1de3bfc35ca0c431ec8c0977bcb148674d",
+    "file": "head-artifact.zip",
+    "sha256": "4e428d751d7d58c4f0d35cea775012c259b43a749363a0f645dcb23a48a86a4d"
+  },
+  "merge_verified_zip": {
+    "bytes": 5892591,
+    "file": "merge-artifact.zip",
+    "sha256": "b3c76968c20a93663304e958c2a1aa68e791aca204c7715908e7a203fe54dafa"
+  },
+  "no_further_writes_planned": true,
+  "total_bytes": 54017740
+}
