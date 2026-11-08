@@ -1,0 +1,25 @@
+{
+  "source": "phase1 exact V3 implementation plus three regression tests; quota preparation diagnostic only",
+  "auth_sha256": "7214ea4e588a95cb0043d750123d7ad657ed7cba275ba54f1d4e62535ce7a30b",
+  "test_sha256": "b9b09ea5d969da23b4b6e841790940d1f8639983a702f91fd3bed0c531e73980",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 78.1425906389486,
+  "auth_unchanged": true,
+  "tests_unchanged": true,
+  "stdout_sha256": "970e726f257387dd40f2bac7f4f2d6da4fbb87b6a82e8fd1536d876aa7e6511f",
+  "stderr_sha256": "899db6e3ea1eca10453f78f7dedee870e455dac27dab95e0203de3504aa4abf0"
+}

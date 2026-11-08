@@ -7975,3 +7975,49 @@ negative source/CI-contract controls and repository links. These are default
 feature component runtime tests on shared Linux x86_64, not all-feature runtime,
 independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
 not change those source identities or close the six operational qualifications.
+
+
+### 2026-11-08 authenticated epoch discovery and storage-network obligations
+
+Continue Cell PR #807 from exact
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` in an isolated stacked branch.
+The [authenticated PQ V3 contract](specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md)
+adds explicitly signed 300-second sequence epochs, separate active/replay
+allocations, bounded authenticated-source shares, query nonces and exact
+bootstrap reply binding. Closed epochs can be reclaimed without reopening
+old signed sequence namespaces; existing V1/V2 namespaces retain their original
+meaning. Current provider authority expiry releases active capacity while
+history remains until epoch closure. Current-source authentication, original
+receipt-time conflict evidence, exact lease boundaries and the original shared
+connection/byte/validation/deadline reservation are independent obligations.
+
+The [source-bound evidence](../../evidence/cell-discovery-auth-epoch-20261108/README.md)
+retains an actual unchanged-source 52-pass discovery baseline and two actual
+desired-recovery red controls (0 passed / 2 failed, Cargo exit 101). Sixteen
+previous signed admissions remain allocated after expiry, a 601-second clock
+advance and reopen, and exclude a fresh signed identity. The tests augment
+only the old test modules; those failures are not new-source validation.
+New V3 source needs its own frozen-source complete crate and required gates.
+
+Independent review also identified operation-local sequence downgrade after a
+higher observed lease expires or its withdrawal is capacity-refused. Actual
+native red controls reproduce both expiry orderings and the quota-refused
+withdrawal path. Preserve the first quota fixture's setup failure separately;
+the diagnostic successor reaches the intended semantic failure. The candidate
+retains a bounded highest-verified sequence across both query rounds before
+current-expiry and quota filtering. This veto is distinct from, and cannot
+manufacture, the directory's committed cross-operation high water.
+
+The [five-part acceptance register](specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md)
+keeps existing complete-target TCX1 delta, TCV1 closure, complete-replica
+intersection, protected shared-object GC and bounded RAM working sets. It
+records the missing persistent complete-version retained-set owner, shard
+lifecycle, independently administered placement, executed prepaid renewal/repair
+and ordinary restricted-loader/device/Hepta CURRENT/resource/FinalUse/next-task
+trace. A discovery location lease is not a funded storage lease. Exact-byte
+deduplication must be measured on the actual encoding and updates. Permanent
+historical retention needs an explicit funded capacity horizon.
+
+The existing PN5 independent 72-hour WAN gate, original four-second service
+contract and separate thirty-second pressure campaign remain unchanged.
+All five operational storage qualifications remain **HOLD_NO_GO**.
