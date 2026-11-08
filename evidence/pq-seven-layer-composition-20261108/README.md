@@ -67,3 +67,30 @@ requires its own command receipts; earlier results do not automatically apply.
 The record also retains a separate local full-diff failure caused by an absent
 historical Git object. Scoped repair checks do not substitute for the complete
 desktop checkout's source and diff checks.
+
+
+## Exact committed-source campaigns
+
+| Tested source | Command gates | Aggregate result | Receipt |
+| --- | --- | --- | --- |
+| `d8280daa8651ca387813b25e2a712f3fd1c82a1d` | 28 passed / 1 failed | FAIL: generated inventory omitted four config entries | [Original campaign](committed-source-d828/README.md) |
+| `1d29818ad927f549f43d74a06f51e91771feac70` | 29 passed / 0 failed | PASS for the named scoped checks; whole-chain HOLD remains | [Repaired-source campaign](committed-source-1d29818/README.md) |
+
+Both campaigns completed all 29 commands, including raw tracked-source checks
+before and after, exact Cargo graphs with locked offline dependencies, strict
+workspace Clippy, formatting, 165 default crypto tests, and 6 Hepta PQ comparator
+tests. Each keeps its original summary and stdout/stderr byte identities. The
+[separate inventory refusal](inventory-negative-d828/summary.json) is also
+retained. Results from one source never replace results from another source.
+
+The [repair delta](source-repair-delta.json) and
+[environment observation](validation-environment-observation.json) expose the
+actual source and toolchain scope. These are operator observations and do not
+establish independent custody, deployed-root identity, or whole-chain acceptance.
+
+The [local materialization summary](local-materialization-summary.json) and
+[lossless complete record](local-materialization.json.gz) resolve the earlier
+local missing-pin and Markdown-target observations. That earlier local sparse
+checkout still had 142 explicitly missing objects and did not qualify as a
+complete source checkout. Both recorded campaigns used the separate, complete
+desktop worktree and preserved full source verification before and after.
