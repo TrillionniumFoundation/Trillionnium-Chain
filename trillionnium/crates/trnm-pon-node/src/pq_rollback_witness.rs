@@ -67,6 +67,7 @@ pub(crate) mod test_observation;
 const REQUEST_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/request/v1\0";
 const REPLY_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/reply/v1\0";
 const BINDING_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/binding/v1\0";
+const GENERATION_BINDING_DOMAIN: &[u8] = b"TRNM/M12/full-generation-effect-witness/binding/v3\0";
 const REQUEST_BODY: usize = 245;
 const REPLY_BODY: usize = 172;
 const REQUEST_BYTES: usize = REQUEST_BODY + ML_DSA_65_SIGNATURE_BYTES;
@@ -111,6 +112,43 @@ pub struct WitnessBinding {
     writer: PqNativeVerifier,
 }
 impl WitnessBinding {
+    /// New M12 namespace over the existing authenticated CAS register protocol.
+    /// It never matches a PNQ2 network policy. The context commits the entire
+    /// generation configuration and random journal identity, not a caller's
+    /// operation label. The returned ID must be pinned outside the backup domain.
+    pub fn generation_v3(
+        context: [u8; 64],
+        generation: u64,
+        witness_spki: &[u8],
+        writer_spki: &[u8],
+    ) -> Result<Self> {
+        ensure(
+            context != [0; 64] && (1..=i64::MAX as u64).contains(&generation),
+            "GENERATION_WITNESS_CONTEXT",
+        )?;
+        let witness_id = ml_dsa_65_key_id_from_spki(witness_spki).map_err(crypto)?;
+        let writer_id = ml_dsa_65_key_id_from_spki(writer_spki).map_err(crypto)?;
+        ensure(witness_id != writer_id, "PQ_WITNESS_IDENTITY_SEPARATION")?;
+        let mut canonical = GENERATION_BINDING_DOMAIN.to_vec();
+        canonical.extend(generation.to_be_bytes());
+        canonical.extend(context);
+        canonical.extend(witness_spki);
+        canonical.extend(writer_spki);
+        Ok(Self {
+            id: Sha512::digest(&canonical).into(),
+            canonical,
+            policy_length: 0,
+            witness: PqNativeVerifier::from_pinned_spki(witness_spki, witness_id)
+                .map_err(crypto)?,
+            writer: PqNativeVerifier::from_pinned_spki(writer_spki, writer_id).map_err(crypto)?,
+        })
+    }
+    pub(crate) fn matches_generation_v3(&self, context: [u8; 64], generation: u64) -> bool {
+        let mut expected = GENERATION_BINDING_DOMAIN.to_vec();
+        expected.extend(generation.to_be_bytes());
+        expected.extend(context);
+        self.policy_length == 0 && self.canonical.starts_with(&expected)
+    }
     pub fn new(
         policy: &crate::ingress::pq_network::PqNetworkPolicy,
         generation: u64,
@@ -150,7 +188,8 @@ impl WitnessBinding {
     }
     pub(crate) fn matches_policy(&self, policy: &[u8]) -> bool {
         let start = BINDING_DOMAIN.len() + 16;
-        policy.len() == self.policy_length
+        self.canonical.starts_with(BINDING_DOMAIN)
+            && policy.len() == self.policy_length
             && self.canonical.get(start..start + policy.len()) == Some(policy)
     }
 }

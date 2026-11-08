@@ -1,3 +1,14 @@
+**M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
+The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
+adds a separate M12 witness binding, complete-journal checkpoints and transaction
+head fencing. New generation/settlement intents require an authenticated external
+CAS; uncertain replies keep the same operation and full unresolved reservation.
+Whole local rollback and an unwitnessed local successor refuse recovery. The
+original V2 research path and historical #782 Unknown operations remain outside
+this new profile's qualification. Native fixture evidence, independent current
+custody, provider query/idempotency, real power loss and original CPU/service
+budget acceptance are distinct requirements; no runtime activation is authorized.
+
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
 > Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.

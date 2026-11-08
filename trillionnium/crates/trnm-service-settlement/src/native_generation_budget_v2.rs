@@ -17,6 +17,8 @@ pub type Hash = [u8; 32];
 pub type Result<T> = std::result::Result<T, NativeBudgetErrorV1>;
 pub const NAMESPACE: &str = "pon-native-owner-w1-generation-budget-v2";
 pub const PROFILE: &str = "trnm-w1-risc0-3.0.6-poseidon2-join-v2";
+mod recovery_checkpoint_v3;
+pub use recovery_checkpoint_v3::GenerationRecoveryCheckpointV3;
 const APP: i64 = 0x504e_4732;
 const MAX_EVENT: usize = 16_384;
 const META: &str = "CREATE TABLE native_generation_meta_v2(singleton INTEGER PRIMARY KEY CHECK(singleton=1),configuration BLOB NOT NULL,journal BLOB NOT NULL CHECK(length(journal)=32),sequence INTEGER NOT NULL,root BLOB NOT NULL CHECK(length(root)=32)) STRICT";
@@ -618,6 +620,8 @@ pub struct NativeGenerationStoreV2 {
     connection: Connection,
     configuration: ConfigurationV2,
     journal_identity: Hash,
+    recovery_expected_v3: Option<GenerationRecoveryCheckpointV3>,
+    recovery_committed_v3: Option<GenerationRecoveryCheckpointV3>,
 }
 fn event_root(journal: Hash, previous: Hash, sequence: u64, payload: &[u8]) -> Hash {
     let mut h = Sha256::new();
@@ -657,12 +661,15 @@ fn schema(c: &Connection) -> Result<()> {
     require(count == 2, "GENERATION_STORE_SCHEMA")
 }
 fn journal_id(c: &Connection) -> Result<Hash> {
-    let bytes: Vec<u8> = c.query_row(
-        "SELECT journal FROM native_generation_meta_v2 WHERE singleton=1",
+    // Restored files may have bypassed CHECK constraints. Do not allocate an
+    // attacker-sized Vec before validating an ostensibly fixed-size field.
+    let bytes: Option<Vec<u8>> = c.query_row(
+        "SELECT CASE WHEN typeof(journal)='blob' AND length(journal)=32 THEN journal ELSE NULL END FROM native_generation_meta_v2 WHERE singleton=1",
         [],
         |r| r.get(0),
     )?;
     bytes
+        .ok_or(NativeBudgetErrorV1::Invalid("GENERATION_JOURNAL_IDENTITY"))?
         .try_into()
         .map_err(|_| NativeBudgetErrorV1::Invalid("GENERATION_JOURNAL_IDENTITY"))
 }
@@ -674,9 +681,10 @@ fn load(
 ) -> Result<(State, u64, Hash)> {
     schema(c)?;
     require(journal_id(c)? == journal, "GENERATION_JOURNAL_IDENTITY")?;
-    let (config, count, root): (Option<Vec<u8>>, u64, Vec<u8>) = c.query_row(
-        "SELECT CASE WHEN length(configuration)<=16384 THEN configuration ELSE NULL END,sequence,root FROM native_generation_meta_v2 WHERE singleton=1",
+    let (config, count, root): (Option<Vec<u8>>, u64, Option<Vec<u8>>) = c.query_row(
+        "SELECT CASE WHEN typeof(configuration)='blob' AND length(configuration)<=16384 THEN configuration ELSE NULL END,sequence,CASE WHEN typeof(root)='blob' AND length(root)=32 THEN root ELSE NULL END FROM native_generation_meta_v2 WHERE singleton=1",
         [], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
+    let root = root.ok_or(NativeBudgetErrorV1::Invalid("GENERATION_JOURNAL_ROOT_SIZE"))?;
     require(
         config.as_deref() == Some(encode(cfg)?.as_slice())
             && count <= u64::from(cfg.max_records) * 12,
@@ -693,7 +701,7 @@ fn load(
         )?;
         seen = true;
     }
-    let mut q = c.prepare("SELECT sequence,CASE WHEN length(payload)<=16384 THEN payload ELSE NULL END,root FROM native_generation_events_v2 ORDER BY sequence")?;
+    let mut q = c.prepare("SELECT sequence,CASE WHEN typeof(payload)='blob' AND length(payload)<=16384 THEN payload ELSE NULL END,CASE WHEN typeof(root)='blob' AND length(root)=32 THEN root ELSE NULL END FROM native_generation_events_v2 ORDER BY sequence")?;
     let mut rows = q.query([])?;
     while let Some(row) = rows.next()? {
         sequence += 1;
@@ -703,11 +711,11 @@ fn load(
         )?;
         let bytes: Option<Vec<u8>> = row.get(1)?;
         let bytes = bytes.ok_or(NativeBudgetErrorV1::Invalid("GENERATION_EVENT_SIZE"))?;
+        let stored_root: Option<Vec<u8>> = row.get(2)?;
+        let stored_root =
+            stored_root.ok_or(NativeBudgetErrorV1::Invalid("GENERATION_JOURNAL_ROOT_SIZE"))?;
         let current = event_root(journal, previous, sequence, &bytes);
-        require(
-            row.get::<_, Vec<u8>>(2)?.as_slice() == current,
-            "GENERATION_JOURNAL_ROOT",
-        )?;
+        require(stored_root.as_slice() == current, "GENERATION_JOURNAL_ROOT")?;
         let e: Event = borsh::from_slice(&bytes)?;
         require(encode(&e)? == bytes, "GENERATION_JOURNAL_ENCODING")?;
         state.apply(&e, cfg)?;
@@ -783,22 +791,34 @@ impl NativeGenerationStoreV2 {
             connection: c,
             configuration,
             journal_identity,
+            recovery_expected_v3: None,
+            recovery_committed_v3: None,
         };
         store.snapshot()?;
         Ok(store)
     }
     fn snapshot(&self) -> Result<State> {
         let tx = self.connection.unchecked_transaction()?;
-        let (s, _, _) = load(&tx, &self.configuration, self.journal_identity, None)?;
+        let (s, sequence, root) = load(&tx, &self.configuration, self.journal_identity, None)?;
+        self.check_recovery_expected_v3(sequence, root)?;
         tx.commit()?;
         Ok(s)
     }
     fn update<T>(&mut self, make: impl FnOnce(&State) -> Result<Update<T>>) -> Result<T> {
+        let expected = self.recovery_expected_v3;
+        let context = expected.map(|_| self.recovery_context_v3()).transpose()?;
         let tx = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let (mut state, mut sequence, mut root) =
             load(&tx, &self.configuration, self.journal_identity, None)?;
+        if let (Some(expected), Some(context)) = (expected, context) {
+            require(
+                expected
+                    == recovery_checkpoint_v3::checkpoint_from_parts_v3(context, sequence, root)?,
+                "GENERATION_RECOVERY_TRANSACTION_HEAD",
+            )?;
+        }
         let value = match make(&state)? {
             Update::Replay(v) => v,
             Update::Append(e, v) => {
@@ -834,6 +854,11 @@ impl NativeGenerationStoreV2 {
             Some((sequence, root, &state)),
         )?;
         tx.commit()?;
+        if let Some(context) = context {
+            self.recovery_committed_v3 = Some(recovery_checkpoint_v3::checkpoint_from_parts_v3(
+                context, sequence, root,
+            )?);
+        }
         // Failure after commit is uncertainty. Retrying finds Pending, never New.
         let read = self.connection.unchecked_transaction()?;
         load(
