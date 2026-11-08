@@ -8431,3 +8431,15 @@ bind 11,064 tracked entries / 1,114,540,546 bytes. The [source receipt and raw l
 remain distinct from e36 native execution and its failed terminal disposition.
 Runtime and formal subtree objects match e36 exactly; this evidence-only update
 does not create a new native run, PQ-128 qualification or production activation.
+
+### 2026-11-08 — distributed source inventory follow-up
+
+Status: **Draft / HOLD**. Hosted checks found that the PQ quorum-preflight change
+omitted its new Rust test file from the embedded distributed source inventory.
+Refresh the existing inventory with its unchanged generator and retain the
+original failed observation. The separate final validation runner adds the
+actual inventory freshness command to the existing 31 gates, for 32 total;
+the execution evidence must bind any pass to the corrected source. See the
+[authority report](../security/PQ_AUTHORITY_PREFLIGHT_20261108.md) for this
+omission and the distinct hosted historical-evidence and business-target
+failures. No whole-chain or production claim is promoted by this follow-up.

@@ -206,3 +206,28 @@ Exact component tests and the root-signature experiment do not establish full
 entrypoint migration, independent custody, original fixed-Host availability,
 WAN acceptance, a complete PQ proof composition or quantum PoN work cost.
 The original whole-chain HOLD and independent acceptance requirements remain.
+
+## Hosted CI inventory follow-up
+
+Hosted checks on the initial delivery
+`527e2e58db6d7c1fd84ba88c3131289edea86b1d` found a concrete integration
+omission: the embedded distributed native source inventory did not list the
+new `pq_release/quorum_preflight_tests.rs`. The existing base inventory was
+fresh. This continuation introduced exactly one missing path and no extra or
+deleted paths: the expected list has 1,369 entries, compared with the retained
+1,368-entry list. The original generator refreshes that one entry without
+changing its enumeration rules or the signature implementation.
+
+The previously recorded 31 local command gates did not include this independent
+hosted freshness check. Their actual results remain bound to their own tested
+sources. A separate frozen 32-command runner preserves every original command
+and argument, adding `scripts/refresh_distributed_source_inventory.py --check`
+immediately after the initial raw-source guard. The generator itself is now
+explicitly source-pinned alongside that runner. The execution record identifies
+the corrected source and the actual later validation result.
+
+Hosted results also include an unavailable pinned historical artifact and real
+public-service confirmation failures. Those observations remain separate from
+the inventory omission and the local cryptographic tests; refreshing a source
+inventory does not establish service performance, hosted acceptance or any
+production qualification. Original failed runs and reports must remain FAIL.

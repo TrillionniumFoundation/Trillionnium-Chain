@@ -286,6 +286,10 @@
       "bytes": 12638,
       "sha256": "bf87fa8ee59b12eecb1c8d42cc757ef79ca4b4a19bf6455cd37004bf7bb6b01a"
     },
+    "authority-final-validation-runner.py": {
+      "bytes": 25774,
+      "sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710"
+    },
     "authority-integrated-validation-runner.py": {
       "bytes": 25660,
       "sha256": "f5fc66625c09cfccf5054ec705a49c2a88f234c0620e6e6426aa4b7efcb71b86"
