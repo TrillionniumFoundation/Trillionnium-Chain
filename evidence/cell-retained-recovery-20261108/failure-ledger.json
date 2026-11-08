@@ -1,0 +1,40 @@
+{
+  "schema": "cell-retained-recovery-failure-ledger-v1",
+  "observations": [
+    {
+      "id": "development-targeted-compile",
+      "outcome": "COMPILE_REFUSED",
+      "reason": "Two concurrently authored test modules were not yet present. No test body ran.",
+      "log": "initial-targeted-compile-failure.txt"
+    },
+    {
+      "id": "development-storage",
+      "outcome": "WRITE_REFUSED",
+      "reason": "Agent reported transient ENOSPC while creating retained/tests.rs. The same task path became writable again; no other checkout was removed.",
+      "evidence_scope": "Agent observation; no standalone syscall transcript retained."
+    },
+    {
+      "id": "development-01",
+      "outcome": "495_PASSED_1_FAILED",
+      "reason": "Test equated client request frames with server read-slot admissions. Server reserves an extra EOF read slot. Corrected only the test to compare exact completed responses, exact bytes, and bounded EOF admission.",
+      "log": "development-01/complete-cell-tests.log",
+      "qualified_exact_source": false
+    },
+    {
+      "id": "publication-relay-local-clone",
+      "outcome": "SOURCE_IMPORT_REFUSED",
+      "reason": "Existing local promisor clone could not supply Git object 4bad7a064c3d45cb906165c79d8e5156b9826cfc; no existing checkout was changed.",
+      "runtime_job": "1a1bc36f31b-138b0-ed"
+    },
+    {
+      "id": "publication-relay-direct-clone",
+      "outcome": "TIMED_OUT",
+      "exit_code": 124,
+      "original_timeout_seconds": 240,
+      "reason": "Direct full clone did not complete within original job deadline; no published ref was updated.",
+      "runtime_job": "1a1bc389e60-138b0-f6"
+    }
+  ],
+  "failed_observations_erased": false,
+  "production_qualified": false
+}
