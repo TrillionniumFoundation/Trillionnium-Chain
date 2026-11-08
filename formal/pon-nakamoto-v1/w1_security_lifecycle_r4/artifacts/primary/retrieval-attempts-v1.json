@@ -1,0 +1,25 @@
+[
+  {
+    "name": "co25-20260327.pdf",
+    "url": "https://eprint.iacr.org/2025/536.pdf",
+    "retrieved_at": "2026-11-08T04:48:08.080036+00:00",
+    "success": false,
+    "error": "<HTTPError 403: 'Forbidden'>"
+  },
+  {
+    "name": "bgk23-proceedings.pdf",
+    "url": "https://par.nsf.gov/servlets/purl/10510337",
+    "retrieved_at": "2026-11-08T04:48:14.447791+00:00",
+    "bytes": 566838,
+    "sha256": "301d3bc0325838c3361d7bf133cb8e6fe09d0196263f4697f0cc04c3a4839ad2",
+    "success": true
+  },
+  {
+    "name": "p3-challenger-0.8.0.crate",
+    "url": "https://static.crates.io/crates/p3-challenger/p3-challenger-0.8.0.crate",
+    "retrieved_at": "2026-11-08T04:48:20.751219+00:00",
+    "bytes": 102890,
+    "sha256": "92cccaed1c107ad279e76dfd10aa71cff1c1898eb282f406288ad556e65e5a8f",
+    "success": true
+  }
+]
