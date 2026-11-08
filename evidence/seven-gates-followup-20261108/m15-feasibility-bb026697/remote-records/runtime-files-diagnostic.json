@@ -1,0 +1,57 @@
+{
+  "apparmor_context": "unconfined",
+  "native_case_executed": false,
+  "original_tools_input_rejection_retained": true,
+  "process_context": [
+    "Name:\tpython3",
+    "Uid:\t1000\t1000\t1000\t1000",
+    "Gid:\t1000\t1000\t1000\t1000",
+    "CapEff:\t0000000000000000",
+    "NoNewPrivs:\t0",
+    "Seccomp:\t0"
+  ],
+  "runtime_files": [
+    {
+      "bytes": 2129424,
+      "destination": "/lib/x86_64-linux-gnu/libc.so.6",
+      "error": "single-linked regular tool/source required",
+      "error_type": "ValueError",
+      "gid": 0,
+      "mode": 493,
+      "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "pinned_file_accepted": false,
+      "sha256": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf",
+      "st_nlink": 2,
+      "uid": 0
+    },
+    {
+      "bytes": 26848,
+      "destination": "/lib/x86_64-linux-gnu/libcap-ng.so.0",
+      "gid": 0,
+      "mode": 420,
+      "path": "/usr/lib/x86_64-linux-gnu/libcap-ng.so.0.0.0",
+      "pinned_file_accepted": true,
+      "sha256": "25349c22956c7af94f46e728d7e4c1eba57d0e4a0517f72781fb495d541eeef3",
+      "st_nlink": 1,
+      "uid": 0
+    },
+    {
+      "bytes": 236616,
+      "destination": "/lib64/ld-linux-x86-64.so.2",
+      "gid": 0,
+      "mode": 493,
+      "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+      "pinned_file_accepted": true,
+      "sha256": "c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da",
+      "st_nlink": 1,
+      "uid": 0
+    }
+  ],
+  "schema": "trnm-m15-existing-runtime-custody-diagnostic-v1",
+  "scope": "Read-only diagnostics of failed original input contract; no file/link/permission/policy changes",
+  "source": {
+    "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "status": "",
+    "tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+  }
+}

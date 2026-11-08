@@ -180,6 +180,18 @@ resource, cancellation or full-state checks.
 
 ## Acceptance boundaries
 
+The [M15 feasibility record](m15-feasibility-bb026697/README.md) retains a
+complete static-build tool manifest, including 142 provider headers and the
+original provider receipt, accepted by the original input validator. Two
+separate runtime prerequisites refused the actual desktop: the unchanged
+namespace command exited 1 at `/proc/self/setgroups`, and the original protected
+single-link runtime-file predicate refused the existing libc with link count 2.
+The [complete archive](m15-feasibility-bb026697.tar.gz) and
+[execution plan](m15-feasibility-bb026697/execution-plan.json) retain all commands,
+inputs, source identities and failures. Static build and the ignored isolated
+Node case remain unexecuted; no artifact digest, permission change, altered
+namespace or debug substitute supplies a pass.
+
 | Gate | What this source contributes | Evidence still required |
 | --- | --- | --- |
 | Source convergence | One explicit Chain lineage and a frozen HEPLCP02 Hepta pair; original failures and rosters retained | Complete source/build/provider/executed-file and model identity at the same tested pair |

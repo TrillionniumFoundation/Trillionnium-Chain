@@ -1,0 +1,1 @@
+{"exit_code": 1, "namespace_ready": false, "observation_sha256": "be86fea5b59f729d606724c0f03e2c0081c208e132adc1ee3683e85632b13890", "output": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1", "stderr": "unshare: cannot open /proc/self/setgroups: Permission denied\n"}

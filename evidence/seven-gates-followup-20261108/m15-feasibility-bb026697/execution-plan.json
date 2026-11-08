@@ -1,0 +1,274 @@
+{
+  "schema": "trnm-m15-bb026697-feasibility-plan-v1",
+  "source": {
+    "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+    "remote_repo": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact",
+    "remote_head_and_tree_match": true,
+    "remote_status_clean": true
+  },
+  "overall": "BLOCKED",
+  "native_case": "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation",
+  "jobs": [
+    {
+      "role": "prerequisite",
+      "job_id": "1a1bc85bb06-138b0-309",
+      "job_state": "succeeded",
+      "job_exit_code": 0,
+      "output_complete": true,
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "qualification_pass": false
+    },
+    {
+      "role": "namespace",
+      "job_id": "1a1bc88e35c-138b0-31e",
+      "job_state": "succeeded",
+      "job_exit_code": 0,
+      "output_complete": true,
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "qualification_pass": false
+    },
+    {
+      "role": "input-preparation",
+      "job_id": "1a1bc8df7e2-138b0-335",
+      "job_state": "failed",
+      "job_exit_code": 1,
+      "output_complete": true,
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "qualification_pass": false
+    },
+    {
+      "role": "runtime-diagnostic",
+      "job_id": "1a1bc9051aa-138b0-344",
+      "job_state": "succeeded",
+      "job_exit_code": 0,
+      "output_complete": true,
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "qualification_pass": false
+    }
+  ],
+  "blockers": [
+    {
+      "kind": "namespace_permission",
+      "unshare_exit_code": 1,
+      "stderr": "unshare: cannot open /proc/self/setgroups: Permission denied\n",
+      "namespace_ready": false,
+      "record": "remote-records/namespace-probe.json",
+      "not_inferred": "The exact permission refusal is observed; no claim that AppArmor or another specific mechanism is the sole cause."
+    },
+    {
+      "kind": "runtime_custody",
+      "tools_input_accepted": false,
+      "file": {
+        "bytes": 2129424,
+        "destination": "/lib/x86_64-linux-gnu/libc.so.6",
+        "error": "single-linked regular tool/source required",
+        "error_type": "ValueError",
+        "gid": 0,
+        "mode": 493,
+        "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+        "pinned_file_accepted": false,
+        "sha256": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf",
+        "st_nlink": 2,
+        "uid": 0
+      },
+      "record": "remote-records/runtime-files-diagnostic.json"
+    }
+  ],
+  "build_inputs": {
+    "path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/static-build-tools.json",
+    "sha256": "dbfaebf6b4e5874645d5458f67e32e4296a653e40a9b65dd7a9931689b74a1eb",
+    "complete_provider_headers": 142,
+    "original_input_tools_validation_reached_and_returned": true,
+    "basis": "The retained preparation command executed builder.input_tools before constructing the isolated manifest and reached isolated.tools_input, which then failed."
+  },
+  "isolated_inputs": {
+    "path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/isolated-run-tools.json",
+    "sha256": "0833b10590a1f96836027335e52f0ae43acf329a3b1d1d0cf32033f69fd4ebfc",
+    "accepted": false
+  },
+  "candidate_commands_not_executed": {
+    "build_argv": [
+      "/usr/bin/python3.12",
+      "-I",
+      "-B",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact/scripts/m15_static_native_build.py",
+      "--repo",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact",
+      "--output",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-static-bb026697-01",
+      "--expected-head",
+      "bb026697a972521009bc133ae6ed2b653e18e931",
+      "--expected-tree",
+      "18175756871bf341586fc37be1b17a00ef1dd099",
+      "--tool-inputs",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/static-build-tools.json",
+      "--tool-inputs-sha256",
+      "dbfaebf6b4e5874645d5458f67e32e4296a653e40a9b65dd7a9931689b74a1eb",
+      "--compile-timeout-seconds",
+      "14400"
+    ],
+    "build_shell": "/usr/bin/python3.12 -I -B /home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact/scripts/m15_static_native_build.py --repo /home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact --output /home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-static-bb026697-01 --expected-head bb026697a972521009bc133ae6ed2b653e18e931 --expected-tree 18175756871bf341586fc37be1b17a00ef1dd099 --tool-inputs /home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/static-build-tools.json --tool-inputs-sha256 dbfaebf6b4e5874645d5458f67e32e4296a653e40a9b65dd7a9931689b74a1eb --compile-timeout-seconds 14400",
+    "run_argv_template": [
+      "/usr/bin/python3.12",
+      "-I",
+      "-B",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact/scripts/m15_isolated_native_run.py",
+      "--repo",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact",
+      "--expected-head",
+      "bb026697a972521009bc133ae6ed2b653e18e931",
+      "--expected-tree",
+      "18175756871bf341586fc37be1b17a00ef1dd099",
+      "--artifacts",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-static-bb026697-01/artifacts.json",
+      "--artifacts-sha256",
+      "UNPRODUCED_ARTIFACT_MANIFEST_SHA256",
+      "--tool-inputs",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/isolated-run-tools.json",
+      "--tool-inputs-sha256",
+      "0833b10590a1f96836027335e52f0ae43acf329a3b1d1d0cf32033f69fd4ebfc",
+      "--output",
+      "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-isolated-bb026697-01",
+      "--tmpfs-mebibytes",
+      "2048"
+    ],
+    "unresolved_run_argument": {
+      "name": "--artifacts-sha256",
+      "bind_to_actual_bytes_of": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-static-bb026697-01/artifacts.json",
+      "status": "No static build was started, so no artifact manifest exists for this attempt."
+    },
+    "cargo_cache": "/home/qian-qi/.cargo",
+    "rustup_cache": "/home/qian-qi/.rustup",
+    "ambient_loader_or_compiler_injection_allowed": false
+  },
+  "fixed_contract": {
+    "rust_version": "1.95.0",
+    "provider_version": "3.5.9",
+    "target": "x86_64-unknown-linux-gnu",
+    "profile": "release",
+    "crt_static": true,
+    "compile_jobs": 2,
+    "compile_timeout_seconds_per_command": 14400,
+    "rust_case_seconds": 180,
+    "maximum_steps": 32,
+    "service_rpc_seconds": 2,
+    "outer_setup_cleanup_seconds": 240,
+    "inner_cleanup_ceiling_seconds": 195,
+    "tmpfs_mebibytes_candidate": 2048,
+    "tmpfs_must_cover_actual_artifacts": true,
+    "namespace_uid_gid_range": {
+      "outer_uid": 1000,
+      "outer_gid": 1000,
+      "subuid_start": 100000,
+      "subgid_start": 100000,
+      "count": 2000
+    },
+    "setgroups": "allow"
+  },
+  "scope": {
+    "static_build_started": false,
+    "native_case_executed": false,
+    "original_32_campaign_replaced": false,
+    "source_modified": false,
+    "host_configuration_or_permissions_modified": false,
+    "namespace_or_custody_rules_relaxed": false,
+    "debug_artifacts_substituted": false,
+    "independent_deployment_qualified": false,
+    "overall_qualification": "HOLD"
+  },
+  "retained_remote_identities": [
+    {
+      "remote_path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/namespace-probe.json",
+      "local_path": "remote-records/namespace-probe.json",
+      "sha256": "be86fea5b59f729d606724c0f03e2c0081c208e132adc1ee3683e85632b13890",
+      "bytes": 1731
+    },
+    {
+      "remote_path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/namespace-probe.stdout",
+      "local_path": "remote-records/namespace-probe.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/namespace-probe.stderr",
+      "local_path": "remote-records/namespace-probe.stderr",
+      "sha256": "325b4176dd6adda24e5bc13b14bcf70922e7eaa103fe9af9fcb3fc8d7937d186",
+      "bytes": 61
+    },
+    {
+      "remote_path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/static-build-tools.json",
+      "local_path": "remote-records/static-build-tools.json",
+      "sha256": "dbfaebf6b4e5874645d5458f67e32e4296a653e40a9b65dd7a9931689b74a1eb",
+      "bytes": 19919
+    },
+    {
+      "remote_path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/isolated-run-tools.json",
+      "local_path": "remote-records/isolated-run-tools.json",
+      "sha256": "0833b10590a1f96836027335e52f0ae43acf329a3b1d1d0cf32033f69fd4ebfc",
+      "bytes": 2486
+    },
+    {
+      "remote_path": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1/runtime-files-diagnostic.json",
+      "local_path": "remote-records/runtime-files-diagnostic.json",
+      "sha256": "b5b68b8af3c59e078af19fe00aedeec8899574c29b4ff26dacb9fe06a699d30a",
+      "bytes": 1789
+    }
+  ],
+  "source_files": [
+    {
+      "path": "scripts/m15_static_native_build.py",
+      "bytes": 16374,
+      "sha256": "bf50e2459810ccbc780551b08a416020247912db13d91b0cbe931c43fa63a78e",
+      "git_blob": "160ae3d29e339625f711a3d1d62427295265ef4b"
+    },
+    {
+      "path": "scripts/m15_native_build_support.py",
+      "bytes": 16715,
+      "sha256": "f9053fc4811b1e99657cc7e95ff03b02244c59174155326f52213a731fb820d3",
+      "git_blob": "900189d6736dd7b1687adea46958b64e2876a05d"
+    },
+    {
+      "path": "scripts/m15_isolated_native_support.py",
+      "bytes": 14919,
+      "sha256": "06407d4bafbf69311f19aa0214b2ae4557f91989a44cf68da5cd75e5b123016f",
+      "git_blob": "c56a864121e8fda9f1ab1beb36ad2a58d5edbb30"
+    },
+    {
+      "path": "scripts/m15_isolated_native_setup.py",
+      "bytes": 15491,
+      "sha256": "4f3de54e659b6d8a2447cd2037e44c7566a09c3c9535769ab20c4a1b39d3b166",
+      "git_blob": "c3d63638aa339e554a1b0a53fd7de5468da2f96f"
+    },
+    {
+      "path": "scripts/m15_isolated_native_run.py",
+      "bytes": 16905,
+      "sha256": "3740012398fd8c1ef0231865e740722ec3e61e52c0f30d4a271a138fb2dba075",
+      "git_blob": "affd413a3a2155e9ae0a05db75080cda1bcc6b24"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/native_consumer_tests.rs",
+      "bytes": 14162,
+      "sha256": "19f8dd3a69cb240b8c5ee269632b1033185413fc9f28258a15af02cc0c30bbc5",
+      "git_blob": "8c2642fbdf1bd97caf547cd3c9966c454a6a7521"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/native_provision_fixture.rs",
+      "bytes": 16945,
+      "sha256": "c0ee52205496a5a0b7b0648b7a9f2a0ead433df91735da3c800d6f9adc4518f2",
+      "git_blob": "5d0e7e990343c4bd07d8d9adece368ce08eff02c"
+    }
+  ]
+}
