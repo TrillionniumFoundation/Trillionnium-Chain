@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Actual model execution, NoUpdate and Cell payload loading, 2026-11-08 UTC:**
+The [original SmolLM execution evidence](../../evidence/smollm-same-iteration-20261108/README.md)
+retains two actual ten-step generations and a separate fresh ten-step controlled
+NoUpdate replay, all on the same pinned trainer/worker material closure. The
+candidate regresses from three to one correct answer on four public frozen rows.
+The replay freezes its strict decision rule before its own training, retains the
+complete parent, executes a new parent next task and recovers the exact response
+in another worker process. Prior tasks/outcomes were exposed; no prospective,
+independent or efficacy claim follows. Fixed #807 native Cell code transfers
+the exact adapter and two companion files (1,011,315 bytes, 17 chunks, zero cache
+hits), and the actual worker loads from the receiver directory. Same-device
+loopback is not independent operation, public discovery or long-term custody.
+The 233 preserved original files replay under a separate bounded evidence check.
+Native learning-owner completion, real settlement, production FinalUse and
+activation remain distinct obligations; these records grant none of them.
+
 **Original completed learning receipts and acknowledged use, 2026-11-08 UTC:**
 Continue the exact #809 Selection reader with the
 [completed-checkpoint join](specs/pon/CELL_LEARNING_COMPLETION_JOIN_V1.md).
