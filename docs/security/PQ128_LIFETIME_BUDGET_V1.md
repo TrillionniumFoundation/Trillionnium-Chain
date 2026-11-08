@@ -179,13 +179,85 @@ never a complete real-world security bound.
 
 ### Machine interface
 
-`evaluate(data)` validates the closed input schema. `inspect(root, manifest)`
-also reads the manifest and all named event-owner files through the existing
-descriptor-bound source reader and reports their SHA-256 identities. The source
-revision must be a 40-character commit identifier, or the exact `illustrative`
-marker for an example. Format and file-identity checks do not prove a revision's
-provenance or theorem applicability; repository source-pin checks remain a
-separate gate.
+`evaluate(data)` validates the closed input schema and performs arithmetic. It
+does not inspect files, so `source_revision_bound` is false,
+`source_binding_scope` is `unbound`, and `source_lock_sha256` is null.
+
+For a `research-model`, `inspect(root, manifest)` additionally requires the
+reviewed [source lock](../../config/pon/pq128-source-lock-v1.json). Its namespace
+is `trnm-pq128-source-lock-v1` and its exact fields are `schema`,
+`source_revision`, and `files`. The lock revision must equal the manifest's full
+40-character lowercase commit identifier. The `files` object must contain
+exactly the union of the events' `source_paths`, each mapped to a full lowercase
+SHA-256 digest. Missing and extra paths are both refused. The manifest, lock,
+and every named owner file are read through the existing descriptor-bound
+regular-file reader. Every actual file digest must match the reviewed lock;
+there is no fallback to reporting unbound hashes if the lock is unavailable or
+does not match. Duplicate JSON fields, symlinked inputs, and oversize locks are
+refused.
+
+After these checks, the report has `source_revision_bound: true`,
+`source_binding_scope: declared-event-paths-only`, and the SHA-256 identity of
+the exact lock bytes. This means consistency with the reviewed lock. The
+runtime checker does not access Git history and therefore works in shallow CI
+checkouts. It does not authenticate the lock's origin, prove Git ancestry,
+establish a complete dependency closure, check deployed executable bytes, or
+make multiple file reads into an immutable snapshot. An actor who can replace
+the manifest, lock, and sources together can create a different consistent
+declaration; review and repository source-integrity checks remain separate
+gates. These SHA-256 values are source-review checksums, not upgraded protocol
+content commitments or numerical quantum-security guarantees.
+
+The arithmetic example remains unbound even if its revision field happens to
+contain a syntactically valid commit ID or a matching research lock exists.
+Its source hashes describe the bytes read for the example only. All security,
+theorem-applicability, composition-coverage, and activation flags remain false
+in both modes, and the actual lifetime failure bound remains null.
+
+### Source-lock generation record
+
+The checked-in lock was generated from the 15 declared event paths at commit
+`12e510b211110d93d9ead07e02c07a1eecc28ae9`. For every path, generation checked
+the exact `git ls-tree` entry was a regular blob with mode `100644` or `100755`,
+read `git show <revision>:<path>`, and compared those bytes with the current
+regular file before recording its SHA-256. All 15 comparisons matched. The
+lock's SHA-256 is
+`97d8c0a229f1f863c5f54a800f1405a4a68f60cac5899b4f2973deeb000900c8`.
+This is evidence of how this review artifact was constructed, not a signature
+or a theorem about the complete program. A future source change requires a
+new reviewed mapping; CI must not silently regenerate the lock from whatever
+bytes it is checking.
+
+With that commit available, reproduce the generation checks without rewriting
+the lock:
+
+```sh
+python3 - <<'PY'
+import hashlib
+from pathlib import Path
+import subprocess
+import sys
+sys.path.insert(0, 'scripts/ci')
+import pq_lifetime_budget as budget
+from pq_source_reader import read_regular
+root = Path.cwd()
+manifest = budget.strict_json(read_regular(root, budget.DEFAULT_MANIFEST, budget.MAX_BYTES))
+lock = budget.strict_json(read_regular(root, budget.DEFAULT_SOURCE_LOCK, budget.MAX_BYTES))
+revision = '12e510b211110d93d9ead07e02c07a1eecc28ae9'
+assert revision == lock['source_revision'] == manifest['experiment']['source_revision']
+paths = {path for event in manifest['events'] for path in event['source_paths']}
+assert paths == set(lock['files'])
+for path in sorted(paths):
+    entry = subprocess.check_output(['git', '--literal-pathspecs', 'ls-tree', '-z', revision, '--', path])
+    metadata, name = entry.removesuffix(b'\0').split(b'\t')
+    mode, kind, oid = metadata.decode().split()
+    assert mode in ('100644', '100755') and kind == 'blob' and name.decode() == path
+    blob = subprocess.check_output(['git', 'show', revision + ':' + path])
+    assert blob == read_regular(root, path, budget.MAX_BYTES)
+    assert hashlib.sha256(blob).hexdigest() == lock['files'][path]
+print('Matched declared event paths:', len(paths))
+PY
+```
 
 Probabilities are objects with canonical decimal-string `numerator` and
 `denominator`; call/query counts also use decimal strings. Duplicate fields,

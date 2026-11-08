@@ -1,0 +1,36 @@
+{
+  "campaigns": [
+    {
+      "job_id": "1a1baf30324-12894-1e9a",
+      "source": "d8280daa8651ca387813b25e2a712f3fd1c82a1d"
+    },
+    {
+      "job_id": "1a1baff7670-12894-1ef7",
+      "source": "1d29818ad927f549f43d74a06f51e91771feac70"
+    }
+  ],
+  "host": "desktop",
+  "independent_host_attestation": false,
+  "initial_bundle": {
+    "bytes": 115461,
+    "sha256": "a9897374119e785460936629c3ae6a2c1c36840a8c16d8736c85723219e1c234"
+  },
+  "observed_after_campaigns": true,
+  "openssl_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+  "production_activation": false,
+  "provider_files": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+      "resolved_path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+      "sha256": "8ff7dd91270fd4a8fc377031f0fd2f2cee1cd17a32ce30e4fd773a25730a120f"
+    }
+  ],
+  "repair_bundle": {
+    "bytes": 5866,
+    "sha256": "c6f5559ca9907d991a3b99e89a34a301e1ea5162961a304bdf872e783d8abbd2"
+  },
+  "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "schema": "trnm-pq-validation-environment-observation-v1"
+}
