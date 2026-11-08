@@ -1383,6 +1383,18 @@ class CiContractTests(unittest.TestCase):
         changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
         self.rejected(path, original, changed)
 
+    def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
+        path = 'scripts/ci/ci_job.sh'
+        for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+                        '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+            for replacement in ('', '    true # omitted lifetime budget check\n', command * 2):
+                with self.subTest(command=command, replacement=replacement):
+                    self.rejected(path, command, replacement)
+            original = (self.root / path).read_text()
+            changed = original.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+            self.rejected(path, original, changed)
+
     def test_one_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
         for replacement in ['', ONE_ZERO_RUN_STEP.replace('        if: always()\n', ''),
                             ONE_ZERO_RUN_STEP.replace('run: env -u CARGO_INCREMENTAL python3', 'run: true # python3'),

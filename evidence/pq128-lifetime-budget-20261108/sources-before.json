@@ -1,0 +1,58 @@
+{
+  "config/pon/pq-cross-branch-corpus-v1.json": {
+    "bytes": 133557,
+    "sha256": "860c2dbebb77180fa0e77372abb2ba06664c4a29a83a9833c16079e29546908c"
+  },
+  "config/pon/pq128-lifetime-budget-v1.json": {
+    "bytes": 17620,
+    "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23"
+  },
+  "config/pon/pq128-lifetime-example-v1.json": {
+    "bytes": 22575,
+    "sha256": "1445acf89060118c4afd64e881fa3fc77f3daca6ab30ca5b0ca675817080ec57"
+  },
+  "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+    "bytes": 632794,
+    "sha256": "e31230ae7ae27bca23bbaafc4a9e18d8485350503d1fc00991c8d51b77b119aa"
+  },
+  "docs/security/PQ128_LIFETIME_BUDGET_V1.md": {
+    "bytes": 16191,
+    "sha256": "42fba97c46be63964b475ec26031d444c8742040c01114256c6f4094d0af9cea"
+  },
+  "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md": {
+    "bytes": 12826,
+    "sha256": "a10547a3f64b0e6efd70d498f484d6028bdbdb355dadc8ae3cc95b9e5df3c8e2"
+  },
+  "scripts/ci/check_ci_contract.py": {
+    "bytes": 66033,
+    "sha256": "1aa9283cca462396341e0bcef6ba20999e17a1c5b9cc91d26e96390fd65c144d"
+  },
+  "scripts/ci/check_pq_research_integration.py": {
+    "bytes": 52875,
+    "sha256": "2af57b5e674af6bd82ecf7b1c364b9199dba91b5529da2283feb8d9af8b96ce2"
+  },
+  "scripts/ci/ci_job.sh": {
+    "bytes": 25221,
+    "sha256": "c8a520cd96c2ba42e1079a9f9c6d078ff7b91f12b680216e8915aad4f9d99432"
+  },
+  "scripts/ci/pq_chain_claim_guard.py": {
+    "bytes": 13839,
+    "sha256": "57cd1ae3c9a549c9848bd8f52d6cab6019b70e9a1909b3efbdad291920d56d94"
+  },
+  "scripts/ci/pq_lifetime_budget.py": {
+    "bytes": 18463,
+    "sha256": "06cce17c50c705a83aedf4af3867a6ee9df90ffe751285f180392306f2e57965"
+  },
+  "scripts/ci/test_ci_contract.py": {
+    "bytes": 92153,
+    "sha256": "0b262a71d553ef234c25b8765eff50324d8c385e16dacda189f384956c179d31"
+  },
+  "scripts/ci/test_pq_chain_claim_guard.py": {
+    "bytes": 22317,
+    "sha256": "c88c24da59c83e965f7e61109202067324647cd37aff988a65de8401cc881927"
+  },
+  "scripts/ci/test_pq_lifetime_budget.py": {
+    "bytes": 27909,
+    "sha256": "0113fe64d942e35c7b658d22c0534f6da5435e88f11ed3e6a9eded42a15edca5"
+  }
+}

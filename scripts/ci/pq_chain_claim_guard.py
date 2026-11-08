@@ -13,6 +13,8 @@ from pathlib import Path
 import sys
 
 from pq_source_reader import SourceReadError, read_regular
+from pq_lifetime_budget import (BudgetError, DEFAULT_MANIFEST as LIFETIME_BUDGET,
+                                inspect as inspect_lifetime_budget)
 
 CONFIG = 'config/pon/post-quantum-transition-v1.json'
 CORPUS = 'config/pon/pq-cross-branch-corpus-v1.json'
@@ -96,6 +98,12 @@ GATES = {
         'docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md',
         'config/pon/pq-cross-branch-corpus-v1.json',
         'scripts/ci/pq_source_reader.py',
+    ),
+    'lifetime_budget': (
+        LIFETIME_BUDGET,
+        'scripts/ci/pq_lifetime_budget.py',
+        'scripts/ci/test_pq_lifetime_budget.py',
+        'docs/security/PQ128_LIFETIME_BUDGET_V1.md',
     ),
 }
 
@@ -242,12 +250,24 @@ def inspect(root: Path) -> dict:
         refuse_lifetime_promotion(manifest, PROOF_MANIFEST)
         false_field(manifest, 'pq_128_security_qualified', PROOF_MANIFEST)
         false_field(manifest, 'production_consensus_activation', PROOF_MANIFEST)
+    try:
+        lifetime = inspect_lifetime_budget(root)
+    except BudgetError as error:
+        raise UnsafePromotion('invalid lifetime budget: ' + str(error)) from error
+    require(lifetime['purpose'] == 'research-model',
+            'illustrative budget cannot replace the current research register')
     return {
         'schema': 'trnm-whole-chain-pq-claim-guard-v1',
         'status': 'HOLD', 'whole_chain_pq_qualified': False,
         'pq_128_qualified': False, 'production_activation': False,
         'gates': {gate: {'status': 'UNQUALIFIED', 'source_paths': list(paths)}
                   for gate, paths in GATES.items()},
+        'lifetime_budget': {key: lifetime[key] for key in (
+            'schema', 'status', 'manifest_sha256', 'allocated_sum',
+            'model_arithmetic_sum', 'actual_lifetime_failure_bound',
+            'unknown_terms', 'unknown_query_budgets',
+            'composition_coverage_proved', 'theorem_applicability_verified',
+        )},
         'note': 'Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.',
     }
 

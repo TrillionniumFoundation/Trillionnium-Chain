@@ -583,6 +583,8 @@ PQ_RELEASE_REGRESSION_COMMAND = '          python3 scripts/ci/record_pq_native_c
 REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+    python3 scripts/ci/test_pq_lifetime_budget.py
+    python3 scripts/ci/pq_lifetime_budget.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
@@ -1574,6 +1576,11 @@ def validate(root: Path = ROOT) -> dict:
     require('    python3 scripts/ci/test_cross_arch_cost.py\n' in script,
             'cross-architecture evidence negative checks missing')
     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
+    for budget_command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+                           '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+        require(budget_command in dict(lane_pairs)['repository-truth'] and
+                script.count(budget_command) == 1,
+                'PQ lifetime arithmetic and refusal controls execute once in repository-truth')
     require(RUNTIME_RELEASE_COMMAND in dict(lane_pairs)['repository-truth']
             and script.count(RUNTIME_RELEASE_COMMAND) == 1,
             'runtime material controls execute once with the configured verifier interpreter')

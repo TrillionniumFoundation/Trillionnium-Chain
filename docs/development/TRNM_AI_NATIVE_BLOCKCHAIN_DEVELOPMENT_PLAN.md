@@ -9350,3 +9350,25 @@ independently current migration custody, KDF callers, concrete FS/QROM and
 lifetime bounds, and quantum PoN cost/fork qualification. Candidate observations
 cannot create CURRENT, FinalUse or a trusted migration anchor. HOLD / NO-GO,
 production_activation=false and whole_chain_pq_qualified=false remain.
+
+### 2026-11-08 whole-chain PQ128 lifetime accounting
+
+Continue the PQ integration candidate `12e510b211110d93d9ead07e02c07a1eecc28ae9`
+with the [lifetime budget contract](../security/PQ128_LIFETIME_BUDGET_V1.md),
+machine-readable source/obligation register and exact rational checker.
+Keep the user's eight-class allocation as a design example; it supplies no
+project theorem or actual attack-resource bound. Record eight unknown audit
+terms, four unknown fixed-public-primitive query budgets and nine unmet
+conditions, including event coverage, initial advice and cross-owner refinement.
+
+Reject ambiguous adaptive/multi-instance counting, observed counts substituted
+for adversary caps, omitted offline/failed/unpublished work, epoch resets and
+self-certified promotion. Extend the existing claim guard to refuse conflicting
+numeric/boolean whole-chain claims and require the budget checker. Retain all
+original native/runtime failures and source identities. No Rust relation, wire,
+consensus, production deployment or FinalUse permission changes in this work.
+
+Qualification still requires independently instantiated signatures, commitment,
+native/proof refinement, joint quantum work/DAA/fork rules, transport, complete
+recovery, release and application-owner composition. The accounting checker
+always returns an unknown actual lifetime bound and false PQ/activation flags.
