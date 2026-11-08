@@ -112,7 +112,14 @@ materials; duplicate keys from one controller cannot satisfy it. Roles beyond
 these mandatory pairs can still share control, and such sharing is always
 reported. This is not a statement that the seven roles are fully independent.
 
-`reviewers` pins material-authority identities and their controller IDs.
+Each `reviewers` row is exactly `{authority, controller_id}`. `authority` is
+the original reviewer signing-key digest in the **same namespace** as
+`bindings[].signer`; it is not an arbitrary document-author label. The original
+owner must supply and verify that mapping. A key appearing in both collections
+must have the identical original controller ID; a re-pinned policy cannot grant
+that same key another controller identity. A consistent same-key/same-controller
+entry still cannot review its own role's separation.
+
 `minimum_reviewer_components` counts distinct known controller components of
 usable reviewers, not keys or documents. A reviewer controlled by either side
 of a required pair is excluded. Two reviewer keys with the same controller count
@@ -181,6 +188,13 @@ are only upper bounds conditional on the original mappings and retained facts.
 Unknown common-control links can reduce them.
 
 This check composes with the existing signed NoUpdate/parent-chain verifier.
+The composition binds the source pair and campaign, but does not yet associate
+the signed V3 learning actors with the additional role-control materials.
+`review_learning_control_material` therefore retains
+`learning_actor_control_binding_verified=false` and lists the original
+learning actor-to-control binding as missing. The integration fixture deliberately
+uses independent synthetic control identities; passing it does not establish
+that its role controllers are the participants in the signed learning records.
 It does not change legitimate NoUpdate, native CURRENT, settlement, protected
 installation, or the next task's model selection. The ordinary handoff remains
 subject to its [original owner boundary](CELL_ORDINARY_HOST_HANDOFF_V2.md).
@@ -199,4 +213,5 @@ no external authority. Controls exercise same-controller key rotation, original
 owner substitution, transitive and cross-role common control, shared replica
 custody, self-controlled reviewers, duplicated reviewer keys, missing roles and
 inventories, omitted minimum pairs, stale and misbound material, StableId
-preservation, canonical encodings and the false authority flags.
+preservation, cross-collection signing-key/controller contradictions, canonical
+encodings and the false authority flags.

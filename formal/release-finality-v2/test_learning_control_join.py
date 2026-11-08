@@ -1,6 +1,9 @@
 """Join real V3 signature verification with synthetic role-control materials.
 
 These are algorithmic controls, not independent operators or native adoption.
+The role-control fixture is independent synthetic material; it is not an
+original-owner mapping of the signed V3 learning actors. A shared campaign and
+source pair cannot establish that missing actor-to-control association.
 """
 import copy
 import unittest
@@ -46,10 +49,23 @@ class LearningControlJoinTests(unittest.TestCase):
             self.assertEqual(result["learning_input_review"], verify_learning_packet(packet, trusted))
             self.assertEqual(result["control_material_review"]["status"], "MATERIAL_REVIEW_COMPLETE")
             self.assertEqual(result["qualification"], "HOLD_NO_GO")
-            for name in ("independent_control_accepted", "physical_installation_accepted",
+            for name in ("independent_control_accepted", "learning_actor_control_binding_verified",
+                         "physical_installation_accepted",
                          "prospective_neural_gain_accepted", "hepta_final_use", "production_activation"):
                 self.assertIs(result[name], False)
+            self.assertIn("original learning actor-to-control binding", result["missing_external_acceptance"])
             self.assertEqual((packet, trusted, self.manifest, self.policy, self.control), before)
+
+    def test_complete_materials_do_not_assert_control_bindings_for_signed_learning_actors(self):
+        packet, trusted = self.packet()
+        result = self.review(packet, trusted)
+        self.assertEqual(result["control_material_review"]["status"], "MATERIAL_REVIEW_COMPLETE")
+        self.assertIs(result["learning_actor_control_binding_verified"], False)
+        self.assertEqual(result["missing_external_acceptance"],
+                         verify_learning_packet(packet, trusted)["missing_external_acceptance"] +
+                         ["original learning actor-to-control binding"])
+        self.assertEqual(result["qualification"], "HOLD_NO_GO")
+        self.assertIs(result["hepta_final_use"], False)
 
     def test_seven_role_materials_do_not_waive_a_wrong_parent_or_bad_signature(self):
         packet, trusted = self.packet()

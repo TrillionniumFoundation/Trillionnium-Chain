@@ -252,6 +252,39 @@ class ControlSeparationTests(unittest.TestCase):
         self.assertTrue(all(row["reviewer_components"] == 0 for row in rows))
         self.assertTrue(all(row["rejected_self_controlled_reviewers"] for row in rows))
 
+    def test_role_signing_key_cannot_acquire_another_controller_as_reviewer(self):
+        trainer = next(row for row in self.manifest["bindings"] if row["role"] == "trainer")
+        previous = self.policy["reviewers"][0]["authority"]
+        self.policy["reviewers"][0]["authority"] = trainer["signer"]
+        # Deliberately retain the different reviewer controller. Re-pinning this
+        # inconsistent policy must not override the original role-owner mapping.
+        for section in ("inventories", "common_control", "separation_reviews"):
+            for row in self.manifest[section]:
+                if row["evidence"]["authority"] == previous:
+                    row["evidence"]["authority"] = trainer["signer"]
+        self.repin()
+        with self.assertRaisesRegex(Refusal, "CONTROL_REVIEWER_SIGNER_CONTROLLER_ALIAS"):
+            self.review()
+
+    def test_same_role_key_and_controller_are_excluded_from_self_review(self):
+        trainer = next(row for row in self.manifest["bindings"] if row["role"] == "trainer")
+        previous = self.policy["reviewers"][0]["authority"]
+        self.policy["reviewers"][0].update(authority=trainer["signer"],
+                                          controller_id=trainer["controller_id"])
+        for section in ("inventories", "common_control", "separation_reviews"):
+            for row in self.manifest[section]:
+                if row["evidence"]["authority"] == previous:
+                    row["evidence"]["authority"] = trainer["signer"]
+        self.repin()
+        result = self.review()
+        self.assertEqual(result["status"], "UNRESOLVED")
+        rows = [row for row in result["separation_observations"] if "trainer" in row["roles"]]
+        self.assertTrue(rows)
+        self.assertTrue(all(row["reviewer_components"] == 0 for row in rows))
+        self.assertTrue(all(row["rejected_self_controlled_reviewers"] == [trainer["signer"]]
+                            for row in rows))
+        self.assert_no_authority(result)
+
     def test_two_reviewer_keys_owned_by_one_controller_count_once(self):
         second = h("rotated-reviewer-key")
         self.policy["minimum_reviewer_components"] = 2

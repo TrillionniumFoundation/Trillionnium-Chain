@@ -1,0 +1,47 @@
+{
+  "records": [
+    {
+      "bytes": 2420,
+      "retained": "committed-finality-receipt.json",
+      "sha256": "57e6e98edff1c4dd72d2d5405a8cacb5aa5de4103be60fc6ed6702880809654f",
+      "source_relative_path": "committed-finality/receipt.json"
+    },
+    {
+      "bytes": 17454,
+      "retained": "committed-finality-tests.log",
+      "sha256": "f2620a58b14d2e2bfbda37934c75a56f24d916e7d785ac08bc66ec4e6095b62a",
+      "source_relative_path": "committed-finality/tests.log"
+    },
+    {
+      "bytes": 423,
+      "retained": "source-before.json",
+      "sha256": "9800f4d29fc9efa1ba1188a9a056f75a39f2687fd3572ca49a8d0201448f455a",
+      "source_relative_path": "source-before.json"
+    },
+    {
+      "bytes": 423,
+      "retained": "source-after.json",
+      "sha256": "9800f4d29fc9efa1ba1188a9a056f75a39f2687fd3572ca49a8d0201448f455a",
+      "source_relative_path": "source-after.json"
+    },
+    {
+      "bytes": 6898,
+      "retained": "source-integrity-tests.log",
+      "sha256": "a888db010c22b378e61ca1caccdee8ac30c617f61ad8f19d134987da03b0f5cb",
+      "source_relative_path": "source-integrity-tests.log"
+    },
+    {
+      "bytes": 1821,
+      "retained": "original-parent-tests.log",
+      "sha256": "2c1fdbded2c8e1c64883206488f1d28074d6bb04f068d215e630f2ecf7a40a47",
+      "source_relative_path": "original-parent-tests.log"
+    },
+    {
+      "bytes": 105,
+      "retained": "original-learning.log",
+      "sha256": "5a6abd032bd2e9e4fd4254ed96bd3f838e47a9b1717807f43f6efbd9a0004ba9",
+      "source_relative_path": "original-learning.log"
+    }
+  ],
+  "tested_commit": "b3ff1d3c7428a6a080650d3fc754075c3ab6f4b2"
+}

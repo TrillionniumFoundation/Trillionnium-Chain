@@ -237,6 +237,15 @@ def review_control_separation(manifest_raw, policy_raw, *, expected_manifest,
     _bindings(manifest["bindings"])
     require(canonical(manifest["bindings"]) == canonical(expected_bindings),
             "CONTROL_ORIGINAL_OWNER_BINDINGS")
+    # A reviewer authority is the original signing-key digest. One key cannot
+    # acquire a second controller identity by moving from a role binding into
+    # the reviewer policy. Consistent self-review is rejected by the graph below.
+    signer_controllers = {row["signer"]: row["controller_id"]
+                          for row in manifest["bindings"]}
+    for authority, controller in reviewers.items():
+        if authority in signer_controllers:
+            require(signer_controllers[authority] == controller,
+                    "CONTROL_REVIEWER_SIGNER_CONTROLLER_ALIAS")
 
     graph = _ControlGraph()
     role_controllers = {role: set() for role in ROLES}

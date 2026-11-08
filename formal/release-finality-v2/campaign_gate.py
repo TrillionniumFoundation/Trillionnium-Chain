@@ -76,9 +76,11 @@ def review_learning_control_material(packet, trusted, manifest_raw, policy_raw,
         learning_input_review=learning, control_material_review=controls,
         frozen_pair=copy.deepcopy(trusted["pair"]), campaign=trusted["campaign"],
         qualification="HOLD_NO_GO", independent_control_accepted=False,
+        learning_actor_control_binding_verified=False,
         physical_installation_accepted=False, prospective_neural_gain_accepted=False,
         hepta_final_use=False, production_activation=False,
-        missing_external_acceptance=list(learning["missing_external_acceptance"]))
+        missing_external_acceptance=list(learning["missing_external_acceptance"]) +
+            ["original learning actor-to-control binding"])
 
 
 def finite_number(value, positive=False):
