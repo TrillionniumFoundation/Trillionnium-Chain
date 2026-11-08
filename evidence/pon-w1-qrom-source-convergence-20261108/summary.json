@@ -1,0 +1,34 @@
+{
+  "HOLD": true,
+  "closure_required_tests": 105,
+  "closure_successes": 105,
+  "consensus_admission": false,
+  "exact_report_comparisons": 7,
+  "final_validation": "validation-v2-03",
+  "historical_contract_preserved": true,
+  "historical_engine_preserved": true,
+  "historical_reports_preserved": true,
+  "historical_roster_preserved": true,
+  "implementation_passed": true,
+  "implementation_required_tests": 84,
+  "independent_cryptographic_review": false,
+  "internal_implementation_review": "two reproducible guard defects corrected and independently rechecked by a parallel code-review agent; not independent cryptographic review",
+  "lifetime_ledger_tests_within_closure": 19,
+  "lifetime_selected_inputs_matched": 20,
+  "local_review_red_subtests": [
+    25,
+    3
+  ],
+  "native_C_kernel_controls_within_closure": 8,
+  "new_Rust_source_compiled_or_executed": false,
+  "post_quantum_soundness_qualified": false,
+  "preserved_hosted_failures": [
+    42508015708,
+    42508015884
+  ],
+  "production_qualified": false,
+  "schema": "TRNM-W1-QROM-SOURCE-CONVERGENCE1",
+  "scope": "fresh bounded local controls on retained dirty patch; no hosted CI or clean-source native qualification",
+  "selected_source_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "source_unchanged": true
+}

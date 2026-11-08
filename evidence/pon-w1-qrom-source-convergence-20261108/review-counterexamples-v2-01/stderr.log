@@ -1,0 +1,294 @@
+test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate (test_w1_qrom_workflow_gate.WorkflowGateTests.test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate) ... ok
+test_hypothetical_report_rejects_inexact_fraction_input (test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_inexact_fraction_input) ... ok
+test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans (test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans) ... ok
+test_hypothetical_report_requires_nonnull_component_results (test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_requires_nonnull_component_results) ... ok
+test_named_import_system_exit_zero_is_rejected (test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_import_system_exit_zero_is_rejected) ... ok
+test_named_load_tests_system_exit_zero_is_rejected (test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_load_tests_system_exit_zero_is_rejected) ... ok
+test_named_missing_duplicate_and_skipped_controls_are_rejected (test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_missing_duplicate_and_skipped_controls_are_rejected) ... ok
+test_named_roster_executes_exactly_once_without_recursing_into_real_suites (test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_roster_executes_exactly_once_without_recursing_into_real_suites) ... ok
+test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) ... 
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value=True) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value=0) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value=None) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value='false') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (missing_source_review='new_native_once_route_qualified') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value=True) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value=0) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value=None) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value='false') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (missing_source_review='funded_service_decoder_qualified') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value=True) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value=0) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value=None) ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value='false') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (missing_source_review='whole_source_and_build_equivalence_proved') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_engine_sha256') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_contract_sha256') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_report_sha256') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='selected_project_file_count') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='unchanged_project_file_count') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_route_byte_projection_reproduced') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_semantic_report_fields_reproduced') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='changed_paths') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='schema') ... FAIL
+  test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='unreviewed_source_qualified') ... FAIL
+test_status_independently_rechecks_named_ids_and_boolean_scope (test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_independently_rechecks_named_ids_and_boolean_scope) ... ok
+test_status_rejects_exit_zero_without_named_completion (test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_rejects_exit_zero_without_named_completion) ... ok
+test_status_requires_every_step_outcome_and_conclusion (test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_requires_every_step_outcome_and_conclusion) ... ok
+test_unknown_report_cannot_infer_derived_values_or_comparisons (test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_cannot_infer_derived_values_or_comparisons) ... ok
+test_unknown_report_requires_all_input_and_component_names (test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_requires_all_input_and_component_names) ... ok
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='new_native_once_route_qualified', value='false')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (missing_source_review='new_native_once_route_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 396, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(missing)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='funded_service_decoder_qualified', value='false')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (missing_source_review='funded_service_decoder_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 396, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(missing)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_review='whole_source_and_build_equivalence_proved', value='false')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 392, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (missing_source_review='whole_source_and_build_equivalence_proved')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 396, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(missing)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_engine_sha256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_contract_sha256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_report_sha256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='selected_project_file_count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='unchanged_project_file_count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_route_byte_projection_reproduced')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='historical_semantic_report_fields_reproduced')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='changed_paths')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='schema')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+======================================================================
+FAIL: test_report_scope_rejects_qualification_escalation_and_false_as_zero (test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero) (source_transition='unreviewed_source_qualified')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 414, in test_report_scope_rejects_qualification_escalation_and_false_as_zero
+    self.assert_scope_rejected(change)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_workflow_gate.py", line 212, in assert_scope_rejected
+    self.assertNotEqual(result[0], 0, 'actual workflow accepted the mutated report')
+AssertionError: 0 == 0 : actual workflow accepted the mutated report
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.678s
+
+FAILED (failures=25)

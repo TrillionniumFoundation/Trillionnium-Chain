@@ -1,0 +1,91 @@
+{
+  "funded_service_decoder_qualified": false,
+  "historical_source_commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "new_native_once_route_qualified": false,
+  "review_scope": "Exact two source edits reviewed; reverse projection reproduces historical bytes. No new route, proof, build, enabled-feature, QROM or consensus qualification.",
+  "schema": "TRNM-W1-QROM-SOURCE-TRANSITION1",
+  "selected_project_file_count": 16,
+  "selected_source_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "semantics_lock_change": {
+    "after": {
+      "bytes": 74379,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a"
+    },
+    "before": {
+      "bytes": 74353,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "sha256": "af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f"
+    },
+    "changed_packages": [
+      {
+        "after": {
+          "dependencies": [
+            "risc0-binfmt",
+            "risc0-build",
+            "sha2"
+          ],
+          "name": "trnm-w1-zk-methods-v2",
+          "version": "0.1.0"
+        },
+        "before": {
+          "dependencies": [
+            "risc0-build"
+          ],
+          "name": "trnm-w1-zk-methods-v2",
+          "version": "0.1.0"
+        }
+      }
+    ],
+    "other_parsed_lock_values_identical": true,
+    "whole_cargo_graph_verified": false
+  },
+  "source_changes": [
+    {
+      "after": {
+        "bytes": 11172,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      "before": {
+        "bytes": 9233,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "07415e8e3bb53f3e81dd489e4ebda63368170efbe4a217ae6b0dd6cc0af14128"
+      },
+      "reverse_edits": [
+        {
+          "current": "\n/// One complete native replay with an independently supplied header, for the\n/// same fresh-process receiver boundary as the single-receipt verifier. This\n/// command never silently substitutes the existing 1,001-replay benchmark.\nfn native_once(args: &[String]) -> Result<()> {\n    ensure!(\n        args.len() == 3,\n        \"--native-once INPUT HEADER EXPECTED_ARTIFACTS\"\n    );\n    let input = bounded(&args[0], v2::INPUT_BYTES)?;\n    ensure!(input.len() == v2::INPUT_BYTES, \"complete input size\");\n    let header = bounded(&args[1], HEADER_BYTES)?;\n    ensure!(header.len() == HEADER_BYTES, \"header size\");\n    ensure!(\n        input[..HEADER_BYTES] == header,\n        \"W1_V2_NATIVE_HEADER_REJECT\"\n    );\n    let expected_bytes = bounded(&args[2], 64)?;\n    let expected = artifacts(&expected_bytes)?;\n    let started = Instant::now();\n    let journal =\n        v2::check_complete_relation(&input).map_err(|error| anyhow::anyhow!(\"{error:?}\"))?;\n    let identity = public(&header, &expected, &journal)?;\n    let verify_ns = started.elapsed().as_nanos();\n    println!(\n        \"{}\",\n        json!({\n            \"schema\":\"TRNM-W1-V2-NATIVE-ONCE1\", \"profile_id\":PROFILE_ID,\n            \"iterations\":1, \"full_replay_calls\":1, \"full_native_verify_ns\":[verify_ns],\n            \"work_id\":hex::encode(identity), \"input_sha256\":sha(&input),\n            \"header_sha256\":sha(&header), \"journal_sha256\":sha(&journal),\n            \"expected_artifacts_sha256\":sha(&expected_bytes),\n            \"input_bytes\":input.len(), \"journal_bytes\":journal.len(),\n            \"sample_scope\":\"one complete native replay and independent public statement binding; file reads, startup and destruction require the outer receiver observation\",\n            \"parent_eligibility_checked\":false, \"admission_authorized\":false\n        })\n    );\n    Ok(())\n}\n\n",
+          "historical": ""
+        },
+        {
+          "current": "    }\n    if args.first().map(String::as_str) == Some(\"--native-once\") {\n        return native_once(&args[1..]);\n",
+          "historical": ""
+        }
+      ]
+    },
+    {
+      "after": {
+        "bytes": 32654,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      "before": {
+        "bytes": 32354,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+      },
+      "reverse_edits": [
+        {
+          "current": "        2 if p.len() == 80 => 80,\n        2 => {\n            crate::funded_service_task_v1::FundedServiceReservationV1::decode(p)?;\n            p.len()\n        }\n",
+          "historical": "        2 => 80,\n"
+        },
+        {
+          "current": "        4 => 64,\n        5 if p.len() == 64 => 64,\n        5 => {\n            crate::funded_service_task_v1::FundedServiceDecisionV1::decode(p)?;\n            p.len()\n        }\n",
+          "historical": "        4 | 5 => 64,\n"
+        }
+      ]
+    }
+  ],
+  "unchanged_project_file_count": 14,
+  "whole_source_and_build_equivalence_proved": false
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_qrom_implementation_audit.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "expected": "nonzero: three JSON type regressions against Python-equality preservation guard",
+  "driver_sha256": "f53045d16163de557f8cfb4b6ee2e0e956f3db336e2fa43ddfc724361a4a3788",
+  "stderr_sha256": "f0cb0ed704c3490350cf0ef9a82fb11e0b83ec4be64224dce00452c715a23ce0"
+}

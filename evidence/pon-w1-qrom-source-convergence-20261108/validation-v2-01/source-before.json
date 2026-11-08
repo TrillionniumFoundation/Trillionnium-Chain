@@ -1,0 +1,99 @@
+{
+  "files": [
+    {
+      "bytes": 9914,
+      "path": ".github/workflows/pon-w1-qrom-closure.yml",
+      "sha256": "b317dd1b1318e265fd5bb480f2659e177386fc5df1e2e4d4589ce617505ac8ec"
+    },
+    {
+      "bytes": 39167,
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "sha256": "d609896470fe6e8598df9b10aaa9759b4ec67a4eae39b98d505cb894baf58713"
+    },
+    {
+      "bytes": 6875,
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "bytes": 7752,
+      "path": "config/pon/w1-qrom-implementation-v2.json",
+      "sha256": "bed7e925b5c02f896ea0f6ada378a346080d044a8c7c3879f7d47c034fb86280"
+    },
+    {
+      "bytes": 10677,
+      "path": "config/pon/w1-qrom-required-tests-v1.json",
+      "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+    },
+    {
+      "bytes": 11207,
+      "path": "config/pon/w1-qrom-required-tests-v2.json",
+      "sha256": "e0d1cd257e890ecb2173053da898d915cf39d3c0c5f5868379bb36f5d975c286"
+    },
+    {
+      "bytes": 1387,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/baseline-bb026697-01/lifetime-diff.json",
+      "sha256": "6b1b97ca4e47bdabf11b6f1e6d5ae5a32e8415cda5b71c92d744dcca0755d1f0"
+    },
+    {
+      "bytes": 2388,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/baseline-bb026697-01/receipt.json",
+      "sha256": "808dd2a43e745f8a0a12beedfe8867722b2277a0e9967c7a2b7f78aab7aae7e2"
+    },
+    {
+      "bytes": 430,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/baseline-bb026697-01/semantics-diff.json",
+      "sha256": "aca78141e70a3178a9c6c0a7046b1773e8b9cb5679db935b1562fb6518169f7b"
+    },
+    {
+      "bytes": 31311,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/lifetime-bb026697.json",
+      "sha256": "b1db15ce9cef18978720cc88c9f73e807204e9734f1054bce9bb78a7de9dc4be"
+    },
+    {
+      "bytes": 3987,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/reviewed-source.diff",
+      "sha256": "aa0244fecd348509408abb8b10eb26121693afb1b0db865a512808812ef40f66"
+    },
+    {
+      "bytes": 76729,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/semantics-bb026697.json",
+      "sha256": "129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe"
+    },
+    {
+      "bytes": 5168,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/source-review.json",
+      "sha256": "988a67862cff06d2d6d580dc65db84f9d177a7bbbdb9e79c96c3dc4f81d9491b"
+    },
+    {
+      "bytes": 13882,
+      "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+      "sha256": "1279bb2085c5322ec7de7364f68e7d4827cba76e09de96bc5d7a14910a0dc169"
+    },
+    {
+      "bytes": 18389,
+      "path": "scripts/ci/test_w1_qrom_workflow_gate.py",
+      "sha256": "c601a9150fa416effa6f90672a93c6039c1cc4656c083b3e8857a38177b02a2a"
+    },
+    {
+      "bytes": 37821,
+      "path": "scripts/w1_lifetime_ledger.py",
+      "sha256": "3d6c6f43d5499ac0e7ce18b8ed2bb3a7ba2e6cb84923bc2b63c7ffe367442cd5"
+    },
+    {
+      "bytes": 21678,
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    },
+    {
+      "bytes": 14257,
+      "path": "scripts/w1_qrom_implementation_audit_v2.py",
+      "sha256": "f53045d16163de557f8cfb4b6ee2e0e956f3db336e2fa43ddfc724361a4a3788"
+    }
+  ],
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "scope": "uncommitted reviewed patch on bb; not a clean-source CI receipt",
+  "status": " M .github/workflows/pon-w1-qrom-closure.yml\n M .github/workflows/pon-w1-qrom-implementation.yml\n M scripts/ci/test_w1_qrom_implementation_audit.py\n M scripts/ci/test_w1_qrom_workflow_gate.py\n?? config/pon/w1-qrom-implementation-v2.json\n?? config/pon/w1-qrom-required-tests-v2.json\n?? evidence/pon-w1-qrom-source-convergence-20261108/baseline-bb026697-01/lifetime-diff.json\n?? evidence/pon-w1-qrom-source-convergence-20261108/baseline-bb026697-01/receipt.json\n?? evidence/pon-w1-qrom-source-convergence-20261108/baseline-bb026697-01/semantics-diff.json\n?? evidence/pon-w1-qrom-source-convergence-20261108/lifetime-bb026697.json\n?? evidence/pon-w1-qrom-source-convergence-20261108/reviewed-source.diff\n?? evidence/pon-w1-qrom-source-convergence-20261108/semantics-bb026697.json\n?? evidence/pon-w1-qrom-source-convergence-20261108/source-review.json\n?? scripts/w1_qrom_implementation_audit_v2.py\n",
+  "tracked_diff_sha256": "40320db74a6f386a3742519603bbe147258c89f902c7f5bad1cd4cd5af07ac74",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+}

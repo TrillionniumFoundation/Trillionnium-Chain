@@ -1,0 +1,66 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_qrom_implementation_audit.py",
+        "-v"
+      ],
+      "elapsed_seconds": 0.31676292419433594,
+      "exit_code": 1,
+      "name": "implementation-tests",
+      "stderr_sha256": "2287b455d674164876da5ad1a857ea93557999b1c111d49fe8a48404968b6aca",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/w1_qrom_implementation_audit.py"
+      ],
+      "elapsed_seconds": 0.06427407264709473,
+      "exit_code": 2,
+      "name": "implementation",
+      "stderr_sha256": "cf0e8063b0192bcdd80c6db442548e8e6ef8ffa105a4f7b9c369f2f6d72a5858",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/w1_qrom_semantics_audit.py"
+      ],
+      "elapsed_seconds": 2.3715333938598633,
+      "exit_code": 0,
+      "name": "semantics",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/w1_lifetime_ledger.py",
+        "--input",
+        "evidence/pon-w1-lifetime-20261107/project-input.json"
+      ],
+      "elapsed_seconds": 0.06427907943725586,
+      "exit_code": 0,
+      "name": "lifetime",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b1db15ce9cef18978720cc88c9f73e807204e9734f1054bce9bb78a7de9dc4be"
+    }
+  ],
+  "scope": "fresh selected Python controls and reports, not native cryptographic verification or a complete build/load attestation",
+  "source_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "source_status_after": "",
+  "source_status_before": "",
+  "source_tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+}

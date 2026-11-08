@@ -1,0 +1,42 @@
+{
+  "name": "lifetime",
+  "historical_sha256": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c",
+  "current_sha256": "b1db15ce9cef18978720cc88c9f73e807204e9734f1054bce9bb78a7de9dc4be",
+  "differences": [
+    [
+      "/selected_source_survey/base_commit",
+      "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+      "7e044b65454f4c9ea505591727332acffb33e7e5"
+    ],
+    [
+      "/selected_source_survey/observations/cumulative_weight/anchor_line",
+      "4975",
+      "5146"
+    ],
+    [
+      "/selected_source_survey/observations/cumulative_weight/sha256",
+      "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+      "e6e322d670d28ca86c3c94a19bb3b5d53feab3265631d3c83a278e9d5892fb8e"
+    ],
+    [
+      "/selected_source_survey/observations/native_work_verifier/anchor_line",
+      "1108",
+      "1122"
+    ],
+    [
+      "/selected_source_survey/observations/native_work_verifier/sha256",
+      "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+      "e6e322d670d28ca86c3c94a19bb3b5d53feab3265631d3c83a278e9d5892fb8e"
+    ],
+    [
+      "/selected_source_survey/sources/7/bytes",
+      "370473",
+      "382292"
+    ],
+    [
+      "/selected_source_survey/sources/7/sha256",
+      "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+      "e6e322d670d28ca86c3c94a19bb3b5d53feab3265631d3c83a278e9d5892fb8e"
+    ]
+  ]
+}
