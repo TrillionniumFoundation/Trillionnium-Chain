@@ -1,0 +1,136 @@
+{
+  "annotations": [
+    {
+      "annotation_level": "warning",
+      "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+      "end_column": null,
+      "end_line": 2,
+      "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+      "path": ".github",
+      "raw_details": "",
+      "start_column": null,
+      "start_line": 2,
+      "title": ""
+    },
+    {
+      "annotation_level": "failure",
+      "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+      "end_column": null,
+      "end_line": 50,
+      "message": "Process completed with exit code 1.",
+      "path": ".github",
+      "raw_details": "",
+      "start_column": null,
+      "start_line": 50,
+      "title": ""
+    }
+  ],
+  "ci_rerun": false,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654652"
+      ],
+      "exit_code": 0,
+      "label": "export-job",
+      "logs": {
+        "export-job.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "export-job.stdout.log": {
+          "bytes": 2834,
+          "sha256": "dcf270f76c7963147824f74f22b0c107f885edadb1dc615f4b2ca6bc9eab6cb6"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654652/annotations?per_page=100"
+      ],
+      "exit_code": 0,
+      "label": "export-annotations",
+      "logs": {
+        "export-annotations.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "export-annotations.stdout.log": {
+          "bytes": 956,
+          "sha256": "818638900d98815672362bebfb80e39cd43df4a38824fd016800abf49dde7016"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654652/logs"
+      ],
+      "exit_code": 0,
+      "label": "export-job-log",
+      "logs": {
+        "export-job-log.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "export-job-log.stdout.log": {
+          "bytes": 148621,
+          "sha256": "e66e947567a69b038a38f63a79c5b5cc3404b36fcb47dad16c07f6735a20752e"
+        }
+      }
+    }
+  ],
+  "diagnostic_lines": [
+    "2026-11-08T08:39:43.3425877Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103",
+    "2026-11-08T08:39:43.3474911Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030",
+    "2026-11-08T08:39:43.3975639Z  * [new branch]          fix/chain-tx-adapter-timeout-20261018 -> origin/fix/chain-tx-adapter-timeout-20261018",
+    "2026-11-08T08:39:43.4059766Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030",
+    "2026-11-08T08:39:43.4198348Z  * [new branch]          research/chain-pq-large-parent-readback-error-evidence-20261031 -> origin/research/chain-pq-large-parent-readback-error-evidence-20261031",
+    "2026-11-08T08:39:43.4210729Z  * [new branch]          research/pon-daa-go-error-parity-20261026 -> origin/research/pon-daa-go-error-parity-20261026",
+    "2026-11-08T08:39:48.4987738Z test_permission_denial_and_processing_error_fail_with_evidence (__main__.ExportTests.test_permission_denial_and_processing_error_fail_with_evidence) ... ok",
+    "2026-11-08T08:59:18.9115766Z CodeQL analysis export failed: CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "2026-11-08T08:59:18.9372729Z ##[error]Process completed with exit code 1.",
+    "2026-11-08T08:59:20.2581441Z   if-no-files-found: error",
+    "2026-11-08T08:59:21.0022957Z (node:2781) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities."
+  ],
+  "finished_unix_seconds": 1794129933.0772793,
+  "job": {
+    "conclusion": "failure",
+    "failed_steps": [
+      {
+        "completed_at": "2026-11-08T08:59:18Z",
+        "conclusion": "failure",
+        "name": "Export exact PR analyses with the existing read-only token",
+        "number": 5,
+        "started_at": "2026-11-08T08:39:48Z",
+        "status": "completed"
+      }
+    ],
+    "head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+    "id": 128678654652,
+    "name": "export",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825151/job/128678654652"
+  },
+  "native_executed": false,
+  "observed_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "result": "OBSERVED",
+  "schema": "trnm-hosted-ci-late-export-triage-v1",
+  "source_after": {
+    "head": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+    "status": "",
+    "tree": "c06c28dbbb16bb30a4f568408913313ab533c47e"
+  },
+  "source_before": {
+    "head": "ca3c4f88afc70399000b18fc7d68cfa62e57fb2f",
+    "status": "",
+    "tree": "c06c28dbbb16bb30a4f568408913313ab533c47e"
+  },
+  "source_mutated": false,
+  "source_unchanged": true,
+  "started_unix_seconds": 1794129917.5288017
+}

@@ -1,0 +1,66 @@
+{
+  "artifact-files.json": {
+    "bytes": 319639,
+    "sha256": "e45d70d87c090c5ad54954400a3c693e06617a24a78b2a36283be7ce21e7b1cf"
+  },
+  "binary-before.json": {
+    "bytes": 595,
+    "sha256": "cf4ae0348be8adfde30a9ca04ff6c37dd510f265f3927e779c31afe3a7867b4f"
+  },
+  "hardware.json": {
+    "bytes": 1957,
+    "sha256": "b1cdc64e89502d6a5882e9f4bee1ee499c53f9f93a77955fc9789345f12c0b62"
+  },
+  "results.json": {
+    "bytes": 8561,
+    "sha256": "0c639090aa4ff464f0dc3c82942a10bedf01e0e640249e5025c3f29d3b45747c"
+  },
+  "run-1-phase-readback.json": {
+    "bytes": 1853561,
+    "sha256": "c39320f225bfd2b15e61208da4edf534b16a1e1490ec34f3589e25b9f7eb0083"
+  },
+  "run-1-raw/report.json": {
+    "bytes": 39316697,
+    "sha256": "d197ae07093dc9138b8e436075addc12df46b28bf71fdeb48ab59b0d7f5b1766"
+  },
+  "run-1-result.json": {
+    "bytes": 1368,
+    "sha256": "6a4b304ea9db2ddc6df379c1de55af141eb2f6273610e6e94371ee6f4bcdc840"
+  },
+  "run-1.step.json": {
+    "bytes": 1013,
+    "sha256": "daefdd8143041bdbd479d2557c728b0b5aa644527182c2c923b7536fd16fd2a9"
+  },
+  "run-2-phase-readback.json": {
+    "bytes": 1853083,
+    "sha256": "e257a2fd03ecac847f73fc1a346d8b7ff030729e0106a0d45a70727f3ae16992"
+  },
+  "run-2-raw/report.json": {
+    "bytes": 39373065,
+    "sha256": "2f44d437c932a31cc8b98be3dda0c954e37a41e68f15d51262d89aa2dfa4e507"
+  },
+  "run-2-result.json": {
+    "bytes": 1368,
+    "sha256": "882e8dbe3e1db70ed444250a869b4992a6bae99b4b64d0bcc20bd3fcd07500d5"
+  },
+  "run-2.step.json": {
+    "bytes": 1013,
+    "sha256": "8e928d071f5b3be232aeb35f8b9715e72c935c5f4615976df94540ab124049b6"
+  },
+  "run-3-phase-readback.json": {
+    "bytes": 1853330,
+    "sha256": "983021d2311a6dbda095f30037b5309c0b39e819e0160517df36db7d341f8480"
+  },
+  "run-3-raw/report.json": {
+    "bytes": 38709480,
+    "sha256": "be3861dda9186f5b8d3e09ba29b79d1cfdb1578d7f14caa48b1e37e84a1a77ba"
+  },
+  "run-3-result.json": {
+    "bytes": 1368,
+    "sha256": "f537dab3833c1f7f13dd4045cad5ab5ab7e71cbaeb10125de1eec44226d34b05"
+  },
+  "run-3.step.json": {
+    "bytes": 1013,
+    "sha256": "1f83557b76f04d72fd6ef15789fd0856c3a8f421d696c1e9ec5c6e54359d83bc"
+  }
+}

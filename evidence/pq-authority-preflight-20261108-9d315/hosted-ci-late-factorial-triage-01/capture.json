@@ -1,0 +1,597 @@
+{
+  "schema": "trnm-hosted-late-factorial-triage-capture-v1",
+  "acquisition_result": "PASS",
+  "run_id": 42463825182,
+  "observed_pr_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "job_ids": [
+    128678654928,
+    128678654819,
+    128678654810
+  ],
+  "read_only": true,
+  "ci_retried": false,
+  "native_executed": false,
+  "source_changed": false,
+  "large_artifacts_downloaded": false,
+  "commands": [
+    {
+      "label": "128678654928-metadata",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654928"
+      ],
+      "started": 1794130267.327923,
+      "finished": 1794130270.0535436,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654928-metadata.stdout",
+        "bytes": 3683,
+        "sha256": "00a2405bdb205afcd2cddc8ccf4c32ea4bf341c4890e99abf7cc57502988b861"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654928-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654928-annotations",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654928/annotations?per_page=100"
+      ],
+      "started": 1794130267.3282058,
+      "finished": 1794130268.8082232,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654928-annotations.stdout",
+        "bytes": 957,
+        "sha256": "ab3c367fdd57b53eba0abdf2821ba7fee393f49fcf1244fc5f983bd535797cd4"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654928-annotations.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654928-log",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654928/logs"
+      ],
+      "started": 1794130267.3285704,
+      "finished": 1794130273.8490963,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654928-log.stdout",
+        "bytes": 219806,
+        "sha256": "db56de2263a41fb88f12626c2f10aa009bdc55dadc17b14718b85e57a2f600e7"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654928-log.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654819-metadata",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654819"
+      ],
+      "started": 1794130268.808458,
+      "finished": 1794130272.9393907,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654819-metadata.stdout",
+        "bytes": 3696,
+        "sha256": "3438ebb8a1d08bf1c3b1eb47e9d7d03e131e155df0a4c4c0b4a3331412479fd3"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654819-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654819-annotations",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654819/annotations?per_page=100"
+      ],
+      "started": 1794130270.0537195,
+      "finished": 1794130272.9779646,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654819-annotations.stdout",
+        "bytes": 957,
+        "sha256": "ab3c367fdd57b53eba0abdf2821ba7fee393f49fcf1244fc5f983bd535797cd4"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654819-annotations.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654819-log",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654819/logs"
+      ],
+      "started": 1794130272.939589,
+      "finished": 1794130282.8428447,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654819-log.stdout",
+        "bytes": 220749,
+        "sha256": "517077f95fb565da720483c9fbeddff92c37d252141850f8926e5e86292279fe"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654819-log.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654810-metadata",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654810"
+      ],
+      "started": 1794130272.9781501,
+      "finished": 1794130279.8744068,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654810-metadata.stdout",
+        "bytes": 3690,
+        "sha256": "c4c6db8961024c10135bb8aa72089f307baa89e5c3a1cedf6b3a7bc4cf3da73a"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654810-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654810-annotations",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678654810/annotations?per_page=100"
+      ],
+      "started": 1794130273.851198,
+      "finished": 1794130285.0188465,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654810-annotations.stdout",
+        "bytes": 957,
+        "sha256": "ab3c367fdd57b53eba0abdf2821ba7fee393f49fcf1244fc5f983bd535797cd4"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654810-annotations.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "128678654810-log",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128678654810/logs"
+      ],
+      "started": 1794130279.8745978,
+      "finished": 1794130286.449576,
+      "exit_code": 0,
+      "timed_out": false,
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654810-log.stdout",
+        "bytes": 220846,
+        "sha256": "1cd1a15da86642858146571332fbda9e3bca665a80a9bb994a43ffe549556655"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-late-factorial-triage-01/128678654810-log.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "job_id": 128678654928,
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "run_id": 42463825182,
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Prepare pinned provider required by native all-feature controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T08:48:30Z",
+          "completed_at": "2026-11-08T08:48:48Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 2,
+          "start_column": null,
+          "end_line": 2,
+          "end_column": null,
+          "annotation_level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "raw_details": ""
+        },
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 23,
+          "start_column": null,
+          "end_line": 23,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 22.",
+          "raw_details": ""
+        }
+      ],
+      "annotations_page_complete": true,
+      "failure_signals": [],
+      "structured_results": [
+        {
+          "line": 1595,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1596,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1597,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1598,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1602,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1603,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1604,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1617,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1618,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1619,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1620,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1694,
+          "value": {
+            "result": "PASS"
+          }
+        }
+      ],
+      "log_line_count": 1808
+    },
+    {
+      "job_id": 128678654819,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "run_id": 42463825182,
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Prepare pinned provider required by native all-feature controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T08:48:30Z",
+          "completed_at": "2026-11-08T08:48:49Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 2,
+          "start_column": null,
+          "end_line": 2,
+          "end_column": null,
+          "annotation_level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "raw_details": ""
+        },
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 23,
+          "start_column": null,
+          "end_line": 23,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 22.",
+          "raw_details": ""
+        }
+      ],
+      "annotations_page_complete": true,
+      "failure_signals": [],
+      "structured_results": [
+        {
+          "line": 1597,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1598,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1599,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1600,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1604,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1605,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1606,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1619,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1620,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1621,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1622,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1696,
+          "value": {
+            "result": "PASS"
+          }
+        }
+      ],
+      "log_line_count": 1810
+    },
+    {
+      "job_id": 128678654810,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "run_id": 42463825182,
+      "head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Prepare pinned provider required by native all-feature controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T08:48:18Z",
+          "completed_at": "2026-11-08T08:48:25Z"
+        }
+      ],
+      "annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 2,
+          "start_column": null,
+          "end_line": 2,
+          "end_column": null,
+          "annotation_level": "warning",
+          "title": "",
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "raw_details": ""
+        },
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 23,
+          "start_column": null,
+          "end_line": 23,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 22.",
+          "raw_details": ""
+        }
+      ],
+      "annotations_page_complete": true,
+      "failure_signals": [],
+      "structured_results": [
+        {
+          "line": 1599,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1600,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1601,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1602,
+          "value": {
+            "schema": "history-native-resource-failure-v1"
+          }
+        },
+        {
+          "line": 1606,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1607,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1608,
+          "value": {
+            "schema": "history-w1-host-boundary-count-v1"
+          }
+        },
+        {
+          "line": 1621,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1622,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1623,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1624,
+          "value": {
+            "schema": "native-history-real-kill-cut-v1"
+          }
+        },
+        {
+          "line": 1698,
+          "value": {
+            "result": "PASS"
+          }
+        }
+      ],
+      "log_line_count": 1812
+    }
+  ],
+  "capture_finished_unix_seconds": 1794130286.4976866
+}

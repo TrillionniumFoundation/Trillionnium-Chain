@@ -1,0 +1,794 @@
+{
+  "schema": "trnm-hosted-late-factorial-triage-classification-v1",
+  "acquisition_result": "PASS",
+  "classification_status": "COMPLETE",
+  "hosted_ci_result": "FAIL",
+  "run_id": 42463825182,
+  "observed_pr_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "jobs": [
+    {
+      "job_id": 128678654928,
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654928",
+      "run_id": 42463825182,
+      "reported_head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "hosted_conclusion": "failure",
+      "classification": "provider_preparation_failure_with_later_factorial_step_success",
+      "failed_step": {
+        "name": "Prepare pinned provider required by native all-feature controls",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-08T08:48:30Z",
+        "completed_at": "2026-11-08T08:48:48Z"
+      },
+      "reported_process_exit_code": 22,
+      "failure_annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 23,
+          "start_column": null,
+          "end_line": 23,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 22.",
+          "raw_details": ""
+        }
+      ],
+      "provider_download_line": {
+        "line": 1671,
+        "text": "2026-11-08T08:48:30.3931600Z Downloading pinned OpenSSL 3.5.9; log: /home/runner/work/_temp/w1-legal-factorial-head-arm64-42463825182-1/pq-provider/build-and-smoke.log"
+      },
+      "failure_log_line": {
+        "line": 1672,
+        "text": "2026-11-08T08:48:48.5554667Z ##[error]Process completed with exit code 22."
+      },
+      "strict_native_lint_step": {
+        "name": "Run strict native lint for all affected owners",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9,
+        "started_at": "2026-11-08T08:48:48Z",
+        "completed_at": "2026-11-08T08:48:48Z"
+      },
+      "factorial_step": {
+        "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-08T08:48:48Z",
+        "completed_at": "2026-11-08T08:56:30Z"
+      },
+      "factorial_report_in_job_log": {
+        "line": 1694,
+        "value": {
+          "receipt": "/home/runner/work/_temp/w1-legal-factorial-head-arm64-42463825182-1/w1-legal-strategy-v3",
+          "result": "PASS"
+        },
+        "text": "2026-11-08T08:56:30.1347449Z {\"receipt\": \"/home/runner/work/_temp/w1-legal-factorial-head-arm64-42463825182-1/w1-legal-strategy-v3\", \"result\": \"PASS\"}"
+      },
+      "source_identity_before_and_after": [
+        {
+          "line": 1008,
+          "value": {
+            "base": null,
+            "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1141476687,
+            "tracked_entries": 11587,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1721,
+          "value": {
+            "base": null,
+            "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1141476687,
+            "tracked_entries": 11587,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "all_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "completed_at": "2026-11-08T08:39:07Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:07Z",
+          "completed_at": "2026-11-08T08:39:44Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:44Z",
+          "completed_at": "2026-11-08T08:39:46Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:46Z",
+          "completed_at": "2026-11-08T08:39:51Z"
+        },
+        {
+          "name": "Verify retained and factorial readers and command-owner failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:51Z",
+          "completed_at": "2026-11-08T08:40:03Z"
+        },
+        {
+          "name": "Verify actual locked graph and original formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:03Z",
+          "completed_at": "2026-11-08T08:40:15Z"
+        },
+        {
+          "name": "Execute native producer, header, History and CPU cancellation controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-08T08:40:15Z",
+          "completed_at": "2026-11-08T08:48:30Z"
+        },
+        {
+          "name": "Prepare pinned provider required by native all-feature controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T08:48:30Z",
+          "completed_at": "2026-11-08T08:48:48Z"
+        },
+        {
+          "name": "Run strict native lint for all affected owners",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-08T08:48:48Z",
+          "completed_at": "2026-11-08T08:48:48Z"
+        },
+        {
+          "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-08T08:48:48Z",
+          "completed_at": "2026-11-08T08:56:30Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-08T08:56:30Z",
+          "completed_at": "2026-11-08T08:56:31Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-08T08:56:31Z",
+          "completed_at": "2026-11-08T08:56:44Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-08T08:56:44Z",
+          "completed_at": "2026-11-08T08:56:44Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-08T08:56:44Z",
+          "completed_at": "2026-11-08T08:56:44Z"
+        }
+      ],
+      "native_panic_or_failed_test_summary_lines": [],
+      "deeper_provider_diagnostics_observed": false,
+      "provider_internal_log_downloaded": false,
+      "failure_boundary": "The job failed in provider preparation immediately after announcing the pinned OpenSSL 3.5.9 download. The strict native lint step was skipped. The subsequent factorial step completed successfully and printed result PASS.",
+      "unresolved": "The complete job log does not include pq-provider/build-and-smoke.log contents. The failing subcommand, HTTP status, and deeper root cause are not established by this bounded capture.",
+      "regression_attribution": "Not established. This triage makes no source-byte or baseline-run comparison and does not infer absence of a regression.",
+      "raw_files": [
+        {
+          "path": "128678654928-metadata.stdout",
+          "bytes": 3683,
+          "sha256": "00a2405bdb205afcd2cddc8ccf4c32ea4bf341c4890e99abf7cc57502988b861"
+        },
+        {
+          "path": "128678654928-metadata.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "128678654928-annotations.stdout",
+          "bytes": 957,
+          "sha256": "ab3c367fdd57b53eba0abdf2821ba7fee393f49fcf1244fc5f983bd535797cd4"
+        },
+        {
+          "path": "128678654928-annotations.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "128678654928-log.stdout",
+          "bytes": 219806,
+          "sha256": "db56de2263a41fb88f12626c2f10aa009bdc55dadc17b14718b85e57a2f600e7"
+        },
+        {
+          "path": "128678654928-log.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "job_id": 128678654819,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654819",
+      "run_id": 42463825182,
+      "reported_head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "hosted_conclusion": "failure",
+      "classification": "provider_preparation_failure_with_later_factorial_step_success",
+      "failed_step": {
+        "name": "Prepare pinned provider required by native all-feature controls",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-08T08:48:30Z",
+        "completed_at": "2026-11-08T08:48:49Z"
+      },
+      "reported_process_exit_code": 22,
+      "failure_annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 23,
+          "start_column": null,
+          "end_line": 23,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 22.",
+          "raw_details": ""
+        }
+      ],
+      "provider_download_line": {
+        "line": 1673,
+        "text": "2026-11-08T08:48:30.8756497Z Downloading pinned OpenSSL 3.5.9; log: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-arm64-42463825182-1/pq-provider/build-and-smoke.log"
+      },
+      "failure_log_line": {
+        "line": 1674,
+        "text": "2026-11-08T08:48:49.1859415Z ##[error]Process completed with exit code 22."
+      },
+      "strict_native_lint_step": {
+        "name": "Run strict native lint for all affected owners",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9,
+        "started_at": "2026-11-08T08:48:49Z",
+        "completed_at": "2026-11-08T08:48:49Z"
+      },
+      "factorial_step": {
+        "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-08T08:48:49Z",
+        "completed_at": "2026-11-08T08:56:36Z"
+      },
+      "factorial_report_in_job_log": {
+        "line": 1696,
+        "value": {
+          "receipt": "/home/runner/work/_temp/w1-legal-factorial-prospective-merge-arm64-42463825182-1/w1-legal-strategy-v3",
+          "result": "PASS"
+        },
+        "text": "2026-11-08T08:56:36.7967159Z {\"receipt\": \"/home/runner/work/_temp/w1-legal-factorial-prospective-merge-arm64-42463825182-1/w1-legal-strategy-v3\", \"result\": \"PASS\"}"
+      },
+      "source_identity_before_and_after": [
+        {
+          "line": 1010,
+          "value": {
+            "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+            "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "kind": "prospective-merge",
+            "prospective_merge": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1141476687,
+            "tracked_entries": 11587,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1723,
+          "value": {
+            "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+            "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "kind": "prospective-merge",
+            "prospective_merge": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1141476687,
+            "tracked_entries": 11587,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "all_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:07Z",
+          "completed_at": "2026-11-08T08:39:08Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:08Z",
+          "completed_at": "2026-11-08T08:39:45Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:45Z",
+          "completed_at": "2026-11-08T08:39:46Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:46Z",
+          "completed_at": "2026-11-08T08:39:52Z"
+        },
+        {
+          "name": "Verify retained and factorial readers and command-owner failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:52Z",
+          "completed_at": "2026-11-08T08:40:03Z"
+        },
+        {
+          "name": "Verify actual locked graph and original formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:03Z",
+          "completed_at": "2026-11-08T08:40:15Z"
+        },
+        {
+          "name": "Execute native producer, header, History and CPU cancellation controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-08T08:40:15Z",
+          "completed_at": "2026-11-08T08:48:30Z"
+        },
+        {
+          "name": "Prepare pinned provider required by native all-feature controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T08:48:30Z",
+          "completed_at": "2026-11-08T08:48:49Z"
+        },
+        {
+          "name": "Run strict native lint for all affected owners",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-08T08:48:49Z",
+          "completed_at": "2026-11-08T08:48:49Z"
+        },
+        {
+          "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-08T08:48:49Z",
+          "completed_at": "2026-11-08T08:56:36Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-08T08:56:36Z",
+          "completed_at": "2026-11-08T08:56:37Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-08T08:56:37Z",
+          "completed_at": "2026-11-08T08:56:51Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-08T08:56:51Z",
+          "completed_at": "2026-11-08T08:56:51Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-08T08:56:51Z",
+          "completed_at": "2026-11-08T08:56:51Z"
+        }
+      ],
+      "native_panic_or_failed_test_summary_lines": [],
+      "deeper_provider_diagnostics_observed": false,
+      "provider_internal_log_downloaded": false,
+      "failure_boundary": "The job failed in provider preparation immediately after announcing the pinned OpenSSL 3.5.9 download. The strict native lint step was skipped. The subsequent factorial step completed successfully and printed result PASS.",
+      "unresolved": "The complete job log does not include pq-provider/build-and-smoke.log contents. The failing subcommand, HTTP status, and deeper root cause are not established by this bounded capture.",
+      "regression_attribution": "Not established. This triage makes no source-byte or baseline-run comparison and does not infer absence of a regression.",
+      "raw_files": [
+        {
+          "path": "128678654819-metadata.stdout",
+          "bytes": 3696,
+          "sha256": "3438ebb8a1d08bf1c3b1eb47e9d7d03e131e155df0a4c4c0b4a3331412479fd3"
+        },
+        {
+          "path": "128678654819-metadata.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "128678654819-annotations.stdout",
+          "bytes": 957,
+          "sha256": "ab3c367fdd57b53eba0abdf2821ba7fee393f49fcf1244fc5f983bd535797cd4"
+        },
+        {
+          "path": "128678654819-annotations.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "128678654819-log.stdout",
+          "bytes": 220749,
+          "sha256": "517077f95fb565da720483c9fbeddff92c37d252141850f8926e5e86292279fe"
+        },
+        {
+          "path": "128678654819-log.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "job_id": 128678654810,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42463825182/job/128678654810",
+      "run_id": 42463825182,
+      "reported_head_sha": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+      "hosted_conclusion": "failure",
+      "classification": "provider_preparation_failure_with_later_factorial_step_success",
+      "failed_step": {
+        "name": "Prepare pinned provider required by native all-feature controls",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-08T08:48:18Z",
+        "completed_at": "2026-11-08T08:48:25Z"
+      },
+      "reported_process_exit_code": 22,
+      "failure_annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+          "start_line": 23,
+          "start_column": null,
+          "end_line": 23,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "Process completed with exit code 22.",
+          "raw_details": ""
+        }
+      ],
+      "provider_download_line": {
+        "line": 1675,
+        "text": "2026-11-08T08:48:18.6215133Z Downloading pinned OpenSSL 3.5.9; log: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42463825182-1/pq-provider/build-and-smoke.log"
+      },
+      "failure_log_line": {
+        "line": 1676,
+        "text": "2026-11-08T08:48:25.7143006Z ##[error]Process completed with exit code 22."
+      },
+      "strict_native_lint_step": {
+        "name": "Run strict native lint for all affected owners",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9,
+        "started_at": "2026-11-08T08:48:25Z",
+        "completed_at": "2026-11-08T08:48:25Z"
+      },
+      "factorial_step": {
+        "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-08T08:48:25Z",
+        "completed_at": "2026-11-08T08:56:44Z"
+      },
+      "factorial_report_in_job_log": {
+        "line": 1698,
+        "value": {
+          "receipt": "/home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42463825182-1/w1-legal-strategy-v3",
+          "result": "PASS"
+        },
+        "text": "2026-11-08T08:56:44.5976139Z {\"receipt\": \"/home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42463825182-1/w1-legal-strategy-v3\", \"result\": \"PASS\"}"
+      },
+      "source_identity_before_and_after": [
+        {
+          "line": 1015,
+          "value": {
+            "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+            "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "kind": "prospective-merge",
+            "prospective_merge": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1141476687,
+            "tracked_entries": 11587,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "line": 1725,
+          "value": {
+            "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+            "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+            "kind": "prospective-merge",
+            "prospective_merge": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+            "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1141476687,
+            "tracked_entries": 11587,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "all_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-08T08:39:04Z",
+          "completed_at": "2026-11-08T08:39:05Z"
+        },
+        {
+          "name": "Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T08:39:05Z",
+          "completed_at": "2026-11-08T08:39:43Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T08:39:43Z",
+          "completed_at": "2026-11-08T08:39:44Z"
+        },
+        {
+          "name": "Install exact original compiler and tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-08T08:39:44Z",
+          "completed_at": "2026-11-08T08:39:53Z"
+        },
+        {
+          "name": "Verify retained and factorial readers and command-owner failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-08T08:39:53Z",
+          "completed_at": "2026-11-08T08:40:06Z"
+        },
+        {
+          "name": "Verify actual locked graph and original formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-08T08:40:06Z",
+          "completed_at": "2026-11-08T08:40:21Z"
+        },
+        {
+          "name": "Execute native producer, header, History and CPU cancellation controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-08T08:40:21Z",
+          "completed_at": "2026-11-08T08:48:18Z"
+        },
+        {
+          "name": "Prepare pinned provider required by native all-feature controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T08:48:18Z",
+          "completed_at": "2026-11-08T08:48:25Z"
+        },
+        {
+          "name": "Run strict native lint for all affected owners",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-08T08:48:25Z",
+          "completed_at": "2026-11-08T08:48:25Z"
+        },
+        {
+          "name": "Execute all thirty separate v3 shards under the original per-shard budget",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-08T08:48:25Z",
+          "completed_at": "2026-11-08T08:56:44Z"
+        },
+        {
+          "name": "Verify measured source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-08T08:56:44Z",
+          "completed_at": "2026-11-08T08:56:46Z"
+        },
+        {
+          "name": "Retain costs, binaries and all failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-08T08:56:46Z",
+          "completed_at": "2026-11-08T08:57:02Z"
+        },
+        {
+          "name": "Post Checkout exact measured source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-08T08:57:02Z",
+          "completed_at": "2026-11-08T08:57:02Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-08T08:57:02Z",
+          "completed_at": "2026-11-08T08:57:02Z"
+        }
+      ],
+      "native_panic_or_failed_test_summary_lines": [],
+      "deeper_provider_diagnostics_observed": false,
+      "provider_internal_log_downloaded": false,
+      "failure_boundary": "The job failed in provider preparation immediately after announcing the pinned OpenSSL 3.5.9 download. The strict native lint step was skipped. The subsequent factorial step completed successfully and printed result PASS.",
+      "unresolved": "The complete job log does not include pq-provider/build-and-smoke.log contents. The failing subcommand, HTTP status, and deeper root cause are not established by this bounded capture.",
+      "regression_attribution": "Not established. This triage makes no source-byte or baseline-run comparison and does not infer absence of a regression.",
+      "raw_files": [
+        {
+          "path": "128678654810-metadata.stdout",
+          "bytes": 3690,
+          "sha256": "c4c6db8961024c10135bb8aa72089f307baa89e5c3a1cedf6b3a7bc4cf3da73a"
+        },
+        {
+          "path": "128678654810-metadata.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "128678654810-annotations.stdout",
+          "bytes": 957,
+          "sha256": "ab3c367fdd57b53eba0abdf2821ba7fee393f49fcf1244fc5f983bd535797cd4"
+        },
+        {
+          "path": "128678654810-annotations.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "128678654810-log.stdout",
+          "bytes": 220846,
+          "sha256": "1cd1a15da86642858146571332fbda9e3bca665a80a9bb994a43ffe549556655"
+        },
+        {
+          "path": "128678654810-log.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "scope": {
+    "job_ids": [
+      128678654928,
+      128678654819,
+      128678654810
+    ],
+    "gh_read_only_get_calls": 9,
+    "annotations_per_page": 100,
+    "full_job_log_endpoint_responses_retained": true,
+    "empty_stderr_streams_retained": true,
+    "large_artifacts_downloaded": false,
+    "other_checks_inspected": false,
+    "native_executed_by_triage": false,
+    "ci_retried": false,
+    "source_changed": false
+  },
+  "capture_file": {
+    "path": "capture.json",
+    "bytes": 19508,
+    "sha256": "9fbb259489bf5fa51a693ab23fe608ac6bc032cdaced965133852b45740e42ee"
+  },
+  "commands_file": {
+    "path": "commands.json",
+    "bytes": 7897,
+    "sha256": "6e0caa788762d10b1ad43fccfbdcf592b9c883fbb606239b5dd94a79efdcc992"
+  },
+  "capture_derived_field_limitation": "capture.json failure_signals used an overescaped display regex and is not an absence-of-errors assertion. The complete original raw logs are retained; this classification re-reads the exact ##[error] line and the failure annotation.",
+  "claim_boundary": "A successful data acquisition and the later factorial PASS line do not change the hosted job failures into PASS. No claim is made about the newer source or its separate 32-gate run.",
+  "frozen": true,
+  "freeze_modes": {
+    "directory": "0555",
+    "files": "0444"
+  },
+  "completed_unix_seconds": 1794130584.911903
+}

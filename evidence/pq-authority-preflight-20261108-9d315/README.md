@@ -221,3 +221,113 @@ hashes are left unchanged; captured bytes are never trimmed or rewritten.
 qualification remain false. This evidence does not establish full
 entrypoint migration, independent custody or recovery, original fixed-Host
 availability, WAN acceptance, or a complete quantum security composition.
+
+
+## Inventory correction retained with local and hosted HOLD
+
+**Current local validation is FAIL, not a 32-gate pass.** The complete run on
+`ca3c4f88afc70399000b18fc7d68cfa62e57fb2f` retained [its original summary](inventory-source-01/summary.json):
+31 command gates passed, while `node-release-owner` exited 101. This collector's
+PASS means that the evidence was verified and retained, not that the failed
+native validation became successful. The tested commit is recorded under
+`retained_failed_validations`; `validated_commits` keeps its earlier identities.
+
+The initially published source `527e2e58db6d7c1fd84ba88c3131289edea86b1d` omitted the new quorum test file
+from the embedded distributed source inventory. This was our integration
+omission. The base inventory was fresh. The unchanged generator adds only
+`trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs`, from 1,368 to 1,369 entries. [The separate inventory correction
+record](inventory-source-correction.json) binds the exact six-file correction.
+The earlier `source-correction.json`, documenting the positive Node fixture
+correction, has not been rewritten. [The inventory-fix receipt](distributed-inventory-fix-01/receipt.json)
+retains one expected failed pre-fix check (exit 1, `passed: false`) and nine
+successful commands; the fix driver did not run native tests.
+
+The frozen final runner preserves the original 31 commands and adds the actual
+inventory freshness command immediately after the first source guard. That
+freshness check passed on the corrected source. [The original raw-output
+readback](inventory-validation-readback.json) records the complete outcome:
+
+| Scope | Actual outcome on this source |
+| --- | --- |
+| Release library suite | 52 passed, exact 37 + 6 + 9 names, none ignored |
+| Five other related packages | 442 passed, 2 existing ignored |
+| Six-package documentation tests | 4 passed |
+| Node `release_owner::` module | **38 passed, 2 failed**, 1 existing ignored, 1,244 filtered |
+| CI contract / pure root research | 116 / 18 passed |
+| Three upstream migration groups | 7 / 13 / 21 passed |
+| Other command gates | Strict workspace Clippy, formatting, three locked graphs, source guards, provider identity and SQLite qualification passed |
+
+The two actual Node failures are:
+
+- `release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas`:
+  the initialized fixture's open path panicked at `service_test_fixture.rs:215:51`
+  with `Kind(TimedOut)`, before the intended injected elapsed-expiry point.
+- `release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas`:
+  the assertion at `service_tests.rs:87:9` observed `TimedOut` where the test
+  required `PermissionDenied`. This is a failed test, not a successful expected
+  refusal. The earlier corrected positive `admitted_completion_after_expiry...`
+  control did pass in the same output.
+
+No native or CI rerun was used to replace these outcomes, and no clock,
+signature, service deadline, business threshold, or refusal assertion was
+changed after this observation. The previous 31-command PASS remains bound to
+its previous source; it does not establish that this newer source passed.
+
+### Retained hosted CI failures on the earlier published source
+
+[The scoped readback](hosted-ci-final-readback-01/receipt.json) observed
+105 checks on `527e2e58db6d7c1fd84ba88c3131289edea86b1d` at `2026-11-08T09:23:59.049925+00:00`:
+73 success, 22 failure,
+9 in progress and 1 skipped.
+This is a dated snapshot, not a claim that still-running checks subsequently
+passed. All retrieved original logs, annotations, reports, process evidence and
+artifact ZIPs are archived in the hosted observation and late-triage directories.
+Bounded late priority/factorial triage retains full job logs, metadata and
+annotations; it does not claim that every hosted artifact was downloaded or
+that every still-running check was fully diagnosed. The small original CodeQL
+export artifact is retained in full.
+
+- The pinned historical artifact `11531476198` from run `37730166589` was
+  unavailable: artifact API 404, original-run artifact count zero, and no
+  download candidates. Its workflow is unchanged from the base. Recovery
+  still requires the exact original failure data and provenance; no different
+  artifact or newly generated failure is substituted.
+- Original native campaign run `42463825169` built and executed three actual
+  campaigns. All three failed finite confirmation/client-state criteria with
+  retained `PUBLIC_REQUEST_DEADLINE` records. These are not startup failures.
+  The original 71,722,426-byte artifact ZIP `13610289272` is included with SHA-256
+  `b6415ddf54d336c1c0647eca920cfe7ed0dfe24b75a7d65cf9a8c5b118d6c354`.
+- Four protocol/cross-architecture observations report `CONFIRMATION_TARGET`:
+  each five named native controls passed, but the confirmation reader rejected
+  the retained report and the native child exited 1; host-error lists were
+  empty. These are separate failures from the inventory omission.
+- The three late factorial jobs failed their pinned OpenSSL 3.5.9 provider
+  preparation/download step with exit 22. Each later `--legal-strategy-v3`
+  Python command still ran and reported PASS; the containing jobs remain
+  failed. The deeper provider `build-and-smoke.log` was not retrieved, so no
+  particular HTTP status or deeper root cause is claimed.
+- Later service-model and other W1 observations are retained in their dedicated
+  raw triage directories. The CodeQL export job reports that analyses/checks
+  did not complete and stabilize before its deadline. That export failure does
+  not itself establish either a vulnerability finding or successful remediation.
+
+Unchanged workflow/test files alone do not prove an inherited runtime failure
+or exclude every shared-code effect; no comparison campaign was rerun on the
+base. The unavailable historical-artifact gate and confirmation thresholds
+remain intact. The failed GraphQL PR-note attempt is retained even though it
+has no terminal receipt; later PR text updates use the existing draft.
+
+[Archive accounting](followup-archive-inventory.json) records every ordinary
+original file, including all zero-byte logs. Raw patches and text captures with
+Git whitespace diagnostics use lossless gzip with original path, size and
+SHA-256 in the index; raw receipts are never rewritten. [External artifact
+accounting](external-artifacts.json) explicitly records any original at least
+100,000,000 bytes retained outside Git (0 such
+files). No oversized file is silently omitted. The unused PASS-only collector
+draft is identified in [its supersession record](unexecuted-collector-draft.json)
+and was not executed. Previous 31-command PASS, earlier genuine Node FAIL,
+research captures and all previous evidence retain their original bytes.
+
+The draft remains **HOLD** for current native validation, hosted acceptance,
+service performance, production activation, whole-chain PQ security, physical
+rollback safety, WAN qualification, HeptaFinalUse and PoN quantum claims.
