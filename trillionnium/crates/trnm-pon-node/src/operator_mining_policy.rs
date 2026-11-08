@@ -8,10 +8,10 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, OpenOptions},
-    io::{Read, Seek, SeekFrom, Write},
+    io::{Read, Write},
     os::{
         fd::AsRawFd,
-        unix::fs::{MetadataExt, OpenOptionsExt},
+        unix::fs::{FileExt as UnixFileExt, MetadataExt, OpenOptionsExt},
     },
     path::{Path, PathBuf},
     sync::{
@@ -1301,7 +1301,7 @@ impl Permit {
     }
 }
 type HeldMaterialIdentity = (u64, u64, u64, u32, u32, u64, i64, i64, i64, i64);
-type HeldMaterialRow = (PathBuf, File, HeldMaterialIdentity);
+type HeldMaterialRow = (PathBuf, File, HeldMaterialIdentity, String);
 pub(crate) struct HeldCatalog {
     rows: Vec<HeldMaterialRow>,
     roles: Vec<String>,
@@ -1329,15 +1329,16 @@ impl HeldCatalog {
             .iter()
             .position(|r| r == role)
             .ok_or(PolicyError::NativeBinding)?;
-        let (_, file, identity) = &self.rows[index];
+        let (_, file, identity, expected_sha256) = &self.rows[index];
         check(identity.2 <= limit, PolicyError::Capacity)?;
-        let mut clone = io(file.try_clone())?;
-        io(clone.seek(SeekFrom::Start(0)))?;
         let mut bytes = Vec::new();
+        let mut digest = Sha256::new();
         let mut buffer = [0u8; 65536];
         loop {
             progress().map_err(|_| PolicyError::CpuUnknown)?;
-            let n = io(clone.read(&mut buffer))?;
+            // Duplicated descriptors share a cursor. Consume only the explicit
+            // offset and authenticate the exact buffer returned to the Node.
+            let n = io(file.read_at(&mut buffer, bytes.len() as u64))?;
             if n == 0 {
                 break;
             }
@@ -1348,14 +1349,18 @@ impl HeldCatalog {
                     .is_some_and(|n| n as u64 <= identity.2),
                 PolicyError::Capacity,
             )?;
+            digest.update(&buffer[..n]);
             bytes.extend_from_slice(&buffer[..n]);
         }
         self.ready()?;
-        check(bytes.len() as u64 == identity.2, PolicyError::NativeBinding)?;
+        check(
+            bytes.len() as u64 == identity.2 && hex::encode(digest.finalize()) == *expected_sha256,
+            PolicyError::NativeBinding,
+        )?;
         Ok(bytes)
     }
     pub(crate) fn ready(&self) -> Result<()> {
-        for (path, file, identity) in &self.rows {
+        for (path, file, identity, _) in &self.rows {
             check(
                 same_meta(&io(file.metadata())?) == *identity
                     && same_meta(&io(fs::symlink_metadata(path))?) == *identity,
@@ -1371,10 +1376,13 @@ impl HeldCatalog {
             PolicyError::NativeBinding,
         )?;
         let mut catalog = b"TRNM-RESTRICTED-NODE-CATALOG1".to_vec();
-        for (row, (path, file, identity)) in inputs.materials.iter().zip(&self.rows) {
+        for (row, (path, file, identity, expected_sha256)) in
+            inputs.materials.iter().zip(&self.rows)
+        {
             check(
                 &row.path == path
                     && row.bytes == identity.2
+                    && &row.sha256 == expected_sha256
                     && same_meta(&io(file.metadata())?) == *identity
                     && same_meta(&io(fs::symlink_metadata(path))?) == *identity,
                 PolicyError::NativeBinding,
@@ -1498,7 +1506,12 @@ pub(crate) fn verify_catalog(
         put_text(&mut catalog, role);
         catalog.extend_from_slice(&row.bytes.to_le_bytes());
         put_text(&mut catalog, &row.sha256);
-        held_rows.push((row.path.clone(), file, same_meta(&before)));
+        held_rows.push((
+            row.path.clone(),
+            file,
+            same_meta(&before),
+            row.sha256.clone(),
+        ));
     }
     check(
         sha(&catalog) == permit.view.body.task.full_material_catalog,

@@ -60,6 +60,7 @@ pub(super) fn verify(file: &File, size: u64, expected_platform: Digest32) -> Res
     }
     within(offset, u64::from(count) * 56, size)?;
     let mut executable_entry = false;
+    let mut non_executable_stack = false;
     for i in 0..count {
         let mut segment = [0; 56];
         file.read_exact_at(&mut segment, offset + u64::from(i) * 56)?;
@@ -76,13 +77,23 @@ pub(super) fn verify(file: &File, size: u64, expected_platform: Digest32) -> Res
             ));
         }
         if kind == 1 {
-            if memory < length || flags & 3 == 3 {
-                return Err(invalid("M15 ELF writable executable load"));
+            if memory < length || flags & 3 == 3 || (flags & 1 != 0 && memory != length) {
+                return Err(invalid(
+                    "M15 ELF executable load is writable or not fully file-backed",
+                ));
             }
             let end = address
                 .checked_add(memory)
                 .ok_or_else(|| invalid("M15 ELF address overflow"))?;
             executable_entry |= flags & 1 != 0 && entry >= address && entry < end;
+        }
+        if kind == 0x6474e551 {
+            // Linux uses the last PT_GNU_STACK. Refuse ambiguous duplicates
+            // instead of assigning a different meaning to the same image.
+            if non_executable_stack || flags & 1 != 0 {
+                return Err(invalid("M15 ELF executable or repeated GNU stack"));
+            }
+            non_executable_stack = true;
         }
         if kind == 2 {
             if length > 65536 || !length.is_multiple_of(16) {
@@ -99,10 +110,11 @@ pub(super) fn verify(file: &File, size: u64, expected_platform: Digest32) -> Res
                 }
                 if matches!(
                     tag,
-                    1 | 15 | 29 | 0x6ffffefb | 0x6ffffefc | 0x7ffffffd | 0x7fffffff
-                ) {
+                    1 | 15 | 22 | 29 | 0x6ffffefb | 0x6ffffefc | 0x7ffffffd | 0x7fffffff
+                ) || (tag == 30 && u64_at(&dynamic, 8) & 4 != 0)
+                {
                     return Err(invalid(
-                        "M15 external dynamic dependency/search/audit path rejected",
+                        "M15 external dynamic dependency/search/audit path or text relocation rejected",
                     ));
                 }
             }
@@ -111,9 +123,9 @@ pub(super) fn verify(file: &File, size: u64, expected_platform: Digest32) -> Res
             }
         }
     }
-    if !executable_entry {
+    if !executable_entry || !non_executable_stack {
         return Err(invalid(
-            "M15 ELF entry is not in a sealed executable segment",
+            "M15 ELF requires a sealed executable entry and explicit non-executable stack",
         ));
     }
     Ok(())

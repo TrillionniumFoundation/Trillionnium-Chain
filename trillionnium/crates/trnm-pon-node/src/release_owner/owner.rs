@@ -206,6 +206,7 @@ impl Owner {
         contract: &super::execution_wire::Contract,
     ) -> Result<Validity> {
         let result = (|| {
+            contract.require_closed_execution()?;
             if self.invalidated {
                 return Err(invalid("M15 owner is fenced"));
             }

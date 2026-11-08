@@ -8413,3 +8413,25 @@ bind 11,064 tracked entries / 1,114,540,546 bytes. The [source receipt and raw l
 remain distinct from e36 native execution and its failed terminal disposition.
 Runtime and formal subtree objects match e36 exactly; this evidence-only update
 does not create a new native run, PQ-128 qualification or production activation.
+
+
+### Actual material loading and static M15 profile V2, 2026-11-08
+
+The [actual-reader counterexample](../../evidence/loader-closure-20261108/README.md)
+retains two failing tests on the original continuous/mining reader: a duplicated
+file handle's shared cursor redirects loaded bytes while inode identity and
+length stay fixed. The repair retains each authenticated material digest, reads
+by explicit offset, and verifies the exact returned buffer inside the existing
+bounded progress loop. The original replay/resource checks remain required.
+
+The [static execution V2 contract](../security/M15_STATIC_EXECUTION_CLOSURE_V2.md)
+narrows the existing sealed M15 consumer with an explicit provider environment
+before authority open, secure-execution refusal, one non-executable stack,
+no text relocations and file-backed executable segments. Historical V1 records
+keep their original signed representation; the upgraded owner refuses new or
+current V1 execution until the original authority publishes a current V2
+configuration. This does not reset namespace/history or reinterpret an unknown
+launch as absent. Fixed-source checks must retain their original failures.
+General interpreters, shared-library loading, tokenizer/router extensions and
+external model runtime closure remain unsupported; isolated native deployment,
+original-8193 resources, whole-state rollback and activation remain HOLD / NO-GO.

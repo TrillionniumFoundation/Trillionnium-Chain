@@ -256,7 +256,10 @@ fn isolated_fixed_root_static_node_claim_refresh_and_revocation() -> Result<()> 
     actual_environment.sort();
     assert_eq!(
         actual_environment,
-        vec![b"LANG=C".to_vec(), b"LC_ALL=C".to_vec(), b"TZ=UTC".to_vec()]
+        super::execution_environment::restricted_environment()
+            .into_iter()
+            .map(|(key, value)| format!("{key}={value}").into_bytes())
+            .collect::<Vec<_>>()
     );
     let (attempt_id, attempt) = attempt_and_claim(pid)?;
     f.clock.catalog_fault.require_fired()?;
