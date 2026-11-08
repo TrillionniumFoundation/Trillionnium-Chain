@@ -7904,3 +7904,56 @@ extended to cover closed, incomplete, cross-epoch and recorded-stopping cuts.
 Original standalone native scenarios keep their original source identities;
 new exact-source verification is recorded separately instead of relabelling
 old runs as execution of the hardened source.
+
+
+### 2026-11-08 complete Cell version, discovery, custody and task residency
+
+Continue the existing next-architecture candidate at
+`9f54b05c643185a5041fc1f78cef77e95877f52a` in an isolated stacked review branch.
+The six requested storage/distribution capabilities share one source tree;
+separate CPQ1 and Hepta readback candidates are not treated as merged or accepted.
+
+The [complete-version contract](specs/pon/CELL_COMPLETE_VERSION_V1.md) adds TCV1
+and CPV3: one canonical commitment and publisher signature bind the entire model
+root, dependency graph, environment closure and exact full manifest/chunk set.
+Actual cache readback includes every model and environment payload under one
+aggregate budget and original deadline. Same release members with a different
+dependency graph cannot reuse the signature. This is declared-byte completeness;
+unlisted dependencies and actual loader/device compatibility remain owner gates.
+
+The [discovery refinement](specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md) moves
+source-fair scheduling before permanent identity-quota admission. Two early
+sources returning eight valid records each can no longer exclude a later source
+merely by batch order. Signature/history checking retains receipt time while
+current admission retains the original TTL and deadline, including same-sequence
+conflicts that expire while later replies arrive. No high-water row, namespace,
+connection allowance, signature allowance or original timeout is reset.
+
+The [custody/continuation contract](specs/pon/CELL_CUSTODY_CONTINUATION_V1.md)
+reads real physical archives for an independently pinned complete replica roster.
+TCV1 coverage requires both model and environment at the same exact store/slot;
+complementary fragments or mismatched owners cannot be pooled into a complete
+version. All probes share a nonrefundable aggregate payload/probe budget. Renewal
+and repair plans retain the original terms and responsible owners. Contactability
+is not prepaid funding; sponsor disappearance requests a replacement without
+lowering replica requirements, extending an old lease or granting deletion.
+
+Residency checks incremental RAM/reference demand after complete metadata but
+before payload download inside the original network session. A task-local
+borrowed working set admits only a complete canonical resident set and has no
+remote or disk fallback during hot reads. Current loader pins, original deadline
+and latched cancellation are rechecked without conferring execution authority.
+
+| Capability | Candidate control added | Remaining acceptance evidence |
+| --- | --- | --- |
+| Complete version | TCV1/CPV3, exact dependencies and environment, complete byte readback | Actual restricted-loader dependency inventory, device/ABI readback, separate CPQ1 qualification |
+| Discovery | Fair durable admission, expiry/conflict preservation, original aggregate budgets | Authenticated bootstrap response/query binding, genuinely independent operators and WAN/Sybil scope |
+| Custody | Exact per-store whole-version intersection and physical archive readback | Independently administered custody/failure domains and elapsed-time recovery campaigns |
+| Renewal/repair economy | Original terms, payer/responsible-owner work items, no invented funding or refund | Real prepaid successor funding, repair effects, sponsor replacement and economic sustainability |
+| Loading/cache | Pre-download memory rejection and bounded complete task RAM set | Measured NVMe/device transfer and ordinary expert/VRAM path |
+| Current use | Fresh supplied-owner view checks; no cache-to-execution grant | Actual Hepta CURRENT/resource/FinalUse guard and ordinary next-task execution |
+
+All six end-to-end capability qualifications remain **HOLD_NO_GO** pending their
+explicit external/owner evidence. Published plaintext cannot be made secret or
+forgotten by revocation. Preserve the actual failed pre-fix discovery controls,
+intermediate build failures and source-specific final validation separately.

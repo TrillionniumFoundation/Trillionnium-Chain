@@ -10,6 +10,7 @@ mod bep52;
 mod cache_budget;
 mod cache_wal;
 mod closure;
+mod custody;
 mod delta;
 pub mod discovery;
 mod erasure;
@@ -25,6 +26,7 @@ mod retention;
 mod store;
 mod tensor;
 mod tensor_reader;
+mod version;
 
 pub use archive::{
     CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
@@ -39,6 +41,14 @@ pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
     MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1,
+};
+pub use custody::{
+    observe_release_custody, observe_version_custody, CellCustodyContinuationV1,
+    CellCustodyPolicyPinV1, CellCustodyProbeBudgetV1, CellCustodyProbeUsageV1,
+    CellCustodyRecoveryActionV1, CellCustodyRenewalActionV1, CellCustodyReplicaObservationV1,
+    CellCustodyReplicaPinV1, CellCustodyReplicaStateV1, CellCustodySponsorObservationV1,
+    CellCustodySponsorStateV1, CellReleaseCustodyPolicyV1, CellReleaseCustodyReportV1,
+    CellVersionCustodyReportV1, MAX_CELL_CUSTODY_REPLICAS_V1,
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use erasure::{
@@ -74,7 +84,7 @@ pub use release::{
 pub use residency::{
     CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
     CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
-    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1,
+    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
 };
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
@@ -84,6 +94,10 @@ pub use tensor::{
     CellTensorContractV1, CellTensorDTypeV1, CellTensorFileV1, CellTensorModelManifestV1,
     CellTensorReadbackV1, CellTensorSpecV1, MAX_CELL_TENSOR_CONTRACT_BYTES_V1,
     MAX_CELL_TENSOR_HEADER_BYTES_V1, MAX_CELL_TENSOR_MODEL_MANIFEST_BYTES_V1,
+};
+pub use version::{
+    CellVersionCommitmentV1, CellVersionLoaderContextV1, CellVersionManifestV1,
+    CellVersionReadbackV1, MAX_CELL_VERSION_BYTES_V1, MAX_CELL_VERSION_MANIFESTS_V1,
 };
 
 pub type CellDigestV1 = [u8; 32];

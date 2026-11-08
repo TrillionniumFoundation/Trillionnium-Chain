@@ -18,13 +18,15 @@ use std::{
 use sha2::{Digest, Sha256};
 
 use super::{
-    fetch_closure_cancellable, require, CellClosureFetchReportV1, CellDigestV1, CellErrorV1,
-    CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1, CellReleaseFetchLimitsV1,
-    CellResultV1, CellStoreV1, MAX_CELL_BYTES,
+    release::fetch_closure_for_residency, require, CellClosureFetchReportV1, CellDigestV1,
+    CellErrorV1, CellFileRoleV1, CellLoaderContextV1, CellManifestV1, CellReleaseClosureV1,
+    CellReleaseFetchLimitsV1, CellResultV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
 mod tensor;
+mod working_set;
 pub use tensor::{CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1};
+pub use working_set::CellResidentWorkingSetV1;
 
 static RESIDENCY_OWNER_SEQUENCE: AtomicU64 = AtomicU64::new(1);
 
@@ -87,6 +89,14 @@ impl CellLocalSelectionV1 {
 struct ChunkKey {
     digest: CellDigestV1,
     size: u32,
+}
+
+struct CachedAdmissionPlan {
+    manifests: Vec<CellManifestV1>,
+    missing: BTreeSet<ChunkKey>,
+    references: usize,
+    payload_bytes: u64,
+    additional_bytes: u64,
 }
 
 /// Ordered immutable chunks of one TCD1 file. Arc ownership stays private so
@@ -253,7 +263,14 @@ impl CellResidencyV1 {
             });
         }
         self.check_slot()?;
-        let fetch = fetch_closure_cancellable(store, closure, &bounded, peers, limits, cancelled)?;
+        let fetch = fetch_closure_for_residency(
+            store,
+            closure,
+            &bounded,
+            peers,
+            limits,
+            (self, cancelled),
+        )?;
         self.prepare_cached(store, closure, &bounded, limits.release.deadline, cancelled)?;
         Ok(CellResidencyPrepareReportV1 {
             closure_id: bounded.closure_id,
@@ -281,54 +298,13 @@ impl CellResidencyV1 {
             return checkpoint(deadline, cancelled);
         }
         self.check_slot()?;
-        // Inspect every pinned manifest and the complete incremental reservation
-        // before allocating any weight payload. Metadata is bounded by TCD1 and
-        // the manager's aggregate reference limit.
-        let mut manifests = Vec::with_capacity(closure.files().len());
-        let mut missing = BTreeSet::new();
-        let mut references = 0usize;
-        let mut payload_bytes = 0u64;
-        for file in closure.files() {
-            checkpoint(deadline, cancelled)?;
-            let manifest = store
-                .manifest_with_deadline(file.manifest, Some(deadline))?
-                .ok_or(CellErrorV1::Unavailable)?;
-            closure.verify_manifest(&manifest)?;
-            references = references
-                .checked_add(manifest.chunks().len())
-                .ok_or(CellErrorV1::Invalid("resident reference budget"))?;
-            require(
-                references <= self.config.max_chunk_references - self.usage.chunk_references
-                    && references as u64 <= expected.max_chunks,
-                "resident reference budget",
-            )?;
-            payload_bytes = payload_bytes
-                .checked_add(manifest.size())
-                .ok_or(CellErrorV1::Invalid("resident payload budget"))?;
-            for chunk in manifest.chunks() {
-                let key = ChunkKey {
-                    digest: chunk.sha256,
-                    size: chunk.size,
-                };
-                if !self.chunks.contains_key(&key) {
-                    missing.insert(key);
-                }
-            }
-            manifests.push(manifest);
-        }
-        let additional_bytes = missing.iter().try_fold(0u64, |total, chunk| {
-            total
-                .checked_add(u64::from(chunk.size))
-                .ok_or(CellErrorV1::Invalid("resident byte budget"))
-        })?;
-        require(
-            additional_bytes <= self.config.max_resident_bytes - self.usage.unique_payload_bytes,
-            "resident byte budget",
-        )?;
-        require(
-            payload_bytes <= expected.max_payload_bytes,
-            "resident payload budget",
-        )?;
+        let CachedAdmissionPlan {
+            manifests,
+            missing,
+            references,
+            payload_bytes,
+            additional_bytes,
+        } = self.cached_admission_plan(store, closure, expected, deadline, cancelled)?;
         let mut added = BTreeMap::<ChunkKey, Arc<[u8]>>::new();
         let mut files = Vec::with_capacity(closure.files().len());
         for (file, manifest) in closure.files().iter().zip(manifests) {
@@ -516,6 +492,92 @@ impl CellResidencyV1 {
             "resident closure budget",
         )
     }
+
+    /// Called only by the existing closure transport owner after every manifest
+    /// has passed its first metadata pass and before any payload request. It
+    /// reads bounded cached metadata and checks exact incremental RAM/reference
+    /// needs without admitting residents, selecting a version or issuing use.
+    pub(super) fn verify_prefetch_capacity(
+        &self,
+        store: &CellStoreV1,
+        closure: &CellReleaseClosureV1,
+        expected: &CellLoaderContextV1,
+        deadline: Instant,
+        cancelled: &AtomicBool,
+    ) -> CellResultV1<()> {
+        checkpoint(deadline, cancelled)?;
+        closure.verify_for_loader(expected)?;
+        self.check_slot()?;
+        self.cached_admission_plan(store, closure, expected, deadline, cancelled)?;
+        checkpoint(deadline, cancelled)
+    }
+
+    fn cached_admission_plan(
+        &self,
+        store: &CellStoreV1,
+        closure: &CellReleaseClosureV1,
+        expected: &CellLoaderContextV1,
+        deadline: Instant,
+        cancelled: &AtomicBool,
+    ) -> CellResultV1<CachedAdmissionPlan> {
+        // Inspect every pinned manifest and the complete incremental reservation
+        // before downloading or allocating weight payload. Metadata is bounded
+        // by TCD1 and the manager's aggregate reference limit. The final staging
+        // pass repeats this check; a cache mutation is never trusted by a plan.
+        let mut manifests = Vec::with_capacity(closure.files().len());
+        let mut missing = BTreeSet::new();
+        let mut references = 0usize;
+        let mut payload_bytes = 0u64;
+        for file in closure.files() {
+            checkpoint(deadline, cancelled)?;
+            let manifest = store
+                .manifest_with_deadline(file.manifest, Some(deadline))?
+                .ok_or(CellErrorV1::Unavailable)?;
+            closure.verify_manifest(&manifest)?;
+            references = references
+                .checked_add(manifest.chunks().len())
+                .ok_or(CellErrorV1::Invalid("resident reference budget"))?;
+            require(
+                references <= self.config.max_chunk_references - self.usage.chunk_references
+                    && references as u64 <= expected.max_chunks,
+                "resident reference budget",
+            )?;
+            payload_bytes = payload_bytes
+                .checked_add(manifest.size())
+                .ok_or(CellErrorV1::Invalid("resident payload budget"))?;
+            for chunk in manifest.chunks() {
+                let key = ChunkKey {
+                    digest: chunk.sha256,
+                    size: chunk.size,
+                };
+                if !self.chunks.contains_key(&key) {
+                    missing.insert(key);
+                }
+            }
+            manifests.push(manifest);
+        }
+        let additional_bytes = missing.iter().try_fold(0u64, |total, chunk| {
+            total
+                .checked_add(u64::from(chunk.size))
+                .ok_or(CellErrorV1::Invalid("resident byte budget"))
+        })?;
+        require(
+            additional_bytes <= self.config.max_resident_bytes - self.usage.unique_payload_bytes,
+            "resident byte budget",
+        )?;
+        require(
+            payload_bytes <= expected.max_payload_bytes,
+            "resident payload budget",
+        )?;
+        checkpoint(deadline, cancelled)?;
+        Ok(CachedAdmissionPlan {
+            manifests,
+            missing,
+            references,
+            payload_bytes,
+            additional_bytes,
+        })
+    }
 }
 
 fn checkpoint(deadline: Instant, cancelled: &AtomicBool) -> CellResultV1<()> {
@@ -529,3 +591,7 @@ fn checkpoint(deadline: Instant, cancelled: &AtomicBool) -> CellResultV1<()> {
 #[cfg(test)]
 #[path = "residency_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "residency/budget_task_tests.rs"]
+mod budget_task_tests;
