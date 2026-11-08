@@ -7417,3 +7417,77 @@ Complete details, scripts, reviews and immutable evidence are linked from
 `formal/pon-nakamoto-v1/w1_public_stark_research/ROUND3_REPORT.md` and
 `formal/pon-nakamoto-v1/physical_strategy_frontier_research/README.md`.
 All five substantive production gates remain **HOLD_NO_GO**.
+
+
+## 2026-11-08 P3 shared primitive model and tagged SHA3 profile
+
+The separate [shared-primitive research package](../../formal/pon-nakamoto-v1/p3_shared_primitive_qualification/README.md)
+starts from the exact PR #783 source
+`cc836dfc13ef0006eb0878abd8cb5eca9a76bec0`. The existing unrestricted
+truncated-permutation collision and shared-role identities remain valid
+audit findings. They have not been promoted to a legal Merkle opening
+collision or complete W1 forgery.
+
+For the retained construction, a new conditional classical ideal-permutation
+argument allows arbitrary sibling strings and one shared forward/inverse
+query history. For half-space size `N=p^4`, fixed positive leaf width `w`,
+ordinary height/index, and `T=Q+2(ceil(w/4)+h) <= N^2`, its conflicting-opening
+bound is `min(1,2*N*T^2/(N^2-T+1))`. Advice must be independent of the sampled
+permutation or its preparation included in the same history. The first-exposure
+argument explicitly allows raw inverse-created compression collisions.
+Finite structural controls and a separate six-test full-hash path extractor
+are retained. Actual P3 pruned/mixed-height openings, concrete Poseidon2,
+quantum queries and PCS/Fiat-Shamir extraction remain outside this result.
+
+The incompatible `TRNM-W1-P3-SHA3-512-TAGGED-R1` candidate uses complete
+SHA3-512 outputs, injective role frames, typed statement/expected-input context,
+64-byte raw digests without field reduction, and new proof-envelope magics.
+It retains the existing W1 SHA-256 and five-lane packed carry AIRs. Its
+allocation-free scanner admits both bounded buffers before either owning
+decode or preprocessing. The profile records inherited HashChallenger state
+aliases and the unbounded field rejection sampler; it makes no independent
+role-oracle or complete Fiat-Shamir claim. No recursive SHA3 verifier AIR
+or production dispatch is added.
+
+Eight fresh complete prove-and-independent-verify executions cover retained
+and dense inputs in ABBA order, with two runs per arm per input, the same
+eight-CPU affinity and Rayon setting, and unchanged measured source/binary/input
+identities. The dense input bytes are a read-only copy from the unmerged R4
+worktree with exact provenance; R4 implementation and cached measurements are
+not imported. Full pipeline medians are 20.414321 -> 9.708290 seconds on the
+retained input and 20.511479 -> 9.742452 on the dense input. Independent
+verification medians are 1.221478 -> 0.747086 seconds and
+1.120189 -> 1.004059 seconds. All samples, including the new dense verifier's
+1.240611-second sample, remain included.
+
+New transmitted statement-plus-proof sizes are 5,435,252 and 5,444,148 bytes,
+up from 5,187,252 and 5,186,804 bytes for the old research STARK. They remain
+about 110 times the original 49,506-byte native candidate. These small-sample
+shared-host measurements exclude mining/search, queues, WAN, energy and
+recursion, and do not establish native or production benefit. Native validation
+passed 56 Rust tests, 31 external known-answer cases within one of those tests,
+71 full-proof structural controls and 11 independent receiver controls.
+Structural controls include deliberately admitted raw digest bytes and must
+not be relabelled cryptographic rejections. The control replay created zero
+additional proofs.
+
+The exact-rational ideal-sponge calculator implements the cited 2026 preprint's
+stated bounds and query convention, with 40 tests and explicit lifetime/advice
+restrictions. It rejects unknown free construction-dependent advice, uncharged
+shared roles and unsupported concrete/Merkle/Fiat-Shamir/W1 claims. It always
+returns `qualified=false`; caller-declared budgets are not verified adversarial
+limits. The 2025 quantum indifferentiability and 2024 precomputation results
+remain conditional ideal-model tools, not concrete Poseidon2/Keccak proofs.
+
+The package's focused exact-commit runner pins source before and after,
+regenerates independent vectors, checks the locked graph, formatting, strict
+Clippy and retained/new tests, preserves repository/source-integrity negatives,
+and excludes runtime/configuration/qualification changes. Its result is
+distinct from complete repository CI or an external cryptographic audit.
+All failed observations and model-assisted review limitations are retained.
+
+Concrete shared-primitive binding, actual P3 opening geometry, complete
+noninteractive knowledge soundness, quantum/advice/lifecycle security,
+recursive cost and globally bounded hostile receiver cost remain open.
+Existing production service, native admission and qualification gates remain
+**HOLD_NO_GO**. No activation, release or main-branch merge is performed.

@@ -1,0 +1,44 @@
+{
+  "job_id": "1a1b9c01064-12894-169d",
+  "state": {
+    "at_unix_ms": 1794117748080,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b9c01064-12894-169d",
+    "launch_nonce": "2f929530c698932ee52db6467a76d19b",
+    "log_bytes": {
+      "stderr": {
+        "seen": 773,
+        "stored": 773
+      },
+      "stdout": {
+        "seen": 0,
+        "stored": 0
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/usr/lib/python3.12/base64.py\", line 37, in _bytes_from_decode_data\n    return s.encode('ascii')\n           ^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'ascii' codec can't encode character '\\u2026' in position 36079: ordinal not in range(128)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 3, in <module>\n  File \"/usr/lib/python3.12/base64.py\", line 83, in b64decode\n    s = _bytes_from_decode_data(s)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/base64.py\", line 39, in _bytes_from_decode_data\n    raise ValueError('string argument should contain only ASCII characters')\nValueError: string argument should contain only ASCII characters\n",
+  "stdout_bytes": 0,
+  "stderr_bytes": 773
+}
