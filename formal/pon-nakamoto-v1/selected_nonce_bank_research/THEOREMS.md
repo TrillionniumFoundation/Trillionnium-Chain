@@ -18,6 +18,8 @@ The round-3 online class allowed a drawn selector to be skipped forever or attem
 
 Fix the complete selector bank before ticket queries. Coordinate `i` occurs `n_i` times. No distributional assumption on these fixed counts is needed. Each of the `M = sum_i n_i` distinct ticket candidates has a fresh, independent Bernoulli success indicator of parameter `0 < p < 1`, independent of all selector information and private coins. Write `q = 1-p`.
 
+Initially no useful result is resident. Any pre-bank useful-result acquisition must be charged separately, with its amortization and the resulting nonempty initial cache stated explicitly; the empty-cache formula is not asserted for that altered starting state.
+
 An attempt costs a common nonnegative continuation price `c`. Its coordinate's useful result must be available. Acquiring that result costs a nonnegative fixed price `u_i`; a resident result can be reused without reacquisition. There is capacity for at least one complete useful result, in addition to the already purchased nonce bank. This is an atomic, additive acquisition model: it does not represent shared intermediate arithmetic between distinct coordinates, circuits exploiting ticket predicates, fractional computation, free historical advice, energy, latency, or a concrete processor.
 
 Admit all history-dependent and randomized schedules of these `M` candidates, arbitrary whole-result precomputation, retention, eviction, recomputation and ordering. An outcome is observable only after paying the required attempt/acquisition costs. Require the maximum possible success probability for this bank, `1-q^M`. Early stopping after the first success is permitted. The already paid gate and bank-construction costs must be added to the theorem's value.
