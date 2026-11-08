@@ -615,10 +615,15 @@ PQ_RELEASE_REGRESSION_COMMAND = '          python3 scripts/ci/record_pq_native_c
 # Required post-win controls retain one literal executable lane and one actual
 # saved-receipt verifier step. These source guards do not qualify a proof.
 REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
+    python3 scripts/ci/test_pq_authority_effect_register.py
+    python3 scripts/ci/pq_authority_effect_register.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
@@ -629,6 +634,12 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
 
     # Conditional resource/event models retain unknown W1 hardware and protocol gates.
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v
+    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py
+    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check
     python3 formal/pon-nakamoto-v1/stateful_tail.py
     python3 formal/pon-nakamoto-v1/residual_grover.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
@@ -743,6 +754,41 @@ PY
     python3 scripts/ci/test_work_cost_report.py
     python3 scripts/test_qualification_runtime.py
 '''
+
+# Independent literal for the existing external lane. A command inside a false
+# branch or an errexit-suppressing shell condition is not an executed control.
+EXTERNAL_EVIDENCE_CONTRACT_BLOCK = '''    python3 scripts/ci/prepare_evidence_sources.py
+    python3 scripts/ci/test_evidence_sources.py
+    python3 scripts/ci/check_repository.py
+    python3 scripts/ci/test_repository.py EvidenceBoundaryTests
+    python3 scripts/ci/check_pon_evidence.py
+    python3 scripts/ci/test_pon_evidence.py
+    python3 scripts/ci/check_invariant_evidence.py --historical
+    python3 scripts/ci/test_invariant_evidence.py
+    python3 scripts/ci/check_completion_evidence.py --historical
+    python3 scripts/ci/test_completion_evidence.py
+    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-session-v1
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-native-node-v1
+    python3 scripts/ci/check_client_confirmation_evidence.py --historical --evidence evidence/pon-closed-round-v1
+    python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1
+    python3 scripts/ci/test_public_readiness_evidence.py
+    python3 scripts/ci/check_native_node_supplements.py --historical
+    python3 scripts/ci/test_native_node_supplements.py
+    python3 scripts/ci/test_native_session_evidence.py
+    python3 scripts/ci/test_client_confirmation_evidence.py
+    python3 scripts/ci/test_evaluation_bundle_evidence.py
+    python3 scripts/ci/report_module_evidence.py --format markdown
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-contract-authority-v1/work-cost --historical
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-session-v1/work-cost --historical
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-native-node-v1/work-cost --historical
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-closed-round-v1/work-cost --historical
+    python3 scripts/ci/check_four_priority_evidence.py
+    python3 scripts/ci/test_four_priority_evidence.py
+    python3 scripts/pon_work_cost_report.py --verify evidence/pon-four-priority-audit-v1/work-cost --historical
+'''
+
 
 W1_POSTWIN_WORKFLOW_PREFIX = r'''name: PoN W1 transparent candidate observations
 on:
@@ -1247,6 +1293,13 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'work/native model controls must execute exactly once in repository-truth')
+    for command in (
+            'python3 scripts/ci/test_pq_authority_effect_register.py',
+            'python3 scripts/ci/pq_authority_effect_register.py',
+            "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v"):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'PQ authority effect and root recovery controls must execute exactly once in repository-truth')
     repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
     expected_repository_commands = code_lines(
         re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
@@ -1310,6 +1363,13 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
     require(code_lines(lanes['repository-truth']) == code_lines(REPOSITORY_TRUTH_BLOCK),
             'W1 post-win controls and all retained repository-truth commands require one straight-line lane without skipped or swallowed failures')
+    require(code_lines(lanes['external-evidence-contract']) == code_lines(EXTERNAL_EVIDENCE_CONTRACT_BLOCK),
+            'external-evidence-contract must retain its complete straight-line command sequence without skipped or swallowed failures')
+    for command in ('python3 scripts/ci/check_completion_evidence.py --historical',
+                    'python3 scripts/ci/test_completion_evidence.py'):
+        require(code_lines(lanes['external-evidence-contract']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'historical completion evidence controls must execute exactly once in external-evidence-contract')
     dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'
                        'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"\n'
                        'case "${1:?required job}" in\n')
