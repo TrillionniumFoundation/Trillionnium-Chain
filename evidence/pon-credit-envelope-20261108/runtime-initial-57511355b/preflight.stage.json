@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.115404,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:23:20.932471+00:00",
+  "passed": true,
+  "stage": "preflight",
+  "started_utc": "2026-11-08T12:23:20.817070+00:00",
+  "stderr": "preflight.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "preflight.stdout.log",
+  "stdout_sha256": "d4a6c8da87aa978e17a0b68fbd621af1a9829511285bf13c57db257546f78731"
+}

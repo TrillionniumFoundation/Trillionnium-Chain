@@ -1,0 +1,244 @@
+{
+  "schema": "pon-fixed-provider-range-transport-v1",
+  "source_commit": "57511355b9dfb1fc02c90eb0713fd8e95263a662",
+  "official_release_asset_id": 598377651,
+  "expected_bytes": 53279637,
+  "expected_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "parts": [
+    {
+      "part": 0,
+      "start": 0,
+      "end": 4194303,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 31.759626392973587,
+          "http_status": 206,
+          "content_range": "bytes 0-4194303/53279637",
+          "bytes": 4194304,
+          "sha256": "3bb8774fde0a95d64abc411c308fa7bcee93c8d6ecceae79d372aa714e34ed6a",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 1,
+      "start": 4194304,
+      "end": 8388607,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 16.454658835893497,
+          "http_status": 206,
+          "content_range": "bytes 4194304-8388607/53279637",
+          "bytes": 4194304,
+          "sha256": "fe2d0a9c54e37905f33b1a7d07f3f974d7b7836f6a63e388020c5115bbf5810b",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 2,
+      "start": 8388608,
+      "end": 12582911,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 16.716519908048213,
+          "http_status": 206,
+          "content_range": "bytes 8388608-12582911/53279637",
+          "bytes": 4194304,
+          "sha256": "1e1f7763a7e841a8ae9380cd23cf2790cab13da9df680eeefcbf46a04c84bfad",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 3,
+      "start": 12582912,
+      "end": 16777215,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 17.901556021999568,
+          "http_status": 206,
+          "content_range": "bytes 12582912-16777215/53279637",
+          "bytes": 4194304,
+          "sha256": "64c6889ec99c988f249ee49452da9857ecf277fee83ec6d7b70140c36cf9a984",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 4,
+      "start": 16777216,
+      "end": 20971519,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 15.595615305937827,
+          "http_status": 206,
+          "content_range": "bytes 16777216-20971519/53279637",
+          "bytes": 4194304,
+          "sha256": "8ff43a86e02b31a631f119a4ab740ddb65b7e0b9eeebf3624dec20b4c9d13579",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 5,
+      "start": 20971520,
+      "end": 25165823,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 20.08021607599221,
+          "http_status": 206,
+          "content_range": "bytes 20971520-25165823/53279637",
+          "bytes": 4194304,
+          "sha256": "1624f5d89c099375cadf3e56b734c24d4f488760df5da5f868f2ea4c96853724",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 6,
+      "start": 25165824,
+      "end": 29360127,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 27.603838325012475,
+          "http_status": 206,
+          "content_range": "bytes 25165824-29360127/53279637",
+          "bytes": 4194304,
+          "sha256": "5f4ef5302816e9770978e913aa1f80a986ea601923e452c5365c546ded19210c",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 7,
+      "start": 29360128,
+      "end": 33554431,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 12.26002917601727,
+          "http_status": 206,
+          "content_range": "bytes 29360128-33554431/53279637",
+          "bytes": 4194304,
+          "sha256": "669710b48738c0b052da85976822e7e4bfd4da97803c2b41a9e1ff9fe6cd6b30",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 8,
+      "start": 33554432,
+      "end": 37748735,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 10.30612598406151,
+          "http_status": 206,
+          "content_range": "bytes 33554432-37748735/53279637",
+          "bytes": 4194304,
+          "sha256": "e13ca9cf4fe0ff42d2ad5ad95bfc9a995f46b76261770397b3a2c496f09731ac",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 9,
+      "start": 37748736,
+      "end": 41943039,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 32.46249209390953,
+          "http_status": 206,
+          "content_range": "bytes 37748736-41943039/53279637",
+          "bytes": 4194304,
+          "sha256": "5a53912d707cc8f2a415390f9bb833999968f43b4d06aea4fd380fd12c981872",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 10,
+      "start": 41943040,
+      "end": 46137343,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 13.54077921481803,
+          "http_status": 206,
+          "content_range": "bytes 41943040-46137343/53279637",
+          "bytes": 4194304,
+          "sha256": "9e95ca1e552683a7e426d87ab92ec21644ab8325210b0aa30d5ffdd2cf20334c",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 11,
+      "start": 46137344,
+      "end": 50331647,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 13.284491552971303,
+          "http_status": 206,
+          "content_range": "bytes 46137344-50331647/53279637",
+          "bytes": 4194304,
+          "sha256": "3e056f82b3b6043e8311739db9ccc189946256bfe3f430b8e2bb0ff2df5abc16",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "part": 12,
+      "start": 50331648,
+      "end": 53279636,
+      "attempts": [
+        {
+          "attempt": 1,
+          "transport_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+          "elapsed_seconds": 15.81083838478662,
+          "http_status": 206,
+          "content_range": "bytes 50331648-53279636/53279637",
+          "bytes": 2947989,
+          "sha256": "bb162f6985d159cf8e9bc5c8f6d8e4faeb99113e0c2b739fad6743bc3507df73",
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "all_parts_complete": true
+}
