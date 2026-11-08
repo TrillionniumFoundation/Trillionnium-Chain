@@ -399,6 +399,25 @@ independent and their failed evidence remains retained.
 The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
 contains the complete local replay, counterexample/repair and source-pinned gates.
 
+**Original completed learning receipts and acknowledged use, 2026-11-08 UTC:**
+Continue the exact #809 Selection reader with the
+[completed-checkpoint join](specs/pon/CELL_LEARNING_COMPLETION_JOIN_V1.md).
+The original Hepta actor now exports the actual final `NextUse` checkpoint after
+retained-parent or adopted-candidate use and after native cold recovery. The
+Chain reader requires one exact appended receipt, byte-identical prior receipt
+objects, the original owner/iteration, and the actual acknowledged actor use.
+Changing and rehashing a checkpoint cannot substitute another observed task,
+publication, cutover or checkpoint. ACK, model STOP and training completion
+remain independent facts. Hepta source `34eacaec1c94032f4980807e4a6f7c3516a7dafc`
+passed its five selected native controls; Chain retains their original bytes and
+thirteen continuation controls. The outer collector's incorrect JUnit path is
+preserved as a failure and reconciled with the original report, not overwritten.
+These actor fixtures do not execute a neural model and do not authenticate
+training/evaluation owners or grant current permission, payment or FinalUse.
+The complete real-model owner cycle remains **HOLD_NO_GO**.
+[Exact-source evidence](../../evidence/cell-learning-completion-20261108/README.md).
+
+
 **Original frozen learning iteration to native use, 2026-11-08 America/New_York:**
 Continue #787 with the [bounded checkpoint/readback join](specs/pon/CELL_LEARNING_ITERATION_JOIN_V2.md).
 Hepta #5357 adds a mandatory owner-frozen evaluation-profile commitment before
