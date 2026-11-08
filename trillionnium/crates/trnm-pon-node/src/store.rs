@@ -1373,7 +1373,7 @@ impl StateBackend {
     }
 }
 enum SelectedOpen {
-    InitializeOrRecover { growth_observation_only: bool },
+    InitializeOrRecover { observation_only: bool },
     ExistingPqOwner,
 }
 
@@ -1791,9 +1791,7 @@ impl Node {
             hook,
             owners,
             state_backend,
-            SelectedOpen::InitializeOrRecover {
-                growth_observation_only,
-            },
+            SelectedOpen::InitializeOrRecover { observation_only },
         )
     }
 
@@ -1807,9 +1805,7 @@ impl Node {
         selection: SelectedOpen,
     ) -> Result<Self> {
         let (observation_only, existing_owner_only) = match selection {
-            SelectedOpen::InitializeOrRecover {
-                growth_observation_only,
-            } => (growth_observation_only, false),
+            SelectedOpen::InitializeOrRecover { observation_only } => (observation_only, false),
             SelectedOpen::ExistingPqOwner => (false, true),
         };
         ensure(
