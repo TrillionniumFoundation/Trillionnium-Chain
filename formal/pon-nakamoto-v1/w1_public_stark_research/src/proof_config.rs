@@ -27,6 +27,7 @@ use serde_json::{Value, json};
 use crate::arith_air::Dot8Air;
 use crate::arith_carry_air::{Dot8CarryAir, Dot8PackedCarryAir};
 use crate::sha_air::W1ShaAir;
+use crate::sha_schedule_air::ScheduledShaAir;
 
 pub type Val = Goldilocks;
 pub type Challenge = BinomialExtensionField<Val, 2>;
@@ -48,6 +49,8 @@ pub const ARITH_COMPONENT: u32 = 2;
 pub const CARRY_COMPONENT: u32 = 3;
 /// Five-lane carry packing has its own fixed transcript component.
 pub const PACKED_CARRY_COMPONENT: u32 = 4;
+/// SHA public-schedule projection has its own fixed transcript component.
+pub const SCHEDULE_SHA_COMPONENT: u32 = 5;
 pub const RESEARCH_DOMAIN: &[u8] = b"TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1\0";
 pub const LOG_BLOWUP: usize = 2;
 pub const LOG_FINAL_POLY_LEN: usize = 0;
@@ -71,13 +74,17 @@ fn fri_regime() -> FriRegime {
     }
 }
 
-/// Construct the sole research parameter profile. Only the four fixed
+/// Construct the sole research parameter profile. Only the five fixed
 /// components are admitted; component selection changes domain separation,
 /// never the field, hash, query count, blowup, or grinding settings.
 pub fn config(component: u32) -> Config {
     assert!(matches!(
         component,
-        SHA_COMPONENT | ARITH_COMPONENT | CARRY_COMPONENT | PACKED_CARRY_COMPONENT
+        SHA_COMPONENT
+            | ARITH_COMPONENT
+            | CARRY_COMPONENT
+            | PACKED_CARRY_COMPONENT
+            | SCHEDULE_SHA_COMPONENT
     ));
     let perm = default_goldilocks_poseidon2_8();
     let hash = Hasher::new(perm.clone());
@@ -188,8 +195,16 @@ where
 
 /// Inspect the actual AIR constraints and PCS layout. This is a named-term
 /// conditional round-by-round estimate, not an end-to-end ROM/QROM bound.
-fn metadata<A>(sha: &W1ShaAir, arith: &A, arith_height: usize, arithmetic_component: u32) -> Value
+fn metadata<S, A>(
+    sha: &S,
+    sha_height: usize,
+    sha_component: u32,
+    arith: &A,
+    arith_height: usize,
+    arithmetic_component: u32,
+) -> Value
 where
+    S: BaseAir<Val> + Air<SymbolicAirBuilder<Val, Challenge>>,
     A: BaseAir<Val> + Air<SymbolicAirBuilder<Val, Challenge>>,
 {
     let cardinality = u128::from(GOLDILOCKS_ORDER) * u128::from(GOLDILOCKS_ORDER);
@@ -208,7 +223,7 @@ where
         "estimator_modulus_bits": CONSERVATIVE_MODULUS_BITS,
         "estimator_modulus_bits_reason": "P^2 >= 2^127; using 128 as an exact denominator would round the field cardinality upward",
         "research_domain_hex": hex::encode(RESEARCH_DOMAIN),
-        "component_domains": {"sha": SHA_COMPONENT, "arithmetic": arithmetic_component},
+        "component_domains": {"sha": sha_component, "arithmetic": arithmetic_component},
         "fri": {"log_blowup": LOG_BLOWUP, "log_final_poly_len": LOG_FINAL_POLY_LEN,
             "max_log_arity": MAX_LOG_ARITY, "num_queries": NUM_QUERIES,
             "batch_pow_bits": 0, "commit_pow_bits": 0, "query_pow_bits": 0,
@@ -220,28 +235,68 @@ where
         "complete_noninteractive_security_bits": Value::Null,
         "quantum_security_bits": Value::Null,
         "lifecycle_security_bits": Value::Null,
-        "sha": component_security(sha, sha.trace_height(), SHA_COMPONENT, 2),
+        "sha": component_security(sha, sha_height, sha_component, 2),
         "arithmetic": component_security(arith, arith_height, arithmetic_component, 1)
     })
 }
 
 /// Original quotient/remainder AIR metadata, preserving its transcript domain.
 pub fn security_metadata(sha: &W1ShaAir, arith: &Dot8Air) -> Value {
-    metadata(sha, arith, arith.trace_height(), ARITH_COMPONENT)
+    metadata(
+        sha,
+        sha.trace_height(),
+        SHA_COMPONENT,
+        arith,
+        arith.trace_height(),
+        ARITH_COMPONENT,
+    )
 }
 
 /// Carry-AIR metadata from its actual symbolic constraints and fixed PCS shape.
 /// The complete noninteractive and quantum security qualifications remain open.
 pub fn carry_security_metadata(sha: &W1ShaAir, arith: &Dot8CarryAir) -> Value {
-    let mut report = metadata(sha, arith, arith.trace_height(), CARRY_COMPONENT);
+    let mut report = metadata(
+        sha,
+        sha.trace_height(),
+        SHA_COMPONENT,
+        arith,
+        arith.trace_height(),
+        CARRY_COMPONENT,
+    );
     report["schema"] = "w1-p3-0.8.0-conditional-rbr-carry-metadata-v3".into();
     report
 }
 
 /// Five-lane packing retains every relation row and changes the fixed PCS shape.
 pub fn packed_carry_security_metadata(sha: &W1ShaAir, arith: &Dot8PackedCarryAir) -> Value {
-    let mut report = metadata(sha, arith, arith.trace_height(), PACKED_CARRY_COMPONENT);
+    let mut report = metadata(
+        sha,
+        sha.trace_height(),
+        SHA_COMPONENT,
+        arith,
+        arith.trace_height(),
+        PACKED_CARRY_COMPONENT,
+    );
     report["schema"] = "w1-p3-0.8.0-conditional-rbr-packed-carry-metadata-v4".into();
+    report["arithmetic"]["lanes_per_row"] = 5.into();
+    report["arithmetic"]["real_dot8_rows"] = arith.real_rows().into();
+    report
+}
+
+/// Public SHA schedule expansion is paid by each verifier and is not proof supplied.
+pub fn scheduled_sha_security_metadata(sha: &ScheduledShaAir, arith: &Dot8PackedCarryAir) -> Value {
+    let mut report = metadata(
+        sha,
+        sha.trace_height(),
+        SCHEDULE_SHA_COMPONENT,
+        arith,
+        arith.trace_height(),
+        PACKED_CARRY_COMPONENT,
+    );
+    report["schema"] = "w1-p3-0.8.0-conditional-rbr-public-schedule-metadata-v5".into();
+    report["native_relation_hash"] = "SHA-256: independently reconstructed public message schedule; all 64 compression rounds, IV, links and claimed digest constrained by AIR".into();
+    report["sha"]["public_schedule_source"] = "exact canonical padded block bytes; two fixed u16 limbs per word; rebuilt independently in each process".into();
+    report["sha"]["native_compression_in_verifier_air_construction"] = false.into();
     report["arithmetic"]["lanes_per_row"] = 5.into();
     report["arithmetic"]["real_dot8_rows"] = arith.real_rows().into();
     report

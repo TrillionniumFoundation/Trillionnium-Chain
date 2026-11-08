@@ -55,6 +55,8 @@ fn read_input(path: &Path) -> Result<Vec<u8>, String> {
 fn decode(bytes: &[u8]) -> Result<(W1Proof, &'static str, usize), String> {
     let (component, degree_bits) = if bytes.starts_with(SHA_MAGIC) {
         ("sha", 13)
+    } else if bytes.starts_with(b"W1P3SCS4") {
+        ("scheduled-sha", 13)
     } else if bytes.starts_with(ARITH_MAGIC) {
         ("arithmetic", 17)
     } else if bytes.starts_with(b"W1P3ACR2") {
