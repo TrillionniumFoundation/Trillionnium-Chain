@@ -94,6 +94,98 @@ fn historical_material_reuses_arithmetic_after_complete_replay_and_reopens() {
     let reopened = Node::open(directory.path(), settings, 2).unwrap();
     assert_eq!(reopened.state_at(ids[4]).unwrap(), expected);
     assert_eq!(reopened.read_active().unwrap(), active);
+    assert_long_replay_prefix_and_tail();
+}
+
+fn assert_long_replay_prefix_and_tail() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let mut node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+    let mut ids = vec![settings.genesis()];
+    for height in 1..=18 {
+        let packet = node
+            .make(
+                *ids.last().unwrap(),
+                vec![transfer(&settings, height)],
+                development_public(2).unwrap(),
+                1 + height * 10,
+                4096,
+            )
+            .unwrap();
+        ids.push(node.admit(&packet, NOW).unwrap());
+    }
+    let expected = node.state_at(ids[18]).unwrap();
+    assert_eq!(root(&expected).unwrap(), node.record(ids[18]).unwrap().root);
+    {
+        let cache = node.historical_commitment_cache.borrow();
+        assert_eq!(cache.entries(), 8);
+        for id in &ids[..7] {
+            assert!(cache
+                .candidate(*id, node.record(*id).unwrap().root)
+                .is_some());
+        }
+        assert!(cache
+            .candidate(ids[18], node.record(ids[18]).unwrap().root)
+            .is_some());
+    }
+    // A current snapshot with a different anchor must still be read from SQL.
+    let middle = node.state_at(ids[8]).unwrap();
+    node.db
+        .execute(
+            "INSERT OR REPLACE INTO snapshots(block,state) VALUES(?,?)",
+            params![ids[8].as_slice(), canonical(&middle).unwrap()],
+        )
+        .unwrap();
+    assert_eq!(node.state_at(ids[18]).unwrap(), expected);
+    {
+        let cache = node.historical_commitment_cache.borrow();
+        for id in &ids[8..15] {
+            assert!(cache
+                .candidate(*id, node.record(*id).unwrap().root)
+                .is_some());
+        }
+        assert!(cache
+            .candidate(ids[18], node.record(ids[18]).unwrap().root)
+            .is_some());
+    }
+    // Cancellation is still reached at the same checkpoint, with cold retry.
+    for warm in [true, false] {
+        if !warm {
+            node.historical_commitment_cache.borrow_mut().clear();
+        }
+        let mut calls = 0;
+        let error = node
+            .state_at_with_progress(ids[18], &mut || {
+                calls += 1;
+                if calls == 12 {
+                    Err(Error::new(ErrorCode::PublicRequestCancelled))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+        assert!(error.is(ErrorCode::PublicRequestCancelled));
+        assert_eq!(calls, 12);
+        assert_eq!(node.state_at(ids[18]).unwrap(), expected);
+    }
+    // A second branch sharing the original anchor never reuses a State verdict.
+    let mut parent = ids[4];
+    for height in 5..=18 {
+        let packet = node
+            .make(
+                parent,
+                vec![transfer(&settings, height)],
+                development_public(3).unwrap(),
+                2 + height * 10,
+                4096,
+            )
+            .unwrap();
+        parent = node.admit(&packet, NOW).unwrap();
+    }
+    let fork = node.state_at(parent).unwrap();
+    assert_eq!(root(&fork).unwrap(), node.record(parent).unwrap().root);
+    assert_eq!(node.state_at(ids[18]).unwrap(), expected);
+    assert!(node.historical_commitment_cache.borrow().entries() <= 8);
 }
 
 #[test]
@@ -850,6 +942,45 @@ fn independent_entry_payload_and_retention_bounds_discard_without_ledger_rejecti
         ),
         (0, 0, 0)
     );
+    // Same-anchor long replays preserve seven arithmetic prefix candidates
+    // and the latest parent, without increasing any original cache bound.
+    cache.begin_replay([42; 32]);
+    for n in 0..7_u8 {
+        cache.retain_preferred([n; 32], Some(&small), true);
+    }
+    for n in 7..100_u8 {
+        cache.retain([n; 32], Some(&small));
+        assert_eq!(cache.entries(), 8);
+        for prefix in 0..7_u8 {
+            assert!(cache.candidate([prefix; 32], small.root()).is_some());
+        }
+        assert!(cache.candidate([n; 32], small.root()).is_some());
+        assert_eq!(cache.payload_bytes(), 8 * small.payload_bytes());
+        assert_eq!(
+            cache.retained_charge_bytes(),
+            8 * small.retained_charge_bytes()
+        );
+    }
+    // A fork with the same anchor cannot fill every slot with preferences.
+    for n in 100..120_u8 {
+        cache.retain_preferred([n; 32], Some(&small), true);
+        cache.retain([200; 32], Some(&small));
+        assert_eq!(cache.entries(), 8);
+        assert!(cache.candidate([200; 32], small.root()).is_some());
+    }
+    cache.begin_replay([43; 32]);
+    for n in 210..218_u8 {
+        cache.retain([n; 32], Some(&small));
+    }
+    assert!(cache.candidate([119; 32], small.root()).is_none());
+    assert_eq!(cache.entries(), 8);
+    // Byte pressure overrides all preferences, and None removes an old entry.
+    cache.retain_preferred([220; 32], Some(&large), true);
+    cache.retain_preferred([221; 32], Some(&large), true);
+    assert_eq!(cache.entries(), 1);
+    assert!(cache.retained_charge_bytes() <= 16 * 1024 * 1024);
+    cache.retain_preferred([221; 32], None, true);
+    assert_eq!(cache.entries(), 0);
 }
 
 #[test]
