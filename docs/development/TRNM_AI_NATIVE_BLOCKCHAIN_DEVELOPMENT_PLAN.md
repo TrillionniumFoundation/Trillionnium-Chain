@@ -10117,3 +10117,12 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+
+### 2026-11-08 native money observation epoch continuation
+
+Six new original Node regressions reproduce late foreign WAL commits escaping legacy/authenticated funding and payment observations. Each commits through a separate SQLite connection at the real snapshot rollback boundary after an accepted signed native payment; no production test hook or replacement verifier is introduced. The tests retain both generation replacement and stored-parameter replacement, verify read-only behavior, and require a fresh read to preserve the original payment identity after deliberate fixture repair.
+
+The candidate samples the live owner/context, active head/generation and SQLite data version before the snapshot, binds the active snapshot to that epoch, and rechecks after rollback before returning either current or retained-anchor payment facts. A changed observation returns an owner error; it does not infer unpaid status, authorize retry, release resources, rewind local history or create another payment. Growth retains its original owner guard and receives the same final epoch check. No signed domain, wire or stored schema changes.
+
+The source-only repair does not establish a real provider payment, irreversibility of an external effect, independent witness custody, original business-budget qualification or whole-chain security. Exact committed-source tests and the original failures are retained separately.

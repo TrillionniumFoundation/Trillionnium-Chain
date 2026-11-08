@@ -3,12 +3,33 @@
 use super::{Node, StateBackend};
 use crate::{ensure, Error, Result};
 use rusqlite::OptionalExtension;
+use trnm_protocol::pon_wire::Hash;
 use trnm_service_settlement::native_budget::{
     NativeBudgetAnchorV1, NativeBudgetErrorV1, NativeBudgetResultV1, NativeFundingObservationV1,
     NativeFundingOwnerV1, NativeFundingSourceV1, NativePaymentObservationV1, NativePaymentQueryV1,
 };
 
 impl Node {
+    /// A read transaction can hide a foreign WAL commit until it ends. Capture
+    /// the live owner before opening that snapshot and compare again after it
+    /// is released; otherwise old funding or payment can escape as current.
+    fn native_money_observation_epoch(&self) -> Result<(Hash, u64, i64)> {
+        self.ready()?;
+        self.storage_context()?;
+        let (block, generation) = self.active()?;
+        let data_version = self
+            .db
+            .pragma_query_value(None, "data_version", |row| row.get(0))?;
+        Ok((block, generation, data_version))
+    }
+
+    fn check_native_money_observation_epoch(&self, expected: (Hash, u64, i64)) -> Result<()> {
+        ensure(
+            self.native_money_observation_epoch()? == expected,
+            "NATIVE_MONEY_OBSERVATION_EPOCH_CHANGED",
+        )
+    }
+
     /// Authenticate a snapshot that this owner actually published as active in
     /// the stated generation. Merely retaining a valid side-branch block does
     /// not establish a historical funding or payment observation.
@@ -56,8 +77,10 @@ impl Node {
         &self,
         source: NativeFundingSourceV1,
     ) -> Result<NativeFundingObservationV1> {
+        let epoch = self.native_money_observation_epoch()?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             let snapshot = self.growth_current_working()?;
+            self.check_native_money_observation_epoch(epoch)?;
             return Ok(NativeFundingObservationV1 {
                 anchor: NativeBudgetAnchorV1 {
                     network: snapshot.commitment.network,
@@ -76,6 +99,10 @@ impl Node {
         let read = self.db.unchecked_transaction()?;
         self.storage_context()?;
         let (block, generation, state) = self.read_active()?;
+        ensure(
+            (block, generation) == (epoch.0, epoch.1),
+            "NATIVE_MONEY_OBSERVATION_EPOCH_CHANGED",
+        )?;
         let record = self.record(block)?;
         let observation = NativeFundingObservationV1 {
             anchor: NativeBudgetAnchorV1 {
@@ -93,6 +120,7 @@ impl Node {
         self.namespace()?;
         self.storage_context()?;
         read.rollback()?;
+        self.check_native_money_observation_epoch(epoch)?;
         Ok(observation)
     }
 }
