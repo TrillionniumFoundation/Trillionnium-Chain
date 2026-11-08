@@ -1,0 +1,16 @@
+{
+  "closure_required_tests": 105,
+  "closure_successes": 105,
+  "consensus_admission": false,
+  "exact_report_comparisons": 7,
+  "implementation_passed": true,
+  "implementation_required_tests": 84,
+  "independent_cryptographic_review": false,
+  "lifetime_ledger_tests_within_closure": 19,
+  "native_C_kernel_controls_within_closure": 8,
+  "new_Rust_source_compiled_or_executed": false,
+  "post_quantum_soundness_qualified": false,
+  "production_qualified": false,
+  "scope": "fresh bounded local controls on retained dirty patch; no hosted CI or clean-source native qualification",
+  "source_unchanged": true
+}

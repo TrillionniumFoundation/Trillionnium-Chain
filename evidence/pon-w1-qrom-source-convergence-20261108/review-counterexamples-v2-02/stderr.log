@@ -1,0 +1,57 @@
+test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified) ... ok
+test_changed_audit_helper_is_refused_before_execution (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_audit_helper_is_refused_before_execution) ... ok
+test_changed_native_source_is_refused_before_mapping (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_native_source_is_refused_before_mapping) ... ok
+test_changed_seal_word_is_rejected_by_full_artifact_identity (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_seal_word_is_rejected_by_full_artifact_identity) ... ok
+test_changed_source_snapshot_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_source_snapshot_is_refused) ... ok
+test_contract_cannot_promote_unknown_quantum_budget_or_qualification (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_contract_cannot_promote_unknown_quantum_budget_or_qualification) ... ok
+test_control_index_high_bits_are_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_control_index_high_bits_are_refused) ... ok
+test_duplicate_keys_and_nonfinite_numbers_are_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_duplicate_keys_and_nonfinite_numbers_are_refused) ... ok
+test_existing_output_is_not_replaced (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_existing_output_is_not_replaced) ... ok
+test_external_commitment_substitution_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_external_commitment_substitution_is_refused) ... ok
+test_false_historical_guest_identity_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_false_historical_guest_identity_is_refused) ... ok
+test_fixed_receipt_trailing_data_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_fixed_receipt_trailing_data_is_refused) ... ok
+test_fri_schedule_does_not_treat_boolean_as_po2 (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_fri_schedule_does_not_treat_boolean_as_po2) ... ok
+test_historical_engine_contract_report_and_review_remain_immutable_inputs (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_historical_engine_contract_report_and_review_remain_immutable_inputs) ... ok
+test_import_cache_and_search_path_cannot_replace_checked_helper_bytes (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_import_cache_and_search_path_cannot_replace_checked_helper_bytes) ... ok
+test_inner_and_outer_parameter_fields_are_separate_controls (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_inner_and_outer_parameter_fields_are_separate_controls) ... ok
+test_parent_directory_symlink_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_parent_directory_symlink_is_refused) ... ok
+test_raw_po2_must_not_be_montgomery_decoded (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_raw_po2_must_not_be_montgomery_decoded) ... ok
+test_real_control_inclusion_sibling_change_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_real_control_inclusion_sibling_change_is_refused) ... ok
+test_version_one_contract_still_refuses_the_changed_sources (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_one_contract_still_refuses_the_changed_sources) ... ok
+test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) ... 
+  test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) (historical_json_type='fresh_cryptographic_verification') ... FAIL
+  test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) (historical_json_type='control_inclusion_matches_reconstructed_tree') ... FAIL
+  test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) (historical_json_type='outer_recursion_seal_po2_raw') ... FAIL
+test_zero_seal_and_foreign_receipt_kind_are_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_zero_seal_and_foreign_receipt_kind_are_refused) ... ok
+
+======================================================================
+FAIL: test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) (historical_json_type='fresh_cryptographic_verification')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 141, in test_version_two_transition_preserves_exact_historical_projection_and_unknowns
+    self.assertRaisesRegex(audit.AuditError, 'historical semantic mapping fields changed'):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AuditError not raised
+
+======================================================================
+FAIL: test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) (historical_json_type='control_inclusion_matches_reconstructed_tree')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 141, in test_version_two_transition_preserves_exact_historical_projection_and_unknowns
+    self.assertRaisesRegex(audit.AuditError, 'historical semantic mapping fields changed'):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AuditError not raised
+
+======================================================================
+FAIL: test_version_two_transition_preserves_exact_historical_projection_and_unknowns (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_version_two_transition_preserves_exact_historical_projection_and_unknowns) (historical_json_type='outer_recursion_seal_po2_raw')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 141, in test_version_two_transition_preserves_exact_historical_projection_and_unknowns
+    self.assertRaisesRegex(audit.AuditError, 'historical semantic mapping fields changed'):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AuditError not raised
+
+----------------------------------------------------------------------
+Ran 22 tests in 1.216s
+
+FAILED (failures=3)

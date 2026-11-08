@@ -1,0 +1,444 @@
+[
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/named_tests.py",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/implementation"
+    ],
+    "elapsed_seconds": 2.421442747116089,
+    "exit_code": 0,
+    "name": "implementation-named-84",
+    "started_unix_seconds": 1794165458.3037174,
+    "stderr": {
+      "path": "implementation-named-84.stderr.log",
+      "sha256": "5a42b25185f84c8d303cdd5765e8cb452de91e4e61f88b4c0ec6a03c8d7dcc04"
+    },
+    "stdout": {
+      "path": "implementation-named-84.stdout.log",
+      "sha256": "e8b78ee079cc151eadb4930daa41b1621580f3d6203805828739b3691ef6ab83"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_implementation_audit_v2.py",
+      "--output",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/implementation/implementation.json"
+    ],
+    "elapsed_seconds": 0.264707088470459,
+    "exit_code": 0,
+    "name": "implementation-map-v2",
+    "started_unix_seconds": 1794165460.725659,
+    "stderr": {
+      "path": "implementation-map-v2.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "implementation-map-v2.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_conditional_budget.py"
+    ],
+    "elapsed_seconds": 0.032099246978759766,
+    "exit_code": 0,
+    "name": "budget-unknown",
+    "started_unix_seconds": 1794165460.9908633,
+    "stderr": {
+      "path": "budget-unknown.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "implementation/budget-unknown.json",
+      "sha256": "286b8fa0b442effb0655f59433ae5cbf9a1deeb50b69fe1260c93c69396e5ce2"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_conditional_budget.py",
+      "--example-input"
+    ],
+    "elapsed_seconds": 0.032123565673828125,
+    "exit_code": 0,
+    "name": "budget-hypothetical-input",
+    "started_unix_seconds": 1794165461.023318,
+    "stderr": {
+      "path": "budget-hypothetical-input.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "implementation/budget-hypothetical-input.json",
+      "sha256": "b09d51c53c68ca6de3c32891ef3b28f0a9e26fa0bf6a6206d5498895322e6081"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_conditional_budget.py",
+      "--input",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/implementation/budget-hypothetical-input.json"
+    ],
+    "elapsed_seconds": 0.03192949295043945,
+    "exit_code": 0,
+    "name": "budget-hypothetical",
+    "started_unix_seconds": 1794165461.0558782,
+    "stderr": {
+      "path": "budget-hypothetical.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "implementation/budget-hypothetical.json",
+      "sha256": "5ca0fa2e5479e0375975cf02ffff361756de67eb11e2c7bb9251b7b6874f2bb0"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/report_scopes.py",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/implementation"
+    ],
+    "elapsed_seconds": 0.031911373138427734,
+    "exit_code": 0,
+    "name": "implementation-report-scopes",
+    "started_unix_seconds": 1794165461.0883927,
+    "stderr": {
+      "path": "implementation-report-scopes.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "implementation-report-scopes.stdout.log",
+      "sha256": "7d3b1fedb6bfe92ab756acf620fda6a6388e245ce1c22dc752296ef330e2899d"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/ci/w1_qrom_closure_controls.py",
+      "run",
+      "--roster-sha256",
+      "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+      "--output",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure"
+    ],
+    "elapsed_seconds": 15.386940240859985,
+    "exit_code": 0,
+    "name": "closure-run",
+    "started_unix_seconds": 1794165461.1207473,
+    "stderr": {
+      "path": "closure-run.stderr.log",
+      "sha256": "c64ad643413d7e941d75f087ed11b1bfaf0f003df00482d0b9e32782cf2be404"
+    },
+    "stdout": {
+      "path": "closure-run.stdout.log",
+      "sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/ci/w1_qrom_closure_controls.py",
+      "check",
+      "--roster-sha256",
+      "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+      "--output",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure"
+    ],
+    "elapsed_seconds": 0.11441206932067871,
+    "exit_code": 0,
+    "name": "closure-check",
+    "started_unix_seconds": 1794165476.5082283,
+    "stderr": {
+      "path": "closure-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure-check.stdout.log",
+      "sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_semantics_audit.py"
+    ],
+    "elapsed_seconds": 2.3707261085510254,
+    "exit_code": 0,
+    "name": "reproduce-semantics",
+    "started_unix_seconds": 1794165476.6231906,
+    "stderr": {
+      "path": "reproduce-semantics.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/semantics.json",
+      "sha256": "129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-source-convergence-20261108/semantics-bb026697.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/semantics.json"
+    ],
+    "elapsed_seconds": 0.0016124248504638672,
+    "exit_code": 0,
+    "name": "compare-semantics",
+    "started_unix_seconds": 1794165478.9947367,
+    "stderr": {
+      "path": "compare-semantics.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-semantics.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_lifetime_ledger.py",
+      "--input",
+      "evidence/pon-w1-lifetime-20261107/project-input.json"
+    ],
+    "elapsed_seconds": 0.11462640762329102,
+    "exit_code": 0,
+    "name": "reproduce-lifetime",
+    "started_unix_seconds": 1794165478.9967275,
+    "stderr": {
+      "path": "reproduce-lifetime.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/lifetime.json",
+      "sha256": "b1db15ce9cef18978720cc88c9f73e807204e9734f1054bce9bb78a7de9dc4be"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-source-convergence-20261108/lifetime-bb026697.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/lifetime.json"
+    ],
+    "elapsed_seconds": 0.0019316673278808594,
+    "exit_code": 0,
+    "name": "compare-lifetime",
+    "started_unix_seconds": 1794165479.1129465,
+    "stderr": {
+      "path": "compare-lifetime.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-lifetime.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_composition_budget.py"
+    ],
+    "elapsed_seconds": 0.06429934501647949,
+    "exit_code": 0,
+    "name": "reproduce-composition-unknown",
+    "started_unix_seconds": 1794165479.1152375,
+    "stderr": {
+      "path": "reproduce-composition-unknown.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/composition-unknown.json",
+      "sha256": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-formal-bridge-20261107/composition-unknown.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/composition-unknown.json"
+    ],
+    "elapsed_seconds": 0.0016219615936279297,
+    "exit_code": 0,
+    "name": "compare-composition-unknown",
+    "started_unix_seconds": 1794165479.1802704,
+    "stderr": {
+      "path": "compare-composition-unknown.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-composition-unknown.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_composition_budget.py",
+      "--example"
+    ],
+    "elapsed_seconds": 0.06439352035522461,
+    "exit_code": 0,
+    "name": "reproduce-composition-example",
+    "started_unix_seconds": 1794165479.1823049,
+    "stderr": {
+      "path": "reproduce-composition-example.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/composition-example.json",
+      "sha256": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-formal-bridge-20261107/composition-example.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/composition-example.json"
+    ],
+    "elapsed_seconds": 0.0018024444580078125,
+    "exit_code": 0,
+    "name": "compare-composition-example",
+    "started_unix_seconds": 1794165479.247376,
+    "stderr": {
+      "path": "compare-composition-example.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-composition-example.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_joint_oracle_diagnostic.py"
+    ],
+    "elapsed_seconds": 0.034021854400634766,
+    "exit_code": 0,
+    "name": "reproduce-joint-oracle-unknown",
+    "started_unix_seconds": 1794165479.2496088,
+    "stderr": {
+      "path": "reproduce-joint-oracle-unknown.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/joint-oracle-unknown.json",
+      "sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-unknown.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/joint-oracle-unknown.json"
+    ],
+    "elapsed_seconds": 0.0016434192657470703,
+    "exit_code": 0,
+    "name": "compare-joint-oracle-unknown",
+    "started_unix_seconds": 1794165479.2843761,
+    "stderr": {
+      "path": "compare-joint-oracle-unknown.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-joint-oracle-unknown.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_joint_oracle_diagnostic.py",
+      "--example",
+      "alias"
+    ],
+    "elapsed_seconds": 0.03310060501098633,
+    "exit_code": 0,
+    "name": "reproduce-joint-oracle-alias",
+    "started_unix_seconds": 1794165479.286554,
+    "stderr": {
+      "path": "reproduce-joint-oracle-alias.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/joint-oracle-alias.json",
+      "sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-alias.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/joint-oracle-alias.json"
+    ],
+    "elapsed_seconds": 0.0016646385192871094,
+    "exit_code": 0,
+    "name": "compare-joint-oracle-alias",
+    "started_unix_seconds": 1794165479.3202908,
+    "stderr": {
+      "path": "compare-joint-oracle-alias.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-joint-oracle-alias.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "scripts/w1_qrom_joint_oracle_diagnostic.py",
+      "--example",
+      "separated"
+    ],
+    "elapsed_seconds": 0.06426382064819336,
+    "exit_code": 0,
+    "name": "reproduce-joint-oracle-separated",
+    "started_unix_seconds": 1794165479.322377,
+    "stderr": {
+      "path": "reproduce-joint-oracle-separated.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "closure/joint-oracle-separated.json",
+      "sha256": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/cmp",
+      "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+      "/workspace/scratch/3a200666069f/qrom-bb-followup-20261108/validation-v2-02/closure/joint-oracle-separated.json"
+    ],
+    "elapsed_seconds": 0.0017216205596923828,
+    "exit_code": 0,
+    "name": "compare-joint-oracle-separated",
+    "started_unix_seconds": 1794165479.3876436,
+    "stderr": {
+      "path": "compare-joint-oracle-separated.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "compare-joint-oracle-separated.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

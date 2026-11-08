@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_qrom_workflow_gate.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "expected": "nonzero: new source-review negative controls against pre-fix workflow",
+  "workflow_sha256": "d609896470fe6e8598df9b10aaa9759b4ec67a4eae39b98d505cb894baf58713",
+  "stderr_sha256": "0849898547d8c59369e750a6ab208fbbea5d81618ab3e6b3028ba70bca45cfe7"
+}
