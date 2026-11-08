@@ -1,0 +1,11 @@
+{
+  "schema": "w1-node-pressure-final-archive-v1",
+  "archive": "/home/qian-qi/work/chain-w1-node-pressure-20261108-f16ac-r4-01/node-pressure-evidence-final.tar.gz",
+  "bytes": 2944501,
+  "sha256": "c928d3bbac5d2bfb47e3f2e9dcd7be0989b2b8f631e5d3b85793c60c483c0bf7",
+  "archived_files": 949,
+  "summary_sha256": "72f9589073ec790bbce9163db60270d5c0c170840042dfbf58bb409afa5acd89",
+  "result_sha256": "7fb6f1d64f9fe0448ee6f2f590e3aacbc1b463241b54c4df4a5000f1a6e63dcb",
+  "first_archive_retained_unchanged": true,
+  "new_exercises_or_proofs": 0
+}

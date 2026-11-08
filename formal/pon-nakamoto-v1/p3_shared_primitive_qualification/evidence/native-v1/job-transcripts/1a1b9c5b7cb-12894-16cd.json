@@ -1,0 +1,44 @@
+{
+  "job_id": "1a1b9c5b7cb-12894-16cd",
+  "state": {
+    "at_unix_ms": 1794118228716,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b9c5b7cb-12894-16cd",
+    "launch_nonce": "240358a22d1d1eca0640c1b6fb67f590",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 5088,
+        "stored": 5088
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "stdout": "{\"fixtures\": [\"fixtures/retained.artifacts.bin\", \"fixtures/retained.prefix.bin\", \"fixtures/retained.input.bin\", \"fixtures/retained.expected-header.bin\", \"results/retained-native-01/statement.bin\", \"results/retained-native-02/statement.bin\"]}\n{\"command\": [\"/home/qian-qi/.cargo/bin/rustfmt\", \"--edition\", \"2024\", \"tests/tagged_sha3_profile.rs\"], \"exit_code\": 0, \"wall_s\": 0.06187844276428223, \"stdout\": \"\", \"stderr\": \"\"}\n{\"command\": [\"/home/qian-qi/.cargo/bin/cargo\", \"test\", \"--offline\", \"--locked\", \"--release\", \"--test\", \"tagged_sha3_profile\"], \"exit_code\": 0, \"wall_s\": 57.3106586933136, \"stdout\": \"\\nrunning 10 tests\\ntest domain_bytes_and_typed_statement_context_are_unambiguous_for_test_cases ... ok\\ntest actual_streaming_hashes_match_the_exact_framed_encoding ... ok\\ntest frozen_profile_descriptor_constants_match_actual_configuration ... ok\\ntest inherited_hash_challenger_history_alias_is_recorded_not_hidden ... ok\\ntest research_metadata_carries_no_security_bit_qualification ... ok\\ntest known_raw_inverse_witness_does_not_repeat_under_explicit_new_digest_embedding ... ok\\ntest sha3_standard_vector_and_full_digest_word_roundtrip ... ok\\ntest upstream_serializing_challenger_rejects_modulus_before_sampling_extension ... ok\\ntest tiny_packed_carry_proof_independent_verify_rejects_changed_goal_and_opening ... ok\\ntest tiny_sha_proof_independent_verify_rejects_context_component_statement_and_opening ... ok\\n\\ntest result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s\\n\\n\", \"stderr\": \"   Compiling proc-macro2 v1.0.107\\n   Compiling quote v1.0.47\\n   Compiling unicode-ident v1.0.27\\n   Compiling crossbeam-utils v0.8.23\\n   Compiling crossbeam-epoch v0.9.21\\n   Compiling crossbeam-deque v0.8.8\\n   Compiling serde_core v1.0.228\\n   Compiling autocfg v1.5.1\\n   Compiling rayon-core v1.13.0\\n   Compiling either v1.19.0\\n   Compiling serde v1.0.228\\n   Compiling cfg-if v1.0.5\\n   Compiling cpufeatures v0.3.1\\n   Compiling rand_core v0.10.1\\n   Compiling paste v1.0.15\\n   Compiling tracing-core v0.1.36\\n   Compiling pin-project-lite v0.2.17\\n   Compiling thiserror v2.0.21\\n   Compiling scopeguard v1.2.0\\n   Compiling version_check v0.9.5\\n   Compiling crunchy v0.2.4\\n   Compiling typenum v1.20.1\\n   Compiling tiny-keccak v2.0.2\\n   Compiling libm v0.2.16\\n   Compiling zmij v1.0.23\\n   Compiling serde_json v1.0.149\\n   Compiling keccak v0.1.6\\n   Compiling memchr v2.8.3\\n   Compiling itoa v1.0.18\\n   Compiling cpufeatures v0.2.17\\n   Compiling hex v0.4.3\\n   Compiling lock_api v0.4.14\\n   Compiling chacha20 v0.10.2\\n   Compiling itertools v0.15.0\\n   Compiling spin v0.12.3\\n   Compiling generic-array v0.14.7\\n   Compiling num-traits v0.2.19\\n   Compiling rand v0.10.3\\n   Compiling syn v2.0.119\\n   Compiling syn v3.0.9\\n   Compiling num-integer v0.1.47\\n   Compiling crypto-common v0.1.7\\n   Compiling block-buffer v0.10.4\\n   Compiling num-bigint v0.5.1\\n   Compiling digest v0.10.7\\n   Compiling sha3 v0.10.9\\n   Compiling sha2 v0.10.9\\n   Compiling rayon v1.12.0\\n   Compiling thiserror-impl v2.0.21\\n   Compiling p3-maybe-rayon v0.8.0\\n   Compiling serde_derive v1.0.228\\n   Compiling tracing-attributes v0.1.31\\n   Compiling tracing v0.1.44\\n   Compiling p3-util v0.8.0\\n   Compiling bincode v1.3.3\\n   Compiling p3-field v0.8.0\\n   Compiling p3-matrix v0.8.0\\n   Compiling p3-symmetric v0.8.0\\n   Compiling p3-keccak v0.8.0\\n   Compiling p3-challenger v0.8.0\\n   Compiling p3-dft v0.8.0\\n   Compiling p3-air v0.8.0\\n   Compiling p3-commit v0.8.0\\n   Compiling p3-mds v0.8.0\\n   Compiling p3-sha256-air v0.8.0\\n   Compiling p3-poseidon2 v0.8.0\\n   Compiling p3-poseidon1 v0.8.0\\n   Compiling p3-security v0.8.0\\n   Compiling p3-merkle-tree v0.8.0\\n   Compiling p3-goldilocks v0.8.0\\n   Compiling p3-fri v0.8.0\\n   Compiling p3-uni-stark v0.8.0\\n   Compiling w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research)\\n    Finished `release` profile [optimized] target(s) in 56.85s\\n     Running tests/tagged_sha3_profile.rs (/home/qian-qi/work/p3-shared-profile-target-3acf89/release/deps/tagged_sha3_profile-fe7b10562657ff69)\\n\"}\n{\"command\": [\"/home/qian-qi/.cargo/bin/cargo\", \"build\", \"--offline\", \"--locked\", \"--release\", \"--example\", \"tagged_sha3_backend\", \"--example\", \"packed_carry_backend\"], \"exit_code\": 0, \"wall_s\": 39.70024251937866, \"stdout\": \"\", \"stderr\": \"   Compiling w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research)\\n    Finished `release` profile [optimized] target(s) in 39.64s\\n\"}\n{\"command\": [\"/home/qian-qi/.cargo/bin/cargo\", \"clippy\", \"--offline\", \"--locked\", \"--all-targets\", \"--\", \"-D\", \"warnings\"], \"exit_code\": 0, \"wall_s\": 3.3139870166778564, \"stdout\": \"\", \"stderr\": \"    Checking w1-full-public-stark-research v0.1.0 (/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research)\\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.42s\\n\"}\n",
+  "stderr": "",
+  "stdout_bytes": 5088,
+  "stderr_bytes": 0
+}

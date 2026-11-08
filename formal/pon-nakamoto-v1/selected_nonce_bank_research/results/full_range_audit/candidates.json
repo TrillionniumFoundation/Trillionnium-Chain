@@ -1,0 +1,6146 @@
+[
+  {
+    "nonce": 512,
+    "coordinate": [
+      4,
+      6,
+      2
+    ],
+    "event": "37f8a5059d4591f8ee8d41ec1c1a86eaa396e58988b9f4d8f44c49bcb9031aae",
+    "ticket": "849ec2eea9739ec316ed135a7dfa80aecb3bcc46a7d3918bc6eeab20768e79c5",
+    "target_passes": false,
+    "witness_sha256": "7da8e6f7dc53f2e26b58aeb2c7482e6cce80a4e07869a1d0be9542b17fe16fe5"
+  },
+  {
+    "nonce": 513,
+    "coordinate": [
+      6,
+      5,
+      7
+    ],
+    "event": "049a1f9b129c5221b4daa2d05936499d8bc526b9f5fcd3827cadcbb5a2b46c28",
+    "ticket": "7dc6bf3a145fc8f433bff401535099ff8980475f3d93b9e3068800436eb710db",
+    "target_passes": false,
+    "witness_sha256": "3257c608f6b42c472a50e5a2ef1c15d731dfbec1c7b55effa7aa62955a12bcd4"
+  },
+  {
+    "nonce": 514,
+    "coordinate": [
+      7,
+      0,
+      6
+    ],
+    "event": "c05d30f746e1142eb7f114545c3d735b02211c0037c637b13ed287bce238df5b",
+    "ticket": "986d714e21c2d83ea7a9c7733b8ada9921753adaf81e3dd9c18c7f312cd9146f",
+    "target_passes": false,
+    "witness_sha256": "aac2e8eb777570c84205d33b687f6792d820c783112b3cb9a58f03aeb4b764ad"
+  },
+  {
+    "nonce": 515,
+    "coordinate": [
+      6,
+      7,
+      5
+    ],
+    "event": "2e8558f31623c653fdbcff13778c0c78242b252a8c85f8229104e6e31b2fe384",
+    "ticket": "3f7bf17a55a8afb1534814cea227cb40768c2c839f7b299478759b4ecfd941b7",
+    "target_passes": false,
+    "witness_sha256": "7fc43998363140c4c6dd14fe31b280596a7078aec330198d7eb7369f73611f90"
+  },
+  {
+    "nonce": 516,
+    "coordinate": [
+      5,
+      3,
+      0
+    ],
+    "event": "2f309f91aa6274d723ce4149c244a7cb8d016e4662cb0da966a2bb09d3b8f82a",
+    "ticket": "206d6d2691d6ff615678461b5d05aa2117a950a7e6f6fa82f976d8bfa4b7cb24",
+    "target_passes": false,
+    "witness_sha256": "455d15fc725db2f4595af3a89710f3679ac700e48165f9618eec81ba4f887b6d"
+  },
+  {
+    "nonce": 517,
+    "coordinate": [
+      2,
+      5,
+      4
+    ],
+    "event": "9d70ca53d1e5666c0a3c556ea586958f55ef55fb1613b6661f9e37333377fc1a",
+    "ticket": "255c6e88923904848a5d2d61a05b168a822161cec8b38b04efb67399ad81577b",
+    "target_passes": false,
+    "witness_sha256": "7dd15444c324f16346894ec1bfd4c69d8d9a130fdb0d802c2b21d7fa75e8c9b3"
+  },
+  {
+    "nonce": 518,
+    "coordinate": [
+      7,
+      7,
+      5
+    ],
+    "event": "8f7012d777d666d2640d155eb3cbc0691a0570e7dd6fb417817af6ebf0479cb5",
+    "ticket": "2e9ef47908f67450bebdc4e67aef63abd8d523a2c7cf2630584648430a480ec2",
+    "target_passes": false,
+    "witness_sha256": "df8f076b89044b9d0aef28778721b1d5b53d5533685f1e9d23c53bbd9785ce46"
+  },
+  {
+    "nonce": 519,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "event": "f5bb583defa6c8e9b43baea4aa1874d56dc08ba79bb7f52adefd8ff0071281af",
+    "ticket": "5d05069620553c2b4640783a28c3b23fb37480ad82deaa758a6b739b66f0129f",
+    "target_passes": false,
+    "witness_sha256": "7af8249d32c6b38d7bbf9f679b54b15dc9c18731c2267321813a42296dc4cd50"
+  },
+  {
+    "nonce": 520,
+    "coordinate": [
+      1,
+      4,
+      2
+    ],
+    "event": "d295a7c40584db364d15cef0538dcd401c1fba6b11cf348b9db97ad31f1d504a",
+    "ticket": "6d9a36253dec8ecc3940ba283a17a289a4800245a7980d03815a7bbdd3c7e255",
+    "target_passes": false,
+    "witness_sha256": "9fb72161385272686a6611f828966437ac50c139b3b11273b54f567b5f19f92c"
+  },
+  {
+    "nonce": 521,
+    "coordinate": [
+      6,
+      1,
+      2
+    ],
+    "event": "8dd49f1ea8669a454946b4f1472914b9a0e64347230f39742f02759fcefe98cc",
+    "ticket": "159e34191cfa4819269a6cd9f3145d8a44b8f3cbc698ff6ce7a56ee8fcb409a5",
+    "target_passes": false,
+    "witness_sha256": "cb6d5ed12f8bf3c313f15a3df1373dc1c3100956ca210e1081454aac116bbd0a"
+  },
+  {
+    "nonce": 522,
+    "coordinate": [
+      5,
+      2,
+      3
+    ],
+    "event": "d6d8c81a4c16a333574893bc15e884153ec2ccd6ff7cf94736df6319acda6aa3",
+    "ticket": "da106148a0903edaddffd0866c5577bb8431bf4fdcbf7f9eb523286d32c584fa",
+    "target_passes": false,
+    "witness_sha256": "e1a8efaf1285005c08b6aa32ce5ccede592207b74eff9534ab4cf3ae9dcdc592"
+  },
+  {
+    "nonce": 523,
+    "coordinate": [
+      1,
+      1,
+      5
+    ],
+    "event": "c147a2191af2c5c3631abd863a71ebb4b32a454c7030915c9b82ce20dafea7e3",
+    "ticket": "7baa5ab8baa6a90780e716816044b7458dc9cf56a72f3ceec286612fef29f2cf",
+    "target_passes": false,
+    "witness_sha256": "122128716840f62c2d5b2ef5d03ca9388db13019508b21380d2f8ed361e94bcc"
+  },
+  {
+    "nonce": 524,
+    "coordinate": [
+      2,
+      5,
+      0
+    ],
+    "event": "b4a48486bca9c1212ffe661ee4e7e6b7e09cb775be19966b43ca9f53f3e8f866",
+    "ticket": "3a3f87b98434c4ac9d85a9f198256d6a4d31a1df09e66983d2775434dc67346b",
+    "target_passes": false,
+    "witness_sha256": "1c0cf6fb006f1063613190fb91daaa4e1f10e40bf8bcff9908c17e4121fe1c4a"
+  },
+  {
+    "nonce": 525,
+    "coordinate": [
+      6,
+      5,
+      2
+    ],
+    "event": "248fdd3854a3cafc25aafeb67c750b53bf4efde95f87e5cbe7249db141e5025e",
+    "ticket": "50f867bffca1a969025a27979daaac4fc10e81d7a591e4d8247f8f48958f25a6",
+    "target_passes": false,
+    "witness_sha256": "5e1ed321d9efa4ec40fc192530e930ce17e81c09e58e27eff36eefb12a172c7b"
+  },
+  {
+    "nonce": 526,
+    "coordinate": [
+      5,
+      2,
+      0
+    ],
+    "event": "9a64dea4e6f044f62abe8a964b4309a75a53989fcf760915f83b0fcfe4d99ed3",
+    "ticket": "1a8c03bac310dece3ddead098f42567cf505dd8fea6835c904f97bb8f4793ac1",
+    "target_passes": false,
+    "witness_sha256": "58ce8fc31d3dd75e18db2ea387236e17a3051e2e6f62e19a6a4d7b31d06606c3"
+  },
+  {
+    "nonce": 527,
+    "coordinate": [
+      4,
+      2,
+      7
+    ],
+    "event": "6983a43cf47a5e36b63c76d58dc21b457859deec021f549d93e34c6c4c9a01f0",
+    "ticket": "37b5be553cd7a5b484e6e805ebea313b46cba965d9a72b32d98e03d421c71916",
+    "target_passes": false,
+    "witness_sha256": "d4679b066cad8c07449976e655449a8f3217c2d8bc32d88a2e20266b72730e16"
+  },
+  {
+    "nonce": 528,
+    "coordinate": [
+      0,
+      0,
+      6
+    ],
+    "event": "48dd1b07c39e2125792ff37293de49326bbc7bea3d1326a637c575debd370c9a",
+    "ticket": "39cdeda1123e81b0c590c901b4c48411061a2b08fc35f43d29272282b6a28d24",
+    "target_passes": false,
+    "witness_sha256": "1dfa0d05128caa35f544174644ab32ac8a702afdd2be1553e5dbc09eef9437ce"
+  },
+  {
+    "nonce": 529,
+    "coordinate": [
+      1,
+      7,
+      1
+    ],
+    "event": "d5dddee078d016e584b0d6de542e11967bca24cbe72e7d9cfb5c1a95729869f3",
+    "ticket": "55cae377b27db43b9eb2dbb807b2ce2e78b5617b0a44c9379642285e164a4391",
+    "target_passes": false,
+    "witness_sha256": "5c92fa7cbf8b1c4b71ac24715888af61365700deaee8f66d7c0da64182ada945"
+  },
+  {
+    "nonce": 530,
+    "coordinate": [
+      1,
+      3,
+      2
+    ],
+    "event": "00b06ad388f86465bb84904c6bfe229da16a2659d32ec7f38760680323716cbd",
+    "ticket": "64307f5275ed6a491994ab38cfd7eebe0459e1d739c0da3ca50c809b84f3775a",
+    "target_passes": false,
+    "witness_sha256": "e3a21b3324150ffcbde5fd3d5c6188d3c0240eafe46cf5934057d65edac38c68"
+  },
+  {
+    "nonce": 531,
+    "coordinate": [
+      7,
+      6,
+      7
+    ],
+    "event": "e1c7a659c45803490b2ea2713e2ff41b9d97a95a684121d7b77e9330a3358cdf",
+    "ticket": "e6357f778ef2d25b4d41d3987b70a282c8ac1cc449aff919497803bcade18731",
+    "target_passes": false,
+    "witness_sha256": "c2d5865fd546151313d4f1cf3b01905736497178cbe43dd534ec2adf938256fd"
+  },
+  {
+    "nonce": 532,
+    "coordinate": [
+      4,
+      5,
+      1
+    ],
+    "event": "4eb798e9a9ff57b3a0e7a356b69fb48671d1159aafc10ae7e9eb46469deda80b",
+    "ticket": "4bdcde163d03c48dc89bf2750b7bba0f499324e93d271eac50c3f0da149aed5e",
+    "target_passes": false,
+    "witness_sha256": "9a612283232b88057d120eba757603db9f69b84d28d96a23351913eea38f70f4"
+  },
+  {
+    "nonce": 533,
+    "coordinate": [
+      0,
+      7,
+      2
+    ],
+    "event": "647b240dfbca057ee667505997e423a03fb36fc5f12266637d7b306962a31b6e",
+    "ticket": "6897af4036c0f0ba62d656b7c5edc9656dca244357069d0cc4b255eb19ff4105",
+    "target_passes": false,
+    "witness_sha256": "5512d8b40c79dcb2ca3534a247a67ba8966dc1a32a38b2612fa556b99120d1a9"
+  },
+  {
+    "nonce": 534,
+    "coordinate": [
+      4,
+      4,
+      1
+    ],
+    "event": "1f4a3a79e6c8bef64a45a71b51d1a4ff980862dfb8d86d92df49c744c7620f16",
+    "ticket": "185d2f3369d5f822aaa56466a948ea8632954dc099a26c2b7c3b1d9e326e3c15",
+    "target_passes": false,
+    "witness_sha256": "549043f93b3a1c03133f4dc7ff4673e47f83fe644e17e9204c15d885714a785a"
+  },
+  {
+    "nonce": 535,
+    "coordinate": [
+      4,
+      3,
+      1
+    ],
+    "event": "09cd2362dbe9be405ffd8289e8f122e45923392738f1e5b2a052bc2fc47158c5",
+    "ticket": "0d15bcd51f7e9dfc7941a519fbf9976b72a749293b8b80b2b22096bf2a12cec2",
+    "target_passes": false,
+    "witness_sha256": "650b4d92a0be8c84d47b3533491e0f9038125102cbf42ed47a62852c34cd7a6c"
+  },
+  {
+    "nonce": 536,
+    "coordinate": [
+      5,
+      5,
+      3
+    ],
+    "event": "83dfe360b85d533de545c61fa442ce3b2ec2dcf89b3aac89d31aea8b8dcfac40",
+    "ticket": "7454f81163925dc22781e1a9831077e44b3fb037a402ec0e679c7dc61d6c0254",
+    "target_passes": false,
+    "witness_sha256": "437ab92c04741de803694ade45cab6d1e23afcba0edf9b7c92ccf18e2c9e87e1"
+  },
+  {
+    "nonce": 537,
+    "coordinate": [
+      4,
+      4,
+      2
+    ],
+    "event": "55dc1b78fdaea654f7d8ff150453874639275873b1314bafad540f39f26dd992",
+    "ticket": "e6687a6a24ac05b35f93ee2a0e74fd80816d2f692182e12301630c1e5d8ef9c0",
+    "target_passes": false,
+    "witness_sha256": "5a6669e4ab1ca8c7d7fc55f48d5158ecd9fe0c75ee3cf0b1b50e46de9ec70631"
+  },
+  {
+    "nonce": 538,
+    "coordinate": [
+      3,
+      5,
+      6
+    ],
+    "event": "edf8bd4cefc4d6694c9ff8bd2c201af1d905efc52a66d6de035e0f00064a0aa4",
+    "ticket": "49e6ecf5ee2a860b56cf83014c2b5c09be6fb2899d7e35c6fd687be62b6ba26d",
+    "target_passes": false,
+    "witness_sha256": "28df6163afba1ca07c378ee004c05f4d5eb72a01036b186842f096fc5a3aee25"
+  },
+  {
+    "nonce": 539,
+    "coordinate": [
+      5,
+      2,
+      7
+    ],
+    "event": "b7e5710c9db9981ba44c890e7faaf76d9ee3049119a46453026b02616deee970",
+    "ticket": "73d7cae165b2977f9e4c3c97f145f708681e3e623e7b3fbbb40f7186ce822f55",
+    "target_passes": false,
+    "witness_sha256": "495d98434e532ca0b966b97a012a3b3b4cfae9688b8dad4880e0294cdff13cb3"
+  },
+  {
+    "nonce": 540,
+    "coordinate": [
+      7,
+      1,
+      6
+    ],
+    "event": "f308c0657732301e08f35d16af2f4ba5ca6a828c4f733661cbb64b8d12d1d837",
+    "ticket": "486182680a8563777116ec3ee36fcc08b5df128bc907d1c4287f9465e19ed601",
+    "target_passes": false,
+    "witness_sha256": "d50cf8a559399010acfb20ef29b9ce5d124cb756798dfb53450ad4c02e237732"
+  },
+  {
+    "nonce": 541,
+    "coordinate": [
+      3,
+      4,
+      3
+    ],
+    "event": "2ff7e0c7d62ed2129aee4651c15caed287d91ed7bf204d490f5a84c6ad1945c3",
+    "ticket": "60bca228e309ccce4961d077559d2e680cdf430a9eca269c36ace50d44247a91",
+    "target_passes": false,
+    "witness_sha256": "12745df166078c7b0e3a2c89887eb0cc53e70add50fb3e07e348bb70c90e58dd"
+  },
+  {
+    "nonce": 542,
+    "coordinate": [
+      5,
+      0,
+      7
+    ],
+    "event": "d58d1d00f083df8057c8e1acc4c2db77edc8ceba8ddd9612e6ceae66bd8abf18",
+    "ticket": "be313462029e8d3d9f41d7ca7e20c62ccf938180a7f8c235fadf8dac26741cd2",
+    "target_passes": false,
+    "witness_sha256": "bb29925d2c66672d2f79324d38f2cfae4baada5290c638b0847eef13c84c6ce9"
+  },
+  {
+    "nonce": 543,
+    "coordinate": [
+      3,
+      2,
+      6
+    ],
+    "event": "138d37737fe516e43941afa8042a8cf4405965598fd5a25cbb3e9838471d54d2",
+    "ticket": "c2b8af436c5f1d502fc48803fb5a377c3fe854acbb57ac0e33dd6f2807c35750",
+    "target_passes": false,
+    "witness_sha256": "0a4cf398586f442fd4db72375dbce1a8063c47674a6ffc0530412cb3c0f21d76"
+  },
+  {
+    "nonce": 544,
+    "coordinate": [
+      0,
+      4,
+      2
+    ],
+    "event": "273a4dcf321cdd2d4484d55673334962602b72773441b9c640af45c4d7279033",
+    "ticket": "1800c774c8af8dec87b8cd8e21f91b04fe0a948e3ac699d2df818d93a6059427",
+    "target_passes": false,
+    "witness_sha256": "8f1212b5b29b646834f3f85b74245b69725a11a85e7ad91f6f535f5e1616cb92"
+  },
+  {
+    "nonce": 545,
+    "coordinate": [
+      3,
+      6,
+      4
+    ],
+    "event": "835e4bffe293d1bed7944467981d817f395c1beca8e4012b9e68f2147f559e59",
+    "ticket": "ea010653a864c4d6582bb6be570d1fb045833c112a2c907434c49831b07edbb5",
+    "target_passes": false,
+    "witness_sha256": "a109cccff72d363dc25da6165b7a32651dc4d29799060a5e89c5341b38b0ae61"
+  },
+  {
+    "nonce": 546,
+    "coordinate": [
+      2,
+      4,
+      7
+    ],
+    "event": "1c410ffdeee52ffec8d199b7ac471ab0432e28682a63d59467422d1538071f05",
+    "ticket": "d23d1c960cc18d9b577b02c7f55d6d90af1a68bfdfe26845213253a65f71ab6f",
+    "target_passes": false,
+    "witness_sha256": "f6247e662f1c85d21264bd20b34d8cdcb18f5590705166df2d7e680a7403acb4"
+  },
+  {
+    "nonce": 547,
+    "coordinate": [
+      3,
+      5,
+      2
+    ],
+    "event": "6e529bdf2fd50382b9d6e6160f7a17a362327f289dab9a96f31efd1d01fa17bc",
+    "ticket": "b73b1066b3523c3ec882914207b1a66f33637a40f757aa9aac8d31c75fa7660e",
+    "target_passes": false,
+    "witness_sha256": "d26f9cfa314a49a9a0b68b4e785b43b6adc3b38db4a3de2cd2168896978fae76"
+  },
+  {
+    "nonce": 548,
+    "coordinate": [
+      6,
+      0,
+      3
+    ],
+    "event": "e4cd8835c39b66166312e46bfae8da6dc72113e8b7bf7aaa73076960ba3e8455",
+    "ticket": "c85bef93c5c962691785ff90bd33046e7817ccc87818a4c2f51b058ff664ada7",
+    "target_passes": false,
+    "witness_sha256": "a33ee4b0106673117fbcdc46557fcfe73a801900bd7c7cdc801b33f96f54ba55"
+  },
+  {
+    "nonce": 549,
+    "coordinate": [
+      1,
+      1,
+      0
+    ],
+    "event": "e034e2fe7c849858365c4fe5790831525b77b28a28876c58b3eef75e2fa9c3d6",
+    "ticket": "c2e2d91eff51c378e40ae21900834fb28041502ff9e41b42492c5649407cb2d9",
+    "target_passes": false,
+    "witness_sha256": "ad8c5284277ef71a93bc94f3223ddfdde6b2ce3ee5374a9e121d21b6f6fe57f4"
+  },
+  {
+    "nonce": 550,
+    "coordinate": [
+      1,
+      5,
+      7
+    ],
+    "event": "d427ce313b623aea87ed9d233bd4776beede0c685cd879140de1620f20739b32",
+    "ticket": "97a66940abce18d6b418ab9a79bdfdd740150aea3941c1655f179fc5d4f6843b",
+    "target_passes": false,
+    "witness_sha256": "080d9d96c13ca51ad0815dfb6611395e140d7e52337dbdb4e19b1fbce92509e9"
+  },
+  {
+    "nonce": 551,
+    "coordinate": [
+      4,
+      7,
+      2
+    ],
+    "event": "701ade5737b1acaf87a66771bcc4422f89d3c14b57aa31339d3d1390ab906075",
+    "ticket": "95a5fbc468c0c9c0e3f4071778fa52881f87991bbab489b7686ad75ad2f9fff8",
+    "target_passes": false,
+    "witness_sha256": "5edb249da8e53286491058f818e0cb4162884c319000f4bdeafabc114a58cddd"
+  },
+  {
+    "nonce": 552,
+    "coordinate": [
+      1,
+      7,
+      7
+    ],
+    "event": "8262989f6237dd9d5c499e20a70f4f7ae5ff5590657051df3394842e4bf80585",
+    "ticket": "50f67f6fac2479110b86ad6ea3da9ddeb4641e3788a5a2c8b61b1585279acbd0",
+    "target_passes": false,
+    "witness_sha256": "ea25cdd46865a4a87561894fa32171e1fa13ed19d0b80d5f1cf904b3266a349d"
+  },
+  {
+    "nonce": 553,
+    "coordinate": [
+      6,
+      1,
+      1
+    ],
+    "event": "198317564d4be68ce27663f5eddd6b1ae71aade7c729a28e515cb4433bb65a00",
+    "ticket": "2fb94ba08114c6eaa42cb76e8d47f8476b0fb3171fe5bf541c832692ff94c623",
+    "target_passes": false,
+    "witness_sha256": "899ca4b1704f1991ab62c1aa306cc6e60a6e4589a39414f967d9deddaccdedfe"
+  },
+  {
+    "nonce": 554,
+    "coordinate": [
+      7,
+      6,
+      5
+    ],
+    "event": "c718d8201c09e474e25e6586aa14ddf2b10cdbd04c899a278018a0cd973f8c63",
+    "ticket": "59fafcc319401df672c71c3d5b56c80c7bffb66725c99a367790882168384812",
+    "target_passes": false,
+    "witness_sha256": "a2f215e6fc9462d081f0c61a46e32beaaf1b838853a66fb610489c081b409273"
+  },
+  {
+    "nonce": 555,
+    "coordinate": [
+      5,
+      6,
+      0
+    ],
+    "event": "e909f85027e643411420389fcefcb63712cb257a8d462921031d7d8eb85ec78d",
+    "ticket": "f7670e39c1951d1b0583c9b064c459ad6f93e0799e651297db931a52cb6aa4fe",
+    "target_passes": false,
+    "witness_sha256": "97ea3300b296ab98ebb003e3a5977f9f843b56dea01cd5895a029748b514e653"
+  },
+  {
+    "nonce": 556,
+    "coordinate": [
+      0,
+      3,
+      7
+    ],
+    "event": "e71afd48a7d372df9868624e5429981979a36910a6ee6b754187fee49d6372ff",
+    "ticket": "c3037ac8518872cfa2406c0b0db3f47eb0f4e3cf3620819df8a51a4849eebd10",
+    "target_passes": false,
+    "witness_sha256": "09e575e0fb004a05df9806188bf1353c190917a698f493143ca5c9d957604ac3"
+  },
+  {
+    "nonce": 557,
+    "coordinate": [
+      5,
+      1,
+      7
+    ],
+    "event": "5cf7f1cfb48c56c46dfaaa529d9d4c72ecb85b21cdd19f6d9b60ae397a4c3f16",
+    "ticket": "95720eeb45c15aaa87eb5b4466c5f416b9da91e636a217b4262ecadc6441fc48",
+    "target_passes": false,
+    "witness_sha256": "54c9bd99abdd935fe394a0933ceec084d04f880e97d16ba8a678c7e4bf62216b"
+  },
+  {
+    "nonce": 558,
+    "coordinate": [
+      5,
+      6,
+      7
+    ],
+    "event": "ff5ce122ed91e2648021701f3f605d10ea424d659a9d82ae1a26ef28e731fa25",
+    "ticket": "34a903212b8e12620777470e4c698a7213962049fe249191e535cfdcf7691b7b",
+    "target_passes": false,
+    "witness_sha256": "d98b86903c4764682b44e6b837f67644d4e8b30349a608e24bcd13f3971f254c"
+  },
+  {
+    "nonce": 559,
+    "coordinate": [
+      4,
+      5,
+      1
+    ],
+    "event": "7dce874b765064ed35f0f2a441d061efd227833b0563d6dbfbe513a7582feeb2",
+    "ticket": "b19b7bb8d1c9fe523abcbf92a78d93a62a33f4f2ab57260aa25e76943a083ec8",
+    "target_passes": false,
+    "witness_sha256": "5a17a4febea97f709c7f8dbcdc316593dffe2f0f152cc9ba11cafd3b57e26c55"
+  },
+  {
+    "nonce": 560,
+    "coordinate": [
+      5,
+      1,
+      1
+    ],
+    "event": "6f9f753188262636c801ecc9de288c6ee9dfaf44af7d8463f3ea92789cf1c0d3",
+    "ticket": "5491977ef7c7a8eed686007ca204687345792eb9c5c4d6da79f86247d0762760",
+    "target_passes": false,
+    "witness_sha256": "48f635f164202900e2620d22498e08873731e5fb5b552eb11d846a9637e695b4"
+  },
+  {
+    "nonce": 561,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "event": "083bde38e2a44f8f488e614ff4b47ae9d895e9fec33a7966a16d2d18f92415da",
+    "ticket": "0064f72c54274e2db008608d934f0ca6381918be7ef0b176b4695405c624effa",
+    "target_passes": true,
+    "witness_sha256": "888443dd7ba6ee5489c8915e247772cd5bbcfca1a6f5404778a1151362cefd72"
+  },
+  {
+    "nonce": 562,
+    "coordinate": [
+      1,
+      6,
+      4
+    ],
+    "event": "d6f079a522a01af0a0c5060f6537911cb46f83c4de073c8d23888bde637e17d5",
+    "ticket": "71105f74eb8f9da51d4c65b4a4353ad6ac7cdf3994cbb85ef292a9c9d7931390",
+    "target_passes": false,
+    "witness_sha256": "66d8c5a52f51548629930847fb2558f7f0a7cd9e0d8af8d191388f9ba9f89055"
+  },
+  {
+    "nonce": 563,
+    "coordinate": [
+      6,
+      2,
+      5
+    ],
+    "event": "3cb727bf6193cf125a89de963bfe52b4b30e73a342ca9b62d2a118e8fdbe5453",
+    "ticket": "11034959f4e75d555ad64f122f62866eabb242692b98465464be62be14874b99",
+    "target_passes": false,
+    "witness_sha256": "0694ac33d21486cb40c9af65aeb284d93a8ac392e5107b8c5168d9c6a7daf578"
+  },
+  {
+    "nonce": 564,
+    "coordinate": [
+      2,
+      1,
+      6
+    ],
+    "event": "8f3f330bc649b241a516b06682ae193bbbd30d7d75504860941532391a2287b8",
+    "ticket": "b64fddf702cb2b22a91004fda6b10aaa9fad4a0d718a5923dad75d12b3dad4d1",
+    "target_passes": false,
+    "witness_sha256": "7b9f2854b43a7e65844e678f845f8c27108cd82671f503308f1b54488a521834"
+  },
+  {
+    "nonce": 565,
+    "coordinate": [
+      6,
+      1,
+      4
+    ],
+    "event": "4a56e028b6add846f0f5d6889f65c3a38542c2a2a22fe2975ded3c77195064c5",
+    "ticket": "eb8c6c670cf626aeabe2574ee014d759742413ff49f630b1dfdb31243f4b2718",
+    "target_passes": false,
+    "witness_sha256": "a775ebcf3e13f225826d7e1736134d35dccb9dfc66fb6930db7efeff94e94a24"
+  },
+  {
+    "nonce": 566,
+    "coordinate": [
+      1,
+      1,
+      2
+    ],
+    "event": "4ec1c6212229fec8935e9eaf0c89260c0bcdc97a899095a65f46f571690db72e",
+    "ticket": "6f1b835cf571854e37d3b54bd2d2a4ba674134ff1c1f8e591fecc25cc1841f16",
+    "target_passes": false,
+    "witness_sha256": "3f6136dee62578e5cc8370dd5c40d4ad3ab4ab9ba3f2c378d5899081c992b76d"
+  },
+  {
+    "nonce": 567,
+    "coordinate": [
+      1,
+      0,
+      1
+    ],
+    "event": "2125a465d3a02e83ef534ffab719668c08f17a354ffa52d9f2243cdad4bd5415",
+    "ticket": "735ebaf22b6760ffa26acf9d918dce3eb5934341bbe45fa975383a8cc19a9e1c",
+    "target_passes": false,
+    "witness_sha256": "7cda8e3f829a95e0aefb5c2c872e051fbb8b1f96da6e41c2425461d2fc4be4a8"
+  },
+  {
+    "nonce": 568,
+    "coordinate": [
+      1,
+      7,
+      4
+    ],
+    "event": "39cb93c28b7662c7b6dd5f6371635c8b2f8cb84e097acbe43f7614afe533c8b9",
+    "ticket": "e4adfb5c20e92297702c26fae0a383583436c08a81285b6f97289c312cff068b",
+    "target_passes": false,
+    "witness_sha256": "4e2956fd894fae53cca1cff005860e846858523347a47f3472c29e8cbfda881c"
+  },
+  {
+    "nonce": 569,
+    "coordinate": [
+      0,
+      0,
+      5
+    ],
+    "event": "58383759b622a09c11679bdacefa80777741475129e844be0ffd0a2c42823bef",
+    "ticket": "09eebcb7e0223b4c84ea4ea262ef36e82f9cd489fae2479ce92d1d8cef7b0922",
+    "target_passes": false,
+    "witness_sha256": "c5473f6f0b24fa3a3a8c7875006dcfa4dcbc41e9774170a96774b9edd86cbad7"
+  },
+  {
+    "nonce": 570,
+    "coordinate": [
+      1,
+      4,
+      2
+    ],
+    "event": "6cd2390821e15e0f7d8ead43febe8eed7e5b8570e4156984232f142b283489ad",
+    "ticket": "0cd0a3badb016b7efe73c328bc73f9c9d0370f2b243bf7a8de906650fed49945",
+    "target_passes": false,
+    "witness_sha256": "782db0021cbf90de126b43d304a7cc9c438667cfec87f2904445cf2b4996e792"
+  },
+  {
+    "nonce": 571,
+    "coordinate": [
+      4,
+      1,
+      6
+    ],
+    "event": "11aeac5e6bd1a1927c855e80f82c3baeb339bc7a1017adcb8e2106fab37ea9bc",
+    "ticket": "817126e7dd549a8fa3b6fbd88ff1ba3ecd6ee3996592784d98089fc52f2e5506",
+    "target_passes": false,
+    "witness_sha256": "61345f4f3457050024349acd1b283bd86f4e1513c92b369edceb07c2abfaa2aa"
+  },
+  {
+    "nonce": 572,
+    "coordinate": [
+      7,
+      6,
+      3
+    ],
+    "event": "daed1ce50d2a478f5b4beb0bc9d54e31431576d1932869cf5325eac523e3f852",
+    "ticket": "077640455063f83a6639774a9b49087d6fd194c9c4b7c077b8aceaca250a0085",
+    "target_passes": false,
+    "witness_sha256": "8e3447d3c4e3af58ba4f435162ea42a90800275a5cc3b89c338d44683b99c48f"
+  },
+  {
+    "nonce": 573,
+    "coordinate": [
+      6,
+      1,
+      0
+    ],
+    "event": "afa16f52d06c1e6e5a941251bf2d9ecdde062d63e677859d9ba091a6502b62d6",
+    "ticket": "809e89bbe578369f6f181cbf53485d7f33e1e65c11d309685deef345b2f02d5f",
+    "target_passes": false,
+    "witness_sha256": "f933b406ac6631fc87a621ce83912e350322e856d68de279036c9942fadfc05e"
+  },
+  {
+    "nonce": 574,
+    "coordinate": [
+      4,
+      2,
+      1
+    ],
+    "event": "14b046b07af1edba69df1910195471525c5ff669009d751ec61ba6676f773d7e",
+    "ticket": "18995fa1bbbac14103f82bf0a8f040ec3deabd3e545c274f7484c74a76b1e92e",
+    "target_passes": false,
+    "witness_sha256": "3643c6e636bf9036e27054a544353b673d0ffb6bb08853cebc64fc84afc89dab"
+  },
+  {
+    "nonce": 575,
+    "coordinate": [
+      0,
+      1,
+      5
+    ],
+    "event": "4ef88f97f70ee5488e37bd8c02c4202dcc9bdea3750fe3f32c791514669f1272",
+    "ticket": "aa27c0e43c087b826f19b7c5900b53e09ffd4abce8c9afab79b498a8579c6ef7",
+    "target_passes": false,
+    "witness_sha256": "c79f0e2715fb3d7aa2483c2124779ff33b036a7c33f58cc4247708f17381f578"
+  },
+  {
+    "nonce": 576,
+    "coordinate": [
+      3,
+      4,
+      2
+    ],
+    "event": "345cb3f13c4a85ac08007b4113fa99e35e92415d509fe4d158b648f49b7d645e",
+    "ticket": "b60af32853598223085843872ef14096b6cfb9de12adf1553c6d2781b6bb18c9",
+    "target_passes": false,
+    "witness_sha256": "f54d8463d790c3794073126384ee3a6ac7cc543bb21f764d8beafd4d975cb37c"
+  },
+  {
+    "nonce": 577,
+    "coordinate": [
+      0,
+      0,
+      4
+    ],
+    "event": "bd03253d9b0b580d2bb29e40cfed0eb9f17a17623b56b8b00385ecee2727310c",
+    "ticket": "ca0d3facf8256f4cc3d9630bd28afdf579184ae57c69fac4f7f9b367956b56d4",
+    "target_passes": false,
+    "witness_sha256": "989b3c67057df3b35ea647e11e2e9c61f2a69c01e2559b1e7747cdc248a756be"
+  },
+  {
+    "nonce": 578,
+    "coordinate": [
+      6,
+      4,
+      3
+    ],
+    "event": "dca952227d32eb3183d603455912b5c25e0e46c1ffff3150c5553759e53dadf7",
+    "ticket": "7f7f16d7ce0b2cbd19097c41505055b5bd9e2544f91cdf93c5d635c3a4a4cf41",
+    "target_passes": false,
+    "witness_sha256": "90cf99b99e60efb01b25461a545a602395ad97ab4047dadb474bfb2ec9720ee3"
+  },
+  {
+    "nonce": 579,
+    "coordinate": [
+      4,
+      2,
+      7
+    ],
+    "event": "8cba64d44a004008d562074733795b11088fa76ad7c246a0e312351c050c2302",
+    "ticket": "1fe5b8d587212339dada4aab5cc78d37a3faec5de4d4fa2c323022d7aff96ce9",
+    "target_passes": false,
+    "witness_sha256": "de9bf9b3f381ff6f17c686239bcb576dda8de178df37a5292e2a193ebd2fa97f"
+  },
+  {
+    "nonce": 580,
+    "coordinate": [
+      6,
+      0,
+      1
+    ],
+    "event": "52e6ccffc51b46a0954ccbfe57fe34c433073c6150b5af16c8d481aef5014385",
+    "ticket": "4cb03c074924483267ae0b163eb797442194982ef76018669f2022e1950978b5",
+    "target_passes": false,
+    "witness_sha256": "43d7fa9cc9de6f99063d57e48b26433220d9bb467b90fde31859949b88986e47"
+  },
+  {
+    "nonce": 581,
+    "coordinate": [
+      7,
+      3,
+      4
+    ],
+    "event": "1a36da9210b90910edd5af2f9ec0cfee7e5c32c745400929497513ed6a11d9f0",
+    "ticket": "a1cab32c1318cdaf72e24ecae4a1e015b74cc5939402202096694dfd3e2d52fd",
+    "target_passes": false,
+    "witness_sha256": "1dd6afc2ca0fc59573008e90de95dd2126914c8b90f74d786f425a8ca21fa2b9"
+  },
+  {
+    "nonce": 582,
+    "coordinate": [
+      3,
+      0,
+      1
+    ],
+    "event": "f3d4a1c0bd25cfb2c32ce3d604f7e1be60bd2943d06da122e9e03541ef40c1ee",
+    "ticket": "5641a8f50bbde2d5b2c2deb08468e1992877a1cad3f88ac345aa76ab19e00a7e",
+    "target_passes": false,
+    "witness_sha256": "5970e36f2a26e7407ab94bb514b0e75fc8033d469d71494dd741978ebfe672b1"
+  },
+  {
+    "nonce": 583,
+    "coordinate": [
+      6,
+      0,
+      7
+    ],
+    "event": "bd00dd0f7f003ce3727bd6ca06e1140b043a4290c61362151667144c22b5407e",
+    "ticket": "4f0105d4247601d55eb68dde83fa641d617583b2f8f0e5161af540f9911c7d40",
+    "target_passes": false,
+    "witness_sha256": "c18a663822c2cb8f5f76e7ffd6ba7550b440ecb4526f577cd30f8cea9e13f63f"
+  },
+  {
+    "nonce": 584,
+    "coordinate": [
+      6,
+      5,
+      7
+    ],
+    "event": "92f1d57f90c67394e2960b5792674643bcd6a85b3dfd76ab222f6af0788ba788",
+    "ticket": "c1e8cb8db9d48971a14eb1715ef3395c7ddcfdb013835ab90dca22d164324345",
+    "target_passes": false,
+    "witness_sha256": "2c27352a6e3e307cd94cddf88707522c36b0e13f369378f499c57a8e6e011cbf"
+  },
+  {
+    "nonce": 585,
+    "coordinate": [
+      7,
+      7,
+      3
+    ],
+    "event": "615368be0470e1ced86526e4896c3196163333569211dcbe224127fbde35986e",
+    "ticket": "af5faa2438791ede6278154deb9ffd080e8d8deb404bf1c81230ec08c0eb41db",
+    "target_passes": false,
+    "witness_sha256": "bde759e0610d7f54c8d5eeb56de3a4060a13983cb8b3d874550e7eae2e856c6b"
+  },
+  {
+    "nonce": 586,
+    "coordinate": [
+      2,
+      4,
+      7
+    ],
+    "event": "0999a01b73e3f6d21257d3fb1ebf6acca3024bad87efd08f2e4ed2b75307d1ca",
+    "ticket": "a5d55fb6a8ba08648dd13d3fecba24dfdf82f699ff000ee1b04771da48bcd278",
+    "target_passes": false,
+    "witness_sha256": "480116244a811d712c42bd24992a19af134ddf371b8202b152a5f7a216cb1dc8"
+  },
+  {
+    "nonce": 587,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "event": "4798cd7d690f7f745966b663c086f476b3fefe1d6de67cdfcdcfdfff3362b65e",
+    "ticket": "d24d07374474d415c3ee330a86720cceb4834971036511f19472d32a2a74dbfc",
+    "target_passes": false,
+    "witness_sha256": "e7919d385bd7476c314db41e67325d8cb3c0095e5f8a61fe13983ac535f2ee3f"
+  },
+  {
+    "nonce": 588,
+    "coordinate": [
+      7,
+      2,
+      0
+    ],
+    "event": "1ff2d0992df792adf82c935508441045685cd2a9aa51a240629fdd1d12b6a42c",
+    "ticket": "59204a5fb2740ae40cd8959b813a970fd11103f728caf72804b909eaaa2e0e42",
+    "target_passes": false,
+    "witness_sha256": "2232187734fd7166cb4c6ce1b3d36c355f24f0d4da168bae0b681fbcea2ca848"
+  },
+  {
+    "nonce": 589,
+    "coordinate": [
+      7,
+      1,
+      7
+    ],
+    "event": "72047384f27746a383a841310d0cd30a936fe63771ec35a6d8f8bf484cd29647",
+    "ticket": "5ba90a60f34e868b5aacd2200cc4d3d3e78e824e99cf4c3900134fb9926d128e",
+    "target_passes": false,
+    "witness_sha256": "a61e380689816a77dfb549f4ec4ae3190b08bdc62e8ce1ec161fd97e09aec5c7"
+  },
+  {
+    "nonce": 590,
+    "coordinate": [
+      5,
+      7,
+      2
+    ],
+    "event": "5aa861e454c58e5a66002457cd6562a925859084bf1338e1074947e6a24d833d",
+    "ticket": "d2a63f60873f7fc86c8499d0308822a17b9e5bea7bf3a6f072b963fc2b1a16de",
+    "target_passes": false,
+    "witness_sha256": "1ba7136017d721a12e9d04e8cdd2d363e3bfbf72176559f7dc55750f4090b6b2"
+  },
+  {
+    "nonce": 591,
+    "coordinate": [
+      1,
+      2,
+      0
+    ],
+    "event": "85bb43ece6fbb382a63032ef4344143b8e0e388455c6f5fe1d2d77a9e769c952",
+    "ticket": "4284492d39b837a73be4f63c6628afc788d6f2458a3f93d78739a8683d8fac44",
+    "target_passes": false,
+    "witness_sha256": "6d09c87337b5378617d78bd70413c846450c3f100010ce1d54f95c97fb87a5fa"
+  },
+  {
+    "nonce": 592,
+    "coordinate": [
+      0,
+      3,
+      0
+    ],
+    "event": "3ebe25b4e2a3b6a1bf91bd143bb52e090fa9ad49827b901bb9ab8a6246d09e1f",
+    "ticket": "a3ddda1a65c9513531eebce19844c486f290d7ff2ce2540ddb2c9a75b79e34ae",
+    "target_passes": false,
+    "witness_sha256": "5d352e1848665aa48f7af364e7b5dc4716e3496601d66e8d9c5215ebf0faffff"
+  },
+  {
+    "nonce": 593,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "event": "1baec69097be150e70fd242a29cd283e6e65547b2d75f6d50b3ec054554c7a02",
+    "ticket": "28606b4807b921cab29a06753783e5939551d0ae3a555085a05118e8deec9f4a",
+    "target_passes": false,
+    "witness_sha256": "7c17e061a9246763381f4d162d25dfc67ac907df078684602d653efeee6cc872"
+  },
+  {
+    "nonce": 594,
+    "coordinate": [
+      3,
+      5,
+      7
+    ],
+    "event": "1dd083a260abc171caa82193dee0030b36ce1e90ef989881d2959000ec6ff5b2",
+    "ticket": "d5a488342b0c0d811a84f491b863a635cd25fa5dd6862bf1ec4a6f9f28a5ffc8",
+    "target_passes": false,
+    "witness_sha256": "276969298e2a615b4fb7cd91c7b3cdd003ae1ab235dbdf9c84c224e5c7ac7f5f"
+  },
+  {
+    "nonce": 595,
+    "coordinate": [
+      3,
+      3,
+      2
+    ],
+    "event": "8b0c4cab96c4ac2d3596bedff6909248d6da750747b28798f88884a56f4bba87",
+    "ticket": "8a4745922b77c72e03be2e2b7d0c006743cb0435105a63f84f7da71562b597ac",
+    "target_passes": false,
+    "witness_sha256": "79a28829da38c1e20c3a37d99ab9eaa14c1e11137cca2988819b024ead984d17"
+  },
+  {
+    "nonce": 596,
+    "coordinate": [
+      6,
+      3,
+      1
+    ],
+    "event": "1b9c339b67d878f1d17c4653329eba8b68641762c489d4801257ea556fc60286",
+    "ticket": "51268e9382162c4872b32620a560b369509a06efaee591c05b37e28c283af3e4",
+    "target_passes": false,
+    "witness_sha256": "0be78f3d6e68ae51eaa40a988d49904e17f021eb8e886736e4d5375dabc2fc79"
+  },
+  {
+    "nonce": 597,
+    "coordinate": [
+      1,
+      4,
+      0
+    ],
+    "event": "c66271cda9a2c7bd9c5421ca284d544c290ceb87017f3e9378d679ed78405b1e",
+    "ticket": "b32e986dd92b6810eb5fd6c574717d7cd3f4d851b45dedbaa5de1e3309f82a8e",
+    "target_passes": false,
+    "witness_sha256": "97a384f83a2fccdeffccb8fa230ff78379b51b3256bd126ae39026fb83a96301"
+  },
+  {
+    "nonce": 598,
+    "coordinate": [
+      3,
+      0,
+      1
+    ],
+    "event": "d8b62a693b14574a5e7f3102c64efa6012aa481abc0379e084c7a13dd358963d",
+    "ticket": "24f09eb45ff5137b4d8bd8e8273755125a390b2406b8f585c8881c06e4cb1c84",
+    "target_passes": false,
+    "witness_sha256": "76621b17f38b36cf1d43b2a5fecdc97c97f0ad37255eb36bfe3df06b4383d59e"
+  },
+  {
+    "nonce": 599,
+    "coordinate": [
+      1,
+      1,
+      2
+    ],
+    "event": "310221b60582a6e9210cb965c08aea7d76de5ac4aeb38c3a268b2e8fd03e79a2",
+    "ticket": "874634f046b709d116110ac51c3d4946fde0d294dacea2fb470de5e8748558d9",
+    "target_passes": false,
+    "witness_sha256": "eae0adaacecf0912752b8ce899f0ccfec68945806e97f73946624e26c3cb507b"
+  },
+  {
+    "nonce": 600,
+    "coordinate": [
+      1,
+      2,
+      5
+    ],
+    "event": "249ed6d5dd06cdf40610242d81c9fa7c8d2c84bd3cd7cc15847131ac05a3e2f2",
+    "ticket": "7aa53c3d3212f9ef27415e71539071629e47128910c39e92fd5b54174a5c086c",
+    "target_passes": false,
+    "witness_sha256": "09182c3eb1aad53bb318b5170ed270c33f1a5b04ef7669240e9829c5d3f32045"
+  },
+  {
+    "nonce": 601,
+    "coordinate": [
+      7,
+      1,
+      3
+    ],
+    "event": "adffc497bb2d6f0a26fb5c44d9ae1033966d0b50d89b48959653af94fa3a5bb8",
+    "ticket": "dfe93d528aa74d582d6f98876436ebb6ea9581b95bbc99bed2fda466cf1f65c7",
+    "target_passes": false,
+    "witness_sha256": "0b4ea8f5e3bc90285ae2fa60625dd59df3a786c4884e9af0d5db136e6663e7d8"
+  },
+  {
+    "nonce": 602,
+    "coordinate": [
+      1,
+      0,
+      5
+    ],
+    "event": "18008f1b26686a0a59733b9340cf39852513aa0c4ef61905d43f430fb7ed179c",
+    "ticket": "6d8ab53020f80f0270be84baf316ee2bee8f12544a4bb771c7f2ead8b2a64023",
+    "target_passes": false,
+    "witness_sha256": "2d4d5a3192f295483e7f3e5210f14e93507213c671e9ee512eeac51fa3b04750"
+  },
+  {
+    "nonce": 603,
+    "coordinate": [
+      6,
+      5,
+      6
+    ],
+    "event": "5e80ad8372837fb712a75476303733b2ca2d3a4bd9a60108c9841346b9a63461",
+    "ticket": "e33a28ce3c4f43bb4c290a16b86a9c204fe75004d063e4105b7fba8484f9645b",
+    "target_passes": false,
+    "witness_sha256": "9535742c86860fda6fdc9527ef33be56f7d67c6c8b41f4df4acf413eeef78b10"
+  },
+  {
+    "nonce": 604,
+    "coordinate": [
+      2,
+      7,
+      4
+    ],
+    "event": "87490345dbd21b0b5eda1ddc09e4930449c02f43d44b223bc5a05aaccd77491a",
+    "ticket": "703d25f69215c44330a2e19766b872cb9fd1a50a61e7da39ff23a9f42834ea0f",
+    "target_passes": false,
+    "witness_sha256": "ab5c12979f81766bed857ac30142586bd0f7c8a6706d89989d55fd5569aac60f"
+  },
+  {
+    "nonce": 605,
+    "coordinate": [
+      7,
+      5,
+      6
+    ],
+    "event": "e66012b51a786394d6de28149c67ddc28ab797a8f34c8715e6f8555a60c2ae89",
+    "ticket": "024003f1a2b881acd3cafa875f17df929b46418493504b7178edbe30c69e2f7a",
+    "target_passes": true,
+    "witness_sha256": "063ed6d47ec7fe20595373d259d487f0b909b4c87c4b370ef2fe8da840238c6e"
+  },
+  {
+    "nonce": 606,
+    "coordinate": [
+      4,
+      3,
+      7
+    ],
+    "event": "f2f1f088a9a1117798331a6c19c1813d917cb66f4c5e1d07485cb156e4456c55",
+    "ticket": "805daea2c0ad2ed5aee9ddf18ab4754fe7f91cccb904f03a6f84a1c71f737103",
+    "target_passes": false,
+    "witness_sha256": "30483a37eef8b1f4d9e47611009e07b3b061a9a2a0476fc386ec6fa3ba5dac54"
+  },
+  {
+    "nonce": 607,
+    "coordinate": [
+      5,
+      5,
+      2
+    ],
+    "event": "0825e4d06352e1b498676fb3f9e6f0dd018fd0e8b757a012e7f5adf47d22b654",
+    "ticket": "6a283260a117e02083dad34e883890e6eafed51736b2a4c5170a9fb15b0703cf",
+    "target_passes": false,
+    "witness_sha256": "91afe181ba8d9fe6dd774e71513c739583b62a4e735f49a2597acb85d2b5eb39"
+  },
+  {
+    "nonce": 608,
+    "coordinate": [
+      4,
+      2,
+      7
+    ],
+    "event": "7a83279877b8e03f50fcc2d7cf85662bbddf5b890c2d057ed2a00e92f1fe09c8",
+    "ticket": "e07d3d7911f9b29c4c8d8b998ace92aa72fb73b28628da28b006585a6a1b037d",
+    "target_passes": false,
+    "witness_sha256": "64acd0f779c5e0b3aef6635b4d864667a1cb14fb75dcfa701a04f2faf09f4693"
+  },
+  {
+    "nonce": 609,
+    "coordinate": [
+      2,
+      3,
+      1
+    ],
+    "event": "eb5687b2b8d5b6ccb95b8647e2d53e49630b56f115b37f49d43d10c200b76da4",
+    "ticket": "c67b34d242320ee0d5ead29f443f4a068daa46e84b364f2a61b3744ce1ab1f63",
+    "target_passes": false,
+    "witness_sha256": "86ee743bc9370c6642b72e1bc43776e5080a95209fa029ee069dafd806271677"
+  },
+  {
+    "nonce": 610,
+    "coordinate": [
+      4,
+      2,
+      3
+    ],
+    "event": "01ae1169e5e9dcdd37909e72d6ae183c73d10b512d59df507d865d3b96fef5ca",
+    "ticket": "9a8a1247eaec7b1ced66ca81542a5599b87a333ae53c8b6740bf1670ebda541d",
+    "target_passes": false,
+    "witness_sha256": "64b5f69bd430a251b49765b87390c117785a43e909a39e18b859c7e9c0369824"
+  },
+  {
+    "nonce": 611,
+    "coordinate": [
+      0,
+      4,
+      5
+    ],
+    "event": "882250f8a21ef2ff8c2c495ec3fd0fa998f4f4a99507377a1beeba0f96fb1c56",
+    "ticket": "9185eda0af74d4db368df01379c6d26501d77776022fb4487a6a4468a811c505",
+    "target_passes": false,
+    "witness_sha256": "9901330c1a2a53f1e47fa9cb232d13d98ebd29013c9d4f6596feb5a3a57050df"
+  },
+  {
+    "nonce": 612,
+    "coordinate": [
+      2,
+      5,
+      2
+    ],
+    "event": "8cf0f0ad1eaea3bb355a5795fcee0404a487cfda71af4fefb3e8c937b0823fd3",
+    "ticket": "c183dbd2f96e763578729a31ddef8970259c5b415561955c8b2fb4a6b8c3e524",
+    "target_passes": false,
+    "witness_sha256": "a6bf9d6628fbb397b5e652890838176722468bd884c8f2073a076e9ddb67f339"
+  },
+  {
+    "nonce": 613,
+    "coordinate": [
+      4,
+      0,
+      4
+    ],
+    "event": "18b2d64f46d04ec01424239a1bede2b2842f305b8b1db42b02c4ca8b78e48b15",
+    "ticket": "572095493457ef49e0d95dfcf0754a432be18d6a3905fe84a2f3faf3511d4cd2",
+    "target_passes": false,
+    "witness_sha256": "bd5b07404aa51b579ea31c20ea1245c0f8b9523266fadfaedf8c5ca70d7b5641"
+  },
+  {
+    "nonce": 614,
+    "coordinate": [
+      7,
+      2,
+      6
+    ],
+    "event": "078f7999c44daaf68005c9f3babb74b303847e963a592a58afdba81e85482fe7",
+    "ticket": "a45304e27827166f708e3e49d6bc30851fbe4dd998a9a092c9bd985020bda5ff",
+    "target_passes": false,
+    "witness_sha256": "bea35dabaf9d86aa621d1f89268bb08b75791fe9100c686772a2da4645d7b922"
+  },
+  {
+    "nonce": 615,
+    "coordinate": [
+      1,
+      2,
+      2
+    ],
+    "event": "0d1834cf5506719346babcc5b773b7778243c5f236443ed6029017fae0473629",
+    "ticket": "7432cbb9f7f4e4bc2b21dd5f665f53afdf892e8bdde8b221ac1aefa032f52f1e",
+    "target_passes": false,
+    "witness_sha256": "fdb967ff146be51b944e8dea6723f1a9f9a9b094ac4a12beaa6c495c74f77f90"
+  },
+  {
+    "nonce": 616,
+    "coordinate": [
+      5,
+      0,
+      3
+    ],
+    "event": "2d9db52b52153e29f2c323e9558323c338d51f4cbec3f296e8013d90defb8559",
+    "ticket": "d1fff5cf869e8e8a5ba11f1d33d5f6ec3abfb7107ab42f9e4c4a6ea42d7db0f2",
+    "target_passes": false,
+    "witness_sha256": "4d7f511499230f4fb5ac7db1b4cea105f672df597871b352a3e04b0a9a46a049"
+  },
+  {
+    "nonce": 617,
+    "coordinate": [
+      0,
+      1,
+      6
+    ],
+    "event": "4b9ed847572f98d92c8a83a2eb852ad49f27b7210d3a2d90492ecff8b60b2853",
+    "ticket": "f792a8dbc0c9b283600ce07581810a330a9f5627bc77a396c26fecc25edb4e19",
+    "target_passes": false,
+    "witness_sha256": "b34ac312bf35919973672751ed6a7b3214a1e5dd928a1275de768b7ca40b4977"
+  },
+  {
+    "nonce": 618,
+    "coordinate": [
+      7,
+      1,
+      2
+    ],
+    "event": "927bfc3d08a6b0ab937d42c2f1eda5674e717bdebd2686f5974b9c63f53c4878",
+    "ticket": "19a2cfafcd1986cc5cc3baba0b084db6de0965bdb999b29cccc4327832aa6a7c",
+    "target_passes": false,
+    "witness_sha256": "297a853d1eec8efb8e26643c29e56e947c1da69f8e511c53565274856a36267f"
+  },
+  {
+    "nonce": 619,
+    "coordinate": [
+      7,
+      6,
+      0
+    ],
+    "event": "a3970c4c74b324687f98c224c2c55c447acc48f96d66f21088ff9e296d49e99f",
+    "ticket": "9989a9d1810edc7d69dccd965eada8fa459998afb7de6dbbb7cfbefce16ac800",
+    "target_passes": false,
+    "witness_sha256": "4783bc2fad1553db4ae8f40614bd4ee390cd2382371230e3d5d008cc122a34f3"
+  },
+  {
+    "nonce": 620,
+    "coordinate": [
+      0,
+      5,
+      5
+    ],
+    "event": "71b3a38383b31b8af8a9f1b2273ad6eecc2bc554d4e09d1f70c526048e8f0b0c",
+    "ticket": "b510215dda0ca25f1d05b4c40622067f54a021c6cbd0669ef521b58d332c2d6f",
+    "target_passes": false,
+    "witness_sha256": "7638e3e2195416192ab5440e4bb1eab643d339c8ff7ca980496b5eb3aa0dd487"
+  },
+  {
+    "nonce": 621,
+    "coordinate": [
+      7,
+      4,
+      6
+    ],
+    "event": "d9d889e873789b2741a5b3fd27fbe9604fa36bc9f889b9951bba50ca1a95ed59",
+    "ticket": "b6a7880ff72ff7dbd52b285bb03db948b844473a7d1dc189c945f7d270080dea",
+    "target_passes": false,
+    "witness_sha256": "c6b5c477dc62e3ecc0f0aeea2b70cb1ea7a9184e6fd294115bbc4108981a835d"
+  },
+  {
+    "nonce": 622,
+    "coordinate": [
+      6,
+      5,
+      4
+    ],
+    "event": "4d84474f7527b2eb77935a2ae82bba3b219a90212198ab0f5b64fc1eabe67b51",
+    "ticket": "9586ced4a357d3ecaceede96dbe5bcd0cbc81c4e76e541fc307a3cf793d91271",
+    "target_passes": false,
+    "witness_sha256": "29370f667621634c1cce14f7108ca7f7feec12971bc6027aa7b227bcb5383cef"
+  },
+  {
+    "nonce": 623,
+    "coordinate": [
+      2,
+      1,
+      7
+    ],
+    "event": "8dd2a36df9da3ee0d6f5a7364f18feffd32db8f7d0b7f8d33b48fd1d8cfd646b",
+    "ticket": "8180346a7fcb6f01a0a1b630f3058e9b690e0d60d1bc8419cb3df11ab66e4abf",
+    "target_passes": false,
+    "witness_sha256": "9807ddbe4c4a3243615b09f3f768dcd410bee2a67d337962a74eba88b87ec81f"
+  },
+  {
+    "nonce": 624,
+    "coordinate": [
+      0,
+      4,
+      2
+    ],
+    "event": "d53de54f508e7d56a044824ed6aebf946165004cb91dac5e37e48e9e82e128af",
+    "ticket": "7b6812371c58b5271b1e35a81c9b2c47d689dbc9b75aeaeed1e7bcf4440a26d1",
+    "target_passes": false,
+    "witness_sha256": "1a02e4aea153b1b2e9ae4563406c341dcec4b60bde11a278368177eccf504914"
+  },
+  {
+    "nonce": 625,
+    "coordinate": [
+      3,
+      3,
+      6
+    ],
+    "event": "33f16c402d2b6aa87ef889e7e0baf6b357f7b369180c7f6f6c12b892c0c58e31",
+    "ticket": "169d80d2eb382ecdfac0223d1e00f613f284df17ea0bff1de1ba5eb5345fa835",
+    "target_passes": false,
+    "witness_sha256": "1fb4bb22e170aaa0f81192cbc4ae5cb7912ab6e2311510b55efd0251d7a87049"
+  },
+  {
+    "nonce": 626,
+    "coordinate": [
+      2,
+      4,
+      2
+    ],
+    "event": "bae23144988607c9ce0af88da1f5b43163051e862ac7253e5563d791e9e9178e",
+    "ticket": "2cbe062169765bc58965c4ffcbcf28520adb88747c0d2d0be044dcf5f62a4d6c",
+    "target_passes": false,
+    "witness_sha256": "7243b694841a0884b714002c29fb03ad0a2a65090d97d3eafd7279aa9909671f"
+  },
+  {
+    "nonce": 627,
+    "coordinate": [
+      5,
+      6,
+      1
+    ],
+    "event": "67ab56814e4c6f9fec3223f57597c3d76afa20dc48c286d5d16cef31e66f7f45",
+    "ticket": "676fcd1a9666dff695fb7c65bf5a35f40250d64942a26b2de83c903a00f87039",
+    "target_passes": false,
+    "witness_sha256": "a0851e215c695812aec6a318975e00c278f6c760c649259b856c29c8f986e5be"
+  },
+  {
+    "nonce": 628,
+    "coordinate": [
+      6,
+      3,
+      4
+    ],
+    "event": "fe730f4b41ad7fadd7a4c82895f16f268a061602600409347525e851cedf0537",
+    "ticket": "328e22abd204b42ee9c8f0d184845c4582d1e746d5423549331004b3203e9160",
+    "target_passes": false,
+    "witness_sha256": "3c7f32fcda951689739df90da4c3a562ad4c3910a7e6a85ce38920606319de3a"
+  },
+  {
+    "nonce": 629,
+    "coordinate": [
+      5,
+      1,
+      4
+    ],
+    "event": "a4dbd081619817e0eae8a96df584785aabffca99293e3ff1a8b13aeb7deea733",
+    "ticket": "4ca3815fdc5df40796b1c026128b2fe22a6ca83bf7969924db83d147c8217163",
+    "target_passes": false,
+    "witness_sha256": "b97c63dae35becd515e2abc07cf7e1d5faad6349a03f2fddf58539c463485f93"
+  },
+  {
+    "nonce": 630,
+    "coordinate": [
+      4,
+      4,
+      4
+    ],
+    "event": "ee15b44e6b03f0e0983ac563b0ec4dfc710fb541599b1e55ff1f6fc8b281410e",
+    "ticket": "37a2596e858061424a5aa4b7c949bcb4df38b6351e04e1aea8ce5cab8d581d8a",
+    "target_passes": false,
+    "witness_sha256": "926afdefe474eb818e1d1aa630e506c1e70c11863f764c7fc1ab6256f77fbe83"
+  },
+  {
+    "nonce": 631,
+    "coordinate": [
+      0,
+      2,
+      5
+    ],
+    "event": "b2b9a427f9836dccf1c0ef695dfd3d29c3eb68800c08a584a87b90280f325795",
+    "ticket": "bb1e72df73a77326e894296833faf688229262145a8cb72c2c7d2186780e390c",
+    "target_passes": false,
+    "witness_sha256": "9d90149e6add72b7721e262362809de93461a0455443246787253c1b32888145"
+  },
+  {
+    "nonce": 632,
+    "coordinate": [
+      3,
+      2,
+      6
+    ],
+    "event": "f78e811dbafa6d46ed3d2325b05ca472cfffa300c167ae9085834a3ae50a2198",
+    "ticket": "138488293e2109fc974e46ee62cdbb6d3f5f4c46fd5dc54f9cb0272dadcbf082",
+    "target_passes": false,
+    "witness_sha256": "99e7007a22b39932623619e1dd995a8f783c663a85c5e442e617847af6fab63a"
+  },
+  {
+    "nonce": 633,
+    "coordinate": [
+      3,
+      1,
+      5
+    ],
+    "event": "135fbf78d34af0994386b7f7f83619749ceaa795fbccb5321a4aa3e3c175cd7c",
+    "ticket": "c1deaf0394aa6fbfb53d38029eb6f1736ed3bcf8b2bd2b09b6752e81a9154edc",
+    "target_passes": false,
+    "witness_sha256": "1759032038943a2d372376fe35bdac156a129b5284307b3f4ac526143b87491c"
+  },
+  {
+    "nonce": 634,
+    "coordinate": [
+      1,
+      3,
+      6
+    ],
+    "event": "b59147bb5d9c0bad1530c0603adbeb94595d7047eededc26b85f619483e1ff0d",
+    "ticket": "4ff18fe0180446e14b141539788e8b03577e83f1601d5635e98e360302aa1612",
+    "target_passes": false,
+    "witness_sha256": "7010d144aa7861d75b0dff15d30131d713e8773e2e5bbc342a5d5c67c925bbfd"
+  },
+  {
+    "nonce": 635,
+    "coordinate": [
+      4,
+      6,
+      3
+    ],
+    "event": "c2696035331cf27ed168c12645d6c5c36ba2ece40161b749e550284c5fbdd9cb",
+    "ticket": "296dc0b87e136a0f0a3415e26ec6b0a37673ec68f00ec0c6196a944330711a60",
+    "target_passes": false,
+    "witness_sha256": "faa4308e3f18137b0b4bbbaa1a179b47d20ae509eefd64a6790f7fce5d1ef4e7"
+  },
+  {
+    "nonce": 636,
+    "coordinate": [
+      5,
+      7,
+      2
+    ],
+    "event": "b4c7c8bbe2e5636a10b3811ce89e0df5e17af4addb4f43a7842b453ba3775013",
+    "ticket": "0d1db479eec87d6c625fa713cc7e341da30c36304d24b494d9f91ba473ed7a73",
+    "target_passes": false,
+    "witness_sha256": "e635bec8b0a50b5e0eaf4d76b239b9f031c0950339cd149f6a925923158b781a"
+  },
+  {
+    "nonce": 637,
+    "coordinate": [
+      7,
+      0,
+      6
+    ],
+    "event": "0dc77ee50e7e01dfcc04512f397b1028b56765eed097f1f9aceaf3bc8078b275",
+    "ticket": "c506e16b47490a5cff66702c1e67360ff33c5887177f8b37d03404aed2f66e70",
+    "target_passes": false,
+    "witness_sha256": "904594b06972ec625b8197c732793a1bf803b4d2864aa9b9c26710ae565ad8ff"
+  },
+  {
+    "nonce": 638,
+    "coordinate": [
+      1,
+      7,
+      1
+    ],
+    "event": "768ca0ba54b5939e1057d85dd97cb6f4f6a124ed83e96f227e1e27799c6da964",
+    "ticket": "1829a42b2a3df283b2efd8cb28c333944c3523955075292b4cc7559748f8f00e",
+    "target_passes": false,
+    "witness_sha256": "b870f63a6078ca9c2e69facdd4e5bffc0ce17f40b295989ef4a631d9f2f374c0"
+  },
+  {
+    "nonce": 639,
+    "coordinate": [
+      6,
+      7,
+      6
+    ],
+    "event": "bc3e70838b4990c403aad47756ef821a3497a3115a311519c2b2247b82d8803d",
+    "ticket": "56310bd7f9c9a944653f40798aaf17786622477fe15034835b4ea94bf2abca48",
+    "target_passes": false,
+    "witness_sha256": "b248f0c801fd957fb984e4d998668b2d8cf411a7dca95b86363398a6f976a480"
+  },
+  {
+    "nonce": 640,
+    "coordinate": [
+      3,
+      7,
+      6
+    ],
+    "event": "089998f2d939f6f7462b84158d850f75093814ec930199451d8055dfca014dc9",
+    "ticket": "2ecef112398a0de6004ea50cd69171895124b16202814b1ae8ea5a62b4796cdd",
+    "target_passes": false,
+    "witness_sha256": "e877884b958124daafa3fcc24cd0156d5bd97ee172c010af7e79857d23d4cc94"
+  },
+  {
+    "nonce": 641,
+    "coordinate": [
+      6,
+      2,
+      5
+    ],
+    "event": "305c94029c5f457e3a5db80fc57c5f49ee59f84b49aaad553acef248b8c328e7",
+    "ticket": "8b57f0a141b4947e3f1eceb9e109a50f36b468a7b351c2322c9923573813755f",
+    "target_passes": false,
+    "witness_sha256": "ee5a0a079461df5398e346970051386f4fdc298e09b513f3bc3ddc59e9833a27"
+  },
+  {
+    "nonce": 642,
+    "coordinate": [
+      1,
+      3,
+      3
+    ],
+    "event": "8282fee919efb8892216eede2909925933e3fceb68377392722ce224b2f182e6",
+    "ticket": "9adade1f8c2f3bd83f2839370dbfac03a3435fd746cdafdfef409c8d0dd95409",
+    "target_passes": false,
+    "witness_sha256": "18829c8b261dc7a69ba61b150d4dba58e8fddc129cd3b6c6792e32e4f7700447"
+  },
+  {
+    "nonce": 643,
+    "coordinate": [
+      6,
+      7,
+      5
+    ],
+    "event": "13c621e60d88f321cc42cc2653504f4278a6917d6a96c18e2bff7a59577734c2",
+    "ticket": "ce8aa68e4dea8a5bcc5ea92e7bfe8975b6e281a5950d659a86b5b192a79d6939",
+    "target_passes": false,
+    "witness_sha256": "8c1db72279f966876d6f8178ba0ba31bc1da43f69ed2e7b4c7d7bb1b031002f8"
+  },
+  {
+    "nonce": 644,
+    "coordinate": [
+      4,
+      6,
+      7
+    ],
+    "event": "5b9f93e9ef1a83a825fb44164de4fe4624d8e37522df9632def327b6003a5428",
+    "ticket": "004bd7f435a98e57ff88bc93ca542fb29460f2e8f6de8c46c3034ab6b76fc739",
+    "target_passes": true,
+    "witness_sha256": "7dbc739e775c62b2517d8542cdd27e3a658408ed069cfcdd9462e67ccf3ca4d7"
+  },
+  {
+    "nonce": 645,
+    "coordinate": [
+      6,
+      3,
+      1
+    ],
+    "event": "46c00bc7fe9b5c7aa90bbd98670ecddaebaa4e5ba6095d7a6f9739f6d40bb038",
+    "ticket": "bf031276db32064b4899e716a9f2095a172447b26f9c54e2b237bebea0dc6c95",
+    "target_passes": false,
+    "witness_sha256": "b8ace3f40300c944cdc9c50809d09ce386bd0cb06b8972f0ff3119256d1f68ac"
+  },
+  {
+    "nonce": 646,
+    "coordinate": [
+      6,
+      5,
+      7
+    ],
+    "event": "cc1f9fc30b549d79a6444925d31f0ac2376b28e07895cdfaffaa893bbe62e506",
+    "ticket": "1d8ed90a96459ef4e333b9e5c7bb9648918bb212953f66c7ee8e2b1b8a769fd1",
+    "target_passes": false,
+    "witness_sha256": "c9322cdcefb1ea5f665d44ca68dd0079cec46cdfa850d85622bdd735cbeb9f69"
+  },
+  {
+    "nonce": 647,
+    "coordinate": [
+      1,
+      4,
+      1
+    ],
+    "event": "15721a3b7de856d0075d3193321b1c47135e4bfeb3caed8e200c1932f97d2567",
+    "ticket": "fe036ee4a95384ea5d4c4e372d39fe5aab1a6dab54f683c2bd9e96207df65080",
+    "target_passes": false,
+    "witness_sha256": "71012881cb28f72ec81ad95065bc13c4b125f5c0e6befda71f5f671b5452915c"
+  },
+  {
+    "nonce": 648,
+    "coordinate": [
+      4,
+      7,
+      4
+    ],
+    "event": "10c0d64541aaad9c0a0e41c453f62cff281a7fa026e350b39f370dd95d944e4b",
+    "ticket": "c3300caef26717e701e3f9e693bb753ac94e05da319c6232b26577e0fabeace1",
+    "target_passes": false,
+    "witness_sha256": "79a9d495bb51266c1d2e201cebd3f2e9ac3a44056458ef468689c25fa1a5c7f1"
+  },
+  {
+    "nonce": 649,
+    "coordinate": [
+      1,
+      6,
+      7
+    ],
+    "event": "23a678217a4637c5364b5043aef441b93a2c83ff3222c2412bd12e29f02ea5dc",
+    "ticket": "ce5278dde7ab6c18e68c6abdba048e726a01deed0df5e3b91852e91479301c1b",
+    "target_passes": false,
+    "witness_sha256": "6fb48cb4cd77c15aefd48d4138b0250e5276edfa707957bbb2ce0a10cb9d16f0"
+  },
+  {
+    "nonce": 650,
+    "coordinate": [
+      4,
+      1,
+      4
+    ],
+    "event": "029073f8f5fa5dba160f576e1b61ed667759bbabb6880cf737b36d7b21bf4410",
+    "ticket": "30653bf280bd810ef24d00e56d0b7f45880a0724e35b4adbcf92a5e51ae52469",
+    "target_passes": false,
+    "witness_sha256": "c42abac082bec8f3c8c45e2194f5966fb356e668ceb72e4e3505982bea4f8542"
+  },
+  {
+    "nonce": 651,
+    "coordinate": [
+      6,
+      2,
+      5
+    ],
+    "event": "d61101457a41bfb6bfdedd269a84057f50bc110d1b9e1bc1c2f3e5f5009f7600",
+    "ticket": "83e2d877c1491bf686a7ade0790382df13565fa6d558ada78601ce9edf5f2141",
+    "target_passes": false,
+    "witness_sha256": "671f97b00ef01f84903d4a7589498477252539d87bd772ddb735b98c7288d96f"
+  },
+  {
+    "nonce": 652,
+    "coordinate": [
+      5,
+      6,
+      0
+    ],
+    "event": "0bd27a727de21faa2fb0c07e61e4e5d5f9956b3fc16d59d30b5702ecf8ab8a6b",
+    "ticket": "d3dd998b3cdb9e3b2d59e7b5062eaa9cd6ba6dae198811077153befc2e15a6e8",
+    "target_passes": false,
+    "witness_sha256": "344db35a12ed951d15bc384b00a515bfd4610af642001d2f186ce180168dbe89"
+  },
+  {
+    "nonce": 653,
+    "coordinate": [
+      7,
+      4,
+      4
+    ],
+    "event": "8bc6b5ec5e1ecf240e1f1fd4f2caebf0c7627b642d999f872670067a5c706789",
+    "ticket": "c5eb7a67e305b9254f0bfa4549bf7f9f446f60e1898c244c60f47bc50e24c166",
+    "target_passes": false,
+    "witness_sha256": "b5b446808a528722ac9dc6acc94fc7f1727c79a13a9621a698175c505a75f21d"
+  },
+  {
+    "nonce": 654,
+    "coordinate": [
+      4,
+      2,
+      2
+    ],
+    "event": "e50237e3dd4c3939dff944ae4095bffc1166ac6b7381506dc07087c75596a6f8",
+    "ticket": "0222d39d89030e5af01210e038d8f8c2646db59cea9ec80b101aaf2c2bb2e15f",
+    "target_passes": true,
+    "witness_sha256": "f12da7d53ee67ee9510b7c520a254fa7cd488d74ea4142c9ff58b82fe091cbed"
+  },
+  {
+    "nonce": 655,
+    "coordinate": [
+      4,
+      3,
+      0
+    ],
+    "event": "cfad3717fc45dfed8a0335f30c2a15f897e571da2d83ae3b2041a2a8e59833da",
+    "ticket": "a2c17943d7333c4b1ac52bc8c5f88e43f163e4d283a4e8c0e0f7591ae8dd44f1",
+    "target_passes": false,
+    "witness_sha256": "2bdc73e02e86a189a5d7c335611b068c317734a1482cf31bcbc31f3174c24ec4"
+  },
+  {
+    "nonce": 656,
+    "coordinate": [
+      1,
+      2,
+      1
+    ],
+    "event": "b773bbe11365c2ee1b95298787b9f970fa55d170708aae3145a1becaa249fef8",
+    "ticket": "6a0772a61bb29b8ce7dc98af396023e8723416d1d1b57b87101351877a14abd2",
+    "target_passes": false,
+    "witness_sha256": "a3aa8c1a85257cef68f4fa17b4125bab10bd7902f102c0e057cf93b33cba97b3"
+  },
+  {
+    "nonce": 657,
+    "coordinate": [
+      7,
+      2,
+      6
+    ],
+    "event": "9774197706110d816c707d17a4a68bcff2d846339778cec37f29f539060063d5",
+    "ticket": "424ced828f70017505416549809343cb6c77f0434d5a72ddaed46950b90f4fcd",
+    "target_passes": false,
+    "witness_sha256": "dd5e6d9aa63e56586390223c057346a0e1f9c3656b3f1c3ebffacc195fab7a9f"
+  },
+  {
+    "nonce": 658,
+    "coordinate": [
+      0,
+      4,
+      6
+    ],
+    "event": "eded25630fce2de212162c242be5ad00c2db953604d9f78a56c59ec28b811007",
+    "ticket": "e2203fbd0e73ce3c42f5490a1bd6cb8a6af0cb4f3390021c59af6fa35502442c",
+    "target_passes": false,
+    "witness_sha256": "6df5ef4a8654d4f39da215536bd19dad0d84c1c241feacda302dc34bc36cacd8"
+  },
+  {
+    "nonce": 659,
+    "coordinate": [
+      7,
+      3,
+      0
+    ],
+    "event": "012aa1533733ca2c0cefb826ca35faf6f85a6f9c5290489ba53de3bef8b6d89d",
+    "ticket": "75bb61cf53a42b487f61ecce488fd4742a7f2f855fe44d3d8c071b436d9c7600",
+    "target_passes": false,
+    "witness_sha256": "469ca54f4162dfa65dd62d4eae4b78ee74384c6dcc364e9de19cbf1d8f41523d"
+  },
+  {
+    "nonce": 660,
+    "coordinate": [
+      7,
+      7,
+      2
+    ],
+    "event": "f0d2a4d5863b2532c63687a1f8f563a2c04abd3653759e3bc2f5a0e402fd2096",
+    "ticket": "230fd14dc3306f1bac56a93d1890413bc6a55fe0a45bec16f5f2f6285ed0ff82",
+    "target_passes": false,
+    "witness_sha256": "53ef4e601ed53173527b5cc745a33fda44b770e3ccb24f47c92329796b80c3ad"
+  },
+  {
+    "nonce": 661,
+    "coordinate": [
+      3,
+      1,
+      7
+    ],
+    "event": "ef8f70ce17431d39f30669451b69847241c81dfb1b7ce5d9b9adfc3bc5f80921",
+    "ticket": "4affc263aab6eb16dfb0e56b4043e871ccdce87dc7a43e4a4a658dfa844436a2",
+    "target_passes": false,
+    "witness_sha256": "e5dc41bea2752f262188d4a084fe0542d88820ff1b2d6c3fc0d8f16129a0a1ce"
+  },
+  {
+    "nonce": 662,
+    "coordinate": [
+      3,
+      0,
+      1
+    ],
+    "event": "6bca6dd5b966d0271d3bc04bc2dcabff2ada85008c2ac6a019a3d92283d11d96",
+    "ticket": "e26e5d8c0e58d1931f42a727976983e2aebbee3604b53229ab8fb83d8a96b61b",
+    "target_passes": false,
+    "witness_sha256": "dd63f72baabd21113ab8a5a8049a3713816771f5cf43d5c4dbf4520c07f145ec"
+  },
+  {
+    "nonce": 663,
+    "coordinate": [
+      4,
+      2,
+      4
+    ],
+    "event": "5175ae0b534f3bd23780df7dbce590f212c34b5b25c25b3500a17449fc291205",
+    "ticket": "b19547b8cd160e936e365334d33d6d8516d0ca22b1e3899ee23e93fe1f21fe19",
+    "target_passes": false,
+    "witness_sha256": "db1af90895f5cd546c4a065904de85f5c029bee408b9f2c1bfbf1174f813bf8a"
+  },
+  {
+    "nonce": 664,
+    "coordinate": [
+      4,
+      4,
+      3
+    ],
+    "event": "4542cab7c1b5338132e3654c93f70c52639c109c5f9954e708047830237ef767",
+    "ticket": "b817abab6e72990547f869be0aa64e459f19aaca6535a0e0a15b478a3febcedf",
+    "target_passes": false,
+    "witness_sha256": "f2510e39c3ac84fbb9b6bc561ebca3051f42067a7ff280bb0f94f20524dd0127"
+  },
+  {
+    "nonce": 665,
+    "coordinate": [
+      4,
+      7,
+      7
+    ],
+    "event": "a18c299b875125d4705b99da1c9fbc8d8120c9bb998eab0667db828a850f9c55",
+    "ticket": "2ffb43d939fcc7d666bd4af59e48e0049ac6c9d39dc84f92fb680a8dfdcd7a72",
+    "target_passes": false,
+    "witness_sha256": "ce2ff4aa9525f377abfbdf773dd8061313904824a3e87e8dccbb18db9b25dc4a"
+  },
+  {
+    "nonce": 666,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "event": "7c39ae5718590648761ac3a9f07027371e6e74afeeb20b77168360cbd8f3ce79",
+    "ticket": "4be77eb3fdf9f52dcde14545721d62e81378ed15d328b36d23b6b6aade4791ef",
+    "target_passes": false,
+    "witness_sha256": "fc8f0872067dfeda47f344e95939cc0e40ab82e9657658b6a5f4ae67b28cd291"
+  },
+  {
+    "nonce": 667,
+    "coordinate": [
+      1,
+      6,
+      2
+    ],
+    "event": "71014986b1c6ae14cd43d09dda077a96a877aea94b2d6934c228b4c118a0e1b5",
+    "ticket": "2870a0e8e3a03d55f0ff10b021734ca8621dcd2a4989825259078d1488f3ed36",
+    "target_passes": false,
+    "witness_sha256": "8bcf863a128053fc901ef582633e1e401ed2bc90adfdfb0a416f92b620df5b7c"
+  },
+  {
+    "nonce": 668,
+    "coordinate": [
+      2,
+      0,
+      5
+    ],
+    "event": "505a9068679947f6a9316e54bbdaaa4317cf21125cfd183f895ec7c6c55fd420",
+    "ticket": "8a5f6c8b624b2b243b4bd6c91d737c39751e2f4fc575a055ddcbcb17ebeb80dc",
+    "target_passes": false,
+    "witness_sha256": "bcfbff4f56d9fda04cdd08b155fcc931f4e5342b5a92454ff614fe0cd5270f12"
+  },
+  {
+    "nonce": 669,
+    "coordinate": [
+      2,
+      2,
+      4
+    ],
+    "event": "8d96901b4ad91da2c35e3d78bc7c4ba57a010789f1bc2b7fc85353529198f2ae",
+    "ticket": "1674c781c580e14a15da0028821820bd02d7c4ee44044836f6dbf7c0660f6d4e",
+    "target_passes": false,
+    "witness_sha256": "f6c352f7327392d0e4cfad89da1bda9903b74cec93d1eeb81672f4b5cecb69d1"
+  },
+  {
+    "nonce": 670,
+    "coordinate": [
+      2,
+      4,
+      0
+    ],
+    "event": "efab2e858dd93bf7afd37bcbe4a76153b971086fda32c340996f1052117a07b6",
+    "ticket": "f6c50d44bb7e7474b29338c7d256f0458a67d033785252bede4e57090b889d0e",
+    "target_passes": false,
+    "witness_sha256": "bf7f61266ad333171871d03ac1122eba7b51b8e9ccdf78cdeac71ffbaf1d78a3"
+  },
+  {
+    "nonce": 671,
+    "coordinate": [
+      6,
+      2,
+      7
+    ],
+    "event": "8fbf7e6716969170a899ffde92e9ef89fba23f2888f413d52ff69b7d247504b4",
+    "ticket": "f2f387cd8a4609a47985066432302cb0fbbb9ba8504efbad753be26707fdf84b",
+    "target_passes": false,
+    "witness_sha256": "e71fcc4a256242cceab4105922205b191f9beb453e1f6e1c98931704f8dcafc5"
+  },
+  {
+    "nonce": 672,
+    "coordinate": [
+      3,
+      5,
+      4
+    ],
+    "event": "b158e6a0f3542e55d86e7edb78e3728ac3405b140f68a6fd7256793bd2b70a7b",
+    "ticket": "a60be6913eb5c1a63c94ca8be3018183ec3da9a5eef551ba0ebbc68c94e01695",
+    "target_passes": false,
+    "witness_sha256": "5cebd777da1c231572703341aa32909a535d2ac762aa51432a1bf499b1a936cb"
+  },
+  {
+    "nonce": 673,
+    "coordinate": [
+      7,
+      0,
+      6
+    ],
+    "event": "d9bb78ae3a732490a5b64a902852a3afcf64e8e6c34e0fb5a2236f1bb46fd391",
+    "ticket": "62bdf4a0bde49b8807b6217585abc1a7fdf5f61bc319f0053dcf13aff6bfce9a",
+    "target_passes": false,
+    "witness_sha256": "4f47883193a4331cb683ba237b38b49343031a57d1418885a1583c0daa61a5c9"
+  },
+  {
+    "nonce": 674,
+    "coordinate": [
+      2,
+      0,
+      3
+    ],
+    "event": "b5855c08907d42c0d6f39d3a9c9e00ec1b28bcd0b5250b0f4acb005b152ec98d",
+    "ticket": "6c80f267d656fd06c50dd8b4a31b61c1931d857d6d33e8a62125cd9addb23580",
+    "target_passes": false,
+    "witness_sha256": "8a669b42cd341509149833287c8a65b4e2ef8eb62fb2977e12d64854dfe4e53a"
+  },
+  {
+    "nonce": 675,
+    "coordinate": [
+      6,
+      3,
+      3
+    ],
+    "event": "dc426e5f538b5e7ef844ac9f587f260c7996051c85884c68d89fb23197478126",
+    "ticket": "b19bb7c8a1349d6961eb552490ec452291d7990cbe0c1f91b727975f7286d66d",
+    "target_passes": false,
+    "witness_sha256": "8e8703a2ac1f60c16a1d8bc14503bb541a03f9c58bd5fdc870e484e56ac296a2"
+  },
+  {
+    "nonce": 676,
+    "coordinate": [
+      2,
+      4,
+      7
+    ],
+    "event": "85e1601facd4f1721d3a041b70a464b4154961f326cf82b6be4d5df27ab9a40d",
+    "ticket": "c7b806ab1630cdc5ce54630b643601edc559b660cf07babe37db75582b9672c3",
+    "target_passes": false,
+    "witness_sha256": "cdebf5b70cef0a37598d6bcd980d090980c5fc16e091aec338abded22159831a"
+  },
+  {
+    "nonce": 677,
+    "coordinate": [
+      6,
+      4,
+      0
+    ],
+    "event": "167f01680182455129267a5e3443987d7067d5a8e997f1d97ee505560bbe70ed",
+    "ticket": "f1dcfe5b644346807595c058fd81ae8270dc138ca7ad5bb72ecf8271d59017ab",
+    "target_passes": false,
+    "witness_sha256": "52611bd838af292057608ed82fd4f61fb2eab7ece2689da11027caa97d3c081c"
+  },
+  {
+    "nonce": 678,
+    "coordinate": [
+      7,
+      4,
+      1
+    ],
+    "event": "0bf1afd40f73c5b04fee004a50ae728f4d81ec09cf8cebe15f64937349809982",
+    "ticket": "e6e053b14ff4ef31d0ffb366b8c722460c26c4499f871ea23225cf797768f5c7",
+    "target_passes": false,
+    "witness_sha256": "4d0c7f2642913cb27efa6f5b6b8ff64932a2ccdc464886984aea55342a75aa96"
+  },
+  {
+    "nonce": 679,
+    "coordinate": [
+      3,
+      2,
+      6
+    ],
+    "event": "9fc122e190d078b9070ac24d67becb7577d6e22f00629315aab72b7ee1653c0c",
+    "ticket": "b3e6f0e75bbd22a03f6fdb5e1a92863c08a82cf4402f5a481a4479d03970962f",
+    "target_passes": false,
+    "witness_sha256": "2a6ccc412b39e53f7f954662b14d9c385e733cbb26aee7221500b8df59257c14"
+  },
+  {
+    "nonce": 680,
+    "coordinate": [
+      6,
+      7,
+      7
+    ],
+    "event": "f6a677d2f16c7126773e57d58f33b70eb749cf5efe851b2fc886671f63bda2e8",
+    "ticket": "ac75286960ce585a786044114614cafdb3202d525c3c00ad92a16d3579e8f33a",
+    "target_passes": false,
+    "witness_sha256": "d16e40214d975331d633588fca8cd75f413676f3ae129ce884e93b375e79fcb4"
+  },
+  {
+    "nonce": 681,
+    "coordinate": [
+      6,
+      7,
+      1
+    ],
+    "event": "b9a771827e4f3b9d2bfaf4e6c6c22feb7f47db2ccd7d2a4e1d92433db0c7c355",
+    "ticket": "b593e37e17c24689f5533b09083136a46e48f1dd23f218404a9f9d6905715a2e",
+    "target_passes": false,
+    "witness_sha256": "d0426a74267db6760782921be62f69a7feefb7456ef0e1c92173c2396e921c7f"
+  },
+  {
+    "nonce": 682,
+    "coordinate": [
+      6,
+      6,
+      0
+    ],
+    "event": "40910f63d733db6a05d77ede2680a22e92df24b053e69565a2b88ceb252763a1",
+    "ticket": "5cd89192d90469c6ef8bc34bd94dfdd67876e22cdd1b948585f9c62ed182ec79",
+    "target_passes": false,
+    "witness_sha256": "0ce75c48cd1ea0040cd902e1034ce391e3116732b47629a34d136a10f3fed3d9"
+  },
+  {
+    "nonce": 683,
+    "coordinate": [
+      0,
+      4,
+      7
+    ],
+    "event": "1958f552409f6ad73a494d40eb0e42609bc2c1b51ecb97597da3d59c8e217481",
+    "ticket": "80a65016fb47948e10aed795d04dfad56360264a1a9563469d2da6d1f69b9b7c",
+    "target_passes": false,
+    "witness_sha256": "e28e89601d984ff108750f02d2a16aedf71aeefc3d29a307bd3fd205e4d22825"
+  },
+  {
+    "nonce": 684,
+    "coordinate": [
+      7,
+      7,
+      1
+    ],
+    "event": "ce8b9893ff33e05c00ae67216c0a198a30bbaa25b58ef0b1a0b0a4624e168fb9",
+    "ticket": "e8e50b95d5ab18e748ad349e06dcfdddaf43257d5cdf741ee2de3cf84163da41",
+    "target_passes": false,
+    "witness_sha256": "bb0cdce979f93435304388f8f2133bb109b5e5a7483de0cdb971565c6e5f7484"
+  },
+  {
+    "nonce": 685,
+    "coordinate": [
+      1,
+      5,
+      3
+    ],
+    "event": "b558c6d4036136a1c9d70faab904a50fbc6bbeed80815acf43998f328eb6adcf",
+    "ticket": "dbfdfe361be7b3c4d718f15c614547e9c52c258dcf11fd0b690e457891a940a3",
+    "target_passes": false,
+    "witness_sha256": "cf64ec5a4a3d3a33f684c4806e487fb5657fb96c7163fffd67c0af2e18936b4b"
+  },
+  {
+    "nonce": 686,
+    "coordinate": [
+      1,
+      2,
+      4
+    ],
+    "event": "3d78f4e85d9c8d0d31509810654e7b077882ad90d3550d4a7a2269a2d4a19c52",
+    "ticket": "5efabbbb096fa96072785da4721264e87dcd08533608f6d27841a414d7a6bae4",
+    "target_passes": false,
+    "witness_sha256": "2fa05558a9a527a2cb2098932d4c2c8f2e31bbf6f9461f42941a3d6e78b60a8f"
+  },
+  {
+    "nonce": 687,
+    "coordinate": [
+      3,
+      4,
+      2
+    ],
+    "event": "5e66881b14a21666480f4612bd7cb4aefc3efcae101d76a14261413e152a2099",
+    "ticket": "5644ef5695a03f2a22f0425d624b6adbf3ac5cbfdd735465d84fb34238e84cc1",
+    "target_passes": false,
+    "witness_sha256": "cfab381540005b0658bddf0d849faeab32eae783f041e63a8977d20252efbe0a"
+  },
+  {
+    "nonce": 688,
+    "coordinate": [
+      0,
+      0,
+      6
+    ],
+    "event": "3a9a22bd9d626e4c4a22457a2815a8eee3c3ad506f6f971101e7e39015e47333",
+    "ticket": "5f266b9f8e119139ef1ac3d12ee3b7616625589af27561c14fa06b8c8013096d",
+    "target_passes": false,
+    "witness_sha256": "510e101c390c4ee2e2f79288f81cedd5bba02220c24effaea9d509153769c83a"
+  },
+  {
+    "nonce": 689,
+    "coordinate": [
+      6,
+      4,
+      2
+    ],
+    "event": "4c5945d5eb7c6991e03299227b5f98c7d0d4f400faf7e200cc901039e5bb27a8",
+    "ticket": "194822d0701a42cffcf54041c8a637d5e1f6358a682d55d46f76b1c6b5be7065",
+    "target_passes": false,
+    "witness_sha256": "802be4c72f720b86e2c99523c815e146d576e800f2566f0ff6498b4eb69ae8a9"
+  },
+  {
+    "nonce": 690,
+    "coordinate": [
+      0,
+      1,
+      4
+    ],
+    "event": "38b2719e0a55e9ee27263e9ab93cc47ae4ed164e4260912a851b4aab3ec79d6a",
+    "ticket": "f4716dd868d1c5e405a7553265c78aa0baae354ce4217b15dce035cc9d601992",
+    "target_passes": false,
+    "witness_sha256": "20806f3291a0b3b2c306245d6d8f0df5984043fa653bd408ad976a515875a12f"
+  },
+  {
+    "nonce": 691,
+    "coordinate": [
+      1,
+      1,
+      2
+    ],
+    "event": "0e8b480eef3afb7470f79554461290ca7c6d8ea0a195f8c17de9d64141de955e",
+    "ticket": "99160afadf7289b8cc7b8a13833f0fd9ecba7d2c4f97c001a6ba96e7adab50b3",
+    "target_passes": false,
+    "witness_sha256": "7fb918ad78bf3691175cc0e124ee09b6b6d224705b3f0c696486d38254257c4a"
+  },
+  {
+    "nonce": 692,
+    "coordinate": [
+      2,
+      1,
+      4
+    ],
+    "event": "38fce213fe5e6bb8efc969ab8a79e99bfd7e1dc6ddfca3e53815c8d0c889197e",
+    "ticket": "e6564c4d5097cea397c3bd6096b20c43dfd2ae9ed3a4729ffb84a7627023a5cf",
+    "target_passes": false,
+    "witness_sha256": "fcfdff1e29f04fd859b7f781ae0945a9903f1339a4a4ccf42a9b0837c0122e2d"
+  },
+  {
+    "nonce": 693,
+    "coordinate": [
+      2,
+      6,
+      4
+    ],
+    "event": "10d81a42fd3a724a41692aa2ec075b5905fee8d002c146a204115d706650d2ad",
+    "ticket": "b9ec6624f6aef105ec739a75a4602c65cc51913de55004e9c081db74ab68c84f",
+    "target_passes": false,
+    "witness_sha256": "a643c48febd3e9d59a58d1e3ef6aae63876f3de17ae8ddb58a84f9a92aab6ae4"
+  },
+  {
+    "nonce": 694,
+    "coordinate": [
+      1,
+      3,
+      3
+    ],
+    "event": "9f549bed561327bc696fde07e4836a61e250cd9d0dade082706eb6dd0f98d2c5",
+    "ticket": "d9e40dc329e180863f6e5647659007cf04264f323a4fe09d4ff540ff0f668321",
+    "target_passes": false,
+    "witness_sha256": "6a8e6baed778dd169c5cf8c6236216eae86feb44d508773c4c4542fd8a77c952"
+  },
+  {
+    "nonce": 695,
+    "coordinate": [
+      4,
+      7,
+      6
+    ],
+    "event": "7dbaa70dbd55311dd612f365eb270d1c4dbd3e1fb2614f663f59e095818fb65e",
+    "ticket": "0e3c9b5ff22790aa055751e64855f974623113f3ff748326982f9b309e46bbb0",
+    "target_passes": false,
+    "witness_sha256": "e49d978154e236da8501bad07bf0a3d6694e81da72fbb2d0d218e59e461483ca"
+  },
+  {
+    "nonce": 696,
+    "coordinate": [
+      1,
+      0,
+      6
+    ],
+    "event": "bbc8f1a8604632a306d4691c417420f63384a5cf4016dec095f9a7b15acea3a2",
+    "ticket": "b5314e573e07a9b3e479dd1692ad94b3c36cf1ad4d7ca195b1776c349254dbd1",
+    "target_passes": false,
+    "witness_sha256": "9142210e496aa34800f57c417b8ba67c08e88dcda47ad8a6506b9faa59949d2d"
+  },
+  {
+    "nonce": 697,
+    "coordinate": [
+      6,
+      3,
+      7
+    ],
+    "event": "ae5e2b888c7727492a8428cab85fc9ad04ba35dc2e808590b4d261cc79645712",
+    "ticket": "657df02e3ea665945f02eba2683f9190fbd14f2f1ff8a9529e22ce488f891b18",
+    "target_passes": false,
+    "witness_sha256": "18d886f7b2f97523b7ca95f8136e32937409bf6b806a5b2abefb624530642b33"
+  },
+  {
+    "nonce": 698,
+    "coordinate": [
+      1,
+      2,
+      7
+    ],
+    "event": "4156d9b641176c97d0152bdf204f92719cccfeef8843b0710fc731890a698b19",
+    "ticket": "8b75cfe13484e87e1e0ef99d5ac84a8c9a1b6d9451db02a974f0b7b77a453d1e",
+    "target_passes": false,
+    "witness_sha256": "6191d84a1f10f3513d1aee80286dd9a2cac9518ec718415c36dd4f52aaa005c8"
+  },
+  {
+    "nonce": 699,
+    "coordinate": [
+      2,
+      0,
+      0
+    ],
+    "event": "7c51dcd49f610f5fb9c095d5afd142ed020231eacd64f02bde656820672a3a78",
+    "ticket": "27d76c01f833f8c708f288602266d63505c3a8580537f2fd9296fb75f06df2ba",
+    "target_passes": false,
+    "witness_sha256": "1ca36e347ab408c9fde3b504d4c0a2510878a3b8538720245b66f316aeab6551"
+  },
+  {
+    "nonce": 700,
+    "coordinate": [
+      4,
+      0,
+      4
+    ],
+    "event": "43e7eb096d9d70283d50d2e0012d75aab648b217611e72d425e3dc6e4dba1157",
+    "ticket": "f95d7692cfded4c13b831b246fe7aeb06fdb74d83b8ab0a0bc91176134ec399f",
+    "target_passes": false,
+    "witness_sha256": "248a54108a92d6baba2fd3ce744a63eb2f681a8880a79e586a73fd79cf4799ff"
+  },
+  {
+    "nonce": 701,
+    "coordinate": [
+      6,
+      7,
+      2
+    ],
+    "event": "3b4762feebd8655ad49a604248a8be2b27713c623ddc7610b8775bb9d8698147",
+    "ticket": "3209a3b8a0e39bf42b644d96e1dbd597362c11d20761988210353d1ba68f5e3a",
+    "target_passes": false,
+    "witness_sha256": "cf8c85727b3c73bb06714f64d2991684b08875b73194d04b666e2324b4afc57c"
+  },
+  {
+    "nonce": 702,
+    "coordinate": [
+      6,
+      4,
+      3
+    ],
+    "event": "cc6ff6a5c62fadf9ea33e30537f6a4ff986f6b3448e5946f67bc671136cd4e96",
+    "ticket": "494a4f95cb11f931b76bd7976b2042a2be1c34b5e1431f74ee434069f1686653",
+    "target_passes": false,
+    "witness_sha256": "30e4530fd7e2fa718aefeb1de16388f45b0845b73c86ed17256b8b4075ad8832"
+  },
+  {
+    "nonce": 703,
+    "coordinate": [
+      5,
+      1,
+      2
+    ],
+    "event": "754bd6bfda344a1a35470d3d04c99e2c10fa78f1dd0a90235615083f9229483a",
+    "ticket": "e4a5709d12c34fab81f9be31c7aa890ec0032884afbbd24dbb34c85e0e29d56e",
+    "target_passes": false,
+    "witness_sha256": "6e32196a99c3a0714ced53bc10898be17e1639134ee712ece9bbcc373299eeb3"
+  },
+  {
+    "nonce": 704,
+    "coordinate": [
+      7,
+      0,
+      2
+    ],
+    "event": "31f62d8f8b137e57cecddfd46f86fc1b96b3f13c2cba3987890da9ce6e8e82f3",
+    "ticket": "84ed28e3d21b23f671e823f28eee48bf517f99fe59cbff7cad3c49dc7c4d9f89",
+    "target_passes": false,
+    "witness_sha256": "398bbc47596f5d567610d5799ef396dfad44f0d9052bd56e816ee54296cfdc7d"
+  },
+  {
+    "nonce": 705,
+    "coordinate": [
+      6,
+      5,
+      1
+    ],
+    "event": "3adb6afc1cb4e3c0a2571d02f97f234b8fa9b1c28698562538c7fd8837cdde6e",
+    "ticket": "c4c442f3bc6e62a15d68779a6b6293e7e8cb40692a58e6f1a9099c2aada1d617",
+    "target_passes": false,
+    "witness_sha256": "98528061390320bb615bd7906245ce48ff522ee32a01c062b471d453b5433a4a"
+  },
+  {
+    "nonce": 706,
+    "coordinate": [
+      7,
+      6,
+      1
+    ],
+    "event": "f9b573f2deca33dc80199448022ea54289c2afe3264e5d3aab39aa5cc802c8c4",
+    "ticket": "3a70ec06356b3ff08e8b0d08e2c6d3167258ba600d5aabbd83d1f3c63f9d6a3b",
+    "target_passes": false,
+    "witness_sha256": "b65ee99c1bc8b52c35dcfaa5ebf864ddfc8061b1d4c58b511708f1460178c815"
+  },
+  {
+    "nonce": 707,
+    "coordinate": [
+      6,
+      5,
+      4
+    ],
+    "event": "c2f95592b320ec54e3199082c3dad982d34f3b13d41da6dc74749c697fa55171",
+    "ticket": "05337b6289a14ce20a4fc3456c72d52b5767ab4412bc2e21588dd2baffa4ba3a",
+    "target_passes": false,
+    "witness_sha256": "0fc48c6697c2f1379e6ab759cea6508e288a53e0e2f73cba5f5764e4ddfac5bc"
+  },
+  {
+    "nonce": 708,
+    "coordinate": [
+      4,
+      6,
+      2
+    ],
+    "event": "7d2ff54056d1b8afda4b25e16c0d928c4365ef80c97a05dd91771e1aeef99dfe",
+    "ticket": "71b89db43470132e4c30e5b8b85af4bde8e97d5f1f0801ea8d7df05e9f69180b",
+    "target_passes": false,
+    "witness_sha256": "00cb9931337f1b7f411e16a0839ecc67a64c4221762ab357eb0e2539c06e0e76"
+  },
+  {
+    "nonce": 709,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "event": "5b5c3ac732d9b499cf4af724a94400309fd4ef75fd81386d365b7dd40032d94b",
+    "ticket": "6fae9916162fc5d06cdcd7930fceaa27dd4d3a80728b9019e4c06dbb44ba0d31",
+    "target_passes": false,
+    "witness_sha256": "be25f02581a077ddea731f21395d2ab99bbc2ff6e2570b4580701b51410f5175"
+  },
+  {
+    "nonce": 710,
+    "coordinate": [
+      7,
+      5,
+      7
+    ],
+    "event": "7275e40f4bb560c8a8f6717455f8f777525fc81a87abb5cfbcf9734678591217",
+    "ticket": "f822871a14b2bf45cc73732d913c28f5a623dd8b50d43b7bdb7c02c5885508a0",
+    "target_passes": false,
+    "witness_sha256": "508d9bee35a6a527e098932b52c4dc80f4fe7f7a2b4345e7ae4e7ce79615747c"
+  },
+  {
+    "nonce": 711,
+    "coordinate": [
+      6,
+      5,
+      2
+    ],
+    "event": "446f2ed9b242d18fd3b5a68504671059d27711d86dab1873ded8c6e90351b305",
+    "ticket": "6eab5de588312d549de3e07f1a3afb875c5859cf95ed2df7f9ee109e9aef3dd4",
+    "target_passes": false,
+    "witness_sha256": "3e844199c1c11f3ed848c86031a37576e37d9435231553acbc51c05ab75f61ae"
+  },
+  {
+    "nonce": 712,
+    "coordinate": [
+      7,
+      4,
+      4
+    ],
+    "event": "40a5f8334e00e8449825601f313e1c9ac7486f964d4cf689fd747b7846192450",
+    "ticket": "bed0f8cb230dec94efa4a4989cb76609544176739c30d09ca7378e946ed0ce6a",
+    "target_passes": false,
+    "witness_sha256": "7d0c71d348690a4d5c10b449797bd220230ba12248c7385b67cbc0dcb4413d65"
+  },
+  {
+    "nonce": 713,
+    "coordinate": [
+      5,
+      1,
+      0
+    ],
+    "event": "7629dba8787d1a0d41870db5425aa24e191324e673e2235b495536e8d1cf50e5",
+    "ticket": "666f4d92c1a86254425bb734559b19012a9e0cd5ac31d30350bd8932754e4bae",
+    "target_passes": false,
+    "witness_sha256": "f186a9f5b56965909c46ddb38ddd9b291295cdff5db806df143ef31fa35b7c27"
+  },
+  {
+    "nonce": 714,
+    "coordinate": [
+      7,
+      7,
+      6
+    ],
+    "event": "5c6591d1d53c45ad9e37b30c5954c08c67e854016d07379fa9444bf24cfc5ef1",
+    "ticket": "46b2381f61660cb0853b63cfa787b2170b226edf33bceab25792cfa1b8ab0ad7",
+    "target_passes": false,
+    "witness_sha256": "b76180b662499c9c1404c8e16a6f7169a31f29ebaa9be64d269bc69b6ca70c80"
+  },
+  {
+    "nonce": 715,
+    "coordinate": [
+      0,
+      0,
+      2
+    ],
+    "event": "72be22b1cd9bb37c5535d5745f752cc6097a869dcf943cea093d27c6c90b8f09",
+    "ticket": "91d9b8f1df77440a7858fdb3c9dacfe378d444bf0cfa72db0d7f5b920411dfdd",
+    "target_passes": false,
+    "witness_sha256": "c8e14f51207b7d845576c8d7dc3d8663a72510bd8f6f9b5217faced447f1a233"
+  },
+  {
+    "nonce": 716,
+    "coordinate": [
+      7,
+      0,
+      7
+    ],
+    "event": "3404d352b1d467383fd0ac59fa084339d97035c7067dab9f9bc77c78d5784e63",
+    "ticket": "27cf1d856806f7bd3dc7a8b4e4be8b019089501c1efa1e682b2f40ff5fc1193a",
+    "target_passes": false,
+    "witness_sha256": "2ef14d34c18861e913c322ce0b289052a17af6a4c2982e4c0e7edd227be90248"
+  },
+  {
+    "nonce": 717,
+    "coordinate": [
+      5,
+      5,
+      4
+    ],
+    "event": "73a3e045a5f05e16eab794dd43cb9a121c932708a47babc9839937749b16b866",
+    "ticket": "89598e317925b442dd783eaa9d7a9e01ef37f044877602b5f4e1da3b6f418abf",
+    "target_passes": false,
+    "witness_sha256": "5b4a8b0c2739175fcf7324dc367d691a4cb856ebed8ffc7faafd3e0a8df1b25c"
+  },
+  {
+    "nonce": 718,
+    "coordinate": [
+      3,
+      5,
+      5
+    ],
+    "event": "8349d12c671f3529d196ed2ec81e40f280c2de222a4ab58db1daae12e7930b4c",
+    "ticket": "d53a16cc5b5a2e33b2c127c3ff65d17ad5a583e92c94d595324b316a2917b682",
+    "target_passes": false,
+    "witness_sha256": "df82885dc8edfe74c8af8a992335c7670375596bf78abd6d40be6a30aa0f4df3"
+  },
+  {
+    "nonce": 719,
+    "coordinate": [
+      7,
+      0,
+      2
+    ],
+    "event": "81455c7cbfdcde499872309d6a7ea89d2ef177cd901fc0d31ec2f1caed3133b1",
+    "ticket": "34d4044c7636de59aa16069941765cc3e4f78d8bf125f4a6055d74a81d50e0e3",
+    "target_passes": false,
+    "witness_sha256": "fb97196d1f1d72d32c870fb011db02b4910db244ba50f1c15259eac705d35934"
+  },
+  {
+    "nonce": 720,
+    "coordinate": [
+      7,
+      1,
+      0
+    ],
+    "event": "6d7a0ca412dcbf7fa4a894988dcc2f94e147efe99d20985705956c4140d70d5e",
+    "ticket": "da42204696125ca3a12e643f543b1857912a4bc44c1046685137a34e06767bd0",
+    "target_passes": false,
+    "witness_sha256": "f9b71785c1a0907a86adb41cd77e4626a9d818239dbc1f75629d04e56f5f2357"
+  },
+  {
+    "nonce": 721,
+    "coordinate": [
+      1,
+      5,
+      5
+    ],
+    "event": "21a5a0b1f3ebaab9c61f628bb32ca662bc1418efee5e8cedfed87c14c611160a",
+    "ticket": "52892ef535318baac6bf645f52a990824d51f7e270a89f9b1470b79901f23d01",
+    "target_passes": false,
+    "witness_sha256": "5d6dc78dca59109d648538b53851a41db607ea1e9244609ac375636dcff30bfe"
+  },
+  {
+    "nonce": 722,
+    "coordinate": [
+      3,
+      4,
+      0
+    ],
+    "event": "66cb28a653e183c77790ccc2e1a84c056e84a419c447341da63dd4bd6c36d764",
+    "ticket": "182cb145656ae4a7abee328a6ac78488dee0ab34245cae74942e406a7823afb1",
+    "target_passes": false,
+    "witness_sha256": "ece5f1bffa14a4ce69ed1bf9298b6820a5cbfb84dd42ee7d4b5b44c6a47b6317"
+  },
+  {
+    "nonce": 723,
+    "coordinate": [
+      5,
+      2,
+      7
+    ],
+    "event": "674225a23b458481682f667a1f6c65ca322bc8bf176d9ad89122cd53f59e5a8c",
+    "ticket": "d891e46e03ef5d336d52b9d9911a224349d782e4f3ae57a3db725c849341d0c9",
+    "target_passes": false,
+    "witness_sha256": "d56ef58c22988b3c5e98ccc46c471eeffd4aa2210387474326be0aac9e6bf0da"
+  },
+  {
+    "nonce": 724,
+    "coordinate": [
+      5,
+      7,
+      0
+    ],
+    "event": "da04af2df70f0ea9344a3a079e02dee789e005aa4a0989791b4afec4cf130083",
+    "ticket": "5da6397fa963123d2720aa210d3781e2a939e6bbfd8c7cb6108a8d79cf2fd791",
+    "target_passes": false,
+    "witness_sha256": "8b2cf29c2a3a6ef898d3d7a09a9a221dc44ef6ca7f0eb0a4e10e7c6560c8240e"
+  },
+  {
+    "nonce": 725,
+    "coordinate": [
+      3,
+      5,
+      5
+    ],
+    "event": "4bc859e0fc1d5eb42501b385a3641558aab9c96e82b69b7ec9394b92a2c148a3",
+    "ticket": "c41b0315ba7eb2c0f152dc72afeb72a86ef046831184b0d8eafbfe6d54e9da30",
+    "target_passes": false,
+    "witness_sha256": "5f89fd366d463f73844abb729cb509d1d2d14ba75737395f0054fc2fe0b01c46"
+  },
+  {
+    "nonce": 726,
+    "coordinate": [
+      3,
+      4,
+      3
+    ],
+    "event": "cea0d81afbde4c88bb134448daa48808ee728d7a92b6212ab95034511a2f1d14",
+    "ticket": "ba5c88362a72ebd4fe4800682f9d8ec7a2506e0fe3a14860733b666800e0dd69",
+    "target_passes": false,
+    "witness_sha256": "da87b83e122fe61e7e0bde8ec0177b1cc3310246d2baa446c5abc404edfaf552"
+  },
+  {
+    "nonce": 727,
+    "coordinate": [
+      4,
+      3,
+      2
+    ],
+    "event": "0fb788ba579f441839ec803e33d8e7d950b0d319f8c8efdbc64027fce44cbfbb",
+    "ticket": "9dfd5b9d62c61771b5e108d9442ec9ee4d78862354c1196c416f5b4e7924a766",
+    "target_passes": false,
+    "witness_sha256": "e790fc1e1148699aeeb57f1c4c2912abe029f0d5353d18805a29075888f91d81"
+  },
+  {
+    "nonce": 728,
+    "coordinate": [
+      6,
+      5,
+      2
+    ],
+    "event": "6e1bba0efafb5eacc3a39672e4505b953f92ae425f8634de2204e3c7db2851a3",
+    "ticket": "29bb170381f01104cc11862004ec205ee8c473050180a0887706ea4503a0ffbb",
+    "target_passes": false,
+    "witness_sha256": "ddf4972f5a861f684e3e98505512751f98590bc7367c94b6d26de0bf57dc19bd"
+  },
+  {
+    "nonce": 729,
+    "coordinate": [
+      4,
+      5,
+      0
+    ],
+    "event": "1929188dd1b0aa18bc2e5ae529f2ea64f372511bbf05a0bd74e5b4848af3c6ab",
+    "ticket": "8d982e78fe0fc8ad4cc99af4e8bf0969159794f6f5e60fae16459725583a84e1",
+    "target_passes": false,
+    "witness_sha256": "4a9548697a23cfa2df97ceb5af1f4d390a3b034edfcad06ea937d9914b68a2ff"
+  },
+  {
+    "nonce": 730,
+    "coordinate": [
+      7,
+      3,
+      3
+    ],
+    "event": "2deceac108e7bea6657b493c68f90f1d57f5cd571bab17e14c7ab92efb511990",
+    "ticket": "8e54a5741ebbef6f2e25cb36a65445003e61753de08e81c5f39970aed9312965",
+    "target_passes": false,
+    "witness_sha256": "7ef5329c79ac772e190ad8ce7b583f00764a9d181423b4aa3848f6fd9e6647a9"
+  },
+  {
+    "nonce": 731,
+    "coordinate": [
+      2,
+      5,
+      3
+    ],
+    "event": "da49af8c03aa63bef8a874b1f3c057549350f0a7acec7a74c5681066e912bccc",
+    "ticket": "464e8ee46f919777bd15d535e9e98036d3a23b19f49077d87aa1d738f4a1fd93",
+    "target_passes": false,
+    "witness_sha256": "cc59cb7382eacc40bffce03088fe350f1c97f8012ad5cb6dcb1b03e6e9f3b906"
+  },
+  {
+    "nonce": 732,
+    "coordinate": [
+      2,
+      2,
+      7
+    ],
+    "event": "357a3d8ccf75a59cb17b5a48b8c627f58664bbfa52853509e520fc988df3ec75",
+    "ticket": "06e4c149c7e424dffcef5421e6e7e3f52e27d1983e42dc61b897b6a2af2d0f63",
+    "target_passes": false,
+    "witness_sha256": "29586ea44737daea1e2b99f1e297da2dcc9a986acf082d1b615362c52f16e5e8"
+  },
+  {
+    "nonce": 733,
+    "coordinate": [
+      2,
+      7,
+      1
+    ],
+    "event": "6d3710623ec04dba36fc9078617814d3d0b80051031094e10bb949e066a9a8c4",
+    "ticket": "cbb35af5d8ab075627d70305f0a7c1144a1177078ae89760ff334b7b7c7064dc",
+    "target_passes": false,
+    "witness_sha256": "20c65deef8424ade4d97ccb30872404a4f5a2982f7e706c6e3983eb0f7d89141"
+  },
+  {
+    "nonce": 734,
+    "coordinate": [
+      2,
+      1,
+      2
+    ],
+    "event": "ee2faa27753c0701bce69178e839deaee1445f0006c42b94869a4cc296a44ba2",
+    "ticket": "f0c555c129ed638c1790c49425ee71665037f1e93886ca9850000697675c735a",
+    "target_passes": false,
+    "witness_sha256": "92ed5a0d4d1c35dd4563444a85a9e349654df0a72d869acc39eadbb2286bab12"
+  },
+  {
+    "nonce": 735,
+    "coordinate": [
+      3,
+      4,
+      4
+    ],
+    "event": "b03abeaaba116e2c42717572db518fe7f41d80a7c2cac488d0dcefcb55851430",
+    "ticket": "8aabfec3e6f25033c998f2e1aafa06f6521003b55dd2df7460254d07c932238f",
+    "target_passes": false,
+    "witness_sha256": "9e8da8f756dfbe03ac1a6dd485e4862a136846afc735c09114f8d1982fab87a4"
+  },
+  {
+    "nonce": 736,
+    "coordinate": [
+      1,
+      3,
+      7
+    ],
+    "event": "9283d23f0866524618ff4bc49de489ecca9ae2ca07a585b5cac0c8486be837c1",
+    "ticket": "2ce2a2ec1136539b94be4f3bfcb99a92bc180a9009e29b1f7fcc0ea4d3cd0e7e",
+    "target_passes": false,
+    "witness_sha256": "f714ba598ade0d6c7adc11e1dfc774c9f29d01299c2e077585e7f09668fb6771"
+  },
+  {
+    "nonce": 737,
+    "coordinate": [
+      2,
+      2,
+      3
+    ],
+    "event": "7279c8f9c7062bc8fd13e2bc6afd1c3af1ca4fceb4b0d517bf8f0d634b507369",
+    "ticket": "3aeeb2cb9fbb3ac0c2488d14fb6f008b01551f6b5d8fb1cac6d38af5c0722040",
+    "target_passes": false,
+    "witness_sha256": "223bd96ad8c816c6fa8c5340f409e6205012b1e986f078774e7d56179dc2d783"
+  },
+  {
+    "nonce": 738,
+    "coordinate": [
+      2,
+      2,
+      1
+    ],
+    "event": "8036ac8ff49f8b08df3f2a6e53fb373ceb2e86fb93d2ba0d953e8d5b830cbbb3",
+    "ticket": "65bd35e2d53c87538c155afb80497436f9e77e04c0c077bc5a87b07b468b772e",
+    "target_passes": false,
+    "witness_sha256": "b5cb71dff4f6118c5bc9d9af63d693d3bfe18d9c88b370a189c1e852e0498e17"
+  },
+  {
+    "nonce": 739,
+    "coordinate": [
+      2,
+      0,
+      7
+    ],
+    "event": "61ab2bc4541aea1b0ef15a8551b00ccace1dd859f106a2ccea755899546d6780",
+    "ticket": "37f5fe3f1c645e9750abe28c93721ed922110fa72302164b6952e132f7077e76",
+    "target_passes": false,
+    "witness_sha256": "613f1a6db3d6c19ad25f1f274ef84ef086dd338742b9f5e86f66e8e99d1a8626"
+  },
+  {
+    "nonce": 740,
+    "coordinate": [
+      5,
+      0,
+      5
+    ],
+    "event": "40cef67df6ad75def6b62f31e0090935b79ae62d0b7b43da5f0c44cc45eaafd6",
+    "ticket": "6833d7d4243f9775a1fc2f39c89710ac3fd5c9d35a2b02fbaaf63d2743479987",
+    "target_passes": false,
+    "witness_sha256": "a936116b5d320b73c5615b3f7262c661af0c87b87a26684d13f2566d7d126b8a"
+  },
+  {
+    "nonce": 741,
+    "coordinate": [
+      3,
+      5,
+      1
+    ],
+    "event": "b64258d23740577cf29f49af983027cd86e86a726bb6e1b4e74c14465f2139e4",
+    "ticket": "8e7bd1339cd865b24afac8d17546020afe778323c8b25f9448a3de4bb31835f3",
+    "target_passes": false,
+    "witness_sha256": "c62019109e85b63d1854d7c672cdc0deaba76de3bc4f846e8598f1203574c600"
+  },
+  {
+    "nonce": 742,
+    "coordinate": [
+      0,
+      3,
+      0
+    ],
+    "event": "31bb39e87452adc09750e9cb9f4816e16c62823fde250bdd3931b32e3cb3235c",
+    "ticket": "554d47e8c463eed5d98591d36b210c7565871ab905054a1dd3dc544b4df300bc",
+    "target_passes": false,
+    "witness_sha256": "1cffe6aa61729156b748014ea5396101b8d8b3f74321debd73ff6d1187eb7297"
+  },
+  {
+    "nonce": 743,
+    "coordinate": [
+      3,
+      5,
+      5
+    ],
+    "event": "c3ff65d6a61a17c1f2d0e03fec2668a7f07764db55e6534cb5d36dd41cce2be2",
+    "ticket": "c69bcdf70ca20a75018f551f20f714decc907521e6f12928a01b9ff766450c80",
+    "target_passes": false,
+    "witness_sha256": "e9c99d4ca019ca248511e23bd2a5eba922e8a569dc67c3aced2adbdb7de76afb"
+  },
+  {
+    "nonce": 744,
+    "coordinate": [
+      7,
+      3,
+      1
+    ],
+    "event": "e114b7c2254eef5ca206965ae70156be28b34fe4e43067484e6e64efef9018a5",
+    "ticket": "04a9d0e53012efe432481ecb6c6253d192d0cdc4f1fb630dfb53863a424a8820",
+    "target_passes": false,
+    "witness_sha256": "82368cf542b98b482df3fbf066906396cb941908954eb17efb81e040e23c8792"
+  },
+  {
+    "nonce": 745,
+    "coordinate": [
+      5,
+      5,
+      5
+    ],
+    "event": "7cd4ccf195f305e861d3ec4f1e7a22e44e9c933a78996bbd35d11882a423f286",
+    "ticket": "40edb286f1f8b009682b26f5e0cfe25194dfeaf27a5fa13dc5e95108c4ad57d0",
+    "target_passes": false,
+    "witness_sha256": "51332aca3001a93d8b19645509d9b25cdecf8e7498ba62a9bbe25382df8df66d"
+  },
+  {
+    "nonce": 746,
+    "coordinate": [
+      3,
+      7,
+      0
+    ],
+    "event": "6444b9058697b1b836009966aec255511f6dd44d7d0c2efb582c63011262d727",
+    "ticket": "3291d33da2e2ed8e6ebb0816f0ac0da70658e14bbad023d917b273764ab15dc8",
+    "target_passes": false,
+    "witness_sha256": "3c3de6abaeb3584b13e1176c9bc1ada6a9a8dfee293192f6b0dc10c453ed6686"
+  },
+  {
+    "nonce": 747,
+    "coordinate": [
+      6,
+      3,
+      4
+    ],
+    "event": "f5968b145a1f71abfa8c04fdbad0935d8bc295c32cf0d3767af26209785fb3a1",
+    "ticket": "38f1d75edf78e78f1fe7ead514405e00aece9b2f0675de0606648df301de65ec",
+    "target_passes": false,
+    "witness_sha256": "1ee62add031d9b5b746ff1a999f7e47f8cc388ec4ca2eeaae8d18b11342d2f84"
+  },
+  {
+    "nonce": 748,
+    "coordinate": [
+      7,
+      0,
+      3
+    ],
+    "event": "c461da7a952e1734c8d5695a7e515eaa8d4805fb349beac4dc83eab0b1de56ad",
+    "ticket": "2e1030e62716e50f2ca1d8fbe9c6568af23b240255a7f081803a1450082e57e8",
+    "target_passes": false,
+    "witness_sha256": "6bfaeb78c1deb10e6d794bf214758c5841dcb39c94b508ae3441dedcec6360dd"
+  },
+  {
+    "nonce": 749,
+    "coordinate": [
+      5,
+      7,
+      2
+    ],
+    "event": "b10ed3f97d82c4e16cbeebbe013963071403faa40894fea87ace27e84aa22031",
+    "ticket": "178296d5bf85e8eb9a96e573a942344b9c60e1f975bf4754b42ed4c81b1ece56",
+    "target_passes": false,
+    "witness_sha256": "b6f51c7df531ca98adb1f29f0cb377c4563220a9519cceb4433253bf173c04da"
+  },
+  {
+    "nonce": 750,
+    "coordinate": [
+      0,
+      7,
+      4
+    ],
+    "event": "e2aaf3d5852cd659316cb990c6cbb55e4772016986cf9600fe2eab71d7dccfd4",
+    "ticket": "c55fd107b484e123e5341b309f0421c3048331b8ffaaba974c325028e3521ea8",
+    "target_passes": false,
+    "witness_sha256": "e86159843a99b44bbbcebe6e99529f26afb9c29bfae2c7bf1fed5596db47a5ba"
+  },
+  {
+    "nonce": 751,
+    "coordinate": [
+      1,
+      7,
+      1
+    ],
+    "event": "79e61ccbeb5ad851ca15d39b23427ed87192d487afc618145e7dfb25a6c6a241",
+    "ticket": "52c320f5f96077cc0b4be4fc2bb886a20ad2ca1f1fa8b6d479a8066d9f938c32",
+    "target_passes": false,
+    "witness_sha256": "02a90bb425b492df1303e708295140d77cfd33524615856fc46d211764ae44ae"
+  },
+  {
+    "nonce": 752,
+    "coordinate": [
+      5,
+      0,
+      7
+    ],
+    "event": "c5ed99b4f789461487be839171c5f797531acaecec15d6464d95ec0d1d2ac6b4",
+    "ticket": "e77950ef44a3bd8e14099f56b16a98fea8c4ce0b10e7d1d995bd6e7cc1cebdb8",
+    "target_passes": false,
+    "witness_sha256": "04cca1b4c3012ffcaa435271389d279569dcf84c55d58da8e9d136ff0af57aca"
+  },
+  {
+    "nonce": 753,
+    "coordinate": [
+      3,
+      5,
+      1
+    ],
+    "event": "0d92cd4efd52854375d87f63e53ff1bb4719a37a2de43e68023177ba0a33186b",
+    "ticket": "f0a1ede8451f98bcb81cc000d761a5819d1f16768af5db0a647534ab6391e0d8",
+    "target_passes": false,
+    "witness_sha256": "537e65ec2b893f5d1e6181b81746a44ee3f4a0fc474155abd952000f7aedf9b9"
+  },
+  {
+    "nonce": 754,
+    "coordinate": [
+      7,
+      7,
+      0
+    ],
+    "event": "9fb802d085cd60b538d77109137a11c52ed16849c473a1699d8fe9d7ee309358",
+    "ticket": "c38b895358afa0e3eae77be3e51b0c4c497e5ded374359f0558ee9a2d413e395",
+    "target_passes": false,
+    "witness_sha256": "50832e7f693fed5231293678ada71e61a25d6e4954fa583a730b50a5d2d1b326"
+  },
+  {
+    "nonce": 755,
+    "coordinate": [
+      0,
+      4,
+      0
+    ],
+    "event": "bd25c7b93952f742ef45ee3191425c65170ca10de6513dff9d4b3a01bc19a59e",
+    "ticket": "053aa493b51f966cec6a35779d5e6645ca185b8bd15909df6e014197e0980a13",
+    "target_passes": false,
+    "witness_sha256": "1657e9a989d18ad927b4274a954e5df9149fb84b88a1f400fd2e780a36aa655d"
+  },
+  {
+    "nonce": 756,
+    "coordinate": [
+      6,
+      1,
+      6
+    ],
+    "event": "9b299f383209e6505cb0b821df3ed43712a6a60749814f84fe37558d1f968813",
+    "ticket": "8d0c249dc12c00f0a625b2c54e41e1e897c1e992c06e8c861bc127d9b1d10c74",
+    "target_passes": false,
+    "witness_sha256": "fab064a8623d9c8aae1d7496e0c1d2f02daec0e603fbbc684c72ae1b11bb10d9"
+  },
+  {
+    "nonce": 757,
+    "coordinate": [
+      2,
+      3,
+      5
+    ],
+    "event": "3aa5bd43a64375538a092db67c28e15b9f942b2adb81f7ae1ce4c3700d4054b0",
+    "ticket": "9da47370a8ab9437eb0c04ad8f84b5a93109842c661e01813d7aca7706849286",
+    "target_passes": false,
+    "witness_sha256": "47f92584184e4459a267977884c46ca9bcc1d3cf339e81abaf23d77a8038961b"
+  },
+  {
+    "nonce": 758,
+    "coordinate": [
+      3,
+      2,
+      3
+    ],
+    "event": "b1c0ebbf20985aaf0be7572557474a64e40c1ad32cc1115122c57ccc074a841b",
+    "ticket": "73a3e7257de5cfc4afecb7cf3ad425017714fe814471e75e19ebadcc9c404b14",
+    "target_passes": false,
+    "witness_sha256": "f7ccc8a34dd12a54f22fd8b60cc80cf64c773e759fa2d5dca5d31ea246990586"
+  },
+  {
+    "nonce": 759,
+    "coordinate": [
+      0,
+      1,
+      5
+    ],
+    "event": "e1c2b891749ceb83bc101da9249910dbd2c5809701b9d42ca0888aa012eb5c84",
+    "ticket": "e45b3c8b065839e435faad63e4c5d73acc148fa4323af2f6da2f433c9dd4c4c3",
+    "target_passes": false,
+    "witness_sha256": "8881b3996da31dfb3e53ad73bc3053cd880c39b0c5b82ababcf797f94f898e1c"
+  },
+  {
+    "nonce": 760,
+    "coordinate": [
+      0,
+      7,
+      3
+    ],
+    "event": "57757d7770263aa9bda63fa33a83f5cfb5ca4f2b6e296bcc1e36a333440db22c",
+    "ticket": "b8d2499fe5c3e5d26b2f623d693b7926b9328685a6fe51936a3031067b65d5d9",
+    "target_passes": false,
+    "witness_sha256": "35e3d2acb380026d21775fb0facd692f6f559a2c84027e7af932f53dd4d80839"
+  },
+  {
+    "nonce": 761,
+    "coordinate": [
+      6,
+      2,
+      0
+    ],
+    "event": "2e232f027a25d1e9041918c6afdc750767ff6024079ef4593096cb14e662f287",
+    "ticket": "2d0e42a6d9eeca0e06eb9a0a5890d271b93830c85237815e3c430f7cd8432cba",
+    "target_passes": false,
+    "witness_sha256": "eb83fe9c9ea567c5445e10d9fe26de99ed8df152dc2ca06a671e4f79bc0723c1"
+  },
+  {
+    "nonce": 762,
+    "coordinate": [
+      2,
+      2,
+      6
+    ],
+    "event": "23e92f4169dceacf1815843d1ea0b88363264886070dd39b74be8922d6fd4b8d",
+    "ticket": "b5985fbd46c86917e43118616aa0efc437301f5e964b4d5c8808c761d7694da3",
+    "target_passes": false,
+    "witness_sha256": "57e529036e5248c9f510eb8c9badeb21311dd300a3aa545fe5aede171c8195c8"
+  },
+  {
+    "nonce": 763,
+    "coordinate": [
+      2,
+      5,
+      6
+    ],
+    "event": "7d990a56eebe3519a9a1338a983fbe8c0f3229653d8c0f7a1eff64d78993ad23",
+    "ticket": "85788a05022a299fce6c34595c0bd76725a39de024f234164824ac62130ab201",
+    "target_passes": false,
+    "witness_sha256": "ce96143fde31fff4c037afd3ecb1d99eaae11a7120d76f0da850944ce9d80553"
+  },
+  {
+    "nonce": 764,
+    "coordinate": [
+      6,
+      4,
+      6
+    ],
+    "event": "319a8cdea7606c8a72baaf12bc274637f62b419b0447f9d7ad22988950855897",
+    "ticket": "0230c3bf21528ffd30970e42a6b15292c30cda82b0167c5004e0db8a6e1a615a",
+    "target_passes": true,
+    "witness_sha256": "8e0eb43c450468f1a59282bdd4faf4cf9822a2558abd5a622e98d98674b88b28"
+  },
+  {
+    "nonce": 765,
+    "coordinate": [
+      4,
+      5,
+      0
+    ],
+    "event": "1172e960cf3a0291483a5ffed0d81156b6012cb8bd67b99b43ad690842b7a6c1",
+    "ticket": "04e317c1fc14de8d150e3a62b6aebb9edae6c19d0736c91edf7317526afb1032",
+    "target_passes": false,
+    "witness_sha256": "66d80b13d8a239c3590d93eaeea43ba2d604a223a1046f0cecc78f2a095ba502"
+  },
+  {
+    "nonce": 766,
+    "coordinate": [
+      2,
+      5,
+      3
+    ],
+    "event": "597961061b10c255fcfb1533c29592fd90b2f76add736a112ea353b30bda7f15",
+    "ticket": "5ef358ca31089874ba44d2757593ff4b58e9a53009d83c25082b82585033c746",
+    "target_passes": false,
+    "witness_sha256": "1fedfab509440abd62eb7bb0c0be21225fe7b2e63a148c134e5d3c613cad8e12"
+  },
+  {
+    "nonce": 767,
+    "coordinate": [
+      4,
+      5,
+      5
+    ],
+    "event": "4f1a185a5e89a39b259d7ee02b0fa02c8c784126b95965da597d38d8cd2e19f1",
+    "ticket": "de0c54f58fafffe02a5dc325b35d86b26ffc684c2e627b5193b07bbdd12f1bf8",
+    "target_passes": false,
+    "witness_sha256": "1c77261679fad8526a4e36782a292e47e1e7cabdd841bd0c68a498171f8eb289"
+  },
+  {
+    "nonce": 768,
+    "coordinate": [
+      7,
+      0,
+      4
+    ],
+    "event": "f07013d1546f2a0a92e9d82b3ff98382695064ef110252d23ba98915ce84bbd1",
+    "ticket": "38281abcbb08647ba71c9d1fd1f48d8895bb2f21c723837a78b005a7b593b286",
+    "target_passes": false,
+    "witness_sha256": "174538d4fab5399dc71f0fc60fea504f09eaf28aecf2798e86af23e1f813a5f1"
+  },
+  {
+    "nonce": 769,
+    "coordinate": [
+      3,
+      6,
+      3
+    ],
+    "event": "279e010c09ab0a7ecdb7e74967bb944d00418b1de618b81aeec41048396b0475",
+    "ticket": "e0ea61d5296a84c2b36685754bf8ba63385e7fc93f27f75d344a012440241c93",
+    "target_passes": false,
+    "witness_sha256": "a31fa16a68c9371e59b99ae19402cce1a25c6e4ec7ea3b01d74be93be4690b27"
+  },
+  {
+    "nonce": 770,
+    "coordinate": [
+      5,
+      2,
+      4
+    ],
+    "event": "ceb84e3820f9fa43b80ebdfa803ba3705f8cd7f82881d6755434c43cc67bbe07",
+    "ticket": "03f83ba041148b12dce0401a094b5265663685c32bfdabd976ecbbe1536e4e8e",
+    "target_passes": true,
+    "witness_sha256": "95d694dcdef47aaa33948d07aaaef0179bcdc43ceafc8b0e79aa99da4238197c"
+  },
+  {
+    "nonce": 771,
+    "coordinate": [
+      1,
+      3,
+      4
+    ],
+    "event": "610b3f239037bce297d89f48a2115dd1f5e6f5fbcd70a7463fa500609c8cf80b",
+    "ticket": "8ed7c873e67f4bed678248df675f81b5542c18200f2c84b4dcc023bc203af713",
+    "target_passes": false,
+    "witness_sha256": "59667551233378584da1bafca88ae92876004044648a5bf75b2ef9b7406502ed"
+  },
+  {
+    "nonce": 772,
+    "coordinate": [
+      0,
+      7,
+      4
+    ],
+    "event": "7e9b7dcca16ddb5d724c6b35687a00a44ea3d59acd55e23510bb5e60b204a01d",
+    "ticket": "116bd657a8778dd8ea4d6fe8190ee53fd9cdcc277c1b192b8b6d09beacc7ebbe",
+    "target_passes": false,
+    "witness_sha256": "e4baecbd783699b4aded0a907cfc252bd7d7c903953c2cb40acb67e9448baf61"
+  },
+  {
+    "nonce": 773,
+    "coordinate": [
+      3,
+      0,
+      7
+    ],
+    "event": "85bfdf2fb3fbda117cbb3ab9c1f6292ffd38dc612cb0309665f4eec897827a4d",
+    "ticket": "a60bd761ee5d0cd8e3cbcb7fd0c01af7397ac6e594c7869b245c58efffa8d5b9",
+    "target_passes": false,
+    "witness_sha256": "6a86feba3242793ef722cee9795d680e84d2612387aebdd403a2d4453cb1f845"
+  },
+  {
+    "nonce": 774,
+    "coordinate": [
+      4,
+      6,
+      1
+    ],
+    "event": "fe8fdf67430b85ba8dc8828b3f51ffea32bfe46fbd83f33d27644d333bfe9b15",
+    "ticket": "d9330e12aabcd7aee627153bcb942ddf580bd7b72a5fb2357932cdc2718f2fde",
+    "target_passes": false,
+    "witness_sha256": "004c17cc4685dfa5f52cd683e57fb7aaea5983c5d95a19746eae6384e0b6371d"
+  },
+  {
+    "nonce": 775,
+    "coordinate": [
+      4,
+      2,
+      6
+    ],
+    "event": "80978032c2cb2e0ac2e19ee4ebe0a0fdf25ce5f5243d3ce3d2e861eaada97acc",
+    "ticket": "01a333871d10afc53bfc525bc21177c4095833322bdd3d92fe835b5d88a68239",
+    "target_passes": true,
+    "witness_sha256": "2d5157f103c40848db0d0d19d615ce5f73747ddc8ac08a89ee254540cbd7c869"
+  },
+  {
+    "nonce": 776,
+    "coordinate": [
+      4,
+      1,
+      1
+    ],
+    "event": "a5bd96d192c6968c8282e28aa1e42d751d47f0f69b194220059d4e7ac4f2a6a1",
+    "ticket": "e816885113be22abe3557b9936e67752454514512ea2a03d4eccb93a4cd27cad",
+    "target_passes": false,
+    "witness_sha256": "8d163b0a1c46d3c4f5562555b4c7879362037a2e734eb76c19d97bd6e8a972b9"
+  },
+  {
+    "nonce": 777,
+    "coordinate": [
+      1,
+      2,
+      0
+    ],
+    "event": "69f15de98cfa1f30b094e07ac14ed9da3e0b0b59b63976470e4cab330aa84125",
+    "ticket": "c4a0677d5b5a3621068a036edc6e993bc915f685f92cda5b34012031eed4dc68",
+    "target_passes": false,
+    "witness_sha256": "c935b4a1a1e7d9211156c0bfae110f0d61b24a92301bc17b5ed756837ec41d11"
+  },
+  {
+    "nonce": 778,
+    "coordinate": [
+      4,
+      5,
+      2
+    ],
+    "event": "8a71987b7abc4be9d676abc84449d4f214ae1227686b5f37c59bb3821f7b6bd1",
+    "ticket": "322e34882179f14930ebd9412a693cb9f78ee2533a007c20bd11120b3340c05f",
+    "target_passes": false,
+    "witness_sha256": "9dc3092db84702ba92c9927985824c44149d5af10e724e923d0afce781e094dc"
+  },
+  {
+    "nonce": 779,
+    "coordinate": [
+      4,
+      2,
+      3
+    ],
+    "event": "65788576b78154bae1c32e1e8591701b9b514c863224d0c16effa35f8be161d5",
+    "ticket": "d12bc212048d792d2899f41388fa1f449cf4824d954b6e772679b0db5bb82a63",
+    "target_passes": false,
+    "witness_sha256": "29b653e134e1b16607dee5cdc192502fa6c8d5090faed14127dbf63035ff448f"
+  },
+  {
+    "nonce": 780,
+    "coordinate": [
+      6,
+      5,
+      1
+    ],
+    "event": "36011df7c728fb136f92d365e9a39a8a1d5fb53ae4f70d36bdd86b404d143cd7",
+    "ticket": "efb553b9c96bc7a3d1645d480df2455b4c0df850a054c832003ba5ba7db8c40a",
+    "target_passes": false,
+    "witness_sha256": "cae62f0ea26a5c3b70aabbcb1194d1a853fa83c49698b6fc3714f16309dd6fb9"
+  },
+  {
+    "nonce": 781,
+    "coordinate": [
+      1,
+      4,
+      1
+    ],
+    "event": "d307b316c50790901518b5cbf9c48f2663b3f80d6bc65c384f658de605a59b1b",
+    "ticket": "d42d5bc554be4961fb5bbdf7de9a0dd2d52225f25516441b749f0822b1978180",
+    "target_passes": false,
+    "witness_sha256": "d61845c0d4cc450397359f7c7f608f34425943656566bb32facab3e5864791df"
+  },
+  {
+    "nonce": 782,
+    "coordinate": [
+      6,
+      4,
+      4
+    ],
+    "event": "7c976986fc1717e4f4bbe33a3e633df86b11fa31edd92f0ae68cc871d96666c4",
+    "ticket": "5acfc0f1470a85e8981578e57ff42828f99de93f5e8a8da5adb49b1e8048f1ac",
+    "target_passes": false,
+    "witness_sha256": "f3b75a37a81a867106fbeef54e634b4d0614fe10739bc194da78a954da6365df"
+  },
+  {
+    "nonce": 783,
+    "coordinate": [
+      6,
+      3,
+      0
+    ],
+    "event": "84ecffc30598b26ccca1a30522c9aaa51ef3eade6ce9c8172bf7e165d64c7eec",
+    "ticket": "6429990487b50389beb925cd3a4016976393ecd3334b5a8e384205da3916794e",
+    "target_passes": false,
+    "witness_sha256": "832344c5eeaed72d9f0ed4adf57ab19916f67430eee67e545091be254c9851f9"
+  },
+  {
+    "nonce": 784,
+    "coordinate": [
+      7,
+      6,
+      0
+    ],
+    "event": "c5d90939c1b4ae74476b4df93da1a5a6d5b71e58b3586ab46a0b4df27771a7ed",
+    "ticket": "1a0cc125dc4b473626f882bc4624b50364aa879fd6bd0c7af86954768c7e1cc3",
+    "target_passes": false,
+    "witness_sha256": "dbc4e2e0f9697ba72232d0a12f7cf02f01f06177d2d77118b89e7f6b999afce8"
+  },
+  {
+    "nonce": 785,
+    "coordinate": [
+      2,
+      3,
+      5
+    ],
+    "event": "d80fe529ee4f9c0f8ee29598ace81b54dd6322c415af23b7730a61c000d85f38",
+    "ticket": "ab16cb89aa56c5b9604de827c15f29e48b54e6c991646e52ba30d37faead5e5e",
+    "target_passes": false,
+    "witness_sha256": "dd9285675e69a70b264acd05c366cda97ff96e6799cfdb640041050bd12f0899"
+  },
+  {
+    "nonce": 786,
+    "coordinate": [
+      2,
+      3,
+      0
+    ],
+    "event": "e2826c7bf77d11b3f4fdbc4133bee614727696029500f730d4dd8f0fad15b966",
+    "ticket": "2c3b5b7e0c42ada5d7c252ee7751e57a37002826b2e3cfb602ba507940d1d987",
+    "target_passes": false,
+    "witness_sha256": "a14a170ccf38a89f389e4fecb1a52d032a5a0d3f16be62192ddb5a6debfd1042"
+  },
+  {
+    "nonce": 787,
+    "coordinate": [
+      4,
+      6,
+      1
+    ],
+    "event": "650a5254a62e915ba010f24a719a78078b83eb8b408e4f47cc1c78597816ead1",
+    "ticket": "d4b0d87ae49fcda0d4c9880f0c6763c6dcc3dea7ed874e69ca7119b173d56fcb",
+    "target_passes": false,
+    "witness_sha256": "6a02966f5870473400891ccecf3d48a9c5726e76f7eb48654a48f6d7b93e1575"
+  },
+  {
+    "nonce": 788,
+    "coordinate": [
+      7,
+      2,
+      4
+    ],
+    "event": "ff5cf22a71749e35c0b8fe2dbf73f7c8c63dfe4f1f1fb577be7347626fd3c345",
+    "ticket": "dde135c93b6b55ab175b78360aed6a7ebb8ebaeda9404a987179eee51169da5f",
+    "target_passes": false,
+    "witness_sha256": "ab41ff0abc4f7784f3a13096dce56ef5fa6e420e19d62a174cddd9fa036ba554"
+  },
+  {
+    "nonce": 789,
+    "coordinate": [
+      5,
+      3,
+      5
+    ],
+    "event": "0cae62a66b2a08547044a24b9ec6378c2b6205e2a20d381c46f1c0b51d57614a",
+    "ticket": "be43972fa2059719b79ea9e3194610919a078752cdd93bab0ed3dddeb8c31bc6",
+    "target_passes": false,
+    "witness_sha256": "7cdbce1c9898833d558700cd022c91038bb233bfeb00c67f532071970a27bf46"
+  },
+  {
+    "nonce": 790,
+    "coordinate": [
+      5,
+      5,
+      5
+    ],
+    "event": "1977cd2ec7084b69ebf25ab589893a6e86bd8695c1f025d7b92c9c3dcf58b97d",
+    "ticket": "010cfd03dfc2c634bf15bac31c0c1368074427126b5ae642d6a4b4e22af92fad",
+    "target_passes": true,
+    "witness_sha256": "65f0d1d19b13a123d169004881b1cccc2a150513c34f1f9fef36d39dd58e1cc3"
+  },
+  {
+    "nonce": 791,
+    "coordinate": [
+      0,
+      0,
+      4
+    ],
+    "event": "dd74344f38245154b967672ae68cc9b4ae141abe1d207ac37f763138cb9ae251",
+    "ticket": "3a0e069c719e6fb1c0287b8f797de4ab427599c9e62cbdf42705744428a6f1eb",
+    "target_passes": false,
+    "witness_sha256": "5bf3d4eb25e04ea5583bb09ea1c61f52beddfee467af9dd33d47049c3c5a108c"
+  },
+  {
+    "nonce": 792,
+    "coordinate": [
+      3,
+      4,
+      0
+    ],
+    "event": "c155d897805702630ebdd35394fcfd21f5a09df057c1d76c5fe8e30ba82e0090",
+    "ticket": "f2d3900c9f802679ea49d64eb7b4ccf32517de621891d2e6d019419206d97a23",
+    "target_passes": false,
+    "witness_sha256": "2283759624c0b96a52f8c85c3eccc693a1d57e30c1ae00990d1bff26534fdd66"
+  },
+  {
+    "nonce": 793,
+    "coordinate": [
+      7,
+      1,
+      4
+    ],
+    "event": "1083421ed9e3141e844ab05fe0c913feaa6520eb01c60dc7bd33d795d7a29198",
+    "ticket": "7c4dde281b7e6722b1dadd34ea25aa9866c298684a311b1464e521066bd77451",
+    "target_passes": false,
+    "witness_sha256": "7ea1a5a2e6f16f2d0c1c5081c72a236fe2c0167d30407c54190900e72f59ac86"
+  },
+  {
+    "nonce": 794,
+    "coordinate": [
+      2,
+      0,
+      3
+    ],
+    "event": "6e16c5ea7864f95be2ad752dab3cb5acea696c7310761e9f303cffca5a44ca05",
+    "ticket": "0c5157fc99e3c5091dc7febd8df0cab55ac632ee845842742af7bd11e1922889",
+    "target_passes": false,
+    "witness_sha256": "aa3bf2749670b0ca8f000c34f868070154df241b0c253f5aef1965fd25937ea2"
+  },
+  {
+    "nonce": 795,
+    "coordinate": [
+      6,
+      6,
+      6
+    ],
+    "event": "853be2addd8b33f589cc0eb7282976272caa08d02274443c4f20c930cd58c7e7",
+    "ticket": "4325345a7e4a61ee71134b29a6629bb3eced44f29b92896472fa67a10913f109",
+    "target_passes": false,
+    "witness_sha256": "6e9f9c0daa7551cb1781a689a13a2dfc14396bb838d43fc530c5ab1bbfeb6219"
+  },
+  {
+    "nonce": 796,
+    "coordinate": [
+      5,
+      5,
+      1
+    ],
+    "event": "fef45a837a738b0053e7513e058ee9fd87d10aee86dc00dfb02cb69ebd8ccf1d",
+    "ticket": "4af0a4e9a4e5a98c4b7df0c177c0f74fbb513f37f7aedf41e0b726d3c2ecf963",
+    "target_passes": false,
+    "witness_sha256": "b91e37abccde9f2d1c10816ecb69fa4679624183b49cfff5b602a3224112b240"
+  },
+  {
+    "nonce": 797,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "event": "fc9da039d0aba943895c87c604009fa80335b66775442d016b43db7b93476588",
+    "ticket": "2c8f439baa01a89a6522e56c32caf7b8578b42be4d89d92e4c341793850f4cea",
+    "target_passes": false,
+    "witness_sha256": "92bcd45c3263b7787ca330638fe40f30e50a852bc5b75fc9949d21ba6ed5ffaf"
+  },
+  {
+    "nonce": 798,
+    "coordinate": [
+      4,
+      0,
+      3
+    ],
+    "event": "786dcc9b267fe3317f3418bccd91b86686d71e46a57c82d2e3da318a1386b5d6",
+    "ticket": "b4cd54aa805e2b62b285fa5cdba50bf10ab4fd929079ad8d595d17d5adba6ba3",
+    "target_passes": false,
+    "witness_sha256": "eb4f0e0ab0b20e4f8017246c1de71a1098a49190d350f358c1bad7907732f072"
+  },
+  {
+    "nonce": 799,
+    "coordinate": [
+      6,
+      2,
+      3
+    ],
+    "event": "58f8b59458d818dde236908e14296c4b8152e266c7173446721a5371c8f44135",
+    "ticket": "b4a74e1bd3b9a667e9d074d79e519f060b096777b53989e8668d413cf9fb3b4b",
+    "target_passes": false,
+    "witness_sha256": "d6b23b996756cf6ed56782cbbf3f49b3e1b6652deaed0f0cd984f2ec5d2366ff"
+  },
+  {
+    "nonce": 800,
+    "coordinate": [
+      4,
+      0,
+      7
+    ],
+    "event": "b3b9d2943a174e7606c4877d87910c5b0316f107ebffb268723720afc6a1646f",
+    "ticket": "9deced2c919a9ffa18baf5a364478fc9a4d54652ba6e3ce4562081e82d97796f",
+    "target_passes": false,
+    "witness_sha256": "c5e4acf9183d034dfada4108ac182498b59d9edd943c18540445602f1445a00e"
+  },
+  {
+    "nonce": 801,
+    "coordinate": [
+      5,
+      4,
+      1
+    ],
+    "event": "734422d256b2e131ea039a3f0d97407abf69eebcca781f56e54f7b9f971ae20f",
+    "ticket": "0415184be7c0551d3bce42839fefd05389e0630f9f791a1ef9eafd80ef4e83bd",
+    "target_passes": false,
+    "witness_sha256": "4810096f02dd064b96fb733ad77ce1a487f9bd838e42555540afc48eec16b2ff"
+  },
+  {
+    "nonce": 802,
+    "coordinate": [
+      5,
+      4,
+      1
+    ],
+    "event": "789767cd8d54664e2a507b0abce911cd50655545faf3bf0e039f8a4dff894b24",
+    "ticket": "95ab6eb2582131a3c122e515d9232aed9938da73f715e5a802bcc8bd45aa8e15",
+    "target_passes": false,
+    "witness_sha256": "aaed07db59c7d824a53eae835f59d8d8d4074cec248efb8faebd89ff8180508d"
+  },
+  {
+    "nonce": 803,
+    "coordinate": [
+      5,
+      2,
+      3
+    ],
+    "event": "fa7699315f25265fbaec79589b0e4a11cefbd9905408ad8abbc93b5b35e233d3",
+    "ticket": "7eea2e7076264e5c06c1f5ef88ef391d964daad3feee554306f4195e0f46739d",
+    "target_passes": false,
+    "witness_sha256": "bbdd46ccbab6c2b0bd3f192e9e1101109d227198bef2be9f18e57854ee9ee881"
+  },
+  {
+    "nonce": 804,
+    "coordinate": [
+      7,
+      4,
+      5
+    ],
+    "event": "e4394cdcf766410d603e01b84e1d9a8cd8386c6ec754555f67783e9513c63a50",
+    "ticket": "0a79b9faf20620e1522d9ca730c80a7c93060a38fe4390a76952890421d46c2b",
+    "target_passes": false,
+    "witness_sha256": "487aebb4fbf9ffa048e1269ad1143653e76f152bfa6a2b41a7a5b54b0d12ae1d"
+  },
+  {
+    "nonce": 805,
+    "coordinate": [
+      6,
+      5,
+      0
+    ],
+    "event": "99a1bec02bab51cdd7ec2e24295ba5e66244570be6f5f0f278f5b3360186cbe7",
+    "ticket": "31a6d661aeac6265ac02a6680ab4fb2e783cdbf5fc67bfacef6283339fbabb1c",
+    "target_passes": false,
+    "witness_sha256": "b91abd38b58f6f16d79bc414d0d620dae2f150f2ba09734926be5f366791b9d5"
+  },
+  {
+    "nonce": 806,
+    "coordinate": [
+      5,
+      3,
+      4
+    ],
+    "event": "d93dc1623683fe81950a9952180bfb2b2bec4a4c0664a5d87d6a2c7ceb176880",
+    "ticket": "ee3768a863bcceb3eddcc1bb562e8f2d93e19ad1ecae40f02268a30166dfe299",
+    "target_passes": false,
+    "witness_sha256": "12887deedee3d7cc4154994b3221359e23273d65e6e30c08ce3d524cdf69aab7"
+  },
+  {
+    "nonce": 807,
+    "coordinate": [
+      4,
+      2,
+      7
+    ],
+    "event": "0402015e7b2231a541773040d693a38f731a79ebe5927e3dfc9e90b939b71b1d",
+    "ticket": "04ffafcbb9c138a033e038cc20f5a71297c46bd6f92860206091918a6771cc49",
+    "target_passes": false,
+    "witness_sha256": "70ff5812e7ca68aff333fb00a315bc595590e146ca0e620112b51485e9fc6d11"
+  },
+  {
+    "nonce": 808,
+    "coordinate": [
+      5,
+      2,
+      0
+    ],
+    "event": "8583dd0cd7f562f5804f88b1821ea058bf72417f1dc2ecaf04c33c7751e7edfc",
+    "ticket": "d8712a67733e45ab69255a494e42ea8af3a1face3abd47ab4b5bae485e18adb8",
+    "target_passes": false,
+    "witness_sha256": "994e98bcce1efb1d2fa9b880f82151eecef06da8bb0e280acd313a80d185a45c"
+  },
+  {
+    "nonce": 809,
+    "coordinate": [
+      4,
+      2,
+      5
+    ],
+    "event": "d6859546a892f62659a52cd42ebcb3a7920ef27727bc600758bf811b6a9d2d7d",
+    "ticket": "77f0c481aefc147bf3e7ff2c35cc703aa2fe4fe668ddaa3a81b50056b7ba8a95",
+    "target_passes": false,
+    "witness_sha256": "f251482347d333d706be78a0bbf8d1f497692d5bca133c6211ef290fce678a46"
+  },
+  {
+    "nonce": 810,
+    "coordinate": [
+      6,
+      7,
+      6
+    ],
+    "event": "c1f63038385565561986a4dafb21e7b4791db488e3e40f5bdf701534b9197628",
+    "ticket": "8c47cb3d091082c7f6a144e17c6d64db16142aac5d470f31fec0baf90397351c",
+    "target_passes": false,
+    "witness_sha256": "70664bf72ce6245f7352343b3925b7dfe2d383a61e4490ac1e40463f07f71d87"
+  },
+  {
+    "nonce": 811,
+    "coordinate": [
+      2,
+      5,
+      0
+    ],
+    "event": "fbd79632867cf4222534a95a02e6aaa4a66e5bfc16577a4870faf704edab7765",
+    "ticket": "f32778dcc6d1901c3e54b143a167bd96758a46737aecf409996f9647af3af12c",
+    "target_passes": false,
+    "witness_sha256": "8b4545ef95e30a97c21109ebc9452f0222ed2c361d460c5057d59e6f8d7bca92"
+  },
+  {
+    "nonce": 812,
+    "coordinate": [
+      6,
+      4,
+      1
+    ],
+    "event": "0dd55ac6ad761e321d7950d67fd84c66e755ab7bf4242edbe2e434df4e903e27",
+    "ticket": "a1debb1426572acf73f289534f1eed02fb285382043b1a6297e4716638c0495a",
+    "target_passes": false,
+    "witness_sha256": "858e46aecae39401d163eecba2bf352351ba88d9ddb8877b4bef008985890638"
+  },
+  {
+    "nonce": 813,
+    "coordinate": [
+      3,
+      7,
+      6
+    ],
+    "event": "4b82584d1d0da54a0d9e80b39d0dfa6cd7d1013a49681c9641eaf3c93ccf8afe",
+    "ticket": "455ae0836b9956dc7cd32a29be3875dbec6b37abe0607fbb75d3a731b12e073a",
+    "target_passes": false,
+    "witness_sha256": "c6c74875f86e8f26810919e769cd47732b8cc3db3b339569e4f1a34dd6b26515"
+  },
+  {
+    "nonce": 814,
+    "coordinate": [
+      6,
+      3,
+      2
+    ],
+    "event": "77c6a7eae263157fb803e09b70c6b46c6d604c825a0d4229d5c70f329c6a61e5",
+    "ticket": "6728fb5ff2b86d64d1296b9b40afe9227595fbd293f5fd71fff845cda11fe800",
+    "target_passes": false,
+    "witness_sha256": "2384c5674a9a9768afe98630a3205b57d858011a4d1a297a41cb03a0c5015ba6"
+  },
+  {
+    "nonce": 815,
+    "coordinate": [
+      3,
+      4,
+      3
+    ],
+    "event": "36856811734210bdb5b89c50157f7e7a296276fc3fe34507f340b114fe4df038",
+    "ticket": "ad0b20f6b9841e018aacf49c29bb5f94e5c225ef06752a8e6c0aca000fbfc498",
+    "target_passes": false,
+    "witness_sha256": "3b08577a2a60f2899413f298bfb34990375c8182622605df89ecffead61fc874"
+  },
+  {
+    "nonce": 816,
+    "coordinate": [
+      4,
+      1,
+      6
+    ],
+    "event": "31654ede0ff68637d56a5fdf02927b7481dce738be5ffd9619df524f38607add",
+    "ticket": "28dcc61d859fbbef1335e7155f1a841f777b9ed88a92a8c5d77e5393ce45bc12",
+    "target_passes": false,
+    "witness_sha256": "67b3b2000fd951b6667121ee49d4abe2609370f22965e00cdbd9b00992a5d577"
+  },
+  {
+    "nonce": 817,
+    "coordinate": [
+      6,
+      3,
+      2
+    ],
+    "event": "6b0df4c37771e7f40ffe70a32e0678cfcd3c7bedeb65a443cd0d2bbe4145c63f",
+    "ticket": "b5c1c36db31e2d93344a5eb5ea8f0988a739141b35f2cc7a3b784bab3a1d9b61",
+    "target_passes": false,
+    "witness_sha256": "65898087b40a6d1a1b8a5dbe2cf6455acb9dbbd08ed7df8c73d898d5b5bb8bd2"
+  },
+  {
+    "nonce": 818,
+    "coordinate": [
+      2,
+      5,
+      5
+    ],
+    "event": "f295e9b6ef3141c5634599c8d0d75018f6e3356a4d4eeae67a426adec37fee46",
+    "ticket": "e33c65b830418e8fab4cfae05ac0d6f47b371b5d6cb95b1063d8262b555b1b15",
+    "target_passes": false,
+    "witness_sha256": "89e06e92dee353272395bf425878cae6ded14a21e2eb26e8c6e8847747bcedc7"
+  },
+  {
+    "nonce": 819,
+    "coordinate": [
+      1,
+      6,
+      4
+    ],
+    "event": "cfb688d96db308c65a378a974dc8c2693e72f51b3c134068db3139dff9de07a6",
+    "ticket": "48d6a5da3f2c02da815b084f5375f3c9ce799091177cde16f4e469e22dcd1925",
+    "target_passes": false,
+    "witness_sha256": "7a2415d3c57cf9a6eeb1e90a1076f451bcc16e5072aaf0c24cfced310b9473d4"
+  },
+  {
+    "nonce": 820,
+    "coordinate": [
+      3,
+      6,
+      0
+    ],
+    "event": "550ecce36e3612e48ac9aea8c4c7e055b91b812de55e15f82d881ed655c1ace4",
+    "ticket": "40a408d83f3d442a7b47a82f0be871705f38de14a8b36908caa40525910ed953",
+    "target_passes": false,
+    "witness_sha256": "0896465cdd6af2132ff0999a0c006d80c090be32898c3a5d160eed8c21670f34"
+  },
+  {
+    "nonce": 821,
+    "coordinate": [
+      6,
+      3,
+      1
+    ],
+    "event": "a924d17d2b95ca3fefc99435c8feb39bdbd02871d3e4a1a22adb8fbbdfa1d277",
+    "ticket": "feaab9a70035b71e6b3ac51b5db453afefe79396362a1116b9715081d3f352f4",
+    "target_passes": false,
+    "witness_sha256": "78aa8fa4ab22918eb1e33b4c1064216cb079fb603a72089cac87baf4d7b4c79d"
+  },
+  {
+    "nonce": 822,
+    "coordinate": [
+      6,
+      0,
+      4
+    ],
+    "event": "21f7231a1d7655ead04544c8710afea45290ca96849c49930babb7f0b388cf12",
+    "ticket": "04fabf5242b3f90f4a7af7750f7d6ae35deaeb1a346b4f225fa4e3329038322a",
+    "target_passes": false,
+    "witness_sha256": "f1407c6f09fc725491064dc14b7efd2052ec89b20a7df9e620f2804954414847"
+  },
+  {
+    "nonce": 823,
+    "coordinate": [
+      7,
+      6,
+      5
+    ],
+    "event": "3a197e64f3007e74c4242eaef2c51bda7e0bd553fb985598a0d28727ad1d13cc",
+    "ticket": "c88f5be1cece5384975f8157432eba4eb96068adad909a61ed60da5eab524acb",
+    "target_passes": false,
+    "witness_sha256": "e79325ce8df25931a819ff47b6e5a694f629a34c0af9570c996f7db6de768ad2"
+  },
+  {
+    "nonce": 824,
+    "coordinate": [
+      2,
+      1,
+      3
+    ],
+    "event": "dc7138b9970055115fc7bd09c9936f94b1c4b4701225947151f644344bac9ac6",
+    "ticket": "48f4c618ef25de613ef612d8436cb2a71a2f39df2d27fd711f95e7aa1f531171",
+    "target_passes": false,
+    "witness_sha256": "21c4e0324f4c8ff9b5ab5ca0df1556640bab96f460ec264b6730f56a8b76eca5"
+  },
+  {
+    "nonce": 825,
+    "coordinate": [
+      4,
+      3,
+      3
+    ],
+    "event": "dffee9325432174fc03c7bbd9d6d481cf0a0bccfb38339eca1654b5c49f6029f",
+    "ticket": "a83a61432c148f95d7384d6953fdfe45c187ec03cb869408deb889e8006b5f97",
+    "target_passes": false,
+    "witness_sha256": "6f9266efe46a27c4f3398398a79c33606c46b99b861a5a64d8bc4c2af7f4ac38"
+  },
+  {
+    "nonce": 826,
+    "coordinate": [
+      0,
+      3,
+      3
+    ],
+    "event": "3aa5db1c347fe2935ee73c6157ee2b7bca3335684e9c76cbec5b6c5bbb221df2",
+    "ticket": "4c74ce219c2ef73dcada3a19c6f81c4b0c88fea9eb613ba83eb88d2278d268cf",
+    "target_passes": false,
+    "witness_sha256": "f4376e5122870a3a7023179376410c6eff09c172e7f6d14f9367c5346fd50e31"
+  },
+  {
+    "nonce": 827,
+    "coordinate": [
+      5,
+      3,
+      3
+    ],
+    "event": "9cd145ec5ceffb7555febe28e2efcbaf2ab1d43a5206f431f515725bf34943ef",
+    "ticket": "e6d3b2cc3c5fcabab4430d3469d589f59bb56f89c2044853ace78053ad854178",
+    "target_passes": false,
+    "witness_sha256": "1e6684964db63f3b17b986b5ed8785028c3004b06640b16a36f8f94cb9e30311"
+  },
+  {
+    "nonce": 828,
+    "coordinate": [
+      5,
+      4,
+      7
+    ],
+    "event": "ab9b3c747c4267072bcaaa9d4553e571c8c754ead92672686b258799131e7895",
+    "ticket": "679dc0d9cbf7078a73403436551bc2d1a1d6135c063f9d26950fd9aef538b0a4",
+    "target_passes": false,
+    "witness_sha256": "225be589fef7e7ee30f72e752eeb1bc431dcd38d08f5aabd1b9f6e331f7cb1b3"
+  },
+  {
+    "nonce": 829,
+    "coordinate": [
+      2,
+      2,
+      3
+    ],
+    "event": "bf7689f48ec5123725c45e3f303cb52d90384fb717ae48da0d1a813f0c577899",
+    "ticket": "77383132fb4a6cc9b12aa895d63d52c35c9ee9dfe051938511953f03cb629a73",
+    "target_passes": false,
+    "witness_sha256": "82e06864a8d7263dd59fa83dad79d6fab1684c5773599193a72ce4a64578ac72"
+  },
+  {
+    "nonce": 830,
+    "coordinate": [
+      5,
+      0,
+      6
+    ],
+    "event": "014cfa95d71cda3763d2321d8337a0f7442283938f5bb3d59ebd6bdbb64ea19b",
+    "ticket": "bfdd4536477357f675909a0dde051c68fed2c33fa0f240c15a88b3f508ab93fd",
+    "target_passes": false,
+    "witness_sha256": "f0b679dff05e5889630f0d110d9611e8525f50d58fd9cb82d172b2af657f8d75"
+  },
+  {
+    "nonce": 831,
+    "coordinate": [
+      2,
+      2,
+      1
+    ],
+    "event": "5b96701e8c1ab10cec12b821d6c18cfde979fb87f0d997f2b5735715888f9578",
+    "ticket": "5d8bfa8208265cce9b940a78aac36d8e9a1c4a3ad6c80066848bb5a82f32223e",
+    "target_passes": false,
+    "witness_sha256": "249b9a92b64f332ac6b4d593c06830db17b8684a7aa3abc040837163707e30bd"
+  },
+  {
+    "nonce": 832,
+    "coordinate": [
+      0,
+      4,
+      3
+    ],
+    "event": "e592749e21e4e017baaa0dfe35b6be35fb69fc78c1ad8f5129a0c95e74c98926",
+    "ticket": "86e5ea4fe9f6f0b00e1ac49023c36b7268475e5a0af1cf82a19c43aaec3a9617",
+    "target_passes": false,
+    "witness_sha256": "2e3e8bba827040a0968fcde03e30259c8c250ff46118b5eb7d5d87268634685a"
+  },
+  {
+    "nonce": 833,
+    "coordinate": [
+      4,
+      1,
+      1
+    ],
+    "event": "898cd5b245d3d8bba50582355a513cf5ba1f17da221de7ce912ecbe612e698ed",
+    "ticket": "ef0b8662b4f88ccc11ad94bdc05899c6326db77127dc4f9270deae467eae8fc6",
+    "target_passes": false,
+    "witness_sha256": "cc7f60a7e879deae9e3d829a2826230f76c21b55a521eb7cc98f18071b551a93"
+  },
+  {
+    "nonce": 834,
+    "coordinate": [
+      2,
+      5,
+      6
+    ],
+    "event": "c3bd73c07125b92ed2ae7091770ebc83b3816dac905143e66a4fc363c73f0845",
+    "ticket": "5768768bf5d35b5b684365628ed2776f941817b0cc6548793901cf922580495b",
+    "target_passes": false,
+    "witness_sha256": "88ddffc0ada11642e94941dd9c6a72d44e9e3046ca46a6289ac1c8f4eecbded3"
+  },
+  {
+    "nonce": 835,
+    "coordinate": [
+      4,
+      1,
+      2
+    ],
+    "event": "66945827f9a0bcf07e280bd37a28b4a86ee358e1fd646e1a67756070cccd2309",
+    "ticket": "011be41d06f28c3c94c9c37a6c127a6501f1316e61ecd2879fe9e9a07a923b69",
+    "target_passes": true,
+    "witness_sha256": "b1d55f3a732799e6289f958254c12d123ab19ded262a26e8cfe3c8c343df926f"
+  },
+  {
+    "nonce": 836,
+    "coordinate": [
+      7,
+      3,
+      3
+    ],
+    "event": "f7a92f99502945985ba27b2b745d9944ae291f60ae6c2b98ce65ea1c17298aef",
+    "ticket": "9a1afabcedfbe5692539fd4a276da0435d11e402d7351a1d92f7dde91d7bf761",
+    "target_passes": false,
+    "witness_sha256": "8018aa57400105912c99e6c39f67f4ab7fc755669dc0dc7082c583ef65c4085d"
+  },
+  {
+    "nonce": 837,
+    "coordinate": [
+      0,
+      0,
+      4
+    ],
+    "event": "a54278c736a7013be09dd24db95559ce88f93bcda2f70778ecba94d9cb28e361",
+    "ticket": "b5bfa43833c5edd977722c6ac2d6a8734073807510192391ac20cd17f16a1b84",
+    "target_passes": false,
+    "witness_sha256": "a1825ad0a09f3c809a596a2c20edd2d6b8670678c2dacb26fcc493dcfc3b38f1"
+  },
+  {
+    "nonce": 838,
+    "coordinate": [
+      3,
+      4,
+      5
+    ],
+    "event": "78783375373a01bb2ffff580a4ce4d09e4bee285779f36fa282c7a4e6002bc17",
+    "ticket": "101eb3dede2835e64c2eb283e9350f9b8b9ba2e110a66d42009a404edf88f218",
+    "target_passes": false,
+    "witness_sha256": "1d151deee3f6571fa8eab09b642edb99af79fb1b83dc4b80d565326365381769"
+  },
+  {
+    "nonce": 839,
+    "coordinate": [
+      1,
+      2,
+      6
+    ],
+    "event": "911b678bd5309db1089848e5a1c4417f165202c7e0a3efd05457e6073b036a63",
+    "ticket": "0983946f5c6e8b54fc8c68c8d708858e9c720c5019e3bea1cf3945f1f14c94de",
+    "target_passes": false,
+    "witness_sha256": "842389b3f30d4f70f969285b8bbea36e1b151a1dcc7c4a0340fe27327b74f6bb"
+  },
+  {
+    "nonce": 840,
+    "coordinate": [
+      1,
+      4,
+      3
+    ],
+    "event": "38e6d85386989ef91fec9490c7bcbc4bb37d6c0071cea4fa18a999a36ff46ed0",
+    "ticket": "8039d3277d723e717b5bad789055c28644d37accb0937c9bbc58d9df46623e8b",
+    "target_passes": false,
+    "witness_sha256": "7da3f9a480cf581c3731e23747aac5a7b7b4f582f2ffb704b4629a1ddf1534d1"
+  },
+  {
+    "nonce": 841,
+    "coordinate": [
+      7,
+      3,
+      6
+    ],
+    "event": "5d69de409af0a7bb6742d833aa73d742db139a3013cc672fd69d7e4629de84f9",
+    "ticket": "fbd282350bc0b79db860482b7c3730cbe4ab94c27d86890eeaa4ad88c9da57f7",
+    "target_passes": false,
+    "witness_sha256": "dd97b384ad6d62806862df07bb762eecd8e8d95b614c84cde5e4b39544eef9ee"
+  },
+  {
+    "nonce": 842,
+    "coordinate": [
+      4,
+      7,
+      7
+    ],
+    "event": "2afc1ea850d2edf0333274df3650ea6bc134dd8d4cf8ee760282851a0f0a43cc",
+    "ticket": "1e8e56f2ac0100921066c767b6509e139dd75afd0d7f197837a8a21ac3abdaac",
+    "target_passes": false,
+    "witness_sha256": "38bcbc264135f5a3f18d6b4847297ca7139de4f3437682157a1926988c800676"
+  },
+  {
+    "nonce": 843,
+    "coordinate": [
+      2,
+      3,
+      6
+    ],
+    "event": "67d9e706ee8d283890e344064824961f8a0852bf0ce26de677e7701a587a8383",
+    "ticket": "07fb274efd638a6db3216c32b46ba4f1e1f1b9d2bf4085649fc7dd34c6f7adaf",
+    "target_passes": false,
+    "witness_sha256": "4f9419079c6505997f94e64b0755822b9c5083116c9016cc57c04fe83a778381"
+  },
+  {
+    "nonce": 844,
+    "coordinate": [
+      0,
+      4,
+      0
+    ],
+    "event": "d2c3e4c6d3e0d09235c10f5bbd3ca39558713a549c85dd35d858928c61754f1a",
+    "ticket": "b0cec433e075e7065afa57e15bda97160bc1f8cd56054379d77d28384450aa4b",
+    "target_passes": false,
+    "witness_sha256": "610ceafc4bc7caed89663894b4ffc05601a3d5bac3565b2af4b8c2e81942b000"
+  },
+  {
+    "nonce": 845,
+    "coordinate": [
+      3,
+      1,
+      6
+    ],
+    "event": "9a6a5f81cf5d0096ae005fc7f89a34cfef4dcd71365a7fa44d8157f3267f8eac",
+    "ticket": "d92bcad3b875ed5d03f22c0704202648918e616fd95425ca1239eb9156c652e4",
+    "target_passes": false,
+    "witness_sha256": "a0bfddb32467d1d172ed56f9005bc8e283c5e67ee581c2111df1cc7553bbd0f5"
+  },
+  {
+    "nonce": 846,
+    "coordinate": [
+      1,
+      6,
+      2
+    ],
+    "event": "6cc8d3aa444d443d5dcf8dc6832adc319b2bae7d72b1d35701ec74a09832709b",
+    "ticket": "9fcfa4541410cdf42e4dc91f3728cc2e557f1b424821ac6c408dfd089c786dd7",
+    "target_passes": false,
+    "witness_sha256": "9518b6e6a494104f31f880b9e8f8a6a7b5f3dd6d46d0411f41f3f89b502dc97d"
+  },
+  {
+    "nonce": 847,
+    "coordinate": [
+      0,
+      0,
+      3
+    ],
+    "event": "aeed844126fd1da4b189faa2cee263f2f37590832e8f0c853002b8f96a788021",
+    "ticket": "abd47397c849ebd2840c24ce964a012630bdc63ada2c0b6d3f31c2c623cf0e2f",
+    "target_passes": false,
+    "witness_sha256": "7cbe7d7775c01087f4ab4530b6f66dc18da04448cc9283f64f2252111ce9d4e2"
+  },
+  {
+    "nonce": 848,
+    "coordinate": [
+      2,
+      7,
+      0
+    ],
+    "event": "e8dd2f2cef335abdcfdfff2817409e6b75ae079ec9a655f18efc91ceae7fe468",
+    "ticket": "72b44e822f1da183bc816657dffc82daef403c5ea7c190928b802ddf1dae39d4",
+    "target_passes": false,
+    "witness_sha256": "e4a947b40f4d0e40da06b82cef185470a4d7c8f6c87412705490c597b758aab9"
+  },
+  {
+    "nonce": 849,
+    "coordinate": [
+      6,
+      3,
+      0
+    ],
+    "event": "09f365324290e2d2ae0c7624376f0ca4fddf56688af33c90b4fc0082c415d732",
+    "ticket": "86b25d6f79ba1ba2a77c7675d09b625491462828bd3549746c545e829a2f1464",
+    "target_passes": false,
+    "witness_sha256": "1446ecf05c4b57629794533720a4736bdec3f2b6898fb4380a625a90d5e70bd7"
+  },
+  {
+    "nonce": 850,
+    "coordinate": [
+      7,
+      1,
+      1
+    ],
+    "event": "87e6985632f1cf5035cd60aeaf39eaa96789110bb06af04884691726b5c4e647",
+    "ticket": "7b8f034cbd812607e67e96d4ce70e8310d9b9957a177ddfc86d0993c4eeeffc0",
+    "target_passes": false,
+    "witness_sha256": "59d099c64ea13b5f05ba9984cb292b453246da2b124f48c9e7338357651fc880"
+  },
+  {
+    "nonce": 851,
+    "coordinate": [
+      0,
+      6,
+      5
+    ],
+    "event": "ac0b71042235066874f0381f78125abb7060d9319a8f7190b1189b941dc1100d",
+    "ticket": "a4b6f5d96b365953df423baafc4867b2c150bb22c7f90f334d53c7d2bd243d0e",
+    "target_passes": false,
+    "witness_sha256": "23141104e87bff36b79e31c3431e0fee04da14d991339b992435c33e738b4d88"
+  },
+  {
+    "nonce": 852,
+    "coordinate": [
+      6,
+      2,
+      4
+    ],
+    "event": "e4527cbe9bd0b2469ff7711af792a0a3545ea0ab5c3981714ffc63742f4b02da",
+    "ticket": "9f7c380cbb9c7d104eaf3b5f1e89fecc08cd90600965a6495a7fc9961691567c",
+    "target_passes": false,
+    "witness_sha256": "e63265bfb5f2e5c8adf8036ce5f0fa289c04b2e907725fc335dbee38855406eb"
+  },
+  {
+    "nonce": 853,
+    "coordinate": [
+      6,
+      7,
+      3
+    ],
+    "event": "0b5ef5e09689d51c19931409c3bea04497d82a2bbe6b561c802e006e17434f27",
+    "ticket": "d3843699e5f94a5a44aeea90dbe988e3c96fff9d567a2f2ec436b9c476b34b55",
+    "target_passes": false,
+    "witness_sha256": "9ef4b117baaaa8db326812b438e256eea7075df7ba4812404b75fcf4b925dfbf"
+  },
+  {
+    "nonce": 854,
+    "coordinate": [
+      3,
+      7,
+      0
+    ],
+    "event": "9ae377b86c33ece1ba72477a9a8d18c0379c40358cbc984327f0beef96c9ebf5",
+    "ticket": "17ca226043cfa077c69eb6c8ea1f9fbee3042869f8007513048e02193b3ce7df",
+    "target_passes": false,
+    "witness_sha256": "b6fde6cb517a63caa98920a491a861789b53d6266b9556cf66de7f0259740164"
+  },
+  {
+    "nonce": 855,
+    "coordinate": [
+      0,
+      5,
+      1
+    ],
+    "event": "593496a770181e84b983d33d4536cfad5ed5b269aacf54a857183052ca481e1e",
+    "ticket": "d9557bc5afd88387d04e168911ecafd4f8553cd22db7523241ca3bcac89368e6",
+    "target_passes": false,
+    "witness_sha256": "af32eb97a8cd19294a0c0225ea74b2f4941088c7c59f6fa78c4e401e35dd1747"
+  },
+  {
+    "nonce": 856,
+    "coordinate": [
+      4,
+      6,
+      3
+    ],
+    "event": "bc5a2ff956da3b5af80745a2b85cd865959a77bc453904e46772da2c10f18f2c",
+    "ticket": "7843bbc13dbcf337560354c57ea327b50088e0bfb4caa55ed642102db2baf88b",
+    "target_passes": false,
+    "witness_sha256": "7b0900edd3b15d8234f352e3cb6c9e6af8556c6111142563e383ef2688daf2bb"
+  },
+  {
+    "nonce": 857,
+    "coordinate": [
+      1,
+      7,
+      4
+    ],
+    "event": "2d30d504de3587032cd09cd3d45f3d9d103ee831280d1a4686efe51f3307a201",
+    "ticket": "acf6c752ff47fa2f9880a8d2358340d68b85e2e512837716402c486b2c6162db",
+    "target_passes": false,
+    "witness_sha256": "d0d2077f4bec1f9386201a920438ccda5e619077354a38cab8e6d9f26df32a87"
+  },
+  {
+    "nonce": 858,
+    "coordinate": [
+      6,
+      5,
+      5
+    ],
+    "event": "ab5b528742e0134ef194d5f6ea426e57a90927de826809eeba6e6abb1f5548cf",
+    "ticket": "cb33433c91b79c291246ce969fd5e580d2f70c4cd94b3b08c325a22b44f04040",
+    "target_passes": false,
+    "witness_sha256": "2a90eba8ffa8f716928551c63e71645b934963c297685c2846f700d12f437c80"
+  },
+  {
+    "nonce": 859,
+    "coordinate": [
+      7,
+      5,
+      7
+    ],
+    "event": "389134601a48ab3354fe7b52f8338a219a4b491d2431bdd47ef5949e1bb23ffc",
+    "ticket": "9e8c47b33e4f93cddd449f61f6225d22afd7ac93821d4ddec60a313f0a2ca91a",
+    "target_passes": false,
+    "witness_sha256": "a392a73f4293e6356a72f72432fdf164e9aada76e6c9a6e9943e96b7af0a7d63"
+  },
+  {
+    "nonce": 860,
+    "coordinate": [
+      7,
+      5,
+      0
+    ],
+    "event": "a44ed97f26c7e09b67e25317c4c39fa5400b40379d27881c7dc922c1e8995178",
+    "ticket": "ac9b69c809878bdf3a5bc254b0b19098a8b10b808d97aa9c771aa14301b182a5",
+    "target_passes": false,
+    "witness_sha256": "9e48bcc2ec46b5acf969711889a4f66f1779b0267c0d0e172581415418474f08"
+  },
+  {
+    "nonce": 861,
+    "coordinate": [
+      7,
+      1,
+      0
+    ],
+    "event": "51f41f794d0354b8e64cfe2075bfc1e6c6e986be9d0c26eb72caa2d4294dfd48",
+    "ticket": "38411b6ab8d06d35e1b906aa28d4b9c35acf73cac6a901dae48662bdca655fb0",
+    "target_passes": false,
+    "witness_sha256": "59318f623e9ede943d7c993c4454e5e51f0678dbae50a316c68cbaadc4d71395"
+  },
+  {
+    "nonce": 862,
+    "coordinate": [
+      4,
+      2,
+      1
+    ],
+    "event": "a63d9c3ad733c669f4bac9a57136d4066e6beb92feba3eb7e060ddf7dc79d362",
+    "ticket": "ae2b571d5e545a2f6b1c0a59e50e62db69eee5e0d5e69ac68821a7c38e530d70",
+    "target_passes": false,
+    "witness_sha256": "374bd540d08510526ad6075111a425b3c10f3c03042040acd436cadf566a541b"
+  },
+  {
+    "nonce": 863,
+    "coordinate": [
+      4,
+      4,
+      4
+    ],
+    "event": "ea3362fc699b35e4c48ccf3a44be8d44fbe0cd9f221921d9283841ed197a7141",
+    "ticket": "011cb69fa04a0dfdb84d80ce07f6ad7b47139065111d0defec8091c8797da658",
+    "target_passes": true,
+    "witness_sha256": "f3f1e2ac9b2c9433c7147afed8d0e932c4c8925d0ef402668a9d86378ac14e6f"
+  },
+  {
+    "nonce": 864,
+    "coordinate": [
+      1,
+      4,
+      4
+    ],
+    "event": "6f33f1d9a3e46b7c90412689101dc72add5b4f0571f00c48aa012a947259de5d",
+    "ticket": "f4dd29b2096bb196013606521ee9708cf333775589e59a18bfe51bb883447db8",
+    "target_passes": false,
+    "witness_sha256": "698b6f419229465eb23b96be59501182ad42798263a487666d65c36ca9b44eed"
+  },
+  {
+    "nonce": 865,
+    "coordinate": [
+      5,
+      6,
+      4
+    ],
+    "event": "ac40ed889920c28ce008ac8169a242b008b4c3c673924ce0b976e506d9e28344",
+    "ticket": "803d9e06b9edc986cf02af771cfe930e1aa14cbebdb6efa4e1510b790623c9aa",
+    "target_passes": false,
+    "witness_sha256": "c700e69fe08a8adc2f3d5aabdc90e48940c52b91056fc68f3727d5e49f06fc84"
+  },
+  {
+    "nonce": 866,
+    "coordinate": [
+      4,
+      1,
+      5
+    ],
+    "event": "656299c08ceffa8dea4839d38a3e1b808dc27ccea635992432a0fdcc2fdd3edd",
+    "ticket": "f6fe91e1cc919f988fd42bddce2d56507c0a25f852692945a6ab5658f85c1ad9",
+    "target_passes": false,
+    "witness_sha256": "bdf84980d0007417ad8d767f1fc376f4796201d5e5542991eee39e067eed4030"
+  },
+  {
+    "nonce": 867,
+    "coordinate": [
+      4,
+      2,
+      6
+    ],
+    "event": "7f7807231913ddf0187306e4b97e7903cd1d407a97b7092a2440bf06f05e6f0e",
+    "ticket": "56e03b1c75ed283ccc16db9e1cad82d02d7fdf6a52fe51b534e1ed029ad712d2",
+    "target_passes": false,
+    "witness_sha256": "c3d08d864b7eb87f8cf43a1c44c64b56f9df80179efef969e3cf7061ab99aac7"
+  },
+  {
+    "nonce": 868,
+    "coordinate": [
+      3,
+      4,
+      7
+    ],
+    "event": "08eaf0d455f5e72d612e5bbb328e6a00274ae4327b6ebb839d22b35fb81a2245",
+    "ticket": "c09faa44e0439ea5ff3ef1dff003867f452d056b30ed5720042641bbe968ceac",
+    "target_passes": false,
+    "witness_sha256": "199434eca98b761337555f9ccd56396ebb0db4a9ae2c690c60c4d1fa5053eeb5"
+  },
+  {
+    "nonce": 869,
+    "coordinate": [
+      4,
+      0,
+      4
+    ],
+    "event": "61591fcfd8023f048536a66b096945006967e4f9c9c28f968e108abefdbc837a",
+    "ticket": "bd6d6fdf54b7e863db1e5d19869192eecbe9fc80c3e50c3c590dca410c4b4428",
+    "target_passes": false,
+    "witness_sha256": "2411ffb45dda97c2e287c21e097f5b38d9d717080b81352bab773e579d90e44b"
+  },
+  {
+    "nonce": 870,
+    "coordinate": [
+      6,
+      3,
+      6
+    ],
+    "event": "f9eca2cb9311214921300c6aed5dce1af8d41c9212eb818016c633cf9b481da3",
+    "ticket": "2659a2bddb44fee0aa6b7a7a82f21ec579756bff3e745ff77b0f90ff64e0c9de",
+    "target_passes": false,
+    "witness_sha256": "bcd1a0e2b892d2cc0f01a2c48c1da1ced72b3683e19210031949165504d71f63"
+  },
+  {
+    "nonce": 871,
+    "coordinate": [
+      3,
+      1,
+      0
+    ],
+    "event": "5b3a23f052c9cf5e22b9a7e0e9128f423518e18630b1c756a34f576a045d102a",
+    "ticket": "ea7f2ccf39d7da32d6389748f5332fcd116e44f120a2ec886d2cabb0efba9a7f",
+    "target_passes": false,
+    "witness_sha256": "5c155a547a07cfacf08cebda2175be6374a5fa92041a8bf52801938e001a4c0f"
+  },
+  {
+    "nonce": 872,
+    "coordinate": [
+      6,
+      2,
+      6
+    ],
+    "event": "ac74a09dd6260e91345c90ecf3d8ca1c7df3426a12ffb878cc7ebc9c24bba0d6",
+    "ticket": "2336516c7ca0fb5964d5c662574f9dbe75147411e669d8eea9208e7f03d1c7dd",
+    "target_passes": false,
+    "witness_sha256": "648e9eee1721e5c45ee1c820dc63c5f0a7e050359ceff797427fa8b297c3795a"
+  },
+  {
+    "nonce": 873,
+    "coordinate": [
+      3,
+      4,
+      2
+    ],
+    "event": "8fce7d9232836da8691a52fe9dcc261a0600a54779767f8d83f54ddd99a84575",
+    "ticket": "a577a8157308942aa6f08468e51c47486cf183963423409bb23d6962c3f8444a",
+    "target_passes": false,
+    "witness_sha256": "3ec613778c22b2f48e7a34f94d5c538d5d86e7243a2ed9620d8d1c5cba638e72"
+  },
+  {
+    "nonce": 874,
+    "coordinate": [
+      7,
+      4,
+      5
+    ],
+    "event": "c1eff7f84ca7f17c04e80a59090303c3d5dd2f6b1b0ce44532d3e821f360a13a",
+    "ticket": "1d78c7988d9f1be174e1abb1d4a227f3b2d8012f8d754a93ef6fb0f8d1976453",
+    "target_passes": false,
+    "witness_sha256": "31f29050571c89a9625c5e08f615912956042649f7a023053e3dc6bd8c9292e5"
+  },
+  {
+    "nonce": 875,
+    "coordinate": [
+      1,
+      5,
+      4
+    ],
+    "event": "319ba06a3b1ffadda4ea8ec1fb125d5803627d1923f0267a2b78cc020ce380a8",
+    "ticket": "e5ece85a4b851bee9eb71766c4164f9b9d2d97aff9959b0286f75f64ef6d7ae4",
+    "target_passes": false,
+    "witness_sha256": "4e36272c5630980ad1c9bd15492ca6013b6d2a5678322b628cf21ac12e3ca5ad"
+  },
+  {
+    "nonce": 876,
+    "coordinate": [
+      0,
+      0,
+      1
+    ],
+    "event": "2022f09ee8ed723987173e8b7f72af773c7878510d46e1e3b12d9840fdbeb49d",
+    "ticket": "3c6d8e8af5ba8eb7176f368af94394c1a2ca282a19c72c3915a505f53f1b864f",
+    "target_passes": false,
+    "witness_sha256": "f1cfd128b5c8893bbbaf31cbf95d4957314eb279f0f732b825bdaf7efc21b874"
+  },
+  {
+    "nonce": 877,
+    "coordinate": [
+      6,
+      7,
+      7
+    ],
+    "event": "33a92bf969e7cfdc9c99fa7d77c35744d5161cc374fc3395d90fcf6e466a811f",
+    "ticket": "780c96061b2eec89a8edcad317fc1745ebfcedce0c0d6f1b7e72c15e93777877",
+    "target_passes": false,
+    "witness_sha256": "52164483ad38ee27f912613cf88b9d3e92168b9ba27ea902e214fb993b19cdf9"
+  },
+  {
+    "nonce": 878,
+    "coordinate": [
+      6,
+      4,
+      7
+    ],
+    "event": "c7305ba141332b579c6f8969df8a164bae548728dc1638743d75f5f6f4a958f2",
+    "ticket": "121c255987a9a65b25868999a4354f9f4c7ae23b9a58ed9e954c093e8279a6ac",
+    "target_passes": false,
+    "witness_sha256": "9467b8fa7ff14cc2ab6115c66923e901fde3e1cde84e2b5ccc95318c7a522288"
+  },
+  {
+    "nonce": 879,
+    "coordinate": [
+      0,
+      4,
+      0
+    ],
+    "event": "9527c67ebbe0af97b808143203d2f2da6054aff54a8441e5f62f209613d409e7",
+    "ticket": "2f92074ee9cbeb1cc928ad77e9ee04a173b065597df4ca2e8926316481bbeefd",
+    "target_passes": false,
+    "witness_sha256": "0e825eaa5ea657f6badf9f36b5e29b6c9028d6b746fdea4426fd11f1983e031f"
+  },
+  {
+    "nonce": 880,
+    "coordinate": [
+      4,
+      5,
+      7
+    ],
+    "event": "eaef682c265524fff2e0607aee71b2d0ee9fce5af781da5b4e7f7e427ff194d7",
+    "ticket": "83de7e084664a7ded81b7201017cc8578d3623d1f3cd555efb8b378ee645ae35",
+    "target_passes": false,
+    "witness_sha256": "fd668a50c2307140d36ab851d06910251efb99475eb8c3261e7b9d15683a79ed"
+  },
+  {
+    "nonce": 881,
+    "coordinate": [
+      0,
+      0,
+      6
+    ],
+    "event": "7fb2d4518aef2809f00a7076f58c7dd0198d4c3b5c5053878890d45df9a92744",
+    "ticket": "dc89c075d3900bc403f4916549c5ccabcc2b7ea7b91d80e48fc4af8f0272fb76",
+    "target_passes": false,
+    "witness_sha256": "eccf255453d1a5ce2f655cd089fc8e16de63aaf6d10e15e100774eae308181b2"
+  },
+  {
+    "nonce": 882,
+    "coordinate": [
+      6,
+      2,
+      4
+    ],
+    "event": "51c8f7661aebc350aa894f4f5ae2e8fb8ad0e3afa2d797ec301a1ff3d5677be3",
+    "ticket": "cf1d12f2a3d206bd219850248dde51f1823bfe2e10955072729e508db7c547fb",
+    "target_passes": false,
+    "witness_sha256": "caffd61bc8114fa9865830725dac52e976d5809d63feee4f06fa257865bb2436"
+  },
+  {
+    "nonce": 883,
+    "coordinate": [
+      7,
+      4,
+      1
+    ],
+    "event": "48cdf4bc3592547526519cc4a09b80d5a9e9d53df2d83bdbad8f948720c40066",
+    "ticket": "da0b66a779e1e2446354265ec64a998446876b549ef8470d17a7a07ead6f30b6",
+    "target_passes": false,
+    "witness_sha256": "2e66b5565e4876d31ccfaa00af61dc1108bd654c361f84543babd81bbf52fb99"
+  },
+  {
+    "nonce": 884,
+    "coordinate": [
+      7,
+      5,
+      5
+    ],
+    "event": "39268cfaeccb541f45638b5e39df8bdea543c65feaab98df12dcaf2fcb4a5065",
+    "ticket": "6b7e65436ff98b97f0533d03e8fdb8fda7b02f6e86833fb47349513fd2109b54",
+    "target_passes": false,
+    "witness_sha256": "b33f264763de4c0ee7ddaa890c5e8b33655581d3e84c99a938492c3e12468c90"
+  },
+  {
+    "nonce": 885,
+    "coordinate": [
+      4,
+      2,
+      6
+    ],
+    "event": "53827aed9ec743c4515493ae83c8888e552deb10c89995786fbabeb0378bb79b",
+    "ticket": "42860249b6b7568b3717293135c8b9e0de4ef47fbbd65ea5dbd642a6857e5143",
+    "target_passes": false,
+    "witness_sha256": "ab212c044cf73026d4ed70f85928b46eeeeff61f0de7cd13a49228b0e97b20ac"
+  },
+  {
+    "nonce": 886,
+    "coordinate": [
+      2,
+      1,
+      5
+    ],
+    "event": "f78fb2237a6f167e73db6b16138cca7fc32ed7e9a3d934e304c075839e77ac73",
+    "ticket": "d748290180d1da15bc094521c4b58144d94ef11df55f7988d367e8b42aa44306",
+    "target_passes": false,
+    "witness_sha256": "7541b107b5a902ef39f2f19ccca606206b99e77893745aa0189a60758f7b7183"
+  },
+  {
+    "nonce": 887,
+    "coordinate": [
+      7,
+      0,
+      2
+    ],
+    "event": "207d6431ed1ec6f7eb5e0bada3120617361a30102414a561e768b20773392b17",
+    "ticket": "48c22fe4f26a404749eae7a6f78c09d93edf5223de1d61c5510f045b6dd8458e",
+    "target_passes": false,
+    "witness_sha256": "8422526747072266278cdf365dfd043c1461e2f6a55f6329e3f2bc00d4b62d7f"
+  },
+  {
+    "nonce": 888,
+    "coordinate": [
+      7,
+      2,
+      4
+    ],
+    "event": "7e895499d4e96d014688785f9328b1884c163047350512efc7cd69ebd2cf7fbb",
+    "ticket": "d87459002eec80ca395386f295eaeced7482cac79e908d38f7fa5f1c56bba3a5",
+    "target_passes": false,
+    "witness_sha256": "1e839b7255501f7f0e175b5c3b31f4886f53094ba1be321229852847424e71ff"
+  },
+  {
+    "nonce": 889,
+    "coordinate": [
+      3,
+      7,
+      2
+    ],
+    "event": "4e9472811637fb8b087739c9ce03f602eadb9ee29ad63a02ab514bbf30fe1d7b",
+    "ticket": "7ef34265190f476f6ade97becc349154ac4249901360586001e51753d063e509",
+    "target_passes": false,
+    "witness_sha256": "3623bbac60f6d93ff4436e5bba28855850bb354182baaf824eb57f8832b878b2"
+  },
+  {
+    "nonce": 890,
+    "coordinate": [
+      3,
+      6,
+      0
+    ],
+    "event": "1bdbd974b3837e6ca7c42615f967b0458e81eab0825e2c4fe0c8cc26c2662028",
+    "ticket": "8b6a515b2df3894afd9d26b4ce8cfde6261622f0b03471a00a4f973f97415d60",
+    "target_passes": false,
+    "witness_sha256": "8cf15657c06bb4b5942177245e1befbe2b4663216799fbe69680ca4bf6a34a66"
+  },
+  {
+    "nonce": 891,
+    "coordinate": [
+      2,
+      6,
+      4
+    ],
+    "event": "5930e3e18e6545118f8c1351c6dbd4271a5e5177c448b99c2f3abe940be1416a",
+    "ticket": "28dbd57c0500ee7d9ecbd0fa2c1defcaa08fe8ac0c1158faffa5d6791826c48c",
+    "target_passes": false,
+    "witness_sha256": "2508eb4b004e33a428467d66c962292338c31d6aa688a34850e5db3cd51e6462"
+  },
+  {
+    "nonce": 892,
+    "coordinate": [
+      4,
+      1,
+      2
+    ],
+    "event": "854b68a7707ace07fb551231a7a5353b7f8a863b4fbb51cd1d05ee5473c2bc46",
+    "ticket": "855c049e4ed4e758469aa49aeaaa83e8d1caea40eb781ecf0226be897fec58f9",
+    "target_passes": false,
+    "witness_sha256": "54d3e2e67faacdbe6dffe4259fcb6ea75187c43071811639f523124a22338b24"
+  },
+  {
+    "nonce": 893,
+    "coordinate": [
+      7,
+      7,
+      0
+    ],
+    "event": "adbb558e32031c82a81128a385ae021ec83c6a0ccffb330e9f7a978dea6e3998",
+    "ticket": "652a6131b9225b32eaea2bff6aab1a4d5ef0807f0fb3b3a14bec1e1242597cdb",
+    "target_passes": false,
+    "witness_sha256": "079e1429d8d1875805c5574b7d5e799bc59e40fee110371c27ca28bc70696f59"
+  },
+  {
+    "nonce": 894,
+    "coordinate": [
+      1,
+      7,
+      0
+    ],
+    "event": "dd63f6fb82736dfa1595a159554fced688e1a73fba804f6b868b99a5a644172e",
+    "ticket": "fdfdadc41984d50b35c56499efbb8204820356667517615824d3d65be27e83e6",
+    "target_passes": false,
+    "witness_sha256": "846434555479ef6f1101ec7d4f771766ac6edf5f05d7686115bd18a95b06879a"
+  },
+  {
+    "nonce": 895,
+    "coordinate": [
+      2,
+      0,
+      7
+    ],
+    "event": "149f27cf83e5defe6474c7ba57766eecd9f1c7204d1229777eb0e4aac814ef96",
+    "ticket": "44b178fc096d06bf36d36b86fb0e8cd2cf418ec27e13e256f876d8a3e2b869ee",
+    "target_passes": false,
+    "witness_sha256": "864baa454462bb53cc20e4f6aafa3a8349c90d6301cd963caa3a011ab0bdc4a4"
+  },
+  {
+    "nonce": 896,
+    "coordinate": [
+      2,
+      4,
+      2
+    ],
+    "event": "ec903ca287cb665d04c3e71ce03be0273555ecd4fcfa57d536e878da5d315a1f",
+    "ticket": "d154e5a5a26d85aa6d774ef7c1b66a66e69f07464ab4f02a6da18770e7a7a745",
+    "target_passes": false,
+    "witness_sha256": "377769588885d0bb99aba44c588231dd0e9f3e7fe877edb18549d6826c25a184"
+  },
+  {
+    "nonce": 897,
+    "coordinate": [
+      2,
+      6,
+      5
+    ],
+    "event": "5acc8bf30b328bb810577a0c7386beb5e64f493a2933c08b1594f11619b7a175",
+    "ticket": "eba0c75efa8b8f213f71077b8377b57d1339c77a95547760f541c0ba59c5e31e",
+    "target_passes": false,
+    "witness_sha256": "2dda899d9df87bb21d70e0be1d0e341a100936e8902736a50023de959a0fdc37"
+  },
+  {
+    "nonce": 898,
+    "coordinate": [
+      5,
+      4,
+      0
+    ],
+    "event": "1ff0c157764955e680a8668a122b87db0498824d0b865b3c25a188100ede3d8e",
+    "ticket": "33b682dc30365a6db0e72a090319f70c85ce3fb257891d40f444637ea9068f07",
+    "target_passes": false,
+    "witness_sha256": "b570d0c26dd8bfffe604a6054f37db78200740e1a7c966f14998108278328f91"
+  },
+  {
+    "nonce": 899,
+    "coordinate": [
+      4,
+      3,
+      4
+    ],
+    "event": "0529a82f9b5987e98af3985227439de43529ad3e5b6181db65e48de59e6efa7a",
+    "ticket": "c26646f094c8301a8e94fe7a4153d68cafb24bd7dca9975ca0341130ac794119",
+    "target_passes": false,
+    "witness_sha256": "0c774b6897b2f0e58f99705594df8dda9fb68d877366cc6a06a288ac926979cf"
+  },
+  {
+    "nonce": 900,
+    "coordinate": [
+      2,
+      7,
+      6
+    ],
+    "event": "9119005aeb0efd8b795cc4495a10e510717d721e15afde828d0918cc6deebb76",
+    "ticket": "3fa1b2f16770f40cef8163bdca5f2f64cd48adfb3ddd6f9c06d69cce5bc16b86",
+    "target_passes": false,
+    "witness_sha256": "1dbcbbab31238fdfe5ba0fb31c29df07977f50e371c239bc8a59d88ab6ebdf25"
+  },
+  {
+    "nonce": 901,
+    "coordinate": [
+      1,
+      5,
+      4
+    ],
+    "event": "668682d00e8cd0478c7d76f0d3053ce489663fb6d38a38ec3c87a9891cd1e78e",
+    "ticket": "fa60dd3b1aab18d36ac7170cb0058ea44f23ce4e02e035e386f8224e5b9898e8",
+    "target_passes": false,
+    "witness_sha256": "5793a988d5add4680ee9b4ad408022a46d13deeb3fbf0f6fa1e541fcb7ddce96"
+  },
+  {
+    "nonce": 902,
+    "coordinate": [
+      3,
+      2,
+      4
+    ],
+    "event": "d8d1014558fd0e7a7ad28e164f098b8ff29f939d74a9400099bf007a0500a6ec",
+    "ticket": "b64c6c7ffab31a770ebfdb4125eb2fe443dce01cd61464dd3dbe9f139c1e6994",
+    "target_passes": false,
+    "witness_sha256": "0da2e7a6dbb46ee13792d10df87893c4f0a8457b1d6b20d326136a7ad464245e"
+  },
+  {
+    "nonce": 903,
+    "coordinate": [
+      7,
+      1,
+      0
+    ],
+    "event": "14f46f159a0b8ff39f835c9b7df6038503c63af87a938162ba5fc40cbb417964",
+    "ticket": "7a73497f73b8ee2298428e986f3d42122f57540e45a506f4475fd444458bda1d",
+    "target_passes": false,
+    "witness_sha256": "fbe87bd0587e269f7c6887765cb76e6e38472c499f16ece5d28b2310812fbf18"
+  },
+  {
+    "nonce": 904,
+    "coordinate": [
+      6,
+      1,
+      1
+    ],
+    "event": "043b0050a4f4e1fb09f2fdc6d3bd73230802e955a10fbb815e1078ec2b9e8465",
+    "ticket": "8ad4216072223beaba7a53bba145ffe3eef4df2d909205ab8a9bb8131137f17b",
+    "target_passes": false,
+    "witness_sha256": "d2c02efc1b4cd477a8122ead29bd536c3258286655b5a296b5066a2d22fef519"
+  },
+  {
+    "nonce": 905,
+    "coordinate": [
+      7,
+      7,
+      4
+    ],
+    "event": "84c50015d797e831af7805ca474e9da47bf3884d8985936cfa76fbd6850ae5ab",
+    "ticket": "7fbb29242d694d6577c0137d3b2dacb93658b0d24645dc2e1f2e76c148472df0",
+    "target_passes": false,
+    "witness_sha256": "be1ddca481bcac3f20e99633dfb21be45124f2c39abb0562c7e16c74ca4cfc35"
+  },
+  {
+    "nonce": 906,
+    "coordinate": [
+      7,
+      4,
+      6
+    ],
+    "event": "147b8ec44617ab2f1a10960a4e46e6363a9cb8bac094473d79959bf031a0d823",
+    "ticket": "7e9a374e7b354b00f605ce7989180e9263a65dc91b40366f9bb679abec33379c",
+    "target_passes": false,
+    "witness_sha256": "fcc5497c4726fdfc3fc16761a909fdd013339921006ff525203901b002751ae1"
+  },
+  {
+    "nonce": 907,
+    "coordinate": [
+      3,
+      6,
+      2
+    ],
+    "event": "572d5aa6b4be170e2a2b97dd2b35a4c93d42696f7126a44522a8914a470a7931",
+    "ticket": "1aeb47d1242c02cd21642f7015f5c7a28c7c76d09b9c59ced0f07c265a774397",
+    "target_passes": false,
+    "witness_sha256": "f01b6da5207b84147e9f99e8d97af97724e9a50b78fa49eb5ef3cae1505c767f"
+  },
+  {
+    "nonce": 908,
+    "coordinate": [
+      6,
+      6,
+      2
+    ],
+    "event": "d4e7eff6ec813df33d0f72b66c9ac15f4cc0a38802ac4141018fd66cb5b4b0b8",
+    "ticket": "196ba629e0329e58338fa81fbeaa7d51f954344a337da5e592e8e5222935d920",
+    "target_passes": false,
+    "witness_sha256": "c6127baf47c6027776df82e1ca7ff3a08e999b346c0037ec109ff7c62f169c97"
+  },
+  {
+    "nonce": 909,
+    "coordinate": [
+      5,
+      1,
+      2
+    ],
+    "event": "6ac73a9180565e9af622884ea3c41c9198e846c966232d167bda5332f99a99a6",
+    "ticket": "6f037c9deb43cff67a9cc8379266dc2fa6a5822b213b0f8cb910b71e05b39416",
+    "target_passes": false,
+    "witness_sha256": "dadd691c7b408430bab83422bdbad0c064c23ec6f9413ec385d21e03224ff3b7"
+  },
+  {
+    "nonce": 910,
+    "coordinate": [
+      5,
+      6,
+      7
+    ],
+    "event": "91537936adced92854046ce44a26ffc8e727fde2afced9246c1408547f7fa516",
+    "ticket": "7f8b2379dac4b072614d3955eed56c41a61a00fb769dd1b2590727c3f56fa9c5",
+    "target_passes": false,
+    "witness_sha256": "5138f8dfdc52b614634b3587a21f7f16afdb92165301cdf5e84b98b9ca423987"
+  },
+  {
+    "nonce": 911,
+    "coordinate": [
+      6,
+      7,
+      2
+    ],
+    "event": "9e464e867d9dc49172cc93a1b725e6b0ff66379c642254a6b8207ddeaa1152fe",
+    "ticket": "c93879a17e5981053f1da31758d4b300f1ff44f3c257fc52262113d6f2b4d524",
+    "target_passes": false,
+    "witness_sha256": "851129c48294ffbffbceffeb7954df273a098a1d33bde870976ef5c857413d1f"
+  },
+  {
+    "nonce": 912,
+    "coordinate": [
+      5,
+      3,
+      3
+    ],
+    "event": "0e557914e7ecd49f057e9adaaf656a97c91b01a07d010ff4f3a7a7552b065d11",
+    "ticket": "d49d4fa7c578107b77c9331b40a51b07ff0786b14a4bd053e3ba636721b72320",
+    "target_passes": false,
+    "witness_sha256": "a27af747d2684aafe3c6946eba265d33ceb5f34b035d269688a9a21300361b47"
+  },
+  {
+    "nonce": 913,
+    "coordinate": [
+      5,
+      2,
+      1
+    ],
+    "event": "b3341bd6948b32d398a2c3fa1c81708bc5a8adb5be05955a657196021c9da365",
+    "ticket": "22bf7b4d0d316742427487db0d78d43c1a48490ec12b6881f1a5b1b9aa618658",
+    "target_passes": false,
+    "witness_sha256": "9f1ddf349782bb21aa9c8c9ec506a461d56736dedff70e9e8db87670fcd3c86b"
+  },
+  {
+    "nonce": 914,
+    "coordinate": [
+      1,
+      1,
+      4
+    ],
+    "event": "4bba6e0e6caf9f9555627d4c60b255eb603a31df4ca4f6bbfdf99cd2580e15dc",
+    "ticket": "67eae1c28f39ba04dd0adc4776a4a71a177293b31b5ede4cd16f61b610b06222",
+    "target_passes": false,
+    "witness_sha256": "96a16cbc00c725469c27c952a7370c9cfefe67ae8bde2e572bd5a27ca33fb77a"
+  },
+  {
+    "nonce": 915,
+    "coordinate": [
+      3,
+      2,
+      6
+    ],
+    "event": "e3afd1afae07ff9f55a4bf5da7dcb1202721de15bb7856fb8a4704470bcb71cb",
+    "ticket": "08fd32e7fe8b5a19589b52fc2b70d9d0640ae9cc32ce5ae2f61afe5d7fea965b",
+    "target_passes": false,
+    "witness_sha256": "e15871be4364725d9c5ffe47bde3ce97dd1c8e4a3c0e3e8e47a2e447e8020908"
+  },
+  {
+    "nonce": 916,
+    "coordinate": [
+      6,
+      3,
+      1
+    ],
+    "event": "b7b1dc95402880e223c9ad0cec126581553fb62fedf3d30a3376f80c85e94df2",
+    "ticket": "35978c2e9c7217e26d1a7924148e3291d23a4b9a570cbbd1945ca83899fb225c",
+    "target_passes": false,
+    "witness_sha256": "57d9deeb6ba50feea6951cd5783b3c92a2c7ecc07cdc5a11ac4894e247c7c3df"
+  },
+  {
+    "nonce": 917,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "event": "d62dbccaaf1ef8bc6b36ed71a5773cdb814786339350bb680ea92d5f5217b328",
+    "ticket": "62ffb24350e657ba4fb50bf9f15f7becf88c82c7ea8e45d2dca26f87f101e6e8",
+    "target_passes": false,
+    "witness_sha256": "5a4f6738a0eda3575a4d9de72f322bb2eca9fa39cb515e384f5051bf02b0d3dc"
+  },
+  {
+    "nonce": 918,
+    "coordinate": [
+      7,
+      4,
+      7
+    ],
+    "event": "d402ce337962ccc151569e90765e92c032a4d0510559f8c838e1f95d92c421f1",
+    "ticket": "00737a09faa9f4835e380406f7ef1acfa63b06bff200f8d9a436270489d4a2c6",
+    "target_passes": true,
+    "witness_sha256": "2538cd4f90ef73a9ef059ff6bbbd695ab8af7a848211dd4e07d1c151606e28d8"
+  },
+  {
+    "nonce": 919,
+    "coordinate": [
+      5,
+      5,
+      7
+    ],
+    "event": "79dc28dcdc65382818ab64574d868e60d93dcefd6b9f5b9e49a503a9ae5343bb",
+    "ticket": "83c23b3443ef672082c21a68cf9b3c7581c23b8a7085b89ce7b0ccde4cd946c2",
+    "target_passes": false,
+    "witness_sha256": "c8f525219b5a1b9efa70d1a4b010141ed7b7f9c267bf4a80e74a984946123176"
+  },
+  {
+    "nonce": 920,
+    "coordinate": [
+      7,
+      7,
+      6
+    ],
+    "event": "5bd1823614a755cbca88211d9e9cc03e363961766c3ba3566f2b1da9e7b35eab",
+    "ticket": "f56aa601d7be6978f78e717aca416692312cd08b1361291e695275e0415e36c6",
+    "target_passes": false,
+    "witness_sha256": "2ab93a7ecb544a0866f76f99f1e6dd0e93d62e9b9207fc70ca2321d6f731cb4d"
+  },
+  {
+    "nonce": 921,
+    "coordinate": [
+      0,
+      4,
+      7
+    ],
+    "event": "2f3e49f93083679490ceb7ea2c1fd1ce610e71c81d4c132b984dbd217e5ea39a",
+    "ticket": "a1de1a0c887ab96801e97c66ea4f4714dbf94d7d6062f1651036dfe4dfca0166",
+    "target_passes": false,
+    "witness_sha256": "b6c67c80c6f3f3333ea644f51d5a368135cd8afc401ca819771fd017e0853597"
+  },
+  {
+    "nonce": 922,
+    "coordinate": [
+      4,
+      6,
+      7
+    ],
+    "event": "8c82c004ea9de63bc55f2e8d04097c7a244454d83eb533164178bbec1c68dcdc",
+    "ticket": "72cc701509b29b8e1f86cbfd9ce409b857e7a49840350f6727029992f9e99be5",
+    "target_passes": false,
+    "witness_sha256": "21fb0c2385979bb21a33a0c163b93b72180b2fd8057455024bad5ba8067874a9"
+  },
+  {
+    "nonce": 923,
+    "coordinate": [
+      7,
+      7,
+      5
+    ],
+    "event": "2c4fe437e8f7eda67b317c526904557eb36c5e3c34cddde5e3da062c366749a8",
+    "ticket": "3e51d614beae30052fd305f02fd9e9d59971f202b8118602ba4a4a86cf2afb01",
+    "target_passes": false,
+    "witness_sha256": "e4e175dd84eb2d3105f9968ad5c7eff6d7b22253db210f587bf85011a6b16bdf"
+  },
+  {
+    "nonce": 924,
+    "coordinate": [
+      6,
+      5,
+      7
+    ],
+    "event": "ef509a9c89a0f5125b9c5f21a9f17e1fde8c607fb0a083689e0f0d7ac30dda0e",
+    "ticket": "0507b2c54fe1587b611e11dafb12885dda97005d7126db19fdc49cfe0060ec82",
+    "target_passes": false,
+    "witness_sha256": "a8bc3fa33c9dcee1674efd60e325f5605adb76922ac3c59ac7fa62048801db88"
+  },
+  {
+    "nonce": 925,
+    "coordinate": [
+      2,
+      4,
+      0
+    ],
+    "event": "267c749583578bf907397bdf572343b9efa0032814cd1fef3835b6a186e6d18e",
+    "ticket": "7304d6105d6bf6666d7e2d665657e0a71be38b3fc21deb3e327569adc268ac5f",
+    "target_passes": false,
+    "witness_sha256": "dee1ff97f2661ea54e23c8b8a90f060292b0de84124b8ad8797d39c04e45f92b"
+  },
+  {
+    "nonce": 926,
+    "coordinate": [
+      1,
+      7,
+      6
+    ],
+    "event": "4cc5dbbb734b8ead43310aeb4f88e8750826bb73d08effcfec73db6f6ef4e809",
+    "ticket": "0b389827e626d0e99475d955e0c248e4a49553e57e1a4cd523a77bb500b58260",
+    "target_passes": false,
+    "witness_sha256": "1bf62957d8a9554d03f56813f6f6f2492aa8592ae4a7a8c8bb2ed35af8c1868c"
+  },
+  {
+    "nonce": 927,
+    "coordinate": [
+      7,
+      5,
+      5
+    ],
+    "event": "2ac02ee1a842ddef33ea3e30ce6f77d2e762a802f35ba3b4ebfe9dbd0c66d439",
+    "ticket": "65399e1c008d9e2568462776b2e803db33876bc8dc59acfa7d8de6103034c79f",
+    "target_passes": false,
+    "witness_sha256": "20413422852d65a6394c0232d89f8b18d86699957317e106b9561d8f68560d39"
+  },
+  {
+    "nonce": 928,
+    "coordinate": [
+      2,
+      5,
+      6
+    ],
+    "event": "8ee57c0c1d9eef2bcb79622efada822256bc9e3dd7621a51d1cfe7ed9c0c5a2c",
+    "ticket": "8e30afb5599c8a30ab708a76a20d5e65f9952647c38452f8a1a7f25f859e8210",
+    "target_passes": false,
+    "witness_sha256": "32c4d4fb17d244bb19efb6fa1d117d2d57d9683b5b7e9e56d0e2acc6637f40b4"
+  },
+  {
+    "nonce": 929,
+    "coordinate": [
+      3,
+      2,
+      4
+    ],
+    "event": "ad63d911a19d0376fcba69d40f8b33e43d80bb5f681c0e30810eae52bab4722e",
+    "ticket": "c813103f104dcd1c8c2c0d681daf0d9908f882944a11b9e678425205fc329a5d",
+    "target_passes": false,
+    "witness_sha256": "27953a6d088460eb879757862266764a7883ea9c85dd97dc5b0fe19a74c685d1"
+  },
+  {
+    "nonce": 930,
+    "coordinate": [
+      7,
+      4,
+      5
+    ],
+    "event": "13dc6e4f19c5986c38a3373d468a1ea2fa707bc69b13ee472346e7c4760c3516",
+    "ticket": "1237e6f87a722698e0dd7f70233f54cff798e32ea843836ebbcdf589258b1779",
+    "target_passes": false,
+    "witness_sha256": "a9fcb9554ef550e7801d965cfe8524b87ce76e991424dad7191ee77761524adb"
+  },
+  {
+    "nonce": 931,
+    "coordinate": [
+      1,
+      6,
+      1
+    ],
+    "event": "2d28f60d94cad1ef0b8a1749d172c0214debb6d0d0b926016cd789a290147e17",
+    "ticket": "50787b008ea3e69d5a57a67267454e450044c418e7c11bcfe416cf9f73d03341",
+    "target_passes": false,
+    "witness_sha256": "8d8ec71866fb31b4adb2c29431db88243157555c2a9b7e9cb470c18b76af1171"
+  },
+  {
+    "nonce": 932,
+    "coordinate": [
+      5,
+      0,
+      3
+    ],
+    "event": "dc8bd2a1829db3189b05d8b54f6002a9be9a13d1b493a0ff2e5589747143c06b",
+    "ticket": "b2d1505212a2683d0f660c979e27bb7b8bb5d248bcd21b6dcbc4a41ecf3f03ef",
+    "target_passes": false,
+    "witness_sha256": "7014c310ecdb198e1a498547e7d424691228103cf62387f48a39ff09ca7c4883"
+  },
+  {
+    "nonce": 933,
+    "coordinate": [
+      2,
+      2,
+      7
+    ],
+    "event": "ab57cb897a599cf377add484c15ae39fb735d7e2fc0b14d1bc77472e406a814c",
+    "ticket": "5e59dada7a3d624181e98d6510b834b75f7be9837831d877e748c3bb80a331ee",
+    "target_passes": false,
+    "witness_sha256": "0179763607fd042bea16ee0f2b5b5c1135dc3bdb490d1bc553051283a3ea328b"
+  },
+  {
+    "nonce": 934,
+    "coordinate": [
+      3,
+      6,
+      0
+    ],
+    "event": "500e88b4e71910ac8a1a0cf30ff7a9de7578494c21fc441314e7daefca4db8ef",
+    "ticket": "3ebde6a12ba3ef37ce605b25cf612f170de501f6adb7e48d87cd137be57adc24",
+    "target_passes": false,
+    "witness_sha256": "776991ecef4b439f0099fa18f7e7ec117a45b674a9cd27ffd155cddcc19d11b3"
+  },
+  {
+    "nonce": 935,
+    "coordinate": [
+      1,
+      2,
+      0
+    ],
+    "event": "c1a6561130eb7c14a67f42ad41dce1b31078af9e567c863d8e5144f9369c2541",
+    "ticket": "07f8a09b11acc4375936400b81e25b329ea936742095ec7d26e6c5372e94878b",
+    "target_passes": false,
+    "witness_sha256": "42e48dce876551f17b239f2edc55b5323dbe7a4ad9356287b5d1068fb68ac386"
+  },
+  {
+    "nonce": 936,
+    "coordinate": [
+      5,
+      5,
+      5
+    ],
+    "event": "9ad78b37f2988c72c091181c368ed7e20d00a28960389bead7be0792892a015d",
+    "ticket": "7f05c134077d9fd3e6de1edece2068764bb95b5d1939f8cb94bb61f1696a2189",
+    "target_passes": false,
+    "witness_sha256": "26bfb16fa4065c45c73d85bacfb1a46bd1e5dc081ec6a4eccb54b81abc5ef952"
+  },
+  {
+    "nonce": 937,
+    "coordinate": [
+      4,
+      7,
+      3
+    ],
+    "event": "360cbbb2cd4a252c9a156d94530657917b99fdbf1dec3d6f4291a515a9859cbd",
+    "ticket": "9f12c29a714121f584d14bf8dd0fe0b014644551d9be480c2af3149ab8f3b48b",
+    "target_passes": false,
+    "witness_sha256": "62beb33952d7d49fdad3b949fa057947125fcf2d910562c89d9b91c9f0e4b5df"
+  },
+  {
+    "nonce": 938,
+    "coordinate": [
+      2,
+      6,
+      0
+    ],
+    "event": "744bd5855fa3ee599b6cf0098314228d434fe98da25e4a63391b293ca23a9b9b",
+    "ticket": "3093e9890de23e934c3ac837cfc7dffe43da54417ee119c43a4e5925a1f6239b",
+    "target_passes": false,
+    "witness_sha256": "e213d06a6a01485271d1fc82978ab785e2911d6d02ba5d56ea01e922da126f01"
+  },
+  {
+    "nonce": 939,
+    "coordinate": [
+      3,
+      6,
+      5
+    ],
+    "event": "e6fd8754c82f7f87d1c7a8d710d77bfea3c9c73c6df01b2cbf26390721074ce6",
+    "ticket": "67f6771c90419d190eb0d9f6c2059c8ed1e88d6fe727547acf3968caed63bad1",
+    "target_passes": false,
+    "witness_sha256": "4f0de1d118bdeddc7f6bede2d6a4b50d58f3ba073e43ca362bf79f1554378b5c"
+  },
+  {
+    "nonce": 940,
+    "coordinate": [
+      7,
+      0,
+      5
+    ],
+    "event": "71ff10b8acaa509a1565124e056d967dda9b4d38fa81f96e24c180d181f9d269",
+    "ticket": "42ffe68df9fa5ad5da49f17e4e39d857102377052eb559641ee35378b14ed58b",
+    "target_passes": false,
+    "witness_sha256": "b05910e2e0fc8276f65f7f1196d4627228835d00b7de7b3a25de4ca54208d7d0"
+  },
+  {
+    "nonce": 941,
+    "coordinate": [
+      3,
+      5,
+      1
+    ],
+    "event": "c762ce129e5ac8bf16f5e03bb3a19df0e2c5cf293eaa684895e071f49b476883",
+    "ticket": "4f7436cf277532a36e333feba7ee2312f413889f4fb46e36126f3c633ddbbeb1",
+    "target_passes": false,
+    "witness_sha256": "41798c40374f7750046b57bdff9ce571e79165e780574f284ac917685ad6ebaa"
+  },
+  {
+    "nonce": 942,
+    "coordinate": [
+      3,
+      1,
+      5
+    ],
+    "event": "a6e2de645b1bb6d03f67aeb3410a7f7e96c954180fde42eb007557acbb2f1bc3",
+    "ticket": "d8d79c39a95d5b6e11baea9732413cb1c1e87a7708f48c11c8c2f0ed75a16a48",
+    "target_passes": false,
+    "witness_sha256": "fde2498d996e248af68ed13f1110b803194b21669fbc550af945527636eaa3fc"
+  },
+  {
+    "nonce": 943,
+    "coordinate": [
+      3,
+      0,
+      5
+    ],
+    "event": "4e8e0fc2867706416030d07f8166ebaec50cf131f8331c7da9c9d5a7fc67e849",
+    "ticket": "89ff524b23e93700d99349054bcc3ff47f4b9ff3943118c222ff15c4434f4981",
+    "target_passes": false,
+    "witness_sha256": "731446fe26cc5c913ce9c47acfceaa6cd633e1abad3a40f046252d740a2a2470"
+  },
+  {
+    "nonce": 944,
+    "coordinate": [
+      3,
+      1,
+      0
+    ],
+    "event": "82cb0235d907263b98c12cd1969bf04710088abe66f5ede940406c8b24f0d67f",
+    "ticket": "cb6c9e7ce86878341583c6b89dcb4135338ad1a07c21f8fa7761ac32c6908082",
+    "target_passes": false,
+    "witness_sha256": "887dda0243bb53f2994967c446f13d368d30a2a22a7fe21fda2187550507ada7"
+  },
+  {
+    "nonce": 945,
+    "coordinate": [
+      6,
+      2,
+      4
+    ],
+    "event": "851ecff814182c002b03492abd9386f7e0dcf40130fba7f97c68981ad1bb86b3",
+    "ticket": "7712651234bfa490047bb63302dfab8274c2ede2d35426999627eb4b34992e42",
+    "target_passes": false,
+    "witness_sha256": "4d33179c418fd13ae36ee6ac944c542430a4e77d2377ada15a6910cc958f7825"
+  },
+  {
+    "nonce": 946,
+    "coordinate": [
+      4,
+      4,
+      1
+    ],
+    "event": "61a1b6cec116a0e2db9827a3e3aacb5d29c55a2a1b89efa7dd03db2321823f4c",
+    "ticket": "006963d317d6460c9f1be372c4d6faa50f5dc8524fdb01720e010914444ae4dc",
+    "target_passes": true,
+    "witness_sha256": "dd2a730557cf4dff2e447aa9a4a444323bd9c197897ed8effd5de011ddc2b6ee"
+  },
+  {
+    "nonce": 947,
+    "coordinate": [
+      3,
+      1,
+      7
+    ],
+    "event": "83e2b7c465fab767d50309674ee2d0bc4cad615b6d9af29a5df73949eea7f694",
+    "ticket": "228294a8e7ed0534a4e57fb7fba7c20925738dc1527b7c52e2e723b19786db85",
+    "target_passes": false,
+    "witness_sha256": "dea207f661475ba934dc826a9bcc12b461b0df375c5c7a74b7568029c4a49197"
+  },
+  {
+    "nonce": 948,
+    "coordinate": [
+      7,
+      2,
+      1
+    ],
+    "event": "97328a85c540e9538c447ac17539c7b960c57d8c1dd8af0e5010cec91e8f1d8b",
+    "ticket": "0a31fe579f12fce6638c6bc5d7a128ab7fc29804290d2f72d7da423d619ebdb5",
+    "target_passes": false,
+    "witness_sha256": "42394783dd616fb74de629bb08c7c9dfdf24322909fe0ab84b5657714f18802f"
+  },
+  {
+    "nonce": 949,
+    "coordinate": [
+      2,
+      3,
+      1
+    ],
+    "event": "6813c0b9c875ab599eda2837a46b39eae81751f0bf80d8c46037dfd29f44a1e5",
+    "ticket": "9efaee3155b5a1fc2c6384ce7fb90c0c615ddf0cd2cb3b9626cb54e2dc207801",
+    "target_passes": false,
+    "witness_sha256": "0171678c7d3ae2cb9981d17fdf6b620f33f4f0e5943e3f98565037bff39913b7"
+  },
+  {
+    "nonce": 950,
+    "coordinate": [
+      3,
+      3,
+      5
+    ],
+    "event": "5199933b4bee1576b9c4b0d9cc42df9098c4cb7e7a5e93e1b9f4c7096310890a",
+    "ticket": "f453351e6a2b845da0e22888e3f2fd4d71d17bffe3b00b922b297323d9fc29bd",
+    "target_passes": false,
+    "witness_sha256": "c419d5f724fd51039f1eabaab94a04afb19c41bdc0dbd36e29fd697ff9eba7bf"
+  },
+  {
+    "nonce": 951,
+    "coordinate": [
+      0,
+      6,
+      5
+    ],
+    "event": "f74fb30b89fbf97aed0c4561cde3dbe8ecda8720418bc875d755855260ce9973",
+    "ticket": "249a87dbb75777b2d1849cfa8e5c95c2c8c1476a63f53e8cedf593ee5e1e8f53",
+    "target_passes": false,
+    "witness_sha256": "d234da976a4ff45e9701160167ad72c297711f4c85bfdb1865b01fd909762fe4"
+  },
+  {
+    "nonce": 952,
+    "coordinate": [
+      2,
+      1,
+      3
+    ],
+    "event": "3a56be51ef6c799009beffe47b5b8b5ad3076abfff7c79f98de8dad511250661",
+    "ticket": "e421ae02632b460480f455581eeb56f41f5fbd0385b58166b7dba7622000639c",
+    "target_passes": false,
+    "witness_sha256": "abd4cd375fc4ce0a52dcc45152a7123764d4fc45aceae8824ad311dbd84fc4e9"
+  },
+  {
+    "nonce": 953,
+    "coordinate": [
+      6,
+      6,
+      3
+    ],
+    "event": "db5cd1230a01b52b0743d07b5312471ec70f5da381766b91c117e55960ad5505",
+    "ticket": "78d1ddceb911ec1e652fb26e43290e9ca26e3e3532695139f54083a46eae6b7f",
+    "target_passes": false,
+    "witness_sha256": "b25eb49a487780ae796633cbbf9a0ce8287315e10eb6973b533a1ad62b887a31"
+  },
+  {
+    "nonce": 954,
+    "coordinate": [
+      3,
+      1,
+      7
+    ],
+    "event": "6e9b640ca24b57790307de2a67997abb2ecb3642660189a409ea7baf4fad2f18",
+    "ticket": "7371bf54c75f941efb34c9b7319fcee194637d1b627f4a334ab585a447d4b50b",
+    "target_passes": false,
+    "witness_sha256": "234cd2cd7f325d82224e61f33731f5997062f21f5a684c631fb5e67ce7518425"
+  },
+  {
+    "nonce": 955,
+    "coordinate": [
+      5,
+      4,
+      4
+    ],
+    "event": "9c286a503dc013af978fc53ad895a3ec1ff9ac5dfc5f92b8900e7bdeef4bf733",
+    "ticket": "ce8a39af06f800309169360c91e6fccca320a63b6180475734495ecee016ed4b",
+    "target_passes": false,
+    "witness_sha256": "d5d01352b3aef566d81f109f4ce1923d4ac063a531fe8930c7b5fc5f2eda3f55"
+  },
+  {
+    "nonce": 956,
+    "coordinate": [
+      0,
+      2,
+      7
+    ],
+    "event": "f101aabb6612ed064af1c2520c2c0ce7d1602a3210fae5b1e447c3f0cf5dc94c",
+    "ticket": "0be80430a310a1f55ff7f8b5178f98a411b0c3a3691cd8c7eaee8f2e32c39c46",
+    "target_passes": false,
+    "witness_sha256": "bd7242c2528d0c8b27ce1ed8a2de3e52b1b63217b2bb3aef5a7a6c4381b553d3"
+  },
+  {
+    "nonce": 957,
+    "coordinate": [
+      2,
+      1,
+      3
+    ],
+    "event": "15120e461bc26dc70773960c4234a2cc4c6a13d6789209367f007a9a9b3935d6",
+    "ticket": "57e414577e563598121ec99b6ff64e0abef53b0930576e6be7c2878c01942e1d",
+    "target_passes": false,
+    "witness_sha256": "53b2dfd21aeeb2f2b805f96247e79e7f99e3daccef5a2b7c7531d70ca0ff032a"
+  },
+  {
+    "nonce": 958,
+    "coordinate": [
+      3,
+      7,
+      4
+    ],
+    "event": "93b0e7f02a5a2a889809f1822503a2c15a80b00ccc441e3130e1af24dae251ee",
+    "ticket": "8d19ec7feff9bcde0f04094d85210b3dbe49af26e75c3cfab8bb7852e2df81b3",
+    "target_passes": false,
+    "witness_sha256": "6d2ba3df298a9432c70bcbfe9eb8f79214943483364b1f80a50a938a675846ad"
+  },
+  {
+    "nonce": 959,
+    "coordinate": [
+      4,
+      0,
+      4
+    ],
+    "event": "df32b135d9afe38bc9c2773d40e5400559668a737325d9020cadd48d9913428f",
+    "ticket": "3c6e4d2f3570c02274ca9eeb6c63b48ffb5d4d43f80a66615fbb2253ef9368d0",
+    "target_passes": false,
+    "witness_sha256": "c40ac9316d412d8fc1ee754048bfaaf3524f3a129a77fe6489fc6071c44cdfaa"
+  },
+  {
+    "nonce": 960,
+    "coordinate": [
+      3,
+      5,
+      2
+    ],
+    "event": "e345d611ab9c426489970750aaa7cb9f40c67cd1a0dfa748dc0586d957ce132b",
+    "ticket": "1f45b648254a537a7bc530f9c64f6435902e480fbe26ad2cb80aaa62436368f0",
+    "target_passes": false,
+    "witness_sha256": "3af879116721a45971e1e30350aa1d08d9f67f5340437f73bc6676f17424f4fd"
+  },
+  {
+    "nonce": 961,
+    "coordinate": [
+      3,
+      3,
+      6
+    ],
+    "event": "b898188b2a0cf38b531d7997a28d6ac65da5a29203f280882fcdce6671d897e9",
+    "ticket": "654e35e64ad603b8feab4082e5664522832ea0f1a8717c85540886faa1bd5c2c",
+    "target_passes": false,
+    "witness_sha256": "b0db156cba2682dafd14d2ae07ed75264cc93ce08f29dc9e68b779df69be7526"
+  },
+  {
+    "nonce": 962,
+    "coordinate": [
+      6,
+      7,
+      5
+    ],
+    "event": "183169377dabc7a21b7ddac6265da0d9a334215da1f484556320fd4917f5715a",
+    "ticket": "0438993dd74395e82f11afbada45996bb354b7f36e1db6f5bc98084fb4a42910",
+    "target_passes": false,
+    "witness_sha256": "bc194513144593ee4a2dd6134ae8754d9ee51a30807bdae426bc458497697220"
+  },
+  {
+    "nonce": 963,
+    "coordinate": [
+      1,
+      7,
+      0
+    ],
+    "event": "095a76d3dc0546c5027519c57d38e09ded210fd7f7a66ff1bfb3d3237a980eb1",
+    "ticket": "31224fdfd1dae170789fab530b15d6b310f33209a8b51e565a5ed0819cce969f",
+    "target_passes": false,
+    "witness_sha256": "4c25b6455ba04074c35431a53ea2850d961f043d1c2125dfc5d8f390fd018e64"
+  },
+  {
+    "nonce": 964,
+    "coordinate": [
+      6,
+      5,
+      6
+    ],
+    "event": "a9bc363e11b5af559a20de9bba45f4cb88ba8c0c5deb404485f9f52d9c74c404",
+    "ticket": "67d296dbb8db77bdae9b6cfee384682e4a854f4abeab682b9d00f65155cdac34",
+    "target_passes": false,
+    "witness_sha256": "6f2f4397ea4807e6bc003e014eff3e2f4af9469bd90ad67fd490590db67090bb"
+  },
+  {
+    "nonce": 965,
+    "coordinate": [
+      1,
+      1,
+      0
+    ],
+    "event": "f86f743121b8c26283651f027d5d5faf049bc7b9515e62c20aa2c4e9557efa98",
+    "ticket": "5bac445cd5d616b6b6d02ddb1485268f797fc04b87050bf6f7bd5553afb6bacf",
+    "target_passes": false,
+    "witness_sha256": "6b6a87e8e7da413256c42e7e87bdc65d8cd48612929b3f8f52a0784cf0cbe082"
+  },
+  {
+    "nonce": 966,
+    "coordinate": [
+      5,
+      5,
+      1
+    ],
+    "event": "51ca509c5b528445e0cc3d34e99bfde454ff08bd013b8b36c95cdc7627b79edf",
+    "ticket": "2dade4277954d6c3cf9607c9ae680a0064d9b7a99f52e923f0eea1828bb4a071",
+    "target_passes": false,
+    "witness_sha256": "8ab1bff3f2e4deee482541e71c53a3341e0c3e660a6a788a6615c89e426a2d12"
+  },
+  {
+    "nonce": 967,
+    "coordinate": [
+      7,
+      5,
+      7
+    ],
+    "event": "237ae7c0d262cad6a5659367e28717d9570358b288b874758709b67cae058c1f",
+    "ticket": "674ae90da7a0f90dbe55e158539799cc63655196f3582a9a32d91cae108a189c",
+    "target_passes": false,
+    "witness_sha256": "2a27756c778ca3d385a1fe75632d0f6ec569d966b3956ea71fcfc4448f7b8447"
+  },
+  {
+    "nonce": 968,
+    "coordinate": [
+      1,
+      0,
+      5
+    ],
+    "event": "3ac760c4988faec3d53440ade65614924d024caeed1b01e455f563cbef449873",
+    "ticket": "4362d60b9791c59a513bee023d4903e2c7d29e1a450ed98ad224d4182684bc4d",
+    "target_passes": false,
+    "witness_sha256": "d960b9e7193d5731cd4725690cd89282d97a484c4eec8684fe8a6e8e9099aecc"
+  },
+  {
+    "nonce": 969,
+    "coordinate": [
+      2,
+      4,
+      3
+    ],
+    "event": "b5bd8cb3f4c6f119ebfe9e6ddadeb83061bf67b9cafca922dc477133b5601955",
+    "ticket": "0a1eef89d4e8a6b200f9d1560da2e33d2525db6e3e1c7bc3f0283cdade198020",
+    "target_passes": false,
+    "witness_sha256": "e65ff3effde6322ab3cef784bff26592d19e8287e740ce13730db9c71c63bf4c"
+  },
+  {
+    "nonce": 970,
+    "coordinate": [
+      3,
+      6,
+      7
+    ],
+    "event": "cf9118beb3d4609acda55cc634ceafb7fcf37c2e98c2d93bae499b3342116564",
+    "ticket": "c81eb9e0a5dc4ada3499c42fbf920fbf5fd85368aead5c7f26c8af6e18eadb88",
+    "target_passes": false,
+    "witness_sha256": "8d1ae635a5350e98396ec0235e1ee02d7c7fd9b863efb8b5abcffe09cc90fbe6"
+  },
+  {
+    "nonce": 971,
+    "coordinate": [
+      0,
+      2,
+      0
+    ],
+    "event": "dbadcc69517f77359e5fa3e1ef68c05ad90aaf361cba2b51fbcb488da40bb6bb",
+    "ticket": "a161889b0ea14ea0f36dae6f6b19dbeca80a9e042f435d4cc794008f05b47993",
+    "target_passes": false,
+    "witness_sha256": "389446a0c0ce9a16ab06de1dc93d78c3aae7eeb90bc122c144af4cacfedbf007"
+  },
+  {
+    "nonce": 972,
+    "coordinate": [
+      7,
+      5,
+      1
+    ],
+    "event": "19bfa8a65ac8ab8d25a128721ba3f0b5e238105a6e683e4d9bdc608536ad4029",
+    "ticket": "1f5d30dab4df78191bdeb1f49027bd2f9476c6d9a6eaee60a97bb91c6feae400",
+    "target_passes": false,
+    "witness_sha256": "44011dd9566b0f112307c1671edbe6f0d99c16c79332a4bc42a899d3dfe76238"
+  },
+  {
+    "nonce": 973,
+    "coordinate": [
+      7,
+      7,
+      0
+    ],
+    "event": "4bfab000dcc42912cb4b628fbcac2f33224490809ffb095e32381305780f7395",
+    "ticket": "d4a3727c7b7d9a20344e1599b0422c9511678a42c81ca7b31356522c8c4ffff4",
+    "target_passes": false,
+    "witness_sha256": "dbb54abd08f0226bcc606b0b61eff38c323fbe211386f59da5426e9a03ffd4e7"
+  },
+  {
+    "nonce": 974,
+    "coordinate": [
+      5,
+      7,
+      1
+    ],
+    "event": "0967155e77c17d600d6c12f88a5b0c0dda9afcb59790410606b2be59f9e06670",
+    "ticket": "6cdcad473ef82a5bd3b0be8581952bc0302527de5be6a0f2587bf2555e4d51b9",
+    "target_passes": false,
+    "witness_sha256": "6e662d1ecac170cf9e00e9cdbc66492ae8e23fd33b114d00cf77efea04e8ce9b"
+  },
+  {
+    "nonce": 975,
+    "coordinate": [
+      7,
+      3,
+      3
+    ],
+    "event": "58414ab131c8747926f015160c1f5c87824487bfe102c3f767e14aab92c57ef0",
+    "ticket": "0dafa91df46937ffb4a2fccfe9dca584e2c6d484c86982f3da0654ec9717ffb5",
+    "target_passes": false,
+    "witness_sha256": "083cef9f73e106c934d75abeac4311ea631e3329f44dbcfc97d75d92a952aedd"
+  },
+  {
+    "nonce": 976,
+    "coordinate": [
+      2,
+      2,
+      6
+    ],
+    "event": "64000589fdb766dbe8f3752bd1399beb1094a70aa8f8bd6acaa9656c6191ccbe",
+    "ticket": "2a7e551a62ea6cbdd585ce7861d13ac9952be148b56423d2dfc5eee8c2ac026e",
+    "target_passes": false,
+    "witness_sha256": "3edf3e3dc8a00fd3430439428c94e029d674827c18943ab74ce10abd0d779191"
+  },
+  {
+    "nonce": 977,
+    "coordinate": [
+      5,
+      2,
+      0
+    ],
+    "event": "5982027de93a204e8b16c91201986e4f6b7e1f681ba7dc29142d67d4a67f667a",
+    "ticket": "e16ea0167312ebd9a8e65385965c9c320cfb7c2b8f1e6ae2a046aae8050f690e",
+    "target_passes": false,
+    "witness_sha256": "75a957823bc497e1c08d36e7c329d20ee53486bbd3306ef0bf32e59bb447e1f4"
+  },
+  {
+    "nonce": 978,
+    "coordinate": [
+      4,
+      0,
+      3
+    ],
+    "event": "2a2d97051f2d16baa9a8a02e4c5b87280938a9b37f21f09d91eac0530b1166ba",
+    "ticket": "c3eb592eb563a8b8924c61676bd56813da6b3596c47b8cc5bbba35f6da919e6f",
+    "target_passes": false,
+    "witness_sha256": "c4ccc74196e6be428c3ffdd8a2616e05af102a2ffea2c6c7704b25508270a9ca"
+  },
+  {
+    "nonce": 979,
+    "coordinate": [
+      0,
+      3,
+      7
+    ],
+    "event": "8b8da0b56e64df5fdc7c659621d3ca0845cce335f9c816ed8de058544510aa44",
+    "ticket": "d685c9272ec69196e59690ce586b95620261f718efec859a6ca9a406646c8244",
+    "target_passes": false,
+    "witness_sha256": "4fd7acbcc038d1d6c22c526f89a6d327970740a29990e753821dda2eb9784dfd"
+  },
+  {
+    "nonce": 980,
+    "coordinate": [
+      6,
+      5,
+      4
+    ],
+    "event": "245b91e91f8e97a8d994c9abc8c5c54da1a656a7aae653f5e583ca22e8a289b5",
+    "ticket": "e5399d3e020bd3754971578e138bbf9b1bd1f17db51ea65dd70cf939a16873d1",
+    "target_passes": false,
+    "witness_sha256": "2e875133c7c5710af14f53cf1f45c309bf60e6e574b4b92a57e08664402b48d8"
+  },
+  {
+    "nonce": 981,
+    "coordinate": [
+      1,
+      5,
+      7
+    ],
+    "event": "e2f0b48ddce1b2ded3d12ab2eb486c0a191623c1544b6aaeb775518b76d09937",
+    "ticket": "fbfd3064366f1902ca99a6106bbc8297af5f18ff4a21f1154164a0ddc9d07202",
+    "target_passes": false,
+    "witness_sha256": "fb628d5962713645bef4af6d69aa812f25de1140f593a31b44fb8ba32b669667"
+  },
+  {
+    "nonce": 982,
+    "coordinate": [
+      1,
+      3,
+      7
+    ],
+    "event": "f85e77c7a61a82d603a24305915ff16e072c712d95b2c9b9028639e7ed022118",
+    "ticket": "cf9a25628b63d7604013859027a23c478261c34516ef6cc81c5821083095b3d7",
+    "target_passes": false,
+    "witness_sha256": "fd8d94f6f847beff958ab54d97abf546e2caf9ae9fa8982bc60f20dd4938eaf9"
+  },
+  {
+    "nonce": 983,
+    "coordinate": [
+      1,
+      7,
+      4
+    ],
+    "event": "af4702bf0309f16caf6e2568d9ace6c0b0e3677e8a9c5966f715a7886bc4abea",
+    "ticket": "b83a9653c4f20051b4b5b0c9bd5dd7bc72e3768fb23f7c15258c794c7d048bcd",
+    "target_passes": false,
+    "witness_sha256": "bd877603213fedfad1744b0303463967694453856d429188dc0c8589641c7782"
+  },
+  {
+    "nonce": 984,
+    "coordinate": [
+      5,
+      5,
+      7
+    ],
+    "event": "abf55796116b3b7f6862c3a0eecce634e3c0c844532437d20c8ba62801ef5ecf",
+    "ticket": "d256c6a176cbd4d75782a520a0c0000e06bf9e3b977c0846c6be8145737c3d05",
+    "target_passes": false,
+    "witness_sha256": "1ee933dd333b5ccf8731d021d8f4e4b780e0471a4d2ac05de7a82b64fd23c723"
+  },
+  {
+    "nonce": 985,
+    "coordinate": [
+      0,
+      2,
+      3
+    ],
+    "event": "5311b1f53e8b0028a3190e5bfbefef80070159f4901c6f381009d577b183212b",
+    "ticket": "7baa7ceacfcd1a9471201dcc3e8e883b31bc272902046d9fe88a035b8bffb869",
+    "target_passes": false,
+    "witness_sha256": "f57d2efd96780738d23c3d5e56048c8f924ba5d22d4f518f0fa13ef0275bdc1f"
+  },
+  {
+    "nonce": 986,
+    "coordinate": [
+      2,
+      1,
+      6
+    ],
+    "event": "cf5f388bad80a8a7b11e209dc446977cb3547975b8d2ff4723548e06d8a1e627",
+    "ticket": "2bc1439de7a4f9dad649726c4b344a9b4565caefa9e2bb84c8217727e402724b",
+    "target_passes": false,
+    "witness_sha256": "d0f5685e734db5456e780a31c75bb44150092eeaaaa4427d3b3130e60371f1a3"
+  },
+  {
+    "nonce": 987,
+    "coordinate": [
+      5,
+      1,
+      6
+    ],
+    "event": "4d1eb7d3fc9517d7581f1b969a11ec0fd2b7a556bab4d1917a6dc77f00bad2ea",
+    "ticket": "072d7ddb2b1956e1f5f1a2238de3b1b1d3e5ce7dfa43241712fd20c832d0d2d8",
+    "target_passes": false,
+    "witness_sha256": "164e3455bdefb5cbdef62be9c1226bfe1abeee67a986410ca4187ac7899d82cc"
+  },
+  {
+    "nonce": 988,
+    "coordinate": [
+      7,
+      6,
+      4
+    ],
+    "event": "43ec17526e3be7fe73264684adaf6708dee02e5dfe81ab99d1e489165aeb8113",
+    "ticket": "7c80a8f5d4e85b097d3ba5b5e5f86c66f9c5e71872b104e3f5c62896d4cb7e74",
+    "target_passes": false,
+    "witness_sha256": "7713ff037c131094bd85da9b7557ba422be97db3d25270d5b6aa00c9d2f2ec56"
+  },
+  {
+    "nonce": 989,
+    "coordinate": [
+      7,
+      4,
+      7
+    ],
+    "event": "d69ad2942f48030f00882da143ecf30be539ea0ea7a861fe6afd17130045199c",
+    "ticket": "ca5f79dae5e55490d3f78a629afe8f06eeecf1c4ef1084657c5f611374afdb61",
+    "target_passes": false,
+    "witness_sha256": "9ea668ed9a329c5764410876482fe30bb6ba28fbcc44dd51b9ac9857885766ae"
+  },
+  {
+    "nonce": 990,
+    "coordinate": [
+      6,
+      3,
+      5
+    ],
+    "event": "927eb45b47bc6d710a77f097a608545f50e65cd014b953a977b7d899f458e5b3",
+    "ticket": "354a013327d2d46cfdcfaf9e04563f724edbfc0277e1dc082c7e38442f47acd2",
+    "target_passes": false,
+    "witness_sha256": "a56c99cdf3766a97be378f41c24fbaeb146415624ff0ae31d8d3262ee005a34b"
+  },
+  {
+    "nonce": 991,
+    "coordinate": [
+      2,
+      7,
+      1
+    ],
+    "event": "e1c722a34f3a531ad9bda3e703b9acfd97dfaab6603084523d8d438874a01d0a",
+    "ticket": "11cfa90da20d74d26a01296fd7b905ecf169c23afd4b2929ac4119d67fcc1105",
+    "target_passes": false,
+    "witness_sha256": "d834e58e2561458e1f813b7a4a8d06749f67592ec6b0fc834811401b9bcb6257"
+  },
+  {
+    "nonce": 992,
+    "coordinate": [
+      3,
+      2,
+      2
+    ],
+    "event": "b4a1d4cc5c4fc5e4f5acb7d692f4ffa902e9965162fa243c702c2b68eac00940",
+    "ticket": "129f9bf8d465d440b97696f67a746e9789a3fcc6ebfd4c8ed7c74e3fad5ad2f6",
+    "target_passes": false,
+    "witness_sha256": "72dc886335022f17c740caa9c145be7057bde6888f3bf31dac0700d8c7eb2d19"
+  },
+  {
+    "nonce": 993,
+    "coordinate": [
+      1,
+      4,
+      4
+    ],
+    "event": "2e8166c8e37b15cdc9f915d4b6c15d82da44f18f14dfe2d41a394003de3df8c1",
+    "ticket": "fc503b8e77b516f3c608567678e13a410cf0dd82c5b4ef397dbda53bb28a547d",
+    "target_passes": false,
+    "witness_sha256": "c74aa3f15f9c2ce7123806e045d6c9d6cdd6ff0d49bb0bb87b875ea6f241c336"
+  },
+  {
+    "nonce": 994,
+    "coordinate": [
+      3,
+      3,
+      5
+    ],
+    "event": "ae547412ae1e4611d3504b26961a5976e970719f210c60f3f7d7bcfd6646d07a",
+    "ticket": "39d448910d0e50a8329f0bb0f3e3d3c5f8129d60e9e21f9698f4278e38af7b61",
+    "target_passes": false,
+    "witness_sha256": "d4af72460cf7490a8e3fa06d3dab036760e992824eb8d5b5e9a9f5ed3df7eb45"
+  },
+  {
+    "nonce": 995,
+    "coordinate": [
+      1,
+      5,
+      2
+    ],
+    "event": "db8a07d3d96dc96e7519c57bb815537d9aa9c777cad6fbdaa0e3ba97525c8f99",
+    "ticket": "9c7126db75caf6817f96b96501983cb5d3cc659f39b5027a5f429fb2fc50f31a",
+    "target_passes": false,
+    "witness_sha256": "db1959af0f8d7a1af4e8191d5a0cb9a164fc0fe781dc6620ac376e1f36a3e35e"
+  },
+  {
+    "nonce": 996,
+    "coordinate": [
+      5,
+      7,
+      6
+    ],
+    "event": "7f85b42463b84d6b7bed1e9843008acf8cb1ff7d8d2e3484ab960eeff89c3f2b",
+    "ticket": "5809120ca662f5ec95baa3e368b2a7e6ef87449a5a7b8903ea10589e67de4688",
+    "target_passes": false,
+    "witness_sha256": "ed600747be490420f462f7cecf3a913a0a95f0817b8c186446bd0f88b7ae1583"
+  },
+  {
+    "nonce": 997,
+    "coordinate": [
+      5,
+      0,
+      6
+    ],
+    "event": "5f9b3e568e18fffe9d9da5d232993ddef1d993e3031676cedf1e00ae3c35e5b7",
+    "ticket": "18ed1103e7ac2c591cae6cd6169e6b0c9855aeb6fa878e7289647b48a14675b3",
+    "target_passes": false,
+    "witness_sha256": "5ee78e7a46d8fb298b574a5b39a30d137ddcc3064346297a7a3af3470d6ed49f"
+  },
+  {
+    "nonce": 998,
+    "coordinate": [
+      6,
+      2,
+      7
+    ],
+    "event": "a51f25d860f7b55c00bc401403cfaf094ef634893373f178d237ec3bcd1e5e34",
+    "ticket": "0039cae05bc3754516104b25b6da8b010ccc93a6d94211b910c9bce531711138",
+    "target_passes": true,
+    "witness_sha256": "6d2f93e9dad89a674799c2923ebab99ea02d146443a0eb559095ec20354b0aa8"
+  },
+  {
+    "nonce": 999,
+    "coordinate": [
+      4,
+      7,
+      0
+    ],
+    "event": "c178bb041b86a7520bcefdf092311ecc21d018a044cb588803fe80850973add2",
+    "ticket": "6ca53fffb81682575c097a3661f77dbaf6d1bfed0aac36b3e2c02a8b4879ce91",
+    "target_passes": false,
+    "witness_sha256": "515be808c90442c71ed352567934696f6539d2789dd8966afd91cd2e66b9feb2"
+  },
+  {
+    "nonce": 1000,
+    "coordinate": [
+      2,
+      4,
+      5
+    ],
+    "event": "ca5a8830392f940028c5bf921a2eee64e876ae2ff81ba6fb8cef6fcdf762faf1",
+    "ticket": "982a00c9e7b3815532ad023414ca2ed8106d6c64861d1bab5e9ab648549d0333",
+    "target_passes": false,
+    "witness_sha256": "4ac352a4d1ddcdf51206616e1c7b0f04b79af10253f46d28bfd81ada32a235cd"
+  },
+  {
+    "nonce": 1001,
+    "coordinate": [
+      7,
+      1,
+      5
+    ],
+    "event": "e93736a2bd1e35daf383c726f591cd0271595ce1fcbf6376ddc5c05936255c28",
+    "ticket": "fd046d76ff0ed0810b69829048efd64beb8c5bf8da7cca9cf83a0493e19a49fe",
+    "target_passes": false,
+    "witness_sha256": "cd02591b8eb5ce4819aa1be40ca6e0ecdf82f25d07bba7e8e44519ebd0862ea7"
+  },
+  {
+    "nonce": 1002,
+    "coordinate": [
+      5,
+      6,
+      6
+    ],
+    "event": "43dad5afb8f9578d672781fe0ad6cebff4240a432ebb399c0b785b2c55c1258b",
+    "ticket": "9c9501f953833cfea653dfe3acb5f64e8fd09fca808f05df91308e1c640d4612",
+    "target_passes": false,
+    "witness_sha256": "7cec91466c78d9713a050a2a8810e9fa756c0b8e2feab07aedfb2394fdb78a7e"
+  },
+  {
+    "nonce": 1003,
+    "coordinate": [
+      0,
+      0,
+      7
+    ],
+    "event": "92a4c8d737e7ad47653ddb70d461e99a23bd34d0c73bd63bcf10d4a8064c2291",
+    "ticket": "576a2d930cdc090a161307134a00c23964e14320319b4deb9cc7e3796a862ac8",
+    "target_passes": false,
+    "witness_sha256": "c4ba2f5a157337dcf67fb95582fb50d4cdeb3a117e1ecbc059b07f4338448425"
+  },
+  {
+    "nonce": 1004,
+    "coordinate": [
+      7,
+      2,
+      4
+    ],
+    "event": "b2367eda8a670536bca70d55842c76c6a6feb833f374474cccd5912d6cfc9a86",
+    "ticket": "d18c208c807d6fbd99955c1f2ed95b7c259ebf80011c9635f9f887466be21e28",
+    "target_passes": false,
+    "witness_sha256": "8d451cccba256f1e08ebb57e9f612a978b478a578f45f88b49fb13d7002c1747"
+  },
+  {
+    "nonce": 1005,
+    "coordinate": [
+      0,
+      3,
+      5
+    ],
+    "event": "8db8c85c0c3d4de2e38537352a1b9f057ef8c213f25d7a5e5737c066f076a149",
+    "ticket": "b578b3bd747581babc9981303484517d31c83ee7d65833d336a78914b5b85a12",
+    "target_passes": false,
+    "witness_sha256": "554dd9ff6f4bb1b1b8142c74a69cbee667defd599d8c950091a3d4a8ec399907"
+  },
+  {
+    "nonce": 1006,
+    "coordinate": [
+      2,
+      5,
+      2
+    ],
+    "event": "8e83839cdf3c1480e1f15acd451f1d54a530cbd2bf4e34aa60485d2fa9ee3e45",
+    "ticket": "a86795049fda349c04c9b6eae16802f6360a94c089f5e916ba37bfe94c966cfb",
+    "target_passes": false,
+    "witness_sha256": "7372f06b6bd046aea146d11e9d2caa13ffc2e9015e6c3ead0e5b4777023dfe49"
+  },
+  {
+    "nonce": 1007,
+    "coordinate": [
+      1,
+      1,
+      5
+    ],
+    "event": "67c4589b5698a910848b0ae43a8eba3767b6eafbd8f712dd5cf0a174929e14c1",
+    "ticket": "420e4d2dce589ada1f2d40dfc366dcb47e00710423d09e76c8da373afc756eb5",
+    "target_passes": false,
+    "witness_sha256": "1b5c9f94c3a2b0f59533c6f1ebf9c5fd8dfe6fd5d3072bab55a1ba625e2e460c"
+  },
+  {
+    "nonce": 1008,
+    "coordinate": [
+      2,
+      3,
+      6
+    ],
+    "event": "8d107060a0df1ffbfd622e21a9423fdf2576c65dcc06903f6fdf261751dce4f4",
+    "ticket": "731084df3bc9a7078d35a0d3eb09b09fa486ffd9bae986b6f3df18047f335c3d",
+    "target_passes": false,
+    "witness_sha256": "5232d147f7dcf91fb122d1661dcb6a6a0141202eee885561bfe70b0b8c07ba5d"
+  },
+  {
+    "nonce": 1009,
+    "coordinate": [
+      4,
+      7,
+      0
+    ],
+    "event": "2f40d340f67eea4aa9f1047c69d726df90ee5daaba7ba1a2a5a67654c6a56db6",
+    "ticket": "b0aa492a0a8c127513255b35a99b4548a49d71da67389eb0af126948e4808765",
+    "target_passes": false,
+    "witness_sha256": "66cc8fdd35d64de7f5b1f9b9a5f53db0d20ab3d4716080b0bb6815a3e6709a1d"
+  },
+  {
+    "nonce": 1010,
+    "coordinate": [
+      5,
+      3,
+      1
+    ],
+    "event": "a62f8775656eb0a6b03cf58792abd5ed62284576f39fdcc245bce740ee41c86f",
+    "ticket": "a752de71063be814fc0452f78ccf3b0b46b55cb3ebd3432d4da1490430252b6d",
+    "target_passes": false,
+    "witness_sha256": "b6cd2ab8b2af89f6b42b266e1a9c4ac6e5db59f7647ede489b5b0f8afd4aa41b"
+  },
+  {
+    "nonce": 1011,
+    "coordinate": [
+      2,
+      2,
+      6
+    ],
+    "event": "7f463d77c2f4ab1555bfe75dc0003b1e5db2d1532ddb99e2f957884a3a0cc6e0",
+    "ticket": "1f32605f8ee0fa6d17bf6a8042f3f6f4144687cdf7f352283a734d3da8162de5",
+    "target_passes": false,
+    "witness_sha256": "f5aa7e58084a1f1c77205457a8a30173cbb3d730a1f59f13c28f12e404de754a"
+  },
+  {
+    "nonce": 1012,
+    "coordinate": [
+      4,
+      0,
+      7
+    ],
+    "event": "3e56126bdd1bf3dae27378d5f849e534242ef3ad43acc7eef161e7ad69d691f4",
+    "ticket": "6edd9791304cf29cb306912edef878bc55b45ed8fb4fd174b89cbe0130146751",
+    "target_passes": false,
+    "witness_sha256": "e06d343a2227b13caa414ce99743a109ce996f1cc7d4ea1f5302205ab5794dc0"
+  },
+  {
+    "nonce": 1013,
+    "coordinate": [
+      7,
+      7,
+      3
+    ],
+    "event": "3a4c0b58ac9505cfd654b295455c5362ebcd44692f238b5e169cfc1198a75f57",
+    "ticket": "ba69c93b79b5d05f5904dd99af774e2c1b343d73222f103e0dcb2a9e51d66318",
+    "target_passes": false,
+    "witness_sha256": "a6182b18e2c5182ec75b4ca5dc21f3935c4a21686c81ef3da8dfc86e22474a7b"
+  },
+  {
+    "nonce": 1014,
+    "coordinate": [
+      2,
+      6,
+      6
+    ],
+    "event": "743bbb0f76bcf856b9ba81b1f1074d53149f175408d6a1e146aa123eef72434f",
+    "ticket": "4cc162c63f1055d2d386deda5404503305bd66a058ed523e758808878a82fd46",
+    "target_passes": false,
+    "witness_sha256": "ccc1aafa9a883509850e1c02137ac0a4dd8fe250f2f83ea5efbe0d558c196eed"
+  },
+  {
+    "nonce": 1015,
+    "coordinate": [
+      7,
+      7,
+      1
+    ],
+    "event": "fed29f08f0830f565da2a3fa4570dc568bdefd595f4a1fb3f037fd403ceab2ba",
+    "ticket": "c8cb979dd5c5f90e7b1d06276a5c4b0597d233ee7e0c89b49c84f9cd7b0ea6ec",
+    "target_passes": false,
+    "witness_sha256": "6a28094bd84148d46d880f65114e20397bccd92cc12f6556c58c8555221bde13"
+  },
+  {
+    "nonce": 1016,
+    "coordinate": [
+      4,
+      5,
+      0
+    ],
+    "event": "292edd6a23bf442982780c80428b5357cffa35219888b69493c60e5a295745b7",
+    "ticket": "a9dbf1d4adefa82e4c1e8e86913739090626681b67fd2948748f0df4a09c787b",
+    "target_passes": false,
+    "witness_sha256": "203bb4037cc2d775dd33eccf8837b3a530d64b1a5ef705bef89b9dc2bc68a7c1"
+  },
+  {
+    "nonce": 1017,
+    "coordinate": [
+      4,
+      1,
+      6
+    ],
+    "event": "dde0a48cc77b046d06ec180e418c7f0741ca9d267be2a288423058f8bcb2b928",
+    "ticket": "7825bfd20ac5729754019e965f770a79fc61710ce0c79faec70961a97a8a0bf4",
+    "target_passes": false,
+    "witness_sha256": "1ef99b22c5c51f2f261b4a9ba8fde0e42b62efb21b549e659824e95a37e1c33f"
+  },
+  {
+    "nonce": 1018,
+    "coordinate": [
+      0,
+      7,
+      7
+    ],
+    "event": "5e08bacfd1f71df204947297e387e34d3a539fc6178b78453d0b71d89a594694",
+    "ticket": "b53c657b94fe623fa35411a1191d9fd4be2355b1168914742705471882bf2456",
+    "target_passes": false,
+    "witness_sha256": "0c1021f2aa133bdd02111afa41dd43c6fafcf7d4eae18454056074c32c952d80"
+  },
+  {
+    "nonce": 1019,
+    "coordinate": [
+      0,
+      6,
+      7
+    ],
+    "event": "6f5aff9eff259a931d48fe731c6c359d6f390144b7485a8172702ae0e6a2c251",
+    "ticket": "a2b2c5447bd31b9b48de4d66e730e893926a51230d16b9efd3d8811dcd0d028f",
+    "target_passes": false,
+    "witness_sha256": "4756f541984d51bf37641df308ff713877eb9d0b17e3be97fc538e3611cac31d"
+  },
+  {
+    "nonce": 1020,
+    "coordinate": [
+      5,
+      0,
+      3
+    ],
+    "event": "9ad2782bddb1b5a6d6f86fa9de477c9d9cd09859e672d8377b4c6e5c6b01152a",
+    "ticket": "a753716fb6637c1ca277432cd214d865f78e298af6cd88897b0d17c225e94e1d",
+    "target_passes": false,
+    "witness_sha256": "1f084161e47065e1e8dd63c4f6bfe0e36f2607dedf3d10019cd96984bb444823"
+  },
+  {
+    "nonce": 1021,
+    "coordinate": [
+      6,
+      5,
+      2
+    ],
+    "event": "c1a6c5b1de08a3cff1e863480d2fce71a2fa35e7ae002aca5a563b33e21d86ae",
+    "ticket": "80c7a0b5ab69e7753055e4b2248af6f80e20945aa9e317bafef4879ca51d204c",
+    "target_passes": false,
+    "witness_sha256": "e4fbd8f449f3929fdc157aa5ca1c3eb0193db29b8242228e86168d1d0e57d296"
+  },
+  {
+    "nonce": 1022,
+    "coordinate": [
+      1,
+      4,
+      7
+    ],
+    "event": "457f262e4c0359d3562c95de147f960b0e0b1ee0be81e2f835da9f9e2d914eda",
+    "ticket": "da9ae097b79668834077fe97f55fa063858646359e5f720c3ae96b968066d042",
+    "target_passes": false,
+    "witness_sha256": "aca1c45b9c1d08a18d55ea377a4e990c187d4083e5915c23ebf19873382264f7"
+  },
+  {
+    "nonce": 1023,
+    "coordinate": [
+      0,
+      7,
+      4
+    ],
+    "event": "ee23576f5631c34e48c1bace1fded5dd6c8198b6d31d02c708b76d0bc0a8b7be",
+    "ticket": "a6a3faf511a1f68e10d6e9d9c21ec3f535d2b536f06779b68fc4a37f4902086c",
+    "target_passes": false,
+    "witness_sha256": "54b84b0d9fbd66dfabd2389fdfe7518226b020f78882b54095c93a9108c7ef50"
+  }
+]

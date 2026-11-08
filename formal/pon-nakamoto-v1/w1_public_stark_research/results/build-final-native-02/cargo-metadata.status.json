@@ -1,0 +1,18 @@
+{
+  "label": "cargo-metadata",
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--manifest-path",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.186799889896065,
+  "stdout_sha256": "3b06b4e2145f05da2334d2f8d028759f744b6f8640977e27316ec1fcaef80ac0",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

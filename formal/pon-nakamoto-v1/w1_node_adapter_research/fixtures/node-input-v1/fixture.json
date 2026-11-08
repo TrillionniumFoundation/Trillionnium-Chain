@@ -1,0 +1,17 @@
+{
+  "arithmetic_rows": 81920,
+  "genesis_time": 1800000000,
+  "hash_messages": 519,
+  "independent_artifacts_source": "actual Node maintenance() material, compared to produced packet",
+  "native_block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+  "native_node_packet_generated": true,
+  "native_work_verified": true,
+  "node_admitted": false,
+  "observed_now": 1800000100,
+  "production_activation": false,
+  "public_bytes": 377290,
+  "qualification": "HOLD_NO_GO",
+  "raw_sha256": "59221e7e334fc536747b9e068bb0d832b4550141c28e45b7cee04c7cf892c845",
+  "schema": "trnm-w1-node-adapter-fixture-v1",
+  "statement_proved": false
+}

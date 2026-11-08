@@ -1,0 +1,37 @@
+{
+  "single_upload": {
+    "payload_extraction_was_truncated": true,
+    "reported_payload_characters": 96101,
+    "outcome": "h_shell source size refusal before launch",
+    "limit_bytes": 65536
+  },
+  "parts": [
+    {
+      "part": 0,
+      "job_id": "1a1b9a2697b-12894-15ae",
+      "stdout": "",
+      "stderr": "  File \"<stdin>\", line 5\n    with f.open('x') as h: h.write('Warning: truncated output (original token count: 27581)\n                                   ^\nSyntaxError: unterminated string literal (detected at line 5)\n"
+    },
+    {
+      "part": 1,
+      "job_id": "1a1b9a2be2b-12894-15b2",
+      "stdout": "saved part 1 bytes 24504\n",
+      "stderr": ""
+    },
+    {
+      "part": 2,
+      "job_id": "1a1b9a3166e-12894-15b7",
+      "stdout": "saved part 2 bytes 24500\n",
+      "stderr": ""
+    },
+    {
+      "part": 3,
+      "job_id": "1a1b9a34905-12894-15b9",
+      "stdout": "saved part 3 bytes 22601\n",
+      "stderr": ""
+    }
+  ],
+  "root_cause": "Local exec output was truncated at 24,000 tokens; metadata was inadvertently included in the base64 payload. Part 0 Python parsing failed before execution. The bundle was never assembled or installed.",
+  "correction": "Re-extract with an adequate output budget and validate the complete base64 alphabet and compressed payload before a new versioned transfer.",
+  "verification_results_affected": false
+}

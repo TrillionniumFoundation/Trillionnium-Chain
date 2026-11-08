@@ -1,0 +1,12 @@
+{
+  "label": "preflight-staged",
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--staged"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.7960962739307433,
+  "stdout_sha256": "0759ce6292f5770999b32563e747d32befaac6f24bb5e6f4d168d677285bfd7c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

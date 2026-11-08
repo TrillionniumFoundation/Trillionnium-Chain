@@ -1,0 +1,3 @@
+   Compiling w1-prefix-native-research v0.1.0 (/home/qian-qi/work/pon-w1-round1-baseline-89f4dd)
+    Finished `release` profile [optimized] target(s) in 1m 31s
+     Running unittests src/lib.rs (target/release/deps/w1_prefix_native_research-3f015ae811f39552)

@@ -1,0 +1,15 @@
+
+running 10 tests
+test domain_bytes_and_typed_statement_context_are_unambiguous_for_test_cases ... ok
+test actual_streaming_hashes_match_the_exact_framed_encoding ... ok
+test frozen_profile_descriptor_constants_match_actual_configuration ... ok
+test inherited_hash_challenger_history_alias_is_recorded_not_hidden ... ok
+test research_metadata_carries_no_security_bit_qualification ... ok
+test known_raw_inverse_witness_does_not_repeat_under_explicit_new_digest_embedding ... ok
+test sha3_standard_vector_and_full_digest_word_roundtrip ... ok
+test upstream_serializing_challenger_rejects_modulus_before_sampling_extension ... ok
+test tiny_packed_carry_proof_independent_verify_rejects_changed_goal_and_opening ... ok
+test tiny_sha_proof_independent_verify_rejects_context_component_statement_and_opening ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+

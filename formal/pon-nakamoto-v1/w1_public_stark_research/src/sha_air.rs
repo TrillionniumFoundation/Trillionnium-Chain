@@ -1,0 +1,324 @@
+//! Official Plonky3 SHA compression AIR, wrapped with message/chain boundaries.
+//!
+//! The preprocessing contains public messages, not host-computed hash answers.
+//! Claimed output bytes are accepted only through constrained final states.
+
+use core::borrow::Borrow;
+
+use p3_air::utils::pack_bits_le;
+use p3_air::{Air, AirBuilder, BaseAir, WindowAccess};
+use p3_field::PrimeCharacteristicRing;
+use p3_goldilocks::Goldilocks;
+use p3_matrix::dense::RowMajorMatrix;
+use p3_sha256_air::{NUM_SHA256_COLS, SHA256_IV, Sha256Air, Sha256Cols, generate_trace_rows};
+
+use crate::sha_plan::{ShaPlan, padded_blocks};
+
+pub const PREPROCESSED_WIDTH: usize = 27;
+pub const FIRST: usize = 16;
+pub const CHAIN: usize = 17;
+pub const OUTPUT: usize = 18;
+pub const DIGEST: usize = 19;
+
+#[derive(Clone, Debug)]
+pub struct W1ShaAir {
+    preprocessed: RowMajorMatrix<Goldilocks>,
+    inputs: Vec<[u32; 24]>,
+    real_compressions: usize,
+}
+
+impl W1ShaAir {
+    /// Builds preprocessing from public messages and constructs honest SHA
+    /// compression inputs for the prover. The hash computations below are
+    /// witness generation only; they do not test or certify claimed outputs.
+    ///
+    /// For a verifier that only needs preprocessing, use `public_only` so that
+    /// no SHA compression is executed at all during AIR construction.
+    pub fn new(plan: &ShaPlan) -> Self {
+        Self::build(plan, true)
+    }
+
+    pub fn public_only(plan: &ShaPlan) -> Self {
+        Self::build(plan, false)
+    }
+
+    fn build(plan: &ShaPlan, with_witness: bool) -> Self {
+        let rows = plan.padded_compressions();
+        let mut preprocessed = vec![Goldilocks::ZERO; rows * PREPROCESSED_WIDTH];
+        let mut inputs = if with_witness {
+            Vec::with_capacity(rows)
+        } else {
+            Vec::new()
+        };
+        let mut row_index = 0;
+        for message in plan.messages() {
+            let blocks = padded_blocks(&message.bytes).expect("plan checked message lengths");
+            let mut h_in = SHA256_IV;
+            for (block_index, block) in blocks.iter().enumerate() {
+                let row = &mut preprocessed
+                    [row_index * PREPROCESSED_WIDTH..(row_index + 1) * PREPROCESSED_WIDTH];
+                let mut input = [0u32; 24];
+                for word in 0..16 {
+                    input[word] =
+                        u32::from_be_bytes(block[word * 4..word * 4 + 4].try_into().unwrap());
+                    row[word] = Goldilocks::from_u32(input[word]);
+                }
+                row[FIRST] = Goldilocks::from_bool(block_index == 0);
+                row[CHAIN] = Goldilocks::from_bool(block_index + 1 < blocks.len());
+                row[OUTPUT] = Goldilocks::from_bool(block_index + 1 == blocks.len());
+                if block_index + 1 == blocks.len() {
+                    for word in 0..8 {
+                        row[DIGEST + word] = Goldilocks::from_u32(u32::from_be_bytes(
+                            message.expected_digest[word * 4..word * 4 + 4]
+                                .try_into()
+                                .unwrap(),
+                        ));
+                    }
+                }
+                if with_witness {
+                    input[16..24].copy_from_slice(&h_in);
+                    inputs.push(input);
+                    // sha2 0.10's raw compression is used only to populate the
+                    // witness input chaining states. The AIR constrains them.
+                    let block = sha2::digest::generic_array::GenericArray::clone_from_slice(block);
+                    sha2::compress256(&mut h_in, core::slice::from_ref(&block));
+                }
+                row_index += 1;
+            }
+        }
+        assert_eq!(row_index, plan.real_compressions());
+        for padding in row_index..rows {
+            // Valid independent zero-block compressions. Padding cannot feed
+            // a real hash: its chain selector is zero and its IV is fixed.
+            preprocessed[padding * PREPROCESSED_WIDTH + FIRST] = Goldilocks::ONE;
+            if with_witness {
+                let mut input = [0u32; 24];
+                input[16..24].copy_from_slice(&SHA256_IV);
+                inputs.push(input);
+            }
+        }
+        Self {
+            preprocessed: RowMajorMatrix::new(preprocessed, PREPROCESSED_WIDTH),
+            inputs,
+            real_compressions: plan.real_compressions(),
+        }
+    }
+
+    pub fn generate_trace(&self) -> RowMajorMatrix<Goldilocks> {
+        assert!(
+            !self.inputs.is_empty(),
+            "public-only AIR cannot generate a witness"
+        );
+        // Do not eagerly reserve the full LDE in this constructor. The PCS
+        // controls its own allocations, which must be measured separately.
+        generate_trace_rows(self.inputs.clone(), 0)
+    }
+
+    pub fn real_compressions(&self) -> usize {
+        self.real_compressions
+    }
+
+    pub fn trace_height(&self) -> usize {
+        self.preprocessed.values.len() / PREPROCESSED_WIDTH
+    }
+}
+
+impl BaseAir<Goldilocks> for W1ShaAir {
+    fn width(&self) -> usize {
+        NUM_SHA256_COLS
+    }
+
+    fn preprocessed_trace(&self) -> Option<RowMajorMatrix<Goldilocks>> {
+        Some(self.preprocessed.clone())
+    }
+
+    fn preprocessed_width(&self) -> usize {
+        PREPROCESSED_WIDTH
+    }
+
+    fn main_next_row_columns(&self) -> Vec<usize> {
+        // h_in is the first 8 x 2 scalar columns of the repr(C) official row.
+        (0..16).collect()
+    }
+
+    fn preprocessed_next_row_columns(&self) -> Vec<usize> {
+        Vec::new()
+    }
+
+    fn max_constraint_degree(&self) -> Option<usize> {
+        // Official compression degree 3; selector * linear boundary degree 2;
+        // transition selector * chain flag * linear link degree 3.
+        Some(3)
+    }
+
+    fn num_public_values(&self) -> usize {
+        0
+    }
+}
+
+impl<AB: AirBuilder<F = Goldilocks>> Air<AB> for W1ShaAir {
+    fn eval(&self, builder: &mut AB) {
+        // The main trace is exactly the official compression column layout.
+        Sha256Air.eval(builder);
+        let main = builder.main();
+        let local: &Sha256Cols<AB::Var> = main.current_slice().borrow();
+        let next = main.next_slice();
+        let preprocessed = builder.preprocessed().current_slice().to_vec();
+
+        // Each block word is a canonical BE interpretation of the original
+        // message bytes. The official AIR already range-checks these bits.
+        for (word, &message_word) in preprocessed[..16].iter().enumerate() {
+            builder.assert_eq(
+                pack_bits_le::<AB::Expr, _, _>(local.w[word].iter().copied()),
+                message_word,
+            );
+        }
+
+        for word in 0..8 {
+            for limb in 0..2 {
+                builder.when(preprocessed[FIRST]).assert_eq(
+                    local.h_in[word][limb],
+                    Goldilocks::from_u16((SHA256_IV[word] >> (16 * limb)) as u16),
+                );
+                let output_limb = pack_bits_le::<AB::Expr, _, _>(
+                    local.h_out[word][16 * limb..16 * (limb + 1)]
+                        .iter()
+                        .copied(),
+                );
+                builder
+                    .when_transition()
+                    .when(preprocessed[CHAIN])
+                    .assert_eq(next[2 * word + limb], output_limb);
+            }
+            builder.when(preprocessed[OUTPUT]).assert_eq(
+                pack_bits_le::<AB::Expr, _, _>(local.h_out[word].iter().copied()),
+                preprocessed[DIGEST + word],
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use p3_air::check_constraints;
+    use sha2::{Digest, Sha256};
+
+    use super::*;
+    use crate::sha_plan::HashMessage;
+
+    fn plan() -> ShaPlan {
+        let messages = [b"abc".to_vec(), (0..120).collect::<Vec<u8>>()]
+            .into_iter()
+            .enumerate()
+            .map(|(i, bytes)| HashMessage {
+                name: format!("case-{i}"),
+                expected_digest: Sha256::digest(&bytes).into(),
+                bytes,
+            })
+            .collect();
+        ShaPlan::for_public_messages(messages).unwrap()
+    }
+
+    fn rejects(air: &W1ShaAir, trace: &RowMajorMatrix<Goldilocks>) {
+        assert!(std::panic::catch_unwind(|| check_constraints(air, trace, &[])).is_err());
+    }
+
+    fn compress(input: [u32; 24]) -> [u32; 8] {
+        let mut state: [u32; 8] = input[16..24].try_into().unwrap();
+        let mut bytes = [0u8; 64];
+        for i in 0..16 {
+            bytes[4 * i..4 * i + 4].copy_from_slice(&input[i].to_be_bytes());
+        }
+        let block = sha2::digest::generic_array::GenericArray::clone_from_slice(&bytes);
+        sha2::compress256(&mut state, core::slice::from_ref(&block));
+        state
+    }
+
+    fn change_claimed_output(air: &mut W1ShaAir, row: usize, output: [u32; 8]) {
+        for (word, value) in output.into_iter().enumerate() {
+            air.preprocessed.values[row * PREPROCESSED_WIDTH + DIGEST + word] =
+                Goldilocks::from_u32(value);
+        }
+    }
+
+    #[test]
+    fn honest_complete_messages_and_hash_free_public_construction() {
+        let plan = plan();
+        let air = W1ShaAir::new(&plan);
+        let public = W1ShaAir::public_only(&plan);
+        assert_eq!(air.preprocessed.values, public.preprocessed.values);
+        assert_eq!(air.trace_height(), 4);
+        assert_eq!(air.real_compressions(), 4);
+        assert!(public.inputs.is_empty());
+        check_constraints(&air, &air.generate_trace(), &[]);
+    }
+
+    #[test]
+    fn changed_public_digest_rejects_valid_compressions() {
+        let plan = plan();
+        let trace = W1ShaAir::new(&plan).generate_trace();
+        let mut messages = plan.messages().to_vec();
+        messages[1].expected_digest[31] ^= 1;
+        let changed = ShaPlan::for_public_messages(messages).unwrap();
+        rejects(&W1ShaAir::public_only(&changed), &trace);
+    }
+
+    #[test]
+    fn changed_public_message_rejects_valid_compressions() {
+        let plan = plan();
+        let trace = W1ShaAir::new(&plan).generate_trace();
+        let mut messages = plan.messages().to_vec();
+        messages[1].bytes[119] ^= 1;
+        let changed = ShaPlan::for_public_messages(messages).unwrap();
+        rejects(&W1ShaAir::public_only(&changed), &trace);
+    }
+
+    #[test]
+    fn recomputed_compressions_with_broken_chain_reject() {
+        let mut air = W1ShaAir::new(&plan());
+        // Keep every row an individually valid compression, but make the
+        // third row use a state unrelated to its previous compression. Update
+        // all later rows and the claimed final digest, so the ONLY broken
+        // condition is the wrapper's link from row 1 to row 2.
+        air.inputs[2][16] ^= 1;
+        let state = compress(air.inputs[2]);
+        air.inputs[3][16..24].copy_from_slice(&state);
+        let output = compress(air.inputs[3]);
+        change_claimed_output(&mut air, 3, output);
+        let trace = air.generate_trace();
+        check_constraints(&Sha256Air, &trace, &[]);
+        rejects(&air, &trace);
+    }
+
+    #[test]
+    fn recomputed_compressions_with_wrong_iv_reject() {
+        let mut air = W1ShaAir::new(&plan());
+        air.inputs[0][16] ^= 1;
+        let output = compress(air.inputs[0]);
+        change_claimed_output(&mut air, 0, output);
+        let trace = air.generate_trace();
+        check_constraints(&Sha256Air, &trace, &[]);
+        rejects(&air, &trace);
+    }
+
+    #[test]
+    fn recomputed_compression_with_wrong_padding_rejects() {
+        let mut air = W1ShaAir::new(&plan());
+        // Change the SHA bit-length word and its final digest together. Every
+        // compression remains valid; canonical message padding must reject.
+        air.inputs[0][15] ^= 1;
+        let output = compress(air.inputs[0]);
+        change_claimed_output(&mut air, 0, output);
+        let trace = air.generate_trace();
+        check_constraints(&Sha256Air, &trace, &[]);
+        rejects(&air, &trace);
+    }
+
+    #[test]
+    fn changed_compression_bit_rejects() {
+        let air = W1ShaAir::new(&plan());
+        let mut trace = air.generate_trace();
+        trace.values[20] += Goldilocks::ONE;
+        rejects(&air, &trace);
+    }
+}

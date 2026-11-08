@@ -1,0 +1,105 @@
+{
+  "schema": "w1-generic-first-attempt-validation-v1",
+  "host": "desktop",
+  "job_id": "1a1b8516541-12894-e47",
+  "state": "succeeded",
+  "exit_code": 0,
+  "output_complete": true,
+  "output_durable": true,
+  "rust_toolchain": "1.95.0",
+  "rustflags": "not set in task environment",
+  "rayon_num_threads": 8,
+  "cargo_build_jobs": 2,
+  "fmt_check_exit_code": 1,
+  "check_release_all_targets": "PASS",
+  "test_release_lib": {
+    "passed": 18,
+    "failed": 0
+  },
+  "test_release_proof_smoke": {
+    "passed": 3,
+    "failed": 0,
+    "elapsed_seconds": 0.72
+  },
+  "full_w1_trace_built": false,
+  "full_w1_proof_run": false,
+  "qualification": "HOLD_NO_GO",
+  "source_snapshot": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "9e28bf0b3912ca692b0f80842a3f20323b212b2a1c5bbaa85d7503654c069c2e",
+      "bytes": 17783
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+      "bytes": 780
+    },
+    {
+      "path": "fixtures/retained.artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "bytes": 64
+    },
+    {
+      "path": "fixtures/retained.expected-header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "bytes": 318
+    },
+    {
+      "path": "fixtures/retained.input.bin",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "bytes": 49506
+    },
+    {
+      "path": "fixtures/retained.prefix.bin",
+      "sha256": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96",
+      "bytes": 131072
+    },
+    {
+      "path": "run_campaign.py",
+      "sha256": "859af5ca06394d0a33da5a62e257f7816cba1af89d854753515e50c42ed03499",
+      "bytes": 9497
+    },
+    {
+      "path": "src/arith_air.rs",
+      "sha256": "58b449817db1b1f9575d9ce64651469ecfe6d6e4e165db26be2ecef5bada0882",
+      "bytes": 7937
+    },
+    {
+      "path": "src/lib.rs",
+      "sha256": "556ddf2d7c74c000399c5d190ebcb57d9eb27f8019b143143b5756686376e6c2",
+      "bytes": 252
+    },
+    {
+      "path": "src/main.rs",
+      "sha256": "27b0360c9cdac88b6b7ee106142c48493a25117cf7370097a2320b0fecfc2b55",
+      "bytes": 12512
+    },
+    {
+      "path": "src/proof_config.rs",
+      "sha256": "4880d81c6548e831714cb9f42dc3d98705b8f3dee07be665744ba49418efe81f",
+      "bytes": 9585
+    },
+    {
+      "path": "src/public.rs",
+      "sha256": "36e04e65fdeb843e309b688d5203a61a164b3e4d795d8361ea4ea925ce2f8e85",
+      "bytes": 12170
+    },
+    {
+      "path": "src/sha_air.rs",
+      "sha256": "ccf2f7b52b0ad2a8de95289a1c4f6c3d56b497cd1da9141eb121f0c6bea5a2a5",
+      "bytes": 12176
+    },
+    {
+      "path": "src/sha_plan.rs",
+      "sha256": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+      "bytes": 13300
+    },
+    {
+      "path": "tests/proof_smoke.rs",
+      "sha256": "b88e678f7b4aa3d6e4fd26f027b8273d54b9d953938053577e0d35dcd54671c3",
+      "bytes": 6775
+    }
+  ],
+  "lock_after_sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+}

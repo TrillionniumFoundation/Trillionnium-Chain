@@ -1,0 +1,332 @@
+{
+  "argv": [
+    "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/packed_carry_backend",
+    "prove",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/abba-v1/03-retained-A/prepared/statement.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/input-fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89/abba-v1/03-retained-A/proof"
+  ],
+  "exit_code": 0,
+  "timeout": false,
+  "outer_wall_s": 18.826607146,
+  "peak_rss_kib": 2038752,
+  "report": {
+    "arith_proof_bytes": 453861,
+    "arith_proof_sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988",
+    "arith_trace_height": 16384,
+    "process_wall_ms": 18741.642562,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-packed-carry-stark-run-v3",
+    "security": {
+      "arithmetic": {
+        "air_max_constraint_degree": 2,
+        "component": 4,
+        "concrete_shared_permutation_restricted_tree_binding_bits": null,
+        "conditional_rbr_estimate_bits": 63.95384529640614,
+        "conditional_rbr_report": {
+          "ldr": {
+            "regime": {
+              "ListDecoding": {
+                "m": 1000
+              }
+            },
+            "terms": [
+              {
+                "bits": 107.44477991251199,
+                "label": "air-composition"
+              },
+              {
+                "bits": 100.44856139937743,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 63.95384529640614,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 68.57944957862819,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          },
+          "udr": {
+            "regime": "UniqueDecoding",
+            "terms": [
+              {
+                "bits": 118.41128536441774,
+                "label": "air-composition"
+              },
+              {
+                "bits": 111.41506685128317,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 43.39547482858737,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 101.89409149142884,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          }
+        },
+        "conjectured_estimate_bits_separate": 101,
+        "degree_bits": 14,
+        "hash_collision_bits_assumption": 128,
+        "hash_collision_bits_assumption_scope": "conditional_estimator_input_only_not_raw_compressor_security",
+        "is_complete_noninteractive_bound": false,
+        "is_quantum_security_bound": false,
+        "lanes_per_row": 5,
+        "main_next_row_columns": [],
+        "main_width": 370,
+        "max_combo": 1,
+        "modulus_bits_conservative_lower_bound": 127,
+        "num_batched_functions": 552,
+        "num_constraints": 385,
+        "num_quotient_chunks": 1,
+        "preprocessed_next_row_columns": [],
+        "preprocessed_width": 180,
+        "real_dot8_rows": 81920,
+        "trace_height": 16384
+      },
+      "challenge_extension": "X^2 - 7",
+      "challenge_field_cardinality": "340282366762482138490186164457219031041",
+      "commitment_and_challenger": "default Goldilocks Poseidon2 width 8",
+      "complete_noninteractive_bound": "UNRESOLVED: requires concrete transcript/sampling, PCS binding and ROM compilation analysis",
+      "complete_noninteractive_security_bits": null,
+      "component_domains": {
+        "arithmetic": 4,
+        "sha": 1
+      },
+      "compression": {
+        "digest_elements": 4,
+        "inputs": 2,
+        "width": 8
+      },
+      "estimator_modulus_bits": 127,
+      "estimator_modulus_bits_reason": "P^2 >= 2^127; using 128 as an exact denominator would round the field cardinality upward",
+      "field_modulus": "18446744069414584321",
+      "fri": {
+        "batch_pow_bits": 0,
+        "commit_pow_bits": 0,
+        "log_blowup": 2,
+        "log_final_poly_len": 0,
+        "lookup_pow_bits": 0,
+        "max_log_arity": 1,
+        "num_queries": 64,
+        "ood_pow_bits": 0,
+        "query_pow_bits": 0
+      },
+      "hash_strength_status": "UNRESOLVED: 128 is a conditional estimator input. No concrete restricted-tree binding bound is established for the actual shared public invertible Poseidon2 construction. This is not an arbitrary-input collision-resistance claim for the raw compressor or an independent-role-oracle claim.",
+      "lifecycle_security_bits": null,
+      "mmcs": {
+        "arity": 2,
+        "cap_height": 0,
+        "digest_elements": 4
+      },
+      "native_relation_hash": "SHA-256, fully constrained by the SHA AIR",
+      "p3_version": "0.8.0",
+      "public_statement_is_succinct": false,
+      "qualification": "HOLD_NO_GO",
+      "quantum_security_bits": null,
+      "research_domain_hex": "54524e4d2d57312d46554c4c2d5055424c49432d535441524b2d52455345415243482d50332d302e382e302d523100",
+      "schema": "w1-p3-0.8.0-conditional-rbr-packed-carry-metadata-v4",
+      "sha": {
+        "air_max_constraint_degree": 3,
+        "component": 1,
+        "concrete_shared_permutation_restricted_tree_binding_bits": null,
+        "conditional_rbr_estimate_bits": 63.95384529640614,
+        "conditional_rbr_report": {
+          "ldr": {
+            "regime": {
+              "ListDecoding": {
+                "m": 1000
+              }
+            },
+            "terms": [
+              {
+                "bits": 103.04055621192845,
+                "label": "air-composition"
+              },
+              {
+                "bits": 101.03340649566414,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 63.95384529640614,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 64.76659309720453,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          },
+          "udr": {
+            "regime": "UniqueDecoding",
+            "terms": [
+              {
+                "bits": 114.00706166383418,
+                "label": "air-composition"
+              },
+              {
+                "bits": 111.99991194756987,
+                "label": "deep-ali"
+              },
+              {
+                "bits": 43.39209361527134,
+                "label": "low-degree-test"
+              },
+              {
+                "bits": 98.08132307318488,
+                "label": "batch-combination"
+              },
+              {
+                "bits": 128.0,
+                "label": "commitment-collision"
+              }
+            ]
+          }
+        },
+        "conjectured_estimate_bits_separate": 98,
+        "degree_bits": 13,
+        "hash_collision_bits_assumption": 128,
+        "hash_collision_bits_assumption_scope": "conditional_estimator_input_only_not_raw_compressor_security",
+        "is_complete_noninteractive_bound": false,
+        "is_quantum_security_bound": false,
+        "main_next_row_columns": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "main_width": 7728,
+        "max_combo": 2,
+        "modulus_bits_conservative_lower_bound": 127,
+        "num_batched_functions": 15487,
+        "num_constraints": 8152,
+        "num_quotient_chunks": 2,
+        "preprocessed_next_row_columns": [],
+        "preprocessed_width": 27,
+        "trace_height": 8192
+      },
+      "sponge": {
+        "output": 4,
+        "padding": "PaddingFreeSponge, fixed-shape MMCS inputs only",
+        "rate": 4,
+        "width": 8
+      },
+      "zero_knowledge": false
+    },
+    "sha_proof_bytes": 4356101,
+    "sha_proof_sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "sha_trace_height": 8192,
+    "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "status": "TWO_REAL_STARK_PROOFS_GENERATED_NOT_YET_VERIFIED",
+    "timings": [
+      {
+        "elapsed_ms": 14.892832,
+        "phase": "read_decode_and_canonical_plans"
+      },
+      {
+        "elapsed_ms": 4.319573999999999,
+        "phase": "sha_air_and_chaining_witness"
+      },
+      {
+        "elapsed_ms": 87.73272,
+        "phase": "actual_air_security_metadata"
+      },
+      {
+        "elapsed_ms": 59.324307,
+        "phase": "sha_prover_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 50.92632,
+        "phase": "sha_trace_generation"
+      },
+      {
+        "elapsed_ms": 15102.928688,
+        "phase": "sha_stark_prove"
+      },
+      {
+        "elapsed_ms": 625.768025,
+        "phase": "sha_proof_serialize_and_persist"
+      },
+      {
+        "elapsed_ms": 691.70972,
+        "phase": "arith_prover_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 44.812163000000005,
+        "phase": "arith_trace_generation"
+      },
+      {
+        "elapsed_ms": 1364.526535,
+        "phase": "arith_stark_prove"
+      },
+      {
+        "elapsed_ms": 242.96426400000001,
+        "phase": "arith_proof_serialize_and_persist"
+      }
+    ]
+  },
+  "before": {
+    "monotonic_ns": 1196345738548186,
+    "utc_unix_ns": 1794118679746236747,
+    "loadavg": "27.97 21.18 17.52 17/4567 3453966",
+    "cpu_pressure": "some avg10=0.02 avg60=0.04 avg300=0.00 total=9271328498\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669273335\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1602432379",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9cb4c70-12894-16eb.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 488619728\nuser_usec 475152424\nsystem_usec 13467304\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "204083200",
+      "memory.peak": "2287554560",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  },
+  "after": {
+    "monotonic_ns": 1196364567255649,
+    "utc_unix_ns": 1794118698574944570,
+    "loadavg": "28.64 21.66 17.74 9/4529 3457582",
+    "cpu_pressure": "some avg10=0.04 avg60=0.05 avg300=0.00 total=9271384011\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669299947\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1602458936",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9cb4c70-12894-16eb.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 623617908\nuser_usec 607875660\nsystem_usec 15742248\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "209813504",
+      "memory.peak": "2295517184",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  }
+}

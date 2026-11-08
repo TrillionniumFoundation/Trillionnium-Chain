@@ -1,0 +1,23 @@
+{
+  "counts": {
+    "scalar_additions": 0,
+    "scalar_multiplications": 0,
+    "sha256_calls": 4,
+    "sha256_compression_blocks": 12,
+    "sha256_input_bytes": 624
+  },
+  "process": {
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b98fbcc0-12894-1526.service\n",
+    "pid": 3208473,
+    "proc_stat": "3208473 (selected-event-) R 3208453 3208429 3208429 0 -1 4194304 124 0 0 0 0 0 0 0 20 0 1 0 119223505 3534848 512 18446744073709551615 106812861446768 106812861845136 140737341915888 0 0 0 0 4096 1088 0 0 0 17 14 0 0 0 0 0 106812861865728 106812861868224 106813793558528 140737341920579 140737341921063 140737341921063 140737341923157 0\n",
+    "proc_status": "Name:\tselected-event-\nUmask:\t0077\nState:\tR (running)\nTgid:\t3208473\nNgid:\t0\nPid:\t3208473\nPPid:\t3208453\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t64\nGroups:\t4 24 27 30 46 100 114 125 129 984 993 1000 \nNStgid:\t3208473\nNSpid:\t3208473\nNSpgid:\t3208429\nNSsid:\t3208429\nKthread:\t0\nVmPeak:\t    3452 kB\nVmSize:\t    3452 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t    2424 kB\nVmRSS:\t    2424 kB\nRssAnon:\t     312 kB\nRssFile:\t    2112 kB\nRssShmem:\t       0 kB\nVmData:\t     240 kB\nVmStk:\t     192 kB\nVmExe:\t     392 kB\nVmLib:\t    1896 kB\nVmPTE:\t      48 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffffff\nThreads:\t1\nSigQ:\t0/476312\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000001000\nSigCgt:\t0000000000000440\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffff,ffffffff\nCpus_allowed_list:\t0-47\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t0\nnonvoluntary_ctxt_switches:\t0\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n",
+    "scope": "native exact selected-event v1 only; no STARK or W1 proof",
+    "unix_time_ns": 1794114569064317074
+  },
+  "read_parse_verify_elapsed_ns_instrumented": 37251,
+  "result": {
+    "error": "SELECTED_COORD",
+    "status": "REJECT"
+  },
+  "verify_elapsed_ns_instrumented": 12223
+}

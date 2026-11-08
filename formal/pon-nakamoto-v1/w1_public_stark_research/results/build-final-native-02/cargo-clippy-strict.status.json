@@ -1,0 +1,24 @@
+{
+  "label": "cargo-clippy-strict",
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "clippy",
+    "--manifest-path",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+    "--release",
+    "--all-targets",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 1.1688120339531451,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "092a6997abfbd77a5f2cee68023f4b7d167b57f2477956da9986d5b2b6de5d38"
+}
