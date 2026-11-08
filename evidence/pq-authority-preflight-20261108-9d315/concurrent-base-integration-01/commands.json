@@ -1,0 +1,435 @@
+[
+  {
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "elapsed_seconds": 0.09416694613173604,
+    "exit_code": 0,
+    "label": "preflight",
+    "logs": {
+      "preflight.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "preflight.stdout.log": {
+        "bytes": 178,
+        "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "-c",
+      "credential.helper=",
+      "-c",
+      "credential.helper=!/usr/bin/gh auth git-credential",
+      "fetch",
+      "--no-tags",
+      "origin",
+      "refs/heads/fix/chain-pq-integrated-20261105-df8969:refs/remotes/origin/fix/chain-pq-integrated-20261105-df8969"
+    ],
+    "elapsed_seconds": 9.7511998959817,
+    "exit_code": 0,
+    "label": "fetch-reviewed-base",
+    "logs": {
+      "fetch-reviewed-base.stderr.log": {
+        "bytes": 186,
+        "sha256": "d1a5dee5ab7bea9deadcfffdce3e531114d931ff028380f53ac8bab76913ba59"
+      },
+      "fetch-reviewed-base.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "merge-base",
+      "--is-ancestor",
+      "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+      "8d8f05566b2a1612a3bf4a6c6c71635df454d397"
+    ],
+    "elapsed_seconds": 0.004201207077130675,
+    "exit_code": 0,
+    "label": "base-ancestry",
+    "logs": {
+      "base-ancestry.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "base-ancestry.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "diff",
+      "--exit-code",
+      "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+      "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+      "--",
+      "trillionnium",
+      "tests/fuzz",
+      ".cargo",
+      "rust-toolchain",
+      "rust-toolchain.toml"
+    ],
+    "elapsed_seconds": 0.022816106909886003,
+    "exit_code": 0,
+    "label": "upstream-native-source-equality",
+    "logs": {
+      "upstream-native-source-equality.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "upstream-native-source-equality.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "merge",
+      "--no-commit",
+      "--no-ff",
+      "8d8f05566b2a1612a3bf4a6c6c71635df454d397"
+    ],
+    "elapsed_seconds": 15.14740157010965,
+    "exit_code": 1,
+    "label": "merge-reviewed-base",
+    "logs": {
+      "merge-reviewed-base.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "merge-reviewed-base.stdout.log": {
+        "bytes": 463,
+        "sha256": "654d5d3a9cd48f9c7a89bfad082cce266cf4684936b74a3bea6394a752b9ced7"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "apply",
+      "--check",
+      "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/concurrent-base-integration-01/overlap.patch"
+    ],
+    "elapsed_seconds": 0.010376753052696586,
+    "exit_code": 0,
+    "label": "resolution-patch-check",
+    "logs": {
+      "resolution-patch-check.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "resolution-patch-check.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "apply",
+      "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/concurrent-base-integration-01/overlap.patch"
+    ],
+    "elapsed_seconds": 0.010158509016036987,
+    "exit_code": 0,
+    "label": "resolution-patch-apply",
+    "logs": {
+      "resolution-patch-apply.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "resolution-patch-apply.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "rm",
+      "--",
+      "evidence/pq-authority-preflight-20261108-9d315/.hepta-lock-51a6c3818e0946ef9891ba90"
+    ],
+    "elapsed_seconds": 0.43460919498465955,
+    "exit_code": 0,
+    "label": "remove-inactive-tool-lock",
+    "logs": {
+      "remove-inactive-tool-lock.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "remove-inactive-tool-lock.stdout.log": {
+        "bytes": 89,
+        "sha256": "f33af7d8f411c87d4fa31a1db11bc7d4c3fc669ae17bb8f1803a370e8b0cc26c"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "add",
+      "--",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/test_ci_contract.py",
+      "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md"
+    ],
+    "elapsed_seconds": 0.4531984638888389,
+    "exit_code": 0,
+    "label": "stage-source-resolution",
+    "logs": {
+      "stage-source-resolution.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stage-source-resolution.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "add",
+      "--force",
+      "--",
+      "evidence/pq-authority-preflight-20261108-9d315/README.md",
+      "evidence/pq-authority-preflight-20261108-9d315/authority-integrated-validation-runner.py",
+      "evidence/pq-authority-preflight-20261108-9d315/authority-validation-runner.py",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/environment.json",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/provider-verified.json",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/source-after.json",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/source-before.json",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/started.json",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/baseline-build/stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/authority-validation-runner.py",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/canonical-plan.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/canonical-plan.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/canonical-plan.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/cargo-version.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/cargo-version.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/cargo-version.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/ci-contract-negatives.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/ci-contract-negatives.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/ci-contract-negatives.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/ci-contract.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/ci-contract.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/ci-contract.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/commands.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/environment.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/five-package-all-targets.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/five-package-all-targets.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/five-package-all-targets.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/formatting.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/formatting.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/formatting.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-all-features.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-all-features.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-all-features.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-default.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-default.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-default.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-fuzz.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-fuzz.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/metadata-fuzz.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/node-release-owner.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/node-release-owner.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/node-release-owner.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/openssl-version.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/openssl-version.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/openssl-version.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-authority-negatives.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-authority-negatives.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-authority-negatives.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-authority.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-authority.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-authority.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-claim-negatives.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-claim-negatives.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-claim-negatives.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-claim.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-claim.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-claim.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-integration-negatives.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-integration-negatives.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-integration-negatives.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-integration.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-integration.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-integration.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-root-quorum-research.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-root-quorum-research.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/pq-root-quorum-research.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/preflight.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/provider-after.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/provider-before.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/release-all-targets.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/release-all-targets.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/release-all-targets.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/release-non-test-library.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/release-non-test-library.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/release-non-test-library.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/repository-links.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/repository-links.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/repository-links.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/rustc-version.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/rustc-version.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/rustc-version.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/six-package-doc-tests.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/six-package-doc-tests.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/six-package-doc-tests.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-after.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-before.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-guard-after.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-guard-after.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-guard-after.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-guard-before.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-guard-before.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-guard-before.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-integrity-negatives.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-integrity-negatives.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/source-integrity-negatives.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/sqlite-build-outputs/trnm-sqlite-io-boundary-6b71c612131449db.txt",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/sqlite-build-outputs/trnm-sqlite-io-boundary-6d872784d1deb3c0.txt",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/sqlite-qualification.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/summary.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/verified-source-after.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/verified-source-before.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/workspace-strict-clippy.receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/workspace-strict-clippy.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/committed-source-01/workspace-strict-clippy.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/fuzz-after.lock",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/fuzz-before.lock",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/lock.diff",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/metadata.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/metadata.stdout.json",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/fuzz-dependency-repair/receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/non-test-library-precheck/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/non-test-library-precheck/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/non-test-library-precheck/receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/non-test-library-precheck/stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/non-test-library-precheck/stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/post-experiment-host.json",
+      "evidence/pq-authority-preflight-20261108-9d315/pre-integration.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/pre-integration.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/fmt.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/fmt.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/launch-recovery.json",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/launch-recovery.original.txt",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/source.json",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-green/stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-red/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-red/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-red/receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-red/source.json",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-red/stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/quorum-red/stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/root-quorum-research/analysis-receipt.json",
+      "evidence/pq-authority-preflight-20261108-9d315/root-quorum-research/commands.jsonl.gz",
+      "evidence/pq-authority-preflight-20261108-9d315/root-quorum-research/observations.jsonl.gz",
+      "evidence/pq-authority-preflight-20261108-9d315/root-quorum-research/result.json",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/apply-ci.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/apply-ci.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/ci-contract.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/ci-contract.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/patch-check.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/patch-check.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/pq-source.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/pq-source.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/preflight.stderr.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/preflight.stdout.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/retained-registry-references.log",
+      "evidence/pq-authority-preflight-20261108-9d315/source-integration-initial-failure/reviewed-source-pin-changes.json",
+      "evidence/pq-authority-preflight-20261108-9d315/artifact-index.json"
+    ],
+    "elapsed_seconds": 0.179426179965958,
+    "exit_code": 0,
+    "label": "stage-exact-evidence-inventory",
+    "logs": {
+      "stage-exact-evidence-inventory.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stage-exact-evidence-inventory.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "diff",
+      "--cached",
+      "--exit-code",
+      "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+      "--",
+      "trillionnium",
+      "tests/fuzz",
+      ".cargo",
+      "rust-toolchain",
+      "rust-toolchain.toml"
+    ],
+    "elapsed_seconds": 0.007962279953062534,
+    "exit_code": 0,
+    "label": "integrated-native-source-equality",
+    "logs": {
+      "integrated-native-source-equality.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "integrated-native-source-equality.stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "elapsed_seconds": 0.03441993403248489,
+    "exit_code": 2,
+    "label": "staged-diff-check",
+    "logs": {
+      "staged-diff-check.stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "staged-diff-check.stdout.log": {
+        "bytes": 510,
+        "sha256": "b7e69096ab0eee71baf9fb44e560feea237c838f969e12b66221046718d49564"
+      }
+    }
+  }
+]

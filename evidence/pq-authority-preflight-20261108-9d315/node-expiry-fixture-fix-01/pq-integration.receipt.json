@@ -1,0 +1,42 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.5172265379223973,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794125357.5711637,
+  "label": "pq-integration",
+  "logs": {
+    "pq-integration.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/pq-integration.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq-integration.stdout.log": {
+      "bytes": 557,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/pq-integration.stdout.log",
+      "sha256": "59b330077a1f2b33f068de9c7337f80046b97a6c2b5f2807bd3ad96749467142"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 722,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "started_unix_seconds": 1794125357.053937
+}

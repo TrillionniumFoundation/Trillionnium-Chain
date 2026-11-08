@@ -137,3 +137,87 @@ lengths and SHA-256 values in the compression mapping of `artifact-index.json`.
 No captured output is trimmed or rewritten, and original receipt paths and
 hashes remain unchanged. The initial archive-format check refusal is retained
 separately from the passing source and native validation.
+
+## Exact-source validation after concurrent-base integration
+
+The [corrected-source run](integrated-source-02/summary.json) passed all **31 command gates**
+on `a14b7e2b51af9772210e5114945dfa7e309bf97b` (tree `16da421e676ab516b44c35cd7a9319af7be32b4f`).
+The counts below are read from the retained command receipts and checked
+against their exact stdout/stderr bytes by the
+[collection readback](integrated-validation-readback.json).
+
+| Native test scope | Passed | Ignored | Filtered |
+| --- | ---: | ---: | ---: |
+| Release bundle | 52 | 0 | 0 |
+| Other five selected packages | 442 | 2 | 0 |
+| Six-package doctests | 4 | 0 | 0 |
+| Node `release_owner::` only | 40 | 1 | 1,244 |
+
+Every supplied release test name matches the complete 37 + 6 + 9 roster.
+The ignored cost observations and isolated fixed-root control remain
+explicitly ignored. This is not a full Node test run, an all-workspace
+test run, or full Node/Host acceptance. Strict workspace Clippy, formatting,
+the locked offline dependency graphs, source guards and repository checks
+are separate passing gates in the retained run.
+
+| Python command gate | Tests reported |
+| --- | ---: |
+| `ci-contract-negatives` | 116 |
+| `upstream-migration-signatures` | 7 |
+| `upstream-migration-journal` | 13 |
+| `upstream-public-seed-relation` | 21 |
+| `pq-root-quorum-research` | 18 |
+| `pq-integration-negatives` | 55 |
+| `pq-claim-negatives` | 37 |
+| `pq-authority-negatives` | 15 |
+| `source-integrity-negatives` | 43 |
+
+The 18 root research unit tests exercise encoding and policy with
+test doubles. They are separate from the earlier native provider experiment.
+Before/after source and provider identities match. The retained SQLite
+build-script outputs contain the required native qualification markers.
+
+The [original 28-gate run](committed-source-01/summary.json) remains attributed to `62ed4e4facae4e0eb9f3fdeb82001acb3b21be47`
+(tree `38a1d4da1a6dc8c93d49ca181c8e35ecb79ef776`), before the concurrent-base merge.
+Its [count readback](first-validation-counts.json) is retained separately.
+Those old results are not relabelled as results on the integrated commit.
+
+The [first integrated run](integrated-source-01/summary.json) remains **FAIL** on `af6b06fa1cb944e639148b58e9765fe2bb0065ab`.
+Its Node scope reported 39 passed, 1 failed,
+1 ignored and 1,244 filtered tests. The failing gate was
+`node-release-owner`; its original failure, output streams and receipts
+are retained without alteration. The successful corrected-source run
+above does not replace or relabel this failed attempt.
+
+The exact source changes from the failed merge to the successfully tested
+successor are recorded in the [binary Git patch](source-correction.patch.gz)
+and [commit/tree/path record](source-correction.json). The final evidence
+commit changes no files outside this task evidence directory relative
+to that successfully tested successor.
+
+The [fixture-correction supplement](node-expiry-fixture-fix-01/receipt.json)
+retains 11 driver commands and a separate
+[exact native test](node-expiry-fixture-fix-01/node-expiry-exact-native.receipt.json).
+That targeted run reports 1 passed,
+0 ignored and 1,284 filtered tests
+on the same corrected source commit, with unchanged source/provider
+identities and qualified retained SQLite outputs. Its
+`full_validation_executed:false` remains unchanged: this one-test
+supplement does not increase the 31 command gates or the Node total
+reported for the complete selected run above.
+
+The complete [initial integration attempt](concurrent-base-integration-01/commands.json)
+is retained with its final whitespace-check refusal (exit 2) and without
+a success receipt. The [recovery receipt](concurrent-base-integration-recovery-01/receipt.json)
+records the completed merge; it predates the integrated validation above.
+
+All captured streams, including empty files, are retained. Raw `.patch`
+and `.raw` artifacts, and captures rejected by Git whitespace checks, are
+stored as lossless gzip. `artifact-index.json` maps stored gzip bytes to
+the original byte length, SHA-256 and relative path. Receipt paths and
+hashes are left unchanged; captured bytes are never trimmed or rewritten.
+
+**Scope remains HOLD:** production activation and whole-chain PQ
+qualification remain false. This evidence does not establish full
+entrypoint migration, independent custody or recovery, original fixed-Host
+availability, WAN acceptance, or a complete quantum security composition.
