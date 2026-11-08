@@ -150,6 +150,7 @@ WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v',
     'python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v',
     'python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v',
+    'python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v',
     'python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v',
 )
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
@@ -246,6 +247,9 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/daa-bounds"
       test ! -e "$TRNM_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_DAA_EVIDENCE_DIR"
+      export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
+      test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
@@ -253,6 +257,11 @@ MODEL_OBSERVATION_BLOCK = '''    (
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
       python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
       unset TRNM_DAA_EVIDENCE_DIR
+      python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pnh1-python.json"
+      python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated"
+      python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"
+      python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth"
+      unset TRNM_JOINT_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
@@ -443,6 +452,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'work/native model controls must execute exactly once in repository-truth')
+    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
+    require(all(line.startswith(('bash ', 'python3 ')) for line in repository_commands),
+            'repository-truth controls must retain a straight-line command sequence')
     require(MODEL_WINDOW_ORACLE in lanes['protocol-contract'] and script.count(MODEL_WINDOW_ORACLE) == 1,
             'model-window history arithmetic and frozen evidence checks must execute once in protocol-contract')
     require(MODEL_WINDOW_ORACLE + EVALUATION_QUORUM_ORACLE in lanes['protocol-contract'] and
@@ -484,7 +496,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
                      'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT',
-                     'TRNM_DAA_EVIDENCE_DIR']:
+                     'TRNM_DAA_EVIDENCE_DIR', 'TRNM_JOINT_DAA_EVIDENCE_DIR']:
         require(script.count(selector) == MODEL_OBSERVATION_BLOCK.count(selector),
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,

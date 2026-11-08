@@ -7887,3 +7887,47 @@ extended to cover closed, incomplete, cross-epoch and recorded-stopping cuts.
 Original standalone native scenarios keep their original source identities;
 new exact-source verification is recorded separately instead of relabelling
 old runs as execution of the hardened source.
+
+### 2026-11-08 joint W1, branch difficulty, time and chainwork audit
+
+Analyze the complete native relation against the user-pinned joint-state head
+`b5c655ebe9611b3d62cf739e61e6867decc053e3`. Separate complete W1 validity,
+branch-specific retarget and timestamps, cumulative required work, and the
+external cost and network security claims. The whole-chain quantum decision
+remains HOLD_NO_GO; neither a fourfold timespan clamp nor replacing per-block
+linear work by a square root closes that decision.
+
+The new native test executes both authenticated PNH1 and actual PGH2/PNP2 growth
+owners. Per owner, 114 fresh accepted packets cover a common prefix and three
+consecutive negative endpoint periods. The raw spans are -42, -199 and -356
+seconds, each clipped to 38. The ordinary height-65 branch has work 130; the
+height-64 branch has work 793, wins activation, and survives cold recovery with
+identical state and packet bytes. Logical validation clocks do not measure live
+mining speed, an attacker resource share, or quantum profitability.
+
+Independent Python readers recompute profile-specific wire domains, complete
+PNW1 transcripts and products, exact branch ancestors, retargets, MTP/future
+rules and linear cumulative work. Changed-header controls distinguish cheap
+target rejection from full transcript rejection using an explicitly diagnostic
+filter that grants no consensus credit. A cross-review exposed a coverage gap
+where valid PNH1 bytes could be put in the PGH2 evidence directory; the reader
+now binds the directory to the claimed backend and tests the same-byte swap
+through both API and CLI. The reader does not claim to execute native admission,
+account proofs, M06 state transitions or database recovery.
+
+Twelve exact-arithmetic controls distinguish the ideal mean-query cost
+Q=2^256/(T+1) from credited W=floor(Q). The correct bounds are Q' <= 4Q and
+W' <= 4W+3, and a legal 2-to-11 credit jump is a rounding counterexample to a
+fourfold integer-work claim. Native minimum target 1 keeps work finite. A
+per-block square-root score can reverse classical expected-cost ordering;
+an exact square root of total chainwork preserves the original ordering.
+
+Existing CI lanes now require the arithmetic controls and fresh independent
+readers for both actual profiles after the original workspace native test.
+Commands cannot be removed, skipped, swallowed or redirected to historical
+evidence. Preserve original and corrected observations with their exact source
+identities. The newly observed integration storage fix at
+`62d2d90c9e1f4c8450c89843f1e08360a24283ce` must be retained and separately tested
+in the final candidate; no earlier pinned-head execution is relabelled as that
+merged source. The detailed audit is
+[JOINT_CONSENSUS_DAA_AUDIT_20261108.md](../protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md).
