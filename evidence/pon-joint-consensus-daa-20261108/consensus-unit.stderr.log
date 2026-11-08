@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11m 21s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-target/debug/deps/trnm_pon_node-fc27c767cf2f262e)

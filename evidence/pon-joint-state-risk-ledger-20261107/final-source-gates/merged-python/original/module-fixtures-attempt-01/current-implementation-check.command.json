@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "scripts/ci/report_current_implementation.py",
+    "--check"
+  ],
+  "elapsed_seconds": 0.15894368709996343,
+  "exit_code": 0,
+  "name": "current-implementation-check",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "file": "current-implementation-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 71,
+      "file": "current-implementation-check.stdout.log",
+      "sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+    }
+  }
+}

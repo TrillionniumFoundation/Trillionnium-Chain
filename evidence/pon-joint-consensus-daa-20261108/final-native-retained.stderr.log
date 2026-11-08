@@ -1,0 +1,6 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 33s
+     Running tests/daa_adversarial_schedule.rs (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-target/debug/deps/daa_adversarial_schedule-48854b6594e606ae)
+     Running tests/native_node.rs (/home/qian-qi/work/chain-joint-consensus-daa-20261108-9506-target/debug/deps/native_node-48599506fecb2cce)
+error: test failed, to rerun pass `-p trnm-pon-node --test native_node`

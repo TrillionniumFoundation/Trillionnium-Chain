@@ -1,0 +1,36 @@
+{
+  "source_native_sha256": "0f5cfd9af78818ace0d9c0ddd36d9a0be7582f4e3e4d4d4abd5d6f569c72a98d",
+  "reader_sha256": "406375a5674a752c907e6e2cdb9130ebf9c4262a6a73d52e8fb79ab730955393",
+  "controls": [
+    {
+      "case": "identical_observation_reused_as_two_attempts",
+      "result": "expected_refusal",
+      "error": "HIDDEN_ATTEMPT_ORDER"
+    },
+    {
+      "case": "boolean_confirmation_index",
+      "result": "expected_refusal",
+      "error": "CONFIRMATION_REFERENCE"
+    },
+    {
+      "case": "visible_target_mislabeled_hidden_branch",
+      "result": "expected_refusal",
+      "error": "HIDDEN_BRANCH_NOT_HIDDEN"
+    },
+    {
+      "case": "mandatory_native_input_unavailable",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "formal/pon-nakamoto-v1/certificate_observability_evidence.py",
+        "--native-owner-json",
+        "evidence/pon-actual-certificates-20261107/observability/deliberately_missing_native_input.json",
+        "--out",
+        "evidence/pon-actual-certificates-20261107/observability/must_not_exist_after_missing_native.json"
+      ],
+      "result": "expected_nonzero_exit",
+      "returncode": 1,
+      "successful_fallback_written": false
+    }
+  ],
+  "new_native_process_invoked": false
+}

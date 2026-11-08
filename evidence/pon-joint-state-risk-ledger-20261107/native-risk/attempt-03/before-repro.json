@@ -1,0 +1,19 @@
+{
+  "accepted_before_fix": true,
+  "bank_sha256": "34e24a5f273162bd75253ff542a2821136a9e6af62c14bf3477d6cb00cd97019",
+  "global_failure_probability": null,
+  "mutation": "remove final bank lease_end; append one same-epoch pending start pinned after the final native lease_end",
+  "native_checkpoint": {
+    "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+    "record_hash": "22c3f5237c542e8a7bf163c30ac3ac3485c8cdad18668e808ed20c050c91b8b0",
+    "sequence": 97
+  },
+  "native_confirmation_intents_covered": 7,
+  "outcomes_recorded": 6,
+  "prior_native_payload_kind": "lease_end",
+  "risk_increase_or_success_fabricated": false,
+  "schema": "native-risk-nonready-prefix-repro-before-v1",
+  "source_run": "../attempt-02/native-run/run.json",
+  "spent_units": 37,
+  "starts_registered": 9
+}

@@ -1,0 +1,85 @@
+{
+  "full_W1_predicate_recomputed_by_verifier": true,
+  "native_producer_invocations_while_constructing_and_verifying_statement": 0,
+  "query_budget_promotion": {
+    "error": "LIFECYCLE_COVERAGE_AND_INITIAL_STATE_UNATTESTED",
+    "error_type": "LifecycleError",
+    "rejected": true
+  },
+  "signed_statement_claimed_new_producer_call_is_false_by_construction": true,
+  "signed_statement_verified": {
+    "eligibility_refusal": "LIFECYCLE_COVERAGE_AND_INITIAL_STATE_UNATTESTED",
+    "query_budget_eligible": false,
+    "root": {
+      "actual_sha_qrom_composition_proved": false,
+      "all_world_events_covered": false,
+      "anchored_observation_fragment_complete": true,
+      "counters": {
+        "MU1_predicates_rechecked": 0,
+        "bounded_help_deliveries": 0,
+        "full_W1_artifact_predicates_rechecked": 1,
+        "reported_native_calls": 1,
+        "reported_native_nonzero_exits": 0,
+        "resource_readings": 0,
+        "terminal_records": 0,
+        "unmetered_import_records": 0
+      },
+      "end_head": "5ca0a786df9e4c45a5739ed492159f403a01b3256e21c21d441d0083e8b4d2ad",
+      "end_sequence": 2,
+      "exports": {
+        "5ca0a786df9e4c45a5739ed492159f403a01b3256e21c21d441d0083e8b4d2ad": "d94942f385a1a9b037494b3c56c520dcd40147e2dbccb686e5f6569355821820"
+      },
+      "header_digest": "126f3732608bf1df2a882f4b1bb596dfca185c19e820964c0a2bd570b1318a01",
+      "help_observations_fit_declared_policy": true,
+      "help_policy_global_support_certified": false,
+      "initial_oracle_independence_proved": false,
+      "key_id": "e3b795ca298f8c924e33a5edd29d102d19df45afb039450bcb078170ec6d3789",
+      "label": "false-producer",
+      "lifecycle_query_upper_bound": null,
+      "native_confirmation_risk": false,
+      "physical_resource_bound": false,
+      "real_independent_trust_root_established": false,
+      "recorder_execution_attested": false,
+      "signatures_verified_against_supplied_external_pin": true,
+      "signed_source_links": []
+    },
+    "schema": "pon-work-lifecycle-verification-result-v1",
+    "verified_sources": {
+      "false-producer": {
+        "actual_sha_qrom_composition_proved": false,
+        "all_world_events_covered": false,
+        "anchored_observation_fragment_complete": true,
+        "counters": {
+          "MU1_predicates_rechecked": 0,
+          "bounded_help_deliveries": 0,
+          "full_W1_artifact_predicates_rechecked": 1,
+          "reported_native_calls": 1,
+          "reported_native_nonzero_exits": 0,
+          "resource_readings": 0,
+          "terminal_records": 0,
+          "unmetered_import_records": 0
+        },
+        "end_head": "5ca0a786df9e4c45a5739ed492159f403a01b3256e21c21d441d0083e8b4d2ad",
+        "end_sequence": 2,
+        "exports": {
+          "5ca0a786df9e4c45a5739ed492159f403a01b3256e21c21d441d0083e8b4d2ad": "d94942f385a1a9b037494b3c56c520dcd40147e2dbccb686e5f6569355821820"
+        },
+        "header_digest": "126f3732608bf1df2a882f4b1bb596dfca185c19e820964c0a2bd570b1318a01",
+        "help_observations_fit_declared_policy": true,
+        "help_policy_global_support_certified": false,
+        "initial_oracle_independence_proved": false,
+        "key_id": "e3b795ca298f8c924e33a5edd29d102d19df45afb039450bcb078170ec6d3789",
+        "label": "false-producer",
+        "lifecycle_query_upper_bound": null,
+        "native_confirmation_risk": false,
+        "physical_resource_bound": false,
+        "real_independent_trust_root_established": false,
+        "recorder_execution_attested": false,
+        "signatures_verified_against_supplied_external_pin": true,
+        "signed_source_links": []
+      }
+    }
+  },
+  "signer_execution_attribution_proved": false,
+  "signer_owned_old_valid_bytes_before_statement": true
+}

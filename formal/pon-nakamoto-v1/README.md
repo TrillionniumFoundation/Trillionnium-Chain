@@ -149,3 +149,178 @@ contract are in [Model operations acceptance](../../docs/protocol/pon-nakamoto-v
 It replays existing target-decoder controls and adds prospective-record separation,
 poison/backdoor/forgetting probes, unique reported consumer uses and retention costs.
 A contract pass never establishes real model efficacy or independent acceptance.
+
+## Mandatory work and native execution certificates
+
+The [MU1 research relation](MANDATORY_UNITS_RELATION_V1.md) freezes a complete,
+domain-separated fixed-target envelope over one to eight native W1 units. Each
+unit retains the full original relation; one aggregate lottery binds the ordered
+canonical outputs. The profile is not enabled in the native node. The conservative
+query certificate grants unit work for free, charges preprocessing and public
+oracle help, and requires a complete-output budget. It is not a lower bound on
+the cheapest physical W1 strategy.
+
+The [stateful resource theorem](STATEFUL_RESOURCE_TAIL_V1.md),
+[fork witness](NATIVE_FORK_MAPPING_V1.md) and
+[execution accounting](NATIVE_EXECUTION_CERTIFICATE_V1.md) keep initial inventory,
+oracle-correlated residual state, honest off-branch work, availability and
+selection deficits explicit. Complete declared model traces can be checked;
+unseen native candidates, physical time and an environment probability law are
+not authenticated by a trace label or a passing parser.
+
+```bash
+python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v
+MU1_NATIVE_WORK=/absolute/path/to/release/examples/pon_work_io MU1_NATIVE_PREPARED=/absolute/path/to/release/examples/pon_zero_io python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v
+```
+
+## Actual local observations and remaining scientific certificates
+
+[Native owner census](NATIVE_OWNER_OBSERVATION_V1.md) is an opt-in diagnostic
+over a held native PNP1 owner. It enumerates the complete current admitted
+relation in a consistent read snapshot and replays native W1, application state,
+receipts and deltas. Its [independent score bridge](NATIVE_OWNER_SCORE_BRIDGE_V1.md)
+recomputes 512-bit work, ancestor timestamp eligibility, the actual confirmation
+AND and full local comparison deficits from fresh native executions.
+
+[WLC1](WORK_LIFECYCLE_CERTIFICATE_V1.md) authenticates bounded observation
+fragments with externally pinned ML-DSA-65 keys and first/last checkpoints.
+It verifies full work artifacts and public-help source links, while keeping
+signature validity separate from the truth or completeness of resource reports.
+Its fixed finite classical-help theorem requires a global complete transcript
+alphabet and admits a vacuous bound when that alphabet is too large.
+
+[Observability and repeated starts](CERTIFICATE_OBSERVABILITY_V1.md) prove
+why local records alone cannot determine hidden world inventory or correlated
+initial advice. A shared-lifetime interval-packing witness avoids counting the
+same work repeatedly across adaptively chosen windows. Predictable risk spending
+is checked against an explicitly supplied full joint law, never a fresh-reset
+assumption at a selected start.
+
+These components narrow the two actual-certificate obligations. They do not
+establish all-algorithm physical work costs, authentic global budgets, physical
+clock and availability envelopes, or a native common-prefix failure probability.
+The three candidate qualifications and the unknown six-successor risk remain
+as recorded in the sole development plan.
+
+The repository-truth and protocol-contract lanes retain these controls alongside
+the existing checks. [Source and raw evidence](../../evidence/pon-work-native-certificates-20261107/README.md)
+separate the previously delivered abstract models from new complete native W1/MU1
+executions. Neither three-candidate safety qualification nor a numerical risk
+for the current six-successor rule is asserted.
+
+## One lifetime, persistent local debt, and exact composition
+
+[LQC1](lifecycle_query_charging_v1.md) keeps one coalition-wide terminal
+oracle and one irreversible first-coherent-query boundary. A complete paid
+classical prefix is averaged under its explicit ideal-oracle law; subsequent
+queries, helper activity and retained state share one lifetime budget. A
+fixed-output-index union removes analysis-only virtual verification queries.
+Actual oracle-dependent validator feedback is still charged. The declared
+caps and complete joint initial-state independence are assumptions, not facts
+certified by a signed log or a newly started process. MU1 research credit is
+never substituted for native block work.
+
+The [persistent owner journal](NATIVE_OWNER_JOURNAL_V1.md) adds durable intent,
+complete packets and actual post-call census to an opt-in owner wrapper. It
+records native opening/recovery as an operation, keeps unadmitted outputs
+across restart, and exposes unfinished calls, outside-lease intervals,
+validation-clock regressions and orphan artifacts. The sidecar is separate
+from the native database transaction. A real process exit after a native
+commit cannot be relabeled a completed observation, and a hash chain does not
+authenticate the newest physical history without an independently retained
+expectation.
+
+[CC1](CERTIFICATE_COMPOSITION_V1.md) joins exact signed packet bytes to the
+actual journal's native-valid packet bindings, deduplicates native identities
+and retains that unresolved debt. Its controls distinguish a valid signature
+from production, the same header ID from the same valid packet, a global
+probability from a conditional probability at a selected start, and message
+payload from the entire observable helper channel. It supplies no route to
+turn these local observations into a native failure probability.
+
+```bash
+python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
+LQC_NATIVE_WORK=/absolute/path/to/pon_work_io LQC_NATIVE_PREPARED=/absolute/path/to/pon_zero_io python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out /tmp/new-lqc-run
+/absolute/path/to/native_owner_journal_v1 /tmp/new-owner-journal
+NATIVE_OWNER_JOURNAL_RUN=/tmp/new-owner-journal/run.json python3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_native_owner_journal.py -v
+python3 formal/pon-nakamoto-v1/native_owner_journal.py --run /tmp/new-owner-journal/run.json --output /tmp/new-owner-checked.json
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p certificate_composition_tests.py -v
+python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run /tmp/new-owner-journal/run.json --output-dir /tmp/new-composition
+```
+
+The native reader and composition driver require fresh raw journals and
+complete packet files; missing artifacts fail. Cryptographic composition
+tests run in protocol CI's pinned Python environment. The
+[continuation evidence](../../evidence/pon-lifecycle-closure-20261107/README.md)
+preserves initial failures, exact source/binary bindings, actual Linux native
+runs and the unchanged qualification table. Physical all-algorithm work
+losses, authentic joint initial state, full-world coverage, clocks, inventory
+and honest-progress laws remain the two actual scientific obligations.
+
+## Explicit finite joint initial states
+
+[FJS1](FINITE_JOINT_STATE_CERTIFICATE_V1.md) checks every oracle table and the
+complete declared conditional advice density matrix with exact rational PSD
+arithmetic. One common independent reference state and explicit positive excess
+give the proved probability transfer `lambda * B + epsilon`. The reference
+query/list bound is recomputed, and selected-start probability scopes are
+refused. Five complete finite models include coherent advice, noisy advice,
+singular independent state, full truth-table advice and a paid positive excess.
+
+This certifies the supplied finite state, its operator-order loss, and the
+unconditioned model event. Authenticity of actual worker/environment states,
+future helper coverage, actual hash idealization, physical resources and native
+confirmation risk remain separate unproved obligations.
+
+```bash
+python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
+python3 formal/pon-nakamoto-v1/finite_joint_state_certificate.py --evidence-dir /tmp/new-finite-joint-state
+```
+
+## Complete finite execution-event coverage
+
+[EC1](CERTIFICATE_EVENT_COVERAGE_V1.md) derives all confirmed starts and every
+later recorded observation or replayed selection cut from every leaf's raw
+execution. Allocations must cover exactly that complete catalogue and its
+failure leaves before the existing predictable risk bank is applied under the
+same declared joint law. Exact recorded prefixes must agree inside each history
+cell; future-outcome labels alone cannot create a cheaper conditional start.
+
+The controls expose an omitted second confirmation, an omitted failure leaf,
+temporary removal followed by restoration between observations, and identical
+inventory/progress marginals with different joint failure risks. No actual
+network probability law, physical filtration, unrecorded event or extension
+beyond the declared horizon is authenticated.
+
+```bash
+python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
+```
+
+## Durable local confirmation risk registration
+
+[PNRL1](NATIVE_RISK_LEDGER_V1.md) privately wraps the actual persistent native
+owner and syncs each fixed-scope confirmation registration and declared allowance
+before dispatch. Every repeated, failed or interrupted start remains charged.
+The independent reader reconciles **every** confirmation intent in the complete
+supplied native journal, including native calls that bypassed the risk wrapper.
+
+The fresh native scenario exercises pre-dispatch and post-native process exits,
+reopening, unsuccessful confirmations, exact owner binding and cumulative budgets.
+Its tests also retain a real bank-only rollback counterexample before native
+intent, and coherent after-the-fact allowance rewrites. An independently retained
+newer checkpoint rejects those old or rewritten histories; the files alone do
+not authenticate the latest history or physical pre-registration.
+
+```bash
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger
+cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example native_risk_ledger_v1
+/path/to/release/examples/native_risk_ledger_v1 /tmp/new-native-risk-ledger
+NATIVE_RISK_LEDGER_RUN=/tmp/new-native-risk-ledger/run.json python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_risk_ledger.py' -v
+python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run /tmp/new-native-risk-ledger/run.json --output /tmp/new-native-risk-ledger/checked.json
+```
+
+This is declared local expenditure and raw-history reconciliation. Conditional
+failure probabilities, world-wide start coverage, physical time, hidden inventory
+and a common native failure law remain uncertified. The report retains a null
+native failure bound and false probability qualification flags.

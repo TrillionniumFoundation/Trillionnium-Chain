@@ -1,0 +1,17 @@
+test_actual_missing_target_is_failure (__main__.CommittedTreeTests.test_actual_missing_target_is_failure) ... ok
+test_case_sensitive_target_rejected (__main__.CommittedTreeTests.test_case_sensitive_target_rejected) ... ok
+test_changed_canonical_parser_fails_closed (__main__.CommittedTreeTests.test_changed_canonical_parser_fails_closed) ... ok
+test_commit_tree_does_not_require_binary_or_markdown_worktree_files (__main__.CommittedTreeTests.test_commit_tree_does_not_require_binary_or_markdown_worktree_files) ... ok
+test_escaping_symlink_is_rejected (__main__.CommittedTreeTests.test_escaping_symlink_is_rejected) ... ok
+test_fences_external_links_and_fragment_only_follow_existing_grammar (__main__.CommittedTreeTests.test_fences_external_links_and_fragment_only_follow_existing_grammar) ... ok
+test_non_utf8_markdown_fails_instead_of_skipping (__main__.CommittedTreeTests.test_non_utf8_markdown_fails_instead_of_skipping) ... ok
+test_old_regex_in_comments_cannot_approve_changed_parser (__main__.CommittedTreeTests.test_old_regex_in_comments_cannot_approve_changed_parser) ... ok
+test_percent_encoded_local_path_and_parent_directory (__main__.CommittedTreeTests.test_percent_encoded_local_path_and_parent_directory) ... ok
+test_relative_committed_symlink_is_resolved (__main__.CommittedTreeTests.test_relative_committed_symlink_is_resolved) ... ok
+test_root_escape_rejected (__main__.CommittedTreeTests.test_root_escape_rejected) ... ok
+test_symlink_cycle_is_rejected (__main__.CommittedTreeTests.test_symlink_cycle_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 5.252s
+
+OK

@@ -1,0 +1,11 @@
+{
+  "schema": "pon-joint-publication-base-observation-v1",
+  "tested_head": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+  "tested_integration_parent": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "live_review_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "fetch_exit": 0,
+  "merge_preview_exit": 0,
+  "prospective_tree": "c48fa8a24ba2975312cecaa4f2adb959c15e1fa4",
+  "native_tests_executed_on_prospective_merge": false,
+  "integration_delta_stat": " .github/workflows/pon-history-stage-diagnostic.yml |  74 ++++\n config/pon/pq-cross-branch-corpus-v1.json          |  10 +\n scripts/ci/run_from_zero_host.py                   |   6 +\n scripts/ci/run_history_diagnostic.py               | 457 +++++++++++++++++++\n scripts/ci/test_history_stage_diagnostic.py        |  85 ++++\n .../tests/history_stage_diagnostic.rs              | 488 +++++++++++++++++++++\n 6 files changed, 1120 insertions(+)\n"
+}

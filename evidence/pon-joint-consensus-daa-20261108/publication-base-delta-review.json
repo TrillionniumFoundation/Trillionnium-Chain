@@ -1,0 +1,38 @@
+{
+  "schema": "pon-joint-publication-base-delta-review-v1",
+  "tested_head": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+  "review_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "prospective_tree": "c48fa8a24ba2975312cecaa4f2adb959c15e1fa4",
+  "changed_paths": [
+    ".github/workflows/pon-history-stage-diagnostic.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/run_from_zero_host.py",
+    "scripts/ci/run_history_diagnostic.py",
+    "scripts/ci/test_history_stage_diagnostic.py",
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+  ],
+  "existing_corpus_values_preserved": true,
+  "corpus_additions": {
+    "pinned_blobs": [
+      ".github/workflows/pon-history-stage-diagnostic.yml",
+      "scripts/ci/run_from_zero_host.py",
+      "scripts/ci/run_history_diagnostic.py",
+      "scripts/ci/test_history_stage_diagnostic.py",
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ],
+    "required_paths": [
+      ".github/workflows/pon-history-stage-diagnostic.yml",
+      "scripts/ci/run_from_zero_host.py",
+      "scripts/ci/run_history_diagnostic.py",
+      "scripts/ci/test_history_stage_diagnostic.py",
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ]
+  },
+  "native_production_source_paths_changed": false,
+  "prospective_merge_native_tests_executed": false,
+  "initial_review_observation": {
+    "job_id": "1a1ba0611e9-12894-180c",
+    "exit_code": 1,
+    "reason": "first structural checker rejected required_paths additions; final review verifies all old values and restricts additions to the six inspected diagnostic paths"
+  }
+}

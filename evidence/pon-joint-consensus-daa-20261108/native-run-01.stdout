@@ -1,0 +1,9 @@
+
+running 2 tests
+test pgh2_three_negative_endpoint_periods_keep_real_w1_and_select_higher_work has been running for over 60 seconds
+test pnh1_three_negative_endpoint_periods_keep_real_w1_and_select_higher_work has been running for over 60 seconds
+test pgh2_three_negative_endpoint_periods_keep_real_w1_and_select_higher_work ... ok
+test pnh1_three_negative_endpoint_periods_keep_real_w1_and_select_higher_work ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 161.84s
+

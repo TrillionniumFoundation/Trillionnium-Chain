@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/8f0d1a7a75bb/native-complete-local-gates/audit_markdown_tracked_targets.py",
+    "--root",
+    "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+    "--output-directory",
+    "/workspace/scratch/8f0d1a7a75bb/native-complete-local-gates/markdown-tracked-attempt-01",
+    "--expected-head",
+    "b66e66d2465258d808c0f56ff851123306d4bdb4"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb",
+  "exit_code_observed_from_exec_tool": 0,
+  "printed_report_retained_as": "summary.json",
+  "source_sha256": "8af1fee5931815dbf32e35ec6af3b37edc4ffb9fd5a4ec8d944b7b8e21f84021",
+  "stderr_observed_empty": true
+}

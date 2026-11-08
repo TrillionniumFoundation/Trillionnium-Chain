@@ -130,6 +130,29 @@ CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET
 CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
 PAIRED_WORK_ORACLE = '    TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v\n'
 ZERO_WORK_ORACLE = '    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v\n'
+MANDATORY_UNITS_NATIVE = '    MU1_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" MU1_NATIVE_PREPARED="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v\n'
+WORK_LIFECYCLE_NATIVE = ('    WLC_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" WLC_NATIVE_PQ="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle")" python3 formal/pon-nakamoto-v1/work_lifecycle_tests.py -v\n'
+                         '    python3 formal/pon-nakamoto-v1/work_lifecycle_observe.py --native-work "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" --native-pq "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle")" --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-lifecycle"\n')
+NATIVE_OWNER_SCORE_BRIDGE = ('    TRNM_NATIVE_OWNER_OBSERVATION="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_observation_v1")" TRNM_NATIVE_OWNER_RECORD_DIR="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge" python3 formal/pon-nakamoto-v1/test_native_owner_score_bridge.py -v\n'
+                             '    python3 formal/pon-nakamoto-v1/certificate_observability_evidence.py --native-owner-json "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/native.json" --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/observability.json"\n')
+LIFECYCLE_QUERY_NATIVE = '    LQC_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" LQC_NATIVE_PREPARED="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/lifecycle-query"\n'
+CERTIFICATE_COMPOSITION_TESTS = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'certificate_composition_tests.py' -v\n"
+NATIVE_OWNER_JOURNAL = ('    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_owner_journal\n    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_journal_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal"\n    NATIVE_OWNER_JOURNAL_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \'test_native_owner_journal.py\' -v\n    python3 formal/pon-nakamoto-v1/native_owner_journal.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json"\n'
+                        + CERTIFICATE_COMPOSITION_TESTS
+                        + '    python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output-dir "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition"\n')
+NATIVE_RISK_LEDGER = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger\n    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger"\n    NATIVE_RISK_LEDGER_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \'test_native_risk_ledger.py\' -v\n    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json"\n'
+WORK_NATIVE_MODEL_COMMANDS = (
+    'python3 formal/pon-nakamoto-v1/stateful_tail.py',
+    'python3 formal/pon-nakamoto-v1/residual_grover.py',
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v",
+    'python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v',
+    'python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v',
+    'python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v',
+    'python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v',
+    'python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v',
+    'python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v',
+)
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
 EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
@@ -224,6 +247,9 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/daa-bounds"
       test ! -e "$TRNM_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_DAA_EVIDENCE_DIR"
+      export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
+      test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
@@ -231,6 +257,11 @@ MODEL_OBSERVATION_BLOCK = '''    (
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
       python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
       unset TRNM_DAA_EVIDENCE_DIR
+      python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pnh1-python.json"
+      python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pnh1-authenticated"
+      python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"
+      python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth"
+      unset TRNM_JOINT_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
@@ -273,6 +304,10 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v
     TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v
     TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v
+    MU1_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" MU1_NATIVE_PREPARED="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v
+    WLC_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" WLC_NATIVE_PQ="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle")" python3 formal/pon-nakamoto-v1/work_lifecycle_tests.py -v
+    python3 formal/pon-nakamoto-v1/work_lifecycle_observe.py --native-work "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" --native-pq "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle")" --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-lifecycle"
+    LQC_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" LQC_NATIVE_PREPARED="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/lifecycle-query"
     TRNM_GROUPED_NATIVE="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_routed_int257_grouped")" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_grouped*.py' -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
@@ -285,6 +320,18 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
     python3 scripts/ci/run_account_execution_conformance.py
     python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root "$(pwd -P)"
+    TRNM_NATIVE_OWNER_OBSERVATION="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_observation_v1")" TRNM_NATIVE_OWNER_RECORD_DIR="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge" python3 formal/pon-nakamoto-v1/test_native_owner_score_bridge.py -v
+    python3 formal/pon-nakamoto-v1/certificate_observability_evidence.py --native-owner-json "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/native.json" --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/observability.json"
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_owner_journal
+    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_journal_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal"
+    NATIVE_OWNER_JOURNAL_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_owner_journal.py' -v
+    python3 formal/pon-nakamoto-v1/native_owner_journal.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json"
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'certificate_composition_tests.py' -v
+    python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output-dir "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition"
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger
+    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger"
+    NATIVE_RISK_LEDGER_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_risk_ledger.py' -v
+    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json"
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles --test cell_native_v1
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
@@ -388,6 +435,26 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'one native paired-work byte comparison must retain its fresh current-lane output')
     require(script.count(ZERO_WORK_ORACLE) == 1,
             'one native zero-work byte comparison must retain its fresh current-lane output after its release build')
+    require(code_lines(lanes['protocol-contract']).count(MANDATORY_UNITS_NATIVE.strip()) == 1
+            and code_lines(script).count(MANDATORY_UNITS_NATIVE.strip()) == 1,
+            'complete MU1 controls require both current native W1 binaries exactly once in protocol-contract')
+    for block, build, label in ((WORK_LIFECYCLE_NATIVE, CONTINUITY_BUILD, 'W1/PQ lifecycle'),
+                                (NATIVE_OWNER_SCORE_BRIDGE, NODE_EXAMPLE_BUILD, 'native owner score bridge'),
+                                (LIFECYCLE_QUERY_NATIVE, CONTINUITY_BUILD, 'lifecycle query observation'),
+                                (NATIVE_OWNER_JOURNAL, NODE_EXAMPLE_BUILD, 'durable native owner and composition'),
+                                (NATIVE_RISK_LEDGER, NODE_EXAMPLE_BUILD, 'durable native confirmation risk bank')):
+        require(block in lanes['protocol-contract']
+                and all(code_lines(script).count(line) == 1 for line in code_lines(block))
+                and build in lanes['protocol-contract']
+                and lanes['protocol-contract'].index(build) < lanes['protocol-contract'].index(block),
+                label + ' must execute current native binaries once after their build and retain fresh observations')
+    for command in WORK_NATIVE_MODEL_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'work/native model controls must execute exactly once in repository-truth')
+    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
+    require(all(line.startswith(('bash ', 'python3 ')) for line in repository_commands),
+            'repository-truth controls must retain a straight-line command sequence')
     require(MODEL_WINDOW_ORACLE in lanes['protocol-contract'] and script.count(MODEL_WINDOW_ORACLE) == 1,
             'model-window history arithmetic and frozen evidence checks must execute once in protocol-contract')
     require(MODEL_WINDOW_ORACLE + EVALUATION_QUORUM_ORACLE in lanes['protocol-contract'] and
@@ -429,7 +496,7 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
                      'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT',
-                     'TRNM_DAA_EVIDENCE_DIR']:
+                     'TRNM_DAA_EVIDENCE_DIR', 'TRNM_JOINT_DAA_EVIDENCE_DIR']:
         require(script.count(selector) == MODEL_OBSERVATION_BLOCK.count(selector),
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,

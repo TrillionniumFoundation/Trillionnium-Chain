@@ -1,0 +1,17 @@
+[
+  {
+    "path": "formal/pon-nakamoto-v1/native_owner_journal.py",
+    "old_sha256": "ddd0810d7de2dff623576493314aad5eaa846dad1a5d864a14e4f2528f48e5d5",
+    "sha256": "03d8b2aa29c35e4c7f4a894827802fdf380e92aed51cf9f39c00af9d5cbcfaca"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_native_owner_journal.py",
+    "old_sha256": "ae88e381127649f9fdd20e55c775752de7464a5b30101938f579ecedbf5c661e",
+    "sha256": "6372c4944ce3482d6834c234d73a4f290ac4e41c8de5602217224c68188749c0"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/NATIVE_OWNER_JOURNAL_V1.md",
+    "old_sha256": null,
+    "sha256": "e5dcb79edc85a31f8b399c3ad1ef4a430b7376fec7f76ea5f832a4a833018c49"
+  }
+]

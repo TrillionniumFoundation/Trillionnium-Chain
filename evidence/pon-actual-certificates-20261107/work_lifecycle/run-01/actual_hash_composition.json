@@ -1,0 +1,27 @@
+{
+  "MU1_domain_tags": [
+    "parameters",
+    "context",
+    "unit",
+    "unit-output",
+    "ordered-units",
+    "ticket",
+    "identity"
+  ],
+  "MU1_prefix_hex": "54524e4d2d504f4e2d4d553100",
+  "W1_domain_tags": [
+    "task",
+    "noise",
+    "ticket",
+    "native-work-verification"
+  ],
+  "W1_prefix_hex": "54524e4d2d504f4e3100",
+  "W1_trace_prefix_hex": "54524e4d2d504f4e2d54524143453100",
+  "actual_domains_proved_independent_random_functions": false,
+  "actual_sha256_recomputation_matches": true,
+  "preprocessing_aware_composition_proved": false,
+  "same_public_SHA256_primitive": true,
+  "terminal_digest_hex": "097fc5263801e80a4db6ebab4deeba8804f2364eadd3cb1c1590b23d0ca2ebed",
+  "terminal_frame_bytes": 93,
+  "terminal_frame_hex": "54524e4d2d504f4e2d4d55310006007469636b657420000000c77e4ee70466fad648f94a225b1d00b4c087387d440aeafe541ed28787bd9ab720000000151419ea1b986f120cf828d270877ae7e3b2c0ef6bf2e0181d731424518a5e78"
+}

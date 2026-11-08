@@ -1,0 +1,37 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/b9454e263603/chain_obligations/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 33.00s
+     Running tests/native_owner_observation.rs (/workspace/scratch/b9454e263603/native_w1_target/debug/deps/native_owner_observation-4a072f0bbf067175)
+
+running 10 tests
+test actual_legacy_and_authenticated_census_replays_full_native_relation_without_persistence ... ok
+test actual_two_owner_execution_covers_hidden_inventory_six_successors_ties_reorg_and_time_maturity ... ok
+test block_byte_limits_and_native_work_cancellation_never_return_a_partial_census ... ok
+test callback_error_text_never_acquires_retained_data_stop_authority ... ok
+test corrupted_retained_product_is_reverified_instead_of_trusting_admitted_metadata ... ok
+test foreign_commit_during_read_snapshot_is_detected_after_release ... FAILED
+test local_view_digest_stable_but_owner_incarnation_and_observation_attempt_are_not_reused ... ok
+test pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback ... FAILED
+test prior_filtering_sql_view_cannot_hide_an_admitted_fork_from_a_complete_census ... ok
+test retained_chainwork_or_missing_packet_cannot_be_certified ... ok
+
+failures:
+
+---- foreign_commit_during_read_snapshot_is_detected_after_release stdout ----
+
+thread 'foreign_commit_during_read_snapshot_is_detected_after_release' (101) panicked at crates/trnm-pon-node/tests/native_owner_observation.rs:203:10:
+called `Result::unwrap_err()` on an `Ok` value: OwnerCensus { schema: "pon-native-owner-census-v1", packet_profile: "PNP1", state_backend: "legacy-v2", task_profile: "legacy-task-v1", network: "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2", parameters: "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095", genesis: "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6", owner_process_id: 95, owner_observation_instance: 8, owner_attempt: 1, owner_identity_scope: "one Node incarnation in this process invocation; not a globally authenticated principal", directory_device: 39, directory_inode: 948179, database_device: 39, database_inode: 948182, lock_device: 39, lock_inode: 948180, started_ns: 901, ended_ns: 26885005, clock_scope: "process-local Instant since first owner census; not globally synchronized", observed_now: 100, observed_now_source: "caller-supplied validation clock; not the Instant lifecycle clock", future_skew_seconds: 120, confirmation_depth: 6, confirmation_work_multiplier: 6, active_tip: "8eb7187a5366a034ee852715d7e854c92198c8aacc7d79157434fae306a71701", active_generation: 1, state_slot: 0, active_score_hex: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002", active_time_eligible: true, eligible_max_score_hex: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002", eligible_max_ids: ["8eb7187a5366a034ee852715d7e854c92198c8aacc7d79157434fae306a71701"], raw_selection_deficit_hex: Some("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), rows: [OwnerCensusBlock { id: "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6", parent: None, height: 0, chainwork_hex: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", required_work_hex: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", target: None, timestamp: None, packet_sha256: None, proof_sha256: None, packet_bytes: 0, ancestry_time_eligible: true, active_chain_member: true, full_native_work_replayed: false, full_native_application_replayed: false, retained_state_and_deltas_equal: true }, OwnerCensusBlock { id: "8eb7187a5366a034ee852715d7e854c92198c8aacc7d79157434fae306a71701", parent: Some("b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6"), height: 1, chainwork_hex: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002", required_work_hex: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002", target: Some("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"), timestamp: Some(11), packet_sha256: Some("d4b820c886abc574a846a705a6653b27647127daba42b132cc4be86208164d01"), proof_sha256: Some("61dbc80b72de7a70ac24bf250f38debe0358b1b77655ef533c645bec16438629"), packet_bytes: 49508, ancestry_time_eligible: true, active_chain_member: true, full_native_work_replayed: true, full_native_application_replayed: true, retained_state_and_deltas_equal: true }], total_packet_bytes: 49508, local_view_commitment: "36b49136ffc34af2e4725c8ab84396f8270a3ef19def9c7bfbc9966ea38b0ef5", complete_for_all_admitted_rows_in_snapshot: true, local_candidate_relation_rechecked: true, exact_source_schema_rechecked: true, snapshot_released_without_commit: true, owner_caches_may_refresh: true, unadmitted_local_packets_covered: false, remote_private_branches_covered: false, global_ready_attested: false, world_coverage_attested: false, physical_clock_authenticated: false, exported_artifact_authenticated: false, probabilistic_environment_bound: false, six_successor_risk_qualified: false, execution_authority: false, excluded_scope: ["unadmitted local bytes and pending jobs", "remote and private branches", "first global readiness and parent-binding times", "initial residual preprocessing state", "network delivery or retention envelopes", "PNP2/PQ/other task profiles and policy owners", "trusted identity, clock and lifecycle-export attestation"] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback stdout ----
+
+thread 'pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback' (103) panicked at crates/trnm-pon-node/tests/native_owner_observation.rs:318:88:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(GrowthProfile), kind: PolicyRefusal, message: "GROWTH_PROFILE", source: None, request_history_budget: false }
+
+
+failures:
+    foreign_commit_during_read_snapshot_is_detected_after_release
+    pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback
+
+test result: FAILED. 8 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.22s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test native_owner_observation`
