@@ -1,0 +1,59 @@
+[
+  {
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:31.171387+00:00",
+    "elapsed_seconds": 33.47526642700018,
+    "exit_code": 0,
+    "log": "native-00.log",
+    "bytes": 2496,
+    "sha256": "e242428c808ecfbea59c701620a88421146a75c631230472c39196ec42f46d30",
+    "python_test_counts": [
+      "14"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:04.647235+00:00",
+    "elapsed_seconds": 3.940765478000003,
+    "exit_code": 0,
+    "log": "native-01.log",
+    "bytes": 1074,
+    "sha256": "d41dbf9148ac583bab415aa3c10a534f0769ebb0667e8be21d9d890079e787e7",
+    "python_test_counts": [
+      "6"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:08.588277+00:00",
+    "elapsed_seconds": 246.7354491230003,
+    "exit_code": 0,
+    "log": "native-02.log",
+    "bytes": 2745,
+    "sha256": "ff31c865860109ad0a8981a0b3db73a7af22be76d555a9f72e2d9ca4e85781a0",
+    "python_test_counts": [
+      "14"
+    ],
+    "rust_test_results": []
+  }
+]
