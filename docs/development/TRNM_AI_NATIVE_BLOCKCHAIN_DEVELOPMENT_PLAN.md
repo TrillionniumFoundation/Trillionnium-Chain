@@ -7679,3 +7679,33 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+### 2026-11-08 native full relation and complete-path qualification
+
+The [native qualification](specs/pon/NATIVE_FULL_RELATION_QUALIFICATION_V1.md)
+retains the original FullLimb/PNW1 verifier, PGH2/PNP2 statement and Node
+admission/activation rules. A new real-Node regression seals fresh mathematically
+valid work for sixteen incorrect contexts, including an active-tip target that
+differs from the candidate parent target, a matching but ineligible matrix task,
+new signed body, stale state/receipts and account witness. Both FullLimb and
+scalar reference must accept the changed work statement before Node refuses it;
+SQLite rows, active/generation and nonce remain unchanged, and the valid control
+continues through activation and cold reopening.
+
+The [complete-path component tools](../../formal/pon-native-fullpath-v1/README.md)
+retain frozen offered starts and actual producer, receiver and cold-observer
+processes. One parent monotonic clock covers native candidate generation, packet
+export, complete same-host pipe delivery, full W1/execution/admission, activation
+and readback. Exact resubmission is distinct from fresh replay. A last-C-element
+mutation and actual BeforeVerifiedWork cancellation preserve their unsuccessful
+terminal records and resource cost; no partial result is promoted.
+
+Raw packet/statement/source/binary identities, native ancestry/readback and
+resource denominators are reconciled by a bounded reader with adversarial
+controls. It deliberately reports COMPONENT_OBSERVATION_ONLY and HOLD: one
+depth-zero accepted development block does not close the original four-second,
+six-successor, 0.25-CPU/2-GiB/zero-swap/256-PID/16-hostile contract, WAN, full
+history or production gates. Full native correctness does not establish
+physical or quantum search cost. Compression still requires both complete
+instance-specific cryptographic security and end-to-end performance/availability
+qualification; neither can be inferred from an isolated verifier benchmark.
