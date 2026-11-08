@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-research-merge-runtime-equality-v1",
+  "head_before": "98a34edfacd96df18a14b4969df2362ab22abfd7",
+  "incoming": "1fe2f31c70977a030aec73b63fe0617f34d15a77",
+  "resolved_index_tree": "9e6e11c1f7198ba0d0df2a56c062caa4d8cd7f71",
+  "scopes": [
+    "trillionnium",
+    "config",
+    "qualification",
+    "tests/fuzz"
+  ],
+  "equal": true,
+  "runtime_tree_sha256": "dc1afa2b0ffcffd9996833c38e1fd78aa765bd54dc912b2bfd35109c715e6cb4",
+  "work_security_14_test_contract_unchanged": true,
+  "pin_drift": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "expected": "1cc51710312f080a4b507695e2b8f8b676a8d95a",
+      "actual": "c7db147493ab5f23ff161dcaec5c039dbac1176b"
+    }
+  ],
+  "qualification": "HOLD_NO_GO"
+}

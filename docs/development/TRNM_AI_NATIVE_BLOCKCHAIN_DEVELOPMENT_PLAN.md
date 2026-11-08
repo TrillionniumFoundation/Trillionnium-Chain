@@ -10026,3 +10026,83 @@ Fresh named controls, exact input identities, negative observations and the
 remaining obligations are recorded in the
 [new evidence packet](../../evidence/pon-w1-qrom-proof-chain-20261108/README.md).
 No historical failed run or original evidence is relabeled as a success.
+
+
+### 2026-11-08 unified Chain / Hepta qualification continuation
+
+Continue the user's P0 integration, consensus, authority and real Hepta loop,
+followed by P1 data custody/WAN, P2 confirmed performance and P3 complete PQ
+qualification. Keep this file as the sole plan. The implementation and evidence
+index is `evidence/p0-unified-qualification-20261108/README.md`; its input roster
+pins all ten integrated Chain sources and Hepta
+`f1785ca15e41e4e49509a5b211a659e3cbdbf60e`. Freeze one complete Chain commit before
+the final native commands. Record complete raw source, modes, every discovered
+dependency lock and observed executable/runtime/model identities. Missing load
+or model identities remain UNKNOWN, not source or build hashes in disguise.
+
+The composition retains W1 legal work and asynchronous ownership, native full
+paths, timestamp/DAA/chainweight, funded tasks, CCH1 commitments, lifetime claim
+controls, cold packet observation, Cell recovery and the separate tagged SHA3
+research namespace. It also retains the QROM/receipt evidence without weakening
+the existing root-role decoder: only the original four roles enter that decoder.
+Cold status observation does not run writer recovery; existing PQ owner opening,
+current frontier/clock checks, retained database identity and funded validation
+remain in the combined implementation. The current source does have M15
+installation and actual launch consumers; older dated statements that no such
+consumer existed remain historical. Deployment and cross-owner evidence must
+still establish the complete current profile-to-effect path.
+
+Fix the recursive claim-alias bypass and bind DAA head snapshots to the actual
+trace context. Preserve their red evidence. Add raw Chain/Hepta identity capture
+and explicit qualification accounting without granting GO. Keep all native and
+collector exits, every attempt, ignored/filtered cases, unknown outcomes and
+unexecuted obligations. Unknown payment or provider outcomes require readback;
+they cannot be redispatched under a new ID for the same intent. Revocation does
+not erase an earlier committed external effect. NoUpdate requires a completed
+evaluation and the exact retained complete model manifest and bundle.
+
+Keep the archived 32-command native runner and original 52-case manifest
+unchanged. The current release-bundle Unix CI roster is an explicit v2 with the
+same 52 names plus three CCH1 cases. Keep the old collector's exact-contract
+failure distinct from a native binary's outcome. Run the complete current
+workspace, required actual nonempty owner/consensus targets, and fresh DAA/joint
+exports through the separately reviewed supplemental collector. Its original
+two parser counterexamples remain retained. The transparent-profile completion
+gate must require both the original eleven receiver/cancellation controls and
+the added 58 saved-receipt controls, with their original timing and profiles.
+
+Run the independent research manifests and all still-applicable P1/P3 original
+commands on the same frozen source. Distinguish release/default-feature lanes
+from debug/all-feature lanes, local Linux from ARM/hosted observations, and the
+69/81/105 named rosters from their repeated names. Retain the unchanged historical
+cc836 runtime-scope guard's actual failure. The PR 795 raw resolved merge index
+preserved all four runtime scopes; its later source-manifest plan-pin maintenance
+is a separately recorded configuration change, not byte-identical final config.
+Inherited raw logs and license bytes are not rewritten to erase whitespace
+check failures.
+
+The first f178 Hepta run passed twelve selected native component controls but
+failed evidence collection: two JUnit outputs were overwritten, an additional
+actual executable was produced, and no OS loaded executable was observed. Keep
+that attempt with its null Chain identity. Any corrected collection is a new
+attempt under the original local deadlines/retry settings. Existing real model
+loader/training/evaluation implementations do not by themselves connect the
+test-only learning owner ports into one real train/evaluate/pay/cold-fetch/
+install/load/next-task loop. Do not call journal reopening WAN retrieval or
+current-root CAS payment. Preserve NoUpdate, unknown timeout, revocation,
+restart and actual reorg as separately required real-loop cases.
+
+No local test or merge qualifies independent data custody, independently
+administered fault domains, renewal/repair or the existing WAN campaign. No local
+cost example supplies original-budget honest confirmation, matched confirmed
+throughput or production tails. The original four-second/depth-six/quarter-CPU
+Host gate and malicious load remain unchanged and must run on their actual
+qualified host environment. Record CPU/network/disk/lock/queue costs where
+observed and leave unmeasured dimensions UNKNOWN.
+
+All eight whole-chain PQ risks, explicit lifetime/attack resources, shared
+primitive/QROM/proof/recursive composition and independent cryptographic and
+implementation review remain required. Keep production activation, FinalUse
+and whole-chain PQ qualifications false and all seven requested gates at
+HOLD / NO-GO until their own complete, same-source evidence passes. Historical
+successes and failures retain their exact original source identities.
