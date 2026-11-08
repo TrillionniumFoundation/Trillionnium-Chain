@@ -1,0 +1,18 @@
+{
+  "schema": "pon-legal-optimization-catalog-v1",
+  "work_profile": "pon-matmul-transcript-64-v1",
+  "profiles": ["PNH1", "PGH2"],
+  "materials": ["dense", "left-rank-2", "right-rank-4", "zero"],
+  "strategies": ["eager-recompute", "prepared-dense", "prepared-rank-8"],
+  "complete_nonces": [0, 1, 2, 3],
+  "batch_width": 2,
+  "cancelled_nonce": 4,
+  "cancel_after_transcript_tiles": 1,
+  "rank_bound": 8,
+  "selection": "first-original-target-hit-in-declared-nonce-order-or-none",
+  "bank": "all-complete-candidates-retained-one-local-extraction-no-network-publication",
+  "miss_replay": "complete-relation-at-maximum-diagnostic-target-and-separate-original-target-refusal",
+  "native_admission": false,
+  "minimum_legal_cost_proved": false,
+  "production_activation": false
+}

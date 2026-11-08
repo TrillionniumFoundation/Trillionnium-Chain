@@ -10230,3 +10230,33 @@ bound, independent custody, complete History/capacity/churn, physical loading,
 actual adoption, cryptographic closure or production activation. These gates
 remain HOLD until the corresponding original owners and complete campaigns
 supply source-bound evidence.
+
+### 2026-11-08 frozen work, time and cost-contract continuation
+
+Continue the joint DAA lineage at exact source
+`b16bae2824e6c8236ef2011fc93a74df3ac7f039`. Freeze all 1,747 native/formal source
+and complete configuration entries, the canonical W1 relation, legal attacker
+freedoms and lifecycle accounting. Add a temporal reference namespace with
+branch-derived integer ASERT anchors, explicitly scheduled nondecreasing
+timestamps, cache rejection and cold replay bound to an external snapshot
+identity. Restoring the reference graph does not activate a native branch.
+
+Execute a fixed 24-cohort optimization catalog across PNH1/PGH2 header shapes,
+dense/low-rank/zero materials and eager/prepared/rank-aware producers. Retain
+all 96 complete attempts and 24 actual first-tile cancellations. Check the
+original target separately from diagnostic full replay of misses. Every legal
+observed implementation gives an upper bound on minimum cost, never an
+all-algorithm lower bound.
+
+Use exact rational interval and joint-batch constraints for public-credit
+feasibility under one fixed success target, deadline and round horizon. Missing
+real classical/quantum bounds remain HOLD. Keep CP/CQ/CG, complete lifetime
+reductions, same-source native/WAN/payment and the same real Hepta iteration
+as unclosed gates. Distinct branch results cannot be joined by adding passes.
+
+The [seven-package integration record](../protocol/pon-nakamoto-v1/details/WORK_TIME_COST_INTEGRATION_20261108.md)
+contains this increment's acceptance detail, within this sole plan. The
+dedicated hosted workflow retains head/prospective-merge source checks,
+frozen named controls, full W1 campaign and failed/partial observations. Local
+sparse historical evidence remains explicit. Native activation and production
+qualification are not granted by these components.

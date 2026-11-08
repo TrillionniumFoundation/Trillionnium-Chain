@@ -171,7 +171,7 @@
     "config/pon/work-profile-v1.json": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
     "config/portability-inventory-v1.json": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "4654fea4d3389cdfd74b74821cade6762c28a487",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "46f945d806fd59eb00bef728cbf8c17ef5f5c3fc",
     "docs/development/specs/pon/CELL_DEPENDENCY_CLOSURE_V1.md": "7e709ef812e4773ae14959270649235f4bb7c239",
     "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md": "ff260f479ff752dc0fc3aa3e1ac3dc6f8473e534",
     "docs/development/specs/pon/CELL_ORDINARY_HOST_HANDOFF_V2.md": "568a68d48ece8aa856928fe87a14f7db07e47996",
