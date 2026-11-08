@@ -7709,3 +7709,5 @@ history or production gates. Full native correctness does not establish
 physical or quantum search cost. Compression still requires both complete
 instance-specific cryptographic security and end-to-end performance/availability
 qualification; neither can be inferred from an isolated verifier benchmark.
+
+Actual exact-source evidence is now retained in [the 2026-11-08 native complete-path observation](../../evidence/pon-native-fullpath-20261108-a1a69c624/README.md). All 290 selected tests passed. The one new development block required 7.322108454 seconds through independent readback, remained at depth 0, and produced zero progress under the original four-second/six-successor condition. All four starts, native rejection/cancellation outcomes and resource costs remain recorded; security and performance qualification stay HOLD.

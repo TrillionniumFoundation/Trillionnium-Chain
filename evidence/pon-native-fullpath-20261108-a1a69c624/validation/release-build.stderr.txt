@@ -1,0 +1,2 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-native-fullpath-20261108-3dfc/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 50.65s
