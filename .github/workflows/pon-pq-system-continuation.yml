@@ -4,6 +4,12 @@ on:
     paths:
       - trillionnium/**
       - config/pon/pq-cross-branch-corpus-v1.json
+      - config/pon/pq-authority-traces-v1.json
+      - scripts/ci/pq_authority_surface_scan.py
+      - scripts/ci/test_pq_authority_surface_scan.py
+      - scripts/ci/pq_authority_trace.py
+      - scripts/ci/test_pq_authority_trace.py
+      - docs/security/PQ_AUTHORITY_TRACE_V1.md
       - config/pon/pq-system-required-tests-v1.json
       - config/pon/pq-native-tls-required-tests-v1.json
       - config/pon/pq-native-tls-witness-required-tests-v1.json
@@ -410,8 +416,10 @@ jobs:
           for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
             bash "$PQ_OUT/run-command.sh" "${test_file%.py}" python3 -m unittest discover -s scripts/ci -p "$test_file" -v
           done
+          bash "$PQ_OUT/run-command.sh" test_pq_authority_trace python3 scripts/ci/test_pq_authority_trace.py -v
           bash "$PQ_OUT/run-command.sh" pq-source python3 scripts/ci/check_pq_research_integration.py
           bash "$PQ_OUT/run-command.sh" pq-hold python3 scripts/ci/pq_chain_claim_guard.py
+          bash "$PQ_OUT/run-command.sh" pq-authority-trace python3 scripts/ci/pq_authority_trace.py --summary-only
           bash "$PQ_OUT/run-command.sh" repository python3 scripts/ci/check_repository.py
           bash "$PQ_OUT/run-command.sh" inventory python3 scripts/refresh_distributed_source_inventory.py --check
       - name: Install the original pinned compiler
@@ -457,6 +465,14 @@ jobs:
             fi
           done < "$PQ_OUT/required-tests.tsv"
           test "$failed" = 0
+      - name: Require independent account-profile refusal at classical listeners
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          selector=ingress::pq_network::tests::pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects
+          bash "$PQ_OUT/run-command.sh" pq-account-classical-listeners cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1
+          python3 scripts/ci/check_required_native_test.py "$PQ_OUT/pq-account-classical-listeners.log" --test "$selector" > "$PQ_OUT/pq-account-classical-listeners-execution.json"
       - name: Require admitted migration handoff and checkpoint endpoint ownership
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         shell: bash

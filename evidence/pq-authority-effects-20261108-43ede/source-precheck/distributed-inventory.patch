@@ -1,0 +1,18 @@
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index 280844d..f8e3cd9 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -182,6 +182,13 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../config/pon/post-quantum-transition-v1.json"
+         )),
+     ),
++    (
++        "config/pon/pq-authority-traces-v1.json",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../config/pon/pq-authority-traces-v1.json"
++        )),
++    ),
+     (
+         "config/pon/pq-cross-branch-corpus-v1.json",
+         include_bytes!(concat!(

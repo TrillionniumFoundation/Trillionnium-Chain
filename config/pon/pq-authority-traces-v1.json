@@ -1,0 +1,368 @@
+{
+  "schema": "trnm-pq-authority-source-traces-v1",
+  "source_inventory_sha256": "4a3df8a756057317e89e0cd6d1c63237fab50379854e30be2bfa3d7c25142613",
+  "build_inputs_sha256": "125110ddecccbe4adfca6ed44702e3e5a6343fc7c5534efe8ab4ffe9f4d8576c",
+  "whole_chain_pq_qualified": false,
+  "records": [
+    {
+      "id": "classical-network-profile",
+      "classification": "profile-boundary",
+      "selected_profile": "Settings.app.is_pq_account_profile() is true at the classical session boundary; a separately selected PQ network backend also disallows classical owner fallback.",
+      "observation": "authenticated_session checks the account profile before deriving a classical session. Node construction already requires a PQ network owner for PQ accounts. The final listener guard now independently checks both account profile and backend; this is defense in depth for an otherwise constructor-excluded mismatch, not a demonstrated external downgrade.",
+      "authority_effect": "The observed guard prevents this constructor from returning a classical AuthSession under the selected PQ account profile. It is not a proof that every transport, CLI or owner path is covered.",
+      "status": "INCOMPLETE",
+      "runtime_validation": "NOT_RECORDED",
+      "sources": [
+        {
+          "role": "entrypoint",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "sha256": "b9509768af22dc936afb340fa0ea4dc71174ee077e0ee033f5598f02e78f40f1",
+          "anchor": "pub fn authenticated_session("
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "sha256": "b9509768af22dc936afb340fa0ea4dc71174ee077e0ee033f5598f02e78f40f1",
+          "anchor": "!settings.app.is_pq_account_profile(),\n        \"AUTH_CLASSICAL_FOR_PQ_PROFILE\","
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+          "anchor": "!settings.app.is_pq_account_profile() || pq_selected,"
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+          "anchor": "pub(crate) fn require_classical_network_profile(&self) -> Result<()> {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+          "sha256": "95a41e8776118759ebbe58a3b7aba2e06af19f883bc532ddaf077dc74a69c7da",
+          "anchor": "fn classic_authenticated_session_is_rejected_for_pq_only_settings() {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+          "sha256": "95a41e8776118759ebbe58a3b7aba2e06af19f883bc532ddaf077dc74a69c7da",
+          "anchor": "fn pq_profile_rejects_legacy_callers_without_network_or_replay_effects() {"
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+          "anchor": "!self.settings.app.is_pq_account_profile()\n                && !matches!("
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+          "sha256": "9f56887dc78f5e9413aec7d740254b3106c1bb245447e4c6759665f3588b74b2",
+          "anchor": "fn pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects() {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+          "sha256": "95a41e8776118759ebbe58a3b7aba2e06af19f883bc532ddaf077dc74a69c7da",
+          "anchor": "fn classical_profile_keeps_legacy_protected_head_behavior() {"
+        }
+      ],
+      "unresolved_obligations": [
+        "Execute the exact native negative controls on the final committed composition and retain their actual outcomes.",
+        "Bind deployed account and network-owner selection to trusted configuration; enumerate alternate local, bootstrap, History, CLI and transport entrypoints.",
+        "Trace every permission-producing owner through current roots, revocation, replay, state transition and non-rewindable local history."
+      ]
+    },
+    {
+      "id": "legacy-transfer",
+      "classification": "classical-validator",
+      "selected_profile": "Legacy TransferTx Ed25519 wire/validation API. No production TransferTx consumer was found in the reviewed Rust/Cargo source; this is not a universal reachability proof.",
+      "observation": "TransferTx::validate_basic requires the ed25519 algorithm label, derives the sender address, and verifies the signature. The separate native M06 validate_main_envelope API explicitly rejects PQ account profiles.",
+      "authority_effect": "TransferTx validation returns success or an error; no Node balance mutation has been demonstrated through this helper. The native M06 envelope/profile boundary uses separate application types.",
+      "status": "INCOMPLETE",
+      "runtime_validation": "NOT_RECORDED",
+      "sources": [
+        {
+          "role": "entrypoint",
+          "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+          "sha256": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+          "anchor": "pub fn validate_basic(&self) -> Result<(), TransferTxValidationError> {"
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+          "sha256": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+          "anchor": ".verify(&self.signing_message(), &sig)"
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+          "sha256": "d7ae3ab6b2084696b43b075604ed260074c023088ba3edcf5e145444e29b838d",
+          "anchor": "!cfg.is_pq_account_profile(),\n        \"PQ_ACCOUNT_NATIVE_API_REQUIRED\","
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+          "sha256": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+          "anchor": "fn transfer_tx_reject_tampered_signature() {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+          "sha256": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+          "anchor": "fn transfer_tx_reject_address_mismatch() {"
+        }
+      ],
+      "unresolved_obligations": [
+        "Recheck external, non-Rust, generated and alias-based consumers before claiming the legacy helper unreachable in a deployment.",
+        "Retain exact native evidence that PQ account admission cannot accept the legacy envelope or create a nonce/balance effect.",
+        "Bind migration and legacy compatibility policy to its explicit namespace and independently authenticated current state."
+      ]
+    },
+    {
+      "id": "legacy-settlement",
+      "classification": "classical-effect-owner",
+      "selected_profile": "ConsumptionSettlementFreshGenesisTrustBundleV1 bilateral Ed25519 settlement component. The current Node funding module imports the separate native_budget module.",
+      "observation": "The settlement kernel checks both registered bilateral signer entries and computes local settlement state transitions. Node native-budget imports do not establish a production consumer of the classic settlement kernel.",
+      "authority_effect": "apply_transition clones and updates kernel state; the separate settlement store exposes committed execution. A local kernel/store transition is not evidence of PQ Node admission, deployed funds or independent bilateral root registration.",
+      "status": "INCOMPLETE",
+      "runtime_validation": "NOT_RECORDED",
+      "sources": [
+        {
+          "role": "entrypoint",
+          "path": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+          "sha256": "a0f54594849d850efe342765df24223df3cf859d01c6ac9eb273e4d3455efc22",
+          "anchor": "pub(crate) fn apply_transition("
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+          "sha256": "a0f54594849d850efe342765df24223df3cf859d01c6ac9eb273e4d3455efc22",
+          "anchor": "key.verify_strict(&digest.0, &signature).map_err(|_| {"
+        },
+        {
+          "role": "effect-boundary",
+          "path": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+          "sha256": "a0f54594849d850efe342765df24223df3cf859d01c6ac9eb273e4d3455efc22",
+          "anchor": "state.escrow.last_settlement_id = Some(settlement_id);"
+        },
+        {
+          "role": "caller",
+          "path": "trillionnium/crates/trnm-service-settlement/src/store.rs",
+          "sha256": "c990cfc2e1267d681633de6c99387c9074348b621ab51cafd956dd2c47db846b",
+          "anchor": "pub fn execute_committed_execution("
+        },
+        {
+          "role": "caller",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+          "sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+          "anchor": "use trnm_service_settlement::native_budget::{"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-service-settlement/src/tests.rs",
+          "sha256": "209aec0e8974b1c276b4ac88a892138027f8059c47407918c69eb264bdc87663",
+          "anchor": "fn receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved() {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-service-settlement/src/tests.rs",
+          "sha256": "209aec0e8974b1c276b4ac88a892138027f8059c47407918c69eb264bdc87663",
+          "anchor": "fn receipt_signatures_sequence_prices_and_cumulative_roots_fail_closed() {"
+        }
+      ],
+      "unresolved_obligations": [
+        "Enumerate actual external callers and prove the selected PQ Node profile cannot route a classic settlement statement to a live monetary effect.",
+        "Authenticate production provider/consumer registration, key generation and revocation independently of received receipts.",
+        "Retain composed native replay, crash, reorganization and durable-effect reconciliation evidence without importing historical passes."
+      ]
+    },
+    {
+      "id": "legacy-research-command",
+      "classification": "classical-validator",
+      "selected_profile": "SignedResearchCommandV1 and AuthoritySetV1 in the separate research-protocol component; no production Node dependency was found in the reviewed Cargo source.",
+      "observation": "The command validator checks its canonical payload, role and Ed25519 signature. The component state machine separately checks its configured authority set and command-id replay record before applying research-object transitions.",
+      "authority_effect": "The internal research state can mutate its research objects and applied_commands map. This does not demonstrate deployment, Node consensus reachability or Hepta execution/upgrade authority.",
+      "status": "INCOMPLETE",
+      "runtime_validation": "NOT_RECORDED",
+      "sources": [
+        {
+          "role": "entrypoint",
+          "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+          "sha256": "675c819160a7d8c7de56f5084bf187c576fe8365ff22da062e1c030919173ca5",
+          "anchor": "pub fn validate(&self) -> Result<(), SignedResearchCommandValidationError> {"
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+          "sha256": "675c819160a7d8c7de56f5084bf187c576fe8365ff22da062e1c030919173ca5",
+          "anchor": ".verify_strict(\n                &self.signing_bytes(),\n                &Signature::from_bytes(&signature_bytes),\n            )"
+        },
+        {
+          "role": "caller",
+          "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+          "sha256": "3904a1b3184a0a32bf77df4dc573579bf1cee75ae1e095361588c774af34e7c6",
+          "anchor": "pub fn apply(\n        &mut self,\n        signed: &SignedResearchCommandV1,"
+        },
+        {
+          "role": "effect-boundary",
+          "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+          "sha256": "3904a1b3184a0a32bf77df4dc573579bf1cee75ae1e095361588c774af34e7c6",
+          "anchor": "self.applied_commands.insert("
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+          "sha256": "0bd5c2eafa0cf0631d7da67e6b5d2851a7dddf36d47ca571fb9e9bf97d2e8711",
+          "anchor": "fn altered_replay_is_rejected_even_when_new_payload_is_validly_signed() {"
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-research-protocol/src/state.rs",
+          "sha256": "3904a1b3184a0a32bf77df4dc573579bf1cee75ae1e095361588c774af34e7c6",
+          "anchor": "if !self.authorities.authorizes(signed) {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+          "sha256": "0bd5c2eafa0cf0631d7da67e6b5d2851a7dddf36d47ca571fb9e9bf97d2e8711",
+          "anchor": "fn protocol_state_rejects_self_asserted_unregistered_authorities() {"
+        }
+      ],
+      "unresolved_obligations": [
+        "Recheck all external/generated consumers and their selected runtime profile before treating the component as isolated from production.",
+        "Bind actual authority registration, current revocation, command replay and any downstream execution/effect owner.",
+        "Run and retain exact composed native tests if the component becomes reachable from a PQ-only owner."
+      ]
+    },
+    {
+      "id": "legacy-hepta-v1",
+      "classification": "classical-validator",
+      "selected_profile": "SignedHeptaAdmissionV1 explicitly uses the legacy Ed25519 authority set. SignedHeptaAdmissionV2 is a separate PQ type and verifier namespace.",
+      "observation": "V1 verify_for_context compares the expected receiving-owner admission and chain, then verifies the V1 authority and signature. This comparison result grants no automatic FinalUse; PQ V2 has a distinct validation implementation.",
+      "authority_effect": "The V1 helper returns Result<(), HeptaHandoffError>. Production installation, execution, current withdrawal and operation-journal effects require independent receiving owners and have not been qualified by this source record.",
+      "status": "INCOMPLETE",
+      "runtime_validation": "NOT_RECORDED",
+      "sources": [
+        {
+          "role": "entrypoint",
+          "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "sha256": "a54d725aa5116ed050e18655f1578fef193ed98faf38bd61c7d7a97ecfe1f9a5",
+          "anchor": "pub fn verify_for_context("
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "sha256": "a54d725aa5116ed050e18655f1578fef193ed98faf38bd61c7d7a97ecfe1f9a5",
+          "anchor": ".verify_strict(\n                &self.signing_bytes(),\n                &Signature::from_bytes(&signature_bytes),\n            )"
+        },
+        {
+          "role": "return-boundary",
+          "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "sha256": "a54d725aa5116ed050e18655f1578fef193ed98faf38bd61c7d7a97ecfe1f9a5",
+          "anchor": "self.verify_with_authorities_at(authorities, now_unix_s)"
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+          "sha256": "06b4c988f921b03c6f20134bdc5130fbd7db18bec6f291bfd289de52c81087e6",
+          "anchor": "pub struct SignedHeptaAdmissionV2 {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs",
+          "sha256": "6665ee6f7f8cd2f301ae16025b3dfb0ce90248e8bd8e4b2b5c1a5d2fbdbefacb",
+          "anchor": "fn no_classical_signature_or_algorithm_negotiation_is_accepted() {"
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+          "sha256": "0bd5c2eafa0cf0631d7da67e6b5d2851a7dddf36d47ca571fb9e9bf97d2e8711",
+          "anchor": "fn hepta_handoff_rechecks_the_destination_and_fresh_owner_snapshot() {"
+        }
+      ],
+      "unresolved_obligations": [
+        "Bind the concrete receiving Hepta host profile and prove V1 comparison success cannot authorize a PQ-only FinalUse or installation.",
+        "Authenticate fresh external withdrawal/registry heads, issuer generation and non-rewindable consumed-use/operation history.",
+        "Retain native cross-owner replay, restart and reorganization evidence for the actually selected V2 integration."
+      ]
+    },
+    {
+      "id": "legacy-provider-discovery",
+      "classification": "classical-validator",
+      "selected_profile": "Explicit cell-provider-discovery-dev-v1 advertisement profile; cell-provider-discovery-pq-v2 is a separate CLI branch, record type and durable namespace.",
+      "observation": "The V1 record verifies Ed25519 location hints. The CLI branches to PQ V2 before legacy dispatch; V2 verifies the externally pinned key generation and signature through CellPqKeyPinsV2.",
+      "authority_effect": "A verified location hint can enter a discovery directory and guide bounded acquisition. It is not custody, monetary, model-selection, installation or execution authority.",
+      "status": "INCOMPLETE",
+      "runtime_validation": "NOT_RECORDED",
+      "sources": [
+        {
+          "role": "entrypoint",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+          "sha256": "5459086595bdaedcd1f74881b51a4b14eb83524948a1a2c05a36cc5b37b1943f",
+          "anchor": "fn verify_at(\n        &self,\n        expected: CellDiscoveryRequestV1,"
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+          "sha256": "5459086595bdaedcd1f74881b51a4b14eb83524948a1a2c05a36cc5b37b1943f",
+          "anchor": "crate::types::verify_strict(&self.statement.owner, &self.message(), &self.signature)"
+        },
+        {
+          "role": "profile-check",
+          "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+          "sha256": "16d3b164f80c0e22e2457bb99291e901a4dc30aa7e7a0fa636713e6a80d91fe2",
+          "anchor": "if profile == trnm_data_availability::cell::discovery::pq::CELL_DISCOVERY_PROFILE_V2 {\n            return pq::run(values[0].as_str(), &mut args, started);\n        }"
+        },
+        {
+          "role": "verifier",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "90379563d9b9cece97decb7997690118f4b5c0153b3654640509cb7419dd4f44",
+          "anchor": "let key_expiry = keys.verify("
+        },
+        {
+          "role": "effect-boundary",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+          "sha256": "81513ddc42841478c1a9380e47fdf28586bf57ed88ca76f5acc0907bde3a452c",
+          "anchor": "pub(super) fn accept_verified("
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+          "sha256": "a47a02c7dadd439c7d34363af78f6069c97898392bfcf88d46ba5bd80ea13619",
+          "anchor": "fn actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire() {"
+        },
+        {
+          "role": "effect-boundary",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+          "sha256": "b3913d57df8ff8f779633b92d28f41a2e703f330272087abbf3ade1b88d8a854",
+          "anchor": "pub(super) fn accept_verified("
+        },
+        {
+          "role": "caller",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+          "sha256": "0e0cc9809fcc05249ce56b7dd1a02a4151eb4f60aa21f546d9bd5e7c62d0fc1f",
+          "anchor": "pub fn fetch_discovered_cell_to_file("
+        },
+        {
+          "role": "regression-source",
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+          "sha256": "a47a02c7dadd439c7d34363af78f6069c97898392bfcf88d46ba5bd80ea13619",
+          "anchor": "fn fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart() {"
+        }
+      ],
+      "unresolved_obligations": [
+        "Retain exact native evidence for the selected discovery CLI/transport and all alternate ingest/reopen paths with no legacy fallback.",
+        "Authenticate and refresh the independent CPK2 roster, revocation frontier and directory generation under the actual deployment policy.",
+        "Trace acquisition through model selection and current execution permission; successful download never supplies FinalUse."
+      ]
+    }
+  ],
+  "untraced_scope": [
+    "The full authority graph remains incomplete: curated role hints and crypto-indicator files are not completed effect traces.",
+    "Non-Rust code, macros, generated code, aliases, external consumers, dynamically selected policies and independently stored roots are not exhaustively traced.",
+    "Actual runtime profiles, signature/key provenance, current revocation, state ownership, crash/reorganization behavior and effect reconciliation require separate native evidence.",
+    "Whole-chain proof soundness, quantum work, complete migration/rollback, network capacity and independently deployed end-to-end gates remain unqualified."
+  ]
+}

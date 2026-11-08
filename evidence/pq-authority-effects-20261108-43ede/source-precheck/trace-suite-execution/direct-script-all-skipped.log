@@ -1,0 +1,6 @@
+ssssssssssssssssssssssssssssss
+----------------------------------------------------------------------
+Ran 30 tests in 0.000s
+
+OK (skipped=30)
+REFUSE: all 30 authority trace controls must execute and pass; no skipped or expected-failure controls

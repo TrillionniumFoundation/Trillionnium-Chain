@@ -1,0 +1,16 @@
+{
+  "changes": [
+    {
+      "new_blob": "cb1189fcc66a089c6a343653fa245367fd527884",
+      "old_blob": "6e2a2b8bf8513defd07983c7cce01770fdc1f3e7",
+      "path": "config/pon/pq-authority-traces-v1.json"
+    },
+    {
+      "new_blob": "f8e3cd978534af89853c86c769f06fb03e545fee",
+      "old_blob": "280844d69a88b273df670a55011e0c1c753325a7",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    }
+  ],
+  "reason": "New trace config must enter unchanged distributed source generator; full corpus digest then binds that exact Rust inventory.",
+  "schema": "trnm-reviewed-source-pin-refresh-v1"
+}

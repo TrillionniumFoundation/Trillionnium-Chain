@@ -183,6 +183,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-authority-traces-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-authority-traces-v1.json"
+        )),
+    ),
+    (
         "config/pon/pq-cross-branch-corpus-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

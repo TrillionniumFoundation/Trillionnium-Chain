@@ -47,6 +47,10 @@ GATES = {
         'trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs',
         'scripts/ci/pq_authority_surface_scan.py',
         'scripts/ci/test_pq_authority_surface_scan.py',
+        'scripts/ci/pq_authority_trace.py',
+        'scripts/ci/test_pq_authority_trace.py',
+        'config/pon/pq-authority-traces-v1.json',
+        'docs/security/PQ_AUTHORITY_TRACE_V1.md',
         'docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md',
     ),
     'proof_pq128': (

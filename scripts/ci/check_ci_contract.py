@@ -788,9 +788,87 @@ def check_pq_release_authority_controls(root: Path) -> dict:
             'python_test_doubles': 18, 'tests_executed': False}
 
 
+PQ_CLASSICAL_PROFILE_STEP = '''      - name: Require independent account-profile refusal at classical listeners
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          selector=ingress::pq_network::tests::pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects
+          bash "$PQ_OUT/run-command.sh" pq-account-classical-listeners cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1
+          python3 scripts/ci/check_required_native_test.py "$PQ_OUT/pq-account-classical-listeners.log" --test "$selector" > "$PQ_OUT/pq-account-classical-listeners-execution.json"
+'''
+
+
+def check_pq_authority_trace_controls(root: Path) -> dict:
+    """Require the trace ledger and its negative controls in both CI owners.
+
+    This checks execution wiring, not that any trace is complete or that a
+    passing source review qualifies a running post-quantum network.
+    """
+    commands = (
+        "python3 scripts/ci/test_pq_authority_trace.py -v",
+        "python3 scripts/ci/pq_authority_trace.py --summary-only",
+    )
+    script = (root / 'scripts/ci/ci_job.sh').read_text()
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
+    lanes = dict(pairs)
+    require(len(pairs) == len(lanes) and 'repository-truth' in lanes,
+            'PQ authority trace requires the original repository lane')
+    prefix = (
+        '    bash scripts/project-preflight.sh --audit\n'
+        '    python3 scripts/ci/test_project_boundary.py\n'
+        '    # A passing HOLD check does not certify whole-chain PQ or PQ-128.\n'
+        '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'
+        "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"
+        '    python3 scripts/ci/pq_authority_surface_scan.py --summary-only\n'
+        + ''.join('    ' + command + '\n' for command in commands)
+    )
+    require(lanes['repository-truth'].startswith(prefix)
+            and all(code_lines(script).count(command) == 1 for command in commands),
+            'PQ authority trace and negatives must execute once before other repository checks')
+    text = (root / PQ_RELEASE_WORKFLOW).read_text()
+    expected_step = '''      - name: Require retained source and claim controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
+            bash "$PQ_OUT/run-command.sh" "${test_file%.py}" python3 -m unittest discover -s scripts/ci -p "$test_file" -v
+          done
+          bash "$PQ_OUT/run-command.sh" test_pq_authority_trace python3 scripts/ci/test_pq_authority_trace.py -v
+          bash "$PQ_OUT/run-command.sh" pq-source python3 scripts/ci/check_pq_research_integration.py
+          bash "$PQ_OUT/run-command.sh" pq-hold python3 scripts/ci/pq_chain_claim_guard.py
+          bash "$PQ_OUT/run-command.sh" pq-authority-trace python3 scripts/ci/pq_authority_trace.py --summary-only
+          bash "$PQ_OUT/run-command.sh" repository python3 scripts/ci/check_repository.py
+          bash "$PQ_OUT/run-command.sh" inventory python3 scripts/refresh_distributed_source_inventory.py --check
+'''
+    jobs = dict(re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)',
+                           text.split('\njobs:\n', 1)[1]))
+    native = jobs.get('native', '')
+    require(native.count(PQ_CLASSICAL_PROFILE_STEP) == text.count(PQ_CLASSICAL_PROFILE_STEP) == 1,
+            'classical listener guard requires its exact native test and actual execution readback')
+    require(native.count(expected_step) == text.count(expected_step) == 1
+            and not re.search(r'^    (?:if|continue-on-error):', native, re.M)
+            and '        runner: [ubuntu-24.04, ubuntu-24.04-arm]\n'
+                '        source: [head, prospective-merge]\n' in native
+            and not re.search(r'^        (?:exclude|include):', native, re.M),
+            'PQ authority trace requires the unskipped head/merge native source-control step')
+    for relative in ('scripts/ci/pq_authority_surface_scan.py',
+                     'scripts/ci/test_pq_authority_surface_scan.py',
+                     'scripts/ci/pq_authority_trace.py',
+                     'scripts/ci/test_pq_authority_trace.py',
+                     'config/pon/pq-authority-traces-v1.json',
+                     'docs/security/PQ_AUTHORITY_TRACE_V1.md'):
+        require('      - ' + relative + '\n' in text.split('\npermissions:', 1)[0],
+                'PQ authority trace inputs must trigger the native workflow: ' + relative)
+    return {'repository_commands': 2, 'hosted_source_cells': 4,
+            'additional_native_profile_controls': 1,
+            'tests_executed': False, 'whole_chain_pq_qualified': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
+    pq_authority_trace_controls = check_pq_authority_trace_controls(root)
     check_from_zero_host_callsites(root)
     text = (root / WORKFLOW).read_text()
     body = text.split('\njobs:\n', 1)
@@ -1055,6 +1133,7 @@ def validate(root: Path = ROOT) -> dict:
             'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
             'pq_release_authority_controls': pq_release_authority_controls,
+            'pq_authority_trace_controls': pq_authority_trace_controls,
             'tests_executed': False}
 
 

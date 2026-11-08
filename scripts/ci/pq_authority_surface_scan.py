@@ -49,10 +49,25 @@ CLASSIC = re.compile(r'\bed25519\b|ed25519_dalek|verify_strict\s*\(|verify_hex_s
 PQ = re.compile(r'\bml_dsa\b|ML_DSA_65|PqNativeVerifier|PqNativeSigningKey|verify_tpq1\s*\(|\bpqcrypto_mldsa\b|\bdilithium\b|\bsphincs(?:plus)?\b|\bslh_dsa\b', re.I)
 MAX_SOURCE_BYTES = 1024 * 1024
 MAX_SOURCE_FILES = 20000
+SOURCE_INVENTORY_SCHEMA = 'trnm-pq-rust-source-corpus-v1'
 
 
 class AuditError(ValueError):
     pass
+
+
+def source_inventory_sha256(entries: list[dict]) -> str:
+    """Bind every observed Rust path and byte identity, including non-hits.
+
+    Sorted, canonical JSON gives paths and digests unambiguous boundaries. The
+    domain distinguishes this inventory identity from a source-file digest.
+    This is a measurement of a finite scan, not a same-writer-proof snapshot.
+    """
+    encoded = json.dumps(sorted(entries, key=lambda item: item['path']),
+                         sort_keys=True, separators=(',', ':'),
+                         ensure_ascii=True).encode('ascii')
+    return hashlib.sha256(SOURCE_INVENTORY_SCHEMA.encode('ascii') + b'\0'
+                          + encoded).hexdigest()
 
 
 def source_identity(metadata):
@@ -136,10 +151,13 @@ def sources(root: Path):
 def inspect(root: Path) -> dict:
     all_paths = set()
     entries = []
+    source_inventory = []
     files_seen = 0
     for name, data, content in sources(root):
         files_seen += 1
         all_paths.add(name)
+        source_sha256 = hashlib.sha256(data).hexdigest()
+        source_inventory.append({'path': name, 'sha256': source_sha256})
         classic_hits = []
         pq_hits = []
         for i, line in enumerate(content.splitlines(), 1):
@@ -155,7 +173,7 @@ def inspect(root: Path) -> dict:
                         'pq_indicator_lines': pq_hits[:24],
                         'classical_indicator_count': len(classic_hits),
                         'pq_indicator_count': len(pq_hits),
-                        'sha256': hashlib.sha256(data).hexdigest()})
+                        'sha256': source_sha256})
     missing = sorted(set(CRITICAL) - all_paths)
     if missing:
         raise AuditError('critical source missing: ' + ', '.join(missing))
@@ -163,7 +181,14 @@ def inspect(root: Path) -> dict:
             'status': 'HOLD_INCOMPLETE_AUTHORITY_TRACING',
             'whole_chain_pq_qualified': False,
             'source_files_read': files_seen,
+            'source_inventory_schema': SOURCE_INVENTORY_SCHEMA,
+            'source_inventory_sha256': source_inventory_sha256(source_inventory),
+            'source_inventory': sorted(source_inventory, key=lambda item: item['path']),
+            # Compatibility field: this has always counted curated path hints,
+            # not completed entrypoint-to-effect authorization reviews.
             'reviewed_roles_mapped': len(CRITICAL),
+            'mapped_role_hints': len(CRITICAL),
+            'completed_authority_traces': 0,
             'unreviewed_indicator_files': sum(e['role_review_hint'] == 'unreviewed-source-hit' for e in entries),
             'scope': 'All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof',
             'findings': entries}
@@ -181,6 +206,7 @@ def main() -> int:
         return 2
     if args.summary_only:
         report.pop('findings')
+        report.pop('source_inventory')
     print(json.dumps(report, sort_keys=True, separators=(',', ':')))
     return 0
 

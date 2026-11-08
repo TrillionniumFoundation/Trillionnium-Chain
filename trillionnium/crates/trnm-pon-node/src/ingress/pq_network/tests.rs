@@ -1,6 +1,9 @@
 use super::*;
 use openssl::pkey::{KeyType, PKey};
-use std::{io::Write, thread};
+use std::{
+    io::{Read, Write},
+    thread,
+};
 
 mod recovery_request {
     use super::*;
@@ -39,6 +42,76 @@ fn raw_request(address: SocketAddr, wire: &[u8]) -> Result<Vec<u8>> {
     let deadline = Instant::now() + Duration::from_secs(5);
     super::super::write_frame_deadline(&mut stream, wire, deadline)?;
     super::super::read_frame_deadline(&mut stream, deadline)
+}
+
+fn serve_classical_family(family: u8, listener: TcpListener, node: Node) -> Result<()> {
+    let lifetime = Duration::from_millis(10);
+    let stop = Arc::new(AtomicBool::new(false));
+    let identity =
+        super::super::DevelopmentIdentity::from_secret_hex(&hex::encode([17; 32])).unwrap();
+    match family {
+        0 => super::super::serve(listener, node, lifetime, stop).map(|_| ()),
+        1 => super::super::serve_authenticated(
+            listener,
+            node,
+            lifetime,
+            stop,
+            super::super::AuthenticatedServer::new(
+                identity,
+                [crate::development_public(1).map(hex::encode).unwrap()],
+                1,
+            )
+            .unwrap(),
+        )
+        .map(|_| ()),
+        2 => super::super::public_v2::serve_public_protected_v2(
+            listener,
+            node,
+            lifetime,
+            stop,
+            super::super::public_v2::PublicServer::new(
+                identity,
+                super::super::public_v2::PublicPolicy::development(),
+            )
+            .unwrap(),
+        )
+        .map(|_| ()),
+        3 => super::super::public_v3::serve_public_protected_v3(
+            listener,
+            Arc::new(Mutex::new(node)),
+            lifetime,
+            stop,
+            super::super::public_v3::PublicServer::new(
+                identity,
+                super::super::public_v3::PublicPolicy::development(),
+            )
+            .unwrap(),
+        )
+        .map(|_| ()),
+        4 => super::super::serve_protected(
+            listener,
+            node,
+            lifetime,
+            stop,
+            super::super::AdmissionPolicy::development(),
+        )
+        .map(|_| ()),
+        5 => super::super::serve_authenticated_protected(
+            listener,
+            node,
+            lifetime,
+            stop,
+            super::super::AuthenticatedServer::new(
+                identity,
+                [crate::development_public(1).map(hex::encode).unwrap()],
+                1,
+            )
+            .unwrap(),
+            super::super::AdmissionPolicy::development(),
+        )
+        .map(|_| ()),
+        _ => unreachable!("unknown classical listener family"),
+    }
 }
 
 #[test]
@@ -523,72 +596,79 @@ fn pins_context_canonical_wire_sequence_and_classical_downgrade_refuse() {
         let node =
             Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-        let stop = Arc::new(AtomicBool::new(false));
-        let identity =
-            super::super::DevelopmentIdentity::from_secret_hex(&hex::encode([17; 32])).unwrap();
-        let result = match family {
-            0 => super::super::serve(listener, node, Duration::from_millis(10), stop).map(|_| ()),
-            1 => super::super::serve_authenticated(
-                listener,
-                node,
-                Duration::from_millis(10),
-                stop,
-                super::super::AuthenticatedServer::new(
-                    identity,
-                    [crate::development_public(1).map(hex::encode).unwrap()],
-                    1,
-                )
-                .unwrap(),
-            )
-            .map(|_| ()),
-            2 => super::super::public_v2::serve_public_protected_v2(
-                listener,
-                node,
-                Duration::from_millis(10),
-                stop,
-                super::super::public_v2::PublicServer::new(
-                    identity,
-                    super::super::public_v2::PublicPolicy::development(),
-                )
-                .unwrap(),
-            )
-            .map(|_| ()),
-            3 => super::super::public_v3::serve_public_protected_v3(
-                listener,
-                Arc::new(Mutex::new(node)),
-                Duration::from_millis(10),
-                stop,
-                super::super::public_v3::PublicServer::new(
-                    identity,
-                    super::super::public_v3::PublicPolicy::development(),
-                )
-                .unwrap(),
-            )
-            .map(|_| ()),
-            4 => super::super::serve_protected(
-                listener,
-                node,
-                Duration::from_millis(10),
-                stop,
-                super::super::AdmissionPolicy::development(),
-            )
-            .map(|_| ()),
-            _ => super::super::serve_authenticated_protected(
-                listener,
-                node,
-                Duration::from_millis(10),
-                stop,
-                super::super::AuthenticatedServer::new(
-                    identity,
-                    [crate::development_public(1).map(hex::encode).unwrap()],
-                    1,
-                )
-                .unwrap(),
-                super::super::AdmissionPolicy::development(),
-            )
-            .map(|_| ()),
-        };
+        let result = serve_classical_family(family, listener, node);
         assert_eq!(result.unwrap_err().to_string(), "PQ_NETWORK_REQUIRED");
+    }
+}
+
+#[test]
+fn pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects() {
+    fn metadata(path: &std::path::Path) -> Vec<(String, Vec<u8>)> {
+        let db = rusqlite::Connection::open_with_flags(
+            path.join("native.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let mut statement = db
+            .prepare("SELECT key,value FROM metadata ORDER BY key")
+            .unwrap();
+        let rows = statement
+            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .unwrap();
+        rows.collect::<std::result::Result<_, _>>().unwrap()
+    }
+
+    let (settings, policy) = super::canonical_tests::setup();
+    for family in 0..6 {
+        let directory = tempfile::tempdir().unwrap();
+        let mut node =
+            Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+        let before = node.stats().unwrap();
+        let before_pq = node.pq_network_status(&policy).unwrap();
+        let before_metadata = metadata(directory.path());
+        // This mismatch is deliberately unreachable through the public openers.
+        // The last listener guard must independently honor the account profile.
+        node.select_classical_backend_for_profile_guard_test();
+
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let pending = listener.try_clone().unwrap();
+        pending.set_nonblocking(true).unwrap();
+        let mut peer = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let wire = serde_json::to_vec(&Request::Head).unwrap();
+        super::super::write_frame_deadline(
+            &mut peer,
+            &wire,
+            Instant::now() + Duration::from_secs(2),
+        )
+        .unwrap();
+
+        let error = serve_classical_family(family, listener, node).unwrap_err();
+        assert_eq!(error.to_string(), "PQ_NETWORK_REQUIRED", "family {family}");
+        // Retaining the queued socket proves rejection preceded accept/read,
+        // not merely that a later namespace or signature check rejected Head.
+        let (mut untouched, _) = pending
+            .accept()
+            .expect("profile refusal must leave the connection unaccepted");
+        assert_eq!(
+            super::super::read_frame_deadline(
+                &mut untouched,
+                Instant::now() + Duration::from_secs(2),
+            )
+            .unwrap(),
+            wire,
+        );
+        peer.set_nonblocking(true).unwrap();
+        let mut response = [0_u8; 1];
+        assert_eq!(
+            peer.read(&mut response).unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock,
+        );
+
+        let reopened =
+            Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+        assert_eq!(reopened.stats().unwrap(), before);
+        assert_eq!(reopened.pq_network_status(&policy).unwrap(), before_pq);
+        assert_eq!(metadata(directory.path()), before_metadata);
     }
 }
 

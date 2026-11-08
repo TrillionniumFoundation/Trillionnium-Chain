@@ -60,6 +60,10 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "scripts/ci/pq_authority_trace.py",
+    "scripts/ci/test_pq_authority_trace.py",
+    "config/pon/pq-authority-traces-v1.json",
+    "docs/security/PQ_AUTHORITY_TRACE_V1.md",
     "scripts/ci/pq_source_reader.py",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",

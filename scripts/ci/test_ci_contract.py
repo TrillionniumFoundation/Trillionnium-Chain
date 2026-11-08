@@ -32,6 +32,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
+from check_ci_contract import check_pq_authority_trace_controls, PQ_CLASSICAL_PROFILE_STEP
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -689,6 +690,68 @@ class W1ReuseV3LaneTests(unittest.TestCase):
             self.assertNotEqual(run(after).returncode, 0)
             env['TRNM_EXPECTED_BASE_SHA'] = base
             self.assertEqual(run(after).returncode, 0)
+
+
+class PqAuthorityTraceCiTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-trace-ci-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        for relative in ('scripts/ci/ci_job.sh', PQ_RELEASE_WORKFLOW):
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, path)
+
+    def reject(self, relative, before, after):
+        path = self.root / relative
+        original = path.read_text()
+        self.assertIn(before, original)
+        path.write_text(original.replace(before, after, 1))
+        try:
+            with self.assertRaises(ValueError):
+                check_pq_authority_trace_controls(self.root)
+        finally:
+            path.write_text(original)
+
+    def test_real_wiring_keeps_four_sources_without_qualification(self):
+        result = check_pq_authority_trace_controls(self.root)
+        self.assertEqual(result['hosted_source_cells'], 4)
+        self.assertFalse(result['tests_executed'])
+        self.assertFalse(result['whole_chain_pq_qualified'])
+
+    def test_repository_cannot_skip_trace_or_swallow_failure(self):
+        path = 'scripts/ci/ci_job.sh'
+        for command in (
+                "    python3 scripts/ci/test_pq_authority_trace.py -v\n",
+                '    python3 scripts/ci/pq_authority_trace.py --summary-only\n'):
+            for after in ('', '    true # ' + command.lstrip(), command.rstrip() + ' || true\n'):
+                with self.subTest(command=command, after=after):
+                    self.reject(path, command, after)
+
+    def test_hosted_trace_cannot_be_removed_or_conditionally_skipped(self):
+        step = '      - name: Require retained source and claim controls\n'
+        self.reject(PQ_RELEASE_WORKFLOW, step, step + '        if: false\n')
+        self.reject(PQ_RELEASE_WORKFLOW, '  native:\n', '  native:\n    if: false\n')
+        test_command = '          bash "$PQ_OUT/run-command.sh" test_pq_authority_trace python3 scripts/ci/test_pq_authority_trace.py -v\n'
+        self.reject(PQ_RELEASE_WORKFLOW, test_command, '')
+        self.reject(PQ_RELEASE_WORKFLOW, test_command, test_command.replace(
+            'python3 scripts/ci/test_pq_authority_trace.py -v',
+            'python3 -m unittest discover -s scripts/ci -p test_pq_authority_trace.py -v'))
+        command = '          bash "$PQ_OUT/run-command.sh" pq-authority-trace python3 scripts/ci/pq_authority_trace.py --summary-only\n'
+        self.reject(PQ_RELEASE_WORKFLOW, command, command.rstrip() + ' || true\n')
+        self.reject(PQ_RELEASE_WORKFLOW, command, '')
+
+    def test_changed_manifest_alone_still_triggers_native_controls(self):
+        self.reject(PQ_RELEASE_WORKFLOW, '      - config/pon/pq-authority-traces-v1.json\n', '')
+
+    def test_profile_listener_control_requires_actual_exact_execution(self):
+        for changed in (
+                '',
+                PQ_CLASSICAL_PROFILE_STEP.replace('-- --exact --show-output', '-- --show-output'),
+                PQ_CLASSICAL_PROFILE_STEP.replace('python3 scripts/ci/check_required_native_test.py', 'true #'),
+                PQ_CLASSICAL_PROFILE_STEP.replace('        shell: bash\n', '        continue-on-error: true\n        shell: bash\n')):
+            with self.subTest(changed=changed[:80]):
+                self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_PROFILE_STEP, changed)
 
 
 class PqReleaseAuthorityCiTests(unittest.TestCase):
