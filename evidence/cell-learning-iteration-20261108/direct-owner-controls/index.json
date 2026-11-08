@@ -1,0 +1,65 @@
+{
+  "actual_model_execution": false,
+  "archive_preflight_completed_before_copy": true,
+  "engineering_controls_only": true,
+  "files": [
+    {
+      "bytes": 8252,
+      "file": "result.json",
+      "sha256": "0d97b795871f5478aba50dca46c7f8ea02eebd7ff0bae35ff170f2190f662696",
+      "source_file": "native-evidence/direct-v1/result.json"
+    },
+    {
+      "bytes": 4773,
+      "file": "start.json",
+      "sha256": "df46aadd2feabe17dbfafece1ad6bc893a886ac070ffa15a3be6d6f1cdf277d5",
+      "source_file": "native-evidence/direct-v1/start.json"
+    },
+    {
+      "bytes": 18432,
+      "file": "native-controls.stdout",
+      "sha256": "8791c1abe519bf1a3c55e86b118a59ec4faf7bc8edd024ef69cf2234b4d6fad1",
+      "source_file": "native-evidence/direct-v1/native-controls.log"
+    },
+    {
+      "bytes": 1089,
+      "file": "native-controls.junit.xml",
+      "sha256": "ee7777400d6e6cbc03748486a86a01c4700c54f057f5815f65bf3927fcffb7ec",
+      "source_file": "native-evidence/direct-v1/native-controls.junit.xml"
+    },
+    {
+      "bytes": 387,
+      "file": "exact-test-names.json",
+      "sha256": "a85f94bf141745d1face6fed1f0f66240cbefe9a0322911eb7ff72ce4348c7aa",
+      "source_file": "native-evidence/extra-native-test-names.json"
+    },
+    {
+      "bytes": 1322,
+      "file": "launch.json",
+      "sha256": "7d71034653737d5dbf218726868689585ebd0d5d5ddec8b1563c6eb77a2067d2",
+      "source_file": "native-evidence/direct-v1-launch.json"
+    },
+    {
+      "bytes": 12253,
+      "file": "runner.py",
+      "sha256": "b794d2d5b701f0c5f337daa492989505f55c99ac57ce00df463c0c9d06d05a8f",
+      "source_file": "native-evidence/run_direct_learning_controls.py"
+    }
+  ],
+  "independent_denominator_from_primary_39": true,
+  "native_tree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+  "original_artifact_bytes_preserved": true,
+  "passed_tests": 3,
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "run_id": "c7136f6b-8515-4198-ad9b-9441c1ac964c",
+  "schema": "hepta-native-direct-owner-controls-archive-v1",
+  "selected_errors": 0,
+  "selected_failures": 0,
+  "selected_skips": 0,
+  "selected_tests": 3,
+  "source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "source_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+  "source_unchanged": true,
+  "tests_outside_selection": 859
+}

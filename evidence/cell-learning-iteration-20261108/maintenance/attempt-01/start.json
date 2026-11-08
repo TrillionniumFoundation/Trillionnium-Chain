@@ -1,0 +1,72 @@
+{
+  "commands": [
+    [
+      "scoped-fix",
+      [
+        "just",
+        "fix",
+        "-p",
+        "codex-hepta-learning-artifacts",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked"
+      ]
+    ],
+    [
+      "post-fmt",
+      [
+        "just",
+        "fmt"
+      ]
+    ],
+    [
+      "strict-clippy",
+      [
+        "just",
+        "clippy",
+        "-p",
+        "codex-hepta-learning-artifacts",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    ]
+  ],
+  "resources": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-maintenance-v1.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 65774\nuser_usec 31859\nsystem_usec 33914\nnice_usec 29000\ncore_sched.force_idle_usec 0\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "20832256",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0"
+  },
+  "source": {
+    "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+    "status": "",
+    "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+  },
+  "test_results": [
+    {
+      "bytes": 17517,
+      "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/native-v3/result.json",
+      "sha256": "7ed73680708e579af144d4c6b1b457bfc0cfc2f87905a70bb268826cc354a552"
+    },
+    {
+      "bytes": 8252,
+      "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/direct-v1/result.json",
+      "sha256": "0d97b795871f5478aba50dca46c7f8ea02eebd7ff0bae35ff170f2190f662696"
+    }
+  ],
+  "tests_rerun_after_maintenance": false
+}

@@ -1,0 +1,248 @@
+RUST_MIN_STACK=8388608 NEXTEST_PROFILE=local python3 ../scripts/run-nextest.py "$@"
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> third_party/i18n-config-0.4.8/src/lib.rs:144:9
+    |
+144 |         &self,
+    |         ^^^^^ the lifetime is elided here
+145 |     ) -> Result<Option<(&'_ Crate, &'_ I18nConfig)>, I18nConfigError> {
+    |                          ^^ ^^^^^   ^^ the same lifetime is elided here
+    |                          |  |
+    |                          |  the same lifetime is hidden here
+    |                          the same lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+145 |     ) -> Result<Option<(&'_ Crate<'_>, &'_ I18nConfig)>, I18nConfigError> {
+    |                                  ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> third_party/i18n-config-0.4.8/src/lib.rs:155:26
+    |
+155 |     pub fn active_config(&self) -> Result<Option<(&'_ Crate, &'_ I18nConfig)>, I18nConfigError> {
+    |                          ^^^^^                     ^^ ^^^^^   ^^ the same lifetime is elided here
+    |                          |                         |  |
+    |                          |                         |  the same lifetime is hidden here
+    |                          |                         the same lifetime is elided here
+    |                          the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+    |
+155 |     pub fn active_config(&self) -> Result<Option<(&'_ Crate<'_>, &'_ I18nConfig)>, I18nConfigError> {
+    |                                                            ++++
+
+warning: `i18n-config` (lib) generated 2 warnings (run `cargo fix --lib -p i18n-config` to apply 2 suggestions)
+   Compiling codex-app-server v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server)
+   Compiling codex-hepta-fleet v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-fleet)
+   Compiling codex-hepta-infer-core v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-infer-core)
+   Compiling codex-hepta-neuron v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-neuron)
+   Compiling codex-hepta-agent-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-agent-protocol)
+   Compiling codex-hepta-control-plane v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-control-plane)
+   Compiling codex-hepta-context-compiler v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-context-compiler)
+   Compiling codex-hepta-prompt-optimizer v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-prompt-optimizer)
+   Compiling codex-hepta-objective v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-objective)
+   Compiling codex-hepta-learning-artifacts v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-learning-artifacts)
+   Compiling codex-hepta-plasticity v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-plasticity)
+   Compiling codex-hepta-matrix-protocol v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-matrix-protocol)
+   Compiling codex-hepta-supervisor v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-supervisor)
+   Compiling codex-app-server-client v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server-client)
+   Compiling codex-hepta-codex-adapter v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-codex-adapter)
+   Compiling codex-hepta-intelligence v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-intelligence)
+   Compiling codex-hepta-bellman-operator v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-bellman-operator)
+   Compiling codex-hepta-cognitive-store v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-cognitive-store)
+   Compiling codex-hepta-agentd v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-agentd)
+   Compiling core_test_support v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/core/tests/common)
+   Compiling app_test_support v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/app-server/tests/common)
+   Compiling codex-hepta-infer-worker-host v0.0.0 (/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108/codex-rs/hepta-infer-worker-host)
+error: couldn't read `hepta-agentd/src/../../../qualification/neuron-v13-generation/proposal_worker.py`: No such file or directory (os error 2)
+  --> hepta-agentd/src/neuron_v13_generation_bootstrap_test_support.rs:69:13
+   |
+69 |             include_bytes!("../../../qualification/neuron-v13-generation/proposal_worker.py");
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:38:5
+    |
+ 38 |     assert_eq!(ok(ports.executed.lock()).clone(), executed);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:39:5
+    |
+ 39 |     assert_eq!(ok(ports.attested.lock()).clone(), executed);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:43:5
+    |
+ 43 |     assert_eq!(saved.request, request);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:44:5
+    |
+ 44 |     assert_eq!(saved.receipts.len(), 2);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:46:5
+    |
+ 46 |     assert_eq!(checkpoint_calls.len(), 3);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:56:5
+    |
+ 56 |     assert_eq!(ok(ports.executed.lock()).clone(), executed);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:57:5
+    |
+ 57 |     assert_eq!(ok(ports.attested.lock()).clone(), executed);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:58:5
+    |
+ 58 |     assert_eq!(ok(ports.checkpoint_calls.lock()).clone(), checkpoint_calls);
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+error[E0659]: `assert_eq` is ambiguous
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:59:5
+    |
+ 59 |     assert_eq!(ok(ports.checkpoint.lock()).clone(), Some(saved));
+    |     ^^^^^^^^^ ambiguous name
+    |
+    = note: ambiguous because of a conflict between a name from a glob import and an outer scope during import or macro resolution
+note: `assert_eq` could refer to the macro imported here
+   --> hepta-agentd/src/learning_iteration_profile_tests.rs:5:5
+    |
+  5 | use super::*;
+    |     ^^^^^^^^
+    = help: consider adding an explicit import of `assert_eq` to disambiguate
+    = help: or use `self::assert_eq` to refer to this macro unambiguously
+note: `assert_eq` could also refer to the macro defined here
+   --> /home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/prelude/mod.rs:162:13
+    |
+162 |     pub use super::v1::*;
+    |             ^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0659`.
+error: could not compile `codex-hepta-agentd` (lib test) due to 10 previous errors
+error: command `/home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/cargo test --no-run --message-format json-render-diagnostics --package codex-hepta-learning-artifacts --package codex-hepta-agentd --lib --locked` exited with code 101
+error: recipe `test` failed on line 89 with exit code 101
