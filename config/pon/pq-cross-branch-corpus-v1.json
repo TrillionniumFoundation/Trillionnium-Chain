@@ -141,7 +141,7 @@
   "parent_profile": "pon-nakamoto-v1",
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "b459945f8b071c70f83cc5fce0fa895225d5c8d0",
-    ".github/workflows/pon-history-stage-diagnostic.yml": "b9243ba119d506a02f4eda42dbf27e3939316f64",
+    ".github/workflows/pon-history-stage-diagnostic.yml": "88b0ed45d65aff17d5cf5e0e14f7516efee24746",
     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "516ca1abb0dfeb6c52b3a99efc8f041390d78223",
     ".github/workflows/pon-pq-system-continuation.yml": "f6b862182b361eefef62a553f59c3e79e90e1868",
@@ -338,7 +338,7 @@
     "scripts/ci/run_w1_reused_cost_v3.py": "7171e55ac36ec717c7f3cb66331978df5ec8c1e1",
     "scripts/ci/test_ci_contract.py": "f5b37eed463b4058e573e85d1550f2b0d72de164",
     "scripts/ci/test_growth_scale_observation.py": "417df6a1f7e3c2d3570885b03a28e7f1518d89c3",
-    "scripts/ci/test_history_stage_diagnostic.py": "9fa491dd407ae0188142a0699791d620f14ac3f0",
+    "scripts/ci/test_history_stage_diagnostic.py": "342bab6975f315c62f111b53df335f546451db82",
     "scripts/ci/test_integration_push_source.py": "b4c60b653aa82dfa00571ec09dad06bf9b7cf5b4",
     "scripts/ci/test_llm_cell_handoff_deadline.py": "fc9bb2b9f5996088917469166ce6c86048058cbf",
     "scripts/ci/test_llm_cell_host_handoff.py": "c11c27571496843887f31f500aae69d90ac18da1",
