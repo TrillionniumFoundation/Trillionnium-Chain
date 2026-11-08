@@ -7,6 +7,10 @@ integration candidate `12e510b211110d93d9ead07e02c07a1eecc28ae9`, tree
 The [execution record](../../evidence/pq-authority-preflight-20261108-9d315/README.md)
 records the actual tested successor and toolchain.
 
+This source also preserves concurrent migration qualification through
+`8d8f05566b2a1612a3bf4a6c6c71635df454d397`, including its independent CI
+controls. Execution records distinguish the original and integrated commits.
+
 ## Actual release-owner change
 
 The existing ML-DSA-65 release kernel checked a signature's membership and then

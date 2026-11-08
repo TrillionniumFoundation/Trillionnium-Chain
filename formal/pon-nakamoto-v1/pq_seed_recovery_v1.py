@@ -13,8 +13,11 @@ not a claim that the composition has independently established 128-bit quantum
 security. The known upstream circuit accepts a public message and constrains
 hx = SHA-512(message || seed); this module never computes hx or knows its seed.
 
-Upstream reference: SoundnessLabs/pqchain at SOURCE_COMMIT, based on Ligetron
-v1.1.0; see https://eprint.iacr.org/2025/1368. Three source files are pinned by
+Upstream reference: SoundnessLabs/pqchain at SOURCE_COMMIT; see
+https://eprint.iacr.org/2025/1368. Its README describes Ligetron v1.1.0, while
+VERSION and RELEASE.json at that same source identify v1.2.0. PROOF_PROFILE
+retains the original unqualified V1 wire label; it is not a verified release
+identity. Three source files are pinned by
 SHA-256. Artifact digests are required caller declarations, not attestations of
 compiled circuit/verifier identity. Neither source pins nor parser checks
 qualify a verifier. All profiles remain unqualified for actual recovery.

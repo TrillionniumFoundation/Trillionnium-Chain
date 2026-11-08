@@ -1,0 +1,19 @@
+{
+  "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+  "head": "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+  "index_entries_sha256": "19767a4172c94cae786aab463a7d70e2744e229516a753193de00afa2ccbc3b4",
+  "lockfiles": {
+    "tests/fuzz/Cargo.lock": {
+      "bytes": 34066,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/tests/fuzz/Cargo.lock",
+      "sha256": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40332,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/trillionnium/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+    }
+  },
+  "status": "",
+  "tree": "38a1d4da1a6dc8c93d49ca181c8e35ecb79ef776"
+}

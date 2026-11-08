@@ -26,8 +26,8 @@ between the recorded red and green overlays. No primitive-call counter was
 added; the ordering claim uses the source control flow and observed errors.
 
 - [Baseline compilation receipt](baseline-build/receipt.json): compilation only.
-- [Red receipt](quorum-red/receipt.json) and [original output](quorum-red/stdout.log).
-- [Green receipt](quorum-green/receipt.json) and [actual output](quorum-green/stdout.log).
+- [Red receipt](quorum-red/receipt.json) and [original output](quorum-red/stdout.log.gz).
+- [Green receipt](quorum-green/receipt.json) and [actual output](quorum-green/stdout.log.gz).
 - [Provider verification](baseline-build/provider-verified.json).
 
 An initial green launch had an unknown local outcome. The remote job directory
@@ -45,7 +45,7 @@ is retained. An offline metadata resolution added exactly that one local edge;
 the complete parsed package lists, versions and all other lock fields were
 unchanged. The primary workspace lock is unchanged. See the
 [repair receipt](fuzz-dependency-repair/receipt.json) and
-[one-line lock diff](fuzz-dependency-repair/lock.diff).
+[one-line lock diff](fuzz-dependency-repair/lock.diff.gz).
 The [non-test library precheck](non-test-library-precheck/receipt.json) also
 passed; final committed-source validation remains separately identified.
 
@@ -111,3 +111,29 @@ distribution, independent custody, WAL, network, deployment or a complete
 key-management lifecycle. No deployed keys, protected main, services or
 activation state were changed. All production, whole-chain PQ, physical
 rollback and cross-repository Hepta final-use claims retain their original HOLD.
+
+## Exact-source validation before concurrent-base integration
+
+The [first full run](committed-source-01/summary.json) passed all **28 command gates**
+on `62ed4e4facae4e0eb9f3fdeb82001acb3b21be47` (tree
+`38a1d4da1a6dc8c93d49ca181c8e35ecb79ef776`). It executed 52 release tests,
+442 tests across the other five selected packages, four doctests and 40 Node
+release-owner tests. Two existing cost observations and one isolated fixed-root
+Node control remained ignored; 1,244 unrelated Node tests were filtered out.
+This is not an all-workspace test run or full Node/Host acceptance.
+
+Formatting, locked offline graphs, strict all-target/all-feature workspace
+Clippy, Python guards, source integrity and repository links passed.
+Before/after source and provider identities matched, and actual retained
+SQLite build outputs were qualified. This run predates integration of
+`8d8f05566b2a1612a3bf4a6c6c71635df454d397`; it is not relabelled as a
+run on the merged source. All raw logs, including empty streams, are retained.
+
+## Lossless capture formatting
+
+Raw native output includes deliberate final blank lines. Captures that trigger
+Git whitespace checks are stored as lossless gzip, with their original byte
+lengths and SHA-256 values in the compression mapping of `artifact-index.json`.
+No captured output is trimmed or rewritten, and original receipt paths and
+hashes remain unchanged. The initial archive-format check refusal is retained
+separately from the passing source and native validation.

@@ -52,3 +52,37 @@ multi-host review, real Hepta export/Final-use, and physical power-loss
 qualification remain open. The schema change is intentionally
 incompatible with old untrusted research journals; migrate such data
 only by explicit audited export into a new owned namespace.
+
+
+## Reserved-prefix audit correction, 2026-11-08
+
+The earlier exact-schema check used SQL `LIKE 'sqlite_%'`. SQLite treats `_`
+as a single-character wildcard in LIKE, so user-defined names such as
+`sqliteX...` were accidentally hidden along with actual internal objects.
+A real persistent trigger in this hidden class could remove a prior journal
+record before a later insertion; the later record survived post-commit readback.
+That defeated the journal's intended one-use and per-network PQ-key uniqueness
+checks even though ordinary unknown triggers were rejected.
+
+Both main and TEMP schema queries now use `GLOB 'sqlite_*'`, whose underscore
+is literal. This changes the inspection predicate, not the canonical DDL or any
+signed bytes. Existing honest journals remain compatible; polluted namespaces
+fail on cold open or before the next consume. No automatic cleanup rewrites a
+foreign journal, and a refusal is not authority to repeat an external effect.
+See SQLite's [expression documentation](https://sqlite.org/lang_expr.html)
+and [schema table documentation](https://sqlite.org/schematab.html).
+
+The updated native-SQLite suite has 13 test methods, including five new methods
+covering persistent/TEMP prefix-lookalike tables and triggers, cold reopen,
+unchanged prior records, unique-key refusal after removing a test fixture, and
+honest concurrent/retry behavior. On the unchanged old owner those regressions
+reported 12 failed subtests; the corrected owner passes all 13 methods.
+Signature success is mocked only in this storage-isolation suite. The separate
+seven-test suite runs actual Ed25519 and ML-DSA-65 signatures on the explicitly
+pinned local OpenSSL backend. The [current execution record](../../evidence/pq-migration-qualification-20261108/README.md)
+retains commands, source digests, failures and scoped results.
+
+The correction does not detect a coherent full-database rollback and does not
+protect a process from an attacker who can replace its code or invoke arbitrary
+same-user writes. Other SQLite owners need their own schema and lifecycle review;
+this increment is not a repository-wide SQLite qualification.

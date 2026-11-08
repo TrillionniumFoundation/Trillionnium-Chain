@@ -279,7 +279,13 @@ NATIVE_RELEASE_BLOCK = '''    (
 # Freeze the complete straight-line lane independently of the file being checked.
 # Presence/count checks alone also match commands skipped or swallowed by shell
 # control flow. Keep their specific diagnostics before the full-lane comparison.
-PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+PQ_MIGRATION_CONFORMANCE_PREFIX = '''    # Actual offline signatures/SQLite and public fixture arithmetic only.
+    # These checks grant no historical ownership, seed-proof or cutover authority.
+    PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_account_migration.py' -v
+    PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_migration_journal_owner.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_relation_vectors_v1.py' -v
+'''
+PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples
@@ -517,6 +523,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
+    pq_commands = code_lines(PQ_MIGRATION_CONFORMANCE_PREFIX)
+    require(code_lines(lanes['protocol-contract'])[:len(pq_commands)] == pq_commands
+            and all(code_lines(script).count(command) == 1 for command in pq_commands),
+            'offline migration and seed relation controls must execute exactly once at the start of protocol-contract with the fixed warning policy')
     parent_material = '    python3 scripts/test_llm_parent_material.py\n'
     parent_step = '    python3 scripts/test_llm_runtime_parent_step.py\n'
     for command in (parent_material, parent_step):
@@ -645,7 +655,7 @@ def check_from_zero_host_callsites(root: Path) -> None:
                'python3 scripts/ci/run_from_zero_native.py --out ')
     workflow_command = '        run: ' + command + '"$TRNM_CI_RECEIPT_DIR/from-zero-native"\n'
     check_from_zero_host_call((root / 'scripts/ci/ci_job.sh').read_text(),
-        '  protocol-contract)\n    ' + command
+        '  protocol-contract)\n' + PQ_MIGRATION_CONFORMANCE_PREFIX + '    ' + command
         + '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
     check_from_zero_host_call((root / '.github/workflows/trnm-required-baseline.yml').read_text(),
         '      - name: Execute exact native from-zero service controls\n'

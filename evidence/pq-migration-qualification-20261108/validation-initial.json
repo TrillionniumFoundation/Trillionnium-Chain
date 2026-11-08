@@ -1,0 +1,209 @@
+{
+  "schema": "trnm-pq-migration-qualification-observations-v1",
+  "base_commit": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "status": "HOLD_NO_GO",
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "sqlite": "3.53.1",
+    "cryptography": "50.0.0",
+    "cryptography_openssl": "OpenSSL 4.0.1 9 Jun 2026",
+    "cli_openssl": {
+      "TRNM_PQ_OPENSSL": "/usr/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "acc10176d038aeb7b2a77d9ec972ac2985857a7191f7aecb7c54ef0e2c7e9549",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.7",
+      "OPENSSL_DIR": "/usr"
+    }
+  },
+  "source_sha256_before": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "7a58bdd63b0fe598eeab2976770c64307cb326732b7a66a1ef05b597c0dd28e1",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "954751cdd1df759f17ed73053b9bb9f2b354a9b12271c0a416228f1c3c57b4f0",
+    "docs/security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md": "c83c9cc393fe6796fd780543e01de84ebf432fce5ae87e57956b1553f5000a0a",
+    "docs/security/PQ_MIGRATION_OWNED_JOURNAL_V1.md": "0480d4702d21598832e15a76779fece7fff3f251fdbe8934e1a102e2f32bd3ae",
+    "docs/security/PQ_SEED_RELATION_REVIEW_V1.md": "c1f6fc8a1dcb1d4dc746e0466768b33807158e9d48c0c928ef821333443303dc",
+    "formal/pon-nakamoto-v1/pq_account_migration.py": "dc686c8cdc03f6c0f60582399a565bf632d2f906240fc1d70dd35b8ecaf91198",
+    "formal/pon-nakamoto-v1/pq_seed_recovery_v1.py": "f576b4f4742478e8262462e6f4ea754f783f3d58220a137a56468cdeb415a2a3",
+    "formal/pon-nakamoto-v1/pq_seed_relation_vectors_v1.py": "d419043bedcf774cdb7fb047c97bfca6813d2140ec3c9fffeb43460e89bd0fb7",
+    "formal/pon-nakamoto-v1/test_pq_account_migration.py": "26e349fbb1146ed3f94e74da03eaa77c95e254a14932fb656b635d99cbd783a1",
+    "formal/pon-nakamoto-v1/test_pq_migration_journal_owner.py": "e0cda647b2e95aaeb46051eb95772158e32b172987a3fe9ec0fb78b18b9e3952",
+    "formal/pon-nakamoto-v1/test_pq_seed_relation_vectors_v1.py": "b844fdae274389d6701ac9d1adf1ccfe4ba5280c7d65ae76580eaa55ea0bc590",
+    "scripts/ci/ci_job.sh": "e36d81f0499e015299d25064cb48d0caba88b75f10556108dc06ec3214d61b7b"
+  },
+  "source_sha256_after": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "7a58bdd63b0fe598eeab2976770c64307cb326732b7a66a1ef05b597c0dd28e1",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "954751cdd1df759f17ed73053b9bb9f2b354a9b12271c0a416228f1c3c57b4f0",
+    "docs/security/PQ_HISTORICAL_ACCOUNT_MIGRATION_V1.md": "c83c9cc393fe6796fd780543e01de84ebf432fce5ae87e57956b1553f5000a0a",
+    "docs/security/PQ_MIGRATION_OWNED_JOURNAL_V1.md": "0480d4702d21598832e15a76779fece7fff3f251fdbe8934e1a102e2f32bd3ae",
+    "docs/security/PQ_SEED_RELATION_REVIEW_V1.md": "c1f6fc8a1dcb1d4dc746e0466768b33807158e9d48c0c928ef821333443303dc",
+    "formal/pon-nakamoto-v1/pq_account_migration.py": "dc686c8cdc03f6c0f60582399a565bf632d2f906240fc1d70dd35b8ecaf91198",
+    "formal/pon-nakamoto-v1/pq_seed_recovery_v1.py": "f576b4f4742478e8262462e6f4ea754f783f3d58220a137a56468cdeb415a2a3",
+    "formal/pon-nakamoto-v1/pq_seed_relation_vectors_v1.py": "d419043bedcf774cdb7fb047c97bfca6813d2140ec3c9fffeb43460e89bd0fb7",
+    "formal/pon-nakamoto-v1/test_pq_account_migration.py": "26e349fbb1146ed3f94e74da03eaa77c95e254a14932fb656b635d99cbd783a1",
+    "formal/pon-nakamoto-v1/test_pq_migration_journal_owner.py": "e0cda647b2e95aaeb46051eb95772158e32b172987a3fe9ec0fb78b18b9e3952",
+    "formal/pon-nakamoto-v1/test_pq_seed_relation_vectors_v1.py": "b844fdae274389d6701ac9d1adf1ccfe4ba5280c7d65ae76580eaa55ea0bc590",
+    "scripts/ci/ci_job.sh": "e36d81f0499e015299d25064cb48d0caba88b75f10556108dc06ec3214d61b7b"
+  },
+  "source_unchanged_during_validation": true,
+  "commands": [
+    {
+      "label": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.04415964300278574,
+      "log": "raw/preflight.log",
+      "log_sha256": "2d42c8dd681e2b5586c5d4222dbbcbccd40c32be9ced4cedd294a23184937c78"
+    },
+    {
+      "label": "journal-final",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_pq_migration_journal_owner.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1620662529967376,
+      "log": "raw/journal-final.log",
+      "log_sha256": "7c11d9eca87511139496ba855f847ca8a032ef435fa7b9836a0642930eb24900"
+    },
+    {
+      "label": "signatures-final-no-path",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_pq_account_migration.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.4999419899977511,
+      "log": "raw/signatures-final-no-path.log",
+      "log_sha256": "0613f282f8a611fc29b1460ca2354174ca00cbd9eeb172a54665a8bfbb44482a"
+    },
+    {
+      "label": "seed-final",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_pq_seed*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7373437239948544,
+      "log": "raw/seed-final.log",
+      "log_sha256": "c419a2e12faf425a26574e6e9b434d0202515ab855ccc573aff2b388aef99dc7"
+    },
+    {
+      "label": "source-pins",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.16276579900295474,
+      "log": "raw/source-pins.log",
+      "log_sha256": "2e041315e4a99fb31ad03d065bed894ee6d90a6624078eb20a1ca89331450dad"
+    },
+    {
+      "label": "source-integrity-controls",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 42.84682946900284,
+      "log": "raw/source-integrity-controls.log",
+      "log_sha256": "ed7bce472bd248de94ced9a043d65f0050e2c3c2e838285195f6e264f8e367cc"
+    },
+    {
+      "label": "ci-contract",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 1,
+      "seconds": 5.018700450003962,
+      "log": "raw/ci-contract.log",
+      "log_sha256": "da5d6bf261d6727c8342837809bd189cde297b73c3318d0f0319c8730237aa94"
+    },
+    {
+      "label": "ci-execution",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "exit_code": 0,
+      "seconds": 24.114902307999728,
+      "log": "raw/ci-execution.log",
+      "log_sha256": "f73f357bc87a3db50de4d519acbf1e71c4b701bdc4047ea936985384e0d2512a"
+    },
+    {
+      "label": "pq-claim-controls",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1934064200031571,
+      "log": "raw/pq-claim-controls.log",
+      "log_sha256": "7e7194c1837e5c80d1149eb905c37d634222c3417df70777ec1751199342e4b3"
+    },
+    {
+      "label": "pq-claim-hold",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.03624511599628022,
+      "log": "raw/pq-claim-hold.log",
+      "log_sha256": "df2056982e26923ea65600bbe0e42783ad619221cf965082fa4945ed63097c47"
+    },
+    {
+      "label": "repository-check",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 2,
+      "seconds": 0.7344893889967352,
+      "log": "raw/repository-check.log",
+      "log_sha256": "dd925892b5ba9abcc79d5d2c0f78dc41499cfa3f16a8360b29cb85ca391ac628"
+    },
+    {
+      "label": "whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.013678256997081917,
+      "log": "raw/whitespace.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "rust_modified": false,
+  "rust_native_tests_executed": false,
+  "clippy_executed": false,
+  "full_seed_proof_generated": false,
+  "full_seed_proof_verified": false,
+  "production_activation": false
+}
