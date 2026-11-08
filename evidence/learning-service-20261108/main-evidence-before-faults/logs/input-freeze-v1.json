@@ -1,0 +1,26 @@
+{
+  "evaluation_rows": 8,
+  "files": {
+    "heldout-input.json": {
+      "bytes": 927,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/inputs/heldout-input.json",
+      "sha256": "079b5c91c0d607ed20abadcae0d7240cf9afd2f5e0fd4993894e340d1b350c41"
+    },
+    "next-task-input.json": {
+      "bytes": 159,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/inputs/next-task-input.json",
+      "sha256": "39c8b0db87b9d737c6fdde2ea30cd1780123f92ec7c570a9276cd7830ae0c886"
+    },
+    "training-input.json": {
+      "bytes": 1334,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/inputs/training-input.json",
+      "sha256": "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964"
+    }
+  },
+  "independent_custody": false,
+  "next_expected_output": "yes",
+  "prospective": false,
+  "schema": "chain-public-smoke-inputs-v1",
+  "scope": "public-smoke-fixtures",
+  "training_rows": 12
+}

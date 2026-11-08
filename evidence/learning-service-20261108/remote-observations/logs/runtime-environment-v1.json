@@ -1,0 +1,22 @@
+{
+  "schema": "chain-runtime-provider-observation-v1",
+  "host": "ai395",
+  "workspace": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006",
+  "python": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+  "python_version": "3.12.16",
+  "packages": {
+    "torch": "2.9.1+cpu",
+    "transformers": "4.57.3",
+    "peft": "0.18.0",
+    "safetensors": "0.7.0",
+    "tokenizers": "0.22.2",
+    "numpy": "1.26.4",
+    "accelerate": "1.15.0"
+  },
+  "materials": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base",
+  "model_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+  "all_seven_public_materials_size_and_sha_match": true,
+  "observation_pty": "dpty-04515947cad5d7dfa01fbdd0e975e2146f21235ff8c87152c4570297fbe97578",
+  "model_training_executed_by_this_observation": false,
+  "original_owner_installation_proven": false
+}

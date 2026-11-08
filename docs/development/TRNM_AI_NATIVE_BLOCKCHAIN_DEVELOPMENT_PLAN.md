@@ -10028,6 +10028,37 @@ remaining obligations are recorded in the
 No historical failed run or original evidence is relabeled as a success.
 
 
+### 2026-11-08 real learning service execution and reconciliation
+
+Continue the same-iteration objective with executable adapters on the unified
+`7e044b65454f4c9ea505591727332acffb33e7e5` source. The
+[development execution contract](specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md)
+binds a complete pretraining evaluation freeze to a durable once-only inherited
+SmolLM operation. Execute the existing four controls and the actual retained
+parent/candidate loaders under frozen incremental budgets. Incomplete or failed
+evaluation cannot become NoUpdate. Keep local numerical results separate from
+original-owner Selection and independent evaluation acceptance.
+
+Connect the same operation's actual files and measured CPU to the existing
+native TSC1/M12 development Task owner. Preserve full Unknown reservations,
+durable original side-effect IDs, current-branch payment readback and monotonic
+local revocation/history through reorganization and cold reopen. A compliant
+completed training service can earn the base fee without model improvement;
+improvement bonus and consensus credit remain distinct and zero in this entry.
+
+Retain exact failures when a historical parent has a different runtime contract.
+An explicit new development bootstrap does not establish that the original
+owner installed it. Real task authorization, independent evaluation/provider
+custody, protected original-owner installation/load, final next-task receipt,
+real funds and the complete nine-step production iteration remain open until
+observed together. Preserve source/file identities and all attempted outcomes;
+do not transfer historical pass counts or weaken the original performance gates.
+
+Retain the [dated execution record](../../evidence/learning-service-20261108/README.md)
+with source snapshots, original unsuccessful observations and raw model/native
+receipts. Its development findings do not close the remaining original-owner
+and independent-custody acceptance boundaries.
+
 ### 2026-11-08 unified Chain / Hepta qualification continuation
 
 Continue the user's P0 integration, consensus, authority and real Hepta loop,

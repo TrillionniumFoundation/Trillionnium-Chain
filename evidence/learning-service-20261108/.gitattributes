@@ -1,0 +1,2 @@
+# Preserve captured process bytes, including libtest's trailing blank lines.
+*.log -whitespace

@@ -1,0 +1,13 @@
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-data-availability)
+    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-mempool v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-mempool)
+    Checking trnm-transport v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-transport)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized] target(s) in 31.09s

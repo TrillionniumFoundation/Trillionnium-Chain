@@ -1,0 +1,42 @@
+{
+  "command": [
+    "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/source/scripts/llm_inherited_runtime.py",
+    "train",
+    "--bootstrap",
+    "--operation-id",
+    "dev-bootstrap-8b4f-v1",
+    "--steps",
+    "1",
+    "--threads",
+    "2",
+    "--materials",
+    "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base",
+    "--input",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/inputs/training-input.json",
+    "--input-sha256",
+    "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964",
+    "--output",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/bootstrap-v1"
+  ],
+  "cwd": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/source",
+  "disk_free_bytes": 822907936768,
+  "explicit_environment": {
+    "MKL_NUM_THREADS": "2",
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "installation_authorized": false,
+  "libc": [
+    "glibc",
+    "2.43"
+  ],
+  "operation_id": "dev-bootstrap-8b4f-v1",
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+  "profile": "strict-v1",
+  "schema": "chain-development-bootstrap-start-v1",
+  "scope": "explicit-development-bootstrap-not-original-owner-installation",
+  "source_archive_sha256": "e6666a3f8aa324620d6e3b952b098d83be988ae3687c409d7fad233b6f78075a",
+  "source_manifest_sha256": "2708306ae88f3ddec5bbe8d63c40375ef8826c50aa99d3b223ab448a60563cac"
+}
