@@ -103,6 +103,7 @@ From a complete checkout, all readers use only the Python standard library:
 python3 -m unittest discover -s formal/pon-native-fullpath-v1 -p 'test_*.py' -v
 python3 formal/throughput-v1/test_proof_cpu_metrics.py -v
 python3 formal/throughput-v1/test_cell_model_metrics.py -v
+python3 formal/throughput-v1/test_reproduce_reports.py -v
 python3 scripts/ci/test_smollm_command_receipts.py -v
 python3 formal/throughput-v1/reproduce_reports.py --output /tmp/throughput-reproduction-new
 ```

@@ -58,7 +58,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--historical-archive", type=Path, default=HISTORY_PATH)
     args = parser.parse_args()
-    output = args.output.absolute()
+    output = args.output.resolve(strict=False)
     require(not output.is_relative_to(ROOT), "OUTPUT_MUST_BE_OUTSIDE_SOURCE")
     output.mkdir(parents=True, exist_ok=False)
     runs = []
