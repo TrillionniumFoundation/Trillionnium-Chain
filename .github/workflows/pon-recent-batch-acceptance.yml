@@ -75,7 +75,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
           # The whole-file pin covers the opt-in owner census and the
           # integrated admission/readback refinements under retained cost controls.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 20181ce2072f530296b4cda95c931ea3c0691902
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
