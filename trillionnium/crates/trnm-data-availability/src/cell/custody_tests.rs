@@ -482,6 +482,45 @@ fn expired_original_observation_deadline_is_not_refreshed() {
 }
 
 #[test]
+fn release_continuation_refuses_late_observation_without_refunding_or_renewing() {
+    let mut fixture = Fixture::new(true);
+    let mut budget = fixture.probe_budget();
+    let report = fixture.observe(43, &mut budget);
+    let sponsor = CellCustodySponsorObservationV1 {
+        owner: fixture.policy.replicas[0].renewal_owner,
+        state: CellCustodySponsorStateV1::Contactable,
+    };
+    assert!(report
+        .plan_continuation(&[sponsor])
+        .unwrap()
+        .iter()
+        .all(|entry| {
+            entry.renewal == CellCustodyRenewalActionV1::FundingRequired
+                && entry.recovery == CellCustodyRecoveryActionV1::None
+        }));
+    // Composition-refusal control, not a claim about an elapsed physical race.
+    let mut late = report.clone();
+    late.finished_before_deadline = false;
+    for state in [
+        CellCustodySponsorStateV1::Contactable,
+        CellCustodySponsorStateV1::Unavailable,
+        CellCustodySponsorStateV1::Unobserved,
+    ] {
+        assert!(matches!(
+            late.plan_continuation(&[CellCustodySponsorObservationV1 { state, ..sponsor }]),
+            Err(CellErrorV1::Invalid(
+                "custody complete release observation required"
+            ))
+        ));
+    }
+    assert!(late.plan_continuation(&[]).is_err());
+    assert!(!late.complete_byte_coverage_observed());
+    assert_eq!(late.usage_after(), report.usage_after());
+    assert_eq!(late.usage_after(), budget.usage());
+    assert_eq!(late.replicas(), report.replicas());
+}
+
+#[test]
 fn future_and_expired_promises_never_count_even_when_all_bytes_remain() {
     let mut fixture = Fixture::new(true);
     for (height, expected) in [
@@ -1246,6 +1285,40 @@ fn version_continuation_refuses_either_missing_component_observation() {
         ))
     ));
     assert_eq!(late_composition.usage_after(), budget.usage());
+}
+
+#[test]
+fn version_continuation_refuses_late_component_even_if_outer_report_is_timely() {
+    let (mut fixture, version, environment) = version_fixture(true);
+    let mut budget = CellCustodyProbeBudgetV1::new(deadline(), 6, 3 * (651 + 217));
+    let report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        20,
+        &mut budget,
+    )
+    .unwrap();
+    assert!(report.plan_continuation(&[]).is_ok());
+    for model in [true, false] {
+        let mut late_component = report.clone();
+        let component = if model {
+            &mut late_component.model
+        } else {
+            &mut late_component.environment
+        };
+        component.as_mut().unwrap().finished_before_deadline = false;
+        assert!(late_component.finished_before_deadline());
+        assert!(matches!(
+            late_component.plan_continuation(&[]),
+            Err(CellErrorV1::Invalid(
+                "custody complete release observation required"
+            ))
+        ));
+        assert_eq!(late_component.usage_after(), budget.usage());
+    }
 }
 
 #[test]

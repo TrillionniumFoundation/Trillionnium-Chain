@@ -7975,3 +7975,45 @@ negative source/CI-contract controls and repository links. These are default
 feature component runtime tests on shared Linux x86_64, not all-feature runtime,
 independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
 not change those source identities or close the six operational qualifications.
+
+### 2026-11-08 Cell peer transport, strong content and sealed repair continuation
+
+Continue #807 at exact source `0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a`
+in one isolated stacked candidate. Preserve its complete native test roster,
+original resource/service contracts and all historical failures. This increment
+does not merge the separate PQ/Hepta candidates or activate a production service.
+
+- Implement a bounded real TCP [BEP52 peer path](specs/pon/CELL_BEP52_PEER_V1.md):
+  complete infohash and original owner metadata, per-peer BEP10 extension IDs,
+  BEP9 metadata, actual pieces, retained partial reads, cancellation and original
+  cumulative connection/frame/byte limits. Add one-hop explicit-bootstrap BEP5
+  UDP queries under the same budget. Discovery hints convey no authority.
+- Add [TCV2/CPV4 full content](specs/pon/CELL_FULL_CONTENT_V2.md): actual full
+  payload and chunk SHA-512, complete metadata, full signer SPKI commitment,
+  original current-owner checks, failed-scan reservations and independent Python
+  wire vectors. Legacy SHA-256 CAS IDs remain locators.
+- Add [Linux sealed data handoff](specs/pon/CELL_SEALED_LOADER_V1.md): declared
+  path/role only, real memfd seals, complete post-seal readback and original
+  cancellation/deadline/extra-copy admission. Join the same actual kernel bytes
+  to TCV2, distinguishing one closure from a complete model/environment pair.
+- Pin all six original [RS46 shard commitments](specs/pon/CELL_RS46_CUSTODY_V1.md)
+  before admitting remote readbacks.
+  Reject bad/missing shards by their original slot/identity, require four verified
+  shards, then verify reconstructed payload and all six deterministic outputs.
+  Original budgets retain failed attempts. Six distinct declared placement
+  domains do not prove independent administration. Apply the same observation
+  deadline refusal to standalone release and complete-version continuation.
+  Optional repair-to-CAS requires an independently pinned TCV2, verifies the
+  recovered original chunk before write and after actual readback, and retains
+  a separate cumulative write/read allowance under the original deadline.
+- Exercise the native signed/sealed pipeline using two real TCP transfers into
+  an empty consumer CAS, CPV4 and complete byte readback, both sealed closures,
+  and the original strict tensor reader on those same descriptors. This small
+  synthetic fixture does not run an ordinary Hepta expert or grant FinalUse.
+
+Evidence must report real TCP/UDP and native loader/repair component tests on the
+same final source. Signature/parser/unit results alone do not qualify public DHT
+operation, independent placement, future availability, prepaid repair, WAN SLA,
+actual NVMe/VRAM, arbitrary-loader dependency confinement, ordinary Hepta next-task
+execution, current FinalUse or a whole-chain PQ lifetime bound. All six original
+operational qualifications remain HOLD until their own evidence is present.

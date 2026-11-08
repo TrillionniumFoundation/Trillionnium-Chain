@@ -9,6 +9,13 @@ use super::{
     CellManifestV1, CellResultV1, MAX_CHUNK_BYTES,
 };
 
+mod custody;
+pub use custody::{
+    CellRs46CacheTargetV1, CellRs46CodewordV1, CellRs46PlacementPolicyV1, CellRs46RepairBudgetV1,
+    CellRs46RepairUsageV1, CellRs46RepairV1, CellRs46ShardInputV1, CellRs46ShardPlacementV1,
+    CELL_RS46_CODEWORD_WIRE_BYTES_V1,
+};
+
 pub const CELL_RS46_PROFILE_V1: &str = "cell-rs46-chunk-v1";
 pub const CELL_RS46_DATA_SHARDS_V1: usize = 4;
 pub const CELL_RS46_TOTAL_SHARDS_V1: usize = 6;
