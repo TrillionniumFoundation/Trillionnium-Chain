@@ -505,4 +505,5 @@ pub mod pon_wire;
 
 pub mod pon_state;
 
+pub mod content_commitment;
 pub mod qualified_work_task;

@@ -8395,3 +8395,32 @@ bind 11,064 tracked entries / 1,114,540,546 bytes. The [source receipt and raw l
 remain distinct from e36 native execution and its failed terminal disposition.
 Runtime and formal subtree objects match e36 exactly; this evidence-only update
 does not create a new native run, PQ-128 qualification or production activation.
+
+### 2026-11-08 — Direct full-content commitments for the CPQ1 candidate
+
+Continue the exact PR #723 source `12e510b2` without combining unrelated open
+candidates. The new [content specification](../security/CPQ1_FULL_CONTENT_COMMITMENTS_V1.md)
+separates locator, second-preimage, chosen-pair collision, Merkle, Fiat–Shamir,
+work-threshold and KDF requirements. Existing CPQ1 profile IDs and native work
+bytes retain their original definitions.
+
+Implementation introduces CCH1: complete 64-byte SHA-512, kind/profile/instance/
+generation/length framing, exact streaming read plus EOF, and a non-refundable
+caller-owned read budget. Typed candidate adapters directly encode complete
+supported State/Config (CST1/SCF1), actual release artifacts (RAC1), model payload
+and metadata (TCM2), all five actual model dependencies (TCC2), and checkpoint
+headers/state/full precommitted SPKIs (CMG1). The CPQ1 signature join requires the
+entire CCH1 record and checks actual bytes, candidate profile, purpose and owner
+generation. A valid signature over only an old or shortened digest is refused.
+
+Native execution, retained-library/doc regressions, strict Clippy, formatting,
+independent Python framing vectors and original source-integrity controls must
+bind the frozen candidate. Their actual outcomes are recorded separately; this
+plan entry grants no execution credit. Existing failing observations remain.
+
+Open: live authorizer and storage migration, opaque PQ/task-window Config
+encoding, 64-byte Merkle proofs, external source/build/history provenance,
+independently current migration custody, KDF callers, concrete FS/QROM and
+lifetime bounds, and quantum PoN cost/fork qualification. Candidate observations
+cannot create CURRENT, FinalUse or a trusted migration anchor. HOLD / NO-GO,
+production_activation=false and whole_chain_pq_qualified=false remain.

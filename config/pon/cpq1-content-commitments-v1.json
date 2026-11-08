@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-cpq1-full-content-v1",
+  "status": "candidate-implementation-hold-no-go",
+  "base_commit": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "claim_format": "CCH1",
+  "claim_bytes": 213,
+  "hash": "SHA-512",
+  "digest_bytes": 64,
+  "input": "domain || complete CCH1 header || actual complete encoded content",
+  "hash_domain_ascii_with_nul": "TRNM/CPQ1/FullContent/SHA512/v1\u0000",
+  "stream_buffer_bytes": 8192,
+  "read_reservation": "declared_content_length_plus_one_EOF_probe",
+  "failed_reads_refunded": false,
+  "signature_payload": "complete_213_byte_CCH1_record",
+  "allowed_content_signature_joins": {
+    "StateSnapshot": "Recovery",
+    "ReleaseArtifact": "Release",
+    "ModelManifest": "Release",
+    "ModelPayload": "Release",
+    "MigrationCheckpoint": "Migration"
+  },
+  "formats": {
+    "CST1": "complete supported state rows and configuration",
+    "SCF1": "all visible supported Config fields",
+    "RAC1": "complete artifact entry and actual raw artifact bytes",
+    "TCM2": "complete model metadata and strong payload claim; dependency aliases only",
+    "TCC2": "TCM2 plus five role-bound complete dependency claims and full readback",
+    "CMG1": "complete header, state, configuration and actual precommitment public keys"
+  },
+  "hash_use_decisions": [
+    {"use": "locator", "decision": "legacy IDs remain lookup aliases only"},
+    {"use": "second_preimage", "decision": "direct full SHA-512 content commitments"},
+    {"use": "chosen_pair_collision", "decision": "direct full SHA-512 with version, kind, context and length"},
+    {"use": "merkle_binding", "decision": "legacy tree unchanged; separate 64-byte tree qualification required"},
+    {"use": "fiat_shamir", "decision": "separate fixed backend and QROM obligations; CCH1 is not a transcript"},
+    {"use": "pon_work", "decision": "unchanged ExternalNativeWork PNW1 relation; separate quantum cost analysis"},
+    {"use": "kdf", "decision": "separate analyzed HKDF/HMAC or other specified KDF; CCH1 forbidden as key derivation"}
+  ],
+  "qualification": {
+    "production_activation": false,
+    "live_owner_migration_complete": false,
+    "whole_chain_pq_qualified": false,
+    "quantum_pon_hardness_qualified": false,
+    "fiat_shamir_qrom_qualified": false,
+    "merkle_migration_complete": false,
+    "immutable_custody_attested": false,
+    "historical_provenance_authenticated_by_rehash": false,
+    "current_or_final_use_granted": false
+  }
+}
