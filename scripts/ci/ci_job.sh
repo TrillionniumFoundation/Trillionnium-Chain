@@ -146,6 +146,9 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v
+    python3 formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
