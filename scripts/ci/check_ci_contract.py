@@ -430,15 +430,16 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
 
 
 PQ_RELEASE_WORKFLOW = '.github/workflows/pon-pq-system-continuation.yml'
-PQ_RELEASE_MANIFEST = 'config/pon/pq-initial-root-material-required-tests-v1.json'
-PQ_RELEASE_SCOPE = 'immutable-initial-root-public-key-material-and-release-quorum-preflight-only'
+PQ_RELEASE_MANIFEST = 'config/pon/pq-release-authority-required-tests-v2.json'
+PQ_RELEASE_SCOPE = 'release-authority-initial-root-quorum-and-cch1-content-binding-unix-only'
 # These are non-wire review pins for the complete, ordered names in each group.
-# The original 37 and initial-root 6 remain unchanged; future additions require
+# The original 37, initial-root 6 and quorum 9 remain unchanged; additions require
 # an explicit manifest, registry, execution and contract review together.
 PQ_RELEASE_GROUPS = {
     'original_release': (37, '41cdd3c0853db168ed869b10ce7579a48fde01d5053b08b7c658d315adbd0cc1'),
     'initial_root_material': (6, 'fc24ff07491d3a6a7fe8712e60ea148796e545ac624e3b3612699c6bc96289bb'),
     'quorum_preflight': (9, '1918b83edb3d238de38bdeac97a0ebc5a313c06a08c11abafcbcc66d233c83d5'),
+    'cch1_content_binding': (3, '65079b3c8b33bc2df5850645bcb4c50d551b6050131c208d7601d1fdde9cc2aa'),
 }
 PQ_ROOT_HARNESS_FILES = (
     'formal/pon-nakamoto-v1/pq_root_quorum_research.py',
@@ -466,7 +467,7 @@ PQ_RELEASE_JOB_HEADER = r'''    name: ML-DSA independent C implementation (${{ m
       EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
     steps:
 '''
-PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require initial-root and quorum controls from the complete release registry
+PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require all release authority and CCH1 controls from the complete Unix registry
         shell: bash
         run: |
           set -euo pipefail
@@ -479,7 +480,7 @@ PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require initial-root and quorum co
           fi
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label initial-root-release-registry --output "$out" -- \
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib -- --list
-          python3 - config/pon/pq-initial-root-material-required-tests-v1.json "$out" <<'PY'
+          python3 - config/pon/pq-release-authority-required-tests-v2.json "$out" <<'PY'
           import json
           import re
           import sys
@@ -487,12 +488,13 @@ PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require initial-root and quorum co
 
           manifest = json.loads(Path(sys.argv[1]).read_text())
           counts = {"original_release": 37, "initial_root_material": 6,
-                    "quorum_preflight": 9, "complete_release": 52}
+                    "quorum_preflight": 9, "cch1_content_binding": 3, "complete_release": 55}
           if (not isinstance(manifest, dict)
-                  or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
+                  or manifest.get("schema") != "trnm-pq-release-authority-required-tests-v2"
                   or manifest.get("package") != "trnm-release-bundle"
                   or manifest.get("harness") != "lib"
-                  or manifest.get("scope") != "immutable-initial-root-public-key-material-and-release-quorum-preflight-only"
+                  or manifest.get("platform_scope") != "unix"
+                  or manifest.get("scope") != "release-authority-initial-root-quorum-and-cch1-content-binding-unix-only"
                   or not isinstance(manifest.get("expected_controls"), dict)
                   or manifest["expected_controls"] != counts
                   or any(type(value) is not int for value in manifest["expected_controls"].values())
@@ -509,7 +511,7 @@ PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require initial-root and quorum co
                       or len(set(names)) != count):
                   raise SystemExit("release-authority required-control names invalid")
               sets[key] = set(names)
-          groups = ("original_release", "initial_root_material", "quorum_preflight")
+          groups = ("original_release", "initial_root_material", "quorum_preflight", "cch1_content_binding")
           if (any(sets[left] & sets[right] for index, left in enumerate(groups)
                   for right in groups[index + 1:])
                   or sets["complete_release"] != set().union(*(sets[group] for group in groups))):
@@ -518,11 +520,11 @@ PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require initial-root and quorum co
           log = (root / "initial-root-release-registry.log").read_text()
           names = re.findall(r"^([A-Za-z0-9_:]+): test$", log, re.M)
           summaries = re.findall(r"^([0-9]+) tests, ([0-9]+) benchmarks$", log, re.M)
-          if (len(names) != 52 or len(set(names)) != 52 or set(names) != sets["complete_release"]
-                  or summaries != [("52", "0")]):
-              raise SystemExit("release-authority actual binary registry differs from the complete required 52")
+          if (len(names) != 55 or len(set(names)) != 55 or set(names) != sets["complete_release"]
+                  or summaries != [("55", "0")]):
+              raise SystemExit("release-authority actual binary registry differs from the complete required Unix 55")
           prefixes = {"original_release": "original-release", "initial_root_material": "initial-root",
-                      "quorum_preflight": "quorum-preflight"}
+                      "quorum_preflight": "quorum-preflight", "cch1_content_binding": "cch1-content-binding"}
           (root / "release-authority-required.tsv").write_text("".join(
               f"{prefixes[group]}-{index:02d}\t{name}\n"
               for group in groups for index, name in enumerate(manifest[group + "_tests"])))
@@ -1316,11 +1318,12 @@ def check_pq_release_authority_controls(root: Path) -> dict:
                 'PQ release controls require a regular source: ' + relative)
     manifest = json.loads((root / PQ_RELEASE_MANIFEST).read_text())
     counts = {group: count for group, (count, _) in PQ_RELEASE_GROUPS.items()}
-    counts['complete_release'] = 52
+    counts['complete_release'] = 55
     require(isinstance(manifest, dict)
-            and manifest.get('schema') == 'trnm-pq-initial-root-material-required-tests-v1'
+            and manifest.get('schema') == 'trnm-pq-release-authority-required-tests-v2'
             and manifest.get('package') == 'trnm-release-bundle'
             and manifest.get('harness') == 'lib'
+            and manifest.get('platform_scope') == 'unix'
             and manifest.get('scope') == PQ_RELEASE_SCOPE
             and isinstance(manifest.get('expected_controls'), dict)
             and manifest['expected_controls'] == counts
@@ -1328,7 +1331,7 @@ def check_pq_release_authority_controls(root: Path) -> dict:
             and all(manifest.get(key) is False for key in (
                 'authorization_results_cached', 'signature_results_cached', 'performance_qualified',
                 'production_activation', 'consensus_authority', 'whole_chain_quantum_security_qualified')),
-            'PQ release manifest must retain the exact 37 + 6 + 9 partition and limited scope')
+            'PQ release manifest must retain the exact Unix 37 + 6 + 9 + 3 partition and limited scope')
     groups = {}
     for group, (count, expected) in PQ_RELEASE_GROUPS.items():
         names = manifest.get(group + '_tests')
@@ -1340,9 +1343,9 @@ def check_pq_release_authority_controls(root: Path) -> dict:
                 'PQ release reviewed test names changed: ' + group)
         groups[group] = set(names)
     complete = manifest.get('complete_release_tests')
-    require(sum(len(names) for names in groups.values()) == len(set().union(*groups.values())) == 52
+    require(sum(len(names) for names in groups.values()) == len(set().union(*groups.values())) == 55
             and complete == sorted(set().union(*groups.values())),
-            'PQ release complete registry must contain exactly all 52 distinct reviewed tests')
+            'PQ release complete registry must contain exactly all 55 distinct reviewed Unix tests')
 
     module = ast.parse((root / PQ_ROOT_HARNESS_FILES[1]).read_text())
     classes = [node for node in module.body
@@ -1376,8 +1379,8 @@ def check_pq_release_authority_controls(root: Path) -> dict:
     require(job.count(PQ_RELEASE_REGRESSION_COMMAND) == 1
             and job.index(PQ_RELEASE_REGRESSION_COMMAND) < job.index(PQ_RELEASE_AUTHORITY_STEP)
             < job.index(PQ_ROOT_HARNESS_STEP),
-            'PQ complete component regression precedes all 52 exact executions and 18 Python controls')
-    return {'complete_release': 52, 'groups': {group: count for group, (count, _) in PQ_RELEASE_GROUPS.items()},
+            'PQ complete component regression precedes all 55 exact Unix executions and 18 Python controls')
+    return {'complete_release': 55, 'platform_scope': 'unix', 'groups': {group: count for group, (count, _) in PQ_RELEASE_GROUPS.items()},
             'python_test_doubles': 18, 'tests_executed': False}
 
 

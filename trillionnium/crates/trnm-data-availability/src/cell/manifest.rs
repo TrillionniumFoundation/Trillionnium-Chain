@@ -83,6 +83,9 @@ impl CellManifestV1 {
     pub fn chunks(&self) -> &[CellChunkV1] {
         &self.chunks
     }
+    pub fn chunk_bytes(&self) -> u32 {
+        self.chunk_bytes
+    }
 
     pub fn validate(&self) -> CellResultV1<()> {
         self.context.validate()?;

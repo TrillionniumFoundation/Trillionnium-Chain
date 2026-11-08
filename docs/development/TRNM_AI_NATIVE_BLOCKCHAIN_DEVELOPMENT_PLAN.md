@@ -163,6 +163,23 @@ work gate; owner-authorized task payment and a future independently verified
 canonical proof settlement are distinct interfaces. Original four-second/16,
 PQ, funding/reorg, WAN, proof-benefit and model-adoption gates remain open.
 
+**Next Architecture & Security Qualification, 2026-11-07 America/New_York:**
+Start the owner's named six-stream program through the existing integration
+lineage and this sole plan. The [qualification contract](specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md)
+and [program registry](../../config/pon/next-architecture-security-v1.json) bind
+Consensus Research, Native Runtime, P2P Cell Commons, Hepta Integration, PQ
+Security and Performance & Economics to their current owners and explicit exits.
+Reuse the existing native M02/M07/M08/M14 and TCM1/Cell cache implementations.
+Add strict BEP52/magnet/Merkle binding and bounded RS(6,4) chunk recovery,
+repair side effects in native status
+observation, retain exact finite hybrid-weight/sampling counterexamples, and
+reconcile complete declared performance/cost denominators. Current W1 STARK
+work is a measured backend candidate; its missing positive whole-path benefit,
+complete proof and original service gates must not be confused with absence of
+an implementation. All original Host/History/WAN, actual Hepta owner, cheapest
+legal work, PQ128 lifecycle and independent economic exits remain required.
+Development observations do not change chainwork, activation or qualification.
+
 **Original business readback and component follow-up, 2026-11-07 UTC — HOLD:**
 The [retained business readback](../../evidence/pon-business-gates-readback-20261107/README.md)
 records real push head `d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89`,

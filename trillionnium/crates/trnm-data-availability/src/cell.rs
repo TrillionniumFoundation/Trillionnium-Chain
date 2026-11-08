@@ -6,12 +6,14 @@
 use std::{fmt, io};
 
 mod archive;
+mod bep52;
 mod cache_budget;
 mod cache_wal;
 mod closure;
 mod content_v2;
 mod delta;
 pub mod discovery;
+mod erasure;
 #[cfg(test)]
 mod historical_tcl3_cache_budget;
 mod manifest;
@@ -29,6 +31,11 @@ pub use archive::{
     CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
     CellReleaseRetentionStoreV2, MAX_CELL_ARCHIVE_CONTRACT_BYTES_V2,
 };
+pub use bep52::{
+    CellBep52BindingV1, CellBep52ChunkProofV1, CellBep52MagnetV1, CELL_BEP52_PIECE_BYTES_V1,
+    CELL_BEP52_PROFILE_V1, MAX_CELL_BEP52_INFO_BYTES_V1, MAX_CELL_BEP52_LEAVES_V1,
+    MAX_CELL_BEP52_METAINFO_BYTES_V1, MAX_CELL_BEP52_PROOF_BYTES_V1,
+};
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
@@ -41,6 +48,10 @@ pub use content_v2::{
     MAX_CELL_CONTENT_MANIFEST_BYTES_V2,
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
+pub use erasure::{
+    CellRs46ChunkBindingV1, CellRs46ShardV1, CELL_RS46_DATA_SHARDS_V1, CELL_RS46_PROFILE_V1,
+    CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1, MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
+};
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
     MAX_CHUNK_BYTES,

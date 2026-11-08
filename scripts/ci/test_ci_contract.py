@@ -860,7 +860,8 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
         self.root = Path(self.temporary.name)
-        for relative in (PQ_RELEASE_WORKFLOW, PQ_RELEASE_MANIFEST, *PQ_ROOT_HARNESS_FILES,
+        for relative in (PQ_RELEASE_WORKFLOW, PQ_RELEASE_MANIFEST,
+                         'config/pon/pq-initial-root-material-required-tests-v1.json', *PQ_ROOT_HARNESS_FILES,
                          'scripts/ci/check_required_native_test.py'):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -877,7 +878,7 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
         return marker + text.split(marker, 1)[1].split('\n      - ', 1)[0] + '\n'
 
     def release_step(self):
-        return self.step('Require initial-root and quorum controls from the complete release registry')
+        return self.step('Require all release authority and CCH1 controls from the complete Unix registry')
 
     def harness_step(self):
         return self.step('Run root-quorum codec and policy test doubles without native crypto claims')
@@ -909,7 +910,7 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
         finally:
             path.write_text(original)
 
-    def registry_log(self, names=None, count=52):
+    def registry_log(self, names=None, count=55):
         if names is None:
             names = self.manifest['complete_release_tests']
         return ''.join(name + ': test\n' for name in names) + f'\n{count} tests, 0 benchmarks\n'
@@ -935,8 +936,9 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
     def test_reviewed_groups_complete_registry_and_hosted_execution_are_required(self):
         result = check_pq_release_authority_controls(self.root)
         self.assertEqual(result['groups'], {'original_release': 37, 'initial_root_material': 6,
-                                           'quorum_preflight': 9})
-        self.assertEqual(result['complete_release'], 52)
+                                           'quorum_preflight': 9, 'cch1_content_binding': 3})
+        self.assertEqual(result['complete_release'], 55)
+        self.assertEqual(result['platform_scope'], 'unix')
         self.assertEqual(result['python_test_doubles'], 18)
         self.assertFalse(result['tests_executed'])
 
@@ -951,10 +953,68 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
                     value['complete_release_tests'].sort()
                 self.rejected_manifest(rename)
 
+    def test_v2_preserves_the_complete_legacy_manifest_and_ordered_groups(self):
+        raw = (self.root / 'config/pon/pq-initial-root-material-required-tests-v1.json').read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(),
+                         'a359086820e876a3806acdd1225689ff072ebfe10d455ac3a96d8d7060680693')
+        legacy = json.loads(raw)
+        for group in ('original_release', 'initial_root_material', 'quorum_preflight'):
+            self.assertEqual(self.manifest[group + '_tests'], legacy[group + '_tests'])
+        added = self.manifest['cch1_content_binding_tests']
+        self.assertEqual(added, [
+            'content_v1::tests::complete_artifact_and_all_metadata_enter_the_strong_commitment',
+            'content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset',
+            'content_v1::tests::short_long_wrong_locator_and_old_digest_wrapper_are_refused',
+        ])
+        self.assertEqual(self.manifest['complete_release_tests'],
+                         sorted(legacy['complete_release_tests'] + added))
+
+    def test_manifest_and_actual_reader_reject_wrong_unix_scope_or_missing_cch1(self):
+        mutations = (
+            lambda v: v.__setitem__('schema', 'trnm-pq-initial-root-material-required-tests-v1'),
+            lambda v: v.pop('platform_scope'),
+            lambda v: v.__setitem__('platform_scope', 'all-platforms'),
+            lambda v: v.__setitem__('platform_scope', 'windows'),
+            lambda v: v['expected_controls'].pop('cch1_content_binding'),
+            lambda v: v['expected_controls'].__setitem__('cch1_content_binding', 3.0),
+            lambda v: v.pop('cch1_content_binding_tests'),
+            lambda v: v['cch1_content_binding_tests'].pop(),
+            lambda v: v['cch1_content_binding_tests'].__setitem__(0, v['original_release_tests'][0]),
+            lambda v: v['cch1_content_binding_tests'].__setitem__(0, v['cch1_content_binding_tests'][1]),
+        )
+        path = self.root / PQ_RELEASE_MANIFEST
+        original = path.read_text()
+        for index, mutate in enumerate(mutations):
+            with self.subTest(mutation=index):
+                self.rejected_manifest(mutate)
+                altered = json.loads(original)
+                mutate(altered)
+                try:
+                    path.write_text(json.dumps(altered))
+                    result = self.read_registry(self.registry_log(), self.root / f'v2-negative-{index}')
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                finally:
+                    path.write_text(original)
+
+    def test_actual_registry_cannot_substitute_legacy_52_or_non_unix_54(self):
+        legacy = json.loads((self.root / 'config/pon/pq-initial-root-material-required-tests-v1.json').read_text())
+        legacy_names = legacy['complete_release_tests']
+        unix_only = 'content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset'
+        non_unix = [name for name in self.manifest['complete_release_tests'] if name != unix_only]
+        self.assertEqual(len(legacy_names), 52)
+        self.assertEqual(len(non_unix), 54)
+        for index, log in enumerate((self.registry_log(legacy_names, 52),
+                                     self.registry_log(legacy_names, 55),
+                                     self.registry_log(non_unix, 54),
+                                     self.registry_log(non_unix, 55))):
+            with self.subTest(registry=index):
+                result = self.read_registry(log, self.root / f'legacy-registry-negative-{index}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+
     def test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims(self):
         mutations = [
             lambda v: v['expected_controls'].__setitem__('complete_release', 43),
-            lambda v: v['expected_controls'].__setitem__('complete_release', 52.0),
+            lambda v: v['expected_controls'].__setitem__('complete_release', 55.0),
             lambda v: v['expected_controls'].pop('quorum_preflight'),
             lambda v: v.__setitem__('scope', 'immutable-initial-root-public-key-material-only'),
             lambda v: v['complete_release_tests'].pop(),
@@ -978,7 +1038,7 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
         reader = ('            elif ! python3 scripts/ci/check_required_native_test.py '
                   '"$out/$label.log" --test "$selector" > "$out/$label-execution.json"; then\n')
         changes = [
-            ('len(names) != 52', 'len(names) < 52'),
+            ('len(names) != 55', 'len(names) < 55'),
             ('set(names) != sets["complete_release"]', 'not sets["complete_release"].issubset(set(names))'),
             ('for group in groups for index, name', 'for group in groups[:2] for index, name'),
             ('"$selector" -- --exact --show-output', '"$selector" -- --show-output'),
@@ -1013,25 +1073,26 @@ class PqReleaseAuthorityCiTests(unittest.TestCase):
         self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'def ' + name + '(', 'def test_unreviewed(')
         self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'class RootQuorumResearchTests(', 'class UnreviewedTests(')
 
-    def test_actual_registry_reader_requires_exact_complete_52_and_three_groups(self):
+    def test_actual_registry_reader_requires_exact_complete_55_and_four_groups(self):
         output = self.root / 'registry-positive'
         result = self.read_registry(self.registry_log(), output)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)['scope'], 'registry-presence-only')
         rows = [line.split('\t') for line in (output / 'release-authority-required.tsv').read_text().splitlines()]
-        self.assertEqual(len(rows), 52)
-        self.assertEqual(len({name for _, name in rows}), 52)
+        self.assertEqual(len(rows), 55)
+        self.assertEqual(len({name for _, name in rows}), 55)
         self.assertEqual({name for _, name in rows}, set(self.manifest['complete_release_tests']))
-        for prefix, count in (('original-release-', 37), ('initial-root-', 6), ('quorum-preflight-', 9)):
+        for prefix, count in (('original-release-', 37), ('initial-root-', 6),
+                              ('quorum-preflight-', 9), ('cch1-content-binding-', 3)):
             self.assertEqual(sum(label.startswith(prefix) for label, _ in rows), count)
         names = self.manifest['complete_release_tests']
         invalid = [
-            self.registry_log(names[:-1], 51),
-            self.registry_log(names + ['unreviewed::test'], 53),
-            self.registry_log(names[:-1] + [names[0]], 52),
-            self.registry_log(names[:-1] + ['unreviewed::test'], 52),
+            self.registry_log(names[:-1], 54),
+            self.registry_log(names + ['unreviewed::test'], 56),
+            self.registry_log(names[:-1] + [names[0]], 55),
+            self.registry_log(names[:-1] + ['unreviewed::test'], 55),
             self.registry_log(count=43),
-            self.registry_log() + '52 tests, 0 benchmarks\n',
+            self.registry_log() + '55 tests, 0 benchmarks\n',
             ''.join(name + ': test\n' for name in names),
         ]
         for index, log in enumerate(invalid):
@@ -1074,15 +1135,15 @@ python3() {
   fi
   case "$mode" in
     zero)
-      printf '%s\n' 'running 0 tests' 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.00s' > "$directory/$label.log"
+      printf '%s\n' 'running 0 tests' 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 55 filtered out; finished in 0.00s' > "$directory/$label.log"
       ;;
     ignored)
-      printf 'running 1 test\ntest %s ... ignored\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 51 filtered out; finished in 0.00s\n' "$selector" > "$directory/$label.log"
+      printf 'running 1 test\ntest %s ... ignored\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 54 filtered out; finished in 0.00s\n' "$selector" > "$directory/$label.log"
       ;;
     *)
       local actual="$selector"
       if test "$mode" = wrong; then actual="${selector}::wrong"; fi
-      printf 'running 1 test\ntest %s ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.00s\n' "$actual" > "$directory/$label.log"
+      printf 'running 1 test\ntest %s ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 54 filtered out; finished in 0.00s\n' "$actual" > "$directory/$label.log"
       if test "$mode" = duplicate; then
         printf 'test %s ... ok\n' "$selector" >> "$directory/$label.log"
       fi
@@ -1105,7 +1166,7 @@ python3() {
                                         capture_output=True, text=True)
                 self.assertEqual(result.returncode == 0, mode == 'pass', result.stderr)
                 calls = [line.split('\t') for line in (output / 'calls.tsv').read_text().splitlines()]
-                self.assertEqual(len(calls), 52)
+                self.assertEqual(len(calls), 55)
                 self.assertEqual({name for _, name in calls}, set(self.manifest['complete_release_tests']))
                 for label, name in calls:
                     if mode != 'pass' and name == target:

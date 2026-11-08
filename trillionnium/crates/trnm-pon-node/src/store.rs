@@ -32,6 +32,7 @@ pub mod native_budget;
 pub mod native_owner_observation;
 mod operator_continuous_owner;
 mod operator_mining_owner;
+pub mod packet_observation;
 pub mod pinned_account_query;
 #[cfg(all(test, feature = "pq-native-openssl"))]
 mod pq_existing_owner_tests;
@@ -1805,7 +1806,7 @@ impl Node {
         state_backend: StateBackend,
         selection: SelectedOpen,
     ) -> Result<Self> {
-        let (growth_observation_only, existing_owner_only) = match selection {
+        let (observation_only, existing_owner_only) = match selection {
             SelectedOpen::InitializeOrRecover {
                 growth_observation_only,
             } => (growth_observation_only, false),
@@ -1828,10 +1829,14 @@ impl Node {
                 == (state_backend == StateBackend::PermanentAccountGrowthV2),
             "GROWTH_PROFILE_BACKEND",
         )?;
-        if growth_observation_only {
+        if observation_only {
             ensure(
-                state_backend == StateBackend::PermanentAccountGrowthV2
-                    && path.join("native.sqlite").is_file(),
+                matches!(
+                    state_backend,
+                    StateBackend::Legacy
+                        | StateBackend::AuthenticatedV1
+                        | StateBackend::PermanentAccountGrowthV2
+                ) && path.join("native.sqlite").is_file(),
                 "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
             )?;
         }
@@ -1922,7 +1927,7 @@ impl Node {
         let dbpath = directory.join("native.sqlite");
         let marker = directory.join("initializing.json");
         ensure(
-            !growth_observation_only || !marker.exists(),
+            !observation_only || !marker.exists(),
             "GROWTH_OBSERVATION_RECOVERY_REQUIRED",
         )?;
         let lock = directory.join("owner.lock");
@@ -2113,12 +2118,12 @@ impl Node {
             plain(p)?;
         }
         ensure(
-            !growth_observation_only || initialized,
+            !observation_only || initialized,
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
         let mut db = if let Some(db) = retained_existing {
             db
-        } else if growth_observation_only {
+        } else if observation_only {
             Connection::open_with_flags(
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -2131,7 +2136,7 @@ impl Node {
             ensure(previous == (dm.dev(), dm.ino()), "NAMESPACE_CHANGED")?;
         }
         db.busy_timeout(Duration::from_secs(5))?;
-        if growth_observation_only {
+        if observation_only {
             db.execute_batch(
                 "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA query_only=ON;",
             )?;
@@ -2263,12 +2268,16 @@ impl Node {
             // Complete-State reference budget records cannot be silently ignored
             // by this backend. Validate/refuse them before any growth recovery.
             node.validate_native_budget_records_v1()?;
-            node.growth_cold_open(!growth_observation_only)?;
+            node.growth_cold_open(!observation_only)?;
             node.validate_native_task_operation_pins_v1()?;
             node.validate_native_demand_evidence_v1()?;
             // Settings retain the immutable genesis input for exact reopen. Hot
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
+        }
+        if observation_only {
+            // Cold reconciliation must not finish an owner's unpublished reorg.
+            node.ready()?;
         }
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
@@ -2285,7 +2294,11 @@ impl Node {
         node.validate_native_budget_records_v1()?;
         node.validate_native_task_operation_pins_v1()?;
         node.validate_native_demand_evidence_v1()?;
-        node.recover()?;
+        if observation_only {
+            node.check_packet_observation_recovery()?;
+        } else {
+            node.recover()?;
+        }
         node.read_active()?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context()?, node.active()?.0)?;
         Ok(node)
@@ -6097,6 +6110,21 @@ impl Node {
         }
         Ok(())
     }
+    /// The read-only prefix of activation, also used by cold reconciliation.
+    fn activation_selection(&self, target: Hash) -> Result<(Hash, u64, Option<u64>)> {
+        let (old, generation) = self.active()?;
+        let next = if self.record(target)?.work > self.record(old)?.work {
+            Some(
+                generation
+                    .checked_add(1)
+                    .filter(|value| *value <= i64::MAX as u64)
+                    .ok_or("GENERATION")?,
+            )
+        } else {
+            None
+        };
+        Ok((old, generation, next))
+    }
     pub fn activate(&mut self, target: Hash) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_activate(target);
@@ -6127,14 +6155,10 @@ impl Node {
         self.mining_activation_gate(target)?;
         self.namespace()?;
         self.resume_owned_reorg(&mut hook, progress, termination_cpu)?;
-        let (old, g) = self.active()?;
-        if self.record(target)?.work <= self.record(old)?.work {
+        let (old, g, next) = self.activation_selection(target)?;
+        let Some(next) = next else {
             return Ok(old);
-        }
-        let next = g
-            .checked_add(1)
-            .filter(|v| *v <= i64::MAX as u64)
-            .ok_or("GENERATION")?;
+        };
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
             progress()?;
@@ -6409,15 +6433,9 @@ impl Node {
         }
         ensure(count == expected.len(), "REORG_EVENTS").map_err(Error::local_integrity)
     }
-    fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
-        self.resume_intent_with_progress(hook, &mut || Ok(()))
-    }
-    fn resume_intent_with_progress(
-        &mut self,
-        hook: &mut Option<&mut Hook<'_>>,
-        progress: &mut dyn FnMut() -> Result<()>,
-    ) -> Result<Hash> {
-        progress()?;
+    /// Decode every original column even when a journal is already terminal.
+    /// Observing only `done` would miss malformed completed-row metadata.
+    fn checked_reorg_intent(&self) -> Result<Option<ReorgRow>> {
         let row = self
             .db
             .query_row(
@@ -6434,15 +6452,27 @@ impl Node {
                 },
             )
             .optional()?;
-        let Some((old, target, g, position, done)) = row else {
+        if let Some((_, _, _, _, done)) = &row {
+            ensure(*done <= 2, "REORG_STEPS").map_err(Error::local_integrity)?;
+            if *done == 2 {
+                self.check_cancelled_reorg_lifecycle()?;
+            }
+        }
+        Ok(row)
+    }
+    fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
+        self.resume_intent_with_progress(hook, &mut || Ok(()))
+    }
+    fn resume_intent_with_progress(
+        &mut self,
+        hook: &mut Option<&mut Hook<'_>>,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
+        let Some((old, target, g, position, done)) = self.checked_reorg_intent()? else {
             return Ok(self.active()?.0);
         };
-        ensure(done <= 2, "REORG_STEPS").map_err(Error::local_integrity)?;
-        if done == 2 {
-            self.check_cancelled_reorg_lifecycle()?;
-            return Ok(self.active()?.0);
-        }
-        if done == 1 {
+        if done != 0 {
             return Ok(self.active()?.0);
         }
         self.invalidate_commitment();
@@ -6575,6 +6605,14 @@ impl Node {
         cut(hook, "published")?;
         Ok(target)
     }
+    fn recovery_target(&self) -> Result<Hash> {
+        let best: Vec<u8> = self.db.query_row(
+            "SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1",
+            [],
+            |row| row.get(0),
+        )?;
+        bytes32(best)
+    }
     pub fn recover(&mut self) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_recover();
@@ -6588,12 +6626,8 @@ impl Node {
         self.invalidate_commitment();
         self.namespace()?;
         self.resume_intent(&mut None)?;
-        let best: Vec<u8> = self.db.query_row(
-            "SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1",
-            [],
-            |r| r.get(0),
-        )?;
-        self.activate(bytes32(best)?)
+        let best = self.recovery_target()?;
+        self.activate(best)
     }
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
         self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))

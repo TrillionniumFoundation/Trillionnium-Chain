@@ -8,6 +8,7 @@ on:
       - config/pon/pq-native-tls-required-tests-v1.json
       - config/pon/pq-native-tls-witness-required-tests-v1.json
       - config/pon/pq-initial-root-material-required-tests-v1.json
+      - config/pon/pq-release-authority-required-tests-v2.json
       - formal/pon-nakamoto-v1/pq_root_quorum_research.py
       - formal/pon-nakamoto-v1/test_pq_root_quorum_research.py
       - scripts/ci/check_ci_contract.py
@@ -157,7 +158,7 @@ jobs:
             --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" \
             --wycheproof trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json \
             --build-dir "$out/c-build" --report "$out/differential.json"
-      - name: Require initial-root and quorum controls from the complete release registry
+      - name: Require all release authority and CCH1 controls from the complete Unix registry
         shell: bash
         run: |
           set -euo pipefail
@@ -170,7 +171,7 @@ jobs:
           fi
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label initial-root-release-registry --output "$out" -- \
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib -- --list
-          python3 - config/pon/pq-initial-root-material-required-tests-v1.json "$out" <<'PY'
+          python3 - config/pon/pq-release-authority-required-tests-v2.json "$out" <<'PY'
           import json
           import re
           import sys
@@ -178,12 +179,13 @@ jobs:
 
           manifest = json.loads(Path(sys.argv[1]).read_text())
           counts = {"original_release": 37, "initial_root_material": 6,
-                    "quorum_preflight": 9, "complete_release": 52}
+                    "quorum_preflight": 9, "cch1_content_binding": 3, "complete_release": 55}
           if (not isinstance(manifest, dict)
-                  or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
+                  or manifest.get("schema") != "trnm-pq-release-authority-required-tests-v2"
                   or manifest.get("package") != "trnm-release-bundle"
                   or manifest.get("harness") != "lib"
-                  or manifest.get("scope") != "immutable-initial-root-public-key-material-and-release-quorum-preflight-only"
+                  or manifest.get("platform_scope") != "unix"
+                  or manifest.get("scope") != "release-authority-initial-root-quorum-and-cch1-content-binding-unix-only"
                   or not isinstance(manifest.get("expected_controls"), dict)
                   or manifest["expected_controls"] != counts
                   or any(type(value) is not int for value in manifest["expected_controls"].values())
@@ -200,7 +202,7 @@ jobs:
                       or len(set(names)) != count):
                   raise SystemExit("release-authority required-control names invalid")
               sets[key] = set(names)
-          groups = ("original_release", "initial_root_material", "quorum_preflight")
+          groups = ("original_release", "initial_root_material", "quorum_preflight", "cch1_content_binding")
           if (any(sets[left] & sets[right] for index, left in enumerate(groups)
                   for right in groups[index + 1:])
                   or sets["complete_release"] != set().union(*(sets[group] for group in groups))):
@@ -209,11 +211,11 @@ jobs:
           log = (root / "initial-root-release-registry.log").read_text()
           names = re.findall(r"^([A-Za-z0-9_:]+): test$", log, re.M)
           summaries = re.findall(r"^([0-9]+) tests, ([0-9]+) benchmarks$", log, re.M)
-          if (len(names) != 52 or len(set(names)) != 52 or set(names) != sets["complete_release"]
-                  or summaries != [("52", "0")]):
-              raise SystemExit("release-authority actual binary registry differs from the complete required 52")
+          if (len(names) != 55 or len(set(names)) != 55 or set(names) != sets["complete_release"]
+                  or summaries != [("55", "0")]):
+              raise SystemExit("release-authority actual binary registry differs from the complete required Unix 55")
           prefixes = {"original_release": "original-release", "initial_root_material": "initial-root",
-                      "quorum_preflight": "quorum-preflight"}
+                      "quorum_preflight": "quorum-preflight", "cch1_content_binding": "cch1-content-binding"}
           (root / "release-authority-required.tsv").write_text("".join(
               f"{prefixes[group]}-{index:02d}\t{name}\n"
               for group in groups for index, name in enumerate(manifest[group + "_tests"])))
