@@ -1,0 +1,11 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+    Finished `release` profile [optimized] target(s) in 5.54s
+     Running unittests examples/pon_rejection_cost.rs (/home/runner/work/_temp/target-w1-security/release/examples/pon_rejection_cost-89af9a54eb5ca413)
+
+running 3 tests
+test tests::actual_late_rejection_stage_matches_scalar_and_keeps_cancellation_distinct ... ok
+test tests::bounded_search_and_fake_ticket_exhaustion_keep_every_attempt ... ok
+test tests::product_last_cell_mutation_is_canonical_even_at_modulus_boundary ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

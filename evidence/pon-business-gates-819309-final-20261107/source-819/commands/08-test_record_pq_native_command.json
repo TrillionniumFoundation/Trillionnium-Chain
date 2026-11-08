@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/test_record_pq_native_command.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:36:11.677418+00:00",
+  "exit_code": 0,
+  "log": "logs/08-test_record_pq_native_command.log",
+  "log_bytes": 1166,
+  "log_sha256": "81ab5a2734a6ead87a69d17a6514f4ad4b47692175cc8a9e21423844455e922a",
+  "name": "08-test_record_pq_native_command",
+  "pid": 1336380,
+  "start_utc": "2026-11-07T18:36:11.005208+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 672224956
+}

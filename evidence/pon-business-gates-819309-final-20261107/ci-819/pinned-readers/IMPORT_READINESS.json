@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-reader-import-only-readiness-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "modules": [
+    {
+      "name": "run_from_zero_native",
+      "file": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/ci/run_from_zero_native.py"
+    },
+    {
+      "name": "run_w1_fresh_service_v1",
+      "file": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/ci/run_w1_fresh_service_v1.py"
+    },
+    {
+      "name": "run_history_native",
+      "file": "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/ci/run_history_native.py"
+    }
+  ],
+  "policy_revision": "r14",
+  "result": "PASS",
+  "native_commands_executed": 0,
+  "github_calls": 0,
+  "business_gate_validated": false
+}

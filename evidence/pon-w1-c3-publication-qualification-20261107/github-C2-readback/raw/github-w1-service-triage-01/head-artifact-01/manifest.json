@@ -1,0 +1,590 @@
+{
+  "all_members_decompressed": false,
+  "api_digest": "sha256:ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4",
+  "api_size_in_bytes": 5630716,
+  "archive": {
+    "bytes": 5630716,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/02-original-artifact-zip.stdout",
+    "sha256": "ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4"
+  },
+  "artifact_id": 13594760529,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        ".login"
+      ],
+      "exit": 0,
+      "label": "00-identity",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/00-identity.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 10,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/00-identity.stdout",
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13594760529"
+      ],
+      "exit": 0,
+      "label": "01-artifact-metadata",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/01-artifact-metadata.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 811,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/01-artifact-metadata.stdout",
+        "sha256": "019f054c00f9ec14aa6dd47a982fc3f6ca6a27e8bf94f7a4afcb857357ae00d9"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13594760529/zip"
+      ],
+      "exit": 0,
+      "label": "02-original-artifact-zip",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/02-original-artifact-zip.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 5630716,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/02-original-artifact-zip.stdout",
+        "sha256": "ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4"
+      }
+    }
+  ],
+  "completed": true,
+  "errors": [],
+  "executed_artifact_content": false,
+  "head_sha": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "job_id": 128555111370,
+  "member_count": 57,
+  "members": [
+    {
+      "bytes": 108305,
+      "compressed_bytes": 7777,
+      "crc32": 868458307,
+      "directory": false,
+      "path": "fresh-service/build.log"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33622,
+      "crc32": 1581979833,
+      "directory": false,
+      "path": "fresh-service/fresh/baseline/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/fresh/baseline/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "path": "fresh-service/fresh/baseline/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/fresh/baseline/receiver/owner.lock"
+    },
+    {
+      "bytes": 196608,
+      "compressed_bytes": 9361,
+      "crc32": 994842766,
+      "directory": false,
+      "path": "fresh-service/fresh/pressure/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/fresh/pressure/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "path": "fresh-service/fresh/pressure/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/fresh/pressure/receiver/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": 3407097486,
+      "directory": false,
+      "path": "fresh-service/fresh/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/fresh/producer/owner.lock"
+    },
+    {
+      "bytes": 7607168,
+      "compressed_bytes": 405311,
+      "crc32": 1378156378,
+      "directory": false,
+      "path": "fresh-service/fresh/report.json"
+    },
+    {
+      "bytes": 914,
+      "compressed_bytes": 476,
+      "crc32": 876182878,
+      "directory": false,
+      "path": "fresh-service/fresh.log"
+    },
+    {
+      "bytes": 8919,
+      "compressed_bytes": 1992,
+      "crc32": 2748609989,
+      "directory": false,
+      "path": "fresh-service/manifest.json"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33622,
+      "crc32": 1581979833,
+      "directory": false,
+      "path": "fresh-service/original/baseline/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/original/baseline/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "path": "fresh-service/original/baseline/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/original/baseline/receiver/owner.lock"
+    },
+    {
+      "bytes": 294912,
+      "compressed_bytes": 16998,
+      "crc32": 2860028373,
+      "directory": false,
+      "path": "fresh-service/original/pressure/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/original/pressure/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "path": "fresh-service/original/pressure/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/original/pressure/receiver/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": 3407097486,
+      "directory": false,
+      "path": "fresh-service/original/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service/original/producer/owner.lock"
+    },
+    {
+      "bytes": 11126345,
+      "compressed_bytes": 459023,
+      "crc32": 180791375,
+      "directory": false,
+      "path": "fresh-service/original/report.json"
+    },
+    {
+      "bytes": 420,
+      "compressed_bytes": 277,
+      "crc32": 1983506030,
+      "directory": false,
+      "path": "fresh-service/original.log"
+    },
+    {
+      "bytes": 10972280,
+      "compressed_bytes": 4426077,
+      "crc32": 2189550760,
+      "directory": false,
+      "path": "fresh-service/public_v3_from_zero"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 37,
+      "crc32": 1815887164,
+      "directory": false,
+      "path": "fresh-service-controls.log"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": 3011331718,
+      "directory": false,
+      "path": "fresh-service-host/actual-systemd-parent-after.log"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": 3011331718,
+      "directory": false,
+      "path": "fresh-service-host/actual-systemd-parent.log"
+    },
+    {
+      "bytes": 1634,
+      "compressed_bytes": 791,
+      "crc32": 906703593,
+      "directory": false,
+      "path": "fresh-service-host/after-provision.json"
+    },
+    {
+      "bytes": 2801,
+      "compressed_bytes": 711,
+      "crc32": 3640269822,
+      "directory": false,
+      "path": "fresh-service-host/before-provision.json"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": 321726484,
+      "directory": false,
+      "path": "fresh-service-host/child-final-load-state.log"
+    },
+    {
+      "bytes": 353,
+      "compressed_bytes": 232,
+      "crc32": 1406271876,
+      "directory": false,
+      "path": "fresh-service-host/child-result.json"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": 321726484,
+      "directory": false,
+      "path": "fresh-service-host/child-load-state.log"
+    },
+    {
+      "bytes": 7701,
+      "compressed_bytes": 1993,
+      "crc32": 2440703905,
+      "directory": false,
+      "path": "fresh-service-host/controller-result.json"
+    },
+    {
+      "bytes": 1711,
+      "compressed_bytes": 821,
+      "crc32": 877373706,
+      "directory": false,
+      "path": "fresh-service-host/inside-after.json"
+    },
+    {
+      "bytes": 1699,
+      "compressed_bytes": 808,
+      "crc32": 671367483,
+      "directory": false,
+      "path": "fresh-service-host/inside-before.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service-host/install-reviewed-unit.log"
+    },
+    {
+      "bytes": 1667,
+      "compressed_bytes": 836,
+      "crc32": 3588292857,
+      "directory": false,
+      "path": "fresh-service-host/outside-after.json"
+    },
+    {
+      "bytes": 146,
+      "compressed_bytes": 111,
+      "crc32": 4046598973,
+      "directory": false,
+      "path": "fresh-service-host/parent-properties.log"
+    },
+    {
+      "bytes": 921,
+      "compressed_bytes": 520,
+      "crc32": 2299276514,
+      "directory": false,
+      "path": "fresh-service-host/prepare-build/process.json"
+    },
+    {
+      "bytes": 7069,
+      "compressed_bytes": 1614,
+      "crc32": 3201510107,
+      "directory": false,
+      "path": "fresh-service-host/prepare-build/stderr"
+    },
+    {
+      "bytes": 108363,
+      "compressed_bytes": 7783,
+      "crc32": 1838903611,
+      "directory": false,
+      "path": "fresh-service-host/prepare-build/stdout"
+    },
+    {
+      "bytes": 3406,
+      "compressed_bytes": 1230,
+      "crc32": 92713061,
+      "directory": false,
+      "path": "fresh-service-host/prepare-build.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service-host/seal-parent-directory.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service-host/seal-parent-receipt.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service-host/start-fixed-parent.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "path": "fresh-service-host/systemd-reload.log"
+    },
+    {
+      "bytes": 541,
+      "compressed_bytes": 370,
+      "crc32": 1562886372,
+      "directory": false,
+      "path": "fresh-service-host/systemd-run.log"
+    },
+    {
+      "bytes": 178,
+      "compressed_bytes": 38,
+      "crc32": 2553495181,
+      "directory": false,
+      "path": "original-host-controls.log"
+    },
+    {
+      "bytes": 229,
+      "compressed_bytes": 139,
+      "crc32": 2035026314,
+      "directory": false,
+      "path": "fresh-service-host/unprovisioned-parent.json"
+    },
+    {
+      "bytes": 24541,
+      "compressed_bytes": 4011,
+      "crc32": 3352151497,
+      "directory": false,
+      "path": "original-native-controls.log"
+    },
+    {
+      "bytes": 133,
+      "compressed_bytes": 114,
+      "crc32": 1692302564,
+      "directory": false,
+      "path": "preflight.log"
+    },
+    {
+      "bytes": 3306,
+      "compressed_bytes": 1229,
+      "crc32": 3142750841,
+      "directory": false,
+      "path": "public-fixture-parent.json"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 239,
+      "crc32": 1491402937,
+      "directory": false,
+      "path": "source-after.json"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 239,
+      "crc32": 1491402937,
+      "directory": false,
+      "path": "source.json"
+    }
+  ],
+  "rerun_or_cancel": false,
+  "run_id": 42422952132,
+  "schema": "TRNM-W1-FRESH-SERVICE-ARTIFACT-READONLY1",
+  "selected_text": [
+    {
+      "bytes": 7607168,
+      "member": "fresh-service/fresh/report.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service/fresh/report.json",
+      "sha256": "71e2eaa17dba3d3bdc0b70b41269b34f73ba58d28e50eca3ba007da9e08fcacb"
+    },
+    {
+      "bytes": 8919,
+      "member": "fresh-service/manifest.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service/manifest.json",
+      "sha256": "82a69278cf62c643a808149bdc5a62ef9a7fdccd54c79192ce6f17b679ce2ae0"
+    },
+    {
+      "bytes": 1634,
+      "member": "fresh-service-host/after-provision.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/after-provision.json",
+      "sha256": "fa356c775c3b457282050a441fdcd3fdf5befad7c8c94e612b487dbde3184c20"
+    },
+    {
+      "bytes": 2801,
+      "member": "fresh-service-host/before-provision.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/before-provision.json",
+      "sha256": "6f9608fec67c36613452d6dd028d6abc0b4705dcd4fdee30a69e1d1ed494b02f"
+    },
+    {
+      "bytes": 353,
+      "member": "fresh-service-host/child-result.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/child-result.json",
+      "sha256": "7a883b0c765493318c236c586de94295c5d78bfa7c4e951de9994f54d86449da"
+    },
+    {
+      "bytes": 7701,
+      "member": "fresh-service-host/controller-result.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/controller-result.json",
+      "sha256": "9656d13659363510dc249756875c6270e81ef8ab4634e47d3017df98b8e52283"
+    },
+    {
+      "bytes": 1711,
+      "member": "fresh-service-host/inside-after.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/inside-after.json",
+      "sha256": "0ff0d7abcf0cde9c23af7da75a292d9626da0d29497102e9abbd2a1d6aad1cc8"
+    },
+    {
+      "bytes": 1699,
+      "member": "fresh-service-host/inside-before.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/inside-before.json",
+      "sha256": "ee5d148cf06123f32eb9963caa372d7cc30b7b3fc974c780d916e7c71b3083bd"
+    },
+    {
+      "bytes": 1667,
+      "member": "fresh-service-host/outside-after.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/outside-after.json",
+      "sha256": "990c82e561db50c8ecfbb046996299f19c9ad90dd9c93ddbc2efd02ca3c89268"
+    },
+    {
+      "bytes": 921,
+      "member": "fresh-service-host/prepare-build/process.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/prepare-build/process.json",
+      "sha256": "1e287f1631705d54d5d9072e1956baa01b6ba7453e102ef4a0d422fa60df2a2b"
+    },
+    {
+      "bytes": 7069,
+      "member": "fresh-service-host/prepare-build/stderr",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/prepare-build/stderr",
+      "sha256": "a891c33599605ad866c032ca309cc2d1c2c6917879f26df042b33a5cdfaf577e"
+    },
+    {
+      "bytes": 108363,
+      "member": "fresh-service-host/prepare-build/stdout",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/prepare-build/stdout",
+      "sha256": "07463d779d11315268b4880e11f6032f8b8241c14de5af904dd597790179a2a7"
+    },
+    {
+      "bytes": 3406,
+      "member": "fresh-service-host/prepare-build.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/prepare-build.json",
+      "sha256": "20f3a458c080cbfcb24b177d000eea23185edf76e1acccb3bece40aaaad32f20"
+    },
+    {
+      "bytes": 229,
+      "member": "fresh-service-host/unprovisioned-parent.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/fresh-service-host/unprovisioned-parent.json",
+      "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+    },
+    {
+      "bytes": 3306,
+      "member": "public-fixture-parent.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/public-fixture-parent.json",
+      "sha256": "c983b54567c8d4773591b8e1bd44aac2311991b884d6abd34320378de42116d9"
+    },
+    {
+      "bytes": 423,
+      "member": "source-after.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/source-after.json",
+      "sha256": "863fe8c81b74365a4a69b65eec394208068feb304d8fe1ed13db9294eeba0738"
+    },
+    {
+      "bytes": 423,
+      "member": "source.json",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01/selected-text/source.json",
+      "sha256": "863fe8c81b74365a4a69b65eec394208068feb304d8fe1ed13db9294eeba0738"
+    }
+  ],
+  "selected_uncompressed_bytes": 7757793,
+  "source_or_gate_modified": false,
+  "uncompressed_bytes": 34481360,
+  "zip_entries": 57
+}

@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/throughput-final-ci-observation-20261107/read_fresh_artifacts_819_v1.py", line 7, in <module>
+    import run_from_zero_native as native
+  File "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/scripts/ci/run_from_zero_native.py", line 33, in <module>
+    from contract_wire import H, header_decode, tx_decode
+  File "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/formal/pon-nakamoto-v1/contract_wire.py", line 18, in <module>
+    SCHEMA=read_config('config/pon/ledger-v1.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/formal/pon-nakamoto-v1/contract_wire.py", line 17, in read_config
+    return json.loads((ROOT/path).read_text(),object_pairs_hook=unique)
+                      ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-final-ci-observation-20261107/pinned-readers-819309fd-v1/config/pon/ledger-v1.json'

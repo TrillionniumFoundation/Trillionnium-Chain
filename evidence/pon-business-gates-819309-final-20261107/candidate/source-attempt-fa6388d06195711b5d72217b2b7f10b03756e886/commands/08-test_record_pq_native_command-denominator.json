@@ -1,0 +1,33 @@
+{
+  "command_record": "commands/08-test_record_pq_native_command.json",
+  "duplicate_test_names": {},
+  "expected_tests": 4,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.CommandRecords.test_exact_source_and_log_are_recorded_without_an_acceptance_claim",
+    "__main__.CommandRecords.test_existing_receipt_is_not_replaced_by_a_later_success",
+    "__main__.CommandRecords.test_real_child_failure_and_stderr_are_preserved",
+    "__main__.CommandRecords.test_successful_child_that_changes_raw_source_cannot_pass"
+  ],
+  "observed_ran_tests": 4,
+  "observed_verbose_test_starts": 4,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "4",
+      "0.484"
+    ]
+  ],
+  "passed": true,
+  "path": "scripts/ci/test_record_pq_native_command.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 1166,
+  "raw_log_sha256": "79d5b96e0a97f75aff8322b36f911759cbc3c884c1a75bf45666ce8d98dd1c96",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "8ff5a8b900675862511321a7c913d79f9b56185f1db9aac8f231f0fb705b528e",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

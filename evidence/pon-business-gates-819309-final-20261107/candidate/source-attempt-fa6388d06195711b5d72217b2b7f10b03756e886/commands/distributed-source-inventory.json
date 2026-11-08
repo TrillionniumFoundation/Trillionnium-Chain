@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T21:49:23.771239+00:00",
+  "exit_code": 0,
+  "log": "logs/distributed-source-inventory.log",
+  "log_bytes": 35,
+  "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+  "name": "distributed-source-inventory",
+  "pid": 1862885,
+  "start_utc": "2026-11-07T21:49:23.651149+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 120098745
+}

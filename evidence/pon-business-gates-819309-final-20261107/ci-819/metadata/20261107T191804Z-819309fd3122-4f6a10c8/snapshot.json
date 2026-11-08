@@ -1,0 +1,2960 @@
+{
+  "authority": {
+    "identity_after": {
+      "login": "ProfHepta",
+      "user_id": 102159240
+    },
+    "login": "ProfHepta",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    },
+    "repository_id": 1323087357,
+    "user_id": 102159240
+  },
+  "collections": [
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        4
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98",
+      "ids": [
+        42402626579,
+        42402618518,
+        42402618358,
+        42402618462
+      ],
+      "key": "workflow_runs",
+      "label": "head-all-events",
+      "pages": 1,
+      "returned": 4,
+      "unique_ids": 4
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        1
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/378180520/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98",
+      "ids": [
+        42402618518
+      ],
+      "key": "workflow_runs",
+      "label": "priority-all-events",
+      "pages": 1,
+      "returned": 1,
+      "unique_ids": 1
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        1
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/403419146/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98",
+      "ids": [
+        42402618462
+      ],
+      "key": "workflow_runs",
+      "label": "w1-all-events",
+      "pages": 1,
+      "returned": 1,
+      "unique_ids": 1
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        44
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/commits/819309fd312298e099642e1253b1d4ba07113e98/check-runs?filter=all",
+      "ids": [
+        128493710720,
+        128493695831,
+        128493695771,
+        128493695770,
+        128493695759,
+        128493695753,
+        128493695748,
+        128493695743,
+        128493695738,
+        128493695730,
+        128493695717,
+        128493695716,
+        128493695715,
+        128493695710,
+        128493695708,
+        128493695693,
+        128493695691,
+        128493695689,
+        128493695687,
+        128493695680,
+        128493695658,
+        128493695650,
+        128493695647,
+        128493671940,
+        128493671854,
+        128493671835,
+        128493671830,
+        128493671829,
+        128493671825,
+        128493671818,
+        128493671802,
+        128493671778,
+        128493671763,
+        128493671759,
+        128493671755,
+        128493506905,
+        128493506850,
+        128493506640,
+        128493480004,
+        128493479963,
+        128493479159,
+        128493478540,
+        128493478503,
+        128493478367
+      ],
+      "key": "check_runs",
+      "label": "check-runs-all",
+      "pages": 1,
+      "returned": 44,
+      "unique_ids": 44
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        0
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/commits/819309fd312298e099642e1253b1d4ba07113e98/status",
+      "ids": [],
+      "key": "statuses",
+      "label": "combined-status",
+      "pages": 1,
+      "returned": 0,
+      "unique_ids": 0
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        23
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/jobs?filter=all",
+      "ids": [
+        128493479159,
+        128493695647,
+        128493695650,
+        128493695658,
+        128493695680,
+        128493695687,
+        128493695689,
+        128493695691,
+        128493695693,
+        128493695708,
+        128493695710,
+        128493695715,
+        128493695716,
+        128493695717,
+        128493695730,
+        128493695738,
+        128493695743,
+        128493695748,
+        128493695753,
+        128493695759,
+        128493695770,
+        128493695771,
+        128493695831
+      ],
+      "key": "jobs",
+      "label": "run-42402618462-all-attempt-jobs",
+      "pages": 1,
+      "returned": 23,
+      "unique_ids": 23
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        23
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/attempts/1/jobs",
+      "ids": [
+        128493479159,
+        128493695647,
+        128493695650,
+        128493695658,
+        128493695680,
+        128493695687,
+        128493695689,
+        128493695691,
+        128493695693,
+        128493695708,
+        128493695710,
+        128493695715,
+        128493695716,
+        128493695717,
+        128493695730,
+        128493695738,
+        128493695743,
+        128493695748,
+        128493695753,
+        128493695759,
+        128493695770,
+        128493695771,
+        128493695831
+      ],
+      "key": "jobs",
+      "label": "run-42402618462-attempt-1-jobs",
+      "pages": 1,
+      "returned": 23,
+      "unique_ids": 23
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        23
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/artifacts",
+      "ids": [
+        13587135201,
+        13586791050,
+        13586691635,
+        13586686618,
+        13586660807,
+        13586616233,
+        13586616185,
+        13586581750,
+        13586536526,
+        13586509176,
+        13586482467,
+        13586467463,
+        13586462531,
+        13586459476,
+        13586332713,
+        13586257049,
+        13586253351,
+        13586134600,
+        13586108382,
+        13586043542,
+        13585963261,
+        13585554366,
+        13584974949
+      ],
+      "key": "artifacts",
+      "label": "run-42402618462-artifacts",
+      "pages": 1,
+      "returned": 23,
+      "unique_ids": 23
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        14
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/jobs?filter=all",
+      "ids": [
+        128493479963,
+        128493480004,
+        128493671755,
+        128493671759,
+        128493671763,
+        128493671778,
+        128493671802,
+        128493671818,
+        128493671825,
+        128493671829,
+        128493671830,
+        128493671835,
+        128493671854,
+        128493671940
+      ],
+      "key": "jobs",
+      "label": "run-42402618518-all-attempt-jobs",
+      "pages": 1,
+      "returned": 14,
+      "unique_ids": 14
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        14
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/attempts/1/jobs",
+      "ids": [
+        128493479963,
+        128493480004,
+        128493671755,
+        128493671759,
+        128493671763,
+        128493671778,
+        128493671802,
+        128493671818,
+        128493671825,
+        128493671829,
+        128493671830,
+        128493671835,
+        128493671854,
+        128493671940
+      ],
+      "key": "jobs",
+      "label": "run-42402618518-attempt-1-jobs",
+      "pages": 1,
+      "returned": 14,
+      "unique_ids": 14
+    },
+    {
+      "coverage_complete": true,
+      "declared_totals": [
+        5
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/artifacts",
+      "ids": [
+        13586980357,
+        13586309794,
+        13586249872,
+        13586194181,
+        13585647797
+      ],
+      "key": "artifacts",
+      "label": "run-42402618518-artifacts",
+      "pages": 1,
+      "returned": 5,
+      "unique_ids": 5
+    }
+  ],
+  "finished_utc": "2026-11-07T19:18:36.457080+00:00",
+  "issues": [],
+  "job_roster": [
+    {
+      "completed_at": "2026-11-07T18:43:28Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493479159",
+      "id": 128493479159,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "Freeze actual integration push source",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041677",
+      "started_at": "2026-11-07T18:42:38Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:50:40Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695647",
+      "id": 128493695647,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 false trace reuse (x64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041702",
+      "started_at": "2026-11-07T18:43:30Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:19Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695650",
+      "id": 128493695650,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041696",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:05Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695658",
+      "id": 128493695658,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 false trace reuse (arm64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041695",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T19:03:53Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695680",
+      "id": 128493695680,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 factorial legal strategies v3 (arm64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041697",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:23Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695687",
+      "id": 128493695687,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 complete legal strategies (v1, arm64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041699",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:12Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695689",
+      "id": 128493695689,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 paid rank and batch v5 (arm64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041701",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:06Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695691",
+      "id": 128493695691,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041715",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:51:52Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695693",
+      "id": 128493695693,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041703",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:55:01Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695708",
+      "id": 128493695708,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041704",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:52Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695710",
+      "id": 128493695710,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041705",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T19:04:09Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695715",
+      "id": 128493695715,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041706",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:49:04Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695716",
+      "id": 128493695716,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 fresh challenge service (x64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041710",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:54:21Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695717",
+      "id": 128493695717,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 complete legal strategies (v2, arm64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041700",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T19:03:27Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695730",
+      "id": 128493695730,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041716",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T19:01:15Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695738",
+      "id": 128493695738,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 factorial legal strategies v3 (x64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041712",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:06Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695743",
+      "id": 128493695743,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041714",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:48Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695748",
+      "id": 128493695748,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 complete legal strategies (v1, x64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041708",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:52:49Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695753",
+      "id": 128493695753,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 paid rank and batch v5 (x64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041711",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:51:34Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695759",
+      "id": 128493695759,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 complete legal strategies (v2, x64, head)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041707",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:51:18Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695770",
+      "id": 128493695770,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041709",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:54:26Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695771",
+      "id": 128493695771,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041698",
+      "started_at": "2026-11-07T18:43:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:48:27Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/job/128493695831",
+      "id": 128493695831,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "run_attempt": 1,
+      "run_id": 42402618462,
+      "runner_name": "GitHub Actions 1000041713",
+      "started_at": "2026-11-07T18:43:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:42:42Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493479963",
+      "id": 128493479963,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "retained-pressure-failure",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041679",
+      "started_at": "2026-11-07T18:42:38Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-07T18:43:22Z",
+      "conclusion": "success",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493480004",
+      "id": 128493480004,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "Freeze actual integration push source",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041678",
+      "started_at": "2026-11-07T18:42:38Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671755",
+      "id": 128493671755,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "native priorities (ubuntu-24.04, head, state)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041685",
+      "started_at": "2026-11-07T18:43:24Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-07T19:04:50Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671759",
+      "id": 128493671759,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041683",
+      "started_at": "2026-11-07T18:43:27Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671763",
+      "id": 128493671763,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041684",
+      "started_at": "2026-11-07T18:43:27Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-07T18:59:26Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671778",
+      "id": 128493671778,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041686",
+      "started_at": "2026-11-07T18:43:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671802",
+      "id": 128493671802,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041687",
+      "started_at": "2026-11-07T18:43:25Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671818",
+      "id": 128493671818,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "native priorities (ubuntu-24.04-arm, head, state)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041691",
+      "started_at": "2026-11-07T18:43:27Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-07T19:05:00Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671825",
+      "id": 128493671825,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041694",
+      "started_at": "2026-11-07T18:43:27Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671829",
+      "id": 128493671829,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041692",
+      "started_at": "2026-11-07T18:43:27Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": "2026-11-07T19:04:07Z",
+      "conclusion": "failure",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671830",
+      "id": 128493671830,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041688",
+      "started_at": "2026-11-07T18:43:25Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671835",
+      "id": 128493671835,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041689",
+      "started_at": "2026-11-07T18:43:25Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671854",
+      "id": 128493671854,
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "name": "native priorities (ubuntu-24.04-arm, head, history)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041693",
+      "started_at": "2026-11-07T18:43:27Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/job/128493671940",
+      "id": 128493671940,
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "run_attempt": 1,
+      "run_id": 42402618518,
+      "runner_name": "GitHub Actions 1000041690",
+      "started_at": "2026-11-07T18:43:25Z",
+      "status": "in_progress"
+    }
+  ],
+  "metadata_coverage_complete": true,
+  "native_gate_validated": false,
+  "queries": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "user"
+      ],
+      "endpoint": "user",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:05.709899+00:00",
+      "http_bytes": 2668,
+      "http_file": "0001-identity.http",
+      "http_sha256": "89300944c7f5f8b170e58d8d941ef8a0418fa63153e9cb15c08050d408b27012",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:05 GMT"
+        ],
+        "etag": [
+          "W/\"40de663e05710367787185b8047f1fe36a67c1c1cb6cf9cb7a725c807f5e39c3\""
+        ],
+        "last-modified": [
+          "Sat, 07 Nov 2026 15:54:34 GMT"
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "CEC2:0E06:A0C04:20839F:6AEF796C"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4964"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "36"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:04.091104+00:00",
+      "stderr_file": "0001-identity.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:07.579997+00:00",
+      "http_bytes": 9937,
+      "http_file": "0002-repository.http",
+      "http_sha256": "8848b13a50607e2495fcf317352c1d56c8690e7073025616244e9b31bcc4a20c",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:07 GMT"
+        ],
+        "etag": [
+          "W/\"3d7cd1ebb9ff9df98613f9abe7362fad5f08a979cfe0e5117884baa4d861ed75\""
+        ],
+        "last-modified": [
+          "Fri, 30 Oct 2026 01:22:21 GMT"
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          "repo"
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "3798:3D9457:A4B48:2198F8:6AEF796E"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4963"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "37"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:05.711047+00:00",
+      "stderr_file": "0002-repository.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98&per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98&per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:09.449849+00:00",
+      "http_bytes": 59762,
+      "http_file": "0003-head-all-events-page-1.http",
+      "http_sha256": "cf99b69653c0610d4f590dc1e7c5ec29a0acb15055ebfcbeacfc92135089eff6",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:09 GMT"
+        ],
+        "etag": [
+          "W/\"60ef1d40a944a2cbc7bc62fb3ae2235f0210146e63b39c2750143a6548277eee\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "EA4E:2C77E3:AA0EC:228C6D:6AEF7970"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4962"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "38"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:07.580605+00:00",
+      "stderr_file": "0003-head-all-events-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/378180520/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98&per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/378180520/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98&per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:11.320564+00:00",
+      "http_bytes": 16037,
+      "http_file": "0004-priority-all-events-page-1.http",
+      "http_sha256": "fda042a70db6333c7815cbb383f35e10f23c2dbfd8fa2a25cc8066084b84649a",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:11 GMT"
+        ],
+        "etag": [
+          "W/\"761250faf8ad558faa873ad89537d4d895c1a880bb6ef9fd9893fadd253af0ac\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "33DE:32EA5E:A3817:21401B:6AEF7972"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4849"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "151"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:09.451386+00:00",
+      "stderr_file": "0004-priority-all-events-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/403419146/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98&per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/403419146/runs?head_sha=819309fd312298e099642e1253b1d4ba07113e98&per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:12.940161+00:00",
+      "http_bytes": 16045,
+      "http_file": "0005-w1-all-events-page-1.http",
+      "http_sha256": "ac94e4773a9a71bccf2fa9eff86c06c4c2bb02d479e85551001304dd34e5d672",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:12 GMT"
+        ],
+        "etag": [
+          "W/\"454f16505f747515aedfa91b2bbecdc3f78e21068fb10edf28b65d6b4f5d9af3\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "1957:85A7B:AC566:22E02E:6AEF7974"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4848"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "152"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:11.321433+00:00",
+      "stderr_file": "0005-w1-all-events-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/819309fd312298e099642e1253b1d4ba07113e98/check-runs?filter=all&per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/commits/819309fd312298e099642e1253b1d4ba07113e98/check-runs?filter=all&per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:14.760369+00:00",
+      "http_bytes": 140454,
+      "http_file": "0006-check-runs-all-page-1.http",
+      "http_sha256": "b5736a7d47d4fe5b29c60fdd385e748cc478e3c228be779c7f713e205e927284",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:14 GMT"
+        ],
+        "etag": [
+          "W/\"53fc877db55d917eddd3cbb21c14483dccde04510f4bbb44338e2add307916d3\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "8D51:5F7BB:A23FE:2107FC:6AEF7975"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4961"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "39"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:12.941027+00:00",
+      "stderr_file": "0006-check-runs-all-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/819309fd312298e099642e1253b1d4ba07113e98/status?per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/commits/819309fd312298e099642e1253b1d4ba07113e98/status?per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:16.383884+00:00",
+      "http_bytes": 7055,
+      "http_file": "0007-combined-status-page-1.http",
+      "http_sha256": "72bc5ad3ddc9638dc993b43adb2efc409a478ddfe6640def9c855d53a4b82d94",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:16 GMT"
+        ],
+        "etag": [
+          "W/\"f2576db0addc2169a061bd5fbef3449eeea05bfd66d6d5fee26d9fb804d2c3d8\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          "repo, repo:status"
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "423A:11AD1F:BBFA6:263E98:6AEF7977"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4960"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "40"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:14.765528+00:00",
+      "stderr_file": "0007-combined-status-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:18.304053+00:00",
+      "http_bytes": 16010,
+      "http_file": "0008-run-42402618462.http",
+      "http_sha256": "c122d70e7a5cda22510584ddc06e4b60922a569a2979b3a57b6952c6e2cc84e8",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:17 GMT"
+        ],
+        "etag": [
+          "W/\"68d75cb21fcac135591355557e514c7918ba426e0d1f54a2bd5a355fd7e98785\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "102D:1FB3E5:B85B8:2577D7:6AEF7979"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4847"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "153"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:16.384498+00:00",
+      "stderr_file": "0008-run-42402618462.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/jobs?filter=all&per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/jobs?filter=all&per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:20.675507+00:00",
+      "http_bytes": 81721,
+      "http_file": "0009-run-42402618462-all-attempt-jobs-page-1.http",
+      "http_sha256": "df17a6a59372fca00620e02ef41d501cdf8a651b2d2110cbd058ecfd06182fc8",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:20 GMT"
+        ],
+        "etag": [
+          "W/\"a020e8b80b46218ebaa25c61ed4e1bd38652f6bd01b12a9309b9dff05cdb3a45\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "19B7:23BE83:BB3F5:2604ED:6AEF797A"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4959"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "41"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:18.304885+00:00",
+      "stderr_file": "0009-run-42402618462-all-attempt-jobs-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/attempts/1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/attempts/1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:22.296021+00:00",
+      "http_bytes": 16032,
+      "http_file": "0010-run-42402618462-attempt-1.http",
+      "http_sha256": "834706fdc7d91c0f3af3b6704f9845bcae380d6b5a34b635e1f75897dc2976f5",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:22 GMT"
+        ],
+        "etag": [
+          "W/\"658895985f94a6df2b4dd9e7adbb258522efc4ad8ae7ea0edcd1080fc042fb70\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "7CD5:328B1C:9E075:2033B8:6AEF797D"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4846"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "154"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:20.677984+00:00",
+      "stderr_file": "0010-run-42402618462-attempt-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/attempts/1/jobs?per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/attempts/1/jobs?per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:24.668117+00:00",
+      "http_bytes": 81722,
+      "http_file": "0011-run-42402618462-attempt-1-jobs-page-1.http",
+      "http_sha256": "4a72345698ca4a26f4174e2cb53c724baf7901e5df11ec49e8f55e918a7870d8",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:24 GMT"
+        ],
+        "etag": [
+          "W/\"a020e8b80b46218ebaa25c61ed4e1bd38652f6bd01b12a9309b9dff05cdb3a45\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "5353:3C33C5:A5983:219ADE:6AEF797E"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4845"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "155"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:22.297065+00:00",
+      "stderr_file": "0011-run-42402618462-attempt-1-jobs-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/artifacts?per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462/artifacts?per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:26.340760+00:00",
+      "http_bytes": 20346,
+      "http_file": "0012-run-42402618462-artifacts-page-1.http",
+      "http_sha256": "f074482e02814972047404cebe982b188f4eb9e2bcca0b9f5f43db8f2a3fc8f5",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:26 GMT"
+        ],
+        "etag": [
+          "W/\"f3e0727e68b4ecbbcd0cf5abf1ef51c2f54fea8848d87576d88549fede13466c\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "2690:29EA1A:A7EC1:222E1B:6AEF7981"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4844"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "156"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:24.671841+00:00",
+      "stderr_file": "0012-run-42402618462-artifacts-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:27.758662+00:00",
+      "http_bytes": 16001,
+      "http_file": "0013-run-42402618518.http",
+      "http_sha256": "27922fb0a0c90f2a93e52a7571a3a4165d464475db26db7b056bdda9098dbe1f",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:27 GMT"
+        ],
+        "etag": [
+          "W/\"06fdc1f2a501ad752b49eaacccb1541e0988cab303ceb114414d2f45e1314ac9\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "EEEB:2C77E3:AFE92:23BD68:6AEF7983"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4843"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "157"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:26.341572+00:00",
+      "stderr_file": "0013-run-42402618518.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/jobs?filter=all&per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/jobs?filter=all&per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:29.527713+00:00",
+      "http_bytes": 75055,
+      "http_file": "0014-run-42402618518-all-attempt-jobs-page-1.http",
+      "http_sha256": "dc13b15484932042a933d31d3f83e4cf97400eb005fa8add8da1424160c804b2",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:29 GMT"
+        ],
+        "etag": [
+          "W/\"760008f1d2883c55620b55cdfdbb4fcd0172fa83d985883e0ef5ab836255fb1d\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "D04B:2F2A1C:AA96C:22CF75:6AEF7984"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4958"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "42"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:27.759364+00:00",
+      "stderr_file": "0014-run-42402618518-all-attempt-jobs-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/attempts/1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/attempts/1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:31.198206+00:00",
+      "http_bytes": 16023,
+      "http_file": "0015-run-42402618518-attempt-1.http",
+      "http_sha256": "b9e71ae7167df1ebbc002fdd6bca8f6819aa167f55cf051d8b456f645d703286",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:30 GMT"
+        ],
+        "etag": [
+          "W/\"c43225b5dd398518a1faa000f788d149ce5ea7bf2bce342d61d798319832776f\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "73B5:1FD155:A8988:22545A:6AEF7986"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4842"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "158"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:29.530354+00:00",
+      "stderr_file": "0015-run-42402618518-attempt-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/attempts/1/jobs?per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/attempts/1/jobs?per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:33.116999+00:00",
+      "http_bytes": 75056,
+      "http_file": "0016-run-42402618518-attempt-1-jobs-page-1.http",
+      "http_sha256": "da5da22e35b25094d01027fd6e96f97eafd96cc1f5382d447f447c6d0a7e0432",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:32 GMT"
+        ],
+        "etag": [
+          "W/\"760008f1d2883c55620b55cdfdbb4fcd0172fa83d985883e0ef5ab836255fb1d\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "8431:24FF9F:AAB78:228BC9:6AEF7987"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4841"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "159"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:31.198876+00:00",
+      "stderr_file": "0016-run-42402618518-attempt-1-jobs-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/artifacts?per_page=100&page=1"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518/artifacts?per_page=100&page=1",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:34.787662+00:00",
+      "http_bytes": 5570,
+      "http_file": "0017-run-42402618518-artifacts-page-1.http",
+      "http_sha256": "d5e43fd08f08aaec15f4a7ff4a6a08c2a3f8518a9842f477c366483a175a3284",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:34 GMT"
+        ],
+        "etag": [
+          "W/\"d1aea520306340782cf2dca62269bb25e82a21d2f0733c79c66b687785ba3718\""
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "B006:1668E0:ADE5A:23776A:6AEF7989"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4840"
+        ],
+        "x-ratelimit-reset": [
+          "1794080845"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "160"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:33.119136+00:00",
+      "stderr_file": "0017-run-42402618518-artifacts-page-1.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28",
+        "--include",
+        "user"
+      ],
+      "endpoint": "user",
+      "exit_code": 0,
+      "finished_utc": "2026-11-07T19:18:36.456020+00:00",
+      "http_bytes": 2670,
+      "http_file": "0018-identity-after.http",
+      "http_sha256": "335781a8fc20bc0d49a4a8c362d0ffc5c0d0e67be8c069c83b9161178db210b6",
+      "http_status": 200,
+      "response_headers": {
+        "access-control-allow-origin": [
+          "*"
+        ],
+        "access-control-expose-headers": [
+          "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning"
+        ],
+        "cache-control": [
+          "private, max-age=60, s-maxage=60"
+        ],
+        "content-security-policy": [
+          "default-src 'none'"
+        ],
+        "content-type": [
+          "application/json; charset=utf-8"
+        ],
+        "date": [
+          "Sat, 07 Nov 2026 19:18:36 GMT"
+        ],
+        "etag": [
+          "W/\"40de663e05710367787185b8047f1fe36a67c1c1cb6cf9cb7a725c807f5e39c3\""
+        ],
+        "last-modified": [
+          "Sat, 07 Nov 2026 15:54:34 GMT"
+        ],
+        "referrer-policy": [
+          "origin-when-cross-origin, strict-origin-when-cross-origin"
+        ],
+        "server": [
+          "github.com"
+        ],
+        "strict-transport-security": [
+          "max-age=31536000; includeSubdomains; preload"
+        ],
+        "vary": [
+          "Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With"
+        ],
+        "x-accepted-oauth-scopes": [
+          ""
+        ],
+        "x-content-type-options": [
+          "nosniff"
+        ],
+        "x-frame-options": [
+          "deny"
+        ],
+        "x-github-api-version-selected": [
+          "2022-11-28"
+        ],
+        "x-github-edge-region": [
+          "iad"
+        ],
+        "x-github-media-type": [
+          "github.v3; format=json"
+        ],
+        "x-github-request-id": [
+          "E8AE:1C9BC0:B700D:254C4B:6AEF798B"
+        ],
+        "x-oauth-client-id": [
+          "178c6fc778ccc68e1d6a"
+        ],
+        "x-oauth-scopes": [
+          "delete_repo, gist, read:org, repo, workflow"
+        ],
+        "x-ratelimit-limit": [
+          "5000"
+        ],
+        "x-ratelimit-remaining": [
+          "4957"
+        ],
+        "x-ratelimit-reset": [
+          "1794081819"
+        ],
+        "x-ratelimit-resource": [
+          "core"
+        ],
+        "x-ratelimit-used": [
+          "43"
+        ],
+        "x-xss-protection": [
+          "0"
+        ]
+      },
+      "started_utc": "2026-11-07T19:18:34.788086+00:00",
+      "stderr_file": "0018-identity-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "requested_head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "schema": "trnm-independent-ci-metadata-snapshot-v1",
+  "scope": "GET metadata only; artifacts/logs and strict retained receipts require separate audit",
+  "started_utc": "2026-11-07T19:18:04.091055+00:00",
+  "target_runs": [
+    {
+      "actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "conclusion": "failure",
+      "created_at": "2026-11-07T18:42:34Z",
+      "event": "push",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618462",
+      "id": 42402618462,
+      "name": "PoN W1 work security observations",
+      "run_attempt": 1,
+      "status": "completed",
+      "triggering_actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "updated_at": "2026-11-07T19:04:10Z",
+      "workflow_id": 403419146
+    },
+    {
+      "actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "conclusion": null,
+      "created_at": "2026-11-07T18:42:35Z",
+      "event": "push",
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42402618518",
+      "id": 42402618518,
+      "name": "PoN priority acceptance",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "triggering_actor": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/102159240?v=4",
+        "events_url": "https://api.github.com/users/ProfHepta/events{/privacy}",
+        "followers_url": "https://api.github.com/users/ProfHepta/followers",
+        "following_url": "https://api.github.com/users/ProfHepta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ProfHepta/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/ProfHepta",
+        "id": 102159240,
+        "login": "ProfHepta",
+        "node_id": "U_kgDOBhbTiA",
+        "organizations_url": "https://api.github.com/users/ProfHepta/orgs",
+        "received_events_url": "https://api.github.com/users/ProfHepta/received_events",
+        "repos_url": "https://api.github.com/users/ProfHepta/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/ProfHepta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ProfHepta/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/ProfHepta",
+        "user_view_type": "public"
+      },
+      "updated_at": "2026-11-07T18:43:28Z",
+      "workflow_id": 378180520
+    }
+  ]
+}

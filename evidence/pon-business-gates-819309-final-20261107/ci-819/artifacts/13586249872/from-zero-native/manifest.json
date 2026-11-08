@@ -1,0 +1,1723 @@
+{
+  "schema": "trnm-from-zero-native-execution-v3",
+  "source_before": {
+    "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+      "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+      "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 12639,
+      "tracked_bytes": 1277471450,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  "source_after": {
+    "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+      "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+      "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 12639,
+      "tracked_bytes": 1277471450,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+  },
+  "source_recompiled": true,
+  "all_named_tests_passed": true,
+  "format_passed": true,
+  "runs": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+          "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 5568008,
+        "user_cpu_ns": 886000,
+        "system_cpu_ns": 886000,
+        "cpu_ns": 1772000,
+        "max_rss_kib": 45224,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 154,
+        "major_faults": 0,
+        "voluntary_switches": 4,
+        "involuntary_switches": 0,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+          "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 5377955,
+        "user_cpu_ns": 1770000,
+        "system_cpu_ns": 1770000,
+        "cpu_ns": 3540000,
+        "max_rss_kib": 45224,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 246,
+        "major_faults": 0,
+        "voluntary_switches": 3,
+        "involuntary_switches": 0,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+          "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 96819184,
+        "user_cpu_ns": 15913000,
+        "system_cpu_ns": 5967000,
+        "cpu_ns": 21880000,
+        "max_rss_kib": 45224,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 514,
+        "major_faults": 0,
+        "voluntary_switches": 30,
+        "involuntary_switches": 1,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "cd44d0328c802c7591baf1c7cda8d88fe2d53c940cad8291f0e2038e94f57c59",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "cd44d0328c802c7591baf1c7cda8d88fe2d53c940cad8291f0e2038e94f57c59",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+          "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 10101766174,
+        "user_cpu_ns": 1925968000,
+        "system_cpu_ns": 568640000,
+        "cpu_ns": 2494608000,
+        "max_rss_kib": 157336,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 38602,
+        "major_faults": 0,
+        "voluntary_switches": 11578,
+        "involuntary_switches": 798,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "74d79aa6bb3c83f389c965eae6e5b3f97ff73e548626305b791ab7387d6aca48",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "74d79aa6bb3c83f389c965eae6e5b3f97ff73e548626305b791ab7387d6aca48",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 8906513528,
+        "user_cpu_ns": 981833000,
+        "system_cpu_ns": 969532000,
+        "cpu_ns": 1951365000,
+        "max_rss_kib": 81988,
+        "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+        "minor_faults": 19856,
+        "major_faults": 0,
+        "voluntary_switches": 15616,
+        "involuntary_switches": 535,
+        "cpu_scope": "entire child, not apportioned to nested wall intervals",
+        "wait4_cpu_resolution_ns": 1000,
+        "stdout_sha256": "61800486171b16086703735d211d8330c2a8caf27adedc325fb6a6a3f9265e6b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": true,
+      "stdout_sha256": "61800486171b16086703735d211d8330c2a8caf27adedc325fb6a6a3f9265e6b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "named_execution": {
+        "result": "PASS",
+        "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "executed_tests": 1,
+        "scope": "named-libtest-execution-only"
+      }
+    }
+  ],
+  "failures": [
+    "CONFIRMATION_TARGET"
+  ],
+  "independent_wan_accepted": false,
+  "work_hardness_accepted": false,
+  "production_activation": false,
+  "passed": false,
+  "execution_finished": false,
+  "service_report": {
+    "sha256": "1719f040460e4440e3f258680a9d9d31bd819f85c1981ca6b07ef6d01f9f8296",
+    "schema": "public-v3-local-from-zero-service-v2",
+    "phases": 2,
+    "scope": "retained finite native report consistency; no independent work or state oracle"
+  },
+  "sustained_report": {
+    "sha256": "689c780f7b0de14b15e9edb7aac7d85a7476e1854db4092e086a08331641faeb",
+    "schema": "public-v3-sustained-local-from-zero-v1",
+    "phases": [
+      {
+        "phase": 0,
+        "attacks": 460,
+        "late_rejections": 460,
+        "honest_reads": 31,
+        "honest_submissions": 1,
+        "connections": 493,
+        "mutation_cpu_refusals": 0,
+        "minimum_sampled_stored_credit_ns": 1795157290
+      },
+      {
+        "phase": 1,
+        "attacks": 492,
+        "late_rejections": 492,
+        "honest_reads": 36,
+        "honest_submissions": 1,
+        "connections": 530,
+        "mutation_cpu_refusals": 0,
+        "minimum_sampled_stored_credit_ns": 1794707065
+      }
+    ],
+    "scope": "retained local report consistency; no independent work/state oracle, saturation or fairness qualification"
+  },
+  "confirmation_report": null,
+  "confirmation_observation": {
+    "schema": "trnm-original-confirmation-observation-v2",
+    "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae",
+    "original_gate_validated": false,
+    "original_gate_validation_error": "CONFIRMATION_TARGET",
+    "simulated_control": false,
+    "phases": [
+      {
+        "mode": "attack-free-baseline",
+        "workers": 0,
+        "window_ns": 4000000000,
+        "business": {
+          "required_signed_transactions": 1,
+          "business_start_delay_ns": 136955,
+          "business_started_before_original_window_end": true,
+          "original_window_remaining_at_business_start_ns": 3999863045,
+          "pre_business_window_overrun_ns": 0,
+          "reported_independently_confirmed_in_window": 1,
+          "unconfirmed": 0,
+          "unknown": 0,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "observed_success_latency_ns": 2998398221,
+          "successful_latency": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 2998398221,
+            "max_ns": 2998398221,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "unconfirmed_latency_lower_bound_ns": null,
+          "lower_bound_reaches_original_window_end": null,
+          "reported_finite_business_target_met": true
+        },
+        "signed_submit_ack": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 15839156,
+            "max_ns": 65777786,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 18199697,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 730835,
+            "max_ns": 826212,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 774005,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "acknowledgements_per_window_second": 1.75,
+          "outcome_detail": {
+            "status_counts": {
+              "ok": 7
+            },
+            "status_missing": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "diagnostic_text_is_typed_error": false,
+            "unobserved_attempts": null,
+            "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed"
+          }
+        },
+        "history_response": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 12135005,
+            "max_ns": 77859203,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 12269155,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 772423,
+            "max_ns": 860456,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 788221,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "outcome_detail": {
+            "status_counts": {
+              "ok": 7
+            },
+            "status_missing": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "diagnostic_text_is_typed_error": false,
+            "unobserved_attempts": null,
+            "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed"
+          }
+        },
+        "independent_page_replay": {
+          "attempts": 7,
+          "accepted_in_original_window": 7,
+          "failed_or_late": 0,
+          "accepted_wall": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 291948191,
+            "max_ns": 665607166,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 296973907,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_wall": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 68255033,
+            "max_ns": 89729324,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 72524960,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "known_calling_thread_cpu_sum_ns": 523973514,
+          "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+          "native_stage_snapshots_retained": 7,
+          "native_stage_snapshots_missing": 0,
+          "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU"
+        },
+        "head_response": {
+          "attempts": 57,
+          "successful_in_original_window": 57,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 57,
+            "missing_samples": 0,
+            "min_ns": 9124946,
+            "max_ns": 64447373,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 9664599,
+            "p95_ns": 60122544,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 57,
+            "missing_samples": 0,
+            "min_ns": 397132,
+            "max_ns": 667446,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 470017,
+            "p95_ns": 645756,
+            "p99_ns": null
+          },
+          "outcome_detail": {
+            "status_counts": {
+              "ok": 57
+            },
+            "status_missing": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "diagnostic_text_is_typed_error": false,
+            "unobserved_attempts": null,
+            "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed"
+          }
+        },
+        "verification_errors": [],
+        "service_totals": {
+          "abandoned_tasks": 0,
+          "accepted_connections": 71,
+          "body_bytes_received": 695592,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 145,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 64,
+          "completed_submit": 7,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 71,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "enqueued_after_backpressure": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 71,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 1236959,
+          "mutation_cpu_charged_ns": 39691599,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1994704030,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 7,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 29624856,
+          "mutation_full_work_cpu_ns": 10066743,
+          "mutation_response_cpu_ns": 292356,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 0,
+          "peak_connections": 2,
+          "peak_mutating_grants": 1,
+          "peak_output_reserved_bytes": 8404992,
+          "peak_paid_body_bytes": 298374,
+          "peak_pending_challenge": 1,
+          "peak_pending_enqueue": 1,
+          "peak_pending_grant": 1,
+          "peak_read_grants": 2,
+          "peak_spent": 39,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 71,
+          "pending_challenge_granted": 71,
+          "pending_challenge_wait_ns": 184393036,
+          "pending_grant_closed": 0,
+          "pending_grant_entered": 71,
+          "pending_grant_granted": 71,
+          "pending_grant_wait_ns": 77016395,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 0,
+          "queue_refusals": 0,
+          "queue_wait_ns": 76587304,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 791544,
+          "response_write_failures": 0,
+          "retained_phase_errors": {},
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 71,
+          "tasks_dequeued": 71,
+          "tasks_enqueued": 71,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 0,
+          "work_finished": 7,
+          "work_ns": 58378923,
+          "work_started": 7
+        },
+        "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s",
+        "receiver_requests": {
+          "accepted_connections_seen": 71,
+          "retained_records": 71,
+          "records_not_retained": 0,
+          "seen_without_snapshot_or_omission_record": 0,
+          "measurement_failures": 0,
+          "counter_overflow": false,
+          "record_lifecycle": {
+            "closed": 71,
+            "unfinished": 0,
+            "unknown": 0
+          },
+          "record_observation_failed": 0,
+          "dispatch_outcomes": {
+            "accepted": 71,
+            "rejected": 0,
+            "unknown": 0
+          },
+          "typed_terminal_error_counts": {},
+          "typed_dispatch_error_counts": {},
+          "missing_terminal_error_slots": 0,
+          "typed_cancelled_records": 0,
+          "typed_deadline_records": 0,
+          "typed_causes_are_disjoint_outcomes": false,
+          "all_seen_records_closed_and_retained": true,
+          "unobserved_client_attempts": null,
+          "scope": "receiver connections, not transactions; complete means observation closure, not execution success; unfinished may include measurement failure; typed causes require the v4 source namespace"
+        },
+        "resource_coverage": {
+          "all_worker_cpu_ns": null,
+          "physical_network_bytes": null,
+          "disk_growth_bytes": null,
+          "request_peak_rss_bytes": {
+            "known_count": 0,
+            "missing_count": 71,
+            "known_sum": null,
+            "max_known": null
+          },
+          "unretained_receiver_records": 0,
+          "scope": "source-report coverage only; full-work CPU is nested inside dispatch CPU; neither is complete worker/process CPU; stream bytes are not physical network bytes; receiver samples cover retained records only; unretained records remain unmeasured; RSS and disk growth are not captured by this source; missing values are not zero",
+          "receiver_dispatch_thread_cpu_ns": {
+            "known_count": 71,
+            "missing_count": 0,
+            "known_sum": 52538586,
+            "max_known": 6395216,
+            "unentered_or_start_unknown_records": 0
+          },
+          "receiver_full_work_thread_cpu_ns": {
+            "known_count": 7,
+            "missing_count": 0,
+            "known_sum": 10066743,
+            "max_known": 1497557,
+            "unentered_or_start_unknown_records": 64
+          },
+          "application_bytes_read": {
+            "known_count": 71,
+            "missing_count": 0,
+            "known_sum": 710928,
+            "max_known": 99661
+          },
+          "application_bytes_written": {
+            "known_count": 71,
+            "missing_count": 0,
+            "known_sum": 886750,
+            "max_known": 102042
+          },
+          "attacker_workers_calling_thread_cpu_ns": {
+            "known_count": 0,
+            "missing_count": 0,
+            "known_sum": null,
+            "max_known": null,
+            "scheduled_workers": 0,
+            "observed_worker_records": 0,
+            "worker_roster_observed": true
+          }
+        },
+        "attacker_attempts": {
+          "scheduled_workers": 0,
+          "observed_worker_records": 0,
+          "missing_worker_records": 0,
+          "worker_call_lists_observed": 0,
+          "worker_call_lists_unavailable": 0,
+          "all_scheduled_worker_call_lists_observed": true,
+          "recorded_attempts": 0,
+          "submitted_client_calls_recorded": 0,
+          "exhausted_without_submission": 0,
+          "unknown_status_records": 0,
+          "submitted_status_counts": {
+            "ok": 0,
+            "refused": 0,
+            "error": 0
+          },
+          "workers_reporting_attempt_cap_reached": 0,
+          "worker_attempt_cap_status_unknown": 0,
+          "calls_with_complete_timing": 0,
+          "calls_with_unknown_timing": 0,
+          "returned_after_call_deadline": 0,
+          "returned_after_original_window": 0,
+          "return_flag_coverage": {
+            "returned_after_call_deadline": {
+              "known_count": 0,
+              "missing_count": 0
+            },
+            "returned_after_original_window": {
+              "known_count": 0,
+              "missing_count": 0
+            }
+          },
+          "calling_thread_cpu": {
+            "known_count": 0,
+            "missing_count": 0,
+            "known_sum_ns": null
+          },
+          "recorded_request_body_bytes": {
+            "known_count": 0,
+            "missing_count": 0,
+            "known_sum": null
+          },
+          "unique_recorded_packet_indices": 0,
+          "repeated_recorded_packet_index_calls": 0,
+          "calls_without_packet_index": 0,
+          "raw_client_error_counts": {},
+          "raw_refusal_error_counts": {},
+          "unknown_status_observations": {
+            "record_count": 0,
+            "records_with_complete_timing": 0,
+            "records_with_unknown_timing": 0,
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "return_flag_coverage": {
+              "returned_after_call_deadline": {
+                "known_count": 0,
+                "missing_count": 0
+              },
+              "returned_after_original_window": {
+                "known_count": 0,
+                "missing_count": 0
+              }
+            },
+            "calling_thread_cpu": {
+              "known_count": 0,
+              "missing_count": 0,
+              "known_sum_ns": null
+            },
+            "recorded_request_body_bytes": {
+              "known_count": 0,
+              "missing_count": 0,
+              "known_sum": null
+            },
+            "unique_recorded_packet_indices": 0,
+            "repeated_recorded_packet_index_records": 0,
+            "records_without_packet_index": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "scope": "retained fields from unclassified records; submission is unknown; this disjoint bucket is excluded from submitted-call totals"
+          },
+          "diagnostic_text_is_typed_error": false,
+          "unobserved_attempts": null,
+          "scope": "retained hostile caller attempts; missing worker/call lists are unknown, not zero; repeated packets remain separate attempts; independently observed late flags overlap status counts even when another clock field is missing; call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; no failed call is equated with receiver rejection or cancellation"
+        },
+        "request_clock": {
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "business_started_ns": 136955,
+          "reported_final_observation_ended_ns": 2998535176,
+          "original_window_to_independent_confirmation_ns": 2998535176,
+          "business_start_to_independent_confirmation_ns": 2998398221,
+          "receiver_to_independent_confirmation_ns": 2996569825,
+          "receiver_and_client_epochs_correlated": true,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit",
+          "business_receive_observation": {
+            "schema": "public-v3-business-receive-clock-v1",
+            "request_binding_stage": "hello-claimed-body-digest",
+            "traffic_epoch_in_observer_ns": 212105,
+            "final_observation_in_observer_ns": 2998747281,
+            "clock_translation_overflowed": false,
+            "epochs_correlated": true,
+            "retained_records": 71,
+            "matched_claim_records": 1,
+            "matching_claims_without_receive_clock": 0,
+            "records_without_complete_identity_binding": 0,
+            "records_without_lifecycle": 0,
+            "records_without_receive_clock": 0,
+            "earliest_matched_claim_received_ns": 2177456,
+            "observed_matched_claim_to_final_observation_ns": 2996569825,
+            "observed_matched_claim_to_confirmation_ns": 2996569825,
+            "confirmation_observed_in_original_window": true,
+            "exact_claim_cohort_covered": true,
+            "body_or_sender_authenticated_by_clock": false,
+            "has_control_authority": false,
+            "scope": "same-process receive time for the peer-claimed first business packet, including failed retries; an Ok final observation is not necessarily confirmation; no full-body validation, sender or operator independence is inferred; unknown bindings or lost records prevent an exact earliest-claim latency"
+          }
+        },
+        "product_metrics": {
+          "confirmation": {
+            "finite_offer_transactions_per_second": 0.25,
+            "required_unique_transactions": 1,
+            "window_ns": 4000000000,
+            "saturated_capacity_tps": null,
+            "scope": "one original signed business transaction, not ACKs, blocks or saturated TPS"
+          },
+          "complete_release_download": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "verified-release-bytes/second"
+          },
+          "first_token": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "nanoseconds"
+          },
+          "inference": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "tokens/second"
+          },
+          "model_net_benefit_per_cost": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "net-model-utility/cost-unit"
+          }
+        }
+      },
+      {
+        "mode": "from-zero-pressure",
+        "workers": 16,
+        "window_ns": 4000000000,
+        "business": {
+          "required_signed_transactions": 1,
+          "business_start_delay_ns": 96393811,
+          "business_started_before_original_window_end": true,
+          "original_window_remaining_at_business_start_ns": 3903606189,
+          "pre_business_window_overrun_ns": 0,
+          "reported_independently_confirmed_in_window": 0,
+          "unconfirmed": 1,
+          "unknown": 0,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "observed_success_latency_ns": null,
+          "successful_latency": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "unconfirmed_latency_lower_bound_ns": 3903606189,
+          "lower_bound_reaches_original_window_end": true,
+          "reported_finite_business_target_met": false
+        },
+        "signed_submit_ack": {
+          "attempts": 7,
+          "successful_in_original_window": 7,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 111824511,
+            "max_ns": 212111694,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 194745191,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 7,
+            "missing_samples": 0,
+            "min_ns": 681693,
+            "max_ns": 902455,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 823007,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "acknowledgements_per_window_second": 1.75,
+          "outcome_detail": {
+            "status_counts": {
+              "ok": 7
+            },
+            "status_missing": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "diagnostic_text_is_typed_error": false,
+            "unobserved_attempts": null,
+            "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed"
+          }
+        },
+        "history_response": {
+          "attempts": 3,
+          "successful_in_original_window": 3,
+          "failed_or_late": 0,
+          "successful_latency": {
+            "samples": 3,
+            "missing_samples": 0,
+            "min_ns": 97813857,
+            "max_ns": 190763159,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 99706037,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 0,
+            "missing_samples": 0,
+            "min_ns": null,
+            "max_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 3,
+            "missing_samples": 0,
+            "min_ns": 734323,
+            "max_ns": 775619,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 767224,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "outcome_detail": {
+            "status_counts": {
+              "ok": 3
+            },
+            "status_missing": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "diagnostic_text_is_typed_error": false,
+            "unobserved_attempts": null,
+            "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed"
+          }
+        },
+        "independent_page_replay": {
+          "attempts": 3,
+          "accepted_in_original_window": 2,
+          "failed_or_late": 1,
+          "accepted_wall": {
+            "samples": 2,
+            "missing_samples": 0,
+            "min_ns": 704113103,
+            "max_ns": 1194815011,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 704113103,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "failed_or_late_wall": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 305719763,
+            "max_ns": 305719763,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 3,
+            "missing_samples": 0,
+            "min_ns": 28120505,
+            "max_ns": 81131262,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 77376639,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "known_calling_thread_cpu_sum_ns": 186628406,
+          "cpu_scope": "caller thread only; excludes separately owned worker CPU",
+          "native_stage_snapshots_retained": 3,
+          "native_stage_snapshots_missing": 0,
+          "native_stage_scope": "optional local snapshots; old absence remains unknown; Host/native/packet intervals are nested, not added to replay CPU"
+        },
+        "head_response": {
+          "attempts": 23,
+          "successful_in_original_window": 22,
+          "failed_or_late": 1,
+          "successful_latency": {
+            "samples": 22,
+            "missing_samples": 0,
+            "min_ns": 11811224,
+            "max_ns": 161665449,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 103229672,
+            "p95_ns": 157574430,
+            "p99_ns": null
+          },
+          "failed_or_late_terminal_duration": {
+            "samples": 1,
+            "missing_samples": 0,
+            "min_ns": 5362277,
+            "max_ns": 5362277,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null
+          },
+          "calling_thread_cpu": {
+            "samples": 23,
+            "missing_samples": 0,
+            "min_ns": 232946,
+            "max_ns": 633433,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "p50_ns": 532164,
+            "p95_ns": 620909,
+            "p99_ns": null
+          },
+          "outcome_detail": {
+            "status_counts": {
+              "ok": 22,
+              "error": 1
+            },
+            "status_missing": 0,
+            "raw_client_error_counts": {
+              "FRAME_DEADLINE": 1
+            },
+            "raw_refusal_error_counts": {},
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 1,
+            "diagnostic_text_is_typed_error": false,
+            "unobserved_attempts": null,
+            "scope": "observed client returns only; retries and polls are not unique business transactions; late flags overlap status counts; missing calls cannot be reconstructed"
+          }
+        },
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "service_totals": {
+          "abandoned_tasks": 2,
+          "accepted_connections": 367,
+          "body_bytes_received": 32784413,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 45,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 25,
+          "completed_submit": 7,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 351,
+          "disconnected_await_requests": 5,
+          "disconnected_before_enqueue": 3,
+          "enqueued_after_backpressure": 29,
+          "executor_refusals": 320,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 366,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 67799030,
+          "mutation_cpu_charged_ns": 288455253,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1999924826,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 327,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 198678486,
+          "mutation_full_work_cpu_ns": 89776767,
+          "mutation_response_cpu_ns": 15022402,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 2,
+          "peak_connections": 18,
+          "peak_mutating_grants": 8,
+          "peak_output_reserved_bytes": 8667136,
+          "peak_paid_body_bytes": 2378277,
+          "peak_pending_challenge": 14,
+          "peak_pending_enqueue": 4,
+          "peak_pending_grant": 9,
+          "peak_read_grants": 2,
+          "peak_spent": 217,
+          "pending_challenge_closed": 1,
+          "pending_challenge_entered": 367,
+          "pending_challenge_granted": 366,
+          "pending_challenge_wait_ns": 13018789311,
+          "pending_grant_closed": 4,
+          "pending_grant_entered": 362,
+          "pending_grant_granted": 358,
+          "pending_grant_wait_ns": 16216963991,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 1,
+          "queue_backpressure_events": 95,
+          "queue_refusals": 0,
+          "queue_wait_ns": 4111541492,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 591465,
+          "response_write_failures": 0,
+          "retained_phase_errors": {
+            "body": 2,
+            "hello": 1,
+            "queue": 3,
+            "solution": 8,
+            "work": 2
+          },
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 362,
+          "tasks_dequeued": 353,
+          "tasks_enqueued": 353,
+          "tasks_skipped_before_dispatch": 1,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 320,
+          "work_finished": 327,
+          "work_ns": 545924785,
+          "work_started": 327
+        },
+        "service_totals_scope": "whole service including shutdown; not per-request p99 or in-window proof/s",
+        "receiver_requests": {
+          "accepted_connections_seen": 367,
+          "retained_records": 367,
+          "records_not_retained": 0,
+          "seen_without_snapshot_or_omission_record": 0,
+          "measurement_failures": 0,
+          "counter_overflow": false,
+          "record_lifecycle": {
+            "closed": 367,
+            "unfinished": 0,
+            "unknown": 0
+          },
+          "record_observation_failed": 0,
+          "dispatch_outcomes": {
+            "accepted": 32,
+            "rejected": 320,
+            "unknown": 15
+          },
+          "typed_terminal_error_counts": {
+            "PUBLIC_EOF": 12
+          },
+          "typed_dispatch_error_counts": {},
+          "missing_terminal_error_slots": 0,
+          "typed_cancelled_records": 0,
+          "typed_deadline_records": 0,
+          "typed_causes_are_disjoint_outcomes": false,
+          "all_seen_records_closed_and_retained": true,
+          "unobserved_client_attempts": null,
+          "scope": "receiver connections, not transactions; complete means observation closure, not execution success; unfinished may include measurement failure; typed causes require the v4 source namespace"
+        },
+        "resource_coverage": {
+          "all_worker_cpu_ns": null,
+          "physical_network_bytes": null,
+          "disk_growth_bytes": null,
+          "request_peak_rss_bytes": {
+            "known_count": 0,
+            "missing_count": 367,
+            "known_sum": null,
+            "max_known": null
+          },
+          "unretained_receiver_records": 0,
+          "scope": "source-report coverage only; full-work CPU is nested inside dispatch CPU; neither is complete worker/process CPU; stream bytes are not physical network bytes; receiver samples cover retained records only; unretained records remain unmeasured; RSS and disk growth are not captured by this source; missing values are not zero",
+          "receiver_dispatch_thread_cpu_ns": {
+            "known_count": 352,
+            "missing_count": 0,
+            "known_sum": 295028208,
+            "max_known": 6925713,
+            "unentered_or_start_unknown_records": 15
+          },
+          "receiver_full_work_thread_cpu_ns": {
+            "known_count": 327,
+            "missing_count": 0,
+            "known_sum": 89776767,
+            "max_known": 1874621,
+            "unentered_or_start_unknown_records": 40
+          },
+          "application_bytes_read": {
+            "known_count": 367,
+            "missing_count": 0,
+            "known_sum": 32863145,
+            "max_known": 99661
+          },
+          "application_bytes_written": {
+            "known_count": 367,
+            "missing_count": 0,
+            "known_sum": 1082208,
+            "max_known": 102043
+          },
+          "attacker_workers_calling_thread_cpu_ns": {
+            "known_count": 16,
+            "missing_count": 0,
+            "known_sum": 338654966,
+            "max_known": 22243154,
+            "scheduled_workers": 16,
+            "observed_worker_records": 16,
+            "worker_roster_observed": true
+          }
+        },
+        "attacker_attempts": {
+          "scheduled_workers": 16,
+          "observed_worker_records": 16,
+          "missing_worker_records": 0,
+          "worker_call_lists_observed": 16,
+          "worker_call_lists_unavailable": 0,
+          "all_scheduled_worker_call_lists_observed": true,
+          "recorded_attempts": 334,
+          "submitted_client_calls_recorded": 334,
+          "exhausted_without_submission": 0,
+          "unknown_status_records": 0,
+          "submitted_status_counts": {
+            "ok": 0,
+            "refused": 318,
+            "error": 16
+          },
+          "workers_reporting_attempt_cap_reached": 0,
+          "worker_attempt_cap_status_unknown": 0,
+          "calls_with_complete_timing": 334,
+          "calls_with_unknown_timing": 0,
+          "returned_after_call_deadline": 0,
+          "returned_after_original_window": 16,
+          "return_flag_coverage": {
+            "returned_after_call_deadline": {
+              "known_count": 334,
+              "missing_count": 0
+            },
+            "returned_after_original_window": {
+              "known_count": 334,
+              "missing_count": 0
+            }
+          },
+          "calling_thread_cpu": {
+            "known_count": 334,
+            "missing_count": 0,
+            "known_sum_ns": 275881772
+          },
+          "recorded_request_body_bytes": {
+            "known_count": 334,
+            "missing_count": 0,
+            "known_sum": 33080362
+          },
+          "unique_recorded_packet_indices": 16,
+          "repeated_recorded_packet_index_calls": 318,
+          "calls_without_packet_index": 0,
+          "raw_client_error_counts": {
+            "IO: Resource temporarily unavailable (os error 11)": 13,
+            "FRAME_DEADLINE": 3
+          },
+          "raw_refusal_error_counts": {
+            "WORK:Transcript": 318
+          },
+          "unknown_status_observations": {
+            "record_count": 0,
+            "records_with_complete_timing": 0,
+            "records_with_unknown_timing": 0,
+            "returned_after_call_deadline": 0,
+            "returned_after_original_window": 0,
+            "return_flag_coverage": {
+              "returned_after_call_deadline": {
+                "known_count": 0,
+                "missing_count": 0
+              },
+              "returned_after_original_window": {
+                "known_count": 0,
+                "missing_count": 0
+              }
+            },
+            "calling_thread_cpu": {
+              "known_count": 0,
+              "missing_count": 0,
+              "known_sum_ns": null
+            },
+            "recorded_request_body_bytes": {
+              "known_count": 0,
+              "missing_count": 0,
+              "known_sum": null
+            },
+            "unique_recorded_packet_indices": 0,
+            "repeated_recorded_packet_index_records": 0,
+            "records_without_packet_index": 0,
+            "raw_client_error_counts": {},
+            "raw_refusal_error_counts": {},
+            "scope": "retained fields from unclassified records; submission is unknown; this disjoint bucket is excluded from submitted-call totals"
+          },
+          "diagnostic_text_is_typed_error": false,
+          "unobserved_attempts": null,
+          "scope": "retained hostile caller attempts; missing worker/call lists are unknown, not zero; repeated packets remain separate attempts; independently observed late flags overlap status counts even when another clock field is missing; call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; no failed call is equated with receiver rejection or cancellation"
+        },
+        "request_clock": {
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "business_started_ns": 96393811,
+          "reported_final_observation_ended_ns": null,
+          "original_window_to_independent_confirmation_ns": null,
+          "business_start_to_independent_confirmation_ns": null,
+          "receiver_to_independent_confirmation_ns": null,
+          "receiver_and_client_epochs_correlated": true,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit",
+          "business_receive_observation": {
+            "schema": "public-v3-business-receive-clock-v1",
+            "request_binding_stage": "hello-claimed-body-digest",
+            "traffic_epoch_in_observer_ns": 89978,
+            "final_observation_in_observer_ns": null,
+            "clock_translation_overflowed": false,
+            "epochs_correlated": true,
+            "retained_records": 367,
+            "matched_claim_records": 1,
+            "matching_claims_without_receive_clock": 0,
+            "records_without_complete_identity_binding": 0,
+            "records_without_lifecycle": 0,
+            "records_without_receive_clock": 0,
+            "earliest_matched_claim_received_ns": 98829479,
+            "observed_matched_claim_to_final_observation_ns": null,
+            "observed_matched_claim_to_confirmation_ns": null,
+            "confirmation_observed_in_original_window": false,
+            "exact_claim_cohort_covered": true,
+            "body_or_sender_authenticated_by_clock": false,
+            "has_control_authority": false,
+            "scope": "same-process receive time for the peer-claimed first business packet, including failed retries; an Ok final observation is not necessarily confirmation; no full-body validation, sender or operator independence is inferred; unknown bindings or lost records prevent an exact earliest-claim latency"
+          }
+        },
+        "product_metrics": {
+          "confirmation": {
+            "finite_offer_transactions_per_second": 0.0,
+            "required_unique_transactions": 1,
+            "window_ns": 4000000000,
+            "saturated_capacity_tps": null,
+            "scope": "one original signed business transaction, not ACKs, blocks or saturated TPS"
+          },
+          "complete_release_download": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "verified-release-bytes/second"
+          },
+          "first_token": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "nanoseconds"
+          },
+          "inference": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "tokens/second"
+          },
+          "model_net_benefit_per_cost": {
+            "status": "not_observed_by_this_report",
+            "value": null,
+            "unit": "net-model-utility/cost-unit"
+          }
+        }
+      }
+    ],
+    "network_capacity_qualified": false,
+    "tail_latency_qualified": false,
+    "production_activation": false,
+    "scope": "same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; reported native observations only, no independent proof/state oracle"
+  },
+  "terminal": {
+    "schema": "trnm-from-zero-native-terminal-v1",
+    "scope": "child process terminals and original sequential report acceptance; diagnostic readback grants no acceptance or subsequent CI execution",
+    "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+    "native_execution_completed": true,
+    "native_execution_completed_scope": "all planned child invocations returned without timeout; not named-test or business acceptance",
+    "native_invocations": [
+      {
+        "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+        "status": "returned",
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+        "status": "returned",
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+        "status": "returned",
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+        "status": "returned",
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "status": "returned",
+        "exit_code": 0,
+        "timed_out": false
+      }
+    ],
+    "unexecuted_native_tests": [],
+    "acceptance_stages": {
+      "service_report": {
+        "path": "native/report.json",
+        "status": "passed",
+        "error": null,
+        "before_validation": {
+          "state": "present",
+          "bytes": 3476034,
+          "sha256": "1719f040460e4440e3f258680a9d9d31bd819f85c1981ca6b07ef6d01f9f8296"
+        },
+        "retained_report": {
+          "state": "present",
+          "bytes": 3476034,
+          "sha256": "1719f040460e4440e3f258680a9d9d31bd819f85c1981ca6b07ef6d01f9f8296"
+        },
+        "retained_matches_before_validation": true
+      },
+      "sustained_report": {
+        "path": "native/sustained/report.json",
+        "status": "passed",
+        "error": null,
+        "before_validation": {
+          "state": "present",
+          "bytes": 18860057,
+          "sha256": "689c780f7b0de14b15e9edb7aac7d85a7476e1854db4092e086a08331641faeb"
+        },
+        "retained_report": {
+          "state": "present",
+          "bytes": 18860057,
+          "sha256": "689c780f7b0de14b15e9edb7aac7d85a7476e1854db4092e086a08331641faeb"
+        },
+        "retained_matches_before_validation": true
+      },
+      "confirmation_report": {
+        "path": "confirmation/report.json",
+        "status": "failed",
+        "error": "CONFIRMATION_TARGET",
+        "before_validation": {
+          "state": "present",
+          "bytes": 10029611,
+          "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae"
+        },
+        "retained_report": {
+          "state": "present",
+          "bytes": 10029611,
+          "sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae"
+        },
+        "retained_matches_before_validation": true
+      }
+    },
+    "unexecuted_acceptance_stages": [],
+    "acceptance_passed": false,
+    "finalization_completed": true,
+    "subsequent_ci_steps_observed": false
+  },
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "build_env": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-priority",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null
+  },
+  "format_copy": {
+    "command": [
+      "rustfmt",
+      "--edition",
+      "2021",
+      "/home/runner/work/_temp/priority-observations/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 293442702,
+    "user_cpu_ns": 47918000,
+    "system_cpu_ns": 16971000,
+    "cpu_ns": 64889000,
+    "max_rss_kib": 102108,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "minor_faults": 7405,
+    "major_faults": 0,
+    "voluntary_switches": 3,
+    "involuntary_switches": 3,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "wait4_cpu_resolution_ns": 1000,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "format": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 54413692572,
+    "user_cpu_ns": 13258141000,
+    "system_cpu_ns": 148130000,
+    "cpu_ns": 13406271000,
+    "max_rss_kib": 220156,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "minor_faults": 41551,
+    "major_faults": 0,
+    "voluntary_switches": 16,
+    "involuntary_switches": 635,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "wait4_cpu_resolution_ns": 1000,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "build": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "wall_ns": 494529439,
+    "user_cpu_ns": 64814000,
+    "system_cpu_ns": 49857000,
+    "cpu_ns": 114671000,
+    "max_rss_kib": 51052,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "minor_faults": 12667,
+    "major_faults": 0,
+    "voluntary_switches": 5,
+    "involuntary_switches": 6,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "wait4_cpu_resolution_ns": 1000,
+    "stdout_sha256": "8efa189c82b563fb8a670a5e591ac03438ddf855f3e1c2daf0281416d22318f7",
+    "stderr_sha256": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b"
+  },
+  "binary_sha256_before": "73ab72d1c77ee73dfd82c259cdca80f3ec55a35912c2ab3a103c53fa23b2952e",
+  "binary_sha256_after": "73ab72d1c77ee73dfd82c259cdca80f3ec55a35912c2ab3a103c53fa23b2952e",
+  "files": {
+    "build/process.json": "40b299acd8cd7bda66f1451003e74f50a1b557faea3b74dbb5a1919a08eb2451",
+    "build/stderr": "0de31bb8485638adca3b21dd27a3da83f5bdd092455b92448f3a6f4e707f716b",
+    "build/stdout": "8efa189c82b563fb8a670a5e591ac03438ddf855f3e1c2daf0281416d22318f7",
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json": "c61b15f99534df3695b5e9cdc6f1196192b7df4aa36ed7d3005f7ac8e809726f",
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+    "confirmation/baseline/independent-client/native.sqlite": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+    "confirmation/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "confirmation/baseline/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "confirmation/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "confirmation/pressure/independent-client/native.sqlite": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+    "confirmation/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "confirmation/pressure/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "confirmation/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "confirmation/producer/native.sqlite": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770",
+    "confirmation/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "confirmation/report.json": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae",
+    "format-check/process.json": "175a20371fc30fa1c98fcbf283d90ce6f041b2799d08e5d660e6d83dc8b764aa",
+    "format-check/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "format-check/stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "format-copy/process.json": "cebae46e118c166becea40a9d9083f47aff5c211d4effd1b48a177d24f66867e",
+    "format-copy/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "format-copy/stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "format-copy-source/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+    "format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9",
+    "format-copy-source/tests/public_v3_from_zero.rs": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+    "formatted.rs": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json": "79ee041e7145990a54485f9f76adbc2283e291c468ffcd66db44e77b5c740b76",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout": "cd44d0328c802c7591baf1c7cda8d88fe2d53c940cad8291f0e2038e94f57c59",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json": "b77675c463679f007d7f4fde40e907746c57f231cde8a832848423b9289ea496",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+    "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json": "8fcca4958e45cbd366313623c8e9c4d6c376242ce56cde2201fadcff86c8fff3",
+    "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout": "74d79aa6bb3c83f389c965eae6e5b3f97ff73e548626305b791ab7387d6aca48",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json": "b1d65a60e2c9604ae6e82f6e08e42c47d4817fe98bab3b30961759b6cd710e28",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout": "61800486171b16086703735d211d8330c2a8caf27adedc325fb6a6a3f9265e6b",
+    "native/producer/native.sqlite": "93b7e9770e3a529a75990a284ff69e792b616a289ffb25397185c531f16cf78f",
+    "native/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native/receiver/native.sqlite": "03cbc6caf0f4a00ce30f778e89bb9a16f62493e60eeb024614d4c2449533f72b",
+    "native/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native/report.json": "1719f040460e4440e3f258680a9d9d31bd819f85c1981ca6b07ef6d01f9f8296",
+    "native/sustained/producer/native.sqlite": "6014d4da91f1606f11071237372516420ace59dbc2f185471cc9b32b0c59f250",
+    "native/sustained/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native/sustained/receiver/native.sqlite": "5b246c26d3e66de7576ba5dd7839c52df52fee00d04cd52619f7839242975b49",
+    "native/sustained/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native/sustained/report.json": "689c780f7b0de14b15e9edb7aac7d85a7476e1854db4092e086a08331641faeb",
+    "public_v3_from_zero": "73ab72d1c77ee73dfd82c259cdca80f3ec55a35912c2ab3a103c53fa23b2952e"
+  }
+}

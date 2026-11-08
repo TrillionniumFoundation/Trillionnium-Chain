@@ -1,0 +1,4 @@
+arithmetic_profile_then_rejection_cache_is_refused: test
+either_cache_alone_preserves_original_cold_cpu_budget_and_profile: test
+rejection_cache_owner_cannot_be_replaced_by_repeated_setup: test
+rejection_cache_then_arithmetic_profile_is_refused: test

@@ -1,0 +1,203 @@
+{
+  "schema": "trnm-final819-history-retained-sql-readback-v1",
+  "artifact_id": 13587353281,
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "source_binding": {
+    "kind": "prospective-merge",
+    "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "before_after_equal": true,
+    "resolver_context_equal": true,
+    "log_source_identity_count": 2
+  },
+  "mode": "SQLite URI mode=ro immutable=1; query_only ON; no Node open or recovery",
+  "db_total_denominator": 2,
+  "databases": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T194212Z-819309fd3122-7d6a9641/history-artifact-read-v1/13587353281/history-native/long-history/confirmer/native.sqlite",
+      "role": "confirmer",
+      "bytes": 220893184,
+      "sha256_before": "825ba31549fefa72de9a4623b8fce659f47a6137b81458e2966743d929f9a5c1",
+      "sha256_after": "825ba31549fefa72de9a4623b8fce659f47a6137b81458e2966743d929f9a5c1",
+      "companions": [],
+      "block_rows_including_genesis": 4106,
+      "non_null_packets": 4105,
+      "height_min": 0,
+      "height_max": 4105,
+      "genesis_hex": "417363ac5d66582653b2772a50616c8ac35da1c901a786d94816828817f08e97",
+      "active": [
+        {
+          "singleton": 1,
+          "tip_hex": "417363ac5d66582653b2772a50616c8ac35da1c901a786d94816828817f08e97",
+          "generation": 0,
+          "state_slot": 0,
+          "height": 0,
+          "is_genesis": true
+        }
+      ],
+      "reorg": [
+        {
+          "singleton": 1,
+          "old_tip_hex": "417363ac5d66582653b2772a50616c8ac35da1c901a786d94816828817f08e97",
+          "new_tip_hex": "87c47d0bf1c7a49d656b283df4e1cd7d7217b006ebf46748a7e89fb000cdb6ea",
+          "generation": 1,
+          "cursor": 3701,
+          "done": 2
+        }
+      ],
+      "reorg_lifecycle_v1": [
+        {
+          "operation": 1,
+          "old_tip_hex": "417363ac5d66582653b2772a50616c8ac35da1c901a786d94816828817f08e97",
+          "new_tip_hex": "87c47d0bf1c7a49d656b283df4e1cd7d7217b006ebf46748a7e89fb000cdb6ea",
+          "generation": 1,
+          "old_slot": 0,
+          "outcome": 2,
+          "cancelled_cursor": 3701,
+          "reason": "PUBLIC_REQUEST_DEADLINE"
+        }
+      ],
+      "other_counts": {
+        "steps": 4105,
+        "events": 0,
+        "snapshots": 33,
+        "deltas": 16388,
+        "kv": 36
+      }
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T194212Z-819309fd3122-7d6a9641/history-artifact-read-v1/13587353281/history-native/long-history/validator/native.sqlite",
+      "role": "validator",
+      "bytes": 220745728,
+      "sha256_before": "169fbb68e422d3e17721a72f19002a00db853ec4a8e3076a34718ad59af69584",
+      "sha256_after": "169fbb68e422d3e17721a72f19002a00db853ec4a8e3076a34718ad59af69584",
+      "companions": [],
+      "block_rows_including_genesis": 4106,
+      "non_null_packets": 4105,
+      "height_min": 0,
+      "height_max": 4105,
+      "genesis_hex": "417363ac5d66582653b2772a50616c8ac35da1c901a786d94816828817f08e97",
+      "active": [
+        {
+          "singleton": 1,
+          "tip_hex": "87c47d0bf1c7a49d656b283df4e1cd7d7217b006ebf46748a7e89fb000cdb6ea",
+          "generation": 4105,
+          "state_slot": 0,
+          "height": 4105,
+          "is_genesis": false
+        }
+      ],
+      "reorg": [],
+      "reorg_lifecycle_v1": [],
+      "other_counts": {
+        "steps": 0,
+        "events": 4105,
+        "snapshots": 33,
+        "deltas": 16388,
+        "kv": 28
+      }
+    }
+  ],
+  "errors": [],
+  "native_log": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T194212Z-819309fd3122-7d6a9641/history-artifact-read-v1/13587353281/history-native/history.log",
+    "bytes": 11500,
+    "sha256": "5b6b3f74c53932ae5619a62ffc10e6ceeb32763db1e28c1063aec214e499a014"
+  },
+  "native_import_returns": {
+    "denominator": 4105,
+    "failure_location": {
+      "activation_cursor": null,
+      "advertised_page_complete": true,
+      "completed_import_calls": 4104,
+      "durable_committed_blocks": null,
+      "head_rpc_elapsed_ns": 6647835,
+      "last_history_rpc_elapsed_ns": 9048083,
+      "last_import_call_expression_elapsed_ns": 30000976331,
+      "last_requested_after": "d94a545e8311569610ef169d70cd69cc504fc82522280cb2547f0c96775e6729",
+      "last_successful_after": "d94a545e8311569610ef169d70cd69cc504fc82522280cb2547f0c96775e6729",
+      "pinned_tip": "87c47d0bf1c7a49d656b283df4e1cd7d7217b006ebf46748a7e89fb000cdb6ea",
+      "production_activation": false,
+      "schema": "native-ancestry-independent-sync-failure-location-v1",
+      "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+      "stage": "import-call-expression"
+    },
+    "sync_error": "PUBLIC_REQUEST_DEADLINE",
+    "raw_log_line": 28
+  },
+  "server_exit": {
+    "line": 29,
+    "record": {
+      "configured_lifetime_seconds": 1800,
+      "loop_exit_before_internal_shutdown": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1439517486864,
+        "lifetime_reached_before_shutdown": false,
+        "reason": "stop_requested",
+        "stop_requested_before_shutdown": true
+      },
+      "production_activation": false,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+      "server_exit_error": null,
+      "server_exit_ok": true,
+      "service_elapsed_ns": 1439587921815,
+      "stop_requested_when_exited": true
+    }
+  },
+  "native_manifest": {
+    "process": {
+      "cleanup_errors": [],
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "exit_code": 101,
+      "failure": null,
+      "pid": 5205,
+      "started": true
+    },
+    "passed": false,
+    "failures": [
+      "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+      "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+      "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+    ],
+    "source_before_after_equal": true,
+    "binary_before_after_equal": true,
+    "binary_sha256": "3f20c94627043b0ecb716f118379a70e8ef47262b4c90c8d877f16e5b26c2260"
+  },
+  "host": {
+    "history-native-host/child-result.json": {
+      "schema": "trnm-ci-original-public-host-child-v1",
+      "passed": null,
+      "failure": null,
+      "host_errors": [],
+      "final_host_errors": null,
+      "native_child_exit": 1,
+      "systemd_run_exit": null,
+      "cleanup": null,
+      "preparation_execution_binding": null
+    },
+    "history-native-host/controller-result.json": {
+      "schema": "trnm-ci-original-public-host-controller-v2",
+      "passed": false,
+      "failure": null,
+      "host_errors": null,
+      "final_host_errors": [],
+      "native_child_exit": null,
+      "systemd_run_exit": 1,
+      "cleanup": "already-collected",
+      "preparation_execution_binding": null
+    }
+  },
+  "original_business_passed": false,
+  "finished_utc": "2026-11-07T19:48:24.460210+00:00"
+}

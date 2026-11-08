@@ -1,0 +1,210 @@
+{
+  "cleanup": "already-collected",
+  "command_argv": [
+    "python3",
+    "scripts/ci/run_w1_fresh_service_v1.py",
+    "--out",
+    "/home/runner/work/_temp/w1-fresh-service-head-42402618462-1/fresh-service"
+  ],
+  "consensus_or_model_authority": false,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "failure": null,
+  "final_host_errors": [],
+  "final_parent_lease": {
+    "consensus_or_model_authority": false,
+    "creator_service": "trnm-from-zero-42402618462-1-fresh-challenge-service-2855.service",
+    "current_service": "trnm-from-zero-42402618462-1-fresh-challenge-service-2855.service",
+    "host_readiness_only": true,
+    "parent_identity": {
+      "boot_id": "aa4fa51f-1e5f-40f2-ae42-516012151c04",
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "unit_file": {
+        "ctime_ns": 1794077264206178308,
+        "device": 29,
+        "inode": 1525,
+        "mtime_ns": 1794077264206178308,
+        "path": "/run/systemd/system/trnmponpublic.slice",
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "size_bytes": 325
+      }
+    },
+    "schema": "trnm-ci-public-fixture-parent-binding-v1",
+    "seal_file": {
+      "ctime_ns": 1794077266020486256,
+      "device": 29,
+      "inode": 1571,
+      "mtime_ns": 1794077266020486256,
+      "path": "/run/trnm-public-fixture-42402618462-1-fresh-challenge-service/parent.json",
+      "sha256": "c9310e22f2825d6838a0f1946d9eae84b1809446d9c7686176f7be53aecc9588",
+      "size_bytes": 3304
+    },
+    "seal_sha256": "c9310e22f2825d6838a0f1946d9eae84b1809446d9c7686176f7be53aecc9588"
+  },
+  "gid": 1001,
+  "host_readiness_only": true,
+  "parent_lease": {
+    "consensus_or_model_authority": false,
+    "creator_service": "trnm-from-zero-42402618462-1-fresh-challenge-service-2855.service",
+    "current_service": "trnm-from-zero-42402618462-1-fresh-challenge-service-2855.service",
+    "host_readiness_only": true,
+    "parent_identity": {
+      "boot_id": "aa4fa51f-1e5f-40f2-ae42-516012151c04",
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7219,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "unit_file": {
+        "ctime_ns": 1794077264206178308,
+        "device": 29,
+        "inode": 1525,
+        "mtime_ns": 1794077264206178308,
+        "path": "/run/systemd/system/trnmponpublic.slice",
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "size_bytes": 325
+      }
+    },
+    "schema": "trnm-ci-public-fixture-parent-binding-v1",
+    "seal_file": {
+      "ctime_ns": 1794077266020486256,
+      "device": 29,
+      "inode": 1571,
+      "mtime_ns": 1794077266020486256,
+      "path": "/run/trnm-public-fixture-42402618462-1-fresh-challenge-service/parent.json",
+      "sha256": "c9310e22f2825d6838a0f1946d9eae84b1809446d9c7686176f7be53aecc9588",
+      "size_bytes": 3304
+    },
+    "seal_sha256": "c9310e22f2825d6838a0f1946d9eae84b1809446d9c7686176f7be53aecc9588"
+  },
+  "parent_reused": false,
+  "passed": false,
+  "preparation": {
+    "binary_path": "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+    "binary_sha256": "d41699d3a5dfe5c27a36c9b7683b99fc5d79648f8ca635539f29734f5a3dd0a3",
+    "build_env": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "CARGO_HOME": "/home/runner/work/_temp/cargo-w1-fresh",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-w1-fresh",
+      "OPENSSL_CONF": null,
+      "OPENSSL_DIR": null,
+      "OPENSSL_MODULES": null,
+      "OPENSSL_STATIC": null,
+      "RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "TRNM_PQ_OPENSSL": null,
+      "TRNM_PQ_OPENSSL_SHA256": null,
+      "TRNM_PQ_OPENSSL_VERSION": null
+    },
+    "completed": true,
+    "consensus_or_model_authority": false,
+    "failure_type": null,
+    "native_tests_executed": false,
+    "process": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_from_zero",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cpu_ns": 341267420000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "exit_code": 0,
+      "involuntary_switches": 3378,
+      "major_faults": 2109,
+      "max_rss_kib": 1512284,
+      "minor_faults": 3788935,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+      "stderr_sha256": "29719ec684464a7e1a8b08c241436d79348192bf4883f1ec29d39ddf13975831",
+      "stdout_sha256": "f7f4c51facb3a668fd9c6d01ce748775b347180e9a9bd7616dd298fe9343f27d",
+      "system_cpu_ns": 12251029000,
+      "timed_out": false,
+      "user_cpu_ns": 329016391000,
+      "voluntary_switches": 15878,
+      "wait4_cpu_resolution_ns": 1000,
+      "wall_ns": 178320236542
+    },
+    "schema": "trnm-ci-original-native-build-preparation-v1",
+    "service_resource_observation": false,
+    "source_after": {
+      "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+      "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1277471450,
+        "tracked_entries": 12639,
+        "tracked_worktree_verified": true
+      },
+      "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+    },
+    "source_before": {
+      "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+      "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+        "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1277471450,
+        "tracked_entries": 12639,
+        "tracked_worktree_verified": true
+      },
+      "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267"
+    },
+    "source_error": null
+  },
+  "schema": "trnm-ci-original-public-host-controller-v2",
+  "service": "trnm-from-zero-42402618462-1-fresh-challenge-service-2855.service",
+  "systemd_run_exit": 1,
+  "uid": 1001
+}

@@ -1,0 +1,77 @@
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.184
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling zeroize v1.8.2
+   Compiling proc-macro2 v1.0.106
+   Compiling cmov v0.5.4
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling ctutils v0.4.6
+   Compiling find-msvc-tools v0.1.9
+   Compiling cfg-if v1.0.4
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling hybrid-array v0.4.15
+   Compiling syn v2.0.117
+   Compiling sha2-asm v0.6.4
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling semver v1.0.27
+   Compiling serde_core v1.0.228
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling rustc_version v0.4.1
+   Compiling digest v0.10.7
+   Compiling crypto-common v0.2.2
+   Compiling curve25519-dalek v4.1.3
+   Compiling digest v0.11.3
+   Compiling cpufeatures v0.2.17
+   Compiling cpufeatures v0.3.1
+   Compiling serde v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling zmij v1.0.21
+   Compiling keccak v0.2.2
+   Compiling sha2 v0.10.9
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling sponge-cursor v0.1.0
+   Compiling signature v2.2.0
+   Compiling rustix v1.1.4
+   Compiling anyhow v1.0.103
+   Compiling serde_json v1.0.149
+   Compiling subtle v2.6.1
+   Compiling ed25519 v2.2.3
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling bitflags v2.11.0
+   Compiling hex v0.4.3
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+    Finished `release` profile [optimized] target(s) in 52.89s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-rank-batch/release/deps/trnm_crypto_primitives-e3d8c22871e6a007)
+
+running 14 tests
+test pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts ... ok
+test pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders ... ok
+test pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback ... ok
+test pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers ... ok
+test pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task ... ok
+test pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work ... ok
+test pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product ... ok
+test pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry ... ok
+test pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields ... ok
+test pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization ... ok
+test pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes ... ok
+test pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs ... ok
+test pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths ... ok
+test pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.31s
+

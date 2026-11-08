@@ -20,6 +20,8 @@ mod historical_commitment_tests;
 mod history_page;
 mod legacy_admission_readback;
 #[cfg(test)]
+mod legacy_admission_root_tests;
+#[cfg(test)]
 mod legacy_reorg_observation_tests;
 #[cfg(test)]
 mod legacy_reorg_root_tests;
@@ -2869,12 +2871,12 @@ impl Node {
         }
         Ok(())
     }
-    /// Only the Legacy reorganization path opts into the existing bounded root
-    /// arithmetic. It still reads every actual SQL row and checks continuity,
-    /// canonical grammar and the fresh stored root at every original boundary.
-    /// Ordinary append/admission, PQ State grammar and the distinct Growth root
-    /// stay unchanged. Profile exclusion is explicit as well as backend exclusion.
-    fn legacy_reorg_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
+    /// Legacy reorganization and the final admission fence share bounded
+    /// complete-State root arithmetic. Every caller still reads actual SQL rows
+    /// and checks continuity, canonical grammar and the fresh stored root at its
+    /// original boundary. PQ State grammar and the distinct Growth root keep
+    /// their original paths; profile and backend exclusion remain explicit.
+    fn legacy_persisted_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
         (self.state_backend == StateBackend::Legacy
             && !pq_accounts_v2::enabled(&self.settings.app)
             && !growth_profile_v2::enabled(&self.settings.app))
@@ -5154,9 +5156,12 @@ impl Node {
             }
             crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
                 .map_err(Error::local_integrity)?;
-            self.check_active_before_commit_with_readback(
+            // Keep the last active-state read and all original post-write fences.
+            // Only the classical complete-input root arithmetic is shared.
+            self.check_active_before_commit_with_root_arithmetic(
                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
                 publication_readback.as_mut(),
+                self.legacy_persisted_root_arithmetic(),
             )?;
             progress(ExecutionProgress::BeforeDurableCommit)?;
             if let Some(scope) = publication_readback.as_mut() {
@@ -5834,7 +5839,7 @@ impl Node {
                     });
                 let arithmetic =
                     matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep)
-                        .then(|| self.legacy_reorg_root_arithmetic())
+                        .then(|| self.legacy_persisted_root_arithmetic())
                         .flatten();
                 self.check_active_before_commit_with_root_arithmetic(
                     progress,
@@ -6108,7 +6113,7 @@ impl Node {
                     &self.slot_state_with_progress(next, progress)?,
                     progress,
                     readback.as_mut(),
-                    self.legacy_reorg_root_arithmetic(),
+                    self.legacy_persisted_root_arithmetic(),
                 )?;
             }
             Ok(readback)
@@ -6330,7 +6335,7 @@ impl Node {
                         &self.slot_state_with_progress(g, progress)?,
                         progress,
                         readback.as_mut(),
-                        self.legacy_reorg_root_arithmetic(),
+                        self.legacy_persisted_root_arithmetic(),
                     )?;
                 }
                 Ok(readback)
@@ -6344,7 +6349,7 @@ impl Node {
         progress()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        let actual_root = match self.legacy_reorg_root_arithmetic() {
+        let actual_root = match self.legacy_persisted_root_arithmetic() {
             Some(arithmetic) => arithmetic.root(&state)?,
             None => self.settings.state_root(&state)?,
         };
@@ -6412,7 +6417,7 @@ impl Node {
                     &self.slot_state_with_progress(g, progress)?,
                     progress,
                     readback.as_mut(),
-                    self.legacy_reorg_root_arithmetic(),
+                    self.legacy_persisted_root_arithmetic(),
                 )?;
             }
             Ok(readback)

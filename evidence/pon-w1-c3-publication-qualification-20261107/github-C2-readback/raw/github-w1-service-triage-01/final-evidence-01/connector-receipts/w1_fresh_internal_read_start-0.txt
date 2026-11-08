@@ -1,0 +1,35 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-c",
+      "import pathlib,hashlib,json,zipfile,stat,os\nroot=pathlib.Path(\"/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-w1-service-triage-01/head-artifact-01\")\nout=root/\"internal-small-01\"\nout.mkdir(exist_ok=False)\nsrc=root/\"02-original-artifact-zip.stdout\"\nb=src.read_bytes()\nassert len(b)==5630716\nassert hashlib.sha256(b).hexdigest()==\"ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4\"\nitems=[]\nwith zipfile.ZipFile(src) as z:\n    for name in [\"fresh-service/fresh.log\",\"fresh-service/original.log\",\"fresh-service-host/systemd-run.log\"]:\n        x=z.getinfo(name)\n        assert not x.is_dir() and 0<=x.file_size<=16384\n        raw=z.read(x)\n        assert len(raw)==x.file_size\n        txt=raw.decode(\"utf-8\")\n        dst=out/name.replace(\"/\",\"__\")\n        with dst.open(\"xb\") as f:f.write(raw);f.flush();os.fsync(f.fileno())\n        items.append({\"member\":name,\"path\":str(dst),\"bytes\":len(raw),\"sha256\":hashlib.sha256(raw).hexdigest(),\"text\":txt})\np=root/\"selected-text/fresh-service/fresh/report.json\"\nwith p.open(\"rb\") as f:\n    raw=f.read(8*1024*1024+1)\nassert len(raw)==7607168 and hashlib.sha256(raw).hexdigest()==\"71e2eaa17dba3d3bdc0b70b41269b34f73ba58d28e50eca3ba007da9e08fcacb\"\nobj=json.loads(raw)\ndef shallow(v):\n    if isinstance(v,dict):\n        return {k:(x if not isinstance(x,(dict,list)) else {\"type\":type(x).__name__,\"length\":len(x),\"keys\":list(x)[:40] if isinstance(x,dict) else None}) for k,x in v.items()}\n    if isinstance(v,list):return {\"type\":\"list\",\"length\":len(v)}\n    return v\ndata={\"schema\":\"TRNM-W1-SERVICE-READONLY-INTERNAL1\",\"zip_sha256\":hashlib.sha256(b).hexdigest(),\"logs\":items,\"fresh_report_structure\":{k:shallow(v) for k,v in obj.items()},\"artifact_executed\":False,\"db_opened\":False}\nraw=(json.dumps(data,ensure_ascii=False,indent=2)+\"\\n\").encode()\ndst=out/\"readback.json\"\nwith dst.open(\"xb\") as f:f.write(raw);f.flush();os.fsync(f.fileno())\nprint(json.dumps({\"path\":str(dst),\"bytes\":len(raw),\"sha256\":hashlib.sha256(raw).hexdigest(),\"data\":data},ensure_ascii=False))\n"
+    ],
+    "created_unix_ms": 1794093310837,
+    "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery",
+    "env_keys": [
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/usr/bin/python3",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1b84b6375-12894-e15",
+    "idempotency_key": "w1-pr782-fresh-head-internal-small-readonly-01",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b84b6375-12894-e15",
+    "request_digest": "41e8765d08c6a4040fc711686310636398dbf5369615aeb1669b4329a5ff1313",
+    "request_fingerprint": 4749175949013459972,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b84b6375-12894-e15"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b84b6375-12894-e15"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

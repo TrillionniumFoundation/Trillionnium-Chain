@@ -1,0 +1,277 @@
+{
+  "schema": "TRNM-PR782-W1-FRESH-SERVICE-READONLY-TRIAGE1",
+  "pull_request": 782,
+  "run_id": "42422952132",
+  "job_id": "128555111370",
+  "source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "source_tree": "161d3a4e8ab8c865869352339ec8c66f6609449a",
+  "artifact": {
+    "id": "13594760529",
+    "bytes": 5630716,
+    "sha256": "ea3bbb909bd39ad5935f206298114e9bfed77b03c5ab26f1142e39f4f9e6f4f4",
+    "file_members": 57
+  },
+  "conclusion": "The actual fresh native ignored test exited 101 at fresh_challenge.rs:244 after retaining finite_target_met=false. Its attack-free baseline met depth-six confirmation, while the from-zero-pressure phase did not complete independent history replay within the unchanged four-second window. The original retained-packet native test exited 0 but reported finite_target_met=false and was rejected by the strict wrapper with CONFIRMATION_TARGET.",
+  "fresh_assertion": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+    "line": 244,
+    "message": "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+    "test_exit": 101,
+    "test_harness_seconds": 9.31,
+    "process_timed_out": false,
+    "strict_wrapper_failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+  },
+  "original": {
+    "native_test_exit": 0,
+    "test_harness_seconds": 8.89,
+    "finite_target_met": false,
+    "strict_wrapper_failure": "CONFIRMATION_TARGET",
+    "last_pressure_history_replay": {
+      "index": 3,
+      "accepted": false,
+      "error": "PUBLIC_REQUEST_DEADLINE"
+    },
+    "full_original_report_inspected": false
+  },
+  "fresh_phases": [
+    {
+      "client_confirmation_latency_ns": 2894233678,
+      "client_confirmed_before_original_window_end": true,
+      "client_confirmed_transactions": 1,
+      "confirmation_ended_ns": 2894344125,
+      "finite_business_target_met": true,
+      "full_native_state_equal": true,
+      "independent_client_confirmation": {
+        "active_generation": 1,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "included_block": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "included_height": 1,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "observed_height": 7,
+        "observed_now": 1794092488,
+        "observed_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "658a6d0d930debbbe5db7ec755727a3b69bd0b173c4e4554c306a8f9d59df9ad",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "independent_final_confirmation_stage": {
+        "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+        "confirmation_ended_ns": 2894341571,
+        "confirmation_started_ns": 2893571256,
+        "confirmation_thread_cpu_ns": 770792,
+        "confirmation_wall_ns": 770315,
+        "observation_returned": true
+      },
+      "independent_history_page_replay": {
+        "_type": "list",
+        "_count": 7,
+        "_first": {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 456031916,
+          "native_import_observation": {
+            "_type": "dict",
+            "_keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "replay_accepted": true,
+          "replay_ended_ns": 997342492,
+          "replay_error": null,
+          "replay_started_ns": 456046548,
+          "replay_thread_cpu_ns": 71592782,
+          "replay_wall_ns": 541295944
+        },
+        "_last": {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 6,
+          "history_request_ended_ns": 2507571010,
+          "native_import_observation": {
+            "_type": "dict",
+            "_keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+          "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+          "replay_accepted": true,
+          "replay_ended_ns": 2893516493,
+          "replay_error": null,
+          "replay_started_ns": 2507587094,
+          "replay_thread_cpu_ns": 80697730,
+          "replay_wall_ns": 385929399
+        }
+      },
+      "invariant_target_met": true,
+      "mode": "attack-free-baseline",
+      "no_attack_accepted": true,
+      "receiver_matches_valid_honest_prefix": true,
+      "requested_window_ns": 4000000000
+    },
+    {
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_before_original_window_end": false,
+      "client_confirmed_transactions": 0,
+      "confirmation_ended_ns": null,
+      "finite_business_target_met": false,
+      "full_native_state_equal": false,
+      "independent_client_confirmation": null,
+      "independent_final_confirmation_stage": null,
+      "independent_history_page_replay": {
+        "_type": "list",
+        "_count": 2,
+        "_first": {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 0,
+          "history_request_ended_ns": 2087022260,
+          "native_import_observation": {
+            "_type": "dict",
+            "_keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "replay_accepted": true,
+          "replay_ended_ns": 3192911135,
+          "replay_error": null,
+          "replay_started_ns": 2087039196,
+          "replay_thread_cpu_ns": 69288570,
+          "replay_wall_ns": 1105871939
+        },
+        "_last": {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 3386883675,
+          "native_import_observation": {
+            "_type": "dict",
+            "_keys": [
+              "after",
+              "clock_scope",
+              "cpu_intervals_are_nested_not_additive",
+              "host_checks",
+              "host_checks_are_nested_not_additive",
+              "host_cpu_includes_each_calling_thread",
+              "host_cpu_is_full_worker_cpu",
+              "measurement_failures",
+              "observation_has_consensus_authority",
+              "packet_capacity",
+              "packets",
+              "phase_cpu_excludes_scoped_workers",
+              "phases",
+              "schema",
+              "supplied_packets",
+              "tip"
+            ]
+          },
+          "next_after": null,
+          "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "replay_accepted": false,
+          "replay_ended_ns": 4085282455,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 3386899779,
+          "replay_thread_cpu_ns": 59869470,
+          "replay_wall_ns": 698382676
+        }
+      },
+      "invariant_target_met": true,
+      "mode": "from-zero-pressure",
+      "no_attack_accepted": true,
+      "receiver_matches_valid_honest_prefix": true,
+      "requested_window_ns": 4000000000
+    }
+  ],
+  "predicates_at_source_lines_202_211": {
+    "construction_valid": true,
+    "baseline_invariant_target_met": true,
+    "baseline_finite_business_target_met": true,
+    "pressure_invariant_target_met": true,
+    "pressure_finite_business_target_met": false
+  },
+  "observed_host": {
+    "cpu_max": "25000 100000",
+    "memory_max": "2147483648",
+    "memory_swap_max": "0",
+    "pids_max": "256",
+    "causal_explanation_established": false
+  },
+  "source_checks": {
+    "before_after_equal": true,
+    "tracked_worktree_verified": true,
+    "build_exit": 0,
+    "binary_sha256_before_after": "d8d807e66e56ebef5114952d67772676465f82a5b0d5f5e676996477d05f1c01",
+    "source_projections_read_from_fixed_commit": true,
+    "current_local_merge_tree_not_qualified_by_this_analysis": true
+  },
+  "boundaries": {
+    "downloaded_artifact_executed": false,
+    "downloaded_sqlite_opened": false,
+    "rerun_performed": false,
+    "source_or_gate_changed": false,
+    "window_or_assertion_changed": false,
+    "prospective_merge_artifact_downloaded": false,
+    "prospective_merge_root_cause_confirmed": false,
+    "local_C2_770_test_result_distinct_from_remote_failure": true,
+    "no_post_window_success_credit": true,
+    "no_single_cause_cpu_attribution": true
+  },
+  "receipts": {
+    "artifact_collector": "1a1b847e376-12894-df6",
+    "small_log_projection": "1a1b84b6375-12894-e15",
+    "source_phase_projection": "1a1b84c6688-12894-e21"
+  }
+}

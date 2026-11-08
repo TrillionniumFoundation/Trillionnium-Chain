@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1",
+    "--all-features",
+    "--locked",
+    "--offline"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:34:00.382043+00:00",
+  "exit_code": 0,
+  "log": "logs/cargo-locked-offline-metadata.log",
+  "log_bytes": 893389,
+  "log_sha256": "6ba97a5d6194e80f6c84af5a5f81972422b0f8f579445706e7aed6de2ad68aad",
+  "name": "cargo-locked-offline-metadata",
+  "pid": 1328802,
+  "start_utc": "2026-11-07T18:33:59.746532+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 635520209
+}
