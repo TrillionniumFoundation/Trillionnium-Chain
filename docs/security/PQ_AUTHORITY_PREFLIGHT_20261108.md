@@ -53,6 +53,31 @@ unchanged. The independent `tests/fuzz/Cargo.lock` adds that one normal local
 dependency edge; all package identities and versions remain unchanged. The
 original missing-edge CI refusal is retained with the repair observation.
 
+## Native timing-fixture correction
+
+The integrated-source-01 run on
+`af6b06fa1cb944e639148b58e9765fe2bb0065ab` completed all 31 command gates.
+Thirty passed. The Node release-owner gate reported 39 passed, one failed and
+one existing ignored test. Its positive post-admission completion test was
+refused by the conservative time check before reaching `Admitted`: the signed
+fixture allowed only two trusted seconds, while its real clock advances at
+twice wall-clock speed. The original failure and every other gate are retained
+in the execution record; that run remains FAIL.
+
+The test now signs one 30-trusted-second window, deliberately waits past the
+former two-second setup window, and starts the original two-second service
+deadline only when sending the request. At the actual `Admitted` hook it checks
+that admission occurred before the signed expiry, then waits on the same real
+fixture clock until that exact expiry. An independent 20-wall-second bound
+prevents an unbounded test wait. The existing lost-after-durable-completion
+error, committed row/frontier/floor/fence checks and cold no-redispatch checks
+remain. Both negative pre-admission expiry tests remain unchanged.
+
+This changes only test scheduling. Production clock/expiry validation, service
+deadlines, crypto, wire bytes and authority transitions are unchanged. The
+follow-up exact native test and complete integrated validation identify their
+own corrected source commit; earlier results are not relabelled.
+
 ## Binding and current-authority review
 
 The following is a source-scoped review of the existing owner paths, not a
