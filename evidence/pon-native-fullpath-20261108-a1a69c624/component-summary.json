@@ -1,0 +1,45 @@
+{
+  "binary_sha256": "5ca41198209fe21b6d4f3557879c69847d37802c4aad67f962dd695bdd7f634e",
+  "campaign_resources": {
+    "cpu_ns": 618446000,
+    "peak_rss_bytes": 54403072,
+    "wire_bytes": 200040
+  },
+  "collector_exit_code": 0,
+  "component_controls_passed": true,
+  "compressed_path_executed": false,
+  "controls": {
+    "all_four_starts_retained": true,
+    "cancellation_not_complete_replay": true,
+    "depth_zero_not_six": true,
+    "duplicate_not_new_replay": true,
+    "expected_terminal_outcomes": true,
+    "explicit_hold": true,
+    "late_product_is_actual_rejection": true,
+    "no_business_progress_claim": true,
+    "one_new_native_block": true,
+    "valid_complete_native_replay": true
+  },
+  "original_observations_sha256": "88a362570bd09dc9e7117048fff4c4767c19867dd5d6dc0274014c4cd063e591",
+  "original_preregistration_sha256": "e7687531f92da803ae0f5dd3d02cb25271ef7d1d09dbe371e9808b9fddc4117e",
+  "overall_gate": "HOLD",
+  "performance_gate": "COMPONENT_OBSERVATION_ONLY",
+  "production_activation": false,
+  "quantum_lower_bound_proved": false,
+  "queue_and_interstage_gaps_ns": 349601937,
+  "reader_exit_code": 1,
+  "recorded_unique_new_native_blocks": 1,
+  "schema": "trnm-native-fullpath-component-summary-v1",
+  "security_gate": "HOLD",
+  "source_after_measurement_exit_code": 0,
+  "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782",
+  "timely_accepted_progress": 0,
+  "valid_end_to_end_observation_ns": 7322108454,
+  "valid_phase_durations_ns": {
+    "acceptance": 1082870444,
+    "propagation": 42120643,
+    "search": 2394345806,
+    "verification": 2576483899,
+    "winner_prepare": 876685725
+  }
+}

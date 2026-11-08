@@ -1,0 +1,55 @@
+[
+  {
+    "argv": [
+      "python3",
+      "formal/pon-native-fullpath-v1/collect_native.py",
+      "--repo",
+      "/home/qian-qi/work/chain-native-fullpath-20261108-3dfc",
+      "--expected-source",
+      "a1a69c624db33205a69973b98a6db0f7d22e0782",
+      "--binary",
+      "/home/qian-qi/work/chain-native-fullpath-20261108-3dfc-target/release/examples/native_fullpath_v1",
+      "--output",
+      "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/processes"
+    ],
+    "elapsed_ns": 15105897457,
+    "error": null,
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "name": "collector",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "formal/pon-native-fullpath-v1/adapt_native.py",
+      "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/processes",
+      "--preregistration-sha256",
+      "e7687531f92da803ae0f5dd3d02cb25271ef7d1d09dbe371e9808b9fddc4117e"
+    ],
+    "elapsed_ns": 265837279,
+    "error": null,
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "name": "reader",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a1a69c624db33205a69973b98a6db0f7d22e0782",
+      "--output",
+      "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/source-after-measurement.json"
+    ],
+    "elapsed_ns": 222667411157,
+    "error": null,
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "name": "source-after-measurement",
+    "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782"
+  }
+]

@@ -1,0 +1,55 @@
+{
+  "schema": "pon-native-fullpath-ci-reconciliation-v1",
+  "observed_head": "0e3a80c4cbecf36a3dea6623f05ad7ce1de915d2",
+  "repair_source": "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+  "production_activation": false,
+  "qualification": "HOLD",
+  "notes": "These are separate old-head CI observations. Local metadata repair does not change any prior performance qualification, missing historical artifact or original failed outcome.",
+  "observations": [
+    {
+      "name": "native-fullpath-component-controls",
+      "result": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599855"
+    },
+    {
+      "name": "generated-source-inventory",
+      "result": "failure",
+      "error": "distributed native source inventory differs; refresh before freezing source",
+      "repair": "Merge integration 96a241bf, run official inventory generator, update the exact inventory blob pin; no guard relaxation.",
+      "urls": [
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599520/job/128659842410",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599483/job/128659842601"
+      ]
+    },
+    {
+      "name": "historical-pressure-artifact",
+      "result": "failure",
+      "reason": "Historical run 37730166589 returned zero artifacts for the retained artifact lookup.",
+      "scope": "Previously failed on integration source; no replacement is promoted as the original artifact.",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599526/job/128659842480",
+      "integration_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456320124/job/128655993205"
+    },
+    {
+      "name": "original-from-zero-confirmation",
+      "result": "failure",
+      "reason": "Original CONFIRMATION_TARGET remains unmet despite successful build and native execution/finalization.",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599483/job/128659842597"
+    },
+    {
+      "name": "original-fresh-service-window",
+      "result": "failure",
+      "reason": "Original four-second / sixteen-hostile service window retains PUBLIC_REQUEST_DEADLINE and CONFIRMATION_TARGET / FRESH_NATIVE_PROCESS_REQUIRED failures.",
+      "scope": "Same original service step also failed on integration source.",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599621/job/128659843327",
+      "integration_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456320135/job/128656212566"
+    },
+    {
+      "name": "original-three-round-campaign",
+      "result": "failure",
+      "reason": "All three original attempts returned cargo 101 with complete_success=false and original_criteria_met=false; build/startup/report validation/finalization had no additional failure.",
+      "scope": "The two compared integration sources did not trigger this workflow; no inherited-cause conclusion is asserted.",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457599512/job/128659842532"
+    }
+  ],
+  "recorded_utc": "2026-11-08T07:31:54.776854+00:00"
+}

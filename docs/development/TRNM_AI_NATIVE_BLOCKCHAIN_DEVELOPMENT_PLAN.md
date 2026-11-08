@@ -8818,3 +8818,45 @@ C5 checkout、原目标缓存、两个已发布证据分支身份和所有旧操
 
 
 2026-11-08 C8 固定 9417 整合候选：C7 `40a3a45d6b8afc5c4706c5235fec47634f4aabbe` 的独立精确资格实际为 69 commands、655 普通 PASS、4 ignored；其昂贵 operation 仅保留 launch-Unknown，未取得 heavy/cold 执行证据，C5/C6 既有真实路径不转记为 C7。本候选从冻结 C7 正常合入固定 `9417e495165865ef6c1288b39084856e31020634`（直接父 `91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c`），理由是实际 prospective 整合在 recent-batch workflow 与 PQ corpus 出现精确 pin 冲突，且上游包含真实生产 historical commitment 的有界 replay-prefix／current-parent 算术保留变化。保留双方 W1/M12 与原缓存边界控制、上游两组既有方法内的新增子例、History source.json 自引用修正及全部必要 pins／required 路径；仅按自动合并后的实际 store.rs、最终 workflow 字节重绑冲突 pin。生成清单为已有路径的 include_bytes 登记，保持原字节并独立 --check；不改 source guard、事件上下文、原 deadline 或接受条件。C8 尚待其最终 commit/tree 的全量精确构建与执行资格以及新 event/base/head/merge tuple；候选检查不继承 C7 PASS，不新增完整 proof、正向付款、完整资源结算或四门资格。冻结仅针对本固定 base，不自动追随以后远端 base 漂移。
+
+### 2026-11-08 native full relation and complete-path qualification
+
+The [native qualification](specs/pon/NATIVE_FULL_RELATION_QUALIFICATION_V1.md)
+retains the original FullLimb/PNW1 verifier, PGH2/PNP2 statement and Node
+admission/activation rules. A new real-Node regression seals fresh mathematically
+valid work for sixteen incorrect contexts, including an active-tip target that
+differs from the candidate parent target, a matching but ineligible matrix task,
+new signed body, stale state/receipts and account witness. Both FullLimb and
+scalar reference must accept the changed work statement before Node refuses it;
+SQLite rows, active/generation and nonce remain unchanged, and the valid control
+continues through activation and cold reopening.
+
+The [complete-path component tools](../../formal/pon-native-fullpath-v1/README.md)
+retain frozen offered starts and actual producer, receiver and cold-observer
+processes. One parent monotonic clock covers native candidate generation, packet
+export, complete same-host pipe delivery, full W1/execution/admission, activation
+and readback. Exact resubmission is distinct from fresh replay. A last-C-element
+mutation and actual BeforeVerifiedWork cancellation preserve their unsuccessful
+terminal records and resource cost; no partial result is promoted.
+
+Raw packet/statement/source/binary identities, native ancestry/readback and
+resource denominators are reconciled by a bounded reader with adversarial
+controls. It deliberately reports COMPONENT_OBSERVATION_ONLY and HOLD: one
+depth-zero accepted development block does not close the original four-second,
+six-successor, 0.25-CPU/2-GiB/zero-swap/256-PID/16-hostile contract, WAN, full
+history or production gates. Full native correctness does not establish
+physical or quantum search cost. Compression still requires both complete
+instance-specific cryptographic security and end-to-end performance/availability
+qualification; neither can be inferred from an isolated verifier benchmark.
+
+Actual exact-source evidence is now retained in [the 2026-11-08 native complete-path observation](../../evidence/pon-native-fullpath-20261108-a1a69c624/README.md). All 290 selected tests passed. The one new development block required 7.322108454 seconds through independent readback, remained at depth 0, and produced zero progress under the original four-second/six-successor condition. All four starts, native rejection/cancellation outcomes and resource costs remain recorded; security and performance qualification stay HOLD.
+
+The initial publication's native full-path CI passed, while the retained PQ
+network CI refused its generated source inventory. The follow-up integrates
+the current history-diagnostic candidate, regenerates the native inventory
+with the official script and updates its exact PQ blob pin. No guard is
+relaxed. The measured native implementation and complete-path tools remain
+byte-identical to the measured source; the original failed CI observation
+and the original component HOLD remain separate from this metadata repair.
+
+The post-integration inventory repair passed 333 selected tests and all 17 recorded validation commands. Its [exact-source validation and retained CI distinctions](../../evidence/pon-native-fullpath-20261108-inventory-reconciliation/README.md) preserve the original measurement and HOLD.

@@ -1,0 +1,236 @@
+{
+  "source": "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+  "commands": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ]
+    },
+    {
+      "name": "source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+        "--output",
+        "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/inventory-reconciliation/source-before.json"
+      ]
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ]
+    },
+    {
+      "name": "pq-source",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ]
+    },
+    {
+      "name": "pq-source-negatives",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ]
+    },
+    {
+      "name": "history-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_stage_diagnostic.py",
+        "-v"
+      ]
+    },
+    {
+      "name": "source-negatives",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ]
+    },
+    {
+      "name": "repository-negatives",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_repository.py",
+        "-v"
+      ]
+    },
+    {
+      "name": "native-path-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-native-fullpath-v1",
+        "-p",
+        "test_*.py",
+        "-v"
+      ]
+    },
+    {
+      "name": "cargo-default",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ]
+    },
+    {
+      "name": "cargo-all-features",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ]
+    },
+    {
+      "name": "format",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ]
+    },
+    {
+      "name": "strict-clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_full_relation_context",
+        "--test",
+        "history_stage_diagnostic",
+        "--example",
+        "native_fullpath_v1",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    {
+      "name": "native-retained-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_full_relation_context",
+        "--test",
+        "work_header_binding",
+        "--test",
+        "growth_persistence_cancellation",
+        "--test",
+        "work_fuzz_semantics",
+        "--",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "name": "native-kernel-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "pon_work::",
+        "--",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "name": "repository-markdown",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ]
+    },
+    {
+      "name": "source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6e48656b51fc9bd85de386b3f01f41daa6e35069",
+        "--output",
+        "/home/qian-qi/work/native-fullpath-qualification-20261108-3dfc/inventory-reconciliation/source-after.json"
+      ]
+    }
+  ]
+}
