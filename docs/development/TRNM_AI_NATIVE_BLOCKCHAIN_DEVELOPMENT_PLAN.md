@@ -8033,3 +8033,15 @@ original early-announcement controls and one timing premise, while the other two
 new sequence controls passed. Those observations remain failures. Use a new
 source-bound Linux development run with persistent native-test storage, compiler
 1.95.0 and the verified pinned optional backend before claiming a complete pass.
+
+Authenticated-epoch C2 verification and minimal lint successor (2026-11-08):
+the isolated ai395 development run on `939aa069af41d31d41082272d7ae7367ef08f812`
+passed the valid three-case old/fixed sequence differential and all four retained
+classical controls. Its full 19-gate run passed 18 gates, including unfiltered
+468 library + 34 integration tests and 13 compile-fail doctests. Strict all-feature
+Clippy found one redundant unit expression in the new epoch directory test;
+remove only that expression and refresh that test's source pin. Preserve the
+entire failed run, host/provider/toolchain inputs and all earlier failures.
+The successor still requires a new complete source-bound run. Production
+authentication bytes and original deadlines/budgets remain unchanged; all five
+storage-network operational qualifications stay HOLD_NO_GO.

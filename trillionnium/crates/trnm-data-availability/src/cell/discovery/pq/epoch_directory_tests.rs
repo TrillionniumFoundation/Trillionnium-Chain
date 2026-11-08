@@ -1006,10 +1006,7 @@ fn assert_while_blocked(action: impl FnOnce() -> CellResultV1<()> + Send, releas
         match error {
             CellErrorV1::Invalid("discovery absolute deadline") => (),
             CellErrorV1::Sql(rusqlite::Error::SqliteFailure(code, _))
-                if code.code == rusqlite::ErrorCode::DatabaseBusy =>
-            {
-                ()
-            }
+                if code.code == rusqlite::ErrorCode::DatabaseBusy => {}
             other => panic!("unexpected deadline failure: {other:?}"),
         }
     });

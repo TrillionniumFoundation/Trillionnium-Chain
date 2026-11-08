@@ -180,3 +180,41 @@ Full acceptance remains pending a new exact-source complete run. The next
 Linux development observation uses an explicitly persistent NVMe temporary
 directory and the pinned compiler/backend, retaining every original test and
 protocol deadline. All operational qualifications remain HOLD_NO_GO.
+
+## Second complete attempt and strict-lint correction
+
+Exact candidate `939aa069af41d31d41082272d7ae7367ef08f812` was cloned to the ai395
+Linux development host and verified with Rust/Cargo 1.95.0. Native temporary
+files used the persistent local ext4 NVMe volume, not the host's tmpfs `/tmp`.
+The isolated pinned OpenSSL 3.5.9 backend was rebuilt and smoke verified on that
+host; its [metadata](ai395-provider.json), [validated inputs](ai395-provider-validation.json)
+and [full preparation log archive](ai395-provider-preparation.tar.gz) remain.
+
+The [controlled differential](sequence-differential-ai395/summary.json) passed:
+four retained classical cases passed at their original bounds; the unchanged
+`7e46e9` tests with pre-guard `7214ea` production source failed all three intended
+assertions with both measured live-receipt premises valid; restored `1fac53`
+production source passed all three. Old/fixed native runtimes were 4.46/4.10
+seconds; the four retained cases took 1.90 seconds. Source-before/source-after
+matched and the checkout returned exactly to C2. This does not erase or assign
+a precise cause to the preserved shared-desktop failures.
+
+The [complete C2 summary](implementation-attempt02/summary.json) records **18
+of 19 gates passed**. The unfiltered [native runtime log](implementation-attempt02/complete-da-native.stdout.log)
+contains 468 library tests, 34 integration tests and 13 compile-fail doctests
+passing, with zero failures, ignores or filters. Library runtime was 78.37
+seconds, the complete Cargo command 89.68 seconds. Strict all-feature lint
+advanced past the prior OpenSSL API issue and rejected a redundant unit
+expression in the new directory deadline test (`clippy::unused_unit`).
+The [original lint failure](implementation-attempt02/strict-clippy.stderr.log)
+and all remaining outputs are retained with the [byte manifest](ai395-attempt02-evidence-manifest.json).
+
+The successor only makes that match arm empty, preserving its unit return and
+test behavior, and refreshes its one source pin. It adds no lint suppression
+and changes no production bytes, signature domains, test deadline or budget.
+A new frozen-source 19-gate run is still required before full software acceptance.
+All operational qualifications remain HOLD_NO_GO.
+
+Source setup also preserves the initial missing-background-PATH `rustup` failure
+and its explicit-absolute-toolchain recovery in the two `ai395-source-setup-*`
+directories. The failed attempt is not relabelled as a compiler failure.
