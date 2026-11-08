@@ -1782,7 +1782,7 @@ impl Node {
         hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
-        growth_observation_only: bool,
+        observation_only: bool,
     ) -> Result<Self> {
         Self::open_selected_mode(
             path,

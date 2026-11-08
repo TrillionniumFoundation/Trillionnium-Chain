@@ -7,6 +7,23 @@ on:
       - scripts/ci/run_history_diagnostic.py
       - scripts/ci/test_history_stage_diagnostic.py
       - trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs
+      # Relevant replay/Host changes need stage evidence too. This is not a
+      # complete dependency graph or an additional qualification gate.
+      - trillionnium/crates/trnm-pon-node/src/store.rs
+      - trillionnium/crates/trnm-pon-node/src/store/**
+      - trillionnium/crates/trnm-pon-node/src/ingress.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress/**
+      - trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs
+      - trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs
+      - trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+      - trillionnium/crates/trnm-protocol/src/pon_state.rs
+      - trillionnium/crates/trnm-protocol/src/pon_wire.rs
+      - trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs
+      - trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs
+      - scripts/ci/run_from_zero_host.py
+      - scripts/ci/public_host_ci_observation.py
+      - scripts/ci/public_fixture_host_lease.py
+      - config/systemd/trnmponpublic.slice
 permissions:
   contents: read
 concurrency:

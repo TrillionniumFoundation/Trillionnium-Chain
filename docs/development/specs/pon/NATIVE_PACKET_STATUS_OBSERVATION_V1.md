@@ -23,12 +23,14 @@ opening its store.
 
 ## Selected interface and backends
 
-The local CLI now calls the native `observe_existing_packet` interface directly.
+The local Linux CLI supervises a disposable instance of the same executable.
+That instance calls the native `observe_existing_packet` interface.
 The interface accepts an independently selected `Settings`, the exact packet,
 one of `PacketObservationBackend::LegacyV2` or
 `PacketObservationBackend::AuthenticatedV1`, the existing worker count, and a
-local snapshot byte limit. The CLI uses
-`DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT`, currently 8 GiB.
+local snapshot byte limit. The CLI defaults to
+`DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT`, currently 8 GiB, and accepts
+an explicit `--observation-snapshot-bytes` bound.
 
 The API returns only the existing
 `pon-native-exact-packet-observation-v3` observation. It does not return a
@@ -81,10 +83,54 @@ of sustainable storage cost. The existing complete-State and retained-history
 validation costs remain. Advisory owner locking and source identity checks
 retain the existing local filesystem trust assumptions.
 
+## Local process CPU envelope
+
+Before decoding packet material or opening the cold store, the Linux worker
+installs an absolute kernel `RLIMIT_CPU` ceiling. This counts cumulative user
+and system CPU for the entire worker process, including all native scoped
+threads and non-cooperative full-history/SQLite calls. The default is five
+CPU seconds. `--observation-cpu-seconds` selects an integer from one through
+thirty. Re-entering limit installation never adds a new allowance: both soft
+and hard limits preserve a stricter inherited/current ceiling. Core dumps are
+disabled. An unsupported platform or unavailable kernel limit refuses the
+local query; it does not silently run with measurement-only accounting.
+
+The parent enforces a separate absolute wall deadline, thirty seconds by
+default and one through 120 via `--observation-wall-seconds`. It bounds each
+captured output stream to 128 KiB, reaps a terminated worker, and owns the
+private temporary root. The worker receives that root as `TMPDIR` in a
+cleared environment. Caller-selected `TMPDIR` cannot place observer cleanup
+inside the source store. After ordinary completion, rejection, kernel
+termination or the parent's wall/output cutoff, the live parent removes the
+private tree. An abrupt supervisor/host crash is not a durable cleanup
+receipt. Kernel CPU limits have the operating system's enforcement granularity;
+this is not a nanosecond-exact CPU meter or a comparative performance result.
+
+The internal worker option always installs the ceiling, even when directly
+invoked. The supervisor's wall deadline, bounded output and cleanup apply to
+the ordinary CLI invocation. No remote request accepts these local controls.
+Only a complete bounded JSON response from a successful child can be returned
+as an observation. A killed process has an unknown cause (CPU limit, OOM or
+another signal); the parent reports `PACKET_OBSERVATION_PROCESS_TERMINATED`.
+It never converts termination into absence, completion, safe retry or authority
+for an external effect.
+
+This is a per-invocation process boundary. It does not establish a durable
+shared credit journal or global/owner quota across repeated invocations,
+concurrent supervisors or restart. Direct library calls, Growth observation
+entrypoints and public-service reads retain their own accounting contracts.
+The original pressure qualification and complete observer CPU qualification
+remain **HOLD**. The source and execution evidence for this addition are in
+[the component record](../../../../evidence/pon-cpu-observer-budget-20261108/README.md).
+
 ## Refusals
 
 | Condition | Result |
 | --- | --- |
+| Invalid CPU/wall bound | `PACKET_OBSERVATION_BUDGET`, before source acquisition |
+| Unsupported/unavailable CPU limiter | `PACKET_OBSERVATION_CPU_UNSUPPORTED` / `PACKET_OBSERVATION_CPU_UNAVAILABLE` |
+| Parent wall deadline / output bound | `PACKET_OBSERVATION_WALL_BUDGET` / `PACKET_OBSERVATION_OUTPUT_LIMIT` |
+| Worker terminated without a complete result | `PACKET_OBSERVATION_PROCESS_TERMINATED`; no absence or safe-retry inference |
 | Missing store or database | `PACKET_STATUS_EXISTING_STORE_REQUIRED`; no namespace creation |
 | Missing original owner lock | Read-open failure; the query does not recreate the lock |
 | Active original owner | `WRITER_BUSY` |
@@ -126,7 +172,12 @@ the CLI must return the live owner's pre-close observation byte-for-byte as
 JSON values while preserving the source namespace. It then opens the ordinary
 writer and checks that recovery still advances the selected tip.
 
-The tests also cover a real durable native reorg intent interrupted at its
+The actual subprocess-envelope tests cover four native busy threads with no
+cooperative checkpoints, nonrenewal of a lowered hard limit, wall expiry,
+bounded output and parent-owned cleanup after child termination. Invalid
+budgets are rejected while a real source owner remains live.
+
+The cold tests also cover a real durable native reorg intent interrupted at its
 existing fault hook, live-owner refusal, recovery and policy markers, missing
 store and missing owner lock, incorrect backend/context, changed duplicate
 packet bytes, local copy-budget refusal, and local-only absence semantics.
@@ -146,6 +197,7 @@ Run from the repository root after the project preflight:
 
 ```bash
 bash scripts/project-preflight.sh
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bin trnm-pon-node packet_observer_cli::tests
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_packet_observer
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test accepted_task_observation
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node packet_status

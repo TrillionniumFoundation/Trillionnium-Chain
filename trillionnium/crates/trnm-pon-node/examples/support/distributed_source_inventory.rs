@@ -5321,6 +5321,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

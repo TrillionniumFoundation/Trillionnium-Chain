@@ -10126,3 +10126,36 @@ Six new original Node regressions reproduce late foreign WAL commits escaping le
 The candidate samples the live owner/context, active head/generation and SQLite data version before the snapshot, binds the active snapshot to that epoch, and rechecks after rollback before returning either current or retained-anchor payment facts. A changed observation returns an owner error; it does not infer unpaid status, authorize retry, release resources, rewind local history or create another payment. Growth retains its original owner guard and receives the same final epoch check. No signed domain, wire or stored schema changes.
 
 The source-only repair does not establish a real provider payment, irreversibility of an external effect, independent witness custody, original business-budget qualification or whole-chain security. Exact committed-source tests and the original failures are retained separately.
+
+
+### 2026-11-08 cold packet readback and cumulative CPU component continuation
+
+The [native packet observation contract](specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md)
+now keeps local `packet-status` on a locked, source-preserving private copy for
+both legacy-v2 and authenticated-v1. It refuses unfinished recovery and uses
+the original typed completed-journal/candidate checks without calling
+`Node::recover`. Exact accepted-task fields and absence/authority boundaries
+remain. The ordinary writer retains its established recovery behavior.
+
+A Linux CLI supervisor adds an absolute process CPU ceiling before stored
+input or model loading. All native threads share that ceiling, including
+non-cooperative validation. The parent separately bounds wall time and output,
+reaps its worker and removes its private snapshot tree. The original shared
+mutation CPU domain already reserves original credit and charges actual owner
+and scoped-worker CPU on refusal. A new continuously changing canonical bad-C
+regression exercises that full path until credit cannot fund another replay;
+no cache hit, failed-request refund or fresh domain is substituted.
+
+The [component evidence](../../evidence/pon-cpu-observer-budget-20261108/README.md)
+retains the optimized-test compiler SIGKILL and initially incomplete toolchain
+loader environment alongside the corrected component runs. Low-memory test
+compilation is an explicit opt-level-zero override for the Node test package;
+existing debug/overflow checks and the optimized W1 crypto primitive remain.
+These runs do not replace original pressure or performance qualification.
+
+Per-invocation CPU caps do not establish cross-process, cross-restart global
+and owner observer credit. Direct library/Growth/public-read consumers keep
+their own contracts; their complete aggregate observer budget remains open.
+No external effect reconciliation, independent rollback anchor, full loaded
+identity closure, control-domain independence or release acceptance follows
+from this local component. All original HOLD / NO-GO decisions remain.
