@@ -35,6 +35,8 @@ lineage, and keep actual chainwork, production eligibility and activation zero.
 Real independent issuers/customers, current consumer use, external funds,
 authenticated complete meters and cheapest physical-cost transfer remain open.
 
+Execution is retained in the [native profile evidence record](../../evidence/pon-native-profile-closure-20261107/README.md). The original native post-hash observer now records seed and step originals, including cancellation and a synced interrupted prefix whose original operation reopens UNKNOWN. Corrected committed source `732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6` passes all 33 selected commands on an exact complete checkout; the first 32/33 run and the earlier GC expectation failure remain retained. The core crates retain ten explicitly ignored observations. An actual isolated Colab CPU kernel separately passes the same pinned 45 profile and 37 composition tests. These controlled observations leave independent demand, public coverage, complete cost transfer and native profile registration unestablished.
+
 **Security-work metering continuation, 2026-11-07 America/New_York:** Continue
 `4699b4079fca323f8db7b9d3644fbb159aa687c0` under the
 [explicit metering contract](specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md).

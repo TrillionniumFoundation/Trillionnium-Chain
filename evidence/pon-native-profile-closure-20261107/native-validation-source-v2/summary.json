@@ -1,0 +1,76 @@
+{
+  "additional_owner_relation_commands": 9,
+  "authority_native_runner_sha256": "289fffbe6dcd9c2f675f2ac8447fd5782c1c107a9a2aff56b1b3948935a2913f",
+  "chainwork_awarded": 0,
+  "commands_failed": 0,
+  "commands_not_started": 0,
+  "commands_passed": 33,
+  "commands_planned": 33,
+  "commands_recorded": 33,
+  "commands_timed_out": 0,
+  "complete_command_denominator": true,
+  "driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_profile_closure_v1.py",
+  "driver_sha256": "84d7264a9e1572cc3f53a4ef1d0400787bc88fa98b76cfe4dfc84dbc408716f3",
+  "expected_source_sha": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+  "fresh_native_runner_sha256": "4f7f63ccd8079476452884032dca04ea443e78bfb9aaf1663304e1a1f13baea0",
+  "frozen_original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "full_node_target_inventory_executed": false,
+  "full_workspace_unit_tests_executed": false,
+  "genuine_independent_demand_established": false,
+  "loaded_driver_sha256": "84d7264a9e1572cc3f53a4ef1d0400787bc88fa98b76cfe4dfc84dbc408716f3",
+  "loaded_original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "minimum_legal_cost_proved": false,
+  "native_consensus_profile_qualified": false,
+  "native_runner_sha256": "c4dc841aa3ca28bb484e5e943d64d2635ef16b3751c98b5de381e8c4b0fa3669",
+  "original_driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+  "original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "original_service_campaign_executed": false,
+  "physical_resource_lower_bound_proved": false,
+  "pow_qualified": false,
+  "prior_failed_campaigns_superseded": false,
+  "production_activation": false,
+  "runner_bindings": {
+    "artifacts": {
+      "authority": {
+        "bytes": 8742072,
+        "executable": true,
+        "exists": true,
+        "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+        "sha256": "289fffbe6dcd9c2f675f2ac8447fd5782c1c107a9a2aff56b1b3948935a2913f"
+      },
+      "fresh": {
+        "bytes": 8331288,
+        "executable": true,
+        "exists": true,
+        "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+        "sha256": "4f7f63ccd8079476452884032dca04ea443e78bfb9aaf1663304e1a1f13baea0"
+      },
+      "grouped": {
+        "bytes": 771760,
+        "executable": true,
+        "exists": true,
+        "path": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+        "sha256": "c4dc841aa3ca28bb484e5e943d64d2635ef16b3751c98b5de381e8c4b0fa3669"
+      }
+    },
+    "cargo_target_directory": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1",
+    "status": "PASS"
+  },
+  "schema": "pon-grouped-profile-closure-local-validation-v1",
+  "source": {
+    "base": null,
+    "candidate": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+    "tested_tree": "12d3b00a6ce7f6395fb81492a7633ad955e71d95",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1084419242,
+    "tracked_entries": 11434,
+    "tracked_worktree_verified": true
+  },
+  "source_failures": [],
+  "status": "PASS",
+  "unchanged_prefix_commands": 24
+}

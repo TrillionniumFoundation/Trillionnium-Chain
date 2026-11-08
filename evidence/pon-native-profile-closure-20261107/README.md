@@ -183,3 +183,95 @@ outside the checkout after verifying index/worktree equality. Its gzip copy
 retains exact original bytes with a verified
 [encoding receipt](native-pruning-correction-encoding-v1.json). Neither failure
 started a validation command or relaxed a source gate.
+
+## Exact committed-source validation
+
+The integrated implementation was first committed as
+`7e941e3c148008ab7264ecc7a3148153183fa6b5`, tree
+`faa6ab5f779ff9372468316de1be4c97a5481808`, retaining the research and original
+native demand heads as its two parents. Its complete 33-command run recorded
+**32 PASS and one FAIL**, with zero unstarted commands or timeouts. The full
+tracked worktree matched the commit before and after execution. The single
+failure was strict Clippy's `int_plus_one` check in the newly added local query
+exporter. Every test command and all other source gates passed.
+
+The correction is exactly `observations.len() >= usize::from(seal::STEPS) + 1`
+to `observations.len() > usize::from(seal::STEPS)`. With the fixed `STEPS = 64`,
+both permit the 65th seed/step observation and reject a 66th. The observation
+budget, cost ordering, cancellation semantics, UNKNOWN cap, driver and command
+timeouts are unchanged. There is no lint suppression or gate waiver.
+
+Corrected source `732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6`, tree
+`12d3b00a6ce7f6395fb81492a7633ad955e71d95`, passed **all 33 commands**.
+The source guard verified all **11,434 tracked entries and 1,084,419,242 bytes**
+before and after execution. There were zero failed, unstarted or timed-out
+commands. The two executing drivers and three actual release runners were
+bound to this source and retained in the command receipts.
+
+The [first full capture](native-validation-source-v1.tar.gz) and
+[first summary](native-validation-source-v1/summary.json) retain the failure.
+The [corrected full capture](native-validation-source-v2.tar.gz),
+[corrected summary](native-validation-source-v2/summary.json),
+[all 33 command receipts](native-validation-source-v2/commands.json) and
+[derived evidence review](native-validation-source-v2/review.json) retain the
+successful invocation separately. Archive manifests and readback receipts bind
+every raw log, source snapshot and collected original fixture file. The original
+STARTED journal copies are retained alongside post-reopen originals; a path or
+hash list alone is not substituted for the SQLite bytes.
+
+### Test counts from the corrected command logs
+
+| Executed group | Passed | Failed | Skipped / ignored |
+| --- | ---: | ---: | ---: |
+| Grouped Python and actual native integration | 275 | 0 | 0 |
+| Conditional query bound, fresh floor and resource transfer | 63 | 0 | 0 |
+| Source-integrity, CI-contract and research-integration controls | 185 | 0 | 0 |
+| Demand and upgrade policy Python | 52 | 0 | 0 |
+| Native crypto, all targets and features | 246 | 0 | 0 |
+| Original funded-task core crates, all targets and features | 388 | 0 | 10 ignored |
+| Selected original Node owner test targets | 47 | 0 | 0 |
+
+The 275 grouped cases include the 45 profile tests, 37 composition tests,
+17 validator controls and seven new native observer controls. Those subsets
+are not added again. The ten ignored original core cases are explicit timing,
+RSS, complete-root or component observation experiments; `--all-targets` and
+`--all-features` do not execute ignored tests. They are not counted as passes.
+The selected Node targets contain 1 header-binding, 14 fresh-admission,
+18 verification-authority, 4 funded-contract, 2 active-anchor, 2 demand,
+4 native task-operation and 2 no-gain-fee tests.
+
+Locked workspace and fuzz dependency graphs, formatting, complete repository
+and Markdown links, generated source inventory, strict workspace Clippy with
+all targets/features and `-D warnings`, and whitespace also passed. These
+results do not replace the inherited full Node/public-service campaign.
+
+### Actual HeptaRuntime Colab CPU supplement
+
+The [Colab evidence record](colab/README.md) and its original report/logs bind
+the exact four profile/composition source files. A task-owned kernel on the
+existing CPU assignment ran **82/82 tests**, comprising 45 profile and
+37 composition tests, with zero failures, errors or skips. Source hashes were
+identical before and after. This is a separate platform execution of the same
+tests, not 82 additional independent tasks or additional unique native cases.
+
+The run used Python 3.13.18 on an x86_64 AMD EPYC 7B12 CPU runtime with two
+logical CPUs; its test interval was approximately 1.349 seconds. The original
+process counters have their actual scope. Provider settlement, complete
+preparation and failure costs, whole machine/network cost and payer incidence
+remain unknown. Preparation failures and task-private state-path correction
+remain in the cloud record. The existing shared runtime and other kernel were
+not released; the task-owned kernel remains idle with its completed process
+group no longer alive.
+
+The [qualification assessment](qualification-status-v1.json) keeps all five
+external acceptance conditions unestablished, with HOLD and zero chainwork.
+No fixture, test-count aggregate, distinct owner namespace or cloud billing
+rate substitutes for the required external facts.
+
+The [first collector layout check](collector-layout-check-v1.json) retains its
+INCOMPLETE result and [complete original archive](collector-layout-check-v1.tar.gz).
+It incorrectly required the Node container directory to be a regular file.
+The [precise correction](collector-layout-correction-v1.json) instead requires
+the actual primary file inside that directory, as shown by the original
+retention manifest. Corrected collection uses new output paths; it neither
+modifies the original files nor reruns the native validation.
