@@ -7495,3 +7495,15 @@ Details and immutable evidence are linked from
 `formal/pon-nakamoto-v1/selected_nonce_bank_research/README.md`.
 No production activation, self-approval, main-branch merge or acceptance-budget
 relaxation is performed by this entry.
+
+### R4 final-check historical fixture correction
+
+The first R4 final-commit check reached the retained physical-strategy Python
+suite and failed because seven original `.log` fixtures were absent from the
+tracked tree. Restore their original proposal-archive bytes, including three
+originally empty budget logs, and retain the failed gate attempt. The existing
+53-file hash manifest and 37-entry upstream source manifest remain unchanged;
+no historical measurement or expected result is regenerated. Repeat the focused
+final-source gate set on the repair commit before the ordinary draft-PR push.
+All five production gates remain HOLD_NO_GO. See the R4 report and
+`formal/pon-nakamoto-v1/physical_strategy_frontier_research/R4_FIXTURE_REPAIR.json`.

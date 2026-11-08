@@ -347,6 +347,15 @@ archived with original byte lengths/hashes rather than edited into passing
 logs. The false zero-PoW hypothesis and Node duplicate-label correction are
 also preserved. No failing performance sample or timed-out request is dropped.
 
+The first final-commit check also exposed seven historical R3 `.log` fixtures
+that the broad Git ignore rule had omitted from the tracked tree. The retained
+24-test suite stopped with `FileNotFoundError`; this failed attempt and all its
+earlier passing logs are preserved in the [initial final-check archive index](../w1_node_adapter_research/evidence/initial-final-check-v1-index.json).
+All seven files are restored byte-for-byte from the original R3 proposal archive,
+including three originally empty budget logs. Existing expected hashes, test
+conditions and historical measurements are unchanged. The [restoration receipt](../physical_strategy_frontier_research/R4_FIXTURE_REPAIR.json) records each original
+member and SHA-256; the complete focused gate set is then run on the repair commit.
+
 The focused final gate set requires repository/Markdown checks, the 50
 repository negatives and 43 source-integrity negatives; locked/offline Cargo
 graphs, formatting, strict Clippy and both Rust research suites; the security
