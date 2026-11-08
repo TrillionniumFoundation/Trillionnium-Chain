@@ -1,0 +1,217 @@
+name: W1 fixed AIR DEEP and FRI algebra
+on:
+  pull_request:
+    paths:
+      - scripts/w1_*.py
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - evidence/pon-w1-*/**
+      - docs/security/W1_*.md
+      - .github/workflows/pon-w1-fri-algebra.yml
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+      - AGENTS.md
+permissions:
+  contents: read
+concurrency:
+  group: w1-fri-algebra-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  algebra:
+    name: W1 algebra (${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      ROSTER_SHA256: 656cc0c0e6dcacd725435cc6bb996e0035fb378dd99de3c4887bed634d8ec483
+    steps:
+      - name: Reserve fresh observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_algebra_out="$RUNNER_TEMP/w1-fri-algebra-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_algebra_out"
+          printf 'W1_ALGEBRA_OUT=%s\n' "$w1_algebra_out" >> "$GITHUB_ENV"
+          python3 --version > "$w1_algebra_out/python-version.txt" 2>&1
+      - name: Checkout exact source
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify complete source before execution
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_ALGEBRA_OUT/source-before.json" 2>&1 | tee "$W1_ALGEBRA_OUT/source-before.log"
+      - name: Check project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_ALGEBRA_OUT/preflight.log"
+      - name: Run the reviewed named controls
+        id: controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_fri_algebra_controls.py run --output "$W1_ALGEBRA_OUT" 2>&1 | tee "$W1_ALGEBRA_OUT/controls.log"
+      - name: Independently require complete named execution
+        id: completion
+        if: always() && steps.controls.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_fri_algebra_controls.py check --output "$W1_ALGEBRA_OUT" 2>&1 | tee "$W1_ALGEBRA_OUT/completion.log"
+          python3 - "$W1_ALGEBRA_OUT" <<'PY'
+          from collections import Counter
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          out = Path(sys.argv[1])
+          sys.path.insert(0, 'scripts/ci')
+          from w1_fri_algebra_controls import read_json
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+          raw, roster = read_json(Path('evidence/pon-w1-fri-algebra-20261108/required-tests.json'))
+          require(hashlib.sha256(raw).hexdigest() == os.environ['ROSTER_SHA256'], 'roster pin')
+          _, actual = read_json(out / 'named-controls.json')
+          require(actual['schema'] == 'TRNM-W1-FRI-ALGEBRA-CONTROLS1'
+                  and actual['roster_sha256'] == os.environ['ROSTER_SHA256'], 'completion scope')
+          require(type(actual['suites']) is list and len(actual['suites']) == len(roster['suites']), 'missing suite')
+          count = 0
+          for expected, row in zip(roster['suites'], actual['suites']):
+              names = expected['tests']
+              require(row['module'] == expected['module'] and row['exception'] is None, 'suite completion')
+              require(type(row['tests_run']) is int and row['tests_run'] == len(names), 'test count')
+              for field in ('registered', 'started', 'successful'):
+                  require(type(row[field]) is list and Counter(row[field]) == Counter(names), 'test identities')
+              for field in ('skipped', 'failures', 'errors', 'expected_failures', 'unexpected_successes'):
+                  require(row[field] == [], 'unsuccessful control')
+              count += len(names)
+          for path, expected in actual['source_sha256'].items():
+              require(hashlib.sha256(Path(path).read_bytes()).hexdigest() == expected, 'tested source changed')
+          with (out / 'completion-independent.json').open('x') as stream:
+              json.dump({'result': 'PASS', 'actual_successful_tests': count,
+                         'roster_sha256': os.environ['ROSTER_SHA256']}, stream, sort_keys=True)
+              stream.write('\n')
+          PY
+      - name: Replay fixed AIR DEEP and FRI equations
+        id: replay
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_fri_algebra_replay.py --output "$W1_ALGEBRA_OUT/algebra-replay.json" 2>&1 | tee "$W1_ALGEBRA_OUT/replay.log"
+      - name: Recompute DEEP with individual register terms
+        id: review
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py --output "$W1_ALGEBRA_OUT/independent-review.json" 2>&1 | tee "$W1_ALGEBRA_OUT/independent-review.log"
+      - name: Require complete numerical checks and bounded claims
+        id: scope
+        if: always() && steps.replay.outcome == 'success' && steps.review.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_fri_algebra_report_check.py "$W1_ALGEBRA_OUT/algebra-replay.json" --review "$W1_ALGEBRA_OUT/independent-review.json" --output "$W1_ALGEBRA_OUT/report-scope.json" 2>&1 | tee "$W1_ALGEBRA_OUT/report-scope.log"
+      - name: Verify complete source after execution
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_ALGEBRA_OUT/source-after.json" 2>&1 | tee "$W1_ALGEBRA_OUT/source-after.log"
+      - name: Require every stage and unchanged exact source
+        id: complete
+        if: always()
+        env:
+          STEP_RECORDS: ${{ toJSON(steps) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_ALGEBRA_OUT" <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          out = Path(sys.argv[1])
+          steps = json.loads(os.environ['STEP_RECORDS'])
+          required = ('observations', 'checkout', 'source_before', 'preflight', 'controls',
+                      'completion', 'replay', 'review', 'scope', 'source_after')
+          failed = [name for name in required if any(
+              steps.get(name, {}).get(field) != 'success' for field in ('outcome', 'conclusion'))]
+          error = None
+          try:
+              before = json.loads((out / 'source-before.json').read_text())
+              after = json.loads((out / 'source-after.json').read_text())
+              if (before != after or before['tested_commit'] != os.environ['EXPECTED_SOURCE']
+                      or before['tracked_worktree_verified'] is not True):
+                  raise ValueError('source identity changed or incomplete')
+              completion = json.loads((out / 'completion-independent.json').read_text())
+              roster = json.loads(Path('evidence/pon-w1-fri-algebra-20261108/required-tests.json').read_text())
+              expected_count = sum(len(row['tests']) for row in roster['suites'])
+              if (completion['result'] != 'PASS'
+                      or completion['roster_sha256'] != os.environ['ROSTER_SHA256']
+                      or type(completion['actual_successful_tests']) is not int
+                      or completion['actual_successful_tests'] != expected_count):
+                  raise ValueError('named completion is missing or stale')
+              scope = json.loads((out / 'report-scope.json').read_text())
+              if (scope['result'] != 'PASS' or scope['schema'] != 'TRNM-W1-FRI-ALGEBRA-SCOPE1'
+                      or scope['report_sha256'] != hashlib.sha256((out / 'algebra-replay.json').read_bytes()).hexdigest()
+                      or scope['review_sha256'] != hashlib.sha256((out / 'independent-review.json').read_bytes()).hexdigest()
+                      or scope['independent_review']['register_expansion_agrees_with_combo_batching'] is not True):
+                  raise ValueError('scope record is missing or stale')
+          except (OSError, KeyError, TypeError, ValueError) as problem:
+              error = str(problem)
+          passed = not failed and error is None
+          with (out / 'ci-status.json').open('x') as stream:
+              json.dump({'schema': 'TRNM-W1-FRI-ALGEBRA-HOSTED1', 'source_kind': os.environ['SOURCE_KIND'],
+                         'expected_source': os.environ['EXPECTED_SOURCE'], 'steps': steps,
+                         'failed_or_skipped_stages': failed, 'identity_error': error,
+                         'all_required_observations_passed': passed,
+                         'complete_w1_soundness_qualified': False, 'post_quantum_soundness_qualified': False,
+                         'production_qualified': False, 'unconditional_project_security_bits': None},
+                        stream, indent=2, sort_keys=True)
+              stream.write('\n')
+          if not passed:
+              raise SystemExit('Incomplete observations: ' + ','.join(failed) + '; ' + str(error))
+          print('All fixed-source algebra observations complete; full security remains unqualified.')
+          PY
+      - name: Retain observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-fri-algebra-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-fri-algebra-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "bytes": 28450,
+      "path": "scripts/w1_fri_algebra_replay.py",
+      "sha256": "9d535ac59b21372565deb416eeeabd2929010d0af97ccd2fd075ccd401e159df"
+    },
+    {
+      "bytes": 8373,
+      "path": "scripts/ci/w1_fri_algebra_controls.py",
+      "sha256": "b89c5fab71e5b8d8c820b8089bab6936a042ee43e928ba54e6586cc00e6e80a8"
+    },
+    {
+      "bytes": 9800,
+      "path": "scripts/ci/w1_fri_algebra_report_check.py",
+      "sha256": "a35aa167b232dd0ee50becc85938491c3fb191392ef660fed1cc04354f6be9e4"
+    },
+    {
+      "bytes": 11390,
+      "path": ".github/workflows/pon-w1-fri-algebra.yml",
+      "sha256": "87b467bcc58aa5e8ccf908d59fc4a7b1a90b41959e9d7dfc0221248c7e8122f3"
+    },
+    {
+      "bytes": 5461,
+      "path": "evidence/pon-w1-fri-algebra-20261108/required-tests.json",
+      "sha256": "656cc0c0e6dcacd725435cc6bb996e0035fb378dd99de3c4887bed634d8ec483"
+    },
+    {
+      "bytes": 70636,
+      "path": "evidence/pon-w1-fri-algebra-20261108/algebra-source-supplement.json.gz",
+      "sha256": "f649c85ff3775c275d3b7f891e4866ecea13a17ac5225eae8b359ec464051f86"
+    },
+    {
+      "bytes": 14207,
+      "path": "evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py",
+      "sha256": "41a19c201d805469a35c3a6a3200ad174f613a5ef4a578a0997abf041ccf0699"
+    },
+    {
+      "bytes": 3800,
+      "path": "scripts/ci/test_w1_fri_algebra_controls.py",
+      "sha256": "c0ced503ea3d97285954b403555baa1b765d889af289bb3e2a34211b68073c31"
+    },
+    {
+      "bytes": 15620,
+      "path": "scripts/ci/test_w1_fri_algebra_replay.py",
+      "sha256": "59133c2cf398523228dd6243bb681bc28b5f248a94e5f6cc05d894c62d341c23"
+    },
+    {
+      "bytes": 3184,
+      "path": "scripts/ci/test_w1_fri_algebra_report_check.py",
+      "sha256": "0d892e2e65dd6c921329001606a9f652d1a109d86a3c647b9f3a92cd017a5127"
+    },
+    {
+      "bytes": 7649,
+      "path": "scripts/ci/test_w1_fri_algebra_review_compare.py",
+      "sha256": "0654b860970ad85258cae50076dfff87300ffa881060cb1ee78085feb64014b7"
+    },
+    {
+      "bytes": 29357,
+      "path": "scripts/w1_fri_query_replay.py",
+      "sha256": "4a6a4f96baea59d5ff872d65ce9ba4f77eaf97306b97446442d5584369453b0f"
+    },
+    {
+      "bytes": 23660,
+      "path": "scripts/w1_fri_transcript_audit.py",
+      "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+    },
+    {
+      "bytes": 18002,
+      "path": "scripts/w1_control_tree_audit.py",
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    {
+      "bytes": 257014,
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    {
+      "bytes": 69332,
+      "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+      "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+    }
+  ],
+  "integration_base": "2e5150c41484a8b3196b33de2e997794145edd7c",
+  "schema": "TRNM-W1-FRI-ALGEBRA-LOCAL-SOURCE1",
+  "scope": "Exact listed source/input bytes. This partial local checkout is not a complete tracked-worktree observation. Git head/merge source verification is separate hosted evidence."
+}

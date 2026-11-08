@@ -1,0 +1,68 @@
+test_air_constant_reduction_and_extension_basis (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_air_constant_reduction_and_extension_basis) ... ok
+test_air_forward_or_wrong_bank_reference_rejected (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_air_forward_or_wrong_bank_reference_rejected) ... ok
+test_air_out_of_bounds_globals_and_taps_rejected (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_air_out_of_bounds_globals_and_taps_rejected) ... ok
+test_air_two_register_banks_and_conditional_multiplier (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_air_two_register_banks_and_conditional_multiplier) ... ok
+test_air_unsupported_parser_forms_rejected (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_air_unsupported_parser_forms_rejected) ... ok
+test_extension_modulus (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_extension_modulus) ... ok
+test_inverse_and_zero_rejection (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_inverse_and_zero_rejection) ... ok
+test_multiplication_against_polynomial_long_reduction (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_multiplication_against_polynomial_long_reduction) ... ok
+test_negative_or_noninteger_power_rejected (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_negative_or_noninteger_power_rejected) ... ok
+test_noncanonical_extension_rejected (test_w1_fri_algebra_replay.FieldAndInterpreterTests.test_noncanonical_extension_rejected) ... ok
+test_batch_mix_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_batch_mix_mutation_rejected) ... ok
+test_complete_fixed_equation_counts_and_independent_values (test_w1_fri_algebra_replay.FixedAlgebraTests.test_complete_fixed_equation_counts_and_independent_values) ... ok
+test_constraint_mix_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_constraint_mix_mutation_rejected) ... ok
+test_deep_point_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_deep_point_mutation_rejected) ... ok
+test_duplicate_transcript_event_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_duplicate_transcript_event_rejected) ... ok
+test_each_deep_oracle_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_each_deep_oracle_mutation_rejected) ... ok
+test_each_fold_challenge_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_each_fold_challenge_mutation_rejected) ... ok
+test_inverse_dft_matches_separate_reverse_butterfly (test_w1_fri_algebra_replay.FixedAlgebraTests.test_inverse_dft_matches_separate_reverse_butterfly) ... ok
+test_leaf_range_identity_mismatch_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_leaf_range_identity_mismatch_rejected) ... ok
+test_missing_query_and_noncanonical_leaf_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_missing_query_and_noncanonical_leaf_rejected) ... ok
+test_public_output_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_public_output_mutation_rejected) ... ok
+test_query_index_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_query_index_mutation_rejected) ... ok
+test_selected_fri_leaf_component_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_selected_fri_leaf_component_mutation_rejected) ... ok
+test_source_helper_mutation_rejected_before_execution (test_w1_fri_algebra_replay.FixedAlgebraTests.test_source_helper_mutation_rejected_before_execution) ... ok
+test_source_supplement_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_source_supplement_mutation_rejected) ... ok
+test_stale_receipt_cannot_feed_capture (test_w1_fri_algebra_replay.FixedAlgebraTests.test_stale_receipt_cannot_feed_capture) ... ok
+test_symlink_helper_directory_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_symlink_helper_directory_rejected) ... ok
+test_tap_groups_are_registers_not_tap_count (test_w1_fri_algebra_replay.FixedAlgebraTests.test_tap_groups_are_registers_not_tap_count) ... ok
+test_terminal_coefficient_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_terminal_coefficient_mutation_rejected) ... ok
+test_u_coefficient_mutation_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_u_coefficient_mutation_rejected) ... ok
+test_unselected_fri_leaf_component_mutation_rejected_downstream (test_w1_fri_algebra_replay.FixedAlgebraTests.test_unselected_fri_leaf_component_mutation_rejected_downstream) ... ok
+test_wrong_fri_coordinate_layout_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_wrong_fri_coordinate_layout_rejected) ... ok
+test_wrong_terminal_coordinate_layout_rejected (test_w1_fri_algebra_replay.FixedAlgebraTests.test_wrong_terminal_coordinate_layout_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 4.817s
+
+OK
+test_ambiguous_and_nonintegral_json_rejected (test_w1_fri_algebra_controls.AlgebraCompletionTests.test_ambiguous_and_nonintegral_json_rejected) ... ok
+test_complete_named_record_keeps_security_unknown (test_w1_fri_algebra_controls.AlgebraCompletionTests.test_complete_named_record_keeps_security_unknown) ... ok
+test_failed_skipped_or_interrupted_suite_rejected (test_w1_fri_algebra_controls.AlgebraCompletionTests.test_failed_skipped_or_interrupted_suite_rejected) ... ok
+test_missing_duplicate_and_boolean_completion_rejected (test_w1_fri_algebra_controls.AlgebraCompletionTests.test_missing_duplicate_and_boolean_completion_rejected) ... ok
+test_stale_source_roster_and_promoted_scope_rejected (test_w1_fri_algebra_controls.AlgebraCompletionTests.test_stale_source_roster_and_promoted_scope_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK
+test_each_promoted_or_mistyped_qualification_rejected (test_w1_fri_algebra_report_check.AlgebraScopeTests.test_each_promoted_or_mistyped_qualification_rejected) ... ok
+test_fixed_counts_preserve_full_proof_unknown (test_w1_fri_algebra_report_check.AlgebraScopeTests.test_fixed_counts_preserve_full_proof_unknown) ... ok
+test_foreign_profile_receipt_or_schema_rejected (test_w1_fri_algebra_report_check.AlgebraScopeTests.test_foreign_profile_receipt_or_schema_rejected) ... ok
+test_incomplete_or_boolean_counts_rejected (test_w1_fri_algebra_report_check.AlgebraScopeTests.test_incomplete_or_boolean_counts_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK
+test_actual_register_expansion_matches_all_queries (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_actual_register_expansion_matches_all_queries) ... ok
+test_cross_query_goals_and_denominator_hashes_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_cross_query_goals_and_denominator_hashes_rejected) ... ok
+test_foreign_review_receipt_and_mistyped_scope_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_foreign_review_receipt_and_mistyped_scope_rejected) ... ok
+test_missing_duplicate_or_mistyped_denominator_identities_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_missing_duplicate_or_mistyped_denominator_identities_rejected) ... ok
+test_missing_or_mistyped_terminal_and_fold_success_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_missing_or_mistyped_terminal_and_fold_success_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.310s
+
+OK
+{"actual_successful_tests": 47, "qualification": {"complete_w1_soundness_qualified": false, "post_quantum_soundness_qualified": false, "production_qualified": false, "quantum_work_qualified": false, "unconditional_project_security_bits": null}, "result": "PASS", "roster_sha256": "656cc0c0e6dcacd725435cc6bb996e0035fb378dd99de3c4887bed634d8ec483"}

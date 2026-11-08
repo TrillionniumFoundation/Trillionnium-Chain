@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_fri_algebra_review_compare.py",
+    "-v"
+  ],
+  "elapsed_seconds": 7.863435926003149,
+  "exact_sources_unchanged": true,
+  "exit_code": 0,
+  "finished_at_utc": "2026-11-08T11:22:56.210927+00:00",
+  "full_security_qualified": false,
+  "native_sdk_executed": false,
+  "schema": "TRNM-W1-INDEPENDENT-COMPARISON-CORRECTED-CONTROL1",
+  "source_sha256_after": {
+    "evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py": "41a19c201d805469a35c3a6a3200ad174f613a5ef4a578a0997abf041ccf0699",
+    "scripts/ci/test_w1_fri_algebra_review_compare.py": "0654b860970ad85258cae50076dfff87300ffa881060cb1ee78085feb64014b7",
+    "scripts/ci/w1_fri_algebra_report_check.py": "a35aa167b232dd0ee50becc85938491c3fb191392ef660fed1cc04354f6be9e4",
+    "scripts/w1_fri_algebra_replay.py": "9d535ac59b21372565deb416eeeabd2929010d0af97ccd2fd075ccd401e159df"
+  },
+  "source_sha256_before": {
+    "evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py": "41a19c201d805469a35c3a6a3200ad174f613a5ef4a578a0997abf041ccf0699",
+    "scripts/ci/test_w1_fri_algebra_review_compare.py": "0654b860970ad85258cae50076dfff87300ffa881060cb1ee78085feb64014b7",
+    "scripts/ci/w1_fri_algebra_report_check.py": "a35aa167b232dd0ee50becc85938491c3fb191392ef660fed1cc04354f6be9e4",
+    "scripts/w1_fri_algebra_replay.py": "9d535ac59b21372565deb416eeeabd2929010d0af97ccd2fd075ccd401e159df"
+  },
+  "started_at_utc": "2026-11-08T11:22:48.347491+00:00",
+  "stderr": "test_actual_register_expansion_matches_all_queries (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_actual_register_expansion_matches_all_queries) ... ok\ntest_cross_query_goals_and_denominator_hashes_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_cross_query_goals_and_denominator_hashes_rejected) ... ok\ntest_foreign_review_receipt_and_mistyped_scope_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_foreign_review_receipt_and_mistyped_scope_rejected) ... ok\ntest_missing_duplicate_or_mistyped_denominator_identities_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_missing_duplicate_or_mistyped_denominator_identities_rejected) ... ok\ntest_missing_or_mistyped_terminal_and_fold_success_rejected (test_w1_fri_algebra_review_compare.IndependentReviewComparisonTests.test_missing_or_mistyped_terminal_and_fold_success_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 7.695s\n\nOK\n",
+  "stdout": ""
+}

@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/dded70360575/chain-qrom/evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py",
+    "--repo-root",
+    "/workspace/scratch/dded70360575/chain-qrom",
+    "--output",
+    "/workspace/scratch/dded70360575/chain-qrom/evidence/pon-w1-fri-algebra-20261108/review/result.json"
+  ],
+  "cwd": "/workspace/scratch/dded70360575/chain-qrom",
+  "elapsed_seconds": 1.9826384280022467,
+  "exit_code": 0,
+  "finished_at_utc": "2026-11-08T11:17:57.322757+00:00",
+  "generator_sha256": "41a19c201d805469a35c3a6a3200ad174f613a5ef4a578a0997abf041ccf0699",
+  "native_sdk_executed": false,
+  "result_bytes": 81499,
+  "result_sha256": "f2f5b12bb98f17076371bb6b1ea34c97a638ef595055985b9239233f8129816e",
+  "schema": "TRNM-W1-INDEPENDENT-REGISTER-REVIEW-INVOCATION1",
+  "started_at_utc": "2026-11-08T11:17:55.340123+00:00",
+  "stderr": "",
+  "stdout": ""
+}
