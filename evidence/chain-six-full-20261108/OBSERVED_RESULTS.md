@@ -102,3 +102,23 @@ The reviewed repairs require the complete historical 23 plus current 10 control 
 Four original hosted ML-DSA artifacts establish that the intended compile-fail API test succeeded at line 359, with the required E0308/current-view type rejection. Its reader still required line 353. The one-byte correction is checked against all four original logs and nineteen labelled invalid variants. The original hosted failures remain, and the downstream independent-C stage was not executed in those jobs.
 
 The original CodeQL exporter made 39 polls with no API analyses or CodeQL checks for the exact PR head/merge and refused at its original deadline. The explicit local-SARIF producer has a different branch filter and upload: never; those records cannot satisfy the API export. The original source identity, 16 exporter controls and trigger attribution are retained. No empty-result acceptance, timeout extension or privilege change is introduced.
+
+## F5 exact-source completion and final evidence publication
+
+The clean F5 commit ab610cf95a6ec39b38e20e64e6367f5b529b3633 (tree abd4442d789b29889960f9b0acc712b9fefed498) completed all 13 Python validation commands. All **257 fixed named controls passed**: CI contract 164, source integrity 43 and repository 50. No name was omitted, duplicated, skipped or reclassified. The original CI/repository/inventory/corpus CLIs passed; the corpus remains 899 pins / 807 required paths. The changed original-learning verifier accepts all 517 original byte identities. The integrated ML-DSA reader reproduces four original-reader refusals, accepts all four original intended compile-fail records with the corrected line identity, and rejects all 19 mutated logs. No fresh ML-DSA or independent-C execution is claimed.
+
+The same exact F5 source passed strict trnm-pon-node Clippy with all targets, all features and -D warnings, workspace formatting, and three locked/offline dependency graphs (default, all features and fuzz). Both validation jobs completed successfully with complete durable output and no timeout. Full source-before/source-after records agree: 26,114 tracked entries / 2,483,808,033 bytes. This compilation includes the regenerated inventory's example/test consumers; it does not rerun the original F3 native experiments.
+
+An independent read-only review verified the exact eleven changed paths, exactly four current corpus pin substitutions, all 899 actual pinned files, all 39 unchanged QROM selected inputs, all 517 unchanged original identities, the unchanged historical work-cost pin, and the sole seven-line inventory exception. Other 4,017 native/formal/fuzz entries and 29 lockfiles retain their Git identities. That review performs no tests and grants no qualification.
+
+| Exact F5 record | SHA-256 |
+| --- | --- |
+| Python summary: 13 commands / 257 fixed named controls | dc3073f20e709113be23271f8141f687cd4710752b695ca4d18fdd24503a6252 |
+| Native compilation and dependency validation | bc7c6f2792ffcf760744fe69760af0ae4cca0c974ee954d3d81f4e013d239765 |
+| Independent read-only diff review | 0b7ee6442561d06a1f7542e0a2eca811af38e22b626023a0f626b8b42c682652 |
+
+The closed original-record archives, the original F4 failed run and reviewed repair records are bound by [the archive manifest](archive-manifest.json). All archive members were reopened and checked. The final publication commit appends only this evidence namespace; the implementation, generated inventory, plan, current pins, tests, workflows and locked graphs remain at the checked F5 bytes. Final publication source checks identify that later commit separately.
+
+Hepta Draft #5393 is published at bdf35d0991a02cdf201cc098257132fe3282f99f. The actual model/native executions remain bound to edf03ecb8a814a0f5e86b1d6a752aeac80b1a978. Later maintenance consists of reviewed lint fixes, Python formatting with unchanged AST and validation documentation. Its strict Clippy and format checks passed; no model run after that maintenance is claimed.
+
+The original F3 wrapper and F4 validation failures remain FAIL. Hosted native confirmation and work-security failures, absent CodeQL API evidence, the unexecuted downstream independent-C continuation and all open external/theoretical qualifications remain material. **Overall disposition is still HOLD / NO-GO.**

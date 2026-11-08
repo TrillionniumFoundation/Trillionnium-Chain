@@ -71,6 +71,30 @@
       "path": "archives/f3-original-source-and-reader-supplements.tar.xz",
       "scope": "Original historical-source failures, exact 15-blob restoration and complete original replay/Cell/lifecycle; fresh original six-test roster and future-entry controls",
       "sha256": "4b81439994c8fe9d7c598212961de096576f445e936590a2e06d05a216ab1210"
+    },
+    {
+      "bytes": 501132,
+      "path": "archives/public-f4-failures-and-repairs.tar.xz",
+      "scope": "Original F4 failed validation, exact CI/raw-storage/inventory repairs, four original ML-DSA ZIPs and CodeQL API-absence evidence; archive integrity only",
+      "sha256": "af5cfe7787ff159b9687416199a7a9c1b0299c8969c53abe34d309712d32d8ac"
+    },
+    {
+      "bytes": 68552,
+      "path": "archives/consensus-f5-native-compile.tar.xz",
+      "scope": "Exact F5 strict native compilation, formatting and three dependency graphs; 31 substantive original records plus four empty coordination locks and manifest; no native experiment rerun",
+      "sha256": "20735d970e8df383cf15f36a989c6cdb83a00947f57447180300004ba800baba"
+    },
+    {
+      "bytes": 32396,
+      "path": "archives/f5-python-and-preparation-records.tar.xz",
+      "scope": "Exact F5 13 Python commands and 257 fixed named controls, integrated ML-DSA reader and original 517 identities; original preparation refusal and corrected source freeze",
+      "sha256": "6cf010b52bbe668909c6161a3b0d78c97e47d84752278a727e2bf19068cabf3f"
+    },
+    {
+      "bytes": 869036,
+      "path": "archives/f5-independent-review.tar.xz",
+      "scope": "Independent read-only F5 diff/pins/QROM/raw-originals/work-cost source review, original cancelled probe retained; no test or native execution",
+      "sha256": "3e32a7f5cd39a9aaa461cbeab2719ac0450f94fc7328981073eb0e26154db5dc"
     }
   ],
   "full_compiled_binary_or_database_export": false,
