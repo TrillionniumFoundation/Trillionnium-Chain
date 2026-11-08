@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "git",
+    "add",
+    "--",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "cwd": "/home/qian-qi/chain-credit-envelope-20261108-f7e62",
+  "elapsed_seconds": 0.115208,
+  "exception": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T12:57:41.878945+00:00",
+  "passed": true,
+  "stage": "repair-stage-inventory",
+  "started_utc": "2026-11-08T12:57:41.763745+00:00",
+  "stderr": "repair-stage-inventory.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "repair-stage-inventory.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

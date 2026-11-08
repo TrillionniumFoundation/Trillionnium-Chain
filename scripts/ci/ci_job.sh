@@ -4,6 +4,8 @@ export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
 case "${1:?required job}" in
   repository-truth)
     bash scripts/project-preflight.sh --audit
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v
     python3 scripts/ci/test_project_boundary.py
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_chain_claim_guard.py

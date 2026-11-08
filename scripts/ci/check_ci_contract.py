@@ -130,6 +130,18 @@ CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET
 CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
 PAIRED_WORK_ORACLE = '    TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v\n'
 ZERO_WORK_ORACLE = '    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v\n'
+# Anchor these controls at the start of the lane. Presence/count alone accepts
+# a false branch or an if-condition that suppresses Bash's errexit behavior.
+# The outer lane dispatch is checked independently below.
+CREDIT_MODEL_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v",
+)
+CREDIT_MODEL_PREFIX = (
+    "    bash scripts/project-preflight.sh --audit\n"
+    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n"
+    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n"
+)
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
 EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
@@ -434,6 +446,14 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
             'full-capacity, reference-growth, bounded-growth and account-verification release controls must execute once sequentially')
+    for command in CREDIT_MODEL_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'credit model controls must execute exactly once in repository-truth')
+    # Preserve the preceding specific refusal diagnostics when an unrelated
+    # required command is moved into this prefix.
+    require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
+            'credit model prefix must execute immediately after preflight without shell control flow')
     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
     dispatch_prefix = ('#!/usr/bin/env bash\nset -euo pipefail\n'

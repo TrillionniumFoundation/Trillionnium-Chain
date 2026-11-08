@@ -18,6 +18,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               CREDIT_MODEL_COMMANDS, CREDIT_MODEL_PREFIX,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
@@ -131,6 +132,60 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_credit_model_commands_cannot_be_omitted_duplicated_or_moved(self):
+        for command in CREDIT_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            variants = [self.script.replace(line, ''),
+                        self.script.replace(line, '    true # omitted credit model\n'),
+                        self.script.replace(line, line * 2),
+                        self.script.replace(line, '').replace('  protocol-contract)\n',
+                                                              '  protocol-contract)\n' + line)]
+            for script in variants:
+                with self.subTest(command=command, script=script), self.assertRaises(ValueError):
+                    check_independent_conformance(script, self.lanes)
+
+    def test_credit_model_commands_cannot_be_skipped_by_false_shell_branch(self):
+        for command in CREDIT_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            skipped = '    if false; then\n' + line + '    fi\n'
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
+                    check_independent_conformance(self.script.replace(line, skipped), self.lanes)
+                # This reproduces the shell failure mode without executing any
+                # actual model/native command or changing the source checkout.
+                prelude = 'set -euo pipefail\npython3() { return 19; }\n'
+                normal = subprocess.run(['bash', '-c', prelude + line],
+                                        capture_output=True, text=True, timeout=5)
+                bypass = subprocess.run(['bash', '-c', prelude + skipped],
+                                        capture_output=True, text=True, timeout=5)
+                self.assertEqual(normal.returncode, 19, normal.stderr)
+                self.assertEqual(bypass.returncode, 0, bypass.stderr)
+
+    def test_credit_model_failures_cannot_be_swallowed_by_shell_condition(self):
+        for command in CREDIT_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            conditional = '    if\n' + line + '    then\n      :\n    fi\n'
+            with self.subTest(command=command):
+                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
+                    check_independent_conformance(self.script.replace(line, conditional), self.lanes)
+                prelude = 'set -euo pipefail\npython3() { return 19; }\n'
+                normal = subprocess.run(['bash', '-c', prelude + line],
+                                        capture_output=True, text=True, timeout=5)
+                bypass = subprocess.run(['bash', '-c', prelude + conditional],
+                                        capture_output=True, text=True, timeout=5)
+                self.assertEqual(normal.returncode, 19, normal.stderr)
+                self.assertEqual(bypass.returncode, 0, bypass.stderr)
+
+    def test_entire_credit_model_prefix_cannot_be_wrapped_or_preceded(self):
+        self.assertIn(CREDIT_MODEL_PREFIX, self.script)
+        for replacement in ('    if false; then\n' + CREDIT_MODEL_PREFIX + '    fi\n',
+                            '    if\n' + CREDIT_MODEL_PREFIX + '    then\n      :\n    fi\n',
+                            '    :\n' + CREDIT_MODEL_PREFIX):
+            with self.subTest(replacement=replacement):
+                with self.assertRaisesRegex(ValueError, 'credit model prefix'):
+                    check_independent_conformance(
+                        self.script.replace(CREDIT_MODEL_PREFIX, replacement), self.lanes)
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (

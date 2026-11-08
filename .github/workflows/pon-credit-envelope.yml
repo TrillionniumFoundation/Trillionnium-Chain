@@ -1,0 +1,118 @@
+name: PoN classical and quantum credit contract
+on:
+  pull_request:
+    paths:
+      - formal/pon-nakamoto-v1/**
+      - scripts/ci/**
+      - docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md
+      - .github/workflows/pon-credit-envelope.yml
+permissions:
+  contents: read
+concurrency:
+  group: pon-credit-envelope-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  finite-credit-contract:
+    name: Finite credit contract (${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify full tracked source before checks
+        id: source_before
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/credit-envelope-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+      - name: Execute pinned tests, verify credit witnesses and recompute costs
+        id: finite_math
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/run_credit_envelope_checks.py --output-dir "$OUT/finite-math" 2>&1 | tee "$OUT/finite-math.log"
+      - name: Execute retained cost and source integrity controls
+        id: retained
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v 2>&1 | tee "$OUT/candidate-clock-controls.log"
+          python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v 2>&1 | tee "$OUT/restricted-oracle-controls.log"
+          python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-integrity-controls.log"
+          python3 scripts/ci/test_ci_contract.py 2>&1 | tee "$OUT/ci-contract-controls.log"
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          for name in ('candidate-clock-controls.log',
+                       'restricted-oracle-controls.log', 'source-integrity-controls.log',
+                       'ci-contract-controls.log'):
+              text = (Path(os.environ['OUT'])/name).read_text()
+              runs = re.findall(r'^Ran ([0-9]+) tests? in .+$', text, re.M)
+              terminal = re.search(r'(?:\A|\n)Ran ([1-9][0-9]*) tests? in [0-9]+(?:\.[0-9]+)?s\n\nOK\s*\Z', text)
+              if len(runs) != 1 or terminal is None or terminal.group(1) != runs[0]:
+                  raise SystemExit('missing, empty, skipped or unsuccessful suite: ' + name)
+          PY
+      - name: Verify full tracked source after checks
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+          cmp "$OUT/source-before.json" "$OUT/source-after.json"
+      - name: Require completed execution stages
+        if: always()
+        env:
+          BEFORE: ${{ steps.source_before.outcome }}
+          MATH: ${{ steps.finite_math.outcome }}
+          RETAINED: ${{ steps.retained.outcome }}
+          AFTER: ${{ steps.source_after.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          stages = {name: os.environ[name] for name in ('BEFORE','MATH','RETAINED','AFTER')}
+          if any(value != 'success' for value in stages.values()):
+              raise SystemExit('incomplete or failed execution: ' + json.dumps(stages))
+          record = json.loads((Path(os.environ['OUT'])/'finite-math/completion.json').read_text())
+          if (record['finite_math_checks'] != 'PASS' or record['overall'] != 'HOLD'
+                  or record['production_activation'] is not False):
+              raise SystemExit('unexpected finite-math scope')
+          PY
+      - name: Retain results and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: credit-envelope-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/credit-envelope-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
