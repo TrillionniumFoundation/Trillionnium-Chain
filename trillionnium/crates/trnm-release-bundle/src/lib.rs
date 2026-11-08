@@ -6,6 +6,7 @@
 //! signing, or release readiness until corresponding evidence is supplied by
 //! external builders and reviewers.
 
+pub mod content_v1;
 pub mod pq_release;
 
 use sha2::{Digest, Sha256};

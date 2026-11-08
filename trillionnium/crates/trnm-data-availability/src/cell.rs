@@ -9,6 +9,7 @@ mod archive;
 mod cache_budget;
 mod cache_wal;
 mod closure;
+mod content_v2;
 mod delta;
 pub mod discovery;
 #[cfg(test)]
@@ -32,6 +33,12 @@ pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
     MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1,
+};
+pub use content_v2::{
+    CellContentClosureReadbackV2, CellContentClosureV2, CellContentDependencyV2,
+    CellContentErrorV2, CellContentManifestV2, CellContentReadbackV2,
+    CELL_CONTENT_DEPENDENCY_COUNT_V2, MAX_CELL_CONTENT_CLOSURE_BYTES_V2,
+    MAX_CELL_CONTENT_MANIFEST_BYTES_V2,
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use manifest::{

@@ -26,6 +26,7 @@
 pub mod checkpoint_tile_material_v1;
 pub mod checkpoint_tile_policy_v1;
 mod codec;
+pub mod content_commitment_v1;
 pub mod continuity_v1;
 pub mod deployment_actors;
 pub mod deployment_checkpoint_tile_v1;
