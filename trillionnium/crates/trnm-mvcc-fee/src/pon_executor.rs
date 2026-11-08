@@ -112,8 +112,8 @@ struct StateInputs<'a> {
     observer: Option<&'a dyn CanonicalTransitionObserver>,
     #[cfg(test)]
     // Retain the old full-speculation oracle for per-call differential tests.
-    // Production always skips nonce-conflicting repeated-sender predictions.
-    force_repeated_sender_speculation: bool,
+    // Production skips known account-conflicting predictions, never validation.
+    force_account_conflict_speculation: bool,
 }
 /// Caller-local observation only; no ledger byte or execution authority.
 /// Header context does not claim the separate parent State binding was read.
@@ -2822,7 +2822,7 @@ pub fn execute_with_authenticated_state_input<E: Send>(
             growth: None,
             observer: None,
             #[cfg(test)]
-            force_repeated_sender_speculation: false,
+            force_account_conflict_speculation: false,
         },
     )
 }
@@ -2853,7 +2853,7 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
             growth: None,
             observer: None,
             #[cfg(test)]
-            force_repeated_sender_speculation: false,
+            force_account_conflict_speculation: false,
         },
     )
 }
@@ -2912,6 +2912,38 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         StateInputs::default(),
     )
 }
+// Conservative work hints, not decoded or authenticated access declarations.
+// A classical transfer reads/writes its sender and recipient accounts. Retain
+// those explicit account dependencies along with every earlier sender nonce,
+// so a common recipient or a funded next sender need not compute a stale patch.
+// The set borrows at most two account ids per already bounded transaction.
+fn account_conflict_hints(transactions: &[Vec<u8>]) -> Vec<bool> {
+    let mut touched = BTreeSet::new();
+    transactions
+        .iter()
+        .map(|raw| {
+            let sender = raw.get(36..68);
+            // PNX1's exact transfer frame: 95-byte prefix, 40-byte payload,
+            // 64-byte signature. Unknown frames retain only the old sender hint.
+            // Full decode, context, expiry and signature checks still run below;
+            // even a forged well-shaped frame can only suppress prediction.
+            let recipient = if raw.len() == 199
+                && raw.starts_with(b"PNX1")
+                && raw.get(92..95) == Some(&[1, 40, 0][..])
+            {
+                raw.get(95..127)
+            } else {
+                None
+            };
+            let conflict = sender.is_some_and(|account| touched.contains(account))
+                || recipient.is_some_and(|account| touched.contains(account));
+            touched.extend(sender);
+            touched.extend(recipient);
+            conflict
+        })
+        .collect()
+}
+
 fn execute_with_state_inputs<E: Send>(
     parent: &State,
     block: BlockExecution<'_>,
@@ -2927,7 +2959,7 @@ fn execute_with_state_inputs<E: Send>(
         growth,
         observer,
         #[cfg(test)]
-        force_repeated_sender_speculation,
+        force_account_conflict_speculation,
     } = inputs;
     let progress = control.progress;
     cfg.check_account_profile()?;
@@ -2984,19 +3016,9 @@ fn execute_with_state_inputs<E: Send>(
                 .iter()
                 .all(|raw| raw.get(36..68) == transactions[0].get(36..68)));
     #[cfg(not(test))]
-    let force_repeated_sender_speculation = false;
-    let repeated_senders = if !serial_state && !force_repeated_sender_speculation {
-        let mut seen = BTreeSet::new();
-        transactions
-            .iter()
-            .map(|raw| {
-                // This is only a conservative work hint. Every envelope is still
-                // decoded/context/profile/expiry/signature checked below. A valid
-                // earlier transaction always advances this same account's nonce;
-                // an invalid earlier transaction ends canonical execution first.
-                raw.get(36..68).is_some_and(|sender| !seen.insert(sender))
-            })
-            .collect::<Vec<_>>()
+    let force_account_conflict_speculation = false;
+    let account_conflicts = if !serial_state && !force_account_conflict_speculation {
+        account_conflict_hints(transactions)
     } else {
         Vec::new()
     };
@@ -3014,7 +3036,7 @@ fn execute_with_state_inputs<E: Send>(
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         let skip_state_prediction =
-            serial_state || repeated_senders.get(index).copied().unwrap_or(false);
+            serial_state || account_conflicts.get(index).copied().unwrap_or(false);
         let patch = if skip_state_prediction || range_command {
             None
         } else {
@@ -3104,7 +3126,7 @@ fn execute_with_state_inputs<E: Send>(
     } else {
         count
     };
-    let serial_conflict = serial_state || repeated_senders.iter().any(|repeated| *repeated);
+    let serial_conflict = serial_state || account_conflicts.iter().any(|conflict| *conflict);
     if serial_conflict && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
@@ -3192,6 +3214,9 @@ fn execute_with_state_inputs<E: Send>(
 #[cfg(test)]
 #[path = "repeated_sender_tests.rs"]
 mod repeated_sender_tests;
+
+#[cfg(test)]
+mod account_conflict_tests;
 
 /// One original block prologue. Prefix previews retain its pre-reward successor,
 /// never a completed block with a second maturity, expiry or subsidy transition.

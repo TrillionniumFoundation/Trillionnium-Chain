@@ -74,6 +74,22 @@ def lifecycle_record(*, accepted=10, connection=40, task=90, created=True, faile
     return row
 
 
+def profiled_record():
+    """Synthetic extension shape only; no native rejection or I/O evidence."""
+    row = lifecycle_record()
+    row['error_timing'] = dict(schema=reader.REQUEST_ERROR_TIMING_SCHEMA,
+        first_dispatch_error=None, first_terminal_error=None, observation_failed=False,
+        clock_is_observer_local=True, has_control_authority=False)
+    row['reactor_io'] = dict(schema=reader.REACTOR_IO_SCHEMA, observation_failed=False,
+        calls_are_wrapper_returns=True, includes_read_buffer_preparation=True,
+        cpu_is_reactor_thread_only=True, includes_wait_between_calls=False,
+        has_control_authority=False, frames=[dict(phase=phase, calls_returned=0,
+            progressed_calls=0, no_progress_calls=0, failed_calls=0, wall_ns=None,
+            wall_ns_known_sum=0, wall_unknown_calls=0, thread_cpu_ns=None,
+            thread_cpu_ns_known_sum=0, thread_cpu_unknown_calls=0) for phase in reader.FRAME_PHASES])
+    return row
+
+
 def attribution_phase(submissions, history, attacks, records):
     """Only role-matching fields vary; this is not a measured native campaign."""
     return {
@@ -177,6 +193,171 @@ def diagnostic_record():
 
 
 class ReaderTests(unittest.TestCase):
+    def test_error_timing_uses_first_bound_event_not_last_error_or_owner_close(self):
+        row = profiled_record()
+        row['error_timing']['first_dispatch_error'] = dict(observed_ns=25, phase='dispatch',
+            error_code='PUBLIC_REQUEST_CANCELLED')
+        row['error_timing']['first_terminal_error'] = dict(observed_ns=30, phase='body',
+            error_code='PUBLIC_REQUEST_DEADLINE')
+        row.update(dispatch_error_code=None, terminal_error_code='PUBLIC_EOF', terminal_phase='output')
+        before = copy.deepcopy(row)
+        result = reader.request_error_timing_summary([row])
+        self.assertEqual(row, before)
+        dispatch, terminal = (result[key] for key in ('first_dispatch_error', 'first_terminal_error'))
+        self.assertEqual(dispatch['accept_to_first_error_wall_ns']['max_ns'], 15)
+        self.assertEqual(terminal['accept_to_first_error_wall_ns']['max_ns'], 20)
+        self.assertEqual(dispatch['first_error_code_counts'], {'PUBLIC_REQUEST_CANCELLED': 1})
+        self.assertEqual(terminal['phase_counts'], {'body': 1})
+        self.assertEqual(dispatch['max_all_captured_error_events_ns'], 15)
+        self.assertFalse(result['scope']['error_time_is_owner_close_or_response_delivery_time'])
+        self.assertIsNone(result['scope']['whole_request_population_p99_ns'])
+
+    def test_error_timing_keeps_unknown_failed_and_historical_coverage(self):
+        rows = [profiled_record() for _ in range(3)]
+        for row, stamp in zip(rows, (30, None, 35)):
+            row['error_timing']['first_dispatch_error'] = dict(observed_ns=stamp,
+                phase='dispatch', error_code=None)
+        rows[2].update(observation_failed=True, complete=False)
+        rows[2]['error_timing']['observation_failed'] = True
+        rows[2]['reactor_io']['observation_failed'] = True
+        rows.append(lifecycle_record())
+        value = reader.request_error_timing_summary(rows)
+        self.assertEqual(value['historical_records_without_extension'], 1)
+        self.assertEqual(value['measurement_failed_records'], 1)
+        event = value['first_dispatch_error']
+        self.assertEqual((event['events_observed'], event['events_with_unknown_clock'],
+                          event['events_with_failed_coverage']), (3, 1, 1))
+        self.assertEqual((event['accept_to_first_error_wall_ns']['known_count'],
+                          event['accept_to_first_error_wall_ns']['unknown_count']), (1, 2))
+        self.assertEqual(event['unknown_error_code_events'], 3)
+        self.assertIsNone(event['max_all_captured_error_events_ns'])
+        self.assertIsNone(event['p99_all_captured_error_events_ns'])
+
+    def test_error_timing_quantile_is_per_event_and_lost_event_disables_population_claim(self):
+        rows = []
+        for elapsed in range(100, 0, -1):
+            row = profiled_record()
+            row['lifecycle'].update(connection_closed_ns=120, task_closed_ns=120)
+            row['error_timing']['first_dispatch_error'] = dict(observed_ns=10 + elapsed,
+                phase='dispatch', error_code='PUBLIC_REQUEST_DEADLINE')
+            rows.append(row)
+        value = reader.request_error_timing_summary(rows)['first_dispatch_error']
+        self.assertEqual(value['max_all_captured_error_events_ns'], 100)
+        self.assertEqual(value['p99_all_captured_error_events_ns'], 99)
+        lost = profiled_record()
+        lost.update(observation_failed=True, complete=False)
+        lost['error_timing']['observation_failed'] = True
+        rows.append(lost)
+        value = reader.request_error_timing_summary(rows)['first_dispatch_error']
+        self.assertEqual(value['events_observed'], 100)
+        self.assertEqual(value['no_event_captured'], 1)
+        self.assertIsNone(value['max_all_captured_error_events_ns'])
+
+    def test_error_timing_does_not_call_an_open_owner_population_final(self):
+        row = profiled_record()
+        row.update(connection_closed=False, task_closed=False, complete=False)
+        row['lifecycle'].update(connection_closed_ns=None, task_closed_ns=None)
+        row['error_timing']['first_dispatch_error'] = dict(observed_ns=25,
+            phase='dispatch', error_code='PUBLIC_REQUEST_CANCELLED')
+        value = reader.request_error_timing_summary([row])
+        self.assertEqual(value['incomplete_owner_records'], 1)
+        event = value['first_dispatch_error']
+        self.assertEqual(event['accept_to_first_error_wall_ns']['max_ns'], 15)
+        self.assertIsNone(event['max_all_captured_error_events_ns'])
+        self.assertIsNone(event['p99_all_captured_error_events_ns'])
+
+    def test_error_timing_rejects_bad_epoch_scope_and_first_event_shape(self):
+        base = profiled_record()
+        base['error_timing']['first_dispatch_error'] = dict(observed_ns=25,
+            phase='dispatch', error_code='PUBLIC_REQUEST_CANCELLED')
+        mutations = [
+            lambda row: row['error_timing'].update(has_control_authority=True),
+            lambda row: row['error_timing'].update(clock_is_observer_local=False),
+            lambda row: row['error_timing'].update(observation_failed=True),
+            lambda row: row['error_timing']['first_dispatch_error'].update(observed_ns=True),
+            lambda row: row['error_timing']['first_dispatch_error'].update(observed_ns=9),
+            lambda row: row['error_timing']['first_dispatch_error'].update(observed_ns=91),
+            lambda row: row['error_timing']['first_dispatch_error'].update(phase='shutdown'),
+            lambda row: row['error_timing']['first_dispatch_error'].update(error_code='peer text'),
+            lambda row: row['error_timing']['first_dispatch_error'].update(error_code='ROOT'),
+            lambda row: row['error_timing']['first_dispatch_error'].pop('error_code'),
+            lambda row: row['lifecycle'].update(schema='foreign-clock-v1'),
+            lambda row: row.pop('lifecycle'),
+        ]
+        for change in mutations:
+            row = copy.deepcopy(base)
+            change(row)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                reader.validate_request_error_timing(row)
+
+    def test_reactor_io_keeps_returned_errors_and_partial_clock_subtotals(self):
+        row = profiled_record()
+        row['reactor_io']['frames'][0].update(calls_returned=3, progressed_calls=1,
+            no_progress_calls=1, failed_calls=1, wall_ns_known_sum=30, wall_unknown_calls=1,
+            thread_cpu_ns_known_sum=9, thread_cpu_unknown_calls=1)
+        result = reader.reactor_io_summary([row, profiled_record(), lifecycle_record()])
+        self.assertEqual(result['historical_records_without_extension'], 1)
+        frame = result['frames'][0]
+        self.assertEqual((frame['calls_returned'], frame['progressed_calls'],
+                          frame['no_progress_calls'], frame['failed_calls']), (3, 1, 1, 1))
+        self.assertEqual((frame['wall_ns_known_sum'], frame['wall_unknown_calls']), (30, 1))
+        self.assertEqual((frame['thread_cpu_ns_known_sum'], frame['thread_cpu_unknown_calls']), (9, 1))
+        self.assertEqual((frame['per_record_wall_ns']['known_count'],
+                          frame['per_record_wall_ns']['unknown_count']), (0, 1))
+        self.assertEqual(frame['records_without_calls'], 1)
+        self.assertEqual(result['frames'][5]['per_record_wall_ns']['known_count'], 0)
+
+    def test_reactor_io_capture_failure_cannot_promote_known_partial_cost_to_total(self):
+        row = profiled_record()
+        row.update(observation_failed=True, complete=False)
+        row['reactor_io']['observation_failed'] = True
+        row['reactor_io']['frames'][5].update(calls_returned=1, failed_calls=1,
+            wall_ns=10, wall_ns_known_sum=10, thread_cpu_ns=3, thread_cpu_ns_known_sum=3)
+        result = reader.reactor_io_summary([row])
+        self.assertEqual(result['measurement_failed_records'], 1)
+        frame = result['frames'][5]
+        self.assertEqual(frame['wall_ns_known_sum'], 10)
+        self.assertEqual(frame['per_record_wall_ns']['unknown_count'], 1)
+        self.assertEqual(frame['per_record_wall_ns']['known_count'], 0)
+
+    def test_reactor_io_rejects_fabricated_zero_or_mismatched_call_coverage(self):
+        mutations = [
+            lambda value: value.update(has_control_authority=True),
+            lambda value: value.update(includes_wait_between_calls=True),
+            lambda value: value.update(calls_are_wrapper_returns=False),
+            lambda value: value.update(observation_failed=True),
+            lambda value: value['frames'].pop(),
+            lambda value: value['frames'].reverse(),
+            lambda value: value['frames'][0].update(wall_ns=0),
+            lambda value: value['frames'][0].update(calls_returned=True),
+            lambda value: value['frames'][0].update(calls_returned=-1),
+            lambda value: value['frames'][0].update(calls_returned=1),
+            lambda value: value['frames'][0].update(wall_unknown_calls=1),
+            lambda value: value['frames'][0].update(wall_ns_known_sum=1),
+            lambda value: value['frames'][0].update(calls_returned=1, failed_calls=1,
+                wall_unknown_calls=1, wall_ns=0, thread_cpu_unknown_calls=1),
+        ]
+        for change in mutations:
+            row = profiled_record()
+            change(row['reactor_io'])
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                reader.validate_reactor_io(row)
+
+    def test_new_diagnostic_extensions_leave_historical_derivation_fields_exact(self):
+        historical = lifecycle_record()
+        self.assertIsNone(reader.request_error_timing_summary([historical]))
+        self.assertIsNone(reader.reactor_io_summary([historical]))
+        old = reader.execution_summary([historical], True, observer_v4=True)
+        row = profiled_record()
+        current = reader.execution_summary([row], True, observer_v4=True)
+        self.assertEqual(current.pop('error_timing')['first_dispatch_error']['events_observed'], 0)
+        current.pop('reactor_io')
+        self.assertEqual(current, old)
+        self.assertNotIn('error_timing', old)
+        self.assertNotIn('reactor_io', old)
+        with self.assertRaises(ValueError):
+            reader.execution_summary([row], True, observer_v4=False)
+
     @staticmethod
     def wait_slot(duration, *, accepted=True, completed=True, code=None):
         return dict(started_ns=0, ended_ns=duration, wall_ns=duration,

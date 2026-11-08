@@ -1,0 +1,22 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_pon_node-fc27c767cf2f262e)
+
+running 15 tests
+test peer_polling::tests::actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries ... ok
+test peer_polling::tests::actual_valid_work_with_false_ledger_state_cannot_advance_cursor_or_owner ... ok
+test peer_polling::tests::call_and_global_page_budgets_round_robin_are_hard_finite ... ok
+test peer_polling::tests::config_file_refuses_symlink_fifo_hardlink_writable_and_oversized ... ok
+test peer_polling::tests::config_has_exact_context_finite_limits_and_no_discovery ... ok
+test peer_polling::tests::malformed_pages_fail_before_packet_allocation_and_do_not_claim_progress ... ok
+test peer_polling::tests::normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does ... ok
+test peer_polling::tests::oversized_failure_is_explicitly_retained_with_digest_and_utf8_boundary ... ok
+test peer_polling::tests::pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork ... ok
+test peer_polling::tests::pinned_peer_requires_the_existing_service_domain_before_full_work ... ok
+test peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text ... ok
+test peer_polling::tests::polling_transport_retries_share_original_end_and_release_stalled_socket ... ok
+test peer_polling::tests::real_native_fixed_tip_disconnect_one_initial_cursor_fallback_and_heavier_fork ... ok
+test peer_polling::tests::transport_unknown_block_malformed_and_post_progress_cursor_never_fallback ... ok
+test peer_polling::tests::typed_local_structure_stops_but_remote_and_transport_failures_retain_cursor ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 1178 filtered out; finished in 4.87s
+

@@ -1,0 +1,7 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_pon_node-fc27c767cf2f262e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1193 filtered out; finished in 0.00s
+

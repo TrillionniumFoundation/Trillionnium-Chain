@@ -36,6 +36,9 @@ ROUNDS = 3
 MAX_REPORT_BYTES = 256 * 1024 * 1024
 ARITHMETIC_REPORT_SCHEMA = 'native-public-v3-arithmetic-facts-separate-process-campaign-v1'
 ERROR_DIAGNOSTIC_SCHEMA = 'public-v3-request-error-diagnostics-v1'
+REQUEST_ERROR_TIMING_SCHEMA = 'public-v3-request-error-timing-v1'
+REACTOR_IO_SCHEMA = 'public-v3-reactor-frame-io-observation-v1'
+FRAME_PHASES = ('hello', 'challenge', 'solution', 'ready', 'body', 'response')
 CPU_SETTLEMENT_SCHEMA = 'public-v3-cpu-settlement-observation-v1'
 CPU_SETTLEMENT_VALUES_SCHEMA = 'public-v3-cpu-settlement-observation-v2'
 CPU_SETTLEMENT_KNOWN_FIELDS = ('owner_cpu_known', 'scoped_worker_cpu_known',
@@ -354,9 +357,180 @@ def request_error_diagnostic_summary(rows):
                      'code, authorization or outcome; missing historical diagnostics remain unknown'}
 
 
+def validate_request_error_timing(row):
+    """Bind first actual errors to their own cause, phase and local epoch."""
+    if 'error_timing' not in row:
+        return
+    value = row['error_timing']
+    require(type(value) is dict and set(value) == {'schema', 'first_dispatch_error',
+            'first_terminal_error', 'observation_failed', 'clock_is_observer_local',
+            'has_control_authority'} and value['schema'] == REQUEST_ERROR_TIMING_SCHEMA,
+            'request error timing exact shape required')
+    require(value['clock_is_observer_local'] is True and value['has_control_authority'] is False,
+            'request error timing local diagnostic scope required')
+    require(type(row.get('observation_failed')) is bool
+            and value['observation_failed'] is row['observation_failed'],
+            'request error timing capture failure mismatch')
+    require('lifecycle' in row, 'request error timing requires original lifecycle epoch')
+    request_owner_lifecycle_summary([row])
+    for name, close in (('first_dispatch_error', 'task_closed_ns'),
+                        ('first_terminal_error', 'connection_closed_ns')):
+        event = value[name]
+        if event is None:
+            continue
+        require(type(event) is dict and set(event) == {'observed_ns', 'phase', 'error_code'},
+                'request first error exact event shape required')
+        stamp, phase, code = (event[key] for key in ('observed_ns', 'phase', 'error_code'))
+        require(stamp is None or (type(stamp) is int and 0 <= stamp < 1 << 64),
+                'request first error u64 or unknown clock required')
+        require(type(phase) is str and 0 < len(phase) <= 64,
+                'request first error phase required')
+        require(name != 'first_dispatch_error' or (phase == 'dispatch' and row['task_created']),
+                'request first dispatch error requires its task owner')
+        require(code is None or (isinstance(code, str) and code != 'ROOT'
+                and re.fullmatch('[A-Z][A-Z0-9_]*', code)),
+                'request first error typed cause or unknown required')
+        accepted, closed = row['lifecycle']['accepted_ns'], row['lifecycle'][close]
+        require(stamp is None or accepted is None or accepted <= stamp,
+                'request first error precedes accept')
+        require(stamp is None or closed is None or stamp <= closed,
+                'request first error follows its owner close')
+
+
+def request_error_timing_summary(rows):
+    """Error appearance is separate from response delivery and owner release."""
+    observed = [row for row in rows if 'error_timing' in row]
+    if not observed:
+        return None
+    for row in observed:
+        validate_request_error_timing(row)
+    failed = sum(row['error_timing']['observation_failed'] for row in observed)
+    unfinished = sum(not row['complete'] for row in observed)
+    result = {'schema': 'public-v3-request-error-timing-derivation-v1',
+              'observed_records': len(observed),
+              'historical_records_without_extension': len(rows) - len(observed),
+              'measurement_failed_records': failed, 'incomplete_owner_records': unfinished}
+    for name in ('first_dispatch_error', 'first_terminal_error'):
+        events = [(row, row['error_timing'][name]) for row in observed
+                  if row['error_timing'][name] is not None]
+        elapsed = [event['observed_ns'] - row['lifecycle']['accepted_ns']
+                   if not row['error_timing']['observation_failed']
+                   and event['observed_ns'] is not None
+                   and row['lifecycle']['accepted_ns'] is not None else None
+                   for row, event in events]
+        clocks = stats(elapsed)
+        complete = bool(events) and not failed and not unfinished and len(observed) == len(rows) \
+            and clocks['unknown_count'] == 0
+        known = sorted(value for value in elapsed if value is not None)
+        result[name] = {
+            'events_observed': len(events), 'no_event_captured': len(observed) - len(events),
+            'events_with_unknown_clock': sum(event['observed_ns'] is None for _, event in events),
+            'events_with_failed_coverage': sum(row['error_timing']['observation_failed']
+                                                for row, _ in events),
+            'first_error_code_counts': dict(Counter(event['error_code'] for _, event in events
+                                                    if event['error_code'] is not None)),
+            'unknown_error_code_events': sum(event['error_code'] is None for _, event in events),
+            'phase_counts': dict(Counter(event['phase'] for _, event in events)),
+            'accept_to_first_error_wall_ns': clocks,
+            'max_all_captured_error_events_ns': known[-1] if complete else None,
+            'p99_all_captured_error_events_ns': known[(99 * len(known) + 99) // 100 - 1]
+                                               if complete else None,
+        }
+    result['scope'] = {
+        'first_event_keeps_its_own_phase_and_typed_cause': True,
+        'last_error_code_may_differ_from_first_event': True,
+        'lost_capture_cannot_establish_first_error_time': True,
+        'open_owners_disable_complete_population_error_tail': True,
+        'error_time_is_owner_close_or_response_delivery_time': False,
+        'error_time_is_cancellation_signal_time': False,
+        'local_monotonic_epoch_only': True,
+        'whole_request_population_p99_ns': None,
+        'has_control_authority': False,
+    }
+    return result
+
+
+def validate_reactor_io(row):
+    if 'reactor_io' not in row:
+        return
+    value = row['reactor_io']
+    require(type(value) is dict and set(value) == {'schema', 'frames', 'observation_failed',
+            'calls_are_wrapper_returns', 'includes_read_buffer_preparation',
+            'cpu_is_reactor_thread_only', 'includes_wait_between_calls', 'has_control_authority'}
+            and value['schema'] == REACTOR_IO_SCHEMA, 'reactor I/O exact shape required')
+    require(all(value[key] is True for key in ('calls_are_wrapper_returns',
+            'includes_read_buffer_preparation', 'cpu_is_reactor_thread_only'))
+            and value['includes_wait_between_calls'] is False
+            and value['has_control_authority'] is False, 'reactor I/O diagnostic scope required')
+    require(type(row.get('observation_failed')) is bool
+            and value['observation_failed'] is row['observation_failed'],
+            'reactor I/O capture failure mismatch')
+    frames = value['frames']
+    require(type(frames) is list and len(frames) == len(FRAME_PHASES),
+            'reactor I/O ordered frame slots required')
+    counts = ('calls_returned', 'progressed_calls', 'no_progress_calls', 'failed_calls',
+              'wall_ns_known_sum', 'wall_unknown_calls', 'thread_cpu_ns_known_sum',
+              'thread_cpu_unknown_calls')
+    for frame, phase in zip(frames, FRAME_PHASES):
+        require(type(frame) is dict and set(frame) == {'phase', 'wall_ns', 'thread_cpu_ns', *counts}
+                and frame['phase'] == phase, 'reactor I/O exact ordered frame shape required')
+        require(all(type(frame[key]) is int and 0 <= frame[key] < 1 << 64 for key in counts),
+                'reactor I/O u64 counters required')
+        calls = frame['calls_returned']
+        require(calls == sum(frame[key] for key in ('progressed_calls', 'no_progress_calls',
+                'failed_calls')), 'reactor I/O outcome denominator mismatch')
+        for total, known_sum, unknown in (
+                ('wall_ns', 'wall_ns_known_sum', 'wall_unknown_calls'),
+                ('thread_cpu_ns', 'thread_cpu_ns_known_sum', 'thread_cpu_unknown_calls')):
+            require(frame[total] is None or (type(frame[total]) is int
+                    and 0 <= frame[total] < 1 << 64), 'reactor I/O u64 or unknown clock required')
+            require(frame[unknown] <= calls, 'reactor I/O clock denominator mismatch')
+            require(calls > frame[unknown] or frame[known_sum] == 0,
+                    'reactor I/O unknown clocks cannot invent known subtotal')
+            require(frame[total] == frame[known_sum] if calls and not frame[unknown]
+                    else frame[total] is None, 'reactor I/O unknown or unentered total is not zero')
+
+
+def reactor_io_summary(rows):
+    """Per-request wrapper sums; these are not individual I/O or request tails."""
+    observed = [row for row in rows if 'reactor_io' in row]
+    if not observed:
+        return None
+    for row in observed:
+        validate_reactor_io(row)
+    frames = []
+    for index, phase in enumerate(FRAME_PHASES):
+        slots = [(row['reactor_io'], row['reactor_io']['frames'][index]) for row in observed]
+        entered = [(value, frame) for value, frame in slots if frame['calls_returned']]
+        frames.append({
+            'phase': phase, 'records_with_calls': len(entered),
+            'records_without_calls': len(slots) - len(entered),
+            **{key: sum(frame[key] for _, frame in slots) for key in
+               ('calls_returned', 'progressed_calls', 'no_progress_calls', 'failed_calls',
+                'wall_ns_known_sum', 'wall_unknown_calls', 'thread_cpu_ns_known_sum',
+                'thread_cpu_unknown_calls')},
+            **{f'per_record_{key}': stats([frame[key] if not value['observation_failed'] else None
+                                          for value, frame in entered])
+               for key in ('wall_ns', 'thread_cpu_ns')},
+        })
+    return {'schema': 'public-v3-reactor-frame-io-derivation-v1',
+            'observed_records': len(observed),
+            'historical_records_without_extension': len(rows) - len(observed),
+            'measurement_failed_records': sum(row['reactor_io']['observation_failed'] for row in observed),
+            'frames': frames,
+            'scope': 'returned frame read/write wrapper calls, including existing read-buffer preparation; '
+                     'no-progress may be would-block, interrupted or already complete; '
+                     'calling reactor CPU only, excluding authentication and waiting between calls; '
+                     'clock sums are per-request aggregates, not individual-call or request p95/p99; '
+                     'known sums and counters may be partial when capture failed; '
+                     'no physical network, syscall, WAL/fsync or control authority'}
+
+
 def validate_v4_record(row):
     require(type(row) is dict, 'v4 request record required')
     validate_request_error_diagnostics(row)
+    validate_request_error_timing(row)
+    validate_reactor_io(row)
     validate_v4_phases(row.get('submit_phases'))
     validate_cpu_settlement(row)
     for key in WAIT_FIELDS_V4:
@@ -668,6 +842,12 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
     if diagnostics is not None:
         require(observer_v4, 'request error diagnostic extension requires v4 observer scope')
         result['error_diagnostics'] = diagnostics
+    for name, summarize in (('error_timing', request_error_timing_summary),
+                            ('reactor_io', reactor_io_summary)):
+        extension = summarize(rows)
+        if extension is not None:
+            require(observer_v4 and instrumented, f'{name} extension requires v4 observer scope')
+            result[name] = extension
     if any('cpu_settlement' in row for row in rows):
         require(observer_v4 and instrumented, 'cpu settlement extension requires v4 observer scope')
         result['cpu_settlement'] = cpu_settlement_summary(rows)

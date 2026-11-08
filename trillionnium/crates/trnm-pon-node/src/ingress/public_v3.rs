@@ -29,7 +29,7 @@ pub use request_observation::{
     PublicRequestObservation, PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase,
     SubmitPhaseObservation, MAX_REQUEST_OBSERVATION_RECORDS,
 };
-use request_observation::{ConnectionObservation, TaskObservation, ThreadCpuStamp};
+use request_observation::{ConnectionObservation, ReactorIoStamp, TaskObservation, ThreadCpuStamp};
 #[cfg(test)]
 use scalar_cpu::ScopedWorkerInterval;
 use scalar_cpu::{
@@ -1568,9 +1568,17 @@ fn read_available_observed(
     phase: usize,
 ) -> Result<bool> {
     let before = bytes.len();
+    let attempt = observation.map(|record| (record, ReactorIoStamp::start()));
     let result = read_available(socket, bytes, expected);
-    if let Some(record) = observation {
-        record.frame(phase, bytes.len() - before, 0, matches!(&result, Ok(true)));
+    if let Some((record, stamp)) = attempt {
+        let sample = stamp.finish(result.is_err());
+        record.frame_attempt(
+            phase,
+            bytes.len() - before,
+            0,
+            matches!(&result, Ok(true)),
+            sample,
+        );
     }
     result
 }
@@ -1582,9 +1590,17 @@ fn write_available_observed(
     phase: usize,
 ) -> Result<bool> {
     let before = *cursor;
+    let attempt = observation.map(|record| (record, ReactorIoStamp::start()));
     let result = write_available(socket, bytes, cursor);
-    if let Some(record) = observation {
-        record.frame(phase, 0, *cursor - before, matches!(&result, Ok(true)));
+    if let Some((record, stamp)) = attempt {
+        let sample = stamp.finish(result.is_err());
+        record.frame_attempt(
+            phase,
+            0,
+            *cursor - before,
+            matches!(&result, Ok(true)),
+            sample,
+        );
     }
     result
 }
@@ -4123,9 +4139,16 @@ mod tests {
         let (mut socket, _) = listener.accept().unwrap();
         let observer = PublicRequestObserver::new(1).unwrap();
         let record = observer.connection().unwrap();
+        socket.set_nonblocking(true).unwrap();
+        let mut bytes = Vec::new();
+        assert!(
+            !read_available_observed(&mut socket, &mut bytes, HELLO_BYTES, Some(&record), 0)
+                .unwrap()
+        );
+        assert!(bytes.is_empty());
+        socket.set_nonblocking(false).unwrap();
         client.write_all(&[1, 2, 3, 4, 5]).unwrap();
         client.shutdown(Shutdown::Write).unwrap();
-        let mut bytes = Vec::new();
         assert!(
             !read_available_observed(&mut socket, &mut bytes, HELLO_BYTES, Some(&record), 0)
                 .unwrap()
@@ -4162,6 +4185,37 @@ mod tests {
         assert_eq!(row.application_bytes_written, Some(output.len() as u64));
         assert_eq!(row.dispatch_thread_cpu_ns, None);
         assert_eq!(row.full_work_thread_cpu_ns, None);
+        assert!(!row.reactor_io.observation_failed);
+        let reads = row.reactor_io.frames[0];
+        assert_eq!(
+            (
+                reads.calls_returned,
+                reads.progressed_calls,
+                reads.no_progress_calls,
+                reads.failed_calls
+            ),
+            (3, 1, 1, 1)
+        );
+        let writes = row.reactor_io.frames[5];
+        assert_eq!(
+            (
+                writes.calls_returned,
+                writes.progressed_calls,
+                writes.no_progress_calls,
+                writes.failed_calls
+            ),
+            (2, 2, 0, 0)
+        );
+        for frame in [reads, writes] {
+            assert_eq!(frame.wall_ns, Some(frame.wall_ns_known_sum));
+            assert_eq!(frame.wall_unknown_calls, 0);
+            if frame.thread_cpu_unknown_calls == 0 {
+                assert_eq!(frame.thread_cpu_ns, Some(frame.thread_cpu_ns_known_sum));
+            } else {
+                assert_eq!(frame.thread_cpu_ns, None);
+                assert!(frame.thread_cpu_unknown_calls <= frame.calls_returned);
+            }
+        }
     }
     #[test]
     fn request_observer_retains_partial_output_bytes_after_actual_write_error() {
@@ -4193,6 +4247,11 @@ mod tests {
         assert_eq!(row.application_bytes_written, Some(IO_QUANTUM as u64));
         assert!(!row.frames[5].complete);
         assert_eq!(row.physical_network_bytes, None);
+        let io = row.reactor_io.frames[5];
+        assert_eq!(
+            (io.calls_returned, io.progressed_calls, io.failed_calls),
+            (2, 1, 1)
+        );
     }
     #[test]
     fn paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers() {

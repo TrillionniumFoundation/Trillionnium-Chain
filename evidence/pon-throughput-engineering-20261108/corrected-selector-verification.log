@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "ingress::public_v3::paid_settlement_consistency_tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement"}
