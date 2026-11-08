@@ -7949,3 +7949,5 @@ actual joint cost lower envelope, complete legal-strategy/initial-state
 simulation, resource/tail/network composition, explicit new native admission
 and recovery namespaces, and real Cell quality/owner use. A successful source
 contract check or synthetic certificate leaves production HOLD_NO_GO.
+
+The complete scalar MU1 reuse probe additionally retains a winning outer-ticket hybrid and rejects its stale unit transcript without new credit; legal prepared-matrix reuse remains allowed and unqualified as a minimum cost. The embedded distributed source inventory includes both new native research files and the existing upstream history diagnostic.

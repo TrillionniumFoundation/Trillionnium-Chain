@@ -50,6 +50,27 @@ Public model training is not repeatedly charged to every miner. Setup is paid
 once, previous credit is excluded from residual potential, and neither an
 epoch nor a profile change resets the cost account.
 
+### Concrete MU1 whole-proof reuse control
+
+The [complete reuse probe](../../../../formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py)
+replays a pinned full MU1 fixture and a separately pinned expected context.
+It retains the first unit proof from nonce 24 and recomputes only the last
+unit for nonce 26. The resulting hybrid really passes the outer aggregate
+target; its new last unit passes complete W1 verification and legally reuses
+the prepared `A,B,AB` prefix. The retained first unit instead fails at
+`TRANSCRIPT`, and both complete MU1 verification and its research counter
+reject at `W1_TRANSCRIPT`, without adding credit. Regenerating under the
+unchanged context produces identical bytes, ticket and identity, with zero
+duplicate credit. All 21 predicates must hold for the probe to report success.
+
+This is a concrete control for the shared context's binding to every unit,
+under the stated hash-binding assumption. It does not prove that each fresh
+unit pays the reference implementation's cost. Context-specific nonce banks,
+legal prepared matrices, shared traces, batching and quantum shortcuts still
+belong in the full lifecycle analysis. The probe uses the complete scalar
+verifier; it does not claim a new native execution or map the synthetic MDP
+into actual W1 resource costs.
+
 ## 2. Decide whether a common credit function even exists
 
 [Credit feasibility](../../../../formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md)
@@ -176,6 +197,7 @@ python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibili
 python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v
 python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v
 python3 formal/pon-nakamoto-v1/fixed_probability_contract.py
+python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check
 python3 formal/pon-nakamoto-v1/amortized_cost_potential.py
 ```
 
