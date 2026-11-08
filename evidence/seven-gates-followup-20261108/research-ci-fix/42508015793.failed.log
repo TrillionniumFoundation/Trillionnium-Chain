@@ -1,0 +1,490 @@
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	﻿2026-11-08T18:11:45.7933257Z ##[group]Run set -euo pipefail
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7933609Z [36;1mset -euo pipefail[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7933976Z [36;1mw1_proof_dir="$GITHUB_WORKSPACE/evidence/pon-w1-full-v2-20261105"[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7934420Z [36;1mw1_verifier="$W1_PROFILE_OUT/bin/w1-verify-v2"[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7934861Z [36;1mRAYON_NUM_THREADS=8 python3 scripts/w1_v2_receipt_controls.py \[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7935349Z [36;1m  --verifier "$w1_verifier" --receipt "$w1_proof_dir/succinct.bin" \[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7935951Z [36;1m  --header "$w1_proof_dir/header.bin" --expected-artifacts "$w1_proof_dir/expected-artifacts.bin" \[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7936626Z [36;1m  --out "$W1_PROFILE_OUT/v2-controls" 2>&1 | tee "$W1_PROFILE_OUT/v2-receipt-controls.log"[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7937289Z [36;1mpython3 scripts/ci/w1_v2_controls_gate.py "$W1_PROFILE_OUT/v2-controls" "$w1_proof_dir" "$w1_verifier" \[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7937850Z [36;1m  2>&1 | tee "$W1_PROFILE_OUT/v2-controls-validation.log"[0m
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7957734Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7958097Z env:
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7958285Z   CI: true
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7958479Z   CARGO_INCREMENTAL: 0
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7958709Z   CARGO_BUILD_JOBS: 2
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7958923Z   RUST_TEST_THREADS: 1
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7959138Z   CARGO_TERM_COLOR: never
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7959391Z   PYTHONDONTWRITEBYTECODE: 1
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7959638Z   SOURCE_KIND: head
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7959911Z   EXPECTED_SOURCE: bb026697a972521009bc133ae6ed2b653e18e931
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7960639Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7961004Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7961483Z   W1_PROFILE_OUT: /home/runner/work/_temp/pon-w1-transparent-profile-head-x64-42508015793-1
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7962085Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-transparent-profile-head-42508015793-1
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7962699Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-transparent-profile-head-42508015793-1
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.7963152Z ##[endgroup]
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:45.9709295Z {"case": "positive_original_full_v2", "passed": true, "returncode": 0, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.0310861Z {"case": "wire_tag_composite", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.0809065Z {"case": "wire_tag_groth16", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.1318267Z {"case": "wire_tag_fake", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.1820636Z {"case": "wire_tag_unknown", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.2324955Z {"case": "seal_length_zero", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.2822932Z {"case": "seal_length_overflow_u64", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.3325134Z {"case": "seal_length_multiply_overflow", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.3829674Z {"case": "seal_length_beyond_slice", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.4320154Z {"case": "receipt_truncated_empty", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.4817248Z {"case": "receipt_truncated_tag", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.5327059Z {"case": "receipt_truncated_seal_length", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.5828165Z {"case": "receipt_truncated_seal_body", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.6325175Z {"case": "receipt_truncated_last_byte", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.6821042Z {"case": "receipt_trailing_byte", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.7320036Z {"case": "seal_word_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.7877860Z {"case": "seal_word_middle", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.8878490Z {"case": "seal_word_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.9369397Z {"case": "external_header_magic", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:46.9863576Z {"case": "external_header_version", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.0354304Z {"case": "external_header_network", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.0876946Z {"case": "external_header_parameters", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.1378671Z {"case": "external_header_parent", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.1872708Z {"case": "external_header_height", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.2372001Z {"case": "external_header_timestamp", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.2862996Z {"case": "external_header_target", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.3361480Z {"case": "external_header_miner", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.3863743Z {"case": "external_header_transactions", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.4361240Z {"case": "external_header_state", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.4854796Z {"case": "external_header_receipts", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.5343437Z {"case": "external_header_work_task", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.5827707Z {"case": "external_header_nonce", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.6332701Z {"case": "external_header_truncated", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.6820537Z {"case": "external_header_trailing", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.7306501Z {"case": "external_artifacts_truncated", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.7795018Z {"case": "external_artifacts_trailing", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.8285314Z {"case": "external_artifacts_model_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.8772241Z {"case": "external_artifacts_model_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.9263108Z {"case": "external_artifacts_input_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:47.9759164Z {"case": "external_artifacts_input_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.0260426Z {"case": "journal_domain", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.0750687Z {"case": "journal_embedded_header", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.1244833Z {"case": "journal_trace", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.1742440Z {"case": "journal_ticket", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.2231784Z {"case": "journal_work_id", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.2721789Z {"case": "journal_model", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.3212511Z {"case": "journal_input", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.4212531Z {"case": "journal_C_canonical_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.5214422Z {"case": "journal_C_canonical_middle", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.6253442Z {"case": "journal_C_canonical_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.6747379Z {"case": "journal_C_noncanonical_4294967291", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.7242894Z {"case": "journal_C_noncanonical_4294967292", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.7739275Z {"case": "journal_C_noncanonical_4294967293", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.8281342Z {"case": "journal_C_noncanonical_4294967294", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:48.8941644Z {"case": "journal_C_noncanonical_4294967295", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.0003712Z {"case": "journal_and_expected_model", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.1012408Z {"case": "journal_and_expected_input", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.2021401Z {"case": "journal_and_expected_both", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.2085903Z {"all_controls_passed": true, "planned_controls": 58, "completed_controls": 58, "error": null}
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3492868Z Traceback (most recent call last):
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3494004Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 161, in <module>
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3501417Z     raise SystemExit(main())
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3501846Z                      ^^^^^^
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3502641Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 155, in main
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3503790Z     validate(args.out, args.proof, verifier_path=verifier, verifier_sha256=controls.sha(verifier))
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3504966Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 95, in validate
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3505891Z     require_fields(process, {
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3506801Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 37, in require_fields
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3507921Z     controls.require(type(row.get(key)) is type(value) and row[key] == value,
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3509002Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_v2_receipt_controls.py", line 56, in require
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3509930Z     raise ValueError(message)
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3510622Z ValueError: process observation differs: schema
+W1 transparent candidate (head, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:11:49.3655365Z ##[error]Process completed with exit code 1.
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	﻿2026-11-08T18:11:57.0717115Z ##[group]Run set -euo pipefail
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0717459Z [36;1mset -euo pipefail[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0717978Z [36;1mw1_profile_out="$RUNNER_TEMP/pon-w1-transparent-profile-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0718529Z [36;1mmkdir -p "$w1_profile_out"[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0718849Z [36;1mpython3 - "$w1_profile_out/ci-status.json" <<'PY'[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0719174Z [36;1mimport json, os, sys[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0719515Z [36;1mreport = {'schema': 'TRNM-W1-TRANSPARENT-CI-OBSERVATION1',[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0720062Z [36;1m    'source_kind': os.environ['SOURCE_KIND'], 'expected_source': os.environ['EXPECTED_SOURCE'],[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0720992Z [36;1m    'steps': json.loads(os.environ['W1_PROFILE_STEP_RESULTS']),[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0721535Z [36;1m    'scope': 'Continuous candidate checks; failed and partial observations are retained.',[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0722119Z [36;1m    'end_to_end_benefit_established': False, 'quantum_soundness_qualified': False,[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0722659Z [36;1m    'production_qualified': False, 'consensus_admission': False}[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0723093Z [36;1mwith open(sys.argv[1], 'x', encoding='utf-8') as stream:[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0723495Z [36;1m    json.dump(report, stream, indent=2, sort_keys=True)[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0723824Z [36;1m    stream.write('\n')[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0724229Z [36;1mrequired = ('checkout', 'source', 'toolchain', 'source_controls', 'observer_tests',[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0724818Z [36;1m            'mapper_tests', 'v2_gate_tests', 'staged_tests', 'budget_tests', 'native', 'hardened',[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0725459Z [36;1m            'verifier_v2', 'real_receiver_controls', 'receipt_controls_v2', 'component_budget', 'source_map',[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0726032Z [36;1m            'profile', 'receipt_controls', 'comparison', 'source_after')[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0726603Z [36;1mincomplete = [name for name in required if report['steps'].get(name, {}).get('outcome') != 'success'][0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0727088Z [36;1mif incomplete:[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0727523Z [36;1m    raise SystemExit('required W1 observations failed or were skipped: ' + ', '.join(incomplete))[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0727983Z [36;1mPY[0m
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0747225Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0747568Z env:
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0747751Z   CI: true
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0747945Z   CARGO_INCREMENTAL: 0
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0748160Z   CARGO_BUILD_JOBS: 2
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0748376Z   RUST_TEST_THREADS: 1
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0748601Z   CARGO_TERM_COLOR: never
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0748848Z   PYTHONDONTWRITEBYTECODE: 1
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0749089Z   SOURCE_KIND: head
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0749364Z   EXPECTED_SOURCE: bb026697a972521009bc133ae6ed2b653e18e931
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0749916Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0750532Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0751046Z   W1_PROFILE_OUT: /home/runner/work/_temp/pon-w1-transparent-profile-head-x64-42508015793-1
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0751646Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-transparent-profile-head-42508015793-1
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0752255Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-transparent-profile-head-42508015793-1
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0757813Z   W1_PROFILE_STEP_RESULTS: {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "checkout": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	      "commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	      "ref": ""
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "source": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "toolchain": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "source_controls": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "observer_tests": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "mapper_tests": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "v2_gate_tests": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "staged_tests": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "budget_tests": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "native": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "hardened": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "verifier_v2": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "real_receiver_controls": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "receipt_controls_v2": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "failure",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "failure"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "component_budget": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "source_map": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "profile": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "receipt_controls": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "comparison": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  "source_after": {
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	  }
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	}
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.0763801Z ##[endgroup]
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.1005971Z required W1 observations failed or were skipped: receipt_controls_v2
+W1 transparent candidate (head, x64)	Record completed, failed and skipped observations	2026-11-08T18:11:57.1042836Z ##[error]Process completed with exit code 1.
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	﻿2026-11-08T18:14:15.9601764Z ##[group]Run set -euo pipefail
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9601960Z [36;1mset -euo pipefail[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9602146Z [36;1mw1_proof_dir="$GITHUB_WORKSPACE/evidence/pon-w1-full-v2-20261105"[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9602376Z [36;1mw1_verifier="$W1_PROFILE_OUT/bin/w1-verify-v2"[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9602596Z [36;1mRAYON_NUM_THREADS=8 python3 scripts/w1_v2_receipt_controls.py \[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9602851Z [36;1m  --verifier "$w1_verifier" --receipt "$w1_proof_dir/succinct.bin" \[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9603156Z [36;1m  --header "$w1_proof_dir/header.bin" --expected-artifacts "$w1_proof_dir/expected-artifacts.bin" \[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9603493Z [36;1m  --out "$W1_PROFILE_OUT/v2-controls" 2>&1 | tee "$W1_PROFILE_OUT/v2-receipt-controls.log"[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9603839Z [36;1mpython3 scripts/ci/w1_v2_controls_gate.py "$W1_PROFILE_OUT/v2-controls" "$w1_proof_dir" "$w1_verifier" \[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9604369Z [36;1m  2>&1 | tee "$W1_PROFILE_OUT/v2-controls-validation.log"[0m
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9619338Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9619510Z env:
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9619610Z   CI: true
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9619716Z   CARGO_INCREMENTAL: 0
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9619832Z   CARGO_BUILD_JOBS: 2
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9619945Z   RUST_TEST_THREADS: 1
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9620059Z   CARGO_TERM_COLOR: never
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9620191Z   PYTHONDONTWRITEBYTECODE: 1
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9620328Z   SOURCE_KIND: prospective-merge
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9620501Z   EXPECTED_SOURCE: 4b55e3b3a01ad44f4da37a76298232e4a29d031a
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9620697Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9620882Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9621168Z   W1_PROFILE_OUT: /home/runner/work/_temp/pon-w1-transparent-profile-prospective-merge-x64-42508015793-1
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9621528Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-transparent-profile-prospective-merge-42508015793-1
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9621890Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-transparent-profile-prospective-merge-42508015793-1
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:15.9622142Z ##[endgroup]
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.0870994Z {"case": "positive_original_full_v2", "passed": true, "returncode": 0, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.1145647Z {"case": "wire_tag_composite", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.1409590Z {"case": "wire_tag_groth16", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.1684149Z {"case": "wire_tag_fake", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.1953631Z {"case": "wire_tag_unknown", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.2219296Z {"case": "seal_length_zero", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.2485050Z {"case": "seal_length_overflow_u64", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.2749840Z {"case": "seal_length_multiply_overflow", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.3023391Z {"case": "seal_length_beyond_slice", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.3286220Z {"case": "receipt_truncated_empty", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.3551408Z {"case": "receipt_truncated_tag", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.3814384Z {"case": "receipt_truncated_seal_length", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.4079867Z {"case": "receipt_truncated_seal_body", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.4345497Z {"case": "receipt_truncated_last_byte", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.4610778Z {"case": "receipt_trailing_byte", "passed": true, "returncode": 1, "observed_rejection_layers": ["wire"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.4876066Z {"case": "seal_word_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.5675760Z {"case": "seal_word_middle", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.6451285Z {"case": "seal_word_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.6717504Z {"case": "external_header_magic", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.6982644Z {"case": "external_header_version", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.7246658Z {"case": "external_header_network", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.7510625Z {"case": "external_header_parameters", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.7774546Z {"case": "external_header_parent", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.8037318Z {"case": "external_header_height", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.8302213Z {"case": "external_header_timestamp", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.8567550Z {"case": "external_header_target", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.8832212Z {"case": "external_header_miner", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.9094829Z {"case": "external_header_transactions", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.9356513Z {"case": "external_header_state", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.9618209Z {"case": "external_header_receipts", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:16.9881066Z {"case": "external_header_work_task", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.0142715Z {"case": "external_header_nonce", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.0405179Z {"case": "external_header_truncated", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.0666519Z {"case": "external_header_trailing", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.0928810Z {"case": "external_artifacts_truncated", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.1190548Z {"case": "external_artifacts_trailing", "passed": true, "returncode": 1, "observed_rejection_layers": [], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.1451792Z {"case": "external_artifacts_model_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.1715451Z {"case": "external_artifacts_model_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.1978443Z {"case": "external_artifacts_input_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.2240931Z {"case": "external_artifacts_input_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.2504595Z {"case": "journal_domain", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.2770158Z {"case": "journal_embedded_header", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.3036803Z {"case": "journal_trace", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.3300279Z {"case": "journal_ticket", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.3564563Z {"case": "journal_work_id", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.3829164Z {"case": "journal_model", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.4093380Z {"case": "journal_input", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.4860272Z {"case": "journal_C_canonical_first", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.5628763Z {"case": "journal_C_canonical_middle", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.6395670Z {"case": "journal_C_canonical_last", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.6661692Z {"case": "journal_C_noncanonical_4294967291", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.6926428Z {"case": "journal_C_noncanonical_4294967292", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.7190825Z {"case": "journal_C_noncanonical_4294967293", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.7453780Z {"case": "journal_C_noncanonical_4294967294", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.7717993Z {"case": "journal_C_noncanonical_4294967295", "passed": true, "returncode": 1, "observed_rejection_layers": ["public"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.8488579Z {"case": "journal_and_expected_model", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:17.9263213Z {"case": "journal_and_expected_input", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0031928Z {"case": "journal_and_expected_both", "passed": true, "returncode": 1, "observed_rejection_layers": ["crypto"], "timed_out": false, "panic_or_abort_detected": false}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0066994Z {"all_controls_passed": true, "planned_controls": 58, "completed_controls": 58, "error": null}
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0965367Z Traceback (most recent call last):
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0965878Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 161, in <module>
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0966327Z     raise SystemExit(main())
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0966521Z                      ^^^^^^
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0966901Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 155, in main
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0967360Z     validate(args.out, args.proof, verifier_path=verifier, verifier_sha256=controls.sha(verifier))
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0967735Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 95, in validate
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0968019Z     require_fields(process, {
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0968285Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/w1_v2_controls_gate.py", line 37, in require_fields
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0968631Z     controls.require(type(row.get(key)) is type(value) and row[key] == value,
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0968956Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_v2_receipt_controls.py", line 56, in require
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0969225Z     raise ValueError(message)
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.0969372Z ValueError: process observation differs: schema
+W1 transparent candidate (prospective-merge, x64)	Retain all 58 actual saved-v2 receipt controls	2026-11-08T18:14:18.1066498Z ##[error]Process completed with exit code 1.
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	﻿2026-11-08T18:14:23.1598109Z ##[group]Run set -euo pipefail
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1598303Z [36;1mset -euo pipefail[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1598573Z [36;1mw1_profile_out="$RUNNER_TEMP/pon-w1-transparent-profile-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1607092Z [36;1mmkdir -p "$w1_profile_out"[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1607390Z [36;1mpython3 - "$w1_profile_out/ci-status.json" <<'PY'[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1607651Z [36;1mimport json, os, sys[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1607909Z [36;1mreport = {'schema': 'TRNM-W1-TRANSPARENT-CI-OBSERVATION1',[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1608319Z [36;1m    'source_kind': os.environ['SOURCE_KIND'], 'expected_source': os.environ['EXPECTED_SOURCE'],[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1608716Z [36;1m    'steps': json.loads(os.environ['W1_PROFILE_STEP_RESULTS']),[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1609154Z [36;1m    'scope': 'Continuous candidate checks; failed and partial observations are retained.',[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1609672Z [36;1m    'end_to_end_benefit_established': False, 'quantum_soundness_qualified': False,[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1610099Z [36;1m    'production_qualified': False, 'consensus_admission': False}[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1610441Z [36;1mwith open(sys.argv[1], 'x', encoding='utf-8') as stream:[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1610733Z [36;1m    json.dump(report, stream, indent=2, sort_keys=True)[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1610909Z [36;1m    stream.write('\n')[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1611118Z [36;1mrequired = ('checkout', 'source', 'toolchain', 'source_controls', 'observer_tests',[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1611554Z [36;1m            'mapper_tests', 'v2_gate_tests', 'staged_tests', 'budget_tests', 'native', 'hardened',[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1611885Z [36;1m            'verifier_v2', 'real_receiver_controls', 'receipt_controls_v2', 'component_budget', 'source_map',[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1612180Z [36;1m            'profile', 'receipt_controls', 'comparison', 'source_after')[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1612472Z [36;1mincomplete = [name for name in required if report['steps'].get(name, {}).get('outcome') != 'success'][0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1612721Z [36;1mif incomplete:[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1612946Z [36;1m    raise SystemExit('required W1 observations failed or were skipped: ' + ', '.join(incomplete))[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1613182Z [36;1mPY[0m
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628096Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628270Z env:
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628372Z   CI: true
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628474Z   CARGO_INCREMENTAL: 0
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628590Z   CARGO_BUILD_JOBS: 2
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628707Z   RUST_TEST_THREADS: 1
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628824Z   CARGO_TERM_COLOR: never
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1628950Z   PYTHONDONTWRITEBYTECODE: 1
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1629086Z   SOURCE_KIND: prospective-merge
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1629255Z   EXPECTED_SOURCE: 4b55e3b3a01ad44f4da37a76298232e4a29d031a
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1629451Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1629636Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1629927Z   W1_PROFILE_OUT: /home/runner/work/_temp/pon-w1-transparent-profile-prospective-merge-x64-42508015793-1
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1630292Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-transparent-profile-prospective-merge-42508015793-1
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1630652Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-transparent-profile-prospective-merge-42508015793-1
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1633344Z   W1_PROFILE_STEP_RESULTS: {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "checkout": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	      "commit": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	      "ref": ""
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "source": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "toolchain": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "source_controls": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "observer_tests": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "mapper_tests": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "v2_gate_tests": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "staged_tests": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "budget_tests": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "native": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "hardened": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "verifier_v2": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "real_receiver_controls": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "receipt_controls_v2": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "failure",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "failure"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "component_budget": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "source_map": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "profile": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "receipt_controls": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "comparison": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  },
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  "source_after": {
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outputs": {},
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "outcome": "success",
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	    "conclusion": "success"
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	  }
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	}
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1636251Z ##[endgroup]
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1795883Z required W1 observations failed or were skipped: receipt_controls_v2
+W1 transparent candidate (prospective-merge, x64)	Record completed, failed and skipped observations	2026-11-08T18:14:23.1822078Z ##[error]Process completed with exit code 1.
