@@ -49,8 +49,19 @@ bounds the additional event needed for a conflicting ordinary path. This is
 a new mathematical argument with a finite structural check, not a formal
 proof-assistant artifact or external cryptographic audit. It does not cover
 quantum queries, a fixed concrete Poseidon2, actual P3 pruned multi-openings,
-or a Fiat-Shamir/PCS extractor. The actual pruned-opening extension remains
-uncompleted and is not an accepted result of this package.
+or a Fiat-Shamir/PCS extractor. That retained-Poseidon2 statement is unchanged.
+
+A separate [tagged-profile pruned-opening reduction](pruned_mmcs/BINDING_REDUCTION.md)
+now covers the actual P3 0.8.0 binary, cap-zero verifier with fixed ordered
+positive power-of-two matrix heights, widths and context. Two accepted
+openings that conflict at a shared matrix-row coordinate yield a collision
+among the complete framed-hash calls made by verification. It covers pruned
+frontiers, shorter-row injections, arbitrary sibling digests and the pinned
+extension flattening. The postprocessor also applies to quantum-produced
+classical outputs, with at most `(q0+q1)*(h+2*k-1)+2` additional whole-hash
+calls, including the witness recheck. This is a structural collision
+reduction, not a quantum commitment extractor, a concrete primitive bound,
+or a completed PCS/Fiat-Shamir security obligation.
 
 ## 2. Separate games and assumptions
 
@@ -58,7 +69,7 @@ uncompleted and is not an accepted result of this package.
 |---|---|---|
 | Raw compression collision | Any two distinct input pairs | Already broken for the old truncated permutation |
 | Ordinary fixed-tree position binding | One root, one externally pinned tree shape and index, two accepted different row values; arbitrary siblings allowed | A reduction from the two paths to a collision in the actual encoded hash inputs |
-| P3 multi-matrix opening binding | Pinned ordered matrix dimensions, cap policy, index reduction, extension flattening and full multi-opening frontier | A reduction covering the actual P3 verifier, including unequal-height injections and path sharing |
+| P3 multi-matrix opening binding | Pinned ordered matrix dimensions, cap policy, index reduction, extension flattening and full multi-opening frontier | A structural reduction for the tagged binary cap-zero power-of-two case is in [BINDING_REDUCTION.md](pruned_mmcs/BINDING_REDUCTION.md); concrete collision bounds and commitment extraction remain open |
 | PCS binding and extraction | Actual FRI/PCS queries and adaptive commitments under the same primitive | The applicable classical/quantum extraction or knowledge theorem with all losses |
 | Noninteractive W1 knowledge soundness | Both W1 components, actual transcript schedule, statement, preprocessing and parameters | A Fiat-Shamir/RBR reduction for the actual implementation and shared oracle interfaces |
 | Lifecycle quantum security | All attempts, roles, recursive nodes, offline work and reused auxiliary states | A justified query/advice budget and composed failure bound for the specified experiment |
@@ -149,6 +160,18 @@ knowledge. A hasher replacement in the P3 challenger is not evidence that
 this transformation or its hypotheses have been implemented. The actual
 observation order, codecs, sampling, grinding, RBR assumptions and extractor
 losses remain part of the project's proof obligation.
+
+### Upstream challenger advisory applicability
+
+The official [CVE-2026-46654 advisory](https://github.com/Plonky3/Plonky3/security/advisories/GHSA-vj64-rjf3-w3v7)
+identifies `MultiField32Challenger` and fixes in P3 0.4.3/0.5.3. This tagged
+candidate pins P3 0.8.0 and configures
+`SerializingChallenger64<Goldilocks, HashChallenger<u8, TranscriptHasher, 64>>`;
+it does not select the advisory's `MultiField32Challenger` path. The advisory
+therefore does not establish a forgery of this configured W1 candidate.
+This applicability check is not a Fiat-Shamir proof. The separate inherited
+HashChallenger observation/partial-consumption aliases documented in
+[PROFILE.md](PROFILE.md) and their native regression tests remain relevant.
 
 [NIST FIPS 202](https://csrc.nist.gov/pubs/fips/202/final) specifies SHA3-512.
 Selecting that standard algorithm does not constitute validation of this
