@@ -13,6 +13,8 @@ from pathlib import Path
 import sys
 
 from pq_source_reader import SourceReadError, read_regular
+from pq_lifetime_budget import (BudgetError, DEFAULT_MANIFEST as LIFETIME_BUDGET,
+                                inspect as inspect_lifetime_budget)
 
 CONFIG = 'config/pon/post-quantum-transition-v1.json'
 CORPUS = 'config/pon/pq-cross-branch-corpus-v1.json'
@@ -20,6 +22,18 @@ CONSENSUS = 'config/consensus-mainline.json'
 DEVNET = 'config/pon/devnet-v1.json'
 BOUNDARY = 'PROJECT_BOUNDARY.json'
 PROOF_MANIFEST = 'trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json'
+
+# Reserved aliases are checked wherever they occur in the configuration objects
+# read below. This is an explicit source contract, not a natural-language scan.
+LIFETIME_CLAIM_FLAGS = frozenset({
+    'whole_chain_pq128_qualified', 'whole_chain_pq_qualified',
+    'pq128_qualified', 'pq_128_qualified', 'pq_128_security_qualified',
+})
+LIFETIME_CLAIM_VALUES = frozenset({
+    'whole_chain_failure_probability', 'whole_chain_lifetime_failure_probability',
+    'actual_lifetime_failure_bound', 'whole_chain_quantum_security_bits',
+    'whole_chain_pq_bits',
+})
 
 # One failure cannot be compensated by successes in other security domains.
 REQUIRED_ASSERTIONS = frozenset({
@@ -85,6 +99,12 @@ GATES = {
         'config/pon/pq-cross-branch-corpus-v1.json',
         'scripts/ci/pq_source_reader.py',
     ),
+    'lifetime_budget': (
+        LIFETIME_BUDGET,
+        'scripts/ci/pq_lifetime_budget.py',
+        'scripts/ci/test_pq_lifetime_budget.py',
+        'docs/security/PQ128_LIFETIME_BUDGET_V1.md',
+    ),
 }
 
 class UnsafePromotion(ValueError):
@@ -132,6 +152,26 @@ def false_field(data: dict, name: str, context: str) -> None:
     require(data.get(name) is False, 'unsupported PQ promotion: ' + context + '.' + name)
 
 
+def refuse_lifetime_promotion(data: dict, context: str) -> None:
+    """Refuse newly introduced numeric/boolean claims that contradict HOLD."""
+    pending = [(data, context)]
+    while pending:
+        value, path = pending.pop()
+        if type(value) is dict:
+            for key, item in value.items():
+                location = path + '.' + key
+                if key in LIFETIME_CLAIM_FLAGS:
+                    require(item is False, 'unsupported PQ promotion: ' + location)
+                if key in LIFETIME_CLAIM_VALUES:
+                    require(item is None, 'unqualified lifetime bound: ' + location)
+                if type(item) in (dict, list):
+                    pending.append((item, location))
+        elif type(value) is list:
+            pending.extend((item, path + '[' + str(index) + ']')
+                           for index, item in enumerate(value)
+                           if type(item) in (dict, list))
+
+
 def inspect(root: Path) -> dict:
     # Reject an alias of an otherwise plausible research checkout *before*
     # loading any source-controlled claims. Checking only leaf symlinks lets
@@ -148,6 +188,9 @@ def inspect(root: Path) -> dict:
     main = strict_json(root, CONSENSUS)
     dev = strict_json(root, DEVNET)
     boundary = strict_json(root, BOUNDARY)
+    for value, label in ((p, CONFIG), (c, CORPUS), (main, CONSENSUS),
+                         (dev, DEVNET), (boundary, BOUNDARY)):
+        refuse_lifetime_promotion(value, label)
     require(p.get('schema') == 'trnm-pon-post-quantum-transition-v1' and
             p.get('status') == 'research-only-no-activation' and
             p.get('changes_existing_consensus') is False,
@@ -204,14 +247,27 @@ def inspect(root: Path) -> dict:
     # If reintroduced, its own qualification flag cannot override whole-chain HOLD.
     if (root / PROOF_MANIFEST).exists() or (root / PROOF_MANIFEST).is_symlink():
         manifest = strict_json(root, PROOF_MANIFEST)
+        refuse_lifetime_promotion(manifest, PROOF_MANIFEST)
         false_field(manifest, 'pq_128_security_qualified', PROOF_MANIFEST)
         false_field(manifest, 'production_consensus_activation', PROOF_MANIFEST)
+    try:
+        lifetime = inspect_lifetime_budget(root)
+    except BudgetError as error:
+        raise UnsafePromotion('invalid lifetime budget: ' + str(error)) from error
+    require(lifetime['purpose'] == 'research-model',
+            'illustrative budget cannot replace the current research register')
     return {
         'schema': 'trnm-whole-chain-pq-claim-guard-v1',
         'status': 'HOLD', 'whole_chain_pq_qualified': False,
         'pq_128_qualified': False, 'production_activation': False,
         'gates': {gate: {'status': 'UNQUALIFIED', 'source_paths': list(paths)}
                   for gate, paths in GATES.items()},
+        'lifetime_budget': {key: lifetime[key] for key in (
+            'schema', 'status', 'manifest_sha256', 'allocated_sum',
+            'model_arithmetic_sum', 'actual_lifetime_failure_bound',
+            'unknown_terms', 'unknown_query_budgets',
+            'composition_coverage_proved', 'theorem_applicability_verified',
+        )},
         'note': 'Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.',
     }
 
