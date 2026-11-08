@@ -40,6 +40,52 @@ pub struct CellRs46ChunkBindingV1 {
     chunk: CellChunkV1,
 }
 
+/// Borrow one immutable owner-pinned TCM1 after validating it exactly once.
+/// Selecting a chunk is then constant-size work, avoiding repeated whole-
+/// manifest validation/hash scans during a complete multi-chunk recovery.
+#[derive(Clone, Copy, Debug)]
+pub struct CellRs46ManifestBindingV1<'a> {
+    manifest: &'a CellManifestV1,
+    id: CellDigestV1,
+}
+
+impl<'a> CellRs46ManifestBindingV1<'a> {
+    pub fn new(
+        manifest: &'a CellManifestV1,
+        expected_manifest: CellDigestV1,
+        expected_context: &CellContextV1,
+    ) -> CellResultV1<Self> {
+        manifest.validate()?;
+        require(manifest.context() == expected_context, "RS46 context pin")?;
+        require(manifest.id() == expected_manifest, "RS46 manifest pin")?;
+        Ok(Self {
+            manifest,
+            id: expected_manifest,
+        })
+    }
+
+    pub fn manifest(&self) -> &'a CellManifestV1 {
+        self.manifest
+    }
+
+    pub fn manifest_id(&self) -> CellDigestV1 {
+        self.id
+    }
+
+    pub fn chunk(&self, index: u32) -> CellResultV1<CellRs46ChunkBindingV1> {
+        let chunk = self
+            .manifest
+            .chunks()
+            .get(index as usize)
+            .ok_or(CellErrorV1::Invalid("RS46 chunk index"))?;
+        Ok(CellRs46ChunkBindingV1 {
+            manifest: self.id,
+            index,
+            chunk: chunk.clone(),
+        })
+    }
+}
+
 impl CellRs46ChunkBindingV1 {
     pub fn from_pinned_manifest(
         manifest: &CellManifestV1,
@@ -47,15 +93,7 @@ impl CellRs46ChunkBindingV1 {
         expected_context: &CellContextV1,
         index: u32,
     ) -> CellResultV1<Self> {
-        manifest.validate()?;
-        require(manifest.context() == expected_context, "RS46 context pin")?;
-        require(manifest.id() == expected_manifest, "RS46 manifest pin")?;
-        require(index < manifest.chunks().len() as u32, "RS46 chunk index")?;
-        Ok(Self {
-            manifest: expected_manifest,
-            index,
-            chunk: manifest.chunks()[index as usize].clone(),
-        })
+        CellRs46ManifestBindingV1::new(manifest, expected_manifest, expected_context)?.chunk(index)
     }
 
     pub fn manifest_id(&self) -> CellDigestV1 {

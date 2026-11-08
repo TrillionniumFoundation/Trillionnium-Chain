@@ -19,9 +19,12 @@ mod historical_tcl3_cache_budget;
 mod manifest;
 mod model_root;
 mod network;
+mod placement;
 pub mod pq;
+mod recoverability;
 mod release;
 mod residency;
+mod retained;
 mod retention;
 mod store;
 mod tensor;
@@ -53,8 +56,9 @@ pub use custody::{
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use erasure::{
-    CellRs46ChunkBindingV1, CellRs46ShardV1, CELL_RS46_DATA_SHARDS_V1, CELL_RS46_PROFILE_V1,
-    CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1, MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
+    CellRs46ChunkBindingV1, CellRs46ManifestBindingV1, CellRs46ShardV1, CELL_RS46_DATA_SHARDS_V1,
+    CELL_RS46_PROFILE_V1, CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1,
+    MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
 };
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
@@ -72,6 +76,18 @@ pub use network::{
     CellFetchReportV1, CellPeerLimitsV1, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
     CellPersistentServeLimitsV2, CellPersistentServeReportV2, CellServeLimitsV1, CellServeReportV1,
 };
+pub use placement::{
+    evaluate_recovery_placement, CellRecoveryFaultAxisV1, CellRecoveryFaultEventV1,
+    CellRecoveryFaultPolicyV1, CellRecoveryPartV1, CellRecoveryPlacementReportV1,
+    CellRecoveryPlacementV1, CellRecoveryProviderPinV1, MAX_CELL_RECOVERY_FAULT_EVENTS_V1,
+    MAX_CELL_RECOVERY_FAULT_SCENARIOS_V1, MAX_CELL_RECOVERY_PLACEMENTS_V1,
+    MAX_CELL_RECOVERY_PROVIDERS_V1,
+};
+pub use recoverability::{
+    CellRecoveryChunkDeficitV1, CellRecoveryChunkKeyV1, CellRecoveryPlacementPolicyV1,
+    CellRetainedRs46ObservationV1, CellRetainedRs46RecoveryV1, CellRs46ProviderShardV1,
+    CellRs46RecoveryBudgetV1, CellRs46RecoveryUsageV1, MAX_CELL_RS46_RECOVERY_CHUNKS_V1,
+};
 pub use release::{
     fetch_closure, fetch_closure_cancellable, fetch_closure_to_file,
     fetch_closure_with_options_to_file, fetch_model_release_to_file,
@@ -87,6 +103,13 @@ pub use residency::{
     CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
     CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
 };
+pub use retained::{
+    fetch_retained_version_set, CellRetainedFetchFailureV1, CellRetainedFetchObservationV1,
+    CellRetainedFetchUsageV1, CellRetainedObjectV1, CellRetainedReadBudgetV1,
+    CellRetainedReadUsageV1, CellRetainedSetOwnerV1, CellRetainedSetReadbackV1,
+    CellRetainedVersionEntryV1, CellRetainedVersionSetV1, MAX_CELL_RETAINED_SET_BYTES_V1,
+    MAX_CELL_RETAINED_VERSIONS_V1,
+};
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
 };
@@ -97,8 +120,10 @@ pub use tensor::{
     MAX_CELL_TENSOR_HEADER_BYTES_V1, MAX_CELL_TENSOR_MODEL_MANIFEST_BYTES_V1,
 };
 pub use version::{
-    CellVersionCommitmentV1, CellVersionLoaderContextV1, CellVersionManifestV1,
-    CellVersionReadbackV1, MAX_CELL_VERSION_BYTES_V1, MAX_CELL_VERSION_MANIFESTS_V1,
+    fetch_complete_version, CellVersionCommitmentV1, CellVersionFetchFailureV1,
+    CellVersionFetchObservationV1, CellVersionFetchTransportReportV1, CellVersionLoaderContextV1,
+    CellVersionManifestV1, CellVersionReadbackV1, MAX_CELL_VERSION_BYTES_V1,
+    MAX_CELL_VERSION_MANIFESTS_V1,
 };
 
 pub type CellDigestV1 = [u8; 32];
