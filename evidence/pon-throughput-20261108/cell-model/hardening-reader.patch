@@ -1,0 +1,101 @@
+--- a/formal/throughput-v1/cell_model_metrics.py
++++ b/formal/throughput-v1/cell_model_metrics.py
+@@ -212,6 +212,16 @@
+     return argv[argv.index(name) + 1]
+ 
+ 
++def recorded_path(value, code):
++    """Validate inert historical path text; never open an old host's path."""
++    require(type(value) is str and 0 < len(value) <= 4096 and
++            all(ord(character) >= 32 for character in value), code)
++    path = PurePosixPath(value)
++    require(path.is_absolute() and str(path) == value and
++            all(part not in (".", "..") for part in path.parts), code)
++    return path
++
++
+ def release_members(raw):
+     require(raw[:4] == b"TCR1" and len(raw) >= 169, "TCR1_HEADER")
+     length = raw[4]
+@@ -251,6 +261,17 @@
+         fields(process, "address pid returncode stopped store", "PEER_PROCESS_FIELDS")
+         require(process["stopped"] is True and type(process["returncode"]) is int, "PEER_TERMINATION_RECORD")
+         integer(process["pid"], "PEER_PID", 1)
++        require(type(process["address"]) is str and re.fullmatch(r"127\.0\.0\.1:[1-9][0-9]{0,4}", process["address"]) and
++                int(process["address"].rsplit(":", 1)[1]) <= 65535, "PEER_ADDRESS")
++        recorded_path(process["store"], "PEER_STORE")
++    materials = recorded_path(transport["consumer_materials"], "CONSUMER_MATERIALS_PATH")
++    parent_file = recorded_path(transport["consumer_parent"], "CONSUMER_PARENT_PATH")
++    require(parent_file.name == "parent-material.json" and parent_file.parent != materials and
++            parent_file.parent.parent == materials.parent, "CONSUMER_PATH_LAYOUT")
++    consumer_command, _ = command(raw["actual/transport/replica-to-consumer-command.json"])
++    consumer_store = recorded_path(option(consumer_command, "--store"), "CONSUMER_CACHE_BINDING")
++    require(consumer_store.parent == materials.parent and str(consumer_store) not in
++            {transport["publisher"]["store"], transport["replica"]["store"]}, "CONSUMER_CACHE_BINDING")
+     marker = raw["actual/transport/source-release.tcr1"]
+     release_id, member_ids, context = release_members(marker)
+     require(release_id == expected["release"] and hashlib.sha256(marker).hexdigest() == transport["release_sha256"],
+@@ -262,7 +283,7 @@
+             "RELEASE_MODEL_CONTEXT")
+     members = transport["members"]
+     require(type(members) is list and len(members) == expected["cells"], "COMPLETE_VERSION_MEMBERS")
+-    seen, names, materializations = set(), set(), []
++    seen, names, destinations, materializations = set(), set(), set(), []
+     for index, member in enumerate(members):
+         fields(member, "destination materialization name pack source", "MEMBER_FIELDS")
+         pack = member["pack"]
+@@ -273,6 +294,13 @@
+         require(type(member["name"]) is str and member["name"] not in names and pack["manifest"] not in seen,
+                 "DUPLICATE_MEMBER")
+         seen.add(pack["manifest"]); names.add(member["name"])
++        logical = PurePosixPath(member["name"])
++        require(str(logical) == member["name"] and len(logical.parts) == 2 and logical.parts[0] in ("base", "adapter") and
++                logical.parts[1] not in (".", ".."), "MEMBER_NAME_MAPPING")
++        destination = recorded_path(member["destination"], "MATERIALIZATION_DESTINATION")
++        expected_destination = (materials if logical.parts[0] == "base" else parent_file.parent) / logical.parts[1]
++        require(destination == expected_destination and destination not in destinations, "MATERIALIZATION_DESTINATION")
++        destinations.add(destination)
+         output = parse(raw[f"actual/transport/materialize-{index}.log"])
+         require(same(output, member["materialization"]), "MATERIALIZATION_RAW_BINDING")
+         fields(output, "bytes cached_chunks connection_attempts downloaded_bytes downloaded_chunks manifest max_response_bytes "
+@@ -288,6 +316,7 @@
+         require(cmd["returncode"] == 0 and cmd["argv"][1] == "fetch" and
+                 option(cmd, "--manifest") == pack["manifest"] and option(cmd, "--output") == member["destination"],
+                 "MATERIALIZATION_COMMAND")
++        require(option(cmd, "--store") == str(consumer_store), "CONSUMER_CACHE_BINDING")
+         materializations.append({"member": member["name"], "reported_command_seconds": rational(duration)})
+     require(sorted(seen) == member_ids and sum(m["pack"]["bytes"] for m in members) == expected["payload_bytes"] and
+             sum(m["pack"]["chunks"] for m in members) == expected["chunks"], "COMPLETE_RELEASE_COVERAGE")
+@@ -302,12 +331,19 @@
+                 option(cmd, "--max-chunks") == str(expected["chunks"]) and
+                 re.fullmatch(r"127\.0\.0\.1:[1-9][0-9]{0,4}", option(cmd, "--peers")), "TRANSFER_COMMAND")
+         negative = name == "offline-publisher-negative"
++        peer_role = "replica" if name == "replica-to-consumer" else "publisher"
++        require(option(cmd, "--peers") == transport[peer_role]["address"], "TRANSFER_PEER_ROLE")
++        if name == "publisher-to-replica":
++            require(option(cmd, "--store") == transport["replica"]["store"], "REPLICA_CACHE_BINDING")
+         budget_ms = 2000 if negative else 180000
+         require(option(cmd, "--overall-ms") == str(budget_ms), "ORIGINAL_TRANSFER_BUDGET")
+         if negative:
+-            require(cmd["returncode"] != 0 and same(transport["offline_publisher_negative"],
++            require(cmd["returncode"] > 0 and same(transport["offline_publisher_negative"],
+                     {"no_completion_file": True, "returncode": cmd["returncode"]}), "OFFLINE_REFUSAL")
+-            require(b"Connection refused" in raw[f"actual/transport/{name}.log"], "OFFLINE_RAW_REFUSAL")
++            refusal_log = raw[f"actual/transport/{name}.log"]
++            require(b"Connection refused" in refusal_log and
++                    b"peer=" + transport["publisher"]["address"].encode() + b" " in refusal_log,
++                    "OFFLINE_RAW_REFUSAL")
+             payload, response_bytes = 0, None
+         else:
+             output = parse(raw[f"actual/transport/{name}.log"])
+--- a/formal/throughput-v1/test_cell_model_metrics.py
++++ b/formal/throughput-v1/test_cell_model_metrics.py
+@@ -168,7 +168,7 @@
+         with self.assertRaisesRegex(ValueError, "CONSUMER_CACHE_BINDING"):
+             self.project()
+ 
+-    def test_signalled_negative_command_is_not_normal_cryptographic_refusal(self):
++    def test_signalled_negative_command_is_not_normal_transport_refusal(self):
+         self.change("actual/transport/offline-publisher-negative-command.json", lambda x: x.__setitem__("returncode", -9))
+         self.change(RESEARCH, lambda x: x["transport"]["offline_publisher_negative"].__setitem__("returncode", -9))
+         with self.assertRaisesRegex(ValueError, "OFFLINE_REFUSAL"):

@@ -1,0 +1,1 @@
+cell I/O: cell request peer=127.0.0.1:42965 kind=2 phase=response-header elapsed_ms=0 os=Some(104): Connection reset by peer (os error 104)

@@ -1,0 +1,8 @@
+test_canonical_outside_path_reaches_create_only_boundary (__main__.OutputBoundaryTests.test_canonical_outside_path_reaches_create_only_boundary) ... ok
+test_external_symlink_parent_cannot_enter_source (__main__.OutputBoundaryTests.test_external_symlink_parent_cannot_enter_source) ... ok
+test_parent_traversal_cannot_enter_source (__main__.OutputBoundaryTests.test_parent_traversal_cannot_enter_source) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
