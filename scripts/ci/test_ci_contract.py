@@ -804,7 +804,10 @@ class CiContractTests(unittest.TestCase):
     def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
         path = 'scripts/ci/ci_job.sh'
         for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
-                        '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+                        '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                        '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+                        '    python3 scripts/ci/pq_authority_effect_register.py\n',
+                        "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
             for replacement in ('', '    true # omitted lifetime budget check\n', command * 2):
                 with self.subTest(command=command, replacement=replacement):
                     self.rejected(path, command, replacement)

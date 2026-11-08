@@ -1,0 +1,45 @@
+{
+  "entries": [
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 76,
+        "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+      },
+      "original_name": "stderr.txt",
+      "stored": {
+        "bytes": 83,
+        "sha256": "91e79f7d7f8098df02e4f260c0ebc808743d233b341ce4aa1728ed69a741da2e"
+      },
+      "stored_name": "stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "stdout.txt.gz"
+    },
+    {
+      "encoding": "identity",
+      "original": {
+        "bytes": 567,
+        "sha256": "a1613e680d1a79bf7e0d7a393eaa0d8d7968767ba28ba480ed65e84220c0720f"
+      },
+      "original_name": "summary.json",
+      "stored": {
+        "bytes": 567,
+        "sha256": "a1613e680d1a79bf7e0d7a393eaa0d8d7968767ba28ba480ed65e84220c0720f"
+      },
+      "stored_name": "summary.json"
+    }
+  ],
+  "original_summary_unchanged": true,
+  "schema": "trnm-pq-command-capture-encoding-v1"
+}

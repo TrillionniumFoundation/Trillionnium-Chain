@@ -1,0 +1,27 @@
+{
+  "campaigns": [
+    {
+      "commands_recomputed": 29,
+      "failed_commands": [
+        "distributed-inventory"
+      ],
+      "qualification_granted": false,
+      "raw_streams_verified": 58,
+      "result": "FAIL",
+      "source": "d8280daa8651ca387813b25e2a712f3fd1c82a1d"
+    },
+    {
+      "commands_recomputed": 29,
+      "failed_commands": [],
+      "qualification_granted": false,
+      "raw_streams_verified": 58,
+      "result": "PASS",
+      "source": "1d29818ad927f549f43d74a06f51e91771feac70"
+    }
+  ],
+  "helper": {
+    "bytes": 8272,
+    "sha256": "c4a900dde5e94ec4369ad2a9d7491148240f23b657db540c4f7f6463c66de7ce"
+  },
+  "qualification_granted": false
+}

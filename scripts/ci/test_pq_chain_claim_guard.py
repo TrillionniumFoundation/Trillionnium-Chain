@@ -1,5 +1,6 @@
 """Adversarial fixtures for the claim guard; deliberately no crypto pass tests."""
 import json
+import hashlib
 import errno
 import io
 import mmap
@@ -16,6 +17,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pq_chain_claim_guard import (BOUNDARY, CONFIG, CONSENSUS, CORPUS, DEVNET, GATES,
                                   LIFETIME_BUDGET, PROOF_MANIFEST, UnsafePromotion,
                                   inspect, safe_file)
+
+LIFETIME_SOURCE_LOCK = 'config/pon/pq128-source-lock-v1.json'
 
 
 class DescriptorReaderControls:
@@ -283,6 +286,7 @@ class TestClaimGuard(unittest.TestCase):
         # source bytes establish a theorem or an implementation refinement.
         self.configs[LIFETIME_BUDGET] = json.loads(
             (Path(__file__).resolve().parents[2] / LIFETIME_BUDGET).read_text())
+        self.configs[LIFETIME_BUDGET]['experiment']['source_revision'] = 'a' * 40
         for name, obj in self.configs.items():
             self.put(name, json.dumps(obj).encode())
         for paths in GATES.values():
@@ -293,6 +297,15 @@ class TestClaimGuard(unittest.TestCase):
             for path in event['source_paths']:
                 if not (self.root / path).exists():
                     self.put(path, b'research source only')
+        paths = {path for event in self.configs[LIFETIME_BUDGET]['events']
+                 for path in event['source_paths']}
+        self.configs[LIFETIME_SOURCE_LOCK] = {
+            'schema': 'trnm-pq128-source-lock-v1',
+            'source_revision': self.configs[LIFETIME_BUDGET]['experiment']['source_revision'],
+            'files': {path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+                      for path in sorted(paths)},
+        }
+        self.put(LIFETIME_SOURCE_LOCK, json.dumps(self.configs[LIFETIME_SOURCE_LOCK]).encode())
 
     def put(self, path, data):
         target = self.root / path
@@ -355,6 +368,19 @@ class TestClaimGuard(unittest.TestCase):
 
     def test_missing_lifetime_manifest_refused(self):
         (self.root / LIFETIME_BUDGET).unlink()
+        self.refused()
+
+    def test_missing_lifetime_source_lock_refused(self):
+        (self.root / LIFETIME_SOURCE_LOCK).unlink()
+        self.refused()
+
+    def test_swapped_lifetime_source_revision_refused(self):
+        self.mutate(LIFETIME_BUDGET, 'experiment', 'source_revision', value='b' * 40)
+        self.refused()
+
+    def test_changed_lifetime_event_owner_source_refused(self):
+        self.put('trillionnium/crates/trnm-release-bundle/src/pq_release.rs',
+                 b'Changed release owner, still under the old source declaration.')
         self.refused()
 
     def test_budget_cannot_add_self_certification_switch(self):

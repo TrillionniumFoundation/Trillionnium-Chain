@@ -1,0 +1,307 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "label": "preflight"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "d8280daa8651ca387813b25e2a712f3fd1c82a1d",
+      "--output",
+      "/home/qian-qi/work/chain-pq-seven-layer-composition-20261108-21690/validation-source-d828-v1/source-before.json"
+    ],
+    "label": "source-before"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "-v"
+    ],
+    "label": "lifetime-tests"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "-v"
+    ],
+    "label": "claim-tests"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "-v"
+    ],
+    "label": "effect-register-tests"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_pq_root_recovery_policy_v1.py",
+      "-v"
+    ],
+    "label": "root-policy-tests"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "label": "lifetime-report"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "label": "claim-report"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "label": "effect-register-report"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py",
+      "--example"
+    ],
+    "label": "root-policy-example"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "label": "pq-source-integration"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "label": "pq-source-negatives"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_authority_surface_scan.py",
+      "-v"
+    ],
+    "label": "authority-scanner-negatives"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "label": "ci-contract"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "label": "ci-contract-negatives"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py",
+      "-v"
+    ],
+    "label": "source-integrity-negatives"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "label": "repository"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_repository.py",
+      "-v"
+    ],
+    "label": "repository-negatives"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "label": "distributed-inventory"
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "label": "diff-check"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "--version"
+    ],
+    "label": "cargo-version"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "label": "metadata-default"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "label": "metadata-all-features"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "label": "metadata-fuzz"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "label": "formatting"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "label": "strict-workspace-clippy"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ],
+    "label": "native-crypto-default"
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-research-protocol",
+      "--test",
+      "hepta_handoff_pq",
+      "--",
+      "--test-threads=1"
+    ],
+    "label": "native-hepta-pq-comparator"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "d8280daa8651ca387813b25e2a712f3fd1c82a1d",
+      "--output",
+      "/home/qian-qi/work/chain-pq-seven-layer-composition-20261108-21690/validation-source-d828-v1/source-after.json"
+    ],
+    "label": "source-after"
+  }
+]

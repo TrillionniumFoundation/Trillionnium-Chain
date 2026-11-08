@@ -734,10 +734,13 @@ def validate(root: Path = ROOT) -> dict:
             'cross-architecture evidence negative checks missing')
     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     for budget_command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
-                           '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+                           '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                           '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+                           '    python3 scripts/ci/pq_authority_effect_register.py\n',
+                           "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):
         require(budget_command in dict(lane_pairs)['repository-truth'] and
                 script.count(budget_command) == 1,
-                'PQ lifetime arithmetic and refusal controls execute once in repository-truth')
+                'PQ lifetime and root recovery refusal controls execute once in repository-truth')
     require(RUNTIME_RELEASE_COMMAND in dict(lane_pairs)['repository-truth']
             and script.count(RUNTIME_RELEASE_COMMAND) == 1,
             'runtime material controls execute once with the configured verifier interpreter')

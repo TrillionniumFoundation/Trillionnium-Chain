@@ -8417,3 +8417,37 @@ Qualification still requires independently instantiated signatures, commitment,
 native/proof refinement, joint quantum work/DAA/fork rules, transport, complete
 recovery, release and application-owner composition. The accounting checker
 always returns an unknown actual lifetime bound and false PQ/activation flags.
+
+### 2026-11-08 seven-layer source, effect and recovery-policy composition
+
+Continue [PR #790](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/790)
+at `88568e2511fcf166e6824947ac97b06b72104385` with the
+[seven-layer review](../security/PQ_SEVEN_LAYER_REVIEW_20261108.md).
+The retained remote observation keeps main at
+`dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`; the independent #796 candidate is
+not merged into this work. Preserve #796's original 31/32 command outcome and
+its Node release-owner result of 38 passed, 2 failed, and 1 ignored at
+`ca3c4f88afc70399000b18fc7d68cfa62e57fb2f`. Other branch successes do not repair
+those failures or validate this composition.
+
+Bind the lifetime register's revision and 15 declared event paths to a reviewed
+regular-file SHA-256 lock generated from fixed Git blobs. Reject source changes,
+revision substitutions, omitted/extra paths, ambiguous JSON, and unavailable
+locks. The 58 lifetime and 49 claim-guard tests pass; arithmetic examples remain
+explicitly unbound, and source consistency never becomes authenticated
+provenance or a complete dependency closure.
+
+Add the bounded [root/recovery policy model](../security/PQ_ROOT_RECOVERY_POLICY_V1.md)
+and [authority/effect register](../security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md).
+Require both declared signature families across every modeled root path and
+successor policy, retain unknown custody/currentness/anchor/effect obligations,
+and never grant authority from supplied approval claims. Trace seven reviewed
+effect scopes, including the actual `pon_wire::Envelope` account path through
+executor debit/credit and Node persistence; do not substitute compatibility
+validation, discovery/cache writes, or read-only finality facts for that effect.
+
+This work changes no Rust authorization owner, native execution, signed wire,
+deployed root or production permission. Exact-source integration receipts remain
+separate from native and independent end-to-end qualification. All seven layers
+retain their open composition obligations; the complete actual lifetime bound
+stays null and whole-chain PQ/activation stay false.
