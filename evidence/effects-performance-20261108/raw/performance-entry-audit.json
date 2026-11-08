@@ -1,0 +1,40 @@
+{
+  "chain_base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "paired_private_base": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+  "performance_gate": "HOLD",
+  "qualified_goodput": null,
+  "qualified_tail_latency": null,
+  "entries": [
+    {
+      "path": "formal/pon-native-fullpath-v1/README.md",
+      "role": "Actual PGH2/PNP2, signed transfer, Node admit/activate/cold observer. Original four starts valid/duplicate/late_product/cancelled. Always COMPONENT_OBSERVATION_ONLY, security and overall HOLD.",
+      "source_sha256": "35dd5f1e80d7fa53b331d514f6cdea3a92aad3bc33db43a10c7020a7d121381a"
+    },
+    {
+      "path": "formal/pon-native-fullpath-v1/fullpath_gate.py",
+      "role": "Bounded recorded-path accounting. Original 4-second/depth-6 target, no independent operator/WAN/original resource qualification.",
+      "source_sha256": "434a448c961fe2a88dc6a1a95ec796906823feb513c3ce2e1f9b009698808032"
+    },
+    {
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "role": "Actual kernel 4 CPU / 16 GiB enclosing scope required. build overrides retained. Does not supply original protected Host qualification itself.",
+      "source_sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "role": "separate_process_work_and_signed_confirmation_campaign uses RawR14; 1024 signed seed transfers, 4 seed blocks, 21 business blocks, 3x30s finite same-host rounds, 24 attackers / 480 call cap. ArithmeticFactsV1 uses distinct explicit selector.",
+      "source_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+    },
+    {
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "role": "fixed_public_host_root_rejection_and_signed_confirmation_diagnostic requires exact release profile, external resource controller and 6 boundary observations; baseline / valid-work-root complete pair, unchanged 4s original offset and depth6.",
+      "source_sha256": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca"
+    }
+  ],
+  "environment_limits": [
+    "This cloud execution has no visible /sys/fs/cgroup/cpu.max, memory.max or pids.max. The original enforced resource contract is not demonstrated.",
+    "The first broad Node diagnostic build failed at unrelated integration linking when the shared filesystem filled. Failure logs are retained; this is not a performance result."
+  ],
+  "side_branch_warning": "#804 throughput-v1 is absent from the exact #812 candidate. Its documentation or sidebranch checks are not results for this source.",
+  "changes": "No performance limits, workload denominators, safety gates, original deadlines or confirmation contracts changed."
+}

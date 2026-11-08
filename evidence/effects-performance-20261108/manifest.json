@@ -1,0 +1,312 @@
+{
+  "schema": "trnm.generation-prepare-preflight-review.v1",
+  "assembled_utc": "2026-11-08T17:37:33.379880+00:00",
+  "assembly_kind": "post-run evidence packaging and separate source-review pass by the patch author; not an independently witnessed run",
+  "base_chain_commit": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "local_source_fix_commit": "95786fa7e88f5ef613aa73085bcc07aea41c73da",
+  "paired_private_commit_at_assignment": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+  "paired_private_execution": "not executed by this task",
+  "source_identity_limit": "The tests ran before the local fix commit was created. Retained hashes of the three changed files match the committed fix. This is targeted native correctness evidence, not a complete exact-commit qualification of the final integration tree.",
+  "overall_gate": "HOLD",
+  "effects_gate": "HOLD",
+  "performance_gate": "HOLD",
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "release_ready": false,
+  "qualified_goodput": null,
+  "qualified_tail_latency": null,
+  "native_openssl_feature_enabled": false,
+  "openssl_provider_attestation": null,
+  "provider_scope": "No native OpenSSL provider qualification was exercised. Retained build warnings and pinned-toolchain observations are not provider attestation.",
+  "review_outcome": "No new ownership or transaction-order weakening found in the narrow prepare-preflight change. Retained-journal recovery remains conditional on the existing durable owner store, original deadlines and current funding checks. Independent rollback recovery and cross-database atomic revocation remain outside this patch.",
+  "runtime_environment": {
+    "RUSTC": "/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "CARGO_HOME": "/workspace/scratch/3a200666069f/effects_performance/cargo-home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/3a200666069f/effects_performance/target",
+    "CARGO_BUILD_JOBS": "2",
+    "note": "The definitive Node/Clippy attempts add the canonical toolchain lib directory to LD_LIBRARY_PATH. No test profile, security contract or resource budget was relaxed."
+  },
+  "reviewed_source": [
+    {
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "bytes": 2204
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "bytes": 40332
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/Cargo.toml",
+      "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d",
+      "bytes": 630
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "sha256": "91bc17c392f5a56cbebc92ca8d2954f5eefeb4294f50d2f5c99927543e70483a",
+      "bytes": 2114
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "sha256": "1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38",
+      "bytes": 69869
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+      "sha256": "588418856005866db8dce3de138b1116eaaf365e8c116d5f420b9c2357b475bb",
+      "bytes": 42374
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+      "sha256": "d4abf3a15058639ddfea90ca521faa89fbf3ba8616122585dc928866c20227f5",
+      "bytes": 21345
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+      "sha256": "48fa0ec456a8090b1d471c2520a9b433baaf1cd4198f2451cab332153ba56859",
+      "bytes": 11742
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/task_owner.rs",
+      "sha256": "7434cc692edf2f6886e9fcd315d03000e06790672e34859334dc7f6fd0adce89",
+      "bytes": 8314
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+      "sha256": "2e1d60181608023ba7f2de38dab32d1e6143671b3b162d5762841d0a62bdbdb1",
+      "bytes": 23899
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+      "sha256": "59dbf4f341e290c9f327ea984ca633ce1eb2eb77b38f45703141294ba2857358",
+      "bytes": 4695
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "sha256": "7d09074bb6dbd3759d89c77c25d077459c57535a2ca5de67fb243a7139e4408d",
+      "bytes": 34610
+    }
+  ],
+  "service_test_binary": {
+    "path": "/workspace/scratch/3a200666069f/effects_performance/target/debug/deps/trnm_service_settlement-b287584320d37ce9",
+    "bytes": 35770192,
+    "sha256": "36be53a6578dc58152cb0dc0ed600952ea72d40763c7ed918e2ae29700dad8d2",
+    "identity_scope": "post-run digest of retained binary named by the successful Cargo log; not a pre-exec measurement or remote attestation",
+    "included_in_git": false
+  },
+  "observations": [
+    {
+      "id": "baseline-offline",
+      "log": "raw/baseline-unit.log",
+      "result": "BUILD_BLOCKED",
+      "cause": "dependency cache did not contain hex",
+      "exit_code": null,
+      "exit_scope": "Cargo exit was not retained separately"
+    },
+    {
+      "id": "baseline-red",
+      "log": "raw/baseline-unit-network.log",
+      "result": "EXPECTED_REGRESSION_FAILURE",
+      "tests_passed": 0,
+      "tests_failed": 2,
+      "tests_filtered": 67,
+      "exit_code": null,
+      "exit_scope": "wrapper ended with cat; underlying Cargo exit was not captured",
+      "source_scope": "original candidate production generation module plus the first two newly added regression tests; not a clean commit"
+    },
+    {
+      "id": "broad-node-diagnostic",
+      "log": "raw/baseline-node.log",
+      "result": "ABORTED_AFTER_BUILD_FAILURE",
+      "exit_file": "raw/baseline-node-session.exit",
+      "exit_code": 130,
+      "exit_scope": "outer session interrupted after unrelated integration linking reported no space and linker bus error",
+      "source_scope": "source was edited while this initial diagnostic compiled; no exact-source result is claimed"
+    },
+    {
+      "id": "service-isolated-attempt",
+      "log": "raw/fixed-service-isolated.log",
+      "result": "BUILD_BLOCKED",
+      "exit_file": "raw/fixed-service-isolated.exit",
+      "exit_code": 101,
+      "cause": "No space left on device before compilation"
+    },
+    {
+      "id": "fixed-service",
+      "log": "raw/fixed-service.log",
+      "result": "PASS",
+      "exit_file": "raw/fixed-service.exit",
+      "exit_code": 0,
+      "tests_passed": 70,
+      "tests_failed": 0,
+      "tests_ignored": 0,
+      "tests_filtered": 0,
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "--",
+        "--nocapture"
+      ]
+    },
+    {
+      "id": "node-missing-loader-directory",
+      "log": "raw/fixed-node-generation.log",
+      "result": "ABORTED_BEFORE_TEST_EXECUTION",
+      "exit_file": "raw/fixed-node-generation-session.exit",
+      "exit_code": 130,
+      "cause": "normal Cargo loader directory set incomplete; attempt interrupted before rerun with canonical toolchain lib"
+    },
+    {
+      "id": "node-normal-loader",
+      "log": "raw/fixed-node-generation-normal-loader.log",
+      "result": "BUILD_FAILED",
+      "exit_file": "raw/fixed-node-generation-normal-loader.exit",
+      "exit_code": 101,
+      "cause": "rustc terminated by signal 9; precise cause was not established",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "async_w1_generation_v2::tests",
+        "--",
+        "--nocapture"
+      ]
+    },
+    {
+      "id": "strict-clippy",
+      "log": "raw/fixed-clippy.log",
+      "result": "BUILD_FAILED",
+      "exit_file": "raw/fixed-clippy.exit",
+      "exit_code": 101,
+      "cause": "Node clippy-driver terminated by signal 9; precise cause was not established",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-service-settlement",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    }
+  ],
+  "retained_files": [
+    {
+      "path": "raw/baseline-node-session.exit",
+      "bytes": 4,
+      "sha256": "f5bde7eb9f6c71611dc5726e8aca3eb4eba3e386da49e0a4ed5c295a90a73a0d"
+    },
+    {
+      "path": "raw/baseline-node.log",
+      "bytes": 7680,
+      "sha256": "c5fd361a226e7ed8ad1cc2cdd17ff12494cc1ae69e28842854807648c95fe1e6"
+    },
+    {
+      "path": "raw/baseline-unit-network.log",
+      "bytes": 8246,
+      "sha256": "5d54cc792d3708bd756478d13b6dbca3d4098777057440c9ee751f8e650b3c0c"
+    },
+    {
+      "path": "raw/baseline-unit.log",
+      "bytes": 396,
+      "sha256": "ceb5a398b5dac9685d035f030fedfdc71536f27cf58cfff6031398a4d1fca938"
+    },
+    {
+      "path": "raw/cleanup-own-incremental.json",
+      "bytes": 476,
+      "sha256": "0e349b0eb7e054d99b843dd247ae4be2cb46bbf8e2bea3ae52e72812463c01cb"
+    },
+    {
+      "path": "raw/fixed-clippy.exit",
+      "bytes": 4,
+      "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+    },
+    {
+      "path": "raw/fixed-clippy.log",
+      "bytes": 7436,
+      "sha256": "8cb8088d16710c17203e3cfb6c424ceb8f32c0f0b8aec3ba0dbf6147021c3be5"
+    },
+    {
+      "path": "raw/fixed-node-generation-normal-loader.exit",
+      "bytes": 4,
+      "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+    },
+    {
+      "path": "raw/fixed-node-generation-normal-loader.log",
+      "bytes": 4234,
+      "sha256": "b022b10d2de3c3d721b06111a43583ca2d4e913e467a03afad48fe28de9a58db"
+    },
+    {
+      "path": "raw/fixed-node-generation-session.exit",
+      "bytes": 4,
+      "sha256": "f5bde7eb9f6c71611dc5726e8aca3eb4eba3e386da49e0a4ed5c295a90a73a0d"
+    },
+    {
+      "path": "raw/fixed-node-generation.log",
+      "bytes": 2353,
+      "sha256": "c06d5fdc466106edb49b143ce0558dbae99f2b118823a8eac9f4b632da60b49b"
+    },
+    {
+      "path": "raw/fixed-service-isolated.exit",
+      "bytes": 4,
+      "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+    },
+    {
+      "path": "raw/fixed-service-isolated.log",
+      "bytes": 128,
+      "sha256": "20c5156256b4dd4fae853c1c5a11f6ca5f725f805eb88de95ba953d596e9259e"
+    },
+    {
+      "path": "raw/fixed-service.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "raw/fixed-service.log",
+      "bytes": 8204,
+      "sha256": "253f3ef562ba553ca821199fa8ea9af0fc124fa80641b4b2a2b4443fcf0a1921"
+    },
+    {
+      "path": "raw/fixed-source-sha256.json",
+      "bytes": 462,
+      "sha256": "c104d3175a5c881694a2904ed5d107853d6e97b0ee3aa765dbdd8b659b7ed937"
+    },
+    {
+      "path": "raw/performance-entry-audit.json",
+      "bytes": 2755,
+      "sha256": "eae684535879263a9ceb81413a18de2507c365b7539ec2662dff576771eaff7b"
+    },
+    {
+      "path": "raw/toolchain-and-source.json",
+      "bytes": 1542,
+      "sha256": "65bbad4620259dcbbadb3fe23d63340fd35ee0ba30209bf3daecf9bfd3796d65"
+    },
+    {
+      "path": "source-change.patch",
+      "bytes": 14074,
+      "sha256": "665ac5e769609114ab2c1387fcb205839e1f6374da1357d965a2cb8144bd8b07"
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs b/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs
+index 311bdc47c..1ecf42211 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs
+@@ -108,13 +108,16 @@ fn reject(n: &mut Node, parent: Hash, transaction: Vec<u8>) {
+     }
+ }
+ fn reserve(s: &crate::Settings) -> (Hash, Vec<u8>) {
++    reserve_nonce(s, 1)
++}
++fn reserve_nonce(s: &crate::Settings, nonce: u64) -> (Hash, Vec<u8>) {
+     let task = hash(
+         b"task-instance-v3",
+         &[
+             &s.network(),
+             &s.parameters(),
+             &public(0),
+-            &1u64.to_le_bytes(),
++            &nonce.to_le_bytes(),
+             &public(1),
+             &1000u64.to_le_bytes(),
+             &20u64.to_le_bytes(),
+@@ -124,7 +127,7 @@ fn reserve(s: &crate::Settings) -> (Hash, Vec<u8>) {
+     payload.extend(public(1));
+     payload.extend(1000u64.to_le_bytes());
+     payload.extend(20u64.to_le_bytes());
+-    (task, signed(s, 0, 1, 2, payload))
++    (task, signed(s, 0, nonce, 2, payload))
+ }
+ fn balance(n: &Node, who: Hash) -> u64 {
+     if n.state_backend == StateBackend::PermanentAccountGrowthV2 {
+@@ -513,6 +516,61 @@ fn real_node_task_owner_assignment_survives_cold_reopen_and_refuses_another_gene
+     assert!(!first.readback(id).unwrap().dispatch_intent);
+     assert!(second.readback(id).is_err());
+ }
++#[test]
++fn real_node_full_generation_journal_rejection_does_not_claim_task_across_cold_reopen() {
++    for backend in [
++        StateBackend::Legacy,
++        StateBackend::AuthenticatedV1,
++        StateBackend::PermanentAccountGrowthV2,
++    ] {
++        let d = tempfile::tempdir().unwrap();
++        let node_path = d.path().join("node");
++        let journal = d.path().join("full.sqlite");
++        let mut n = open(&node_path, backend);
++        let settings = n.settings.clone();
++        let (first_task, first_wire) = reserve_nonce(&settings, 1);
++        let (second_task, second_wire) = reserve_nonce(&settings, 2);
++        mine(&mut n, settings.genesis(), vec![first_wire, second_wire]);
++        let first_statement = statement(first_task);
++        let mut second_statement = statement(second_task);
++        second_statement.provider_operation = [23; 32];
++        let mut config = configuration(&n);
++        config.max_records = 1;
++        let mut full = NativeGenerationStoreV2::open(&journal, config.clone()).unwrap();
++        let mut runtime = TestRuntime {
++            corrupt_profile: false,
++            cancel_after_receipt: false,
++        };
++        let first_id = {
++            let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
++            let id = full.prepare(&mut owner, first_statement.clone()).unwrap();
++            assert!(matches!(
++                full.prepare(&mut owner, second_statement.clone()),
++                Err(NativeBudgetErrorV1::Invalid("GENERATION_TASK_REPLAY"))
++            ));
++            id
++        };
++        let before = full.readback(first_id).unwrap();
++        drop(full);
++        drop(n);
++        let mut n = open(&node_path, backend);
++        let full = NativeGenerationStoreV2::open(&journal, config).unwrap();
++        assert_eq!(full.readback(first_id).unwrap(), before);
++        assert!(full.readback(second_statement.id().unwrap()).is_err());
++        let mut available =
++            NativeGenerationStoreV2::open(&d.path().join("available.sqlite"), configuration(&n))
++                .unwrap();
++        let mut owner = NodeGenerationOwnerV2::new(&mut n, &mut runtime).unwrap();
++        assert!(available.prepare(&mut owner, first_statement).is_err());
++        assert_eq!(
++            available
++                .prepare(&mut owner, second_statement.clone())
++                .unwrap(),
++            second_statement.id().unwrap()
++        );
++    }
++}
++
+ #[test]
+ fn real_owner_signed_wrong_subject_or_sender_never_creates_settlement_intent() {
+     let d = tempfile::tempdir().unwrap();
+diff --git a/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs b/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs
+index 7766ff2b5..d5f0a5d9c 100644
+--- a/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs
++++ b/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs
+@@ -338,7 +338,7 @@ impl State {
+             .get(&id)
+             .ok_or(NativeBudgetErrorV1::Invalid("GENERATION_UNKNOWN"))
+     }
+-    fn anchor(&mut self, a: NativeBudgetAnchorV1, cfg: &ConfigurationV2) -> Result<()> {
++    fn check_anchor(&self, a: NativeBudgetAnchorV1, cfg: &ConfigurationV2) -> Result<()> {
+         require(
+             (a.network, a.parameters, a.genesis) == (cfg.network, cfg.parameters, cfg.genesis),
+             "GENERATION_NATIVE_CONTEXT",
+@@ -348,9 +348,41 @@ impl State {
+                 .is_none_or(|prior| a.generation > prior.generation || a == prior),
+             "GENERATION_STALE_OWNER_SNAPSHOT",
+         )?;
++        Ok(())
++    }
++    fn anchor(&mut self, a: NativeBudgetAnchorV1, cfg: &ConfigurationV2) -> Result<()> {
++        self.check_anchor(a, cfg)?;
+         self.anchor = Some(a);
+         Ok(())
+     }
++    fn check_prepare(
++        &self,
++        anchor: NativeBudgetAnchorV1,
++        clock: &ClockCheckpointV2,
++        statement: &GenerationStatementV2,
++        funding: &NativeTaskPinV2,
++        cfg: &ConfigurationV2,
++    ) -> Result<Hash> {
++        self.check_anchor(anchor, cfg)?;
++        statement.check()?;
++        statement.original_deadline.check(clock)?;
++        let id = statement.id()?;
++        require(
++            self.records.len() < cfg.max_records as usize
++                && !self.records.contains_key(&id)
++                && !self.tasks.contains_key(&statement.task),
++            "GENERATION_TASK_REPLAY",
++        )?;
++        require(
++            funding.owner == statement.owner
++                && funding.provider == statement.provider
++                && funding.deadline == statement.chain_deadline
++                && funding.whole_obligation > 0
++                && anchor.height < funding.deadline,
++            "GENERATION_NATIVE_PIN",
++        )?;
++        Ok(id)
++    }
+     fn apply(&mut self, e: &Event, cfg: &ConfigurationV2) -> Result<()> {
+         match e {
+             Event::Prepare {
+@@ -359,24 +391,8 @@ impl State {
+                 statement,
+                 funding,
+             } => {
+-                self.anchor(*anchor, cfg)?;
+-                statement.check()?;
+-                statement.original_deadline.check(clock)?;
+-                let id = statement.id()?;
+-                require(
+-                    self.records.len() < cfg.max_records as usize
+-                        && !self.records.contains_key(&id)
+-                        && !self.tasks.contains_key(&statement.task),
+-                    "GENERATION_TASK_REPLAY",
+-                )?;
+-                require(
+-                    funding.owner == statement.owner
+-                        && funding.provider == statement.provider
+-                        && funding.deadline == statement.chain_deadline
+-                        && funding.whole_obligation > 0
+-                        && anchor.height < funding.deadline,
+-                    "GENERATION_NATIVE_PIN",
+-                )?;
++                let id = self.check_prepare(*anchor, clock, statement, funding, cfg)?;
++                self.anchor = Some(*anchor);
+                 self.tasks.insert(statement.task, id);
+                 self.records.insert(
+                     id,
+@@ -859,6 +875,7 @@ impl NativeGenerationStoreV2 {
+         s.check()?;
+         let id = s.id()?;
+         let journal = self.journal_identity;
++        let configuration = self.configuration.clone();
+         self.update(|state| {
+             if let Some(r) = state.records.get(&id) {
+                 require(r.statement == s, "GENERATION_STATEMENT_REPLAY")?;
+@@ -866,8 +883,12 @@ impl NativeGenerationStoreV2 {
+                 return Ok(Update::Replay(id));
+             }
+             let (anchor, clock, funding) = observe_task(owner, &s, false)?;
+-            // This durable fence is deliberately committed first. If this
+-            // journal append fails, only this same retained journal may retry.
++            // Validate under this same journal write lock before the durable
++            // owner claim. A deterministic local refusal must not strand a
++            // fresh task in a journal that cannot admit its prepare event.
++            state.check_prepare(anchor, &clock, &s, &funding, &configuration)?;
++            // The owner fence still precedes the journal write. If storage
++            // fails after this point, only this same retained journal may retry.
+             owner.claim_generation_task(&s, journal)?;
+             Ok(Update::append(
+                 Event::Prepare {
+diff --git a/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs b/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs
+index 5875624b9..b4bacc0ec 100644
+--- a/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs
++++ b/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs
+@@ -246,6 +246,113 @@ fn a_second_generation_journal_cannot_claim_the_same_task_or_reset_its_deadline(
+     assert!(!a.readback(id).unwrap().dispatch_intent);
+     assert!(b.readback(id).is_err());
+ }
++#[test]
++fn generation_prepare_rejects_full_journal_before_claiming_a_fresh_task() {
++    let d = tempfile::tempdir().unwrap();
++    let mut config = cfg();
++    config.max_records = 1;
++    let first = statement();
++    let mut second = first.clone();
++    second.task = [40; 32];
++    let mut owner = MockOwner::new(&first);
++    let mut full = NativeGenerationStoreV2::open(&d.path().join("full.sqlite"), config).unwrap();
++    let first_id = full.prepare(&mut owner, first).unwrap();
++    let before = full.readback(first_id).unwrap();
++    let claims = owner.task_owners.clone();
++    assert!(matches!(
++        full.prepare(&mut owner, second.clone()),
++        Err(NativeBudgetErrorV1::Invalid("GENERATION_TASK_REPLAY"))
++    ));
++    assert_eq!(owner.task_owners, claims);
++    assert_eq!(full.readback(first_id).unwrap(), before);
++    assert!(full.readback(second.id().unwrap()).is_err());
++    let mut available =
++        NativeGenerationStoreV2::open(&d.path().join("available.sqlite"), cfg()).unwrap();
++    assert_eq!(
++        available.prepare(&mut owner, second.clone()).unwrap(),
++        second.id().unwrap()
++    );
++}
++
++#[test]
++fn generation_prepare_rejects_invalid_or_stale_anchor_before_claiming_a_fresh_task() {
++    for stale in [false, true] {
++        let d = tempfile::tempdir().unwrap();
++        let first = statement();
++        let mut owner = MockOwner::new(&first);
++        let mut store =
++            NativeGenerationStoreV2::open(&d.path().join("generation.sqlite"), cfg()).unwrap();
++        let first_id = store.prepare(&mut owner, first.clone()).unwrap();
++        let before = store.readback(first_id).unwrap();
++        let claims = owner.task_owners.clone();
++        let anchor = owner.anchor;
++        let mut second = first;
++        second.task = [40; 32];
++        let expected = if stale {
++            owner.anchor.generation -= 1;
++            "GENERATION_STALE_OWNER_SNAPSHOT"
++        } else {
++            owner.anchor.network[0] ^= 1;
++            "GENERATION_NATIVE_CONTEXT"
++        };
++        assert!(matches!(
++            store.prepare(&mut owner, second.clone()),
++            Err(NativeBudgetErrorV1::Invalid(code)) if code == expected
++        ));
++        assert_eq!(owner.task_owners, claims);
++        assert_eq!(store.readback(first_id).unwrap(), before);
++        assert!(store.readback(second.id().unwrap()).is_err());
++        owner.anchor = anchor;
++        let mut available =
++            NativeGenerationStoreV2::open(&d.path().join("available.sqlite"), cfg()).unwrap();
++        assert_eq!(
++            available.prepare(&mut owner, second.clone()).unwrap(),
++            second.id().unwrap()
++        );
++    }
++}
++
++#[test]
++fn generation_prepare_write_failure_keeps_original_claim_for_same_journal_retry() {
++    let d = tempfile::tempdir().unwrap();
++    let path = d.path().join("original.sqlite");
++    let s = statement();
++    let mut owner = MockOwner::new(&s);
++    let mut original = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
++    original
++        .connection
++        .execute_batch(
++            "CREATE TEMP TRIGGER fail_prepare BEFORE INSERT ON native_generation_events_v2 \
++             BEGIN SELECT RAISE(FAIL, 'injected prepare write failure'); END;",
++        )
++        .unwrap();
++    assert!(matches!(
++        original.prepare(&mut owner, s.clone()),
++        Err(NativeBudgetErrorV1::Store(_))
++    ));
++    let id = s.id().unwrap();
++    assert!(original.readback(id).is_err());
++    assert_eq!(
++        owner.task_owners.get(&s.task),
++        Some(&(id, original.journal_identity()))
++    );
++    drop(original);
++    let mut other = NativeGenerationStoreV2::open(&d.path().join("other.sqlite"), cfg()).unwrap();
++    assert!(other.prepare(&mut owner, s.clone()).is_err());
++    let mut original = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
++    assert_eq!(original.prepare(&mut owner, s).unwrap(), id);
++    assert!(matches!(
++        original.begin(&mut owner, id).unwrap(),
++        DispatchDecisionV2::New
++    ));
++    drop(original);
++    let mut original = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
++    assert!(matches!(
++        original.begin(&mut owner, id).unwrap(),
++        DispatchDecisionV2::Pending
++    ));
++}
++
+ #[test]
+ fn committed_intent_after_cold_restart_never_reissues_new_even_without_funding() {
+     let d = tempfile::tempdir().unwrap();
