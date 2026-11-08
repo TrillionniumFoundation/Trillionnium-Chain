@@ -2563,5 +2563,121 @@ class W1PostwinLaneTests(unittest.TestCase):
 
 
 
+class MergedQualificationLaneTests(unittest.TestCase):
+    """Independent source-contract controls; these do not execute native lanes."""
+
+    # Keep these literals independent from every checker's roster and prefix.
+    GROUPS = {
+        'credit': ('repository-truth', '    bash scripts/project-preflight.sh --audit\n', (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_envelope_contract.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_normalized_search_cost.py' -v\n",
+        ), '    python3 scripts/ci/test_project_boundary.py\n'),
+        'pq_effect_root': ('repository-truth', '    python3 scripts/ci/pq_lifetime_budget.py\n', (
+            '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+            '    python3 scripts/ci/pq_authority_effect_register.py\n',
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n",
+        ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
+        'fixed_probability': ('repository-truth',
+                              "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_credit_feasibility.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_amortized_cost_potential_independent.py' -v\n",
+            '    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n',
+            '    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check\n',
+        ), '    python3 formal/pon-nakamoto-v1/stateful_tail.py\n'),
+        'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
+            '    python3 scripts/ci/check_completion_evidence.py --historical\n',
+            '    python3 scripts/ci/test_completion_evidence.py\n',
+        ), '    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical\n'),
+    }
+
+    def setUp(self):
+        self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        self.required = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                         'rust-baseline', 'external-evidence-contract'}
+
+    def checked(self, script):
+        check_independent_conformance(script, self.required)
+
+    def test_actual_merged_lanes_keep_all_original_controls(self):
+        self.checked(self.script)
+
+    def test_independent_literals_keep_original_neighbors_and_unique_commands(self):
+        self.checked(self.script)
+        for name, (lane, before, commands, after) in self.GROUPS.items():
+            block = self.script.split('  ' + lane + ')\n', 1)[1].split('    ;;\n', 1)[0]
+            with self.subTest(group=name):
+                self.assertIn(before + ''.join(commands) + after, block)
+                for command in commands:
+                    self.assertEqual(self.script.count(command), 1)
+
+    def reject_command_mutations(self, group):
+        # A positive precondition prevents a stale checker from making every
+        # negative case pass merely because the untouched lane already fails.
+        self.checked(self.script)
+        lane, _, commands, after = self.GROUPS[group]
+        for command in commands:
+            self.assertEqual(self.script.count(command), 1)
+            variants = {
+                'removed': self.script.replace(command, '', 1),
+                'modified argv': self.script.replace(command, command.replace('python3 ', 'python3 -O ', 1), 1),
+                'duplicated locally': self.script.replace(command, command * 2, 1),
+                'commented out': self.script.replace(command, '    # ' + command.lstrip(), 1),
+                'false branch': self.script.replace(command, '    if false; then\n' + command + '    fi\n', 1),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n', 1),
+                'errexit suppressed': self.script.replace(command, '    if\n' + command + '    then :; fi\n', 1),
+                'backgrounded': self.script.replace(command, command.rstrip() + ' &\n', 1),
+                'moved within lane': self.script.replace(command, '', 1).replace(after, after + command, 1),
+                'moved to fuzz lane': self.script.replace(command, '', 1).replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command, 1),
+                'duplicated in fuzz lane': self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command, 1),
+            }
+            for label, changed in variants.items():
+                self.assertNotEqual(changed, self.script)
+                with self.subTest(group=group, lane=lane, command=command, mutation=label):
+                    with self.assertRaises(ValueError):
+                        self.checked(changed)
+
+    def test_credit_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('credit')
+
+    def test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('pq_effect_root')
+
+    def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('fixed_probability')
+
+    def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('completion')
+
+    def test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions(self):
+        self.checked(self.script)
+        for name, (_, _, commands, _) in self.GROUPS.items():
+            block = ''.join(commands)
+            for replacement in (
+                    ''.join(reversed(commands)), block + block,
+                    '    if false; then\n' + block + '    fi\n',
+                    '    if\n' + block + '    then :; fi\n',
+                    '    {\n' + block + '    } || true\n'):
+                with self.subTest(group=name, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        self.checked(self.script.replace(block, replacement, 1))
+
+    def test_whole_repository_and_external_lanes_cannot_suppress_failures(self):
+        self.checked(self.script)
+        for lane in ('repository-truth', 'external-evidence-contract'):
+            marker = '  ' + lane + ')\n'
+            block = self.script.split(marker, 1)[1].split('    ;;\n', 1)[0]
+            for replacement in (
+                    '    if false; then\n' + block + '    fi\n',
+                    '    if\n' + block + '    then :; fi\n',
+                    '    {\n' + block + '    } || true\n',
+                    '    set +e\n' + block,
+                    block + '    true\n'):
+                with self.subTest(lane=lane, replacement=replacement[:80]):
+                    with self.assertRaises(ValueError):
+                        self.checked(self.script.replace(marker + block, marker + replacement, 1))
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
