@@ -1,0 +1,2 @@
+{"known_job_files": ["exit.json", "exit.witness.json", "stdout.log", "request.json", "owner-intent.json", "launch.json", "stderr.log", "stdin.bin", "started.json", "runner.py", "child.json", "launch.lock", "owner.lock"]}
+{"exact_key": "acceptance-final819-once-sealed-four-package-secret-scan-v1", "rg_returncode": 1, "matching_metadata_paths": [], "stderr_bytes": 0}

@@ -1,0 +1,109 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling shlex v1.3.0
+   Compiling proc-macro2 v1.0.106
+   Compiling find-msvc-tools v0.1.9
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling cfg-if v1.0.4
+   Compiling zeroize v1.8.2
+   Compiling cpufeatures v0.2.17
+   Compiling cmov v0.5.4
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling semver v1.0.27
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling foldhash v0.2.0
+   Compiling autocfg v1.5.1
+   Compiling bitflags v2.11.0
+   Compiling subtle v2.6.1
+   Compiling libc v0.2.184
+   Compiling serde v1.0.228
+   Compiling cfg_aliases v0.2.2
+   Compiling signature v2.2.0
+   Compiling zmij v1.0.21
+   Compiling smallvec v1.15.1
+   Compiling once_cell v1.21.4
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.149
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling itoa v1.0.18
+   Compiling anyhow v1.0.103
+   Compiling sponge-cursor v0.1.0
+   Compiling memchr v2.8.0
+   Compiling hex v0.4.3
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+   Compiling fastrand v2.3.0
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-transport)
+   Compiling keccak v0.2.2
+   Compiling borsh v1.8.0
+   Compiling cc v1.2.59
+   Compiling ed25519 v2.2.3
+   Compiling ctutils v0.4.6
+   Compiling rustc_version v0.4.1
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+   Compiling curve25519-dalek v4.1.3
+   Compiling indexmap v2.13.1
+   Compiling hashlink v0.11.1
+   Compiling syn v2.0.117
+   Compiling hybrid-array v0.4.15
+   Compiling sha2-asm v0.6.4
+   Compiling libsqlite3-sys v0.37.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling fs2 v0.4.3
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling sha2 v0.10.9
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-verification-profiles)
+   Compiling crypto-common v0.2.2
+   Compiling module-lattice v0.2.3
+   Compiling proc-macro-crate v3.5.0
+   Compiling digest v0.11.3
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling ml-dsa v0.1.1
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling borsh-derive v1.8.0
+   Compiling thiserror-impl v1.0.69
+   Compiling tempfile v3.27.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-crypto-primitives)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug", "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps"]; allowed=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug", "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps"]
+   Compiling rusqlite v0.39.0
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 14s
+     Running tests/native_risk_ledger.rs (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_risk_ledger-66b309f1fcce5d0a)
+
+running 11 tests
+test a_new_bank_cannot_reset_a_native_journal_with_previous_confirmation_intents ... ok
+test bank_capacity_refusal_precedes_native_dispatch_and_torn_tail_is_not_repaired ... ok
+test dropped_pre_dispatch_start_is_spent_pending_and_never_automatically_replayed ... ok
+test exclusive_bank_lock_and_supplied_checkpoint_refuse_competing_or_stale_bank ... ok
+test forwarded_native_failure_reports_its_effective_stop_condition ... ok
+test full_native_suffix_rejects_a_confirmation_outside_the_risk_wrapper ... ok
+test incomplete_native_observation_keeps_charge_and_native_stop_before_recovery ... ok
+test native_risk_process_child ... ignored, owned subprocess helper, actually executed twice by the process-cut test
+test real_confirmed_unconfirmed_error_and_two_process_cuts_keep_all_eight_charges ... ok
+test real_native_errors_spend_and_caps_survive_legacy_and_authenticated_reopen ... ok
+test rejected_scope_has_no_native_call_and_bank_scope_and_budget_are_immutable ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 24.41s
+

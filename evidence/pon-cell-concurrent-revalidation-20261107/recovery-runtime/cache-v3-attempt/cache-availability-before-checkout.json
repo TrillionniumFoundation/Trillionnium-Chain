@@ -1,0 +1,403 @@
+{
+  "alternates": [
+    "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final/.git/objects",
+    "/home/qian-qi/work/chain-qrom-closure-publish-20261107/.git/objects"
+  ],
+  "commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "metadata_inspection_only": true,
+  "missing_entries": [
+    {
+      "git_blob": "d69eb8d8cf5a67e7fecbbea2e124d6391fd0177a",
+      "git_mode": "100644",
+      "path": "evidence/codeql-standalone-lock-20261107/README.md"
+    },
+    {
+      "git_blob": "76714186b8f0a7fc43faac1c73e7c6fae400227d",
+      "git_mode": "100644",
+      "path": "evidence/codeql-standalone-lock-20261107/validation.json"
+    },
+    {
+      "git_blob": "c517fced53ebcde4de6030c2732af864af4f394f",
+      "git_mode": "100644",
+      "path": "evidence/pon-current-inbound-history-e70-20261107/README.md"
+    },
+    {
+      "git_blob": "767ec3ae276ccfd25dc7faaa9e1593de754bb205",
+      "git_mode": "100644",
+      "path": "evidence/pon-current-inbound-history-e70-20261107/readback.json"
+    },
+    {
+      "git_blob": "ad3fe441fec9b8212b7fc28579b30dbb88e12ff2",
+      "git_mode": "100644",
+      "path": "evidence/pon-current-inbound-history-e70-20261107/reproduce.py"
+    },
+    {
+      "git_blob": "29affa1baac8fa00fe6275f0e71b38aa1f7907c6",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/INDEX.json"
+    },
+    {
+      "git_blob": "8371189ddfe9ba6c943a82a33d87359180f4fc24",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/README.md"
+    },
+    {
+      "git_blob": "f2d190a5b7e9268e27bc3b67bd5fb5fc378cb4ec",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/ci-contract-after-root-pin.log"
+    },
+    {
+      "git_blob": "81467770ff84bceb9c6cf8c65d5e0c103dab981e",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/ci-contract.log"
+    },
+    {
+      "git_blob": "dc20927035830967bbe97171dd13b1ef42c86d57",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/host-adapter.log"
+    },
+    {
+      "git_blob": "3a6105dcaf47c2fc8c0e0d2d754a7fff54348f2c",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/push-source-final.log"
+    },
+    {
+      "git_blob": "c9c3d70c1c48e4ddcc5f52cf61abd045b5d2f940",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/push-source-receipt-final.log"
+    },
+    {
+      "git_blob": "3f37442e7dc191a79dde64fc857d1a88b88abf1f",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/push-source-receipt-review.log"
+    },
+    {
+      "git_blob": "77ede1cf9e648b2a2d7c2c47a4b66e052ab079ae",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/push-source.log"
+    },
+    {
+      "git_blob": "56a734aac5a9b5a1f1e93fd8ca2b0e97dc903201",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/implementation-controls/source-integrity.log"
+    },
+    {
+      "git_blob": "831f44aa985f40b482b3a8aad045ac9ebd1ed403",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/INDEX.json"
+    },
+    {
+      "git_blob": "0e0de578bc985da74f2c33a835261db1af78fb8a",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/REVIEW.md"
+    },
+    {
+      "git_blob": "f2d190a5b7e9268e27bc3b67bd5fb5fc378cb4ec",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/check_ci_contract.log"
+    },
+    {
+      "git_blob": "4e5765e7a91494f9b37bdad1fd881537b7ea5e29",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/compare_workflows.py"
+    },
+    {
+      "git_blob": "5cce58c90200a3fe6a6ce499d40c4802cce45418",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/controls.json"
+    },
+    {
+      "git_blob": "314348df2d35b6c5fd11eac84b88ea75d3dc5220",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/preflight.log"
+    },
+    {
+      "git_blob": "dcb7544063b03369e01b583538f3713589a42b7f",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/test_ci_source_integrity.log"
+    },
+    {
+      "git_blob": "f9648bb5012006f1734ac898a25d140523f99a35",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/test_integration_push_source.log"
+    },
+    {
+      "git_blob": "0521de969762225366427b79e20765b9c6c22a3b",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/ci-source-entry/independent-review/workflow-preservation.json"
+    },
+    {
+      "git_blob": "f70b76efd6bcf5459177a329df69135d42140220",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/admin-ci-readback-96e1-20261107.json"
+    },
+    {
+      "git_blob": "7df43a692e007c4fa8bf0b633d04cdb74a239d87",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/crypto-rejection-development.log"
+    },
+    {
+      "git_blob": "6cfe6a614cdaa12f73afcb78f76a57747a05213f",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/fresh-cache-metadata-validation.json"
+    },
+    {
+      "git_blob": "4b8e2cc0c52112126d20eb7182bebce835ebdba3",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/fresh-cache-path-negative-controls.log"
+    },
+    {
+      "git_blob": "8c54536914a7c8a326f10d030b323fa4b4315644",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/fresh-cache-path-reader-tests.log"
+    },
+    {
+      "git_blob": "f29fd4f7196a49fadc65c1fcd7ca6a0816642839",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/fresh-cache-path-validation.json"
+    },
+    {
+      "git_blob": "de77ea5f4dc6b5f157bdd647ac09d32760c9b5d2",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/fresh-cache-reader-tests-v2.log"
+    },
+    {
+      "git_blob": "18d57741c455cf3f958a214e4df331de1f95f9bb",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/fresh-cache-reader-tests.log"
+    },
+    {
+      "git_blob": "3253ac9659611270cfb473e62c87944f827129ca",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/legacy-readback-development-fixed.log"
+    },
+    {
+      "git_blob": "f4b2447adc90a329e956158e99c64eafe4041733",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/development/legacy-readback-development.log"
+    },
+    {
+      "git_blob": "a393f8868adc0016667a28a854a3d65a4a566e32",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/native-9ce-development/components.json"
+    },
+    {
+      "git_blob": "0608797d62aec49c96d5ddb7372e347a10dd7b7e",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/native-9ce-development/node-components.log"
+    },
+    {
+      "git_blob": "bca2d4cbc83c362f56ffb14b5e3a136359405787",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/native-9ce-development/provider-driver.json"
+    },
+    {
+      "git_blob": "7eb6b5d43b22565611a7f45d38a7f575c00d0afe",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/INDEX.json"
+    },
+    {
+      "git_blob": "ae16e581abba16c9073c33a23fac50cf7918534c",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/manifest.json"
+    },
+    {
+      "git_blob": "1f01796d8fc457f0e406e1ace7944c3297e2ba2b",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/read_retained_failures.py"
+    },
+    {
+      "git_blob": "7ca89b4e095029ad207298d1bd9846928fea6a89",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/retained-failure-readback.json"
+    },
+    {
+      "git_blob": "7438428cf5cc0ef42e1ba0c57558d700753d69a3",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_ci_observation_process.json"
+    },
+    {
+      "git_blob": "5c8bbd77403a0af844c8a46501bd48c9c99d9f89",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_ci_observation_process.log"
+    },
+    {
+      "git_blob": "b6f1c2dfe9c7ed0ba85a4b9fb02662d461f936a0",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_from_zero_host_ci.json"
+    },
+    {
+      "git_blob": "52e857b71b813024a310dd4f7d9cd15795396e4b",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_from_zero_host_ci.log"
+    },
+    {
+      "git_blob": "320bbf8a0dcc4708193c3c19617164d4def8232c",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_run_from_zero_native.json"
+    },
+    {
+      "git_blob": "0d813ba275db7f5759436aeb6d656431324b345b",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_run_from_zero_native.log"
+    },
+    {
+      "git_blob": "7701f3abd8433ae1283617a92127af72f13fe55b",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_run_w1_fresh_service_v1.json"
+    },
+    {
+      "git_blob": "f6d3d8676eebd6f47d128fda6603653caac03fd6",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/reader-controls/test_run_w1_fresh_service_v1.log"
+    },
+    {
+      "git_blob": "b226ad0fd9b6244672f9a7a5741e766dcf5f7b84",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/cargo-graph.log"
+    },
+    {
+      "git_blob": "f2d190a5b7e9268e27bc3b67bd5fb5fc378cb4ec",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/ci-contract.log"
+    },
+    {
+      "git_blob": "ed8346ccdec576d71a2cf2f279e03ed0419a78fd",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/command-recorder-controls.log"
+    },
+    {
+      "git_blob": "9501a2377e2a59f2b2579947af89b693ee03eea0",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/commands.json"
+    },
+    {
+      "git_blob": "729465efd78d79388d722caed38995bf02bceacc",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/fresh-reader.log"
+    },
+    {
+      "git_blob": "278530f6e5950fa21c6260baef3ad7ab6fba9e4f",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/from-zero-reader.log"
+    },
+    {
+      "git_blob": "945928701339c3b5bb2ac6969b1198edfa94ba80",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/host-history-controls.log"
+    },
+    {
+      "git_blob": "c1cc235ac956f52b06ba268b06b8b46eea54226e",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/pq-controls.log"
+    },
+    {
+      "git_blob": "501a837c3d002700f704a5bf92a9fb91afe1e57e",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/pq-source.log"
+    },
+    {
+      "git_blob": "2817ffaca041c8c424078396004d3143beedd6bf",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/process-controls.log"
+    },
+    {
+      "git_blob": "16943c48cfb39f7130f4ad5e9b2d85b66b6ad293",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/push-source-controls.log"
+    },
+    {
+      "git_blob": "19aeb065de6bb7baa86ee4ad582b83aa5c5633f4",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/repository-links.log"
+    },
+    {
+      "git_blob": "9433d22905e61628f161d91d8d96b46dba5f8598",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/source-after.json"
+    },
+    {
+      "git_blob": "9433d22905e61628f161d91d8d96b46dba5f8598",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/source-after.log"
+    },
+    {
+      "git_blob": "9433d22905e61628f161d91d8d96b46dba5f8598",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/source-before.json"
+    },
+    {
+      "git_blob": "9433d22905e61628f161d91d8d96b46dba5f8598",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/source-before.log"
+    },
+    {
+      "git_blob": "e89e9d2f964b3a8b1ad6a275737a3a46558595ae",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/source-controls.log"
+    },
+    {
+      "git_blob": "c3e0f2bd341ca47413d9bc88feff08999c6c72d8",
+      "git_mode": "100644",
+      "path": "evidence/pon-original-business-continuation-20261107/source-controls-d7952489/summary.json"
+    },
+    {
+      "git_blob": "e05b227ad06dc65cc47288cfd22ec8af983f9d9e",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/README.md"
+    },
+    {
+      "git_blob": "6db7eee0430976d8a4378451138fc22b48542d52",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/service/ABBA_PROTOCOL.md"
+    },
+    {
+      "git_blob": "7d6677b44033b70cbcf3f68200b451d39da42972",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py"
+    },
+    {
+      "git_blob": "0d68a86ada09f73624fbc2fe157d7a6a78ca6484",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/service/test_run_reorg_abba.py"
+    },
+    {
+      "git_blob": "e305827922ea4de73989972798410c0dd98523e2",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/sqlite/README.md"
+    },
+    {
+      "git_blob": "301cf57075eb908b497b0f1107a1d0f8c5e89efa",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/sqlite/index.json"
+    },
+    {
+      "git_blob": "2a9b56df57d2188e1b1bf657a45f6287ba39ba66",
+      "git_mode": "100644",
+      "path": "evidence/pon-six-workpackages-20261106/next/sqlite/raw.tar.gz"
+    },
+    {
+      "git_blob": "efb1742c8c657493251672188cf4982b24e50b35",
+      "git_mode": "100644",
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock"
+    }
+  ],
+  "present_entries": 10995,
+  "prior_network_fetch_modified": false,
+  "prior_network_prepare_job": "1a1b6bcb863-12894-653",
+  "raw_source_check_required_after_checkout": true,
+  "references": [
+    {
+      "object_directory": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final/.git/objects",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "repository": "/home/qian-qi/work/cell-complete-93ddee66e1b3-20261107/chain-final"
+    },
+    {
+      "object_directory": "/home/qian-qi/work/chain-qrom-closure-publish-20261107/.git/objects",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "repository": "/home/qian-qi/work/chain-qrom-closure-publish-20261107"
+    }
+  ],
+  "target_entries": 11070,
+  "tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe"
+}

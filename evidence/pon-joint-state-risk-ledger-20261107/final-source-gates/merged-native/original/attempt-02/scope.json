@@ -1,0 +1,19 @@
+{
+  "head": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b",
+  "ordered_parents": [
+    "b66e66d2465258d808c0f56ff851123306d4bdb4",
+    "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+  ],
+  "retained_rust_targets": [
+    "native_owner_journal",
+    "native_risk_ledger",
+    "native_owner_observation",
+    "cell_native_v1"
+  ],
+  "standalone_examples_are_fresh_under_this_source": true,
+  "source_checkout_is_sparse": true,
+  "whole_workspace_or_production_host_qualification_claimed": false,
+  "source_and_guard_edits_authorized": false,
+  "push_or_commit_performed_by_this_job": false
+}

@@ -1,0 +1,1 @@
+{"native_execution_exercised":true,"native_runtime_attested":false,"recorded":"/workspace/scratch/b9454e263603/chain_obligations/evidence/pon-actual-certificates-20261107/native_score_bridge/attempt-01/run/native.json","six_successor_risk_qualified":false,"snapshots":11}

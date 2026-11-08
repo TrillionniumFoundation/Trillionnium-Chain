@@ -13,6 +13,7 @@ import hashlib
 import json
 import re
 import subprocess
+from functools import lru_cache, wraps
 from pathlib import Path
 from typing import Any
 
@@ -34,9 +35,26 @@ FIELDS = {
     'ordinary_product_entrypoint', 'backend', 'persistence_owner',
     'evidence_selectors', 'remaining',
 }
+_PARSE_CACHE_ENTRIES = 128
+_PARSE_CACHE_MAX_CHARS = 512 * 1024
 
 
-def python_symbols(text: str) -> set[str]:
+def _cache_source_parse(parse):
+    """Cache pure transforms of complete current text, never paths or verdicts."""
+    cached = lru_cache(maxsize=_PARSE_CACHE_ENTRIES)(parse)
+
+    @wraps(parse)
+    def current(text):
+        # Bound retained source size as well as entry count. Large inputs still
+        # receive the complete original parse; they simply are not retained.
+        if len(text) > _PARSE_CACHE_MAX_CHARS:
+            return parse(text)
+        return cached(text)
+    return current
+
+
+@_cache_source_parse
+def python_symbols(text: str) -> frozenset[str]:
     found: set[str] = set()
 
     def visit(nodes: list[ast.stmt], prefix: str = '') -> None:
@@ -46,7 +64,7 @@ def python_symbols(text: str) -> set[str]:
                 found.add(name)
                 visit(node.body, name + '.')
     visit(ast.parse(text).body)
-    return found
+    return frozenset(found)
 
 
 def check_symbol(root: Path, ref: dict[str, str]) -> None:
@@ -148,6 +166,7 @@ def rust_direct_method(body: str, method: str) -> bool:
     return False
 
 
+@_cache_source_parse
 def rust_code(text: str) -> str:
     """Mask comments/string literals, preserving layout for source-only test binding."""
     out = list(text)

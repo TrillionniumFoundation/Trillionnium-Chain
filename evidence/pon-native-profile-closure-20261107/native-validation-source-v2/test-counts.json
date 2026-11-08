@@ -1,0 +1,859 @@
+{
+  "counts_across_reruns_are_not_unique_tests": true,
+  "rows": [
+    {
+      "command_status": "PASS",
+      "label": "grouped-python-and-native",
+      "log_sha256": "9089ba035c6b9ee2ea6a4b029dd8874536156e3499e478c77b3dc845b89d2efa",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        275
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "conditional-query-bound",
+      "log_sha256": "ccd09d6f0d61bf1c49414a3f63335172a69eadb228d1141f70d27821992c3d79",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        21
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "fresh-query-floor",
+      "log_sha256": "30d1ceb574740fc2743dff06905f60741a9a393d2aa783988c29dc7233ffe335",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        27
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "fresh-resource-transfer",
+      "log_sha256": "68fe25ba35fc0ab707799b4c804cc2614953362f752b7678f54255493314b494",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        15
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-crypto-all-targets",
+      "log_sha256": "f0a8aaea74e4fd7fab5ca04d07540a0ae38b44289562529bf7defd96ceb2ebdc",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 163
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 5
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 5
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 3
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 5
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 3
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 7
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 10
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 6
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 246
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-header-binding",
+      "log_sha256": "7ed02c6130999377d37a677a38768999391cbaaa56ded5b1279a1b7730aa6145",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-fresh-admission",
+      "log_sha256": "0ca17b91d75c287718cde503f2c173b4084ff6fe02c8a61e6fef8bf0953ce5a9",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 14
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 14
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-verification-authority",
+      "log_sha256": "fe6d747391b0d32c7e63e72a7e28e86f412af10234d50a926fe97839e159240e",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 18
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 18
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "source-integrity-controls",
+      "log_sha256": "423a7ceb653d4233d97e403bc439cc2fc2d4be7a81ed2913908660c4cbbabdbf",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        43
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "ci-contract-controls",
+      "log_sha256": "3aa3f98a44d35da52c0be3a7ecca9ca0ba70e798515809d0d215e1eaf69eb216",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        105
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-task-core-all-targets",
+      "log_sha256": "ede9218f8b857e9a60eb2feb302d735102c96a288b182200c5e7e30572345676",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 8,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 145
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 5
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 6
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 6
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 8
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 16
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 8
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 17
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 8
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 8
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 3
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 2,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 63
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 0
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 56
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 10,
+        "measured": 0,
+        "passed": 388
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-funded-service-contract",
+      "log_sha256": "29c1d81978750673235d4e5dab1f75f303bcc5b53322e5f4ce8e8baa7796cbc4",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 4
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-active-anchor",
+      "log_sha256": "f94743195b5aa394d1517fe3e655d6973055a2fdbccf230984fd968adff33a51",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 2
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-demand-evidence",
+      "log_sha256": "68f7ebb7580330175bab8755f9b59ecc70700dbe54ed3cb9be25069b07b5f41b",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 2
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-task-operation-v2",
+      "log_sha256": "a8fcedd0ef2192940da06094dc555850f9df7e80f72344c3f918ec326d4b096b",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 4
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "native-no-gain-fees",
+      "log_sha256": "66b9db2390ca030486c1d87dc1ecba38210cc410d92afc81d82d8293aaa78d47",
+      "python_outcome_lines": [],
+      "python_test_counts": [],
+      "rust_test_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 2
+        }
+      ],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 2
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "demand-evidence-python",
+      "log_sha256": "e008885039d1afbf716906f6cf53e71492d62b3423e5294101739ee2ca0568f8",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        29
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "upgrade-policy-python",
+      "log_sha256": "86fd8850ec87cd9ea5a2243ceabd8b01a94394089731e1d44f40f8033e9f7f91",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        23
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    },
+    {
+      "command_status": "PASS",
+      "label": "pq-research-integration-controls",
+      "log_sha256": "bbdbea5e11fdf1a4bafc14a414abbc7a4777369fccd8133604d52de99813eb5b",
+      "python_outcome_lines": [
+        "OK"
+      ],
+      "python_test_counts": [
+        37
+      ],
+      "rust_test_summaries": [],
+      "rust_total": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 0
+      }
+    }
+  ],
+  "schema": "pon-native-profile-log-test-counts-v1",
+  "source_sha": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+  "source_validation_is_not_qualification": true
+}

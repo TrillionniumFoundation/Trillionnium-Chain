@@ -1,0 +1,85 @@
+{
+  "schema": "pon-resource-transfer-compute-readiness-v0",
+  "scope": "Task-owned Colab attempt through authorized HeptaRuntime launcher; no validation workload ran there",
+  "account_identity_redacted": true,
+  "before": {
+    "observed_at": "2026-11-07T14:05:01.766254+00:00",
+    "status": "observed",
+    "assignments": {
+      "runtimes": [],
+      "status": "available"
+    },
+    "consumption": {
+      "assignments_count": 0,
+      "consumption_rate_hourly": 0,
+      "paid_compute_units_balance": 0,
+      "status": "available"
+    },
+    "subscription": {
+      "status": "available",
+      "tier": "SUBSCRIPTION_TIER_FREE"
+    }
+  },
+  "created": {
+    "created_at": "2026-11-07T14:07:08.695001+00:00",
+    "updated_at": "2026-11-07T14:07:13.267995+00:00",
+    "phase": "runtime_ready",
+    "key": "chain-fresh-transfer-20261107-10a9-cpu",
+    "requested_spec": {
+      "accelerator": "NONE",
+      "shape": "STANDARD",
+      "variant": "DEFAULT"
+    },
+    "actual_spec": {
+      "accelerator": "NONE",
+      "shape": "STANDARD",
+      "variant": "DEFAULT"
+    },
+    "owned_runtime": true,
+    "owned_kernel": false,
+    "runtime_submit_attempts": 1,
+    "kernel_submit_attempts": 0
+  },
+  "bind": {
+    "error_code": "STATE_DESTINATION_CONFLICT",
+    "status": "blocked"
+  },
+  "release": {
+    "job_id": "1a1b664eb76-12894-403",
+    "status": "blocked",
+    "error_code": "FIXED_RUNTIME_NOT_FOUND",
+    "exit_code": 2,
+    "authoritative_state": "failed",
+    "output_complete": true
+  },
+  "reconcile": {
+    "job_id": "1a1b6698c32-12894-422",
+    "status": "blocked",
+    "error_code": "FIXED_RUNTIME_NOT_FOUND"
+  },
+  "after": {
+    "observed_at": "2026-11-07T14:30:11.381168+00:00",
+    "status": "observed",
+    "assignments": {
+      "runtimes": [],
+      "status": "available"
+    },
+    "consumption": {
+      "assignments_count": 0,
+      "consumption_rate_hourly": 0,
+      "paid_compute_units_balance": 0,
+      "status": "available"
+    },
+    "subscription": {
+      "status": "available",
+      "tier": "SUBSCRIPTION_TIER_FREE"
+    }
+  },
+  "release_success_claimed": false,
+  "remaining_assigned_runtimes_observed": 0,
+  "allocation_disappearance_cause": "not established",
+  "workloads_submitted": 0,
+  "profile_or_account_guard_overridden": false,
+  "new_gpu_allocation": false,
+  "fallback": "isolated ROG CPU environment through HeptaRuntime; exact-source validation pending"
+}

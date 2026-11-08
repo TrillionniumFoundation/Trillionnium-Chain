@@ -1,0 +1,2 @@
+test store::continuity_tests::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes ... capacity reentry: accepted_native_packets=27, rejected_growth=2, reorgs=2, reopens=3, synthetic_preallocated_genesis=true
+ok

@@ -1,0 +1,41 @@
+{
+  "entry": {
+    "acquisition_status": "rejected_binary_unavailable",
+    "actual_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "api_blob_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/8f0cd650cf346132f727cd3837bd60f7deec1fde",
+    "attempts": [
+      {
+        "error": "HTTPError: 400: GitHub Fetch only accepts UTF-8 text. (Response: None)",
+        "method": "github.fetch API git/blobs URL",
+        "status": "error"
+      },
+      {
+        "actual_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "actual_bytes": 0,
+        "expected_bytes": 1067844,
+        "method": "github.fetch_file encoding=base64",
+        "returned_content_length": 0,
+        "returned_sha": "8f0cd650cf346132f727cd3837bd60f7deec1fde",
+        "status": "rejected_hash_mismatch"
+      },
+      {
+        "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte",
+        "method": "github.fetch_blob",
+        "status": "error"
+      }
+    ],
+    "bytes": 0,
+    "encoding": "base64",
+    "error": "No byte-preserving binary payload received; the empty base64 payload failed expected blob SHA and size checks.",
+    "expected_blob_sha": "8f0cd650cf346132f727cd3837bd60f7deec1fde",
+    "expected_bytes": 1067844,
+    "method": "github.fetch_file encoding=base64 at fixed_upstream_commit",
+    "path": "evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+    "public_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0c830e0be8939ce80c8443c9ad68021b87343a00/evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "verified_at": "2026-11-08T06:27:43.818195+00:00"
+  },
+  "fixed_upstream_commit": "0c830e0be8939ce80c8443c9ad68021b87343a00",
+  "schema": "TRNM-W1-HISTORICAL-BINARY-TRANSFER-OBSERVATION1",
+  "scope": "Only this archive was observed to fail through these three transfer paths. Other missing historical targets were not all attempted. No empty placeholder was written."
+}

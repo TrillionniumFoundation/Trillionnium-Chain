@@ -1,0 +1,60 @@
+[
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "fmt",
+      "--all"
+    ],
+    "returncode": 0,
+    "seconds": 0.20327401161193848
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.2147219181060791
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "test",
+      "--offline",
+      "--locked"
+    ],
+    "returncode": 0,
+    "seconds": 59.244340658187866
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "seconds": 0.9490952491760254
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/home/qian-qi/work/chain-w1-compact-backend-20261108-f16ac-r4/formal/pon-nakamoto-v1/w1_public_stark_research/run_schedule_controls.py",
+      "--source",
+      "/home/qian-qi/work/chain-w1-compact-backend-20261108-f16ac-r4/formal/pon-nakamoto-v1/w1_public_stark_research",
+      "--proofs",
+      "/home/qian-qi/work/chain-w1-scheduled-sha-measurements-20261108-f16ac-r4-01/01-retained-B/proof",
+      "--output",
+      "/home/qian-qi/work/chain-w1-scheduled-sha-controls-20261108-f16ac-r4-01"
+    ],
+    "returncode": 0,
+    "seconds": 12.564571619033813
+  }
+]

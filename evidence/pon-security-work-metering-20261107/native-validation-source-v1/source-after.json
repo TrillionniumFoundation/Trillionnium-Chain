@@ -1,0 +1,17 @@
+{
+  "driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "source": {
+    "base": null,
+    "candidate": "66b4f5a735d350849267e44526be2e12f1d076b5",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "66b4f5a735d350849267e44526be2e12f1d076b5",
+    "tested_tree": "1adbdc08caf0ceb481e148f807a1cadabb49ef24",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1045268705,
+    "tracked_entries": 10961,
+    "tracked_worktree_verified": true
+  },
+  "status": "PASS"
+}

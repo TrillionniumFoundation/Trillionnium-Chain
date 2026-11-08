@@ -1,0 +1,230 @@
+{
+  "dependency_checks": [
+    {
+      "archive": {
+        "bytes": 102890,
+        "path": "/workspace/scratch/f16ac5871196/security_lifecycle_r4/primary/p3-challenger-0.8.0.crate",
+        "sha256": "92cccaed1c107ad279e76dfd10aa71cff1c1898eb282f406288ad556e65e5a8f"
+      },
+      "archive_matches_base_lock": true,
+      "base_lock_checksum": "92cccaed1c107ad279e76dfd10aa71cff1c1898eb282f406288ad556e65e5a8f",
+      "crate": "p3-challenger",
+      "source_files": [
+        {
+          "bytes": 31029,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_lifecycle_r4/primary/p3-challenger-0.8.0/src/hash_challenger.rs",
+          "sha256": "cf98404fae51e2133938c0e1c432b8c51ef10ce39074cb5e7d2fa33fb4d40183"
+        },
+        {
+          "bytes": 27353,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_lifecycle_r4/primary/p3-challenger-0.8.0/src/serializing_challenger.rs",
+          "sha256": "7399cf8ed81d8e35fae3f70950d88fd7f78613dde4c067ef57f4c85da1c269a9"
+        }
+      ],
+      "version": "0.8.0"
+    },
+    {
+      "archive": {
+        "bytes": 94524,
+        "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-uni-stark-0.8.0.crate",
+        "sha256": "d0992185743e8e406eeb1dd8ca4704d1f5246ccf2790f9b521c5455585bfa479"
+      },
+      "archive_matches_base_lock": true,
+      "base_lock_checksum": "d0992185743e8e406eeb1dd8ca4704d1f5246ccf2790f9b521c5455585bfa479",
+      "crate": "p3-uni-stark",
+      "source_files": [
+        {
+          "bytes": 43109,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-uni-stark-0.8.0/src/transcript.rs",
+          "sha256": "a68793bb4a0de0387598353cf15bcfc86f62c25f9a9822acc33883b8461a26a5"
+        },
+        {
+          "bytes": 7683,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-uni-stark-0.8.0/src/config.rs",
+          "sha256": "3b8c20a1006f4fbb9eb89a3ee082fb2a8b4776324fde014e795db2b0f0d3f837"
+        },
+        {
+          "bytes": 15158,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-uni-stark-0.8.0/src/proof.rs",
+          "sha256": "73aa8cd250bdd7ebc8045bbdbcea883d79a391dd44a22be46a733765e3932aec"
+        },
+        {
+          "bytes": 28497,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-uni-stark-0.8.0/src/verifier.rs",
+          "sha256": "d55e7787358dca6ad70d28bad8ce8a25428322160fe0133fa680c1a5fe6ab077"
+        }
+      ],
+      "version": "0.8.0"
+    },
+    {
+      "archive": {
+        "bytes": 112667,
+        "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-fri-0.8.0.crate",
+        "sha256": "9571ee760e131fc7f63115ded567d3b3d0f6d587c35b16818e266c9d6bd3bc9d"
+      },
+      "archive_matches_base_lock": true,
+      "base_lock_checksum": "9571ee760e131fc7f63115ded567d3b3d0f6d587c35b16818e266c9d6bd3bc9d",
+      "crate": "p3-fri",
+      "source_files": [
+        {
+          "bytes": 125366,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-fri-0.8.0/src/verifier.rs",
+          "sha256": "975392a464c823c93c9ec50ce4e73d17a8b0fbdf22f047f887fb749dcf7280a3"
+        },
+        {
+          "bytes": 68703,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-fri-0.8.0/src/two_adic_pcs.rs",
+          "sha256": "926b6ecfe0c3c2ae3956d77f78795c3d5d4b7b171c16ec1ae251852c2d2a24cb"
+        },
+        {
+          "bytes": 3183,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-fri-0.8.0/src/proof.rs",
+          "sha256": "9c6efe2f05ec8f89f43ea1f2e706bf0fd826d9191d20d12b24ea2da10ad494a6"
+        }
+      ],
+      "version": "0.8.0"
+    },
+    {
+      "archive": {
+        "bytes": 163750,
+        "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-goldilocks-0.8.0.crate",
+        "sha256": "325a854e1232dd1ce270245d9c978b71897c286f072d2fa31740956a800e70c5"
+      },
+      "archive_matches_base_lock": true,
+      "base_lock_checksum": "325a854e1232dd1ce270245d9c978b71897c286f072d2fa31740956a800e70c5",
+      "crate": "p3-goldilocks",
+      "source_files": [
+        {
+          "bytes": 54383,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-goldilocks-0.8.0/src/goldilocks.rs",
+          "sha256": "bd59bea02d51616979a1bf10eb7ff70526dd68f5ba1288bf929fcdd0b86b165b"
+        },
+        {
+          "bytes": 11563,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-goldilocks-0.8.0/src/extension.rs",
+          "sha256": "64bc5d9797b8eb71e22a6bfd97f3612b35d124ae7a334e66c07770111334ce95"
+        }
+      ],
+      "version": "0.8.0"
+    },
+    {
+      "archive": {
+        "bytes": 25582,
+        "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-symmetric-0.8.0.crate",
+        "sha256": "cb7b7cc37b4f9592c57bfceabc737de757267b23ae956b2e648d24461f93fb42"
+      },
+      "archive_matches_base_lock": true,
+      "base_lock_checksum": "cb7b7cc37b4f9592c57bfceabc737de757267b23ae956b2e648d24461f93fb42",
+      "crate": "p3-symmetric",
+      "source_files": [
+        {
+          "bytes": 11665,
+          "matches_locked_archive_member": true,
+          "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-symmetric-0.8.0/src/hash.rs",
+          "sha256": "ec1a96e8d32d8a5ff9ee2b0a308eed4c38e6f7a57d17d1b1081e741ebe29fb77"
+        }
+      ],
+      "version": "0.8.0"
+    }
+  ],
+  "known_during_review_changes": [
+    {
+      "initial_sha256": "a20dcf566e4a12b72583997e5dbf5822391f2051fc234ce98e81045b0b983ab8",
+      "path": "tagged_profile_impl/src/tagged_sha3.rs",
+      "reviewed_update": "Added explicit inherited HashChallenger state-alias metadata."
+    },
+    {
+      "path": "tagged_profile_impl/tests/tagged_sha3_profile.rs",
+      "reviewed_update": "Added state-alias regression and frozen extension/constant checks."
+    }
+  ],
+  "native_tests_executed_by_this_reviewer": false,
+  "qualification": "HOLD_NO_GO",
+  "qualified": false,
+  "remaining_evidence": [
+    "Final new-profile Cargo.lock and native source binding",
+    "Native test receipts",
+    "Full-size wire/mutation/proof execution receipts"
+  ],
+  "report": {
+    "bytes": 9498,
+    "path": "/workspace/scratch/3acf892fe0ad/independent_review/REVIEW.md",
+    "sha256": "9b3f41b0711686f8eb69cbc22caee0fe8254413574b49c7145f7cf787c3a0bd6"
+  },
+  "review_type": "static_source_review_only",
+  "reviewed_at_utc": "2026-11-08T06:11:34.824425+00:00",
+  "schema": "p3.tagged.sha3.independent_source_review.v1",
+  "subject_files": [
+    {
+      "bytes": 11590,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/src/tagged_sha3.rs",
+      "sha256": "e2068fa6d1cacb508bd3953761a88204b718b2cb842ecc16f078a081283cbac8"
+    },
+    {
+      "bytes": 10446,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/src/tagged_sha3_wire.rs",
+      "sha256": "e7dfd01addef0f996165d19241849822eb6f2a68caa4a832449151a7314b41fa"
+    },
+    {
+      "bytes": 14919,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/examples/tagged_sha3_backend.rs",
+      "sha256": "9271bde2a3f1f6c496eaa9e113f52adfce32fdab6f50022ebf3c412594a24c37"
+    },
+    {
+      "bytes": 10970,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/tests/tagged_sha3_profile.rs",
+      "sha256": "8ad652a3b13883282d7c97b543e93ab289de1be57daed4a5d67c7ae3919ea375"
+    },
+    {
+      "bytes": 798,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/Cargo.toml",
+      "sha256": "082425d937d0be1ea67f5c1f1c1df280ad803398b35199772123f680c22a82e7"
+    },
+    {
+      "bytes": 345,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/src/lib.rs",
+      "sha256": "120b056b00d3be748c52cff23232b2ea871ce97d88b67b783bc999e7662dddc8"
+    },
+    {
+      "bytes": 4955,
+      "path": "/workspace/scratch/3acf892fe0ad/tagged_profile_impl/build_overlay.py",
+      "sha256": "6c3aa706277dd53d18ffece1144e43e43143b548b4007beae09f46ce3d900919"
+    },
+    {
+      "bytes": 14960,
+      "path": "/workspace/scratch/3acf892fe0ad/base_snapshot/src/public.rs",
+      "sha256": "ae08f54eda74f1ffc7f3ae4c10185d101e10b511bf9ce32a0bc2fe65a3e9dd3d"
+    },
+    {
+      "bytes": 13301,
+      "path": "/workspace/scratch/3acf892fe0ad/base_snapshot/src/sha_plan.rs",
+      "sha256": "5a629d7bcc630ebe3de2f86cb5c6877572d980e8563431ee9c0d128ce1477377"
+    },
+    {
+      "bytes": 12220,
+      "path": "/workspace/scratch/3acf892fe0ad/base_snapshot/src/sha_air.rs",
+      "sha256": "d9548d17dc9429781fe381ac3f4988c6c4cf0563fe8da4e3a2bb2db616225f70"
+    },
+    {
+      "bytes": 12429,
+      "path": "/workspace/scratch/3acf892fe0ad/base_snapshot/src/arith_carry_air.rs",
+      "sha256": "5b5903d2bf5490fb005902fd0a2b8fe3a2ef64e2769c2436a91b4b80e5b3ca9f"
+    },
+    {
+      "bytes": 17800,
+      "path": "/workspace/scratch/3acf892fe0ad/base_snapshot/Cargo.lock",
+      "sha256": "01779e7660fcb586757af683bb8d757c79c8fa9189d0c8cc2fcc6090d3ea5c0d"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+     Running tests/architecture_delivery_compare.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/deps/architecture_delivery_compare-5e60667c40b95e08)
+
+running 13 tests
+test absolute_deadline_dissemination_keeps_complete_material_in_all_three_modes ... ok
+test architecture_deadline::tests::cancellation_wakes_a_waiting_receiver ... ok
+test architecture_deadline::tests::cancelled_writer_does_not_send_a_new_frame ... ok
+test architecture_deadline::tests::continued_fragment_progress_cannot_renew_frame_deadline ... ok
+test architecture_deadline::tests::empty_completion_still_observes_expiry_and_cancellation ... ok
+test architecture_deadline::tests::expired_frame_does_not_consume_available_bytes ... ok
+test architecture_deadline::tests::fragmented_frame_completes_within_one_original_budget ... ok
+test architecture_deadline::tests::header_and_body_reads_share_the_original_frame_end ... ok
+test architecture_deadline::tests::partial_eof_remains_an_error ... ok
+test architecture_deadline::tests::stalled_writer_ends_under_original_deadline ... ok
+test dissemination_cancellation_preserves_original_sender_and_receiver_failures ... ok
+test reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history ... ok
+test signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract ... {"all_finite_business_targets_met":false,"report_path":"/tmp/.tmpXCyZGI/architecture-comparison/report.json","samples":18,"schema":"native-signed-dag-delivery-comparison-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"serial-signed-batches","native_state_equal":false,"position":0,"sample":0,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"concurrent-proposer-batches","native_state_equal":false,"position":1,"sample":0,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"signed-reference-dag","native_state_equal":false,"position":2,"sample":0,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"concurrent-proposer-batches","native_state_equal":false,"position":0,"sample":1,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"signed-reference-dag","native_state_equal":false,"position":1,"sample":1,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"serial-signed-batches","native_state_equal":false,"position":2,"sample":1,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"signed-reference-dag","native_state_equal":false,"position":0,"sample":2,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"serial-signed-batches","native_state_equal":false,"position":1,"sample":2,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"concurrent-proposer-batches","native_state_equal":false,"position":2,"sample":2,"scenario":"disjoint-recipients","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"serial-signed-batches","native_state_equal":false,"position":0,"sample":0,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"concurrent-proposer-batches","native_state_equal":false,"position":1,"sample":0,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"signed-reference-dag","native_state_equal":false,"position":2,"sample":0,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"concurrent-proposer-batches","native_state_equal":false,"position":0,"sample":1,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"signed-reference-dag","native_state_equal":false,"position":1,"sample":1,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"serial-signed-batches","native_state_equal":false,"position":2,"sample":1,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"signed-reference-dag","native_state_equal":false,"position":0,"sample":2,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"serial-signed-batches","native_state_equal":false,"position":1,"sample":2,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+{"cold_reopen_equal":true,"error_count":1,"error_limit":4,"error_text_limit_chars":96,"errors":["PUBLIC_HOST_KERNEL_PARENT"],"mode":"concurrent-proposer-batches","native_state_equal":false,"position":2,"sample":2,"scenario":"hot-recipient","schema":"native-signed-dag-delivery-failure-v1"}
+
+thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (1606591) panicked at crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:
+retained native delivery/replay invariants failed
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract
+
+test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.37s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test architecture_delivery_compare`

@@ -1,0 +1,158 @@
+{
+  "additional_fixed_vc_check_mass_addend": {
+    "denominator": "4835703278458516698824704",
+    "numerator": "45"
+  },
+  "affine_coefficients": {
+    "w_fs": {
+      "denominator": "2361183241434822606848",
+      "numerator": "5"
+    },
+    "w_m": {
+      "denominator": "1",
+      "numerator": "0"
+    },
+    "w_vc": {
+      "denominator": "309485009821345068724781056",
+      "numerator": "1565"
+    }
+  },
+  "affine_maximum_formula": "C + t * max(a_fs, a_vc)",
+  "an_attaining_mass_assignment": {
+    "w_fs": "5",
+    "w_m": "0",
+    "w_vc": "0"
+  },
+  "arithmetic_maximized_upper_expression": {
+    "denominator": "618970019642690137449562112",
+    "numerator": "2156674533"
+  },
+  "conditional_expression_on_declared_query_domains": {
+    "denominator": "618970019642690137449562112",
+    "numerator": "2156674533"
+  },
+  "constant_terms": {
+    "commutator": {
+      "denominator": "618970019642690137449562112",
+      "numerator": "405"
+    },
+    "finite_randomness": {
+      "denominator": "288230376151711744",
+      "numerator": "1"
+    },
+    "input_commitment_extraction": {
+      "denominator": "154742504910672534362390528",
+      "numerator": "1"
+    },
+    "offline_opening_set": {
+      "denominator": "154742504910672534362390528",
+      "numerator": "19"
+    },
+    "online_fixed_vc_mass_including_verifier_checks": {
+      "denominator": "604462909807314587353088",
+      "numerator": "15"
+    },
+    "state_restoration_rrbr": {
+      "denominator": "1180591620717411303424",
+      "numerator": "5"
+    }
+  },
+  "constant_total": {
+    "denominator": "618970019642690137449562112",
+    "numerator": "2150120933"
+  },
+  "domain_checks": {
+    "commutativity_max_queries": true,
+    "pqsr_max_queries": true,
+    "vc_max_queries": true
+  },
+  "expression_exceeds_one": false,
+  "extraction_mass": "w_m + 1",
+  "hypothetical_expression_meets_target": true,
+  "inputs": {
+    "declared_query_domains": {
+      "commutativity_max_queries": "1024",
+      "pqsr_max_queries": "1024",
+      "vc_max_queries": "1024"
+    },
+    "input_kind": "hypothetical",
+    "parameters": {
+      "ell_max": "16",
+      "k": "2",
+      "kappa_rrbr": {
+        "denominator": "1208925819614629174706176",
+        "numerator": "1"
+      },
+      "n_y": "1",
+      "n_y_prime": "1",
+      "q_pi": "2",
+      "q_r_input": "1",
+      "q_r_output": "4",
+      "q_v": "3",
+      "q_y": "1",
+      "r_min": "64",
+      "sigma": "96",
+      "t": "5"
+    },
+    "schema": "TRNM-W1-CDHZ-MARCH-BCS-ASSUMED-INPUT1",
+    "target_error": {
+      "denominator": "4294967296",
+      "numerator": "1"
+    }
+  },
+  "maximum_domain": "real nonnegative w_fs,w_vc,w_m with sum <= t",
+  "ordinary_vc_mass": "w_vc + q_v + q_r_input + q_r_output",
+  "qualification": {
+    "actual_joint_oracle_model_proved": false,
+    "author_erratum_claimed": false,
+    "complete_manuscript_proof_independently_verified": false,
+    "complete_w1_soundness_qualified": false,
+    "component_hypotheses_proved_for_implementation": false,
+    "consensus_admission": false,
+    "pinned_january_to_march_statement_correspondence_verified": true,
+    "post_quantum_soundness_qualified": false,
+    "production_qualified": false,
+    "qrom_theorem_instantiated": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null,
+    "whole_lifetime_failure_bound": null
+  },
+  "query_points": {
+    "adversary_t": "5",
+    "commutativity_t": "11",
+    "decider_queries": "5",
+    "extract_and_offline_t": "11",
+    "offline_opening_set_size": "19",
+    "online_t": "16"
+  },
+  "record_mass": "w_fs + k",
+  "required_query_domains": {
+    "commutativity_max_queries": "11",
+    "pqsr_max_queries": "5",
+    "vc_max_queries": "16"
+  },
+  "schema": "TRNM-W1-CDHZ-MARCH-BCS-ASSUMED-EXPRESSION1",
+  "source": {
+    "interfaces": [
+      "Theorem 6.10",
+      "Theorem 8.3",
+      "Lemma 8.8",
+      "Lemma 9.7",
+      "Theorem 11.3",
+      "Construction 11.11"
+    ],
+    "interpretation": "Named ordinary-VC mass from Lemma 9.7; includes q_V for step-13 VC checks. Conservative derived adapter, not an author correction or a complete theorem audit.",
+    "january_pdf_sha256": "215a62b9a1b5144c89ae103aaabaf6049eab23f7ccb23130bc7d65d597c1eac9",
+    "march_pdf": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+    "march_pdf_sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30",
+    "paper": "https://eprint.iacr.org/2025/2166"
+  },
+  "status": "HYPOTHETICAL_CONSERVATIVE_ADAPTER_ONLY",
+  "unresolved_premises": [
+    "Actual IOR relations, monotonicity, compiler semantics and uniform RRBR knowledge extractor.",
+    "Admissible quantum multi-extractor for the actual salted/capped/encoded commitment and joint oracle.",
+    "Validity of every assumed envelope, query bound and statement-size/proximity scope for the implementation.",
+    "Actual FS construction, all recursive programs, matching middle relations and sequential extraction costs.",
+    "A truthful whole-lifetime adversarial budget; this is one hypothetical reduction expression only."
+  ]
+}

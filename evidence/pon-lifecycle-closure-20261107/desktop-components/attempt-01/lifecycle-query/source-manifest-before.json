@@ -1,0 +1,13 @@
+{
+  "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+  "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+  "formal/pon-nakamoto-v1/lifecycle_query_bound.py": "db93ca64dbd1110d529c7f89228adf4eeafdbeb3deb249eec334bcb5f23047bd",
+  "formal/pon-nakamoto-v1/lifecycle_query_charging_v1.md": "fef5815e3f4061049d72b5dd4ea7b83b6d2a79826e6eab481bfbb33240de1350",
+  "formal/pon-nakamoto-v1/lifecycle_query_evidence.py": "fbac486812badc8ec8590fbabb2da9f10c73e334704f7a0ba84f767fd70e1bda",
+  "formal/pon-nakamoto-v1/lifecycle_query_runtime.py": "3517c866eb270a5ac5edac4ca8fee847f1b1728e8853fe2caed908f82b26cec2",
+  "formal/pon-nakamoto-v1/lifecycle_query_tests.py": "4999d65014e15f87a1c6d901d20663840bbb296906fdc2c18122891ba027b3a1",
+  "formal/pon-nakamoto-v1/mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e",
+  "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+  "formal/pon-nakamoto-v1/mandatory_units_vectors.py": "78b4986be8531023c0ef1967b2c9c331899fffe0758be8077445f78327bd0a0c",
+  "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+}

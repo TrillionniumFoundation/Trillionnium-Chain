@@ -1,0 +1,7 @@
+{
+  "external_originals_available_at_collection": true,
+  "files": [],
+  "git_individual_file_limit_exclusive": 100000000,
+  "schema": "trnm-pq-authority-external-artifacts-v1",
+  "silent_omissions": false
+}

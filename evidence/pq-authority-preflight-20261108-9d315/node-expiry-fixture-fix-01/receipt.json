@@ -1,0 +1,489 @@
+{
+  "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.11514710518531501,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125356.7114716,
+      "label": "preflight-before-edit",
+      "logs": {
+        "preflight-before-edit.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-edit.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "preflight-before-edit.stdout.log": {
+          "bytes": 178,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-edit.stdout.log",
+          "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+        "mode": "--dev",
+        "packages": 26,
+        "project": "trillionnium-chain",
+        "remote_policy_mutated": false,
+        "result": "PASS"
+      },
+      "started_unix_seconds": 1794125356.5963237
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.03259924682788551,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125356.7667694,
+      "label": "rustfmt-reviewed-test",
+      "logs": {
+        "rustfmt-reviewed-test.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/rustfmt-reviewed-test.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "rustfmt-reviewed-test.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/rustfmt-reviewed-test.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794125356.73417
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.016504906816408038,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125356.8361063,
+      "label": "diff-check",
+      "logs": {
+        "diff-check.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/diff-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diff-check.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/diff-check.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794125356.8196023
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.2152048908174038,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125357.0521674,
+      "label": "ci-contract",
+      "logs": {
+        "ci-contract.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/ci-contract.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ci-contract.stdout.log": {
+          "bytes": 378,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/ci-contract.stdout.log",
+          "sha256": "7b1446921b5f46ba5d957c2a60eedaabfbc802f215cd14ec62c1f6fb099c9795"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "artifact_comparison_jobs": 1,
+        "head_jobs": 5,
+        "inline_source_pins": 26,
+        "merge_lanes": 5,
+        "native_cost_architectures": 2,
+        "pq_release_authority_controls": {
+          "complete_release": 52,
+          "groups": {
+            "initial_root_material": 6,
+            "original_release": 37,
+            "quorum_preflight": 9
+          },
+          "python_test_doubles": 18,
+          "tests_executed": false
+        },
+        "tests_executed": false,
+        "w1_actual_reuse_v3_cells": 4
+      },
+      "started_unix_seconds": 1794125356.8369613
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.5172265379223973,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125357.5711637,
+      "label": "pq-integration",
+      "logs": {
+        "pq-integration.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/pq-integration.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pq-integration.stdout.log": {
+          "bytes": 557,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/pq-integration.stdout.log",
+          "sha256": "59b330077a1f2b33f068de9c7337f80046b97a6c2b5f2807bd3ad96749467142"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 722,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "started_unix_seconds": 1794125357.053937
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+        "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.0652111500967294,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125357.6383536,
+      "label": "stage-reviewed-paths",
+      "logs": {
+        "stage-reviewed-paths.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/stage-reviewed-paths.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stage-reviewed-paths.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/stage-reviewed-paths.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794125357.573142
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.016650052974000573,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125357.676284,
+      "label": "staged-diff-check",
+      "logs": {
+        "staged-diff-check.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/staged-diff-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "staged-diff-check.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/staged-diff-check.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794125357.6596363
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.3155256761237979,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125357.9930546,
+      "label": "preflight-before-commit",
+      "logs": {
+        "preflight-before-commit.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-commit.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "preflight-before-commit.stdout.log": {
+          "bytes": 181,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-commit.stdout.log",
+          "sha256": "ae09ebb285e9ecd2dcfbecf6c7d3a0ccd01904ab6244fecd1cefa632c67935d7"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+        "mode": "--staged",
+        "packages": 26,
+        "project": "trillionnium-chain",
+        "remote_policy_mutated": false,
+        "result": "PASS"
+      },
+      "started_unix_seconds": 1794125357.677529
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "commit",
+        "-m",
+        "test(m15): bind completion expiry wait to the signed window"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.11501021613366902,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125358.120193,
+      "label": "commit-reviewed-fix",
+      "logs": {
+        "commit-reviewed-fix.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/commit-reviewed-fix.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "commit-reviewed-fix.stdout.log": {
+          "bytes": 171,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/commit-reviewed-fix.stdout.log",
+          "sha256": "bbfe637a4bbc665760c1565f0cdf73208e6a94147d4c24002426809294c60364"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794125358.0051827
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.11510398401878774,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125358.4289217,
+      "label": "preflight-before-test",
+      "logs": {
+        "preflight-before-test.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-test.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "preflight-before-test.stdout.log": {
+          "bytes": 178,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/preflight-before-test.stdout.log",
+          "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+        "mode": "--dev",
+        "packages": 26,
+        "project": "trillionnium-chain",
+        "remote_policy_mutated": false,
+        "result": "PASS"
+      },
+      "started_unix_seconds": 1794125358.3138173
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 426.28416255605407,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794125784.7170815,
+      "label": "node-expiry-exact-native",
+      "logs": {
+        "node-expiry-exact-native.stderr.log": {
+          "bytes": 340,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/node-expiry-exact-native.stderr.log",
+          "sha256": "00e50abce07da645259683df84a9db044c3031437b9e819222c2db1863205121"
+        },
+        "node-expiry-exact-native.stdout.log": {
+          "bytes": 380,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/node-expiry-exact-native.stdout.log",
+          "sha256": "ba9e66f4947f756d4b55a3a3a7989447ab2dca3efa70e9e49b9696fc293aadde"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "ignored_names": [],
+        "passed_names": [
+          "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch"
+        ],
+        "summaries": [
+          [
+            1,
+            0,
+            0,
+            0,
+            1284
+          ]
+        ]
+      },
+      "started_unix_seconds": 1794125358.4329197
+    }
+  ],
+  "exact_test_name": "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+  "failures": [],
+  "finished_unix_seconds": 1794125785.048262,
+  "full_validation_executed": false,
+  "original_failed_run": {
+    "directory": "integrated-source-01",
+    "failed_command": "node-release-owner",
+    "failed_test": "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+    "result": "FAIL",
+    "source_commit": "af6b06fa1cb944e639148b58e9765fe2bb0065ab",
+    "summary": {
+      "bytes": 100127,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/summary.json",
+      "sha256": "f914399f9b6ea68ef81e56fc3ff53b4164ddf59df2dcbbf8b0f984f7009ade39"
+    }
+  },
+  "parent_commit": "af6b06fa1cb944e639148b58e9765fe2bb0065ab",
+  "production_activation": false,
+  "production_sources_changed": false,
+  "provider_unchanged": true,
+  "result": "PASS",
+  "schema": "trnm-pq-node-expiry-fixture-fix-v1",
+  "source_commit": "a14b7e2b51af9772210e5114945dfa7e309bf97b",
+  "source_tree": "16da421e676ab516b44c35cd7a9319af7be32b4f",
+  "source_unchanged_during_test": true,
+  "sqlite_qualified": true,
+  "targeted_test": {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+    "elapsed_seconds": 426.28416255605407,
+    "exit_code": 0,
+    "finished_unix_seconds": 1794125784.7170815,
+    "label": "node-expiry-exact-native",
+    "logs": {
+      "node-expiry-exact-native.stderr.log": {
+        "bytes": 340,
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/node-expiry-exact-native.stderr.log",
+        "sha256": "00e50abce07da645259683df84a9db044c3031437b9e819222c2db1863205121"
+      },
+      "node-expiry-exact-native.stdout.log": {
+        "bytes": 380,
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/node-expiry-exact-native.stdout.log",
+        "sha256": "ba9e66f4947f756d4b55a3a3a7989447ab2dca3efa70e9e49b9696fc293aadde"
+      }
+    },
+    "passed": true,
+    "readback": {
+      "ignored_names": [],
+      "passed_names": [
+        "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch"
+      ],
+      "summaries": [
+        [
+          1,
+          0,
+          0,
+          0,
+          1284
+        ]
+      ]
+    },
+    "started_unix_seconds": 1794125358.4329197
+  },
+  "test_source": {
+    "before": {
+      "bytes": 11809,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/service-tests-before.raw",
+      "sha256": "1b47a8384fa20bfd7c2a15c41f4a693eb8cede29c8100f45885d8ac80e66fee0"
+    },
+    "formatted": {
+      "bytes": 12829,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/service-tests-formatted.raw",
+      "sha256": "8f12bea3c6c3fc505c18d43844a7d86f6471988ba89bab1e61a9ea7457fa5f82"
+    },
+    "formatting_changed_bytes": false,
+    "reviewed_proposal": {
+      "bytes": 12829,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/service-tests-reviewed-proposal.raw",
+      "sha256": "8f12bea3c6c3fc505c18d43844a7d86f6471988ba89bab1e61a9ea7457fa5f82"
+    }
+  },
+  "whole_chain_pq_qualified": false
+}

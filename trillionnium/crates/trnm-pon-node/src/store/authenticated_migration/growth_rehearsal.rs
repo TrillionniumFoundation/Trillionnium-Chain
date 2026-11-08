@@ -220,6 +220,8 @@ fn verify_source(
     // These source-local observations remain archive facts, never candidate
     // dispatch or payment authority. Check their set and real source history.
     node.validate_native_budget_records_v1()?;
+    node.validate_native_task_operation_pins_v1()?;
+    node.validate_native_demand_evidence_v1()?;
     let pool: u64 = node
         .db
         .query_row("SELECT count(*) FROM local_pool_metadata", [], |r| r.get(0))?;
@@ -339,6 +341,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         #[cfg(test)]
         expected_schema,
         post_write_schema: None,
+        legacy_admission_schema: None,
         #[cfg(test)]
         public_history_test_sql_limit: None,
         #[cfg(test)]
@@ -351,6 +354,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         commitment_observation: RefCell::new(None),
         history_read_counters: Cell::new(super::super::HistoryReadCounters::default()),
         history_page_read_counters: Cell::new(super::super::HistoryPageReadCounters::default()),
+        native_owner_observer: RefCell::new(None),
         owner_policy: None,
         mining_owner: None,
         continuous_owner: None,

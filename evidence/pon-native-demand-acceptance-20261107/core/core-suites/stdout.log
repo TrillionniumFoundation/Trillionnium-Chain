@@ -1,0 +1,558 @@
+
+running 153 tests
+test checkpoint_tile_material_v1::tests::all_finite_bf16_patterns_match_independent_exact_f64_powers_and_even_rounding ... ok
+test checkpoint_tile_material_v1::tests::ieee_integer_rounding_zero_subnormal_ties_clips_and_nonfinite ... ok
+test continuity_v1::capacity_range_tests::capacity_range_full_return_abba_observation ... ignored, paired complete-capacity observation; not original Host or confirmation acceptance
+test continuity_v1::capacity_range_tests::capacity_ranges_match_full_state_and_authenticated_monetary_sources ... ok
+test continuity_v1::capacity_range_tests::capacity_ranges_preserve_first_error_and_exact_account_access_order ... ok
+test continuity_v1::capacity_range_tests::liability_ranges_keep_original_order_and_every_prefix_boundary ... ok
+test continuity_v1::capacity_range_tests::ordinary_capacity_keeps_full_key_limit_and_profile_error_precedence ... ok
+test continuity_v1::capacity_range_tests::ordinary_capacity_range_work_does_not_visit_unrelated_state_rows ... ok
+test continuity_v1::range_tests::complete_liability_ranges_keep_account_proof_calls_in_canonical_order ... ok
+test continuity_v1::range_tests::split_monetary_and_archive_ranges_keep_all_cancellation_cuts ... ok
+test deterministic_parallel_v1::tests::canonical_indices_and_unique_transaction_ids_are_required ... ok
+test deterministic_parallel_v1::tests::fee_limit_and_worker_bounds_fail_closed ... ok
+test deterministic_parallel_v1::tests::reverted_and_out_of_resource_never_write ... ok
+test deterministic_parallel_v1::tests::undeclared_access_and_noncanonical_sets_fail_closed ... ok
+test deterministic_parallel_v1::tests::worker_count_does_not_change_roots_or_receipts ... ok
+test growth_profile_v2::tests::growth_reference_codec_matches_independent_vector ... ok
+test growth_profile_v2::tests::growth_reference_independent_full_vectors_and_field_mutations ... ok
+test growth_profile_v2::tests::growth_reference_keeps_zero_nonce_history_and_working_bound ... ok
+test growth_profile_v2::tests::growth_reference_root_is_context_bound_and_conserved ... ok
+test model_composition_v4::oracle_observations::native_arithmetic_observations_for_independent_python ... ok
+test model_composition_v4::tests::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape ... ok
+test model_composition_v4::tests::exact_sum_and_ablation_count_a_nonzero_parent_once ... ok
+test model_composition_v4::tests::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero ... ok
+test model_composition_v4::tests::wide_sum_preserves_cancellation_but_checks_every_ablation_range ... ok
+test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification
+test pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges ... ok
+test pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget ... ok
+test pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges ... ok
+test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking
+test pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits ... ok
+test pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root ... ok
+test pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors ... ok
+test pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes ... ok
+test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput
+test pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback ... ok
+test pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits ... ok
+test pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material ... ok
+test pon_commitment::full_root_arithmetic_tests::arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks ... ok
+test pon_commitment::full_root_arithmetic_tests::arithmetic_prefix_keeps_two_signed_appends_and_cancelled_successor_rollback ... ok
+test pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_contention_poison_and_retention_refusal_keep_the_original_root ... ok
+test pon_commitment::full_root_arithmetic_tests::full_root_arithmetic_preserves_forks_charges_and_error_order ... ok
+test pon_commitment::full_root_arithmetic_tests::large_parent_full_root_arithmetic_rechecks_all_bytes_without_a_snapshot ... ok
+test pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join ... ok
+test pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent ... ok
+test pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps ... ok
+test pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return ... ok
+test pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers ... ok
+test pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order ... ok
+test pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution ... ok
+test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait
+test pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind ... ok
+test pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot ... ok
+test pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones ... ok
+test pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones ... ok
+test pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity ... ok
+test pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry ... ok
+test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks
+test pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order ... ok
+test pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost ... ignored, explicit paired component cost, including adversarial same-root hints; no throughput qualification
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries ... ok
+test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match ... ok
+test pon_executor::funded_service_v1::tests::arbitration_refund_and_customer_acceptance_consume_the_same_native_escrow ... ok
+test pon_executor::funded_service_v1::tests::delivery_cancellation_and_native_expiry_have_exact_ordering ... ok
+test pon_executor::funded_service_v1::tests::frozen_terms_and_actual_provider_receipt_precede_arbitration_payment ... ok
+test pon_executor::funded_service_v1::tests::profile_changes_context_and_refuses_old_or_partial_admission ... ok
+test pon_executor::growth::range_tests::borrowed_working_ranges_preserve_all_nonaccount_keys_and_pointer_identity ... ok
+test pon_executor::growth::range_tests::mandatory_owner_ranges_keep_shared_future_zero_and_lexical_capacity_errors ... ok
+test pon_executor::growth::range_tests::proved_account_aggregation_keeps_malformed_suffix_rows_overflow_and_error_order ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::actual_pq_evaluation_release_and_mature_claim_use_original_economic_owner ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::application_v6_tasks_use_both_current_keys_and_exact_selected_domains ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::historical_equivocation_survives_rotation_and_retains_bounded_verified_chunks ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::invalid_signature_retry_cannot_refill_prefix_verification_capacity ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::resource_preflight_counts_inner_proofs_and_underpriced_commands_do_no_crypto ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::late_round_conflict_blocks_unexecuted_adoption_without_rewriting_closure ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::pq_quorum_ignores_cross_round_bans_but_keeps_its_frozen_denominator ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::retired_key_newly_signed_old_evidence_cannot_poison_new_generation_round ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::scope_tests::same_generation_other_round_is_live_but_conflicted_round_cannot_vote ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::all_monetary_namespaces_and_zero_obligations_are_counted_without_netting ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::empty_ledger_inventory_never_certifies_external_obligations_or_retirement ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::inventory_counts_every_opaque_row_but_bounds_diagnostic_key_examples ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::inventory_rejects_wrong_pins_changed_state_and_inconsistent_issued_supply ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::malformed_account_is_not_relabelled_as_an_empty_ledger ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::unknown_debt_revocation_execution_and_active_model_rows_block_empty_inference ... ok
+test pon_executor::pq_accounts_v2::migration_inventory_v1::tests::zero_accounts_and_nonce_floors_are_preserved_as_identity_obligations ... ok
+test pon_executor::pq_accounts_v2::tasks_v4_tests::prepared_pq4_task_rechecks_actual_lease_and_both_authorities_before_any_fee_patch ... ok
+test pon_executor::pq_accounts_v2::tasks_v5_tests::prepared_pq5_atomic_renewal_rechecks_revision_prior_source_and_requester_before_fee_patch ... ok
+test pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once ... ok
+test pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads ... ok
+test pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots ... ok
+test pon_executor::pq_accounts_v2::tests::migration_refuses_unprojected_nonmonetary_source_state ... ok
+test pon_executor::pq_accounts_v2::tests::migration_refuses_zero_value_quota_and_release_records ... ok
+test pon_executor::pq_accounts_v2::tests::migration_requires_the_explicit_empty_current_model_sentinel ... ok
+test pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit ... ok
+test pon_executor::prefix_scan_tests::empty_and_nested_prefix_snapshots_revalidate_the_complete_observed_sets ... ok
+test pon_executor::prefix_scan_tests::funds_ranges_keep_complete_supply_and_malformed_namespace_boundaries ... ok
+test pon_executor::prefix_scan_tests::funds_ranges_keep_global_first_error_before_later_overflow_or_bad_types ... ok
+test pon_executor::prefix_scan_tests::mandatory_ranges_keep_expiry_priority_maturity_future_rows_and_unrelated_accounts ... ok
+test pon_executor::prefix_scan_tests::mandatory_ranges_keep_new_public_archives_and_remove_only_orphan_records ... ok
+test pon_executor::prefix_scan_tests::mandatory_ranges_preserve_global_cleanup_error_and_credit_failure_order ... ok
+test pon_executor::prefix_scan_tests::model_cleanup_ranges::disabled_profiles_ignore_missing_parameters_and_malformed_rows ... ok
+test pon_executor::prefix_scan_tests::model_cleanup_ranges::original_first_errors_and_partial_cleanup_states_are_preserved ... ok
+test pon_executor::prefix_scan_tests::model_cleanup_ranges::original_results_match_all_profiles_rounds_and_unrelated_accounts ... ok
+test pon_executor::prefix_scan_tests::prefix_rows_preserve_original_filter_order_values_and_all_string_boundaries ... ok
+test pon_executor::prefix_scan_tests::prefix_scan_does_not_replace_point_read_or_write_conflict_checks ... ok
+test pon_executor::prefix_scan_tests::prefix_scan_overlays_writes_and_retains_the_original_snapshot ... ok
+test pon_executor::prefix_scan_tests::prefix_scan_revalidation_keeps_insert_delete_and_value_conflicts ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_complete_failures_preserve_canonical_first_error_and_parent ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_signature ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relation ... ok
+test pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference ... ok
+test pon_executor::root_arithmetic_tests::arithmetic_root_distinguishes_exact_numeric_values_and_full_non_account_views ... ok
+test pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits ... ok
+test pon_executor::root_arithmetic_tests::borrowed_non_account_partition_keeps_actual_rows_changes_and_original_roots ... ok
+test pon_executor::root_arithmetic_tests::borrowed_non_account_partition_keeps_full_grammar_before_count_and_wire_limits ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched ... ok
+test pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities ... ok
+test pon_executor::root_arithmetic_tests::exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encoding ... ok
+test pon_executor::root_arithmetic_tests::shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation ... ok
+test pon_executor::session_tests::invalid_context_transaction_and_sequence_never_publish_session_state ... ok
+test pon_executor::session_tests::session_state_and_receipts_equal_existing_complete_builder ... ok
+test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth
+test pon_executor::streaming_root_tests::streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits ... ok
+test pon_executor::streaming_root_tests::streamed_m06_root_matches_original_values_removals_and_branch_edits ... ok
+test store::object_delta_tests::object_delta_detects_committed_parent_drift_before_first_write_v1 ... ok
+test store::object_delta_tests::object_delta_empty_initialization_and_noop_have_exact_write_counts_v1 ... ok
+test store::object_delta_tests::object_delta_insert_update_delete_matches_complete_target_v1 ... ok
+test store::object_delta_tests::object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1 ... ok
+test store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1 ... ok
+test store::object_delta_tests::object_delta_unexpected_parent_row_is_not_erased_v1 ... ok
+test tests::committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1 ... ok
+test tests::conflicts_outcomes_resources_and_fee_reduction_are_deterministic ... ok
+test tests::crash_outcomes_reopen_to_exact_source_target_or_fence ... ok
+test tests::exact_replay_and_parent_identity_are_fail_closed ... ok
+test tests::execution_preview_executes_full_fee_path_without_advancing_the_store ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::parallel_execution_tests::hotspot_revert_and_resource_exhaustion_match_sequential_journal_oracle ... ok
+test tests::parallel_execution_tests::multiple_speculative_failures_report_the_canonical_transaction_error ... ok
+test tests::parallel_execution_tests::speculative_insufficient_funds_is_retried_after_predecessor_funds_payer_or_source ... ok
+test tests::parallel_execution_tests::stale_speculative_success_cannot_publish_when_canonical_payer_is_exhausted ... ok
+test tests::parallel_execution_tests::workers_compute_program_meter_fees_and_successors_on_immutable_parent ... ok
+test tests::persistent_parallel_worker_count_bounds_fail_closed ... ok
+test tests::persistent_parallel_worker_counts_reopen_to_identical_canonical_results ... ok
+test tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed ... ok
+test tests::static_access_fee_and_arithmetic_mutants_fail_before_commit ... ok
+test tests::vector_inventory_matches_executable_candidate_assertions ... ok
+
+test result: ok. 145 passed; 0 failed; 8 ignored; 0 measured; 0 filtered out; finished in 120.99s
+
+
+running 9 tests
+test cancellation_payload_cannot_be_reinterpreted_as_invalid_state ... ok
+test complete_namespace_ranges_preserve_full_map_results_with_future_and_boundary_rows ... ok
+test complete_scan_matches_legacy_at_batch_and_capacity_boundaries ... ok
+test complete_scan_preserves_shared_zero_reward_and_archive_reservations ... ok
+test every_interruption_cut_stops_without_publishing_or_mutating_and_can_retry ... ok
+test malformed_state_keeps_original_error_and_cannot_publish_partial_capacity ... ok
+test namespace_seeks_keep_lexical_rejection_precedence_and_original_queue_checks ... ok
+test non_clone_cancellation_payload_keeps_its_identity ... ok
+test wrong_profile_rejects_before_progress_without_upgrading_old_context ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
+
+
+running 5 tests
+test actual_hashed_stream_header_must_equal_the_parsed_header ... ok
+test closed_activation_and_descriptor_changes_cannot_select_a_new_recipe ... ok
+test original_checkpoint_unselected_bytes_and_expected_matrix_pins_are_not_claims ... ok
+test strict_header_extents_unknown_fields_duplicates_and_progress_stop ... ok
+test synthetic_codec_fixture_full_relation_and_actual_signed_admission_binding ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37s
+
+
+running 1 test
+test canonical_bounded_policy_false_claims_and_exact_fresh_context ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+running 6 tests
+test all_future_credit_owners_and_archive_rows_are_reserved_once ... ok
+test maturity_queue_gaps_duplicates_and_mutated_maintenance_reject ... ok
+test native_deferred_funded_expiry_at_capacity_consumes_reserved_accounts ... ok
+test native_evaluation_closure_at_capacity_materializes_archive_then_cleans_it ... ok
+test new_profile_has_fresh_context_and_genesis_reserves_the_whole_queue ... ok
+test real_empty_execution_preserves_liability_bound_and_account_nonces ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 52.78s
+
+
+running 6 tests
+test classic_retained_closure_preserves_legal_appeals_and_late_conflicts ... ok
+test classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score ... ok
+test classic_retained_closure_rejects_substituted_summary_at_use_and_restore ... ok
+test fresh_profile_refuses_attested_models_and_cross_version_replay ... ok
+test independent_reference_vectors_match_native_domains_counts_and_records ... ok
+test retained_reveals_recheck_commitments_at_restore_close_and_adoption ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+
+running 8 tests
+test actual_capacity_rejection_rolls_back_suffix_and_allows_existing_account_transfer ... ok
+test authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity ... ok
+test authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse ... ok
+test changed_actual_parent_bytes_and_forged_root_never_construct_a_prefix ... ok
+test every_suffix_cancellation_and_unwind_restores_the_last_complete_prefix ... ok
+test incremental_signed_prefixes_keep_one_prologue_complete_rewards_receipts_and_roots ... ok
+test invalid_partial_group_and_changed_prefix_leave_prior_nonce_fees_and_state ... ok
+test warm_parent_and_full_root_fallback_keep_the_same_complete_prefix_outputs ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 69.08s
+
+
+running 4 tests
+test actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent ... ok
+test external_data_owner_signature_roots_order_and_repeated_content_fail_closed ... ok
+test native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile ... ok
+test pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.77s
+
+
+running 16 tests
+test actual_workspace_charge_exact_minus_plus_one_preserves_complete_large_deltas ... ok
+test branching_stages_and_unknown_parent_reseed_do_not_advance_base ... ok
+test disabled_cache_still_executes_real_full_rules_and_exact_deltas ... ok
+test explicitly_selected_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback ... ok
+test explicitly_selected_8192_key_and_workspace_limits_remain_full_root_fallbacks ... ok
+test full_actual_difference_checks_removals_empty_values_and_late_bad_value ... ok
+test increasing_the_software_key_budget_does_not_permit_invalid_cache_limits ... ok
+test late_invalid_signature_nonce_and_funds_do_not_mutate_parent_or_snapshot ... ok
+test maximum_keys_and_payload_combination_checks_exact_minus_and_plus_one ... ok
+test payload_budget_fallback_is_explicit_and_real_root_is_unchanged ... ok
+test protocol_bounds_canonical_errors_and_full_key_limit_remain_enforced ... ok
+test real_signed_prefixes_parallel_receipts_and_complete_state_are_identical ... ok
+test same_context_changed_actual_state_wrong_root_and_wrong_snapshot_are_rejected ... ok
+test serial_new_accounts_and_reward_maturity_match_each_actual_successor ... ok
+test signed_large_parent_prefixes_keep_full_rules_roots_receipts_and_exact_delta_parity ... ok
+test workspace_budget_still_falls_back_below_key_and_payload_limits ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 188.17s
+
+
+running 2 tests
+test complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting ... ok
+test complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.08s
+
+
+running 8 tests
+test actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity ... ok
+test both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required ... ok
+test consumer_and_provider_rotations_are_exclusive_in_both_block_orders ... ok
+test consumer_registration_and_quota_use_require_separate_parent_authority ... ok
+test full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation ... ok
+test rotated_provider_uses_stable_account_and_rejects_retired_proof_without_spending ... ok
+test same_block_quota_creation_cannot_supply_consumer_authority ... ok
+test v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.54s
+
+
+running 9 tests
+test actual_signed_nonce_previous_statement_and_parent_lease_bindings_refuse_cross_branch_replay ... ok
+test actual_two_state_owners_charge_two_proofs_and_retain_four_bounded_witness_leaves ... ok
+test either_bad_inner_or_outer_proof_wrong_account_and_wrong_source_never_spend_nonce_or_fee ... ok
+test full_32_task_slot_capacity_counts_64_real_proofs_and_never_enlarges_state_values ... ok
+test legacy_commands_old_profiles_wrong_material_and_unsigned_inner_wrappers_are_refused ... ok
+test missing_reordered_duplicate_oversized_and_other_task_witness_fragments_cannot_authorize ... ok
+test open_register_and_revoke_register_pairs_refuse_both_block_orders_without_partial_effects ... ok
+test retired_registration_cannot_authorize_work_and_current_dual_proofs_restore_the_same_meter ... ok
+test source_and_requester_rotations_exclude_task_use_in_both_orders_then_accept_current_keys ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.63s
+
+
+running 17 tests
+test actual_signed_nonce_previous_statement_and_parent_lease_bindings_refuse_cross_branch_replay ... ok
+test actual_two_state_owners_charge_two_proofs_and_retain_five_bounded_witness_leaves ... ok
+test atomic_all_five_fragment_boundaries_and_mixed_statement_bytes_fail_cold_authorization ... ok
+test atomic_renewal_bad_each_proof_role_account_nonce_branch_or_prior_spends_nothing ... ok
+test atomic_renewal_exact_codec_two_real_proofs_five_chunks_and_old_profile_refusal ... ok
+test either_bad_inner_or_outer_proof_wrong_account_and_wrong_source_never_spend_nonce_or_fee ... ok
+test full_32_task_slot_capacity_counts_64_real_proofs_and_never_enlarges_state_values ... ok
+test incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix ... ok
+test legacy_commands_old_profiles_wrong_material_and_unsigned_inner_wrappers_are_refused ... ok
+test missing_reordered_duplicate_oversized_and_other_task_witness_fragments_cannot_authorize ... ok
+test open_register_and_revoke_register_pairs_refuse_both_block_orders_without_partial_effects ... ok
+test renew_rotate_revoke_and_register_pairs_refuse_both_orders_then_use_current_authority ... ok
+test renewal_block_may_credit_verified_parent_output_without_granting_pending_future_work ... ok
+test renewal_rejects_expired_gap_wrong_revision_changed_scope_and_changed_material_atomically ... ok
+test requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past_output ... ok
+test retired_registration_cannot_authorize_work_and_current_dual_proofs_restore_the_same_meter ... ok
+test source_and_requester_rotations_exclude_task_use_in_both_orders_then_accept_current_keys ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.50s
+
+
+running 8 tests
+test account_forks_keep_the_original_state_nonce_owner_without_shared_credits ... ok
+test dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution ... ok
+test dual_possession_does_not_recover_already_compromised_classical_identity ... ok
+test native_parent_rejects_nonce_reset_liability_omission_and_rebound_parameters ... ok
+test pqg1_native_import_preserves_nonces_all_four_liabilities_and_original_m06_transfers ... ok
+test qtx1_from_another_import_context_refuses_even_if_declared_network_reused ... ok
+test real_wrong_signatures_context_nonce_quarantine_and_classical_fallback_refuse ... ok
+test rust_qtx1_matches_original_python_wire_signature_identity_and_exact_fee ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.59s
+
+
+running 8 tests
+test authenticated_revocation_is_terminal_and_preserves_retention ... ok
+test canonical_parallel_execution_tracks_global_generation_and_prefix_conflicts ... ok
+test explicit_genesis_has_real_bound_maintenance_and_old_context_isolated ... ok
+test failed_fee_signature_nonce_and_wrong_profile_do_not_publish_state ... ok
+test more_than_sixteen_demands_recycle_bounded_metadata_and_never_reuse_identity ... ok
+test renewal_requires_new_source_statement_and_preserves_real_output_meter ... ok
+test same_matrix_cannot_authorize_two_active_demands_and_slot_integrity_checked ... ok
+test source_cannot_reset_material_or_statement_sequence ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+
+running 1 test
+test lifecycle_owner_writes_exactly_once_after_all_validations_and_never_on_failure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 3 tests
+test old_v3_keeps_exact_height_and_never_adopts_v4_overlapping_behavior ... ok
+test overlap_owner_writes_exactly_once_after_all_validations_and_never_on_failure ... ok
+test signed_overlap_includes_at900_905_999_but_future_expired_regressing_or_invalid_sources_do_not_write ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+running 1 test
+test saturated_allocator_observations_flag_overflow_without_panicking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 65 tests
+test funded_service_task_v1::tests::decisions_have_no_ambiguous_verdict_or_predicted_output ... ok
+test funded_service_task_v1::tests::every_native_pq_profile_keeps_its_original_task_grammar ... ok
+test funded_service_task_v1::tests::exact_reservation_bytes_and_every_term_binding ... ok
+test pon_growth::tests::native_growth_v2_header_fixed_vector_and_domain_separation ... ok
+test pon_state::bulk_tests::bulk_collision_in_valid_prefix_keeps_original_error_precedence ... ok
+test pon_state::bulk_tests::bulk_complete_construction_cost_observation ... ignored, explicit full-build paired timing; not native Node throughput or public qualification
+test pon_state::bulk_tests::bulk_keeps_original_bounds_and_absent_empty_distinction ... ok
+test pon_state::bulk_tests::bulk_keeps_updates_inverse_and_failed_batch_snapshot_immutable ... ok
+test pon_state::bulk_tests::bulk_matches_insertion_shape_and_full_wire_at_size_edges ... ok
+test pon_state::bulk_tests::bulk_matches_original_every_divergence_depth_and_path_direction ... ok
+test pon_state::bulk_tests::bulk_nested_all_depths_matches_both_insertion_orders ... ok
+test pon_state::bulk_tests::bulk_real_65536_keys_preserves_every_leaf_and_original_root ... ok
+test pon_state::tests::all_deletions_return_empty_and_values_remain_bounded ... ok
+test pon_state::tests::compressed_roots_equal_independent_full_builder ... ok
+test pon_state::tests::failing_last_change_leaves_predecessor_and_content_unchanged ... ok
+test pon_state::tests::mixed_batches_match_full_builder_and_inverse_restores_predecessor ... ok
+test pon_state::tests::updates_deletes_and_empty_values_preserve_frozen_snapshots ... ok
+test pon_state::tests::wrong_root_duplicate_key_and_oversize_are_rejected ... ok
+test pon_wire::state_root_arithmetic::tests::complete_inputs_match_original_across_random_changes_and_reordered_rows ... ok
+test pon_wire::state_root_arithmetic::tests::equal_value_bytes_in_distinct_allocations_are_never_charged_as_one ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_eligibility_excludes_escapes_controls_and_non_ascii_wire_bytes ... ok
+test pon_wire::state_root_arithmetic::tests::exact_string_hits_cannot_publish_after_failure_collision_or_abandonment ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_require_full_current_keys_values_and_complete_row_sets ... ok
+test pon_wire::state_root_arithmetic::tests::exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit ... ok
+test pon_wire::state_root_arithmetic::tests::incomplete_sources_and_original_wire_limits_publish_no_partial_material ... ok
+test pon_wire::state_root_arithmetic::tests::large_values_reuse_only_identical_complete_leaf_lists ... ok
+test pon_wire::state_root_arithmetic::tests::pending_shared_values_preserve_old_material_and_release_on_every_failed_finish ... ok
+test pon_wire::state_root_arithmetic::tests::retention_refusal_and_eviction_preserve_root_and_existing_budget ... ok
+test pon_wire::state_root_arithmetic::tests::shared_value_index_collisions_and_unique_values_only_limit_optional_retention ... ok
+test pon_wire::state_root_arithmetic::tests::shared_values_charge_only_selected_allocations_and_migrate_unused_old_values ... ok
+test pon_wire::state_root_arithmetic::tests::shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool ... ok
+test pon_wire::state_root_arithmetic::tests::single_partition_forks_collision_checks_and_replacement_use_original_roots ... ok
+test pon_wire::streamed_state_root_tests::state_empty_constants_match_all_depths_and_parallel_callers ... ok
+test pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation ... ignored, explicit complete-root paired observation; not Node or WAN throughput
+test pon_wire::streamed_state_root_tests::state_node_single_buffer_matches_original_wire ... ok
+test pon_wire::streamed_state_root_tests::state_root_constants_do_not_cache_values_or_failures ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_drops_each_owned_encoding_before_requesting_the_next ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_preserves_original_sparse_tree_for_all_input_orders ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_refuses_duplicate_limit_and_truncated_producer_errors ... ok
+test pon_wire::tests::account_archive_reference_root_matches_independent_vectors ... ok
+test pon_wire::tests::contribution_without_signed_round_is_not_revision3_wire ... ok
+test pon_wire::tests::every_header_field_binds_its_wire_bytes_challenge_and_block_identity ... ok
+test pon_wire::tests::every_tx_tag_has_an_exact_payload ... ok
+test pon_wire::tests::header_exact_and_context_bound ... ok
+test pon_wire::tests::release_payload_is_bounded_and_sorted ... ok
+test pon_wire::tests::sparse_root_is_order_independent_and_value_sensitive ... ok
+test pq_frame::tests::entire_statement_has_one_exact_canonical_preflight_binding ... ok
+test pq_frame::tests::malformed_spki_or_classical_key_never_binds_pq_identity ... ok
+test pq_frame::tests::old_devnet_transaction_size_cannot_hold_pq_signature ... ok
+test pq_frame::tests::pinned_mldsa_spki_identity_matches_independent_sha256_vector ... ok
+test pq_frame::tests::sha384_payload_commitment_matches_independent_python_oracle ... ok
+test pq_frame::tests::stale_payload_and_signature_size_refuse ... ok
+test pq_frame::tests::unverified_signature_change_never_grants_authority ... ok
+test pq_frame::tests::zero_lifetimes_bad_length_and_classical_downgrade_reject ... ok
+test pq_native_accounts_v2::tests::closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse ... ok
+test pq_native_accounts_v2::tests::exact_fresh_frame_sizes_include_every_key_and_both_proofs ... ok
+test pq_native_accounts_v2::tests::joint_core_binds_context_generation_every_descriptor_and_full_new_key ... ok
+test pq_native_accounts_v2::tests::new_roles_require_exact_branch_generation_and_anchored_source_identity ... ok
+test pq_native_accounts_v2::tests::quota_successor_has_fresh_exact_roles_and_full_dual_proof_bytes ... ok
+test qualified_work_task::pq_lifecycle_v4::tests::native_pq_lease_revocation_domains_lengths_and_exact_branch_identity_are_fresh ... ok
+test sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams ... ok
+test sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams ... ok
+test tests::identifiers_and_decimal_values_are_canonical ... ok
+test tests::object_namespaces_do_not_collide ... ok
+test tests::result_commitment_binds_every_field ... ok
+
+test result: ok. 63 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 59.99s
+
+
+running 2 tests
+test aliases_empty_graph_overbudget_and_noncanonical_bytes_are_refused ... ok
+test exact_maximum_payload_and_envelope_roundtrip_preserve_old_codec ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test bounded_context_identity_window_padding_and_unaccepted_cost ... ok
+test exact_lease_vector_and_all_packet_truncations ... ok
+test new_signature_domain_binds_lease_and_signature_does_not_mint_identity ... ok
+test renew_does_not_change_output_meter_or_demand_identity ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 2 tests
+test exact_atomic_codec_rejects_every_cut_and_trailing_and_cross_bound_statement ... ok
+test fresh_context_changes_both_inner_and_outer_signed_messages ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test accepted_hardness_unknown_profile_recipe_and_padding_have_no_encoding ... ok
+test demand_nonce_cannot_create_another_output_meter_and_every_material_identity_binds ... ok
+test exact_codec_roundtrip_and_every_truncation_reject ... ok
+test exact_resource_bounds_and_maintenance_class_do_not_manufacture_learning_credit ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 56 tests
+test native_budget::evidence::tests::evidence_export_rechecks_live_journal_instead_of_trusting_a_cached_report ... ok
+test native_budget::evidence::tests::evidence_snapshot_preserves_binding_and_checks_exact_prefix ... ok
+test native_budget::task_operation_v2::tests::checkpoints_detect_local_rollback_and_owner_fence_still_blocks_redispatch ... ok
+test native_budget::task_operation_v2::tests::exact_binding_and_fresh_namespace_reject_old_journals ... ok
+test native_budget::task_operation_v2::tests::second_journal_and_lost_owner_acknowledgement_never_receive_a_second_new ... ok
+test native_budget::task_operation_v2::tests::stale_native_anchor_capacity_and_resource_overrun_fail_closed ... ok
+test native_budget::task_operation_v2::tests::unknown_output_is_bound_once_after_durable_intent_costs_and_actual_delivery ... ok
+test native_budget::tests::all_six_lanes_bind_actual_row_shapes_and_payment_stays_an_owner_proof ... ok
+test native_budget::tests::an_in_window_anchor_cannot_override_its_cancelled_native_funding_row ... ok
+test native_budget::tests::closed_source_and_unknown_cost_cannot_be_reallocated_after_reorg ... ok
+test native_budget::tests::completed_effect_readback_rejects_stale_or_changed_owner_after_restart ... ok
+test native_budget::tests::completed_effect_readback_requires_exact_history_and_original_chain ... ok
+test native_budget::tests::completed_no_gain_service_cannot_record_payment_without_resource_outcome ... ok
+test native_budget::tests::composition_preflight_checks_late_funding_failure_without_changing_the_journal ... ok
+test native_budget::tests::composition_preflight_is_not_authority_and_exact_recovery_keeps_original_context ... ok
+test native_budget::tests::effect_window_refusal_does_not_consume_an_intent_or_change_its_exact_binding ... ok
+test native_budget::tests::effect_window_replay_survives_reorg_and_restart_only_for_reconciliation ... ok
+test native_budget::tests::expiry_charges_unknown_jobs_without_removing_pending_target_intents ... ok
+test native_budget::tests::global_operation_binding_cannot_be_reused_for_another_claim ... ok
+test native_budget::tests::journal_damage_foreign_store_and_policy_repin_are_fail_closed ... ok
+test native_budget::tests::journal_namespace_and_length_framing_have_an_exact_independent_vector ... ok
+test native_budget::tests::journal_replay_rechecks_the_recorded_window_against_its_own_anchor ... ok
+test native_budget::tests::journal_write_fence_committed_readback_requires_exact_prefix_and_allows_valid_append ... ok
+test native_budget::tests::journal_write_fence_does_not_hide_user_objects_behind_sql_like_underscore ... ok
+test native_budget::tests::journal_write_fence_rechecks_live_namespace_for_same_id_replay_and_report ... ok
+test native_budget::tests::journal_write_fence_refuses_successful_statements_that_rewind_the_intent ... ok
+test native_budget::tests::journal_write_fence_refuses_suppressed_intent_before_new_dispatch ... ok
+test native_budget::tests::journal_write_fence_same_id_replay_never_uses_an_old_memory_state ... ok
+test native_budget::tests::native_payment_readback_rechecks_exact_current_owner_and_never_changes_history ... ok
+test native_budget::tests::native_quota_payment_preserves_zero_credit_when_actual_fee_consumes_gross ... ok
+test native_budget::tests::native_reward_budget_and_claim_cannot_invent_fractional_maturation ... ok
+test native_budget::tests::native_reward_payment_requires_original_reward_identity_and_entire_amount ... ok
+test native_budget::tests::native_task_and_quota_cannot_reserve_an_impossible_zero_output ... ok
+test native_budget::tests::no_gain_cannot_unlock_rewards_or_reclassify_failed_contracts ... ok
+test native_budget::tests::no_gain_contract_fee_requires_completed_effect_and_exact_native_payment ... ok
+test native_budget::tests::old_owner_generation_and_context_cannot_authorize_new_jobs ... ok
+test native_budget::tests::payment_requires_exact_source_beneficiary_operation_and_real_fee_split ... ok
+test native_budget::tests::release_claim_is_rechecked_before_the_first_external_intent ... ok
+test native_budget::tests::reorg_and_restart_preserve_pending_and_completed_effects_without_redispatch ... ok
+test native_budget::tests::reports_read_one_snapshot_while_another_handle_appends ... ok
+test native_budget::tests::reward_same_id_with_changed_sibling_fees_cannot_fund_new_physical_work ... ok
+test native_budget::tests::source_is_rechecked_before_each_new_effect_and_cannot_be_reassigned_across_lanes ... ok
+test native_budget::tests::task_existing_receipt_must_bind_subject_before_reservation_and_intent ... ok
+test native_budget::tests::two_store_handles_cannot_double_reserve_the_same_native_funds ... ok
+test native_budget::tests::unknown_cost_is_full_and_repair_dimensions_are_independently_bounded ... ok
+test tests::canonical_command_bytes_reject_trailing_and_truncation ... ok
+test tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence ... ok
+test tests::committed_block_journal_covers_empty_same_block_and_tamper_boundaries ... ok
+test tests::execution_preview_checks_bilateral_receipt_and_preserves_durable_rows ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved ... ok
+test tests::receipt_signatures_sequence_prices_and_cumulative_roots_fail_closed ... ok
+test tests::rollup_requires_complete_exact_unassigned_receipt_interval ... ok
+test tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_closed ... ok
+test tests::settlement_maturity_versions_replay_and_one_shot_are_exact ... ok
+test tests::vector_inventory_matches_candidate_assertions ... ok
+
+test result: ok. 56 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.27s
+

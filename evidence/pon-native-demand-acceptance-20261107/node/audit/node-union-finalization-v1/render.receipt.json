@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/render_node_union_report_recovery_v1.py",
+    "--union",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+    "--output-directory",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-91-target-report-v1",
+    "--original-diagnosis",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.json"
+  ],
+  "elapsed_seconds": 0.09797525405883789,
+  "exit_code": 0,
+  "name": "render",
+  "qualification": false,
+  "script": {
+    "bytes": 11703,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/render_node_union_report_recovery_v1.py",
+    "sha256": "5cd3d591f3a9da480175abdf2e419fd85dbd23c360d8a777765c8624b49a07b4"
+  },
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/render.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 1481,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/render.stdout.log",
+    "sha256": "a47548530724155d4e67809b1fff0aa6811e2820dc482c0dab4257baa8aa9598"
+  }
+}

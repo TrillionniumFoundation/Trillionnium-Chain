@@ -1,0 +1,5 @@
+test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... TRNM_PQ_FIXTURE_CLEANUP {"child_cleanup_error":null,"child_exit_observed":true,"child_exit_success":true,"cleanup_complete":true,"primary_error_preserved":true,"worker_cleanup_error":null,"worker_join_observed":true}
+
+thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (620145) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:637:6:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: "IO: Connection reset by peer (os error 104)", source: Some(Os { code: 104, kind: ConnectionReset, message: "Connection reset by peer" }), request_history_budget: false }
+FAILED

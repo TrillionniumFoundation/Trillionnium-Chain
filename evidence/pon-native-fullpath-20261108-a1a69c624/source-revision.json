@@ -1,0 +1,10 @@
+{
+  "archive_sha256": "2fed7ca9901b033b8d2bb5d753f4253db29044c6cc87cabf5d07219eef689fc4",
+  "base_commit": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "branch": "fix/chain-native-full-verification-20261108",
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "github_operator": "ProfHepta",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "source_commit": "a1a69c624db33205a69973b98a6db0f7d22e0782",
+  "source_tree": "8b1759580bad0c260f692ca3405ba7d856cd6bd5"
+}

@@ -1,0 +1,374 @@
+{
+  "actual_discovered_test_inventory": {
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/enumeration-01/manifest.json",
+    "sha256": "95d08870fff5d1b1159b242fcbb0ef4e5111f857007c4689865c06de2b3f63e8"
+  },
+  "all_candidate_positive_gates_passed": true,
+  "all_frozen_sources_unchanged": true,
+  "base_commit": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+  "canonical_A_head": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+  "canonical_A_status": "",
+  "changed_current_pins": {
+    "scripts/ci/check_ci_contract.py": {
+      "after": "2353de852f9b9aeb223c0caff120c07245308071",
+      "before": "f1493d73d06f856b558b5b6d4ff93c844c1fb0e5"
+    },
+    "scripts/ci/ci_job.sh": {
+      "after": "84ed4bd9f52d6a24aa25fd69c872a75ac037e3a1",
+      "before": "fb6069abd1ea6f5d5efc267db92dba000b540e2e"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "after": "f9a8a8d9f7d354a742a4bbfac0f840a4263c3243",
+      "before": "bf7fb625b45a701dacc6cccd603c8ea05ecc3e1b"
+    },
+    "scripts/test_w1_generation_target_v2.py": {
+      "after": "17db3b13592882edc0df711fc1b58a386e73ff85",
+      "before": "c5a75c12da27dff6878af7f333584fd1a0f0a30d"
+    },
+    "scripts/test_w1_owned_generation_runtime_v2.py": {
+      "after": "ae3ae55f0b51becbc2f866cf016fd15f810d598c",
+      "before": "f6a62854ca574c2605305d0cb0b39674469a86ea"
+    },
+    "scripts/test_w1_owner_cancellation_v1.py": {
+      "after": "f2dd17866397814c6c968ef1093044aebfb21706",
+      "before": "ba83b7d664c2b3cb8f147f98d2f4235efc260ce1"
+    },
+    "scripts/w1_generation_target_v2.py": {
+      "after": "f58c8ede6d6b4db073c7e71111c27cde70275f6f",
+      "before": "902bc3cc5c6bacccbdbc254b9c42d1f130f49cd9"
+    },
+    "scripts/w1_owned_generation_runtime_v2.py": {
+      "after": "db6b3690f68700a7b66f45ece57844bec0996dff",
+      "before": "dd807c2d20216d6a4499f17ad3e9bf3b8a075aeb"
+    },
+    "scripts/w1_owner_cancellation_v1.py": {
+      "after": "10d2b287f8adca9a6fde3e2191fc0a5c6f106585",
+      "before": "043ffc470e343a99d1812e2610114f962cb25b49"
+    }
+  },
+  "commands": [
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "elapsed_ns": 114806895,
+      "exit": 0,
+      "label": "00-preflight",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/00-preflight.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/00-preflight.stdout",
+      "stdout_sha256": "22e2178221fa739d1cacc4bd4cfc5debe14a6dcccbe6f397a79e0b0c43b25b07"
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "elapsed_ns": 215980538,
+      "exit": 0,
+      "label": "01-ci-contract",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/01-ci-contract.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/01-ci-contract.stdout",
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "elapsed_ns": 366071473,
+      "exit": 0,
+      "label": "02-pq-integration",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/02-pq-integration.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/02-pq-integration.stdout",
+      "stdout_sha256": "d2ec18588a08817514f0ace14c729e941c79ac12841e7f08aa5848470ee6f389"
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_ns": 165469817,
+      "exit": 0,
+      "label": "03-distributed-inventory",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/03-distributed-inventory.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/03-distributed-inventory.stdout",
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "elapsed_ns": 115189842,
+      "exit": 0,
+      "label": "04-current-implementation",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/04-current-implementation.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/04-current-implementation.stdout",
+      "stdout_sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_ns": 98243191603,
+      "exit": 0,
+      "label": "05-repository-markdown",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/05-repository-markdown.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/05-repository-markdown.stdout",
+      "stdout_sha256": "2631437121ddf6fceebef93a4999721445fce8091e4109a67c9bd4fea7fce965"
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "elapsed_ns": 65884512,
+      "exit": 0,
+      "label": "06-diff-check",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/06-diff-check.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/06-diff-check.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "corpus_after_blob": "18418fc33724fd37d7034ba89569ad126f49a078",
+  "corpus_after_sha256": "1b8901e2821a59acac1f44d5e1c19f2fdf0d098dcc026bc7be4e405aa757d0f4",
+  "corpus_before_sha256": "ae5c03825f281b87452b5dc4aef919a88ebc813fbdd6be5321cf1f664d5230c8",
+  "frozen_source_record": {
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/frozen-sources.json",
+    "paths": 638,
+    "sha256": "76191b6db1baeb5eb897f1adfe7eea7bf3a5bb73a2f05ca809f9f74248f9be71"
+  },
+  "frozen_source_record_after": {
+    "bytes": 154224,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/c1b-ci-01/final-pin-freeze-01/frozen-sources-after.json",
+    "sha256": "76191b6db1baeb5eb897f1adfe7eea7bf3a5bb73a2f05ca809f9f74248f9be71"
+  },
+  "full_exact_suite_executed": false,
+  "head_changed": false,
+  "historical_evidence_rewritten": false,
+  "mandatory104_block_executed": false,
+  "mandatory_test_methods": 104,
+  "non_pin_corpus_fields_unchanged": true,
+  "pins_after": 636,
+  "pins_before": 636,
+  "required_after": 544,
+  "required_before": 544,
+  "schema": "TRNM-W1-C1B-CI-PIN-FREEZE1",
+  "selected_test_method_invocations": 471,
+  "sole_plan_sha256": "8fd5a0cbe429c73d41de09039aea456490304e52e77f4f8fd02b0e6646f06e57",
+  "workflow_inline_pins_checked": [
+    {
+      "actual": "3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13",
+      "expected": "3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    {
+      "actual": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf",
+      "expected": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+      "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    {
+      "actual": "ddc4e1d317ce962e453a1f08db7f608e43a8e152",
+      "expected": "ddc4e1d317ce962e453a1f08db7f608e43a8e152",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    {
+      "actual": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+      "expected": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+      "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    {
+      "actual": "9202edd5d62220f097ca4f7b87e4cbd2a130f8c4",
+      "expected": "9202edd5d62220f097ca4f7b87e4cbd2a130f8c4",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs",
+      "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    {
+      "actual": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "expected": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+    },
+    {
+      "actual": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+      "expected": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "a6eb85aa2c2e3ad17244890128ef86975d71ecc9",
+      "expected": "a6eb85aa2c2e3ad17244890128ef86975d71ecc9",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "6119f98bb45fda6399d2528db9f61a69751e397f",
+      "expected": "6119f98bb45fda6399d2528db9f61a69751e397f",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "c002d1389908f81a40cf914154756d3d09ce06e3",
+      "expected": "c002d1389908f81a40cf914154756d3d09ce06e3",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "expected": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "c98c5333ab3609b30b11fd0a700917ce7f2a8999",
+      "expected": "c98c5333ab3609b30b11fd0a700917ce7f2a8999",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "e99453b1abe6ce589f003be199b5553241cba398",
+      "expected": "e99453b1abe6ce589f003be199b5553241cba398",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "eed2c350e3dfd17a66d7c4f4225ee2f02d3c0e60",
+      "expected": "eed2c350e3dfd17a66d7c4f4225ee2f02d3c0e60",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "5e3769d3186026a7bac012be534f0d6cad5e362a",
+      "expected": "5e3769d3186026a7bac012be534f0d6cad5e362a",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "expected": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "expected": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "matches": true,
+      "source": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "526f155f2215184aa607da6d453423ca6930ded2",
+      "expected": "526f155f2215184aa607da6d453423ca6930ded2",
+      "matches": true,
+      "source": "formal/pon-nakamoto-v1/test_work_query_bound.py",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "expected": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "expected": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "expected": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "expected": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "expected": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "expected": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "expected": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual": "ec6420becaba837f22d45c917d15554a8e653275",
+      "expected": "ec6420becaba837f22d45c917d15554a8e653275",
+      "matches": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    }
+  ],
+  "workspace_status": " M config/pon/pq-cross-branch-corpus-v1.json\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M scripts/ci/check_ci_contract.py\n M scripts/ci/ci_job.sh\n M scripts/ci/test_ci_contract.py\n M scripts/test_w1_generation_target_v2.py\n M scripts/test_w1_owned_generation_runtime_v2.py\n M scripts/test_w1_owner_cancellation_v1.py\n M scripts/w1_generation_target_v2.py\n M scripts/w1_owned_generation_runtime_v2.py\n M scripts/w1_owner_cancellation_v1.py\n?? scripts/.hepta-lock-0300d291d23ec123387b88fc\n?? scripts/.hepta-lock-5bb54bff341133e6951576ac\n?? scripts/.hepta-lock-6c5fbac1a7d233cdf013a879\n?? scripts/.hepta-lock-7f5e91711c2cecef4ac6ea80\n?? scripts/.hepta-lock-bd348961d3a687735c9fd4fe\n?? scripts/.hepta-lock-d1c3cf00d41737f92f960198\n",
+  "wrapper": {
+    "bytes": 13496,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/exact-ci-wrapper-proposal-03/run_exact_committed_ci_v3.py",
+    "sha256": "c6fa6f1d080c1a50424d646670280ed962e0330eef4a410c14fd93ac5c2e4c74"
+  },
+  "wrapper_preparation": {
+    "bytes": 5026,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-validation/exact-ci-wrapper-proposal-03/preparation.json",
+    "sha256": "6356bc030c1717163c166b80ace7dba2dd259626ff3d696cbb9a29d0324a7c8e"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "boundary": "This later read-only Hepta process has umask0077. The original controls PID had already exited; this is not a measurement of that ended process. No creator or test executed.",
+  "job_id": "1a1b736f679-12894-9ad",
+  "observed": {
+    "paths": [
+      {
+        "dev": 2050,
+        "gid": 0,
+        "ino": 36962305,
+        "mode": "0o1777",
+        "path": "/tmp",
+        "resolved": "/tmp",
+        "symlink": false,
+        "uid": 0
+      },
+      {
+        "dev": 2050,
+        "gid": 0,
+        "ino": 36962305,
+        "mode": "0o1777",
+        "path": "/tmp",
+        "resolved": "/tmp",
+        "symlink": false,
+        "uid": 0
+      },
+      {
+        "dev": 2050,
+        "gid": 1000,
+        "ino": 1492273,
+        "mode": "0o700",
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+        "resolved": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+        "symlink": false,
+        "uid": 1000
+      },
+      {
+        "dev": 2050,
+        "gid": 1000,
+        "ino": 1868162,
+        "mode": "0o600",
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/scripts/ci/test_public_fixture_lease.py",
+        "resolved": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/scripts/ci/test_public_fixture_lease.py",
+        "symlink": false,
+        "uid": 1000
+      }
+    ],
+    "processes": [
+      {
+        "error": "FileNotFoundError(2, 'No such file or directory')",
+        "pid": 1242677
+      },
+      {
+        "pid": 1276743,
+        "status": {
+          "Gid": "1000\t1000\t1000\t1000",
+          "Name": "python3",
+          "PPid": "1276735",
+          "Uid": "1000\t1000\t1000\t1000",
+          "Umask": "0077"
+        }
+      }
+    ],
+    "real_egid": 1000,
+    "real_euid": 1000,
+    "real_gid": 1000,
+    "real_uid": 1000,
+    "source_modified": false,
+    "test_or_creator_executed": false
+  }
+}

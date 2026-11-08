@@ -1,0 +1,50 @@
+{
+  "label": "verify-arith-last-fold-query-value",
+  "command": [
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+    "verify",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/statement.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value"
+  ],
+  "exit_code": 1,
+  "outer_wall_seconds": 0.9926563471090049,
+  "expected_success": false,
+  "matched_exit_expectation": true,
+  "final": {
+    "error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+    "process_wall_ms": 983.700485,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-stark-run-v1",
+    "status": "REJECTED_OR_FAILED"
+  },
+  "phase_events": [
+    {
+      "elapsed_ms": 17.669034,
+      "phase": "bounded_read_decode_and_proof_shape"
+    },
+    {
+      "elapsed_ms": 8.417710999999999,
+      "phase": "canonical_plans_and_public_only_sha_air"
+    },
+    {
+      "elapsed_ms": 53.702932000000004,
+      "phase": "sha_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 296.69941700000004,
+      "phase": "sha_stark_verify"
+    },
+    {
+      "elapsed_ms": 568.6838389999999,
+      "phase": "arith_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 36.030055999999995,
+      "phase": "arith_stark_verify"
+    }
+  ],
+  "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value/statement.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-01/late-query-campaign/arith-last-fold-query-value\"\n\tUser time (seconds): 4.74\n\tSystem time (seconds): 0.15\n\tPercent of CPU this job got: 495%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.99\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 131676\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 35070\n\tVoluntary context switches: 357\n\tInvoluntary context switches: 262\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+  "combined_log_sha256": "68ddbf6c325e0b9f14c2fd23cb5478d53bbf5a228e415a7b01714e7b2c0b43d9"
+}

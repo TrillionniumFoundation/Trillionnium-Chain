@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/test_pq_chain_claim_guard.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.8172784610651433,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794124209.759002,
+  "label": "pq-claim-negatives",
+  "logs": {
+    "pq-claim-negatives.stderr.log": {
+      "bytes": 136,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/pq-claim-negatives.stderr.log",
+      "sha256": "a3b6532a03925d1e51ffca7bb9b04548f7f7ec8f4c1e5911575a1d019b7b2e1e"
+    },
+    "pq-claim-negatives.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/pq-claim-negatives.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      37
+    ]
+  },
+  "started_unix_seconds": 1794124208.9417238
+}

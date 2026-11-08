@@ -1,0 +1,17 @@
+{
+  "actual_nice": 0,
+  "equivalence_claim": "Same recorded build projection, provider artifacts, compiler, kernel and test flags; not full environmental identity.",
+  "fixed_public_kernel_parent_exists": false,
+  "full_effective_environment_canonical_sha256": "0a9a3d149c9cc98fdb38a0c219f3bca33e7e21f90f8c5414778b680298a5310c",
+  "full_environment_not_retained": "Only a digest; values outside the original build projection may be private.",
+  "inherited_environment_variables_removed": [],
+  "inherited_policy_environment_names_and_hashes": {},
+  "original_run_full_environment_not_available": true,
+  "profile_or_rustflags_overrides_added": [],
+  "qualification": false,
+  "requested_cpu_quota_percent": null,
+  "requested_host_timeout_seconds": 10800,
+  "requested_memory_max_bytes": null,
+  "requested_nice": 0,
+  "self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b6b4fa87-12894-60d.service\n"
+}

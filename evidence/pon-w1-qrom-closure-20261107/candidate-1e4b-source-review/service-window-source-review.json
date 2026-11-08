@@ -1,0 +1,221 @@
+{
+  "additional_native_runs_performed": 0,
+  "authoring_observation": {
+    "cause": "The isolated diagnostic manifest uses files; the main manifest uses payload_files.",
+    "corrected_reader_selects_actual_declared_field_for_each_archive": true,
+    "error": "KeyError: 'payload_files'",
+    "exit_code": 1,
+    "native_failure_or_rerun": false,
+    "prior_job": "1a1b690ceaf-12894-513",
+    "prior_report_write_reached": false
+  },
+  "confirmed": {
+    "actual_error": "M15 conservative trusted time interval is outside the exact window",
+    "conservative_upper_ns": "(signed_floor + 1) * 1000000000 + ceil(elapsed_boottime_ns * 2000000 / 1000000)",
+    "expected_test_error": "lost after durable completion",
+    "failure_location_scope": "The actual error and source ordering place this failure before the Admitted/Published hooks. No direct timing sample or admission counter was emitted for this failed call.",
+    "fixture_clock": "Time::now = 20 + floor(2 * BOOTTIME elapsed seconds); maximum_rate_ppm = 2000000",
+    "isolated_exact_diagnostic": {
+      "binary_identity_scope": "Compared retained identities and actual command paths; did not rehash the 484 MB executable in this review.",
+      "binary_path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/trnm_pon_node-fdf9d65ae4c07bb3",
+      "elapsed_seconds": 3.526498616905883,
+      "exit_code": 0,
+      "original_failure_overridden": false,
+      "record": {
+        "bytes": 1131,
+        "path": "native-1e4bffc371bc-failure-diagnostic/service-exact-test.json",
+        "sha256": "924d9ada313f931ca5d6de8a98a160e5eaba34f3c0f14022129c9bf8d2617774"
+      },
+      "retained_before_after_binary_sha256": "5a888454c8321c9ab82681d47ce5058c7f6410c34d13e2fa45004d373f1d9536",
+      "runs": 1,
+      "selected_source_before_after_sha256": "06d49cf298ee945b34d9b11481fc01e65800f750947975eee815a6ba007cbc45",
+      "source_count": 2805,
+      "stderr": {
+        "bytes": 0,
+        "path": "native-1e4bffc371bc-failure-diagnostic/service-exact-test.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 239,
+        "path": "native-1e4bffc371bc-failure-diagnostic/service-exact-test.stdout.log",
+        "sha256": "3f5cb75229475635bd5f2e16f44ef41792e819838eebe5c5b30db9d67670c677"
+      }
+    },
+    "original_module": {
+      "command": {
+        "bytes": 1029,
+        "path": "native-1e4bffc371bc/release-owner-tests.json",
+        "sha256": "d75364e022ba0630bbfbd18dca949c7307dc2771c59d9721fdc73ecd0ab22591"
+      },
+      "failed": 1,
+      "failed_name": "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+      "ignored": 1,
+      "passed": 40,
+      "registered": 42,
+      "stderr": {
+        "bytes": 291,
+        "path": "native-1e4bffc371bc/release-owner-tests.stderr.log",
+        "sha256": "d49ba74ab56f4e203a1cd95ff6f5dc586c753a20b49617fff0822c4235b66ed5"
+      },
+      "stdout": {
+        "bytes": 5669,
+        "path": "native-1e4bffc371bc/release-owner-tests.stdout.log",
+        "sha256": "36adedc308cbe8b23fc97e3631296c005c75b5becf78bb6f37261f477e244387"
+      }
+    },
+    "source_error_branch": "clock_contract.rs Sample::check_at: upper > expires after validity and freshness checks",
+    "source_order": "service_store.rs Store::decide calls sample.check(window) before service_faults::admitted and before durable publish/Published hook",
+    "test_window": "service_tests.rs sets expires_at = fixture.time.now() + 2 before request signing"
+  },
+  "decision": {
+    "change_production_clock_guard": false,
+    "edit_test_to_erase_failure": false,
+    "recommendation": "Retain the module failure and separate single exact PASS. The conservative interval rejection is established; invocation-specific timing cause remains unknown. No product fix is justified by these records.",
+    "run_additional_diagnostics": false,
+    "widen_window": false
+  },
+  "final_summary_scope_review": {
+    "all_33_stage_json_and_66_raw_log_bytes_hashes_match": true,
+    "all_fifteen_registered_once_and_actual_ok": true,
+    "all_observed_command_expectations_met": false,
+    "archives": [
+      {
+        "all_members_rechecked": true,
+        "bytes": 1066112,
+        "path": "native-1e4bffc371bc/observations.tar.gz",
+        "payload_count": 134,
+        "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0"
+      },
+      {
+        "all_members_rechecked": true,
+        "bytes": 561619,
+        "path": "native-1e4bffc371bc-failure-diagnostic/observations.tar.gz",
+        "payload_count": 20,
+        "sha256": "413a6c7bf5a589b876cf05dd72855379b1643b9da2cbe19d64bacc3a5d5a9d09"
+      }
+    ],
+    "checked_command_count": 33,
+    "controller_exit": 2,
+    "controller_exit_used_as_narrow_verdict": false,
+    "controller_state": "failed",
+    "controller_terminal": {
+      "bytes": 731,
+      "path": "native-candidate-1e4b-controller-terminal.json",
+      "sha256": "1f65b42512567bddf6fe95b1abbc7ea64b1513248156cfc2d70ae8e2d81e0430"
+    },
+    "controller_timed_out": false,
+    "critical_root_count": 7,
+    "critical_sealed_count": 8,
+    "entire_release_owner_module_pass": false,
+    "failed_observations": [
+      "full-source-before",
+      "release-owner-tests",
+      "full-source-after"
+    ],
+    "full_tracked_identity_verified": false,
+    "full_workspace_tests_rerun": false,
+    "key_fifteen": {
+      "bytes": 6684,
+      "path": "native-1e4bffc371bc-review/key-fifteen-completion.json",
+      "sha256": "c1dc07256e70241643786fe77319d92aa07dc1c829af95d2576fb2d9998e3d4c"
+    },
+    "narrow_candidate_gate_pass": false,
+    "primary_summary": {
+      "bytes": 57689,
+      "path": "native-1e4bffc371bc/native-summary.json",
+      "sha256": "ddf738cce4d0d37d2d53cca440dc2f84b0a039372d88b299fe53b64fbd12cf1f"
+    },
+    "raw_log_binding_manifest_sha256": "5e236dff8cd2622f5c15a617e6f33dec9c076461476f8a13b7bb2b7d35f6c783",
+    "review_summary": {
+      "bytes": 24356,
+      "path": "native-1e4bffc371bc-review/summary.json",
+      "sha256": "90ee6d281e5b4d4e71ef3ca8c27eb49b66cf3260bf58840278ef0b3041e66d00"
+    },
+    "summary_scope_or_raw_binding_defects_found": []
+  },
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "inference": [
+    "The signed sample follows window construction, so its floor is at least the construction floor under the fixture contract.",
+    "If those floors are equal, the interval check permits at most 0.5 BOOTTIME seconds from ClockClient ticket start to admission check. If the signed floor has advanced by one, any positive elapsed interval makes this upper bound exceed the window.",
+    "Request signing/verification before clock ticket start can change the integer phase; subsequent signing, transport, durable preparation and scheduling contribute to the elapsed bound. These are candidate mechanisms, not measured attribution for this failure."
+  ],
+  "no_source_mutation": true,
+  "observed_utc": "2026-11-07T15:14:23.587864+00:00",
+  "qualification": {
+    "complete_program_semantics_proved": false,
+    "post_quantum_soundness_qualified": false,
+    "production_or_consensus_admission_authorized": false,
+    "unconditional_project_security_bits": null
+  },
+  "reviewer": "implementation_audit",
+  "schema": "TRNM-W1-A-SERVICE-WINDOW-SOURCE-AND-SCOPE-REVIEW1",
+  "source_files": [
+    {
+      "bytes": 11809,
+      "git_blob": "1fc96a9b1fb061a11648dbfa22c68007fc47ca45",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+      "sha256": "1b47a8384fa20bfd7c2a15c41f4a693eb8cede29c8100f45885d8ac80e66fee0"
+    },
+    {
+      "bytes": 10775,
+      "git_blob": "edefa3088bb4cd69ede6a83dca92b7b0d6a6bf87",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+      "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+    },
+    {
+      "bytes": 3396,
+      "git_blob": "98da5de6a6856dbe1a0a1e042fac4f0262fed3c3",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs",
+      "sha256": "702f582374706400530529bce619acd86228222152eb1e5d34bb453b1e169e60"
+    },
+    {
+      "bytes": 6444,
+      "git_blob": "fb0347b0d28e9bf40f7f0ce898570a6b65cfad53",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs",
+      "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+    },
+    {
+      "bytes": 5931,
+      "git_blob": "a3bd44bc4ab6bfdd6d3dfceb6f7f0bb4881b5317",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs",
+      "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273"
+    },
+    {
+      "bytes": 8222,
+      "git_blob": "b2207b42fa1fc1b2496cea8fff35d8c013a2a86b",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+      "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8"
+    },
+    {
+      "bytes": 11567,
+      "git_blob": "2a004b07955d721a3fcb40011313615ba41feb27",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "bytes": 11627,
+      "git_blob": "43aea5f4c880796717c5e6ed1997fa97a30def3d",
+      "matches_commit_A": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    }
+  ],
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0",
+  "unknown": {
+    "failed_call_boottime_elapsed_ns": null,
+    "failed_call_signature_cost_ns": null,
+    "failed_call_signed_floor": null,
+    "failed_call_window_creation_phase": null,
+    "failure_cause_established": false,
+    "product_guard_defect_established": false,
+    "reproducible_failure_rate": null,
+    "scheduler_or_load_causality_established": false
+  }
+}

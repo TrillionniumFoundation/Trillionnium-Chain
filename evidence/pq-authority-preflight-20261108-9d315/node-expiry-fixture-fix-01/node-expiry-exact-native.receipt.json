@@ -1,0 +1,53 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+    "--",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 426.28416255605407,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794125784.7170815,
+  "label": "node-expiry-exact-native",
+  "logs": {
+    "node-expiry-exact-native.stderr.log": {
+      "bytes": 340,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/node-expiry-exact-native.stderr.log",
+      "sha256": "00e50abce07da645259683df84a9db044c3031437b9e819222c2db1863205121"
+    },
+    "node-expiry-exact-native.stdout.log": {
+      "bytes": 380,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/node-expiry-fixture-fix-01/node-expiry-exact-native.stdout.log",
+      "sha256": "ba9e66f4947f756d4b55a3a3a7989447ab2dca3efa70e9e49b9696fc293aadde"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "ignored_names": [],
+    "passed_names": [
+      "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch"
+    ],
+    "summaries": [
+      [
+        1,
+        0,
+        0,
+        0,
+        1284
+      ]
+    ]
+  },
+  "started_unix_seconds": 1794125358.4329197
+}

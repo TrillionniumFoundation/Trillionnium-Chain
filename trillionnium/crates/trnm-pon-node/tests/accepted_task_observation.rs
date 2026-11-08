@@ -1,8 +1,14 @@
 //! Exact task settlement readback through real Node execution and the native CLI.
 use serde_json::{json, Value};
-use std::{fs, path::Path, process::Command};
+use std::{
+    collections::BTreeMap, ffi::OsString, fs, os::unix::fs::MetadataExt, path::Path,
+    process::Command,
+};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
-use trnm_pon_node::{development_public, Node, Packet, Settings};
+use trnm_pon_node::{
+    development_public, observe_existing_packet, Node, Packet, PacketObservationBackend, Settings,
+    DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
 const START: u64 = 1_800_000_000;
@@ -94,6 +100,13 @@ impl Backend {
         }
     }
 
+    fn observation_backend(self) -> PacketObservationBackend {
+        match self {
+            Self::Legacy => PacketObservationBackend::LegacyV2,
+            Self::AuthenticatedV1 => PacketObservationBackend::AuthenticatedV1,
+        }
+    }
+
     fn open(self, path: &Path) -> Node {
         let settings = Settings::development(None).unwrap();
         match self {
@@ -137,6 +150,57 @@ fn assert_no_authority(value: &Value) {
     }
 }
 
+#[derive(Debug, Eq, PartialEq)]
+struct SourceMetadata {
+    identity: (u64, u64),
+    length: u64,
+    mode: u32,
+    links: u64,
+    owner: (u32, u32),
+    modified: (i64, i64),
+    changed: (i64, i64),
+}
+
+fn source_metadata(metadata: &fs::Metadata) -> SourceMetadata {
+    SourceMetadata {
+        identity: (metadata.dev(), metadata.ino()),
+        length: metadata.len(),
+        mode: metadata.mode(),
+        links: metadata.nlink(),
+        owner: (metadata.uid(), metadata.gid()),
+        modified: (metadata.mtime(), metadata.mtime_nsec()),
+        changed: (metadata.ctime(), metadata.ctime_nsec()),
+    }
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct SourceImage {
+    directory: SourceMetadata,
+    files: BTreeMap<OsString, (SourceMetadata, Vec<u8>)>,
+}
+
+fn source_image(path: &Path) -> SourceImage {
+    // Never open the source with SQLite for an assertion. File reads may change
+    // atime, which is deliberately excluded; persisted bytes and other metadata
+    // must remain identical through both cold observation entrypoints.
+    let files = fs::read_dir(path)
+        .unwrap()
+        .map(|entry| {
+            let entry = entry.unwrap();
+            let metadata = fs::symlink_metadata(entry.path()).unwrap();
+            assert!(metadata.is_file());
+            (
+                entry.file_name(),
+                (source_metadata(&metadata), fs::read(entry.path()).unwrap()),
+            )
+        })
+        .collect();
+    SourceImage {
+        directory: source_metadata(&fs::symlink_metadata(path).unwrap()),
+        files,
+    }
+}
+
 #[test]
 fn exact_acceptance_survives_restart_and_cli_readback_without_mutation() {
     for_backends(exact_acceptance_for_backend);
@@ -174,6 +238,23 @@ fn exact_acceptance_for_backend(backend: Backend) {
     drop(node);
     let packet_path = dir.path().join("accepted.packet");
     fs::write(&packet_path, packet.encode().unwrap()).unwrap();
+    let source_before = source_image(&store);
+    let cold = observe_existing_packet(
+        &store,
+        Settings::development(None).unwrap(),
+        &packet,
+        backend.observation_backend(),
+        2,
+        DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+    )
+    .unwrap();
+    // This fixture executed the real reserve/receipt/accept transactions. A
+    // transfer-only packet could not exercise accepted_task's current-State
+    // readback or establish that none of its eight fields was dropped.
+    assert_eq!(cold["accepted_task"], expected);
+    assert_eq!(cold, observed);
+    assert_no_authority(&cold);
+    assert_eq!(source_image(&store), source_before);
     let result = Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
         .args([
             "packet-status",
@@ -194,7 +275,9 @@ fn exact_acceptance_for_backend(backend: Backend) {
     );
     let cli: Value = serde_json::from_slice(&result.stdout).unwrap();
     assert_eq!(cli["result"]["accepted_task"], expected);
+    assert_eq!(cli["result"], observed);
     assert_no_authority(&cli["result"]);
+    assert_eq!(source_image(&store), source_before);
     assert_eq!(backend.open(&store).stats().unwrap(), before);
 }
 

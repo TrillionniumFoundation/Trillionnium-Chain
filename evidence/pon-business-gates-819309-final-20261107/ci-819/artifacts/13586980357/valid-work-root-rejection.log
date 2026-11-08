@@ -1,0 +1,14 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 10.20s
+     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-priority/release/deps/public_v3_multiprocess-1056600f805dba28)
+
+running 1 test
+test valid_work_state_root_replays_are_paid_without_admission ... ok
+
+successes:
+
+successes:
+    valid_work_state_root_replays_are_paid_without_admission
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.14s
+

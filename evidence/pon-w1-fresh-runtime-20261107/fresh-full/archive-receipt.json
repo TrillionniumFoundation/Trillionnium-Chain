@@ -1,0 +1,70 @@
+{
+  "all_member_readback_verified": true,
+  "archive": {
+    "bytes": 1614210,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/fresh-full/fresh-full-public-raw.tar.gz",
+    "sha256": "5af276828a6674661d8e543b7f07488324f16391f94c03d2665f0515958cc0c7"
+  },
+  "copies": [
+    {
+      "bytes": 257014,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/checkpoint/succinct.bin",
+      "published": "fresh-full/funded-balanced/succinct.bin",
+      "sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+    },
+    {
+      "bytes": 257014,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/checkpoint/succinct.bin",
+      "published": "fresh-full/sequential-unfunded/succinct.bin",
+      "sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+    },
+    {
+      "bytes": 49506,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/native-winner/input.bin",
+      "published": "fresh-full/input.bin",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "bytes": 318,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/experiment-inputs-01/header-template-search0.bin",
+      "published": "fresh-full/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 64,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/experiment-inputs-01/expected-artifacts.bin",
+      "published": "fresh-full/expected-artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "bytes": 1414611,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1-01/qualification-raw.tar.gz",
+      "published": "qualification-C1/qualification-raw.tar.gz",
+      "sha256": "dd43317265e13c8014079adfe146dcf60b15ae0830d108abc480c0a499be1325"
+    },
+    {
+      "bytes": 284706,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1-01/qualification-raw-index.json",
+      "published": "qualification-C1/qualification-raw-index.json",
+      "sha256": "5ae2ec014905e4355cf4a9646db10e58e4997a0e8c69b587b1c096c4ea11d03c"
+    },
+    {
+      "bytes": 1256,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C1-01/archive-readback.json",
+      "published": "qualification-C1/archive-readback.json",
+      "sha256": "cf822c24d64447cb44effaf5035d59a236d3d5fcbb03e45877cacd85a1bd0b88"
+    },
+    {
+      "bytes": 133183,
+      "original": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C1-build-qualification-01/qualification.json",
+      "published": "qualification-C1/qualification.json",
+      "sha256": "5b1243d0b2b623041c1a1eba1f6043c59d20e15c2b686ada2f24d179da8e84dc"
+    }
+  ],
+  "full_original_raw_archive": false,
+  "member_count": 969,
+  "private_database_or_key_bytes_published": false,
+  "raw_bytes": 14234046,
+  "schema": "TRNM-W1-PUBLIC-FULL-EVIDENCE-ARCHIVE1",
+  "source_allowlist_sha256": "f4fcf783af9e8e5d7427e89769d2dd40e43aa617ab0f1086b89e9e7fa3c1aba5"
+}

@@ -1,0 +1,36 @@
+{
+  "binary_sha256": "4554dcdbc147fa1d574a604bf89eb1ad90c7243f4c2e9f65fdaae4b45e7d98bd",
+  "command": [
+    "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-7150/cargo-target/debug/deps/trnm_pon_node-d0b5619ab979ee7c",
+    "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-qrom-local-20261107-7150",
+  "diagnostic_passed": false,
+  "elapsed_seconds": 1.6691100320313126,
+  "exactly_one_requested_nonignored_test_reported": true,
+  "exit_code": 101,
+  "full_workspace_passed": false,
+  "name": "root-separation",
+  "original_workspace_result_replaced": false,
+  "post_quantum_soundness_qualified": false,
+  "result": {
+    "failed": 1,
+    "filtered_out": 1200,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 0,
+    "result": "FAILED"
+  },
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "started_utc": "2026-11-07T14:14:20.634316+00:00",
+  "stderr_bytes": 430,
+  "stderr_sha256": "ae27b54e73e20f8c46a1223cd55383bc395d681918104c1a263be4d1a1194667",
+  "stdout_bytes": 369,
+  "stdout_sha256": "26e5802d0a739fc473cc74505e00c895e3bcb3c183636648c215adbe2216ce08",
+  "test": "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+  "timed_out": false,
+  "timeout_seconds": 90
+}

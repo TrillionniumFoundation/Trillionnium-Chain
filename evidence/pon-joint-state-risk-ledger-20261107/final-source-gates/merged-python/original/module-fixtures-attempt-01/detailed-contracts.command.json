@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "scripts/ci/check_detailed_contracts.py"
+  ],
+  "elapsed_seconds": 50.56938342680223,
+  "exit_code": 0,
+  "name": "detailed-contracts",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "file": "detailed-contracts.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 122,
+      "file": "detailed-contracts.stdout.log",
+      "sha256": "69039cab62248ab74fb53ef59bec3a6951ebf916d591fbd33143ed894b8e4396"
+    }
+  }
+}

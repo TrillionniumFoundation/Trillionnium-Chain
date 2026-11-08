@@ -1,0 +1,36 @@
+{
+  "artifact_files": {
+    "architecture-failure-690f-v1.json": {
+      "bytes": 20182,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/architecture-failure-690f-v1.json",
+      "sha256": "fe4a85bf9cd1d16a52ea39823722a2717dd8d1539cd514c90e12e6c2246244e7"
+    },
+    "core-target-counts-690f-v1.json": {
+      "bytes": 22604,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/core-target-counts-690f-v1.json",
+      "sha256": "21bb9bf8a33bee82ecaa67fee822b0901bd1b27bec0c79e80123399259f23a6c"
+    },
+    "node-690f-diagnosis-v1.json": {
+      "bytes": 33222,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.json",
+      "sha256": "99dddd4fe1ec2249b02bd20da57b4a1a62803d7d108769be7e23ec4dbf6ea358"
+    },
+    "node-690f-diagnosis-v1.md": {
+      "bytes": 5839,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.md",
+      "sha256": "4b6628a82fcbce53f4a8a6fd002991d6148e1fb946f208d28cf428aebfee0393"
+    },
+    "node-failure-observations-690f-v1.json": {
+      "bytes": 171411,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-failure-observations-690f-v1.json",
+      "sha256": "347d72f7a2ed98583f3ee5323820d3e22dc91e7996c29013f8efff5344024889"
+    }
+  },
+  "created_utc": "2026-11-07T16:05:50.361341+00:00",
+  "original_completion_receipt_reconstructed": false,
+  "original_inputs_unchanged_during_extraction": true,
+  "schema": "pon-post-run-diagnosis-artifact-manifest-v1",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_pins_unchanged": true,
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+}

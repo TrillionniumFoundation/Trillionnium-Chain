@@ -1,0 +1,33 @@
+{
+  "schema": "w1-guarded-fresh-abba-summary-v1",
+  "qualification": "HOLD_NO_GO",
+  "fresh_complete_proofs": 4,
+  "independent_input_tasks": 1,
+  "host_exclusive": false,
+  "source_before_after_equal": true,
+  "profiles_both_use_bounded_wire_admission": true,
+  "scope": "one ABBA block; research STARK comparison, not native or Node qualification",
+  "variants": {
+    "A": {
+      "pipeline_median_seconds": 23.961508875999996,
+      "prove_median_seconds": 22.936896491,
+      "verify_median_seconds": 0.943003984,
+      "prove_rss_median_kib": 2383922.0,
+      "transmitted_bytes": 5264276
+    },
+    "B": {
+      "pipeline_median_seconds": 13.7648991865,
+      "prove_median_seconds": 12.83366633,
+      "verify_median_seconds": 0.887251689,
+      "prove_rss_median_kib": 2037316.0,
+      "transmitted_bytes": 5187252
+    }
+  },
+  "candidate_over_baseline": {
+    "pipeline_median_seconds": 0.5744587812784616,
+    "prove_median_seconds": 0.5595206106037792,
+    "verify_median_seconds": 0.9408779857286371,
+    "prove_rss_median_kib": 0.8546068201895868,
+    "transmitted_bytes": 0.985368548305598
+  }
+}

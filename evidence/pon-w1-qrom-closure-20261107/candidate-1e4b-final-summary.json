@@ -1,0 +1,170 @@
+{
+  "archives": {
+    "preparation": {
+      "archive": "observations.tar.gz",
+      "archive_bytes": 270118,
+      "archive_sha256": "a77a0655e100dcaf30a8a30271019f2dfedf411244cce9b2b2aab79a6d460747",
+      "file_count": 48,
+      "schema": "TRNM-W1-A-RAW-PACKET1",
+      "scope": "Complete files in the explicitly named source directories, retaining original successes, failures, pending fields and selected source boundaries. This is ordinary observation evidence, not cryptographic attestation.",
+      "tested_source": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+      "tested_tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+    },
+    "python": {
+      "archive": "observations.tar.gz",
+      "archive_bytes": 478855,
+      "archive_sha256": "2e32108380991aa71d8fe8a5af52ae0a0c2e9f0f9110bd195003308f72af9578",
+      "file_count": 27,
+      "schema": "TRNM-W1-A-RAW-PACKET1",
+      "scope": "Complete files in the explicitly named source directories, retaining original successes, failures, pending fields and selected source boundaries. This is ordinary observation evidence, not cryptographic attestation.",
+      "tested_source": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+      "tested_tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+    },
+    "repository": {
+      "archive": "observations.tar.gz",
+      "archive_bytes": 2113947,
+      "archive_sha256": "3e896af8114d5dfd3b5ae3f80b2151bd70845e11079609561e990e6c1024594c",
+      "file_count": 22,
+      "schema": "TRNM-W1-A-RAW-PACKET1",
+      "scope": "Complete files in the explicitly named source directories, retaining original successes, failures, pending fields and selected source boundaries. This is ordinary observation evidence, not cryptographic attestation.",
+      "tested_source": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+      "tested_tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+    }
+  },
+  "b_scope": {
+    "B_commit_and_tree": "Read from the ensuing normal Git commit/publication record; not self-asserted in this pre-commit packet.",
+    "existing_markdown_changes": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/security/W1_QROM_CLOSURE_CONTINUATION_20261107.md",
+      "evidence/pon-w1-qrom-closure-20261107/README.md"
+    ],
+    "fresh_B_hosted_results": "Pending publication; no 7150 or 1a14 result is borrowed.",
+    "native_tests_rerun_on_B": false,
+    "new_file_prefix": "evidence/pon-w1-qrom-closure-20261107/",
+    "production_configuration_scripts_formal_fixed_fixtures_changed": false
+  },
+  "created_utc": "2026-11-07T15:39:07.098272+00:00",
+  "disposition": "HOLD",
+  "fresh_desktop_python_A": {
+    "archive": "candidate-1e4b-python/observations.tar.gz",
+    "closure_105_is_subset_of_314": true,
+    "cloud_history": "The earlier cloud raw package had not completed transfer during an executor interruption. These are fresh desktop observations; no permanent cloud-data-loss claim is made.",
+    "distinct_tests": 499,
+    "groups": [
+      {
+        "complete_ok_names": 314,
+        "count": 314,
+        "exit_code": 0,
+        "label": "w1-314",
+        "plain_OK": true
+      },
+      {
+        "complete_ok_names": 147,
+        "count": 147,
+        "exit_code": 0,
+        "label": "ci-contract-source-147",
+        "plain_OK": true
+      },
+      {
+        "complete_ok_names": 38,
+        "count": 38,
+        "exit_code": 0,
+        "label": "pq-research-38",
+        "plain_OK": true
+      }
+    ],
+    "later_repository_observation": "candidate-1e4b-repository/restored-report.json",
+    "original_all_requested_checks_passed": false,
+    "original_report_fields_unchanged": true,
+    "original_repository_link_check_pending": true,
+    "report": "candidate-1e4b-python/report.json",
+    "report_sha256": "ddb692da9ee51d6bd8ced7129029e0834ae0fe420aef05ee599f9725835b944d",
+    "selected_before_after_equal": true,
+    "selected_bytes": 52119220,
+    "selected_files": 2830,
+    "whole_source_qualified": false
+  },
+  "independent_repository_A": {
+    "initial_exit_code": 2,
+    "initial_failure_preserved": true,
+    "initial_report": "candidate-1e4b-repository/initial-report.json",
+    "later_exit_code": 0,
+    "later_materialization_is_not_retroactive_499_coverage": true,
+    "later_report": "candidate-1e4b-repository/restored-report.json",
+    "local_links": 3717,
+    "original_499_rows_unchanged": true,
+    "remaining_historical_omissions": 359,
+    "restoration": "candidate-1e4b-repository/link-restoration.json",
+    "restored_historical_link_bytes": 18864814,
+    "restored_historical_link_targets": 124,
+    "rust_files": 1275,
+    "selected_materialized_bytes": 1017004928,
+    "selected_materialized_files": 11036,
+    "source_before_after_equal": true,
+    "whole_source_qualified": false,
+    "workspace_packages": 26
+  },
+  "native_A": {
+    "archive": "candidate-1e4b-native/observations.tar.gz",
+    "controller_exit_code": 2,
+    "critical_tests": {
+      "all_fifteen_actual_pass": true,
+      "record": "candidate-1e4b-native/key-fifteen-completion.json",
+      "root": 7,
+      "sealed": 8
+    },
+    "formatting_strict_clippy_fixed_v2_controls_pass": true,
+    "full_tracked_identity_claimed": false,
+    "full_workspace_tests_executed": false,
+    "isolated_service_diagnostic": {
+      "exact_timing_cause_known": false,
+      "original_module_failure_preserved": true,
+      "passed": true,
+      "record": "candidate-1e4b-service-diagnostic/diagnostic-summary.json",
+      "runs": 1,
+      "same_binary_same_A": true,
+      "time_window_or_guard_relaxed": false
+    },
+    "narrow_gate_pass": false,
+    "original_7150_workspace_timeout_and_failures_preserved": true,
+    "release_owner_module": {
+      "failed": 1,
+      "failed_names": [
+        "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch"
+      ],
+      "ignored": 1,
+      "passed": 40,
+      "registered": 42,
+      "result": "FAILED"
+    },
+    "selected_before_after_equal": true,
+    "selected_files": 2805,
+    "summary": "candidate-1e4b-native/native-summary.json"
+  },
+  "qualification": {
+    "complete_full_obligations_discharged": 0,
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "lifetime_adversary_query_budget": null,
+    "original_disposition_path": "obligation-disposition.json",
+    "original_disposition_sha256": "04913db0d754cd66b5d1209d84d798bc49d702f7b3cb18f2c74570b39740ed0b",
+    "original_full_obligation_count": 15,
+    "overall_error_bound": null,
+    "post_quantum_soundness_qualified": false,
+    "pq_authorization_qualified": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "schema": "TRNM-W1-A-TESTED-B-EVIDENCE-CONTINUATION1",
+  "source_pin_restoration": {
+    "before_fresh_python_run": true,
+    "bytes": 50824,
+    "count": 5,
+    "record": "candidate-1e4b-preparation/restored-source-pins.json"
+  },
+  "tested_source": {
+    "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+    "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+  }
+}

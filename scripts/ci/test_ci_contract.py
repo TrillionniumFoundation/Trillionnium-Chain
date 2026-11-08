@@ -2,12 +2,15 @@
 """Negative checks for real lane execution, merge identity, and generated navigation."""
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
+import textwrap
 import tomllib
 import unittest
 from pathlib import Path
@@ -20,6 +23,9 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
+                               WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE,
+                               LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL, CERTIFICATE_COMPOSITION_TESTS, NATIVE_RISK_LEDGER,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                check_from_zero_host_callsites,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
@@ -27,6 +33,8 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
                                GSC2_SYNTHETIC_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
+from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
+                               PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -198,7 +206,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='trnm-pq-ci-callsite-') as directory:
             root = Path(directory)
             for relative in ('.github/workflows/trnm-required-baseline.yml',
-                             '.github/workflows/pon-priority-acceptance.yml'):
+                             '.github/workflows/pon-priority-acceptance.yml',
+                             '.github/workflows/pon-w1-work-security.yml'):
                 target = root / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text((ROOT / relative).read_text())
@@ -228,6 +237,33 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 23, result.stderr)
                 warnings = 'error::ResourceWarning' if 'PYTHONWARNINGS=' in command else 'unset'
                 self.assertEqual(result.stdout, f'synthetic migration test called {warnings}\n')
+
+    def test_fresh_work_theory_and_native_admission_controls_are_additive_and_mandatory(self):
+        theory = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_query_floor_v0.py' -v\n"
+        native = ' --test grouped_fresh_admission_v0'
+        self.assertEqual(self.script.count(theory), 1)
+        self.assertEqual(self.script.count(native), 1)
+        for changed in (self.script.replace(theory, ''), self.script.replace(theory, theory * 2),
+                        self.script.replace(theory, theory.rstrip() + ' || true\n'),
+                        self.script.replace(native, ''),
+                        self.script.replace(native, ' --test grouped_fresh_admission_v0 -- --ignored')):
+            with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
+    def test_resource_transfer_and_shared_authority_controls_cannot_be_omitted_or_swallowed(self):
+        theory = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_resource_transfer_v0.py' -v\n"
+        native = ' --test grouped_verification_authority_v0'
+        self.assertEqual(self.script.count(theory), 1)
+        self.assertEqual(self.script.count(native), 1)
+        variants = (self.script.replace(theory, ''),
+                    self.script.replace(theory, theory * 2),
+                    self.script.replace(theory, theory.rstrip() + ' || true\n'),
+                    self.script.replace(theory, '    if false; then\n' + theory + '    fi\n'),
+                    self.script.replace(native, ''),
+                    self.script.replace(native, native + ' -- --ignored'))
+        for changed in variants:
+            with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
@@ -276,6 +312,27 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             }
             for label, changed in changes.items():
                 with self.subTest(path=path, change=label), self.assertRaises(ValueError):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
+        # Keep this inventory independent of the checker's command tuple.
+        for name in ('test_pon_proof_latency.py', 'test_w1_proof_latency_readback.py'):
+            command = '    python3 scripts/ci/' + name + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'true stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            }
+            for label, changed in changes.items():
+                with self.subTest(reader=name, change=label), self.assertRaisesRegex(
+                        ValueError, 'proof latency controls'):
                     check_independent_conformance(changed, self.lanes)
 
     def test_current_runtime_controls_must_follow_pilot_and_parent_material(self):
@@ -434,6 +491,29 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'reward budget'):
                 check_independent_conformance(changed, self.lanes)
 
+    def test_demand_upgrade_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        for name in ('test_demand_evidence.py', 'test_upgrade_policy.py'):
+            command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
+            original = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+            for label, changed in [('omitted', original.replace(command, '')),
+                                   ('duplicated', original.replace(command, command * 2)),
+                                   ('swallowed', original.replace(command, command.rstrip() + ' || true\n')),
+                                   ('moved', original.replace(command, '').replace(
+                                       '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+                with self.subTest(command=name, change=label), self.assertRaisesRegex(ValueError, 'demand evidence'):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        from check_ci_contract import NATIVE_DEMAND_CONTRACTS
+        command = NATIVE_DEMAND_CONTRACTS
+        for label, changed in [('omitted', self.script.replace(command, '')),
+                               ('duplicated', self.script.replace(command, command * 2)),
+                               ('swallowed', self.script.replace(command, command.rstrip() + ' || true\n')),
+                               ('moved', self.script.replace(command, '').replace(
+                                   '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'native demand'):
+                check_independent_conformance(changed, self.lanes)
+
     def test_parent_material_checks_cannot_be_omitted_duplicated_or_moved(self):
         for command in ('    python3 scripts/test_llm_parent_material.py\n',
                         '    python3 scripts/test_llm_runtime_parent_step.py\n'):
@@ -500,9 +580,12 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 check_independent_conformance(changed, self.lanes)
 
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
-        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py'):
-            command = ("    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p '"
-                       + name + "' -v\n")
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
+                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                     'test_useful_cell_multimodal_execution_v3.py',
+                     'test_useful_cell_multimodal_relation_v3.py'):
+            command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
             self.assertEqual(self.script.count(command), 1)
             variants = {
                 'removed': self.script.replace(command, ''),
@@ -516,6 +599,35 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for label, script in variants.items():
                 with self.subTest(test=name, mutation=label), self.assertRaises(ValueError):
                     check_independent_conformance(script, self.lanes)
+
+    def test_integration_legacy_reorg_reader_retains_its_mandatory_lane(self):
+        command = '    python3 scripts/ci/test_run_legacy_reorg_root_abba.py\n'
+        self.assertEqual(self.script.count(command), 1)
+        check_independent_conformance(self.script, self.lanes)
+        variants = {
+            'removed': self.script.replace(command, ''),
+            'duplicated': self.script.replace(command, command * 2),
+            'stubbed': self.script.replace(command, '    true # ' + command.lstrip()),
+            'skipped': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+            'swallowed': self.script.replace(command, command.rstrip() + ' || true\n'),
+            'other-lane-duplicate': self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            'moved': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+        }
+        for label, changed in variants.items():
+            with self.subTest(mutation=label), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
+    def test_native_cell_suite_cannot_disappear_from_mandatory_conformance(self):
+        selector = ' --test cell_native_v1'
+        self.assertEqual(self.script.count(selector), 1)
+        command = next(line for line in self.script.splitlines(keepends=True)
+                       if selector in line)
+        for replacement in (command.replace(selector, ''),
+                            command.replace(selector, selector * 2),
+                            '    if false; then\n' + command + '    fi\n',
+                            command.rstrip() + ' || true\n'):
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
 
     def test_original_campaign_reader_keeps_original_pins_and_lane(self):
         for replacement in ['', ORIGINAL_CAMPAIGN_READER * 2,
@@ -552,6 +664,58 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                       'printf stale-prior-report')
         with self.assertRaises(ValueError):
             check_independent_conformance(changed, self.lanes)
+
+    def test_joint_consensus_arithmetic_controls_cannot_be_removed_skipped_or_swallowed(self):
+        command = '    python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v\n'
+        self.assertEqual(self.script.count(command), 1)
+        replacements = ('', command * 2, '    true # omitted joint consensus controls\n',
+                        '    if false; then\n' + command + '    fi\n',
+                        command.rstrip() + ' || true\n',
+                        '    if\n' + command + '    then :; fi\n')
+        for replacement in replacements:
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        moved = self.script.replace(command, '').replace(
+            '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(moved, self.lanes)
+
+    def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+        lines = [line + '\n' for line in self.script.splitlines()
+                 if 'TRNM_JOINT_DAA_EVIDENCE_DIR' in line]
+        self.assertEqual(len(lines), 8)
+        for command in lines:
+            for replacement in ('', command * 2):
+                with self.subTest(command=command, replacement=replacement), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        for profile, other in [('pnh1-authenticated', 'pgh2-growth'),
+                               ('pgh2-growth', 'pnh1-authenticated')]:
+            raw_argument = '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile + '"'
+            commands = [line for line in lines if 'python3 ' in line and raw_argument in line]
+            self.assertEqual(len(commands), 2)
+            for command in commands:
+                replacements = (
+                    command.replace('python3 ', 'true # python3 '),
+                    '      if false; then\n' + command + '      fi\n',
+                    command.rstrip() + ' || true\n',
+                    command.replace(raw_argument, '--raw-dir "/tmp/stale-other-run"'),
+                    command.replace(raw_argument, '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR"'),
+                    command.replace(raw_argument, raw_argument.replace(profile, other)),
+                )
+                for replacement in replacements:
+                    with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+            reader = next(command for command in commands if '--expected-report-sha256' in command)
+            digest = ('$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile
+                      + '/joint-daa.json" | cut -d \' \' -f 1)')
+            self.assertIn(digest, reader)
+            replacements = [reader.replace(digest, value)
+                            for value in ('0' * 64, '$(printf stale-prior-report)',
+                                          digest.replace(profile, other))]
+            replacements.append(reader.replace('--expected-report-sha256 "' + digest + '" ', ''))
+            for replacement in replacements:
+                with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(reader, replacement), self.lanes)
 
     def test_cost_counterexamples_require_their_real_input_arguments(self):
         for command in [COST_BOUNDARY_READERS.splitlines(keepends=True)[0],
@@ -686,6 +850,362 @@ class W1ReuseV3LaneTests(unittest.TestCase):
             self.assertEqual(run(after).returncode, 0)
 
 
+class PqReleaseAuthorityCiTests(unittest.TestCase):
+    """Exercise the real workflow readers/loop with explicit synthetic logs.
+
+    The loop tests substitute only recorded Cargo execution. They keep the real
+    exact-test reader and never claim that synthetic libtest output is native work.
+    """
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+        self.root = Path(self.temporary.name)
+        for relative in (PQ_RELEASE_WORKFLOW, PQ_RELEASE_MANIFEST,
+                         'config/pon/pq-initial-root-material-required-tests-v1.json', *PQ_ROOT_HARNESS_FILES,
+                         'scripts/ci/check_required_native_test.py'):
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, target)
+        self.manifest = json.loads((self.root / PQ_RELEASE_MANIFEST).read_text())
+
+    def tearDown(self):
+        self.temporary.cleanup()
+
+    def step(self, name):
+        text = (self.root / PQ_RELEASE_WORKFLOW).read_text()
+        marker = '      - name: ' + name + '\n'
+        self.assertEqual(text.count(marker), 1)
+        return marker + text.split(marker, 1)[1].split('\n      - ', 1)[0] + '\n'
+
+    def release_step(self):
+        return self.step('Require all release authority and CCH1 controls from the complete Unix registry')
+
+    def harness_step(self):
+        return self.step('Run root-quorum codec and policy test doubles without native crypto claims')
+
+    @staticmethod
+    def inline_python(step):
+        return textwrap.dedent(step.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0]) + '\n'
+
+    def rejected_source(self, relative, before, after):
+        path = self.root / relative
+        original = path.read_text()
+        self.assertIn(before, original)
+        try:
+            path.write_text(original.replace(before, after, 1))
+            with self.assertRaises(ValueError):
+                check_pq_release_authority_controls(self.root)
+        finally:
+            path.write_text(original)
+
+    def rejected_manifest(self, mutate):
+        path = self.root / PQ_RELEASE_MANIFEST
+        original = path.read_text()
+        altered = json.loads(original)
+        mutate(altered)
+        try:
+            path.write_text(json.dumps(altered))
+            with self.assertRaises(ValueError):
+                check_pq_release_authority_controls(self.root)
+        finally:
+            path.write_text(original)
+
+    def registry_log(self, names=None, count=55):
+        if names is None:
+            names = self.manifest['complete_release_tests']
+        return ''.join(name + ': test\n' for name in names) + f'\n{count} tests, 0 benchmarks\n'
+
+    def read_registry(self, text, output):
+        output.mkdir(exist_ok=True)
+        (output / 'initial-root-release-registry.log').write_text(text)
+        return subprocess.run(
+            [sys.executable, '-B', '-c', self.inline_python(self.release_step()),
+             str(self.root / PQ_RELEASE_MANIFEST), str(output)],
+            cwd=self.root, capture_output=True, text=True,
+        )
+
+    def read_harness(self, text, output):
+        output.mkdir(exist_ok=True)
+        log = output / 'root-quorum-harness.log'
+        log.write_text(text)
+        return subprocess.run(
+            [sys.executable, '-B', '-c', self.inline_python(self.harness_step()), str(log)],
+            cwd=self.root, capture_output=True, text=True,
+        )
+
+    def test_reviewed_groups_complete_registry_and_hosted_execution_are_required(self):
+        result = check_pq_release_authority_controls(self.root)
+        self.assertEqual(result['groups'], {'original_release': 37, 'initial_root_material': 6,
+                                           'quorum_preflight': 9, 'cch1_content_binding': 3})
+        self.assertEqual(result['complete_release'], 55)
+        self.assertEqual(result['platform_scope'], 'unix')
+        self.assertEqual(result['python_test_doubles'], 18)
+        self.assertFalse(result['tests_executed'])
+
+    def test_original_initial_root_and_quorum_names_cannot_be_relabelled_together(self):
+        for group in PQ_RELEASE_GROUPS:
+            with self.subTest(group=group):
+                def rename(value):
+                    name = value[group + '_tests'][0]
+                    value[group + '_tests'][0] = name + '_renamed'
+                    index = value['complete_release_tests'].index(name)
+                    value['complete_release_tests'][index] = name + '_renamed'
+                    value['complete_release_tests'].sort()
+                self.rejected_manifest(rename)
+
+    def test_v2_preserves_the_complete_legacy_manifest_and_ordered_groups(self):
+        raw = (self.root / 'config/pon/pq-initial-root-material-required-tests-v1.json').read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(),
+                         'a359086820e876a3806acdd1225689ff072ebfe10d455ac3a96d8d7060680693')
+        legacy = json.loads(raw)
+        for group in ('original_release', 'initial_root_material', 'quorum_preflight'):
+            self.assertEqual(self.manifest[group + '_tests'], legacy[group + '_tests'])
+        added = self.manifest['cch1_content_binding_tests']
+        self.assertEqual(added, [
+            'content_v1::tests::complete_artifact_and_all_metadata_enter_the_strong_commitment',
+            'content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset',
+            'content_v1::tests::short_long_wrong_locator_and_old_digest_wrapper_are_refused',
+        ])
+        self.assertEqual(self.manifest['complete_release_tests'],
+                         sorted(legacy['complete_release_tests'] + added))
+
+    def test_manifest_and_actual_reader_reject_wrong_unix_scope_or_missing_cch1(self):
+        mutations = (
+            lambda v: v.__setitem__('schema', 'trnm-pq-initial-root-material-required-tests-v1'),
+            lambda v: v.pop('platform_scope'),
+            lambda v: v.__setitem__('platform_scope', 'all-platforms'),
+            lambda v: v.__setitem__('platform_scope', 'windows'),
+            lambda v: v['expected_controls'].pop('cch1_content_binding'),
+            lambda v: v['expected_controls'].__setitem__('cch1_content_binding', 3.0),
+            lambda v: v.pop('cch1_content_binding_tests'),
+            lambda v: v['cch1_content_binding_tests'].pop(),
+            lambda v: v['cch1_content_binding_tests'].__setitem__(0, v['original_release_tests'][0]),
+            lambda v: v['cch1_content_binding_tests'].__setitem__(0, v['cch1_content_binding_tests'][1]),
+        )
+        path = self.root / PQ_RELEASE_MANIFEST
+        original = path.read_text()
+        for index, mutate in enumerate(mutations):
+            with self.subTest(mutation=index):
+                self.rejected_manifest(mutate)
+                altered = json.loads(original)
+                mutate(altered)
+                try:
+                    path.write_text(json.dumps(altered))
+                    result = self.read_registry(self.registry_log(), self.root / f'v2-negative-{index}')
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                finally:
+                    path.write_text(original)
+
+    def test_actual_registry_cannot_substitute_legacy_52_or_non_unix_54(self):
+        legacy = json.loads((self.root / 'config/pon/pq-initial-root-material-required-tests-v1.json').read_text())
+        legacy_names = legacy['complete_release_tests']
+        unix_only = 'content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset'
+        non_unix = [name for name in self.manifest['complete_release_tests'] if name != unix_only]
+        self.assertEqual(len(legacy_names), 52)
+        self.assertEqual(len(non_unix), 54)
+        for index, log in enumerate((self.registry_log(legacy_names, 52),
+                                     self.registry_log(legacy_names, 55),
+                                     self.registry_log(non_unix, 54),
+                                     self.registry_log(non_unix, 55))):
+            with self.subTest(registry=index):
+                result = self.read_registry(log, self.root / f'legacy-registry-negative-{index}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+
+    def test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims(self):
+        mutations = [
+            lambda v: v['expected_controls'].__setitem__('complete_release', 43),
+            lambda v: v['expected_controls'].__setitem__('complete_release', 55.0),
+            lambda v: v['expected_controls'].pop('quorum_preflight'),
+            lambda v: v.__setitem__('scope', 'immutable-initial-root-public-key-material-only'),
+            lambda v: v['complete_release_tests'].pop(),
+            lambda v: v['complete_release_tests'].__setitem__(0, v['complete_release_tests'][1]),
+            lambda v: v['complete_release_tests'].__setitem__(0, 'unreviewed::test'),
+            lambda v: v['quorum_preflight_tests'].__setitem__(0, v['original_release_tests'][0]),
+            lambda v: v['quorum_preflight_tests'].__setitem__(0, v['quorum_preflight_tests'][1]),
+            lambda v: v.pop('quorum_preflight_tests'),
+        ]
+        for index, mutate in enumerate(mutations):
+            with self.subTest(mutation=index):
+                self.rejected_manifest(mutate)
+        for flag in ('authorization_results_cached', 'signature_results_cached', 'performance_qualified',
+                     'production_activation', 'consensus_authority', 'whole_chain_quantum_security_qualified'):
+            for value in (True, 0):
+                with self.subTest(flag=flag, value=value):
+                    self.rejected_manifest(lambda v, flag=flag, value=value: v.__setitem__(flag, value))
+
+    def test_workflow_cannot_reduce_registry_queue_exact_execution_or_readback(self):
+        step = self.release_step()
+        reader = ('            elif ! python3 scripts/ci/check_required_native_test.py '
+                  '"$out/$label.log" --test "$selector" > "$out/$label-execution.json"; then\n')
+        changes = [
+            ('len(names) != 55', 'len(names) < 55'),
+            ('set(names) != sets["complete_release"]', 'not sets["complete_release"].issubset(set(names))'),
+            ('for group in groups for index, name', 'for group in groups[:2] for index, name'),
+            ('"$selector" -- --exact --show-output', '"$selector" -- --show-output'),
+            (reader, '            elif ! true; then\n'),
+            ('          test "$failed" = 0\n', '          true\n'),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                self.assertIn(before, step)
+                self.rejected_source(PQ_RELEASE_WORKFLOW, step, step.replace(before, after, 1))
+
+    def test_workflow_cannot_skip_or_untrigger_authority_and_harness_controls(self):
+        for step in (self.release_step(), self.harness_step()):
+            for replacement in ('', step.replace('        shell: bash\n', '        if: false\n        shell: bash\n', 1),
+                                step.replace('        shell: bash\n', '        continue-on-error: true\n        shell: bash\n', 1)):
+                with self.subTest(step=step.splitlines()[0], replacement=replacement[:80]):
+                    self.rejected_source(PQ_RELEASE_WORKFLOW, step, replacement)
+        self.rejected_source(PQ_RELEASE_WORKFLOW, '  primitive-interoperability:\n',
+                             '  primitive-interoperability:\n    if: false\n')
+        for relative in (*PQ_ROOT_HARNESS_FILES, 'scripts/ci/check_ci_contract.py', 'scripts/ci/test_ci_contract.py'):
+            self.rejected_source(PQ_RELEASE_WORKFLOW, '      - ' + relative + '\n', '')
+        self.rejected_source(PQ_RELEASE_WORKFLOW, 'python3 -B formal/pon-nakamoto-v1/test_pq_root_quorum_research.py -v',
+                             'true # python3 -B formal/pon-nakamoto-v1/test_pq_root_quorum_research.py -v')
+
+    def test_harness_source_keeps_all_eighteen_reviewed_test_double_names(self):
+        path = self.root / PQ_ROOT_HARNESS_FILES[1]
+        module = ast.parse(path.read_text())
+        test_class = next(node for node in module.body
+                          if isinstance(node, ast.ClassDef) and node.name == 'RootQuorumResearchTests')
+        name = next(node.name for node in test_class.body
+                    if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'))
+        self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'def ' + name + '(', 'def test_unreviewed(')
+        self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'class RootQuorumResearchTests(', 'class UnreviewedTests(')
+
+    def test_actual_registry_reader_requires_exact_complete_55_and_four_groups(self):
+        output = self.root / 'registry-positive'
+        result = self.read_registry(self.registry_log(), output)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['scope'], 'registry-presence-only')
+        rows = [line.split('\t') for line in (output / 'release-authority-required.tsv').read_text().splitlines()]
+        self.assertEqual(len(rows), 55)
+        self.assertEqual(len({name for _, name in rows}), 55)
+        self.assertEqual({name for _, name in rows}, set(self.manifest['complete_release_tests']))
+        for prefix, count in (('original-release-', 37), ('initial-root-', 6),
+                              ('quorum-preflight-', 9), ('cch1-content-binding-', 3)):
+            self.assertEqual(sum(label.startswith(prefix) for label, _ in rows), count)
+        names = self.manifest['complete_release_tests']
+        invalid = [
+            self.registry_log(names[:-1], 54),
+            self.registry_log(names + ['unreviewed::test'], 56),
+            self.registry_log(names[:-1] + [names[0]], 55),
+            self.registry_log(names[:-1] + ['unreviewed::test'], 55),
+            self.registry_log(count=43),
+            self.registry_log() + '55 tests, 0 benchmarks\n',
+            ''.join(name + ': test\n' for name in names),
+        ]
+        for index, log in enumerate(invalid):
+            with self.subTest(index=index):
+                result = self.read_registry(log, self.root / f'registry-negative-{index}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+
+    def test_actual_exact_loop_checks_every_result_and_preserves_failure_status(self):
+        # Only the recorder/Cargo call is synthetic; the workflow loop and its
+        # check_required_native_test.py invocation below are the original bytes.
+        prefix = r'''set -euo pipefail
+source_args=()
+out="$TRNM_SYNTHETIC_OUTPUT"
+python3() {
+  if test "${1:-}" != scripts/ci/record_pq_native_command.py; then
+    command python3 "$@"
+    return
+  fi
+  shift
+  test "${1:-}" = --label || return 99
+  local label="$2"
+  shift 2
+  test "${1:-}" = --output || return 99
+  local directory="$2"
+  shift 2
+  test "${1:-}" = -- || return 99
+  shift
+  local part
+  for part in cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib; do
+    test "${1:-}" = "$part" || return 99
+    shift
+  done
+  local selector="$1"
+  shift
+  test "$*" = '-- --exact --show-output --test-threads=1' || return 99
+  printf '%s\t%s\n' "$label" "$selector" >> "$directory/calls.tsv"
+  local mode=pass
+  if test "$selector" = "$TRNM_SYNTHETIC_TARGET"; then
+    mode="$TRNM_SYNTHETIC_MODE"
+  fi
+  case "$mode" in
+    zero)
+      printf '%s\n' 'running 0 tests' 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 55 filtered out; finished in 0.00s' > "$directory/$label.log"
+      ;;
+    ignored)
+      printf 'running 1 test\ntest %s ... ignored\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 54 filtered out; finished in 0.00s\n' "$selector" > "$directory/$label.log"
+      ;;
+    *)
+      local actual="$selector"
+      if test "$mode" = wrong; then actual="${selector}::wrong"; fi
+      printf 'running 1 test\ntest %s ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 54 filtered out; finished in 0.00s\n' "$actual" > "$directory/$label.log"
+      if test "$mode" = duplicate; then
+        printf 'test %s ... ok\n' "$selector" >> "$directory/$label.log"
+      fi
+      ;;
+  esac
+  if test "$mode" = process; then return 7; fi
+  return 0
+}
+'''
+        loop = textwrap.dedent(self.release_step().split('          PY\n', 1)[1])
+        target = self.manifest['quorum_preflight_tests'][-1]
+        for mode in ('pass', 'zero', 'ignored', 'wrong', 'duplicate', 'process'):
+            with self.subTest(mode=mode):
+                output = self.root / ('loop-' + mode)
+                registry = self.read_registry(self.registry_log(), output)
+                self.assertEqual(registry.returncode, 0, registry.stderr)
+                env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TRNM_SYNTHETIC_OUTPUT=str(output),
+                           TRNM_SYNTHETIC_MODE=mode, TRNM_SYNTHETIC_TARGET=target)
+                result = subprocess.run(['bash', '-c', prefix + loop], cwd=self.root, env=env,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode == 0, mode == 'pass', result.stderr)
+                calls = [line.split('\t') for line in (output / 'calls.tsv').read_text().splitlines()]
+                self.assertEqual(len(calls), 55)
+                self.assertEqual({name for _, name in calls}, set(self.manifest['complete_release_tests']))
+                for label, name in calls:
+                    if mode != 'pass' and name == target:
+                        continue
+                    execution = json.loads((output / (label + '-execution.json')).read_text())
+                    self.assertEqual(execution['test'], name)
+                    self.assertEqual(execution['executed_tests'], 1)
+
+    def test_actual_python_harness_runs_all_eighteen_and_readback_has_no_native_claim(self):
+        run = subprocess.run([sys.executable, '-B', str(self.root / PQ_ROOT_HARNESS_FILES[1]), '-v'],
+                             cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        self.assertEqual(run.returncode, 0, run.stdout)
+        result = self.read_harness(run.stdout, self.root / 'harness-positive')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        observed = json.loads(result.stdout)
+        self.assertEqual(observed['executed_tests'], 18)
+        self.assertEqual(observed['scope'], 'python-codec-policy-test-doubles-only')
+        self.assertIs(observed['native_crypto_observed'], False)
+        self.assertIs(observed['production_activation'], False)
+        rows = run.stdout.splitlines()
+        first = next(line for line in rows if line.startswith('test_'))
+        invalid = [
+            'Ran 0 tests in 0.00s\n\nOK\n',
+            run.stdout.replace(first + '\n', '', 1),
+            run.stdout + first + '\n',
+            run.stdout.replace(first, first.replace(' ... ok', ' ... skipped'), 1),
+            run.stdout.replace(first, first.replace('RootQuorumResearchTests', 'UnreviewedTests'), 1),
+            run.stdout.replace('Ran 18 tests', 'Ran 17 tests'),
+            run.stdout.replace('\nOK\n', '\nOK (skipped=1)\n'),
+            run.stdout.replace('\nOK\n', '\nFAILED (failures=1)\n'),
+        ]
+        first_name = first.split(' ', 1)[0]
+        invalid.append(run.stdout.replace(first_name, 'test_unreviewed'))
+        for index, log in enumerate(invalid):
+            with self.subTest(index=index):
+                result = self.read_harness(log, self.root / f'harness-negative-{index}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+
+
 class CiContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -722,6 +1242,31 @@ class CiContractTests(unittest.TestCase):
     def test_current_execution_contract(self):
         self.assertEqual(validate(self.root)['merge_lanes'], 5)
         current_validate(self.root)
+
+    def test_missing_useful_cell_sources_fail_contract_and_actual_ci_command(self):
+        script = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
+                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                     'test_useful_cell_multimodal_execution_v3.py',
+                     'test_useful_cell_multimodal_relation_v3.py'):
+            path = self.root / 'formal/pon-nakamoto-v1' / name
+            command = next(line.strip() for line in script.splitlines()
+                           if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')
+            raw = path.read_bytes()
+            try:
+                path.unlink()
+                with self.subTest(test=name), self.assertRaisesRegex(
+                        ValueError, 'required useful Cell test source is missing'):
+                    validate(self.root)
+                result = subprocess.run(['bash', '-euo', 'pipefail', '-c', command],
+                                        cwd=self.root, text=True, capture_output=True)
+                with self.subTest(test=name, actual_command=command):
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn(name, result.stderr)
+                    self.assertNotIn('Ran 0 tests', result.stderr)
+            finally:
+                path.write_bytes(raw)
 
     def test_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
         for replacement in ['', ZERO_RUN_STEP.replace('        if: always()\n', ''),
@@ -899,6 +1444,18 @@ class CiContractTests(unittest.TestCase):
         changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
         self.rejected(path, original, changed)
 
+    def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
+        path = 'scripts/ci/ci_job.sh'
+        for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+                        '    python3 scripts/ci/pq_lifetime_budget.py\n'):
+            for replacement in ('', '    true # omitted lifetime budget check\n', command * 2):
+                with self.subTest(command=command, replacement=replacement):
+                    self.rejected(path, command, replacement)
+            original = (self.root / path).read_text()
+            changed = original.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+            self.rejected(path, original, changed)
+
     def test_one_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
         for replacement in ['', ONE_ZERO_RUN_STEP.replace('        if: always()\n', ''),
                             ONE_ZERO_RUN_STEP.replace('run: env -u CARGO_INCREMENTAL python3', 'run: true # python3'),
@@ -1010,6 +1567,100 @@ class CiContractTests(unittest.TestCase):
         self.rejected('scripts/ci/ci_job.sh', original, changed)
         self.rejected('scripts/ci/ci_job.sh', PAIRED_WORK_ORACLE + ZERO_WORK_ORACLE,
                       ZERO_WORK_ORACLE + PAIRED_WORK_ORACLE)
+
+    def test_mandatory_units_requires_complete_current_native_execution(self):
+        for replacement in ['', '    true # omitted complete MU1 checks\n',
+                            MANDATORY_UNITS_NATIVE.replace('realpath -e', 'printf %s'),
+                            MANDATORY_UNITS_NATIVE.replace('MU1_NATIVE_WORK=', 'OMITTED_WORK='),
+                            MANDATORY_UNITS_NATIVE.replace('MU1_NATIVE_PREPARED=', 'OMITTED_PREPARED='),
+                            MANDATORY_UNITS_NATIVE.replace('mandatory_units_tests.py -v',
+                                                          'mandatory_units_tests.py QueryCertificateTests -v'),
+                            MANDATORY_UNITS_NATIVE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', MANDATORY_UNITS_NATIVE, replacement)
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        changed = original.replace(MANDATORY_UNITS_NATIVE, '').replace(
+            '  repository-truth)\n', '  repository-truth)\n' + MANDATORY_UNITS_NATIVE)
+        self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_work_native_model_controls_cannot_be_omitted_or_moved(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for command in WORK_NATIVE_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            for replacement in ['', '    true # omitted work/native model\n', line * 2]:
+                with self.subTest(command=command, replacement=replacement):
+                    self.rejected('scripts/ci/ci_job.sh', line, replacement)
+            changed = original.replace(line, '').replace('  protocol-contract)\n',
+                                                        '  protocol-contract)\n' + line)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_actual_certificates_require_current_binaries_fresh_outputs_and_full_controls(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for block in (WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE):
+            for replacement in ('', '    true # omitted actual certificate execution\n',
+                                block.replace('realpath -e', 'printf %s'),
+                                block.splitlines(keepends=True)[0], block * 2,
+                                block.replace('/native-owner-score-bridge', '/historical-native-owner')
+                                if block == NATIVE_OWNER_SCORE_BRIDGE else
+                                block.replace('/work-lifecycle"', '/historical-lifecycle"')):
+                with self.subTest(block=block[:70], replacement=replacement[:100]):
+                    self.rejected('scripts/ci/ci_job.sh', block, replacement)
+            changed = original.replace(block, '').replace('  repository-truth)\n',
+                                                          '  repository-truth)\n' + block)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_lifecycle_closure_requires_current_native_execution_and_complete_journals(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for block in (LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL):
+            mutations = ['', '    true # omitted lifecycle closure\n', block * 2,
+                         block.replace('realpath -e', 'printf %s'),
+                         block.replace('/lifecycle-query"', '/historical-query"')
+                         if block == LIFECYCLE_QUERY_NATIVE else
+                         block.replace('/native-owner-journal', '/historical-journal')]
+            if block == NATIVE_OWNER_JOURNAL:
+                mutations.extend([block.replace('--test native_owner_journal\n',
+                                                '--test native_owner_journal -- --ignored\n'),
+                                  ''.join(block.splitlines(keepends=True)[1:]),
+                                  ''.join(block.splitlines(keepends=True)[:-1])])
+            for replacement in mutations:
+                with self.subTest(block=block[:70], replacement=replacement[:100]):
+                    self.rejected('scripts/ci/ci_job.sh', block, replacement)
+            changed = original.replace(block, '').replace('  repository-truth)\n',
+                                                          '  repository-truth)\n' + block)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+        # CC1 verifies real ML-DSA signatures. The protocol-contract head and
+        # merge lanes install the pinned wheel; repository-truth does not.
+        command = CERTIFICATE_COMPOSITION_TESTS
+        for replacement in ('', command * 2, '    true # omitted real CC1 signatures\n',
+                            command.rstrip('\n') + ' || true\n'):
+            self.rejected('scripts/ci/ci_job.sh', command, replacement)
+        moved = original.replace(command, '').replace('  repository-truth)\n',
+                                                       '  repository-truth)\n' + command)
+        self.rejected('scripts/ci/ci_job.sh', original, moved)
+
+    def test_native_risk_bank_requires_current_execution_and_all_raw_reconciliation(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        block = NATIVE_RISK_LEDGER
+        lines = block.splitlines(keepends=True)
+        mutations = ['', '    true # omitted native risk bank\n', block * 2,
+                     block.replace('realpath -e', 'printf %s'),
+                     block.replace('/native-risk-ledger', '/historical-risk-ledger'),
+                     block.replace('NATIVE_RISK_LEDGER_RUN=', 'OMITTED_RISK_RUN='),
+                     block.replace('--test native_risk_ledger\n',
+                                   '--test native_risk_ledger -- --ignored\n'),
+                     block.replace("test_native_risk_ledger.py' -v",
+                                   "test_native_risk_ledger.py' -v || true")]
+        mutations.extend(''.join(lines[:i] + lines[i + 1:]) for i in range(len(lines)))
+        for replacement in mutations:
+            with self.subTest(replacement=replacement[:100]):
+                self.rejected('scripts/ci/ci_job.sh', block, replacement)
+        moved_lane = original.replace(block, '').replace('  repository-truth)\n',
+                                                        '  repository-truth)\n' + block)
+        self.rejected('scripts/ci/ci_job.sh', original, moved_lane)
+        before_build = original.replace(block, '').replace(NODE_EXAMPLE_BUILD,
+                                                           block + NODE_EXAMPLE_BUILD)
+        self.rejected('scripts/ci/ci_job.sh', original, before_build)
 
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
@@ -1488,6 +2139,347 @@ cargo() {
             current_validate(self.root)
         finally:
             path.write_text(original)
+
+
+class W1PostwinLaneTests(unittest.TestCase):
+    """Executable CI contracts, not a substitute proof or provider success."""
+
+    def setUp(self):
+        self.script = (ROOT / "scripts/ci/ci_job.sh").read_text()
+        self.workflow = (ROOT / ".github/workflows/pon-w1-transparent-profile.yml").read_text()
+        self.required = {"repository-truth", "protocol-contract", "fuzz-smoke",
+                         "rust-baseline", "external-evidence-contract"}
+
+    def lane_check(self, text):
+        check_independent_conformance(text, self.required)
+
+    def workflow_check(self, text):
+        from check_ci_contract import check_w1_postwin_workflow
+        check_w1_postwin_workflow(text)
+
+    def step(self, name):
+        import re
+        blocks = re.findall(r"(?ms)^      - name: .*?(?=^      - name: |\Z)", self.workflow)
+        rows = [row for row in blocks if "\n        id: " + name + "\n" in row]
+        self.assertEqual(len(rows), 1)
+        return rows[0]
+
+    def commands(self):
+        # Independent literal inventory: do not import the checker's roster.
+        return (
+            'python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee "$w1_contract_out/cancellation-handoff.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"',
+            'python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"',
+            'python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"',
+            'python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"',
+            'python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"',
+            'python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"',
+        )
+
+    def test_actual_postwin_lanes_retain_real_controls(self):
+        self.lane_check(self.script)
+        self.workflow_check(self.workflow)
+
+    def test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed(self):
+        for command in self.commands():
+            line = "      " + command + "\n"
+            self.assertEqual(self.script.count(line), 1)
+            replacements = (
+                "", line + line, "      # " + command + "\n",
+                "      true # " + command + "\n",
+                "      " + command + " || true\n",
+                "      if false; then\n" + line + "      fi\n",
+                "      if " + command + "; then :; fi\n",
+            )
+            for replacement in replacements:
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        self.lane_check(self.script.replace(line, replacement, 1))
+
+    def test_required_postwin_commands_cannot_change_or_duplicate_lane(self):
+        for command in self.commands():
+            line = "      " + command + "\n"
+            for remove_original in (False, True):
+                changed = self.script.replace(line, "", 1) if remove_original else self.script
+                changed = changed.replace("  fuzz-smoke)\n", "  fuzz-smoke)\n" + line, 1)
+                with self.subTest(command=command, moved=remove_original):
+                    with self.assertRaises(ValueError):
+                        self.lane_check(changed)
+
+    def test_postwin_count_and_original_budget_controls_cannot_be_softened(self):
+        mutations = (
+            ('("cancellation-handoff", 22)', '("cancellation-handoff", 0)'),
+            ('("coordinator-contract", 20)', '("coordinator-contract", 1)'),
+            ('("provider-contract", 11)', '("provider-contract", 8)'),
+            ('("generation-target", 13)', '("generation-target", 0)'),
+            ('("generation-target", 13)', '("generation-target", 7)'),
+            ('("generation-target", 13)', '("generation-target", 4)'),
+            ('("owner-cancellation", 8)', '("owner-cancellation", 0)'),
+            ('("owner-cancellation", 8)', '("owner-cancellation", 7)'),
+            ('("owner-cancellation", 8)', '("owner-cancellation", 5)'),
+            ('("source-builder", 8)', '("source-builder", 0)'),
+            ('("owned-runtime-reader", 7)', '("owned-runtime-reader", 0)'),
+            ('("owned-runtime-reader", 7)', '("owned-runtime-reader", 5)'),
+            ('("kaggle-worker-contract", 12)', '("kaggle-worker-contract", 0)'),
+            ('("winner-identity", 4)', '("winner-identity", 0)'),
+            ('("deployment-evidence-binding", 12)', '("deployment-evidence-binding", 0)'),
+            ('("deployment-evidence-binding", 12)', '("deployment-evidence-binding", 9)'),
+            ('("deployment-comparison-audit", 20)', '("deployment-comparison-audit", 0)'),
+            ('("deployment-comparison-audit", 20)', '("deployment-comparison-audit", 10)'),
+            ('("owned-process-collector", 14)', '("owned-process-collector", 0)'),
+            ('("owned-process-collector", 14)', '("owned-process-collector", 13)'),
+            (' or "skipped=" in text', ''),
+            ('      export TMPDIR="$w1_contract_tmp"\n', ''),
+            ('      trap \'rm -rf -- "$w1_contract_tmp"\' EXIT\n', ''),
+            ('    (\n      w1_contract_out=', '    if false; then\n    (\n      w1_contract_out='),
+            ('      export PYTHONDONTWRITEBYTECODE=1\n',
+             '      export PYTHONDONTWRITEBYTECODE=1\n      set +e\n'),
+        )
+        for before, after in mutations:
+            self.assertIn(before, self.script)
+            with self.subTest(before=before):
+                with self.assertRaises(ValueError):
+                    self.lane_check(self.script.replace(before, after, 1))
+
+    def test_real_receiver_step_cannot_be_missing_duplicated_or_bypassed(self):
+        block = self.step("real_receiver_controls")
+        for replacement in (
+            "", block + block,
+            block.replace("        if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'\n",
+                          "        if: false\n"),
+            block.replace("          python3 scripts/ci/test_w1_receiver_real.py",
+                          "          true # python3 scripts/ci/test_w1_receiver_real.py"),
+            block.replace(' | tee "$W1_PROFILE_OUT/real-receiver-controls.log"',
+                          ' | tee "$W1_PROFILE_OUT/real-receiver-controls.log" || true'),
+            block.replace("          set -euo pipefail\n", "          set +e\n"),
+        ):
+            with self.subTest(replacement=replacement):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, replacement, 1))
+
+    def test_real_receiver_requires_all_exact_v2_inputs_and_fresh_output(self):
+        block = self.step("real_receiver_controls")
+        mutations = (
+            ('--verifier "$w1_v2_verifier"', ''),
+            ('--verifier-sha256 "$w1_v2_verifier_sha"', ''),
+            ('--receipt "$w1_v2_fixture/succinct.bin"', ''),
+            ('--input "$w1_v2_fixture/input.bin"', ''),
+            ('--header "$w1_v2_fixture/header.bin"', ''),
+            ('--expected-artifacts "$w1_v2_fixture/expected-artifacts.bin"', ''),
+            ('evidence/pon-w1-full-v2-20261105', 'evidence/pon-w1-complete-succinct-20261028/full-proof'),
+            ('--out "$W1_PROFILE_OUT/real-receiver-controls"', '--out /tmp/retained-receiver-success'),
+            ('257014, "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"',
+             '257014, "' + "0" * 64 + '"'),
+            ('counts = {"tests_run": 11,', 'counts = {"tests_run": 0,'),
+            ('counts = {"tests_run": 11,', 'counts = {"tests_run": 7,'),
+            ('"skipped": 0', '"skipped": 7'),
+            ('"fresh_proof_generations": 0', '"fresh_proof_generations": 1'),
+            ('report.get("actual_complete_receipt_used") is not True', 'False'),
+        )
+        for before, after in mutations:
+            self.assertIn(before, block)
+            with self.subTest(before=before):
+                changed = block.replace(before, after, 1)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, changed, 1))
+
+    def test_real_receiver_requires_current_successful_release_build(self):
+        verifier, receiver = self.step("verifier_v2"), self.step("real_receiver_controls")
+        self.assertIn(verifier + receiver, self.workflow)
+        with self.assertRaises(ValueError):
+            self.workflow_check(self.workflow.replace(verifier + receiver, receiver + verifier, 1))
+        for before, after in (
+            ('cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest"',
+             'true # cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest"'),
+            ('cp "$CARGO_TARGET_DIR/release/w1-verify-v2"', 'cp /tmp/old-verifier'),
+            ('-- -D warnings', '-- -A warnings'),
+        ):
+            self.assertIn(before, verifier)
+            with self.subTest(before=before):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(verifier, verifier.replace(before, after, 1), 1))
+
+    def test_postwin_staged_count_and_source_identity_cannot_be_softened(self):
+        for name, before, after in (
+            ("staged_tests", "counts != ['32']", "counts != ['0']"),
+            ("staged_tests", " or 'skipped=' in text", ""),
+            ("source", "python3 scripts/ci/verify_ci_source.py", "true # python3 scripts/ci/verify_ci_source.py"),
+            ("source_after", "python3 scripts/ci/verify_ci_source.py", "true # python3 scripts/ci/verify_ci_source.py"),
+            ("toolchain", "rustup toolchain install 1.95.0", "true # rustup toolchain install 1.95.0"),
+        ):
+            block = self.step(name)
+            self.assertIn(before, block)
+            with self.subTest(name=name, before=before):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+
+    def test_postwin_controls_keep_head_merge_matrix_and_read_only_scope(self):
+        for before, after in (
+            ("        source: [head, prospective-merge]", "        source: [head]"),
+            ("    timeout-minutes: 60", "    timeout-minutes: 0"),
+            ("  contents: read", "  contents: write"),
+            ("  cancel-in-progress: false", "  cancel-in-progress: true"),
+            ("      - evidence/pon-w1-full-v2-20261105/**\n", ""),
+            ("      - evidence/pon-w1-fresh-runtime-20261107/**\n", ""),
+            ("      - scripts/audit_w1_deployment_comparison.py\n", ""),
+            ("      - scripts/w1_owned_process_collector_v1.py\n", ""),
+            ("      - scripts/test_w1_owned_process_collector_v1.py\n", ""),
+            ("      - scripts/w1_owner_cancellation_v1.py\n", ""),
+            ("      - scripts/test_w1_owner_cancellation_v1.py\n", ""),
+        ):
+            self.assertIn(before, self.workflow)
+            with self.subTest(before=before):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(before, after, 1))
+
+    def test_repository_contracts_cannot_move_into_optional_profile(self):
+        for command in self.commands():
+            inserted = ('      - name: Wrong duplicate required lane\n'
+                        '        run: ' + command + '\n')
+            with self.subTest(command=command):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow + inserted)
+
+
+    def test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced(self):
+        for name, count, command in (
+            ('mapper_tests', 15, 'test_w1_profile_source_map.py'),
+            ('v2_gate_tests', 23, 'test_w1_v2_controls_gate.py'),
+        ):
+            block = self.step(name)
+            mutations = (
+                (f"!= ['{count}']", "!= ['0']"),
+                ('sorted(rows) != required', 'False'),
+                ("!= ['OK']", "!= ['OK (skipped=1)']"),
+                ('python3 -m unittest discover', 'true # python3 -m unittest discover'),
+                ("if: always() && steps.source.outcome == 'success'", 'if: false'),
+            )
+            for before, after in mutations:
+                with self.subTest(step=name, before=before):
+                    self.assertIn(before, block)
+                    with self.assertRaises(ValueError):
+                        self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+            for replacement in ('', block + block):
+                with self.subTest(step=name, replacement=replacement[:40]), self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, replacement, 1))
+            self.assertIn(command, block)
+
+    def test_verifier_keeps_all_three_exact_tests_and_independent_build(self):
+        block = self.step('verifier_v2')
+        mutations = (
+            ('tests::expected_artifacts_are_exact_and_never_derived_from_receipt', 'tests::unreviewed_artifacts'),
+            ('tests::historical_full_receipt_cannot_satisfy_v2_statement', 'tests::unreviewed_historical'),
+            ('tests::saved_full_v2_receipt_verifies_with_independent_artifacts', 'tests::unreviewed_saved_proof'),
+            ('len(rows) != 3', 'len(rows) < 2'),
+            ('{name for name, _ in rows} != expected', 'not expected.issubset({name for name, _ in rows})'),
+            ("!= ['3']", "!= ['0']"),
+            ('0 filtered out;', '1 filtered out;'),
+            ('-- --format=pretty --test-threads=1', '-- saved_full_v2_receipt --format=pretty --test-threads=1'),
+            ("packages.intersection({'risc0-build'", "packages.intersection({'unrelated-build'"),
+            ('cargo +1.95.0 metadata --locked', 'true # cargo +1.95.0 metadata --locked'),
+        )
+        for before, after in mutations:
+            with self.subTest(before=before):
+                self.assertIn(before, block)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+
+    def test_saved_58_suite_keeps_all_original_inputs_readback_and_four_minutes(self):
+        block = self.step('receipt_controls_v2')
+        mutations = (
+            ('        timeout-minutes: 4\n', ''),
+            ('        timeout-minutes: 4\n', '        timeout-minutes: 5\n'),
+            ('RAYON_NUM_THREADS=8', 'RAYON_NUM_THREADS=1'),
+            ('--verifier "$w1_verifier"', '--verifier /tmp/old-verifier'),
+            ('--receipt "$w1_proof_dir/succinct.bin"', '--receipt /tmp/other-receipt'),
+            ('--header "$w1_proof_dir/header.bin"', ''),
+            ('--expected-artifacts "$w1_proof_dir/expected-artifacts.bin"', ''),
+            ('--out "$W1_PROFILE_OUT/v2-controls"', '--out /tmp/prior-controls'),
+            ('python3 scripts/ci/w1_v2_controls_gate.py', 'true # python3 scripts/ci/w1_v2_controls_gate.py'),
+            ('python3 scripts/w1_v2_receipt_controls.py', 'true # python3 scripts/w1_v2_receipt_controls.py'),
+            ('          set -euo pipefail\n', '          set +e\n'),
+        )
+        for before, after in mutations:
+            with self.subTest(before=before):
+                self.assertIn(before, block)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+        for replacement in ('', block + block, block.replace('        shell: bash\n', '        if: false\n        shell: bash\n', 1)):
+            with self.subTest(replacement=replacement[:40]), self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(block, replacement, 1))
+
+    def test_both_receiver_suites_and_final_outcome_block_are_mandatory(self):
+        marker = '      - name: Record completed, failed and skipped observations\n'
+        footer = marker + self.workflow.split(marker, 1)[1].split('\n      - ', 1)[0] + '\n'
+        for before, after in (
+            ("'real_receiver_controls', ", ''),
+            ("'receipt_controls_v2', ", ''),
+            (".get('outcome') != 'success'", "False"),
+            ('          if incomplete:\n', '          if False:\n'),
+            ("'production_qualified': False", "'production_qualified': True"),
+            ('        if: always()\n', '        if: success()\n'),
+        ):
+            with self.subTest(before=before):
+                self.assertIn(before, footer)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(footer, footer.replace(before, after, 1), 1))
+        for replacement in ('', footer + footer):
+            with self.subTest(replacement=replacement[:40]), self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(footer, replacement, 1))
+        verifier, real, saved = (self.step(name) for name in ('verifier_v2', 'real_receiver_controls', 'receipt_controls_v2'))
+        for before, after in ((verifier + real, real + verifier), (real + saved, saved + real)):
+            self.assertIn(before, self.workflow)
+            with self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(before, after, 1))
+
+    def test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage(self):
+        marker = '      - name: Record completed, failed and skipped observations\n'
+        footer = self.workflow.split(marker, 1)[1].split('\n      - ', 1)[0]
+        code = textwrap.dedent(footer.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0]) + '\n'
+        required = ('checkout', 'source', 'toolchain', 'source_controls', 'observer_tests',
+                    'mapper_tests', 'v2_gate_tests', 'staged_tests', 'budget_tests', 'native', 'hardened',
+                    'verifier_v2', 'real_receiver_controls', 'receipt_controls_v2', 'component_budget', 'source_map',
+                    'profile', 'receipt_controls', 'comparison', 'source_after')
+        good = {name: {'outcome': 'success', 'conclusion': 'success'} for name in required}
+        with tempfile.TemporaryDirectory(prefix='w1-final-outcome-') as directory:
+            directory = Path(directory)
+            def run(index, steps):
+                path = directory / (str(index) + '.json')
+                env = dict(os.environ, W1_PROFILE_STEP_RESULTS=json.dumps(steps),
+                           SOURCE_KIND='head', EXPECTED_SOURCE='1' * 40)
+                result = subprocess.run([sys.executable, '-B', '-c', code, str(path)], env=env,
+                                        capture_output=True, text=True)
+                return result, json.loads(path.read_text())
+            result, report = run('positive', good)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIs(report['production_qualified'], False)
+            for name in required:
+                for state in ('failure', 'skipped', 'missing'):
+                    with self.subTest(stage=name, state=state):
+                        steps = {key: dict(value) for key, value in good.items()}
+                        if state == 'missing':
+                            steps.pop(name)
+                        else:
+                            steps[name]['outcome'] = state
+                        result, retained = run(name + '-' + state, steps)
+                        self.assertNotEqual(result.returncode, 0, result.stdout)
+                        self.assertIn(name, result.stderr)
+                        self.assertEqual(retained['steps'], steps)
+                        self.assertIs(retained['quantum_soundness_qualified'], False)
+
+    def test_added_source_snapshot_triggers_cannot_be_removed(self):
+        for path in ('evidence/pon-w1-stark-review-20261106/**', 'evidence/pon-w1-source-snapshot-20261106/**'):
+            before = '      - ' + path + '\n'
+            self.assertIn(before, self.workflow)
+            with self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(before, '', 1))
+
+
 
 
 if __name__ == '__main__':

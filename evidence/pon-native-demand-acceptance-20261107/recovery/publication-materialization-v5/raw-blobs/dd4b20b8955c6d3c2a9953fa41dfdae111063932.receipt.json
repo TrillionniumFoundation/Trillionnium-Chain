@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 13123459,
+  "actual_git_blob_sha1": "dd4b20b8955c6d3c2a9953fa41dfdae111063932",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/dd4b20b8955c6d3c2a9953fa41dfdae111063932"
+  ],
+  "elapsed_seconds": 7.252195596694946,
+  "exit_code": 0,
+  "expected_blob": "dd4b20b8955c6d3c2a9953fa41dfdae111063932",
+  "expected_bytes": 13123459,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "dd4b20b8955c6d3c2a9953fa41dfdae111063932\n",
+  "imported": true,
+  "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-disjoint4-protected/summary.json",
+  "raw_sha256": "e40314fde25b742a113b0ca15df9a557e1d5544ea6e6c5572abc48cb54d2968a",
+  "timed_out": false
+}

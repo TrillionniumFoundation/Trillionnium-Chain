@@ -22,6 +22,7 @@ pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
 pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
+pub mod funded_service_v1;
 pub mod growth;
 #[cfg(feature = "pq-native-openssl")]
 pub mod pq_accounts;
@@ -111,8 +112,9 @@ struct StateInputs<'a> {
     growth: Option<&'a growth::AccountPartition>,
     observer: Option<&'a dyn CanonicalTransitionObserver>,
     #[cfg(test)]
-    // Private per-call research only; default false and absent from production.
-    experimental_skip_repeated_senders: bool,
+    // Retain the old full-speculation oracle for per-call differential tests.
+    // Production always skips nonce-conflicting repeated-sender predictions.
+    force_repeated_sender_speculation: bool,
 }
 /// Caller-local observation only; no ledger byte or execution authority.
 /// Header context does not claim the separate parent State binding was read.
@@ -1478,6 +1480,7 @@ fn prepare(
     signatures: &AtomicUsize,
     parent: Option<&State>,
 ) -> Result<Prepared> {
+    funded_service_v1::check_config(cfg)?;
     cfg.check_account_profile()?;
     if pq_accounts_v2::enabled(cfg) {
         let timestamp = timestamp.ok_or("PQ2_HEADER_TIMESTAMP_REQUIRED")?;
@@ -1505,6 +1508,7 @@ fn prepare(
         return pq_accounts::prepare(raw, height, cfg, signatures, policy);
     }
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    funded_service_v1::check_command(cfg, tx.tag, &tx.payload)?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
         "WORK_TASK_PROFILE",
@@ -1629,6 +1633,9 @@ fn apply_task_command(
     height: u64,
     cfg: &Config,
 ) -> Result<()> {
+    if funded_service_v1::apply_task_command(s, sender_id, nonce, tag, payload, height, cfg)? {
+        return Ok(());
+    }
     let sender = hex::encode(sender_id);
     let mut p = Payload {
         bytes: payload,
@@ -2821,7 +2828,7 @@ pub fn execute_with_authenticated_state_input<E: Send>(
             growth: None,
             observer: None,
             #[cfg(test)]
-            experimental_skip_repeated_senders: false,
+            force_repeated_sender_speculation: false,
         },
     )
 }
@@ -2852,7 +2859,7 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
             growth: None,
             observer: None,
             #[cfg(test)]
-            experimental_skip_repeated_senders: false,
+            force_repeated_sender_speculation: false,
         },
     )
 }
@@ -2926,9 +2933,10 @@ fn execute_with_state_inputs<E: Send>(
         growth,
         observer,
         #[cfg(test)]
-        experimental_skip_repeated_senders,
+        force_repeated_sender_speculation,
     } = inputs;
     let progress = control.progress;
+    funded_service_v1::check_config(cfg)?;
     cfg.check_account_profile()?;
     require(
         !cfg.is_pq_account_profile() || pq_accounts_v2::enabled(cfg) || observer.is_none(),
@@ -2982,8 +2990,9 @@ fn execute_with_state_inputs<E: Send>(
             && transactions
                 .iter()
                 .all(|raw| raw.get(36..68) == transactions[0].get(36..68)));
-    #[cfg(test)]
-    let repeated_senders = if !serial_state && experimental_skip_repeated_senders {
+    #[cfg(not(test))]
+    let force_repeated_sender_speculation = false;
+    let repeated_senders = if !serial_state && !force_repeated_sender_speculation {
         let mut seen = BTreeSet::new();
         transactions
             .iter()
@@ -3011,11 +3020,8 @@ fn execute_with_state_inputs<E: Send>(
             .is_ok_and(|p| matches!(p.command.tag, 2 | 6 | 8 | 10 | 23));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
-        #[cfg(test)]
         let skip_state_prediction =
             serial_state || repeated_senders.get(index).copied().unwrap_or(false);
-        #[cfg(not(test))]
-        let skip_state_prediction = serial_state;
         let patch = if skip_state_prediction || range_command {
             None
         } else {
@@ -3105,10 +3111,7 @@ fn execute_with_state_inputs<E: Send>(
     } else {
         count
     };
-    #[cfg(test)]
     let serial_conflict = serial_state || repeated_senders.iter().any(|repeated| *repeated);
-    #[cfg(not(test))]
-    let serial_conflict = serial_state;
     if serial_conflict && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
@@ -3219,6 +3222,7 @@ fn prepare_block_state_with_inputs(
     monetary_input: Option<&MonetaryObligationInput<'_>>,
     growth: Option<&growth::AccountPartition>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
+    funded_service_v1::check_config(cfg)?;
     cfg.check_account_profile()?;
     pq_accounts_v2::validate_state(parent, cfg)?;
     #[cfg(feature = "pq-native-openssl")]

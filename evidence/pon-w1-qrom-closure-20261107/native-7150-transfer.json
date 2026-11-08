@@ -1,0 +1,23 @@
+{
+  "all_payload_bytes_match_manifest": true,
+  "archive_bytes": 1067844,
+  "archive_sha256": "e11d0f9d28621b459795e5c692ed05636275cf7d4461bda2cc7cbe5960a60e3e",
+  "dependency_time_scope_note": "dependency-audit-timing-note.json inside archive",
+  "failed_command_expectations": [
+    "full-source-before",
+    "chain-workspace-tests",
+    "full-source-after",
+    "dependencies-before"
+  ],
+  "full_tracked_identity_claimed": false,
+  "manifest_sha256": "e02500d3a5e1e2b38512451b52ee5999282cebf243338df2d4afe507a24d9cb3",
+  "payload_files_checked": 133,
+  "post_quantum_soundness_qualified": false,
+  "schema": "TRNM-W1-NATIVE-7150-TRANSFER1",
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "summary_sha256": "0bc3b45874dae5ee7c9d385737c44d13f79566e704793eded96e688129af3cb0",
+  "verified_utc": "2026-11-07T14:04:45.513628+00:00",
+  "workspace_count_note": "test-result-count-interpretation.json inside archive",
+  "workspace_distinct_top_level_test_count": null,
+  "workspace_result": "TIMEOUT_WITH_FAILED_MARKERS_REQUIRING_CLASSIFICATION"
+}

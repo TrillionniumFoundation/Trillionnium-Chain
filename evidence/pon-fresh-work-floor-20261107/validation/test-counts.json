@@ -1,0 +1,90 @@
+{
+  "ci-contract-controls": {
+    "python_test_counts": [
+      102
+    ],
+    "raw_log_sha256": "890cda53672afb00c55dcfd2976dab668557a5cc36fad9f2cd82d76521c43d89",
+    "rust_passed_per_target": [],
+    "test_count": 102
+  },
+  "conditional-query-bound": {
+    "python_test_counts": [
+      21
+    ],
+    "raw_log_sha256": "5997ad5a1cf445892889d42d11285fa0ddbc813e93e322e53699925333060dad",
+    "rust_passed_per_target": [],
+    "test_count": 21
+  },
+  "fresh-query-floor": {
+    "python_test_counts": [
+      27
+    ],
+    "raw_log_sha256": "0949f87f6673c176562a05c9b6ad1934165bf1995a9b5269eb10b308f7c3b111",
+    "rust_passed_per_target": [],
+    "test_count": 27
+  },
+  "grouped-python-and-native": {
+    "python_test_counts": [
+      110
+    ],
+    "raw_log_sha256": "25d3400840b81a29bfef65a8ddb1aab71740ed4417876e7c657a4a8e5f6657ac",
+    "rust_passed_per_target": [],
+    "test_count": 110
+  },
+  "native-crypto-all-targets": {
+    "python_test_counts": [],
+    "raw_log_sha256": "1564f2351ee0160aec2a44d1e08edb7dca9e4657caa1953e5eaf8098aab317c5",
+    "rust_passed_per_target": [
+      160,
+      5,
+      4,
+      5,
+      0,
+      0,
+      4,
+      3,
+      5,
+      0,
+      0,
+      2,
+      3,
+      7,
+      9,
+      9,
+      0,
+      9,
+      0,
+      10,
+      0,
+      0,
+      2,
+      6,
+      0
+    ],
+    "test_count": 243
+  },
+  "native-fresh-admission": {
+    "python_test_counts": [],
+    "raw_log_sha256": "8ba70fe5b32473dcec86b305f58155f7d30763877424f3c33ff6e17d300fe36f",
+    "rust_passed_per_target": [
+      14
+    ],
+    "test_count": 14
+  },
+  "native-header-binding": {
+    "python_test_counts": [],
+    "raw_log_sha256": "6a0d54d00555421cb7eff05b549967f665cb1fad3693d14a0224841f772e121d",
+    "rust_passed_per_target": [
+      1
+    ],
+    "test_count": 1
+  },
+  "source-integrity-controls": {
+    "python_test_counts": [
+      43
+    ],
+    "raw_log_sha256": "8ffe2b01f9b912aa4558913c214a549a93daa807644ac3a3906a615c982197dd",
+    "rust_passed_per_target": [],
+    "test_count": 43
+  }
+}

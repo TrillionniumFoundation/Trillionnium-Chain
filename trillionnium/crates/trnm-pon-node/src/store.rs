@@ -3,9 +3,13 @@
 mod admission_header_tests;
 #[cfg(test)]
 mod append_readback_tests;
+pub mod async_w1_generation_v2;
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
+#[cfg(test)]
+mod canonical_row_reuse_tests;
 pub mod capacity_observation;
+pub mod demand_evidence;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 mod funding;
@@ -15,13 +19,20 @@ mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 mod history_page;
+mod legacy_admission_readback;
+#[cfg(test)]
+mod legacy_admission_root_tests;
 #[cfg(test)]
 mod legacy_reorg_observation_tests;
+#[cfg(test)]
+mod legacy_reorg_root_tests;
 pub mod mempool;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
+pub mod native_owner_observation;
 mod operator_continuous_owner;
 mod operator_mining_owner;
+pub mod packet_observation;
 pub mod pinned_account_query;
 #[cfg(all(test, feature = "pq-native-openssl"))]
 mod pq_existing_owner_tests;
@@ -42,6 +53,7 @@ mod root_rejection_cache_tests;
 mod state_merge;
 pub mod storage_service;
 mod task_observation;
+pub mod task_operation_v2;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
@@ -1124,14 +1136,29 @@ impl WorkCheckedPacket {
         cache: &pon_work::rejection_cache::RejectionCache,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
     ) -> Result<Self> {
+        Self::verify_with_rejection_cache_observed(
+            packet,
+            cache,
+            progress,
+            &mut pon_work::rejection_cache::RejectionObservation::default(),
+        )
+    }
+
+    pub(crate) fn verify_with_rejection_cache_observed(
+        packet: Packet,
+        cache: &pon_work::rejection_cache::RejectionCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        observation: &mut pon_work::rejection_cache::RejectionObservation,
+    ) -> Result<Self> {
         let h = &packet.header;
         let work = cache
-            .verify_with_progress(
+            .verify_with_observation(
                 h.challenge(),
                 h.work_task,
                 h.target,
                 &packet.proof,
                 progress,
+                observation,
             )
             .map_err(|error| match error {
                 pon_work::VerificationError::Relation(error) => {
@@ -1255,6 +1282,9 @@ pub struct Node {
     // Immutable source DDL for the existing ordinary authenticated writer.
     // No SQL/schema observation from a prior operation is an authority here.
     post_write_schema: Option<BTreeMap<String, String>>,
+    // Separate from authenticated/reorganization graph reuse. This source DDL
+    // only nominates ordinary Legacy admission for a fresh same-writer scope.
+    legacy_admission_schema: Option<BTreeMap<String, String>>,
     #[cfg(test)]
     // Fault injection only; the production public endpoint always uses1024.
     public_history_test_sql_limit: Option<u64>,
@@ -1276,6 +1306,9 @@ pub struct Node {
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     history_read_counters: Cell<HistoryReadCounters>,
     history_page_read_counters: Cell<HistoryPageReadCounters>,
+    // Opt-in, process-local observation identity/clock. It grants no write,
+    // consensus, remote coverage or physical-clock attestation authority.
+    native_owner_observer: RefCell<Option<native_owner_observation::OwnerObserver>>,
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
@@ -1773,7 +1806,7 @@ impl Node {
         state_backend: StateBackend,
         selection: SelectedOpen,
     ) -> Result<Self> {
-        let (growth_observation_only, existing_owner_only) = match selection {
+        let (observation_only, existing_owner_only) = match selection {
             SelectedOpen::InitializeOrRecover {
                 growth_observation_only,
             } => (growth_observation_only, false),
@@ -1796,10 +1829,14 @@ impl Node {
                 == (state_backend == StateBackend::PermanentAccountGrowthV2),
             "GROWTH_PROFILE_BACKEND",
         )?;
-        if growth_observation_only {
+        if observation_only {
             ensure(
-                state_backend == StateBackend::PermanentAccountGrowthV2
-                    && path.join("native.sqlite").is_file(),
+                matches!(
+                    state_backend,
+                    StateBackend::Legacy
+                        | StateBackend::AuthenticatedV1
+                        | StateBackend::PermanentAccountGrowthV2
+                ) && path.join("native.sqlite").is_file(),
                 "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
             )?;
         }
@@ -1890,7 +1927,7 @@ impl Node {
         let dbpath = directory.join("native.sqlite");
         let marker = directory.join("initializing.json");
         ensure(
-            !growth_observation_only || !marker.exists(),
+            !observation_only || !marker.exists(),
             "GROWTH_OBSERVATION_RECOVERY_REQUIRED",
         )?;
         let lock = directory.join("owner.lock");
@@ -2081,12 +2118,12 @@ impl Node {
             plain(p)?;
         }
         ensure(
-            !growth_observation_only || initialized,
+            !observation_only || initialized,
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
         let mut db = if let Some(db) = retained_existing {
             db
-        } else if growth_observation_only {
+        } else if observation_only {
             Connection::open_with_flags(
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -2099,7 +2136,7 @@ impl Node {
             ensure(previous == (dm.dev(), dm.ino()), "NAMESPACE_CHANGED")?;
         }
         db.busy_timeout(Duration::from_secs(5))?;
-        if growth_observation_only {
+        if observation_only {
             db.execute_batch(
                 "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA query_only=ON;",
             )?;
@@ -2181,6 +2218,10 @@ impl Node {
             fs::remove_file(marker)?;
             sync_dir(&directory)?;
         }
+        let legacy_admission_schema = (state_backend == StateBackend::Legacy
+            && !pq_accounts_v2::enabled(&settings.app)
+            && !growth_profile_v2::enabled(&settings.app))
+        .then(|| expected_schema.clone());
         let mut node = Self {
             db,
             owner,
@@ -2196,6 +2237,7 @@ impl Node {
             expected_schema: expected_schema.clone(),
             post_write_schema: (state_backend == StateBackend::AuthenticatedV1)
                 .then_some(expected_schema),
+            legacy_admission_schema,
             #[cfg(test)]
             public_history_test_sql_limit: None,
             #[cfg(test)]
@@ -2208,6 +2250,7 @@ impl Node {
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
             history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
+            native_owner_observer: RefCell::new(None),
             owner_policy,
             mining_owner,
             continuous_owner,
@@ -2225,10 +2268,16 @@ impl Node {
             // Complete-State reference budget records cannot be silently ignored
             // by this backend. Validate/refuse them before any growth recovery.
             node.validate_native_budget_records_v1()?;
-            node.growth_cold_open(!growth_observation_only)?;
+            node.growth_cold_open(!observation_only)?;
+            node.validate_native_task_operation_pins_v1()?;
+            node.validate_native_demand_evidence_v1()?;
             // Settings retain the immutable genesis input for exact reopen. Hot
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
+        }
+        if observation_only {
+            // Cold reconciliation must not finish an owner's unpublished reorg.
+            node.ready()?;
         }
         node.read_active()?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
@@ -2243,7 +2292,13 @@ impl Node {
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
         node.validate_native_budget_records_v1()?;
-        node.recover()?;
+        node.validate_native_task_operation_pins_v1()?;
+        node.validate_native_demand_evidence_v1()?;
+        if observation_only {
+            node.check_packet_observation_recovery()?;
+        } else {
+            node.recover()?;
+        }
         node.read_active()?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context()?, node.active()?.0)?;
         Ok(node)
@@ -2898,12 +2953,23 @@ impl Node {
         }
         Ok(())
     }
+    #[cfg(test)]
     fn check_persisted_state_with_readback(
         &self,
         id: Hash,
         state: &State,
         progress: &mut dyn FnMut() -> Result<()>,
         readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
+        self.check_persisted_state_with_root_arithmetic(id, state, progress, readback, None)
+    }
+    fn check_persisted_state_with_root_arithmetic(
+        &self,
+        id: Hash,
+        state: &State,
+        progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,
     ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
@@ -2915,6 +2981,8 @@ impl Node {
         let actual_root = if self.state_backend == StateBackend::AuthenticatedV1 {
             self.authenticated_arithmetic
                 .state_root(&self.settings, state)?
+        } else if let Some(arithmetic) = arithmetic {
+            arithmetic.root(state)?
         } else {
             self.settings.state_root(state)?
         };
@@ -2932,6 +3000,17 @@ impl Node {
         }
         Ok(())
     }
+    /// Legacy reorganization and the final admission fence share bounded
+    /// complete-State root arithmetic. Every caller still reads actual SQL rows
+    /// and checks continuity, canonical grammar and the fresh stored root at its
+    /// original boundary. PQ State grammar and the distinct Growth root keep
+    /// their original paths; profile and backend exclusion remain explicit.
+    fn legacy_persisted_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
+        (self.state_backend == StateBackend::Legacy
+            && !pq_accounts_v2::enabled(&self.settings.app)
+            && !growth_profile_v2::enabled(&self.settings.app))
+        .then_some(&self.commitment_root_arithmetic)
+    }
     /// Check actual data after the last transactional write. A post-COMMIT
     /// observation cannot repair a suppressed write or a trigger-corrupted slot.
     #[cfg(test)]
@@ -2947,7 +3026,24 @@ impl Node {
     fn check_active_before_commit_with_readback(
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
+        self.check_active_before_commit_with_root_arithmetic(progress, readback, None)
+    }
+    fn check_active_before_commit_with_root_arithmetic(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,
+    ) -> Result<()> {
+        self.check_active_before_commit_with_root_role(progress, readback, arithmetic, false)
+    }
+    fn check_active_before_commit_with_root_role(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
         mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        arithmetic: Option<&pon_commitment::FullRootArithmetic>,
+        preserve_staging: bool,
     ) -> Result<()> {
         progress()?;
         self.namespace()?;
@@ -2963,11 +3059,22 @@ impl Node {
         if let Some(scope) = readback.as_deref_mut() {
             scope.nominate_active(&self.db, selected.0)?;
         }
-        self.check_persisted_state_with_readback(
+        // During initial full-history activation, the still-published genesis
+        // State alternates with staging State. Do not evict staging's bounded
+        // pure arithmetic with that small, unrelated active input. All rows and
+        // the root are still checked by the original complete-root algorithm.
+        // Other active tips and every non-reorg caller keep their old policy.
+        let arithmetic = if preserve_staging && selected.0 == self.settings.genesis() {
+            None
+        } else {
+            arithmetic
+        };
+        self.check_persisted_state_with_root_arithmetic(
             selected.0,
             &state,
             progress,
             readback.as_deref_mut(),
+            arithmetic,
         )?;
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context()?, selected.0)
             .map_err(Error::local_integrity)?;
@@ -3084,6 +3191,8 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?;
         let mut state = State::new();
         let mut canonical_bytes = Vec::new();
+        let mut previous_key = [0_u8; 160];
+        let mut previous_key_len = None;
         while let Some(row) = rows
             .next()
             .map_err(|error| Error::from(error).local_integrity())?
@@ -3121,13 +3230,36 @@ impl Node {
                 ))
                 .local_integrity()
             })?;
-            let value: Value = serde_json::from_slice(bytes)
-                .map_err(|error| Error::from(error).local_integrity())?;
-            canonical_bytes.clear();
-            serde_json::to_writer(&mut canonical_bytes, &value)
-                .map_err(|error| Error::from(error).local_integrity())?;
-            ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+            // Reuse only the pure bytes-to-Value decoding of the previous
+            // successful row in THIS complete scan. SQL types and dimensions
+            // above still apply to the current row, and full current BLOB
+            // equality is required. The local State owns the prior value;
+            // no SQLite borrow, State verdict or fact survives this call.
+            let decoded = previous_key_len
+                .filter(|_| canonical_bytes.as_slice() == bytes)
+                .and_then(|len| std::str::from_utf8(&previous_key[..len]).ok())
+                .and_then(|prior| state.get(prior))
+                .cloned();
+            let value = if let Some(value) = decoded {
+                value
+            } else {
+                let value: Value = serde_json::from_slice(bytes)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                canonical_bytes.clear();
+                serde_json::to_writer(&mut canonical_bytes, &value)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+                value
+            };
+            // A fixed key buffer adds no per-row allocation. Exact map lookup
+            // also preserves the old decoder under repeated keys or unusual
+            // SQL ordering; this is never a claim that such a schema is valid.
+            let next_previous_key_len = previous_key.get_mut(..key.len()).map(|prior| {
+                prior.copy_from_slice(key.as_bytes());
+                key.len()
+            });
             state.insert(key, value);
+            previous_key_len = next_previous_key_len;
         }
         progress()?;
         Ok(state)
@@ -3805,7 +3937,16 @@ impl Node {
         &self,
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<State> {
+        self.state_at_with_replay_prefix(tip, progress, readback, None)
+    }
+    fn state_at_with_replay_prefix(
+        &self,
+        tip: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
         mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        mut prefix: Option<&mut legacy_admission_readback::Parent<'_, '_>>,
     ) -> Result<State> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -3822,9 +3963,18 @@ impl Node {
         }
         let mut path = reverse_path::ReversePath::new(tempfile::tempfile()?);
         let mut count = 0u64;
+        let mut prefer_replay_prefix = false;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             progress()?;
+            if let Some(state) = prefix
+                .as_deref_mut()
+                .map(|prefix| prefix.take_if_current(&self.db, tip, cur))
+                .transpose()?
+                .flatten()
+            {
+                break (state, None);
+            }
             let row = self.record(cur)?;
             let snapshot = self
                 .db
@@ -3838,8 +3988,20 @@ impl Node {
                     .map_err(Error::local_integrity)?;
                 continuity_v1::check_state(&state, row.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
+                prefer_replay_prefix = self.state_backend == StateBackend::Legacy;
+                if prefer_replay_prefix {
+                    self.historical_commitment_cache
+                        .borrow_mut()
+                        .begin_replay(cur);
+                }
                 let commitment = self
-                    .checked_historical_commitment(cur, &state, row.root, None)?
+                    .checked_historical_commitment(
+                        cur,
+                        &state,
+                        row.root,
+                        None,
+                        prefer_replay_prefix,
+                    )?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
                     native_authenticated::verify_state_with_readback(
@@ -3858,7 +4020,7 @@ impl Node {
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
             cur = self.parent(cur)?;
         };
-        for _ in 0..count {
+        for replay_index in 0..count {
             progress()?;
             let id = path.pop()?.ok_or("ANCESTRY_LIMIT")?;
             for (index, (key, before, after)) in self
@@ -3890,6 +4052,7 @@ impl Node {
                     &state,
                     self.record(id)?.root,
                     commitment.as_ref(),
+                    prefer_replay_prefix && replay_index < 6,
                 )?
                 .snapshot;
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
@@ -4957,7 +5120,11 @@ impl Node {
         } = admission;
         let h = &packet.header;
         let id = packet.id()?;
-        let progress = control.progress;
+        let progress = |point: ExecutionProgress| -> Result<()> {
+            #[cfg(test)]
+            legacy_admission_readback::test_progress(&self.db, point)?;
+            (control.progress)(point)
+        };
         ensure(
             h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
             "ROOT",
@@ -4983,11 +5150,21 @@ impl Node {
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
+        let legacy_readback_schema = match self.legacy_admission_readback_schema() {
+            // An active-parent read comes from KV, while its child's original
+            // path still reads historical snapshots/deltas. Those obligations
+            // are different and must never borrow this common-prefix path.
+            Some(expected) if !h.height.is_multiple_of(128) && h.parent != self.active()?.0 => {
+                Some(expected)
+            }
+            _ => None,
+        };
         // This is the existing c165 executed-transaction owner, captured before
         // any callback or write. total_changes alone cannot detect an ABA or DDL.
         let original_readback_owner = self
             .post_write_schema
             .as_ref()
+            .or(legacy_readback_schema)
             .map(|_| {
                 trnm_sqlite_io_boundary::TransactionScope::capture(&tx)
                     .map_err(native_authenticated::readback_scope_error)
@@ -5089,6 +5266,23 @@ impl Node {
                         .zip(self.post_write_schema.as_ref()),
                 )?;
             }
+            // All intended writes, including their triggers, precede this
+            // baseline. A failed schema qualification keeps the original two
+            // full replays; a replaced original writer is an integrity error.
+            let mut legacy_readback = original_readback_owner
+                .as_ref()
+                .zip(legacy_readback_schema)
+                .map(|(owner, expected)| {
+                    native_authenticated::PostWriteReadback::new(
+                        &tx,
+                        &self.settings,
+                        id,
+                        owner,
+                        expected,
+                    )
+                })
+                .transpose()?
+                .flatten();
             // Re-read after every write/trigger, while rollback can still remove the
             // whole block. A snapshot cannot conceal an omitted canonical delta.
             ensure(
@@ -5099,29 +5293,46 @@ impl Node {
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
-            ensure(
-                self.state_at_with_readback(
-                    h.parent,
+            if let Some(scope) = legacy_readback.as_mut() {
+                self.check_legacy_admission_states(
+                    (h.parent, id),
+                    (&prior, &output.state),
                     &mut || progress(ExecutionProgress::BeforeDurableCommit),
-                    publication_readback.as_mut(),
-                )? == prior
-                    && self.state_at_with_readback(
-                        id,
+                    scope,
+                )?;
+            } else {
+                ensure(
+                    self.state_at_with_readback(
+                        h.parent,
                         &mut || progress(ExecutionProgress::BeforeDurableCommit),
                         publication_readback.as_mut(),
-                    )? == output.state,
-                "STORAGE_WRITE",
-            )
-            .map_err(Error::local_integrity)?;
+                    )? == prior
+                        && self.state_at_with_readback(
+                            id,
+                            &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                            publication_readback.as_mut(),
+                        )? == output.state,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+            }
             crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
                 .map_err(Error::local_integrity)?;
-            self.check_active_before_commit_with_readback(
+            // Keep the last active-state read and all original post-write fences.
+            // Only the classical complete-input root arithmetic is shared.
+            self.check_active_before_commit_with_root_arithmetic(
                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
                 publication_readback.as_mut(),
+                self.legacy_persisted_root_arithmetic(),
             )?;
             progress(ExecutionProgress::BeforeDurableCommit)?;
             if let Some(scope) = publication_readback.as_mut() {
                 scope.validate_consumed(&tx)?;
+            }
+            if let Some(scope) = legacy_readback.as_mut() {
+                // Any use of the shared prefix stays fenced until AFTER the
+                // last active/ancestry/control check. Never re-stamp this scope.
+                scope.require_unchanged_after_last_write(&tx)?;
             }
             Ok(())
         })();
@@ -5788,7 +5999,16 @@ impl Node {
                             .history
                             .observe(native_authenticated::HistoryStage::ReadActive)
                     });
-                self.check_active_before_commit_with_readback(progress, readback.as_mut())?;
+                let reorg = matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep);
+                let arithmetic = reorg
+                    .then(|| self.legacy_persisted_root_arithmetic())
+                    .flatten();
+                self.check_active_before_commit_with_root_role(
+                    progress,
+                    readback.as_mut(),
+                    arithmetic,
+                    reorg,
+                )?;
             }
             self.continuous_scope_checkpoint()?;
             self.mining_scope_checkpoint()?;
@@ -5890,6 +6110,21 @@ impl Node {
         }
         Ok(())
     }
+    /// The read-only prefix of activation, also used by cold reconciliation.
+    fn activation_selection(&self, target: Hash) -> Result<(Hash, u64, Option<u64>)> {
+        let (old, generation) = self.active()?;
+        let next = if self.record(target)?.work > self.record(old)?.work {
+            Some(
+                generation
+                    .checked_add(1)
+                    .filter(|value| *value <= i64::MAX as u64)
+                    .ok_or("GENERATION")?,
+            )
+        } else {
+            None
+        };
+        Ok((old, generation, next))
+    }
     pub fn activate(&mut self, target: Hash) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_activate(target);
@@ -5920,14 +6155,10 @@ impl Node {
         self.mining_activation_gate(target)?;
         self.namespace()?;
         self.resume_owned_reorg(&mut hook, progress, termination_cpu)?;
-        let (old, g) = self.active()?;
-        if self.record(target)?.work <= self.record(old)?.work {
+        let (old, g, next) = self.activation_selection(target)?;
+        let Some(next) = next else {
             return Ok(old);
-        }
-        let next = g
-            .checked_add(1)
-            .filter(|v| *v <= i64::MAX as u64)
-            .ok_or("GENERATION")?;
+        };
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
             progress()?;
@@ -6051,11 +6282,12 @@ impl Node {
                         .history
                         .observe(native_authenticated::HistoryStage::VerifyState)
                 });
-                self.check_persisted_state_with_readback(
+                self.check_persisted_state_with_root_arithmetic(
                     old,
                     &self.slot_state_with_progress(next, progress)?,
                     progress,
                     readback.as_mut(),
+                    self.legacy_persisted_root_arithmetic(),
                 )?;
             }
             Ok(readback)
@@ -6201,15 +6433,9 @@ impl Node {
         }
         ensure(count == expected.len(), "REORG_EVENTS").map_err(Error::local_integrity)
     }
-    fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
-        self.resume_intent_with_progress(hook, &mut || Ok(()))
-    }
-    fn resume_intent_with_progress(
-        &mut self,
-        hook: &mut Option<&mut Hook<'_>>,
-        progress: &mut dyn FnMut() -> Result<()>,
-    ) -> Result<Hash> {
-        progress()?;
+    /// Decode every original column even when a journal is already terminal.
+    /// Observing only `done` would miss malformed completed-row metadata.
+    fn checked_reorg_intent(&self) -> Result<Option<ReorgRow>> {
         let row = self
             .db
             .query_row(
@@ -6226,15 +6452,27 @@ impl Node {
                 },
             )
             .optional()?;
-        let Some((old, target, g, position, done)) = row else {
+        if let Some((_, _, _, _, done)) = &row {
+            ensure(*done <= 2, "REORG_STEPS").map_err(Error::local_integrity)?;
+            if *done == 2 {
+                self.check_cancelled_reorg_lifecycle()?;
+            }
+        }
+        Ok(row)
+    }
+    fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
+        self.resume_intent_with_progress(hook, &mut || Ok(()))
+    }
+    fn resume_intent_with_progress(
+        &mut self,
+        hook: &mut Option<&mut Hook<'_>>,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Hash> {
+        progress()?;
+        let Some((old, target, g, position, done)) = self.checked_reorg_intent()? else {
             return Ok(self.active()?.0);
         };
-        ensure(done <= 2, "REORG_STEPS").map_err(Error::local_integrity)?;
-        if done == 2 {
-            self.check_cancelled_reorg_lifecycle()?;
-            return Ok(self.active()?.0);
-        }
-        if done == 1 {
+        if done != 0 {
             return Ok(self.active()?.0);
         }
         self.invalidate_commitment();
@@ -6272,11 +6510,12 @@ impl Node {
                             .history
                             .observe(native_authenticated::HistoryStage::VerifyState)
                     });
-                    self.check_persisted_state_with_readback(
+                    self.check_persisted_state_with_root_arithmetic(
                         resulting,
                         &self.slot_state_with_progress(g, progress)?,
                         progress,
                         readback.as_mut(),
+                        self.legacy_persisted_root_arithmetic(),
                     )?;
                 }
                 Ok(readback)
@@ -6290,11 +6529,11 @@ impl Node {
         progress()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        ensure(
-            self.settings.state_root(&state)? == self.record(target)?.root,
-            "ROOT",
-        )
-        .map_err(Error::local_integrity)?;
+        let actual_root = match self.legacy_persisted_root_arithmetic() {
+            Some(arithmetic) => arithmetic.root(&state)?,
+            None => self.settings.state_root(&state)?,
+        };
+        ensure(actual_root == self.record(target)?.root, "ROOT").map_err(Error::local_integrity)?;
         progress()?;
         cut(hook, "before-publish")?;
         self.atomic_reorg_with_readback(progress, |progress, original_owner| {
@@ -6353,17 +6592,26 @@ impl Node {
                         .history
                         .observe(native_authenticated::HistoryStage::VerifyState)
                 });
-                self.check_persisted_state_with_readback(
+                self.check_persisted_state_with_root_arithmetic(
                     target,
                     &self.slot_state_with_progress(g, progress)?,
                     progress,
                     readback.as_mut(),
+                    self.legacy_persisted_root_arithmetic(),
                 )?;
             }
             Ok(readback)
         })?;
         cut(hook, "published")?;
         Ok(target)
+    }
+    fn recovery_target(&self) -> Result<Hash> {
+        let best: Vec<u8> = self.db.query_row(
+            "SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1",
+            [],
+            |row| row.get(0),
+        )?;
+        bytes32(best)
     }
     pub fn recover(&mut self) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
@@ -6378,12 +6626,8 @@ impl Node {
         self.invalidate_commitment();
         self.namespace()?;
         self.resume_intent(&mut None)?;
-        let best: Vec<u8> = self.db.query_row(
-            "SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1",
-            [],
-            |r| r.get(0),
-        )?;
-        self.activate(bytes32(best)?)
+        let best = self.recovery_target()?;
+        self.activate(best)
     }
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
         self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))

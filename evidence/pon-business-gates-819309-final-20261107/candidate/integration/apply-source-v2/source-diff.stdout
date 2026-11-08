@@ -1,0 +1,223 @@
+diff --git a/.github/workflows/pon-recent-batch-acceptance.yml b/.github/workflows/pon-recent-batch-acceptance.yml
+index c7cef3407..3468dab27 100644
+--- a/.github/workflows/pon-recent-batch-acceptance.yml
++++ b/.github/workflows/pon-recent-batch-acceptance.yml
+@@ -73,7 +73,7 @@ jobs:
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs)" = 44acbb5d854a8e0a7c4979b4715bd9949b656cd5
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = a6eb85aa2c2e3ad17244890128ef86975d71ecc9
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
+-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 6769b89e1544d82fb41d418adf11d6b26ef01cc3
++          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 7d6d5bd7bb49d0d9465df3322b485fd6a41549f8
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 28b315487..a4105b1e4 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -536,7 +536,7 @@
+     "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs": "e3a3c2a893eb1c7ee99dd93d2993e8b26ce2d2e3",
+     "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs": "10236458a1fabf587e2aace247a43edbfabda7a9",
+     "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs": "92f1e2a9e971af5abe9e43b1ddfb976c41da9be4",
+-    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "2965d5126c8bc3036803ed8d61757239535e4eeb",
++    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "bde7875080ff6c8a0dca4d6aa0a8909c6ca82a8f",
+     "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "d5dca8c623748172c3e910f9da7c24212aeb26ad",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": "10cccefbab932cc22569eb4a8c035f6de7defc05",
+@@ -604,7 +604,7 @@
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs": "655f0701562203f2e57c4e71591e08b301ac8b92",
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": "f680b26569b39923f63eeb2ccb347e33ea46e03e",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "6769b89e1544d82fb41d418adf11d6b26ef01cc3",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "7d6d5bd7bb49d0d9465df3322b485fd6a41549f8",
+     "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs": "bae5cba609b84c78550c7f4d7e67d0ab9ffde24a",
+     "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
+     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "6f563556fe47a1bb6d780e166355b4f1473c811b",
+@@ -632,8 +632,9 @@
+     "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs": "52914aec898d2967db55a7b618aa6bcf99ee424f",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback.rs": "2cca5dce572f70c5180750caecc4a4340620f09a",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs": "c53e8e00b973678b5766b731e7af1abefc6236f2",
++    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs": "5a04c88b1c7d6db76ccb0c773931730b7e82c565",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs": "d50f5e607f5aed311174808b980f50e95cac929f",
+-    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "7300db720abd74be9f788f4c356f4d08c177db23",
++    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "86ddedea0b03e0016707b5b0a0fbc940d2472ab2",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs": "e99453b1abe6ce589f003be199b5553241cba398",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs": "9c1b5573ae7a4f43745fd29e6e6d1a28abf64da8",
+@@ -1133,6 +1134,7 @@
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index 2965d5126..bde787508 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -5229,6 +5229,13 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs"
+         )),
+     ),
++    (
++        "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs"
++        )),
++    ),
+     (
+         "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+         include_bytes!(concat!(
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index 6769b89e1..7d6d5bd7b 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -19,6 +19,8 @@ mod historical_commitment_tests;
+ mod history_page;
+ mod legacy_admission_readback;
+ #[cfg(test)]
++mod legacy_admission_root_tests;
++#[cfg(test)]
+ mod legacy_reorg_observation_tests;
+ #[cfg(test)]
+ mod legacy_reorg_root_tests;
+@@ -2868,12 +2870,12 @@ impl Node {
+         }
+         Ok(())
+     }
+-    /// Only the Legacy reorganization path opts into the existing bounded root
+-    /// arithmetic. It still reads every actual SQL row and checks continuity,
+-    /// canonical grammar and the fresh stored root at every original boundary.
+-    /// Ordinary append/admission, PQ State grammar and the distinct Growth root
+-    /// stay unchanged. Profile exclusion is explicit as well as backend exclusion.
+-    fn legacy_reorg_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
++    /// Legacy reorganization and the final admission fence share bounded
++    /// complete-State root arithmetic. Every caller still reads actual SQL rows
++    /// and checks continuity, canonical grammar and the fresh stored root at its
++    /// original boundary. PQ State grammar and the distinct Growth root keep
++    /// their original paths; profile and backend exclusion remain explicit.
++    fn legacy_persisted_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
+         (self.state_backend == StateBackend::Legacy
+             && !pq_accounts_v2::enabled(&self.settings.app)
+             && !growth_profile_v2::enabled(&self.settings.app))
+@@ -5153,9 +5155,12 @@ impl Node {
+             }
+             crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+                 .map_err(Error::local_integrity)?;
+-            self.check_active_before_commit_with_readback(
++            // Keep the last active-state read and all original post-write fences.
++            // Only the classical complete-input root arithmetic is shared.
++            self.check_active_before_commit_with_root_arithmetic(
+                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                 publication_readback.as_mut(),
++                self.legacy_persisted_root_arithmetic(),
+             )?;
+             progress(ExecutionProgress::BeforeDurableCommit)?;
+             if let Some(scope) = publication_readback.as_mut() {
+@@ -5833,7 +5838,7 @@ impl Node {
+                     });
+                 let arithmetic =
+                     matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep)
+-                        .then(|| self.legacy_reorg_root_arithmetic())
++                        .then(|| self.legacy_persisted_root_arithmetic())
+                         .flatten();
+                 self.check_active_before_commit_with_root_arithmetic(
+                     progress,
+@@ -6107,7 +6112,7 @@ impl Node {
+                     &self.slot_state_with_progress(next, progress)?,
+                     progress,
+                     readback.as_mut(),
+-                    self.legacy_reorg_root_arithmetic(),
++                    self.legacy_persisted_root_arithmetic(),
+                 )?;
+             }
+             Ok(readback)
+@@ -6329,7 +6334,7 @@ impl Node {
+                         &self.slot_state_with_progress(g, progress)?,
+                         progress,
+                         readback.as_mut(),
+-                        self.legacy_reorg_root_arithmetic(),
++                        self.legacy_persisted_root_arithmetic(),
+                     )?;
+                 }
+                 Ok(readback)
+@@ -6343,7 +6348,7 @@ impl Node {
+         progress()?;
+         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
+             .map_err(|error| Error::from(error).local_integrity())?;
+-        let actual_root = match self.legacy_reorg_root_arithmetic() {
++        let actual_root = match self.legacy_persisted_root_arithmetic() {
+             Some(arithmetic) => arithmetic.root(&state)?,
+             None => self.settings.state_root(&state)?,
+         };
+@@ -6411,7 +6416,7 @@ impl Node {
+                     &self.slot_state_with_progress(g, progress)?,
+                     progress,
+                     readback.as_mut(),
+-                    self.legacy_reorg_root_arithmetic(),
++                    self.legacy_persisted_root_arithmetic(),
+                 )?;
+             }
+             Ok(readback)
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs
+index 7300db720..86ddedea0 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs
+@@ -141,7 +141,7 @@ fn legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors() {
+     let cfg = Settings::development(Some(1)).unwrap();
+     let node = Node::open(directory.path(), cfg.clone(), 1).unwrap();
+     let original = node.read_active().unwrap();
+-    let arithmetic = node.legacy_reorg_root_arithmetic().unwrap();
++    let arithmetic = node.legacy_persisted_root_arithmetic().unwrap();
+     for _ in 0..2 {
+         node.check_active_before_commit_with_root_arithmetic(
+             &mut || Ok(()),
+@@ -276,11 +276,11 @@ fn legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback() {
+ fn legacy_reorg_root_never_selects_the_growth_or_authenticated_relation() {
+     let directory = tempfile::tempdir().unwrap();
+     let legacy = Node::open(&directory.path().join("legacy"), settings(), 1).unwrap();
+-    assert!(legacy.legacy_reorg_root_arithmetic().is_some());
++    assert!(legacy.legacy_persisted_root_arithmetic().is_some());
+     let authenticated =
+         Node::open_with_authenticated_state(&directory.path().join("native"), settings(), 1)
+             .unwrap();
+-    assert!(authenticated.legacy_reorg_root_arithmetic().is_none());
++    assert!(authenticated.legacy_persisted_root_arithmetic().is_none());
+     let growth = Settings::development_with_profiles(
+         Some(1),
+         "native-public-evaluation-dev-v1",
+@@ -289,7 +289,7 @@ fn legacy_reorg_root_never_selects_the_growth_or_authenticated_relation() {
+     .unwrap();
+     let growth = Node::open(&directory.path().join("growth"), growth, 1).unwrap();
+     assert_eq!(growth.state_backend, StateBackend::Legacy);
+-    assert!(growth.legacy_reorg_root_arithmetic().is_none());
++    assert!(growth.legacy_persisted_root_arithmetic().is_none());
+     let actual = growth.read_active().unwrap();
+     assert_eq!(
+         growth.settings.state_root(&actual.2).unwrap(),
+@@ -346,12 +346,12 @@ fn legacy_reorg_root_preserves_pq_v2_and_v6_state_validation() {
+         let mut node =
+             Node::open_with_pq_network(directory.path(), cfg.clone(), 1, &policy).unwrap();
+         assert_eq!(node.state_backend, StateBackend::PqNetworkV2);
+-        assert!(node.legacy_reorg_root_arithmetic().is_none());
++        assert!(node.legacy_persisted_root_arithmetic().is_none());
+         assert!(node.legacy_admission_readback_schema().is_none());
+         // Isolate the defensive profile predicate. The normal Legacy constructor
+         // already refuses PQ, and no SQL operation runs with this test-only tag.
+         node.state_backend = StateBackend::Legacy;
+-        assert!(node.legacy_reorg_root_arithmetic().is_none());
++        assert!(node.legacy_persisted_root_arithmetic().is_none());
+         node.legacy_admission_schema = Some(BTreeMap::new());
+         assert!(node.legacy_admission_readback_schema().is_none());
+         node.legacy_admission_schema = None;
+@@ -389,7 +389,7 @@ fn legacy_reorg_root_preserves_pq_v2_and_v6_state_validation() {
+             .check_active_before_commit_with_root_arithmetic(
+                 &mut || Ok(()),
+                 None,
+-                node.legacy_reorg_root_arithmetic(),
++                node.legacy_persisted_root_arithmetic(),
+             )
+             .unwrap_err();
+         assert_eq!(refusal.to_string(), expected);

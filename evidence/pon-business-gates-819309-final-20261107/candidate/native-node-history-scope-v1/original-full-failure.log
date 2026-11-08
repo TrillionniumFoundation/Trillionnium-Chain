@@ -1,0 +1,7 @@
+test test_full_transaction_pages_use_byte_limits_and_recover_all_native_state ... 
+thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (1667685) panicked at crates/trnm-pon-node/tests/native_node.rs:1407:37:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: "PUBLIC_MUTATION_CPU_BUDGET", source: None, request_history_budget: false }
+
+thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (1667685) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+FAILED

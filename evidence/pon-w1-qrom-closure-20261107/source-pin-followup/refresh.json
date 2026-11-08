@@ -1,0 +1,75 @@
+{
+  "base_commit": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "changes": [
+    {
+      "new_git_blob": "f5ccd62394d43bdbd9e83c188536ae8d51d332a8",
+      "old_git_blob": "9aea7ed09e795c9bf375c351d6adb9d7949edc18",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "source_bytes": 378119,
+      "source_sha256": "b64c0889f80a67b37459db6440ef4f4d8cac67f7f85f02ebe6f407a2042a1d85"
+    },
+    {
+      "new_git_blob": "bf8ff5a232b75d0d84aa6d8ea11c9cefe7ff96d2",
+      "old_git_blob": "7c5b88da83e931859e73b55d912eb5e69f95221a",
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+      "source_bytes": 6898,
+      "source_sha256": "58c6e4d21de46770911c38214c90cd4ae4373b1b786d326e04fab21935e4bd2f"
+    },
+    {
+      "new_git_blob": "2a004b07955d721a3fcb40011313615ba41feb27",
+      "old_git_blob": "747eff7f36a40cd3cbc5fd00b758f6ecfd789883",
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+      "source_bytes": 11567,
+      "source_sha256": "7d0f8b33e7d9f6b316053508c6f1df9f5510c985f5e757470d85d0818888fb39"
+    },
+    {
+      "new_git_blob": "697c598fe227bcc395f8715291883ed45acd6f74",
+      "old_git_blob": "6490b8c84e09a7f3425e5754279a4e03b7ffbfe4",
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs",
+      "source_bytes": 9707,
+      "source_sha256": "df66143307e13bf2c699e0a4a62487dade06847180115bf3bc29635b9c17754d"
+    },
+    {
+      "new_git_blob": "43aea5f4c880796717c5e6ed1997fa97a30def3d",
+      "old_git_blob": "fa193407085124d8fb4f1329b4b4b22cf2207a13",
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+      "source_bytes": 11627,
+      "source_sha256": "64767fdd1a3c8cf95413e7afe550472ea97890d5c5cb0b2965e81c0d4e4d7697"
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "name": "pq-source-guard",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2b026ff2da40cb1d0c0c9ef9f79a5bf2f6121966780ccf027bccd5e45eca3603"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "name": "distributed-inventory",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    }
+  ],
+  "full_native_regressions_completed_here": false,
+  "manifest_after_sha256": "07b382298f9969e203e790eb7776a73e17acfce00cd2cdeb685b04b7e495aab6",
+  "manifest_before_sha256": "9b6432ccc96a6d44c288261a0d819daf3078ffc1b7613c560e5a3346ab1a9fa1",
+  "manifest_path": "config/pon/pq-cross-branch-corpus-v1.json",
+  "observed_utc": "2026-11-07T14:31:55.382063+00:00",
+  "pin_count": 688,
+  "post_quantum_soundness_qualified": false,
+  "production_qualified": false,
+  "schema": "TRNM-W1-QROM-PQ-SOURCE-PIN-FOLLOWUP1",
+  "scope": "Five reviewed source pins only: the 1a14 generated inventory and four release-owner source/test files. Guard behavior, authority/schema parameters and all qualification assertions are unchanged.",
+  "source_checks_passed": true,
+  "unconditional_project_security_bits": null
+}

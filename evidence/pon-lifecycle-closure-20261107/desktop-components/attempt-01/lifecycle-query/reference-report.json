@@ -1,0 +1,35 @@
+{
+  "actor_labels_authenticated": false,
+  "actual_quantum_query_observed": false,
+  "actual_sha_independent_uniform_tickets_proved": false,
+  "checkpoint": {
+    "head_hash": "357620a40f1bf4f5985dd5c3f6bffed17e5f3c02d85749f289e32b15f1204c7d",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "sequence": 43
+  },
+  "complete_emissions_including_duplicates": 10,
+  "declared_caps": {
+    "C": 8,
+    "M": 10,
+    "Q": 1
+  },
+  "global_first_coherent_query_attested": false,
+  "hidden_inventory_output_extraction_and_cap_attested": false,
+  "input_parameters_attest_complete_joint_initial_state": false,
+  "input_parameters_attest_full_lifetime_query_coverage": false,
+  "mandatory_u_minimum_gate_cost_proved": false,
+  "native_identity_and_weight_bridge_proved": false,
+  "native_six_successor_risk_certified": false,
+  "phase": "post-prefix",
+  "physical_resource_tail_proved": false,
+  "production_qualified": false,
+  "records_execution_attested": false,
+  "reference_cache_reads": 11,
+  "reference_cap_checks_pass": true,
+  "reference_post_prefix_calls": 1,
+  "reference_prefix_distinct_calls": 8,
+  "reference_sha256_evaluations": 9,
+  "schema": "pon-lifecycle-query-reference-report-v1",
+  "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+  "unique_research_credit": 32
+}

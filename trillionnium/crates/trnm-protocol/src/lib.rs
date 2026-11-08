@@ -1,4 +1,5 @@
 pub mod crypto_profile;
+pub mod funded_service_task_v1;
 pub mod pq_frame;
 pub mod pq_legacy_profile;
 pub mod pq_native_accounts_v2;
@@ -505,4 +506,5 @@ pub mod pon_wire;
 
 pub mod pon_state;
 
+pub mod content_commitment;
 pub mod qualified_work_task;

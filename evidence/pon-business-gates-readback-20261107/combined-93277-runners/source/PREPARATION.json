@@ -1,0 +1,273 @@
+{
+  "business_or_production_acceptance": false,
+  "controls_executed_during_preparation": 0,
+  "expected_total_for_observed_source": 665,
+  "failures_retained_without_rerun": true,
+  "final_source_head": null,
+  "final_source_requires_new_readonly_roster_comparison": true,
+  "genuine_runtime_expected": {
+    "cryptography": "41.0.7",
+    "numpy": "1.26.4",
+    "python": "3.12.3"
+  },
+  "known_preparation_failure": "draft-v1 AST parse SyntaxError before writing runnable file; 0 tests executed; original source+372-byte error retained",
+  "no_native_builds_or_benchmarks": true,
+  "observed_source_head": "d116e8382d4f24047b73c894edf32d244fed1b2c",
+  "observed_source_was_mutable": true,
+  "original_cell_child_timeout_seconds": 30,
+  "prepared_utc": "2026-11-07T17:49:39.016015+00:00",
+  "roster": {
+    "bytes": 224648,
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/prepared-test-roster.json",
+    "sha256": "d39c7938b75bfbe929248530494d23b6d2c307f7a91579f47e21e46da17d691a"
+  },
+  "run_once_output_directory_must_not_exist": true,
+  "runner": {
+    "bytes": 17908,
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/run-final-controls-v2.py",
+    "sha256": "4d2c809a85a1ee9f8b7152f8746fd1d00f224f8d736f46a9bb50428ca48ca57d"
+  },
+  "runtime_identity_spoofing": false,
+  "schema": "trnm-final-source-controls-preparation-v1",
+  "sole_completed_command_gate_during_preparation": "project-preflight.sh --dev (mutable d116 source; not final qualification)",
+  "source_guard": [
+    "Original verify_ci_source.py --kind head --expected-head EXACT_FINAL_SHA before",
+    "Original verify_ci_source.py --kind head --expected-head EXACT_FINAL_SHA after; exact receipt byte comparison"
+  ],
+  "state": "PREPARED_NOT_EXECUTED_AWAITING_FINAL_SOURCE",
+  "static_commands": [
+    [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    [
+      "/usr/bin/python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    [
+      "/usr/bin/python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    [
+      "/usr/bin/python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    [
+      "/usr/bin/python3",
+      "scripts/ci/check_repository.py"
+    ],
+    [
+      "git",
+      "--no-replace-objects",
+      "diff",
+      "--check"
+    ],
+    [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "--version"
+    ],
+    [
+      "/home/qian-qi/.cargo/bin/rustc",
+      "+1.95.0",
+      "--version",
+      "--verbose"
+    ],
+    [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1",
+      "--all-features",
+      "--locked",
+      "--offline"
+    ]
+  ],
+  "suites": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "source_resolved_test_methods": 37,
+      "source_sha256": "3f1d929a2da0e255b528f2a31701e8ddd65ce5b5a4a94fbcf612842608494c13"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "source_resolved_test_methods": 43,
+      "source_sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_integration_push_source.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_integration_push_source.py",
+      "source_resolved_test_methods": 13,
+      "source_sha256": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_run_from_zero_native.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "source_resolved_test_methods": 149,
+      "source_sha256": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_run_w1_fresh_service_v1.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "source_resolved_test_methods": 29,
+      "source_sha256": "4bcad9c87197e3334d912ecfe3257439959c4a04658ef7c762d98070d8334f62"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "source_resolved_test_methods": 78,
+      "source_sha256": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_observation_process.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_ci_observation_process.py",
+      "source_resolved_test_methods": 7,
+      "source_sha256": "52cd36b22d529406365b05b431dd943c3b7526ff942a0438555d30467c284720"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_record_pq_native_command.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_record_pq_native_command.py",
+      "source_resolved_test_methods": 4,
+      "source_sha256": "8ff5a8b900675862511321a7c913d79f9b56185f1db9aac8f231f0fb705b528e"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "path": "scripts/ci/test_ci_contract.py",
+      "source_resolved_test_methods": 103,
+      "source_sha256": "a1ef5e4405c0a4fe1bd0822b7b2d83fbe593d5ce001defad9e11ede2bf73da29"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "source_resolved_test_methods": 20,
+      "source_sha256": "73358b259307ad1c2bbf2df9ac26853a0cab484e09eda5c240a2a68215a52795"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "source_resolved_test_methods": 47,
+      "source_sha256": "fb629eeb16792e3d3714a9a1ad7c82304a127d394aa861272c259551175e975e"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+      "source_resolved_test_methods": 34,
+      "source_sha256": "10e4a10e58a7573790204a1c53a5a0743adabb305d34a07f9d4481043c616ae3"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+      "source_resolved_test_methods": 11,
+      "source_sha256": "6ed1a512a29600fdbc0c53621bebfc095c2750fb3e7105145fc247cc185162f1"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+      "source_resolved_test_methods": 11,
+      "source_sha256": "a96e7b50d5582beec2c8d520ddca17b6f90765083c37e472c3c09b219a9cce46"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+      "source_resolved_test_methods": 20,
+      "source_sha256": "f9e95ff81abb61f31994c5c2d97bd60e32db922de35c48f709cf5d565304433d"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+      "source_resolved_test_methods": 34,
+      "source_sha256": "23ef7ade9d5ee2e9a80b7e4f71986dfd31af8dbdd8ad45707c8cfefe1c21aa2c"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+        "-v"
+      ],
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+      "source_resolved_test_methods": 25,
+      "source_sha256": "9fbd40ea0426db09cd6323ad7ce0065572882c47179b66bcf1b17dbfb48ee1e8"
+    }
+  ]
+}

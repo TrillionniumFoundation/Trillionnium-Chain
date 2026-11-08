@@ -523,6 +523,38 @@ pub fn serve_cell_rendezvous(
     shutdown: &AtomicBool,
     limits: CellRendezvousLimitsV1,
 ) -> CellResultV1<CellRendezvousReportV1> {
+    serve_cell_rendezvous_inner(listener, directory, addresses, shutdown, limits, None)
+}
+
+// Test-only readiness is emitted after the serving thread has actually entered
+// its nonblocking accept loop; socket/DB initialization alone is not readiness.
+#[cfg(test)]
+pub(super) fn serve_cell_rendezvous_with_ready(
+    listener: &TcpListener,
+    directory: &CellProviderDirectoryV1,
+    addresses: &CellDiscoveryAddressPolicyV1,
+    shutdown: &AtomicBool,
+    limits: CellRendezvousLimitsV1,
+    ready: std::sync::mpsc::SyncSender<()>,
+) -> CellResultV1<CellRendezvousReportV1> {
+    serve_cell_rendezvous_inner(
+        listener,
+        directory,
+        addresses,
+        shutdown,
+        limits,
+        Some(ready),
+    )
+}
+
+fn serve_cell_rendezvous_inner(
+    listener: &TcpListener,
+    directory: &CellProviderDirectoryV1,
+    addresses: &CellDiscoveryAddressPolicyV1,
+    shutdown: &AtomicBool,
+    limits: CellRendezvousLimitsV1,
+    mut ready: Option<std::sync::mpsc::SyncSender<()>>,
+) -> CellResultV1<CellRendezvousReportV1> {
     limits.validate()?;
     addresses.validate()?;
     listener.set_nonblocking(true)?;
@@ -535,6 +567,9 @@ pub fn serve_cell_rendezvous(
     {
         match listener.accept() {
             Ok((mut stream, source)) => {
+                if let Some(ready) = ready.take() {
+                    let _ = ready.send(());
+                }
                 report.connections += 1;
                 let deadline = overall.min(Instant::now() + limits.request_timeout);
                 let response = serve_one(
@@ -563,6 +598,9 @@ pub fn serve_cell_rendezvous(
                 let _ = network::write_deadline(&mut stream, &frame, deadline);
             }
             Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                if let Some(ready) = ready.take() {
+                    let _ = ready.send(());
+                }
                 thread::sleep(Duration::from_millis(5))
             }
             Err(error) if error.kind() == io::ErrorKind::Interrupted => (),

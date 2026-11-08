@@ -1,0 +1,81 @@
+{
+  "commits": [
+    {
+      "local_sha": "9a12d76d33fc69aa0397340a127ae6ab26267549",
+      "published_sha": "5c9f9c1eda10b3c10cc1830f9388e877f45ad580",
+      "subject": "fix(settlement): observe fulfilled NoGain service fees through native owners",
+      "tree": "9f05e6d9c0c1f6093e8b58e54404e022096e32a7",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "d25894016ce94fda7689eaa70a5ee5bef666a109",
+      "published_sha": "e60f8ae35e38e4929e5031a292e2141d50ebe43d",
+      "subject": "feat(pon): compose frozen demand and separate reward evidence",
+      "tree": "75158d4f30fff627d736e98031b425da98646194",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "42f51e5c655e0946cc6c3e280a7d5ff927c6bf12",
+      "published_sha": "7e91f016fa1f970dea5dfbca28d8fd3954130cc5",
+      "subject": "test(pon): reject replayed demand rewards and contradictory evidence",
+      "tree": "271ef6a6d3d0799abc22b67dfe148a2a0bd23355",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "f6ffe05244fdb2f56188174100940ba2f556b968",
+      "published_sha": "2869cad2c83e065b039c7e413042a848b39cbe2e",
+      "subject": "feat(pon): bound continuous upgrade proposals by frozen net utility",
+      "tree": "5c787d90a05548fb85f06dc0054d620cfcaf5515",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "aa98722465c3fbd4ca9355661e50795d74311ff8",
+      "published_sha": "e2303ca7deef6852619dab98b657f6e8bbf68ce7",
+      "subject": "test(pon): verify conditional upgrade bounds and refusal history",
+      "tree": "b88b61316b9d301af77b017caf615dec6c2949dd",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "91a02fdfdff8f4adf35ee4e1c62de5c885e177c3",
+      "published_sha": "ccd3847424c5784a1bfb9c8a51ed769494de1794",
+      "subject": "docs(pon): bind demand evidence and upgrade gates into the existing plan",
+      "tree": "3f3ebe5f54e70f8232acdebfacdc96bce336a89b",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "d7c765656cab9b5ac12d980db46b0336d41ad954",
+      "published_sha": "42a497ea769c86f359f3f1d016f03bf9f90acb2a",
+      "subject": "test(settlement): connect NoGain fees to signed native Task payments",
+      "tree": "c589f6eed5afacb6ced4daf76e920b726f5efe29",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "a4121fe4e0c0e2c479fa89a6bc81a500b1414904",
+      "published_sha": "5e07ca0f8f13aec83deb1700583138a9a1d4e802",
+      "subject": "ci(pon): pin demand and NoGain sources without promoting acceptance",
+      "tree": "41dbebffd4b779c39e4d8feee14f625b0aa88f9b",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "869052275e999676eb9cb179fa529a30cbafb47c",
+      "published_sha": "90e212c7dbfc54afca7f0ac3d445be2be21171fd",
+      "subject": "fix(pon): expire demand attestations and prohibit reviewer improvement bonuses",
+      "tree": "9906ceefd7167ec397ad57d365b97d24d27bcbf0",
+      "tree_equal": true
+    },
+    {
+      "local_sha": "99220dd03626760d6cb015f66bb133d1d61217ec",
+      "published_sha": "ed0ad15c5aaf0b0ca0c6edbb1c67b9976a5019dd",
+      "subject": "merge: preserve concurrent integration lock provenance before final demand validation",
+      "tree": "a4db639e2c346b914ade186697182727a7e43ca4",
+      "tree_equal": true
+    }
+  ],
+  "local_source_commit": "99220dd03626760d6cb015f66bb133d1d61217ec",
+  "production_activation": false,
+  "published_source_commit": "ed0ad15c5aaf0b0ca0c6edbb1c67b9976a5019dd",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "schema": "pon-demand-publication-tree-equivalence-v1",
+  "source_identity": "identical Git trees; commit metadata differs through authenticated Git Data publication",
+  "source_tree": "a4db639e2c346b914ade186697182727a7e43ca4"
+}

@@ -8,9 +8,42 @@ use super::{
     WorkError, PROFILE, PROOF_BYTES,
 };
 use std::{
-    sync::Mutex,
+    mem::size_of,
+    sync::{Mutex, TryLockError},
     time::{Duration, Instant},
 };
+
+pub const MAX_REJECTION_CACHE_SLOTS: usize = 256;
+pub const MAX_REJECTION_CACHE_LIFETIME: Duration = Duration::from_secs(30);
+// Retained Rust objects only: fixed owner and allocated slot capacity. This
+// excludes allocator metadata and per-call verifier workspace, and is not RSS.
+pub const MAX_REJECTION_CACHE_SOFTWARE_BYTES: usize = 32 * 1024;
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum RejectionPublication {
+    #[default]
+    None,
+    Retained,
+    Contended,
+    Poisoned,
+}
+
+/// Per-invocation path facts, never an authorization, CPU estimate or proof.
+/// A found fact can still be cancelled before its mathematical error returns.
+/// `full_replay_started` means the original verifier passed BeforeReplay; an
+/// entered verifier can instead return a cheap encoding/task/target error.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct RejectionObservation {
+    pub key_hashed: bool,
+    pub lookup_contended: bool,
+    pub lookup_poisoned: bool,
+    pub exact_fact_found: bool,
+    pub cached_rejection_returned: bool,
+    pub native_verifier_started: bool,
+    pub native_verifier_returned: bool,
+    pub full_replay_started: bool,
+    pub publication: RejectionPublication,
+}
 
 #[cfg(test)]
 std::thread_local! {
@@ -32,19 +65,48 @@ struct InvalidFact {
 pub struct RejectionCache {
     slots: Mutex<Vec<Option<InvalidFact>>>,
     lifetime: Duration,
+    capacity: usize,
+    software_bytes: usize,
 }
 
 impl RejectionCache {
     /// A finite direct-mapped cache is deliberately not a second block registry.
     /// No caller ID, header height or work score grants priority or authority.
     pub fn new(slots: usize, lifetime: Duration) -> Option<Self> {
-        if !(1..=256).contains(&slots) || lifetime.is_zero() || lifetime > Duration::from_secs(30) {
+        if !(1..=MAX_REJECTION_CACHE_SLOTS).contains(&slots)
+            || lifetime.is_zero()
+            || lifetime > MAX_REJECTION_CACHE_LIFETIME
+        {
             return None;
         }
+        let mut entries = Vec::new();
+        entries.try_reserve_exact(slots).ok()?;
+        let software_bytes = entries
+            .capacity()
+            .checked_mul(size_of::<Option<InvalidFact>>())?
+            .checked_add(size_of::<Self>())?;
+        if software_bytes > MAX_REJECTION_CACHE_SOFTWARE_BYTES {
+            return None;
+        }
+        entries.resize(slots, None);
         Some(Self {
-            slots: Mutex::new(vec![None; slots]),
+            slots: Mutex::new(entries),
             lifetime,
+            capacity: slots,
+            software_bytes,
         })
+    }
+
+    pub fn capacity(&self) -> usize {
+        self.capacity
+    }
+
+    pub fn software_bytes(&self) -> usize {
+        self.software_bytes
+    }
+
+    pub fn lifetime(&self) -> Duration {
+        self.lifetime
     }
 
     fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Option<Hash> {
@@ -62,30 +124,45 @@ impl RejectionCache {
         ))
     }
 
-    fn hit(&self, key: Hash) -> Option<WorkError> {
+    fn hit(&self, key: Hash, observation: &mut RejectionObservation) -> Option<WorkError> {
         // Optional reuse must not wait outside the caller's cancellation and
         // deadline checkpoints. Contention, like poison, is a cache miss.
-        let entries = self.slots.try_lock().ok()?;
+        let entries = match self.slots.try_lock() {
+            Ok(entries) => entries,
+            Err(TryLockError::WouldBlock) => {
+                observation.lookup_contended = true;
+                return None;
+            }
+            Err(TryLockError::Poisoned(_)) => {
+                observation.lookup_poisoned = true;
+                return None;
+            }
+        };
         let i = u64::from_le_bytes(key[..8].try_into().ok()?) as usize % entries.len();
         entries[i]
             .filter(|entry| entry.key == key && Instant::now() < entry.expires)
             .map(|entry| entry.error)
     }
 
-    fn insert(&self, key: Hash, error: WorkError) {
+    fn insert(&self, key: Hash, error: WorkError) -> RejectionPublication {
         if !matches!(error, WorkError::Transcript | WorkError::Product) {
-            return;
+            return RejectionPublication::None;
         }
         // Losing optional publication to contention or poison never delays or
         // changes the already completed mathematical refusal.
-        if let Ok(mut entries) = self.slots.try_lock() {
-            let i = (u64::from_le_bytes(key[..8].try_into().expect("32-byte key")) as usize)
-                % entries.len();
-            entries[i] = Some(InvalidFact {
-                key,
-                error,
-                expires: Instant::now() + self.lifetime,
-            });
+        match self.slots.try_lock() {
+            Ok(mut entries) => {
+                let i = (u64::from_le_bytes(key[..8].try_into().expect("32-byte key")) as usize)
+                    % entries.len();
+                entries[i] = Some(InvalidFact {
+                    key,
+                    error,
+                    expires: Instant::now() + self.lifetime,
+                });
+                RejectionPublication::Retained
+            }
+            Err(TryLockError::WouldBlock) => RejectionPublication::Contended,
+            Err(TryLockError::Poisoned(_)) => RejectionPublication::Poisoned,
         }
     }
 
@@ -97,6 +174,26 @@ impl RejectionCache {
         proof: &[u8],
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, VerificationError<E>> {
+        self.verify_with_observation(
+            challenge,
+            expected_task,
+            target,
+            proof,
+            progress,
+            &mut RejectionObservation::default(),
+        )
+    }
+
+    pub fn verify_with_observation<E>(
+        &self,
+        challenge: Hash,
+        expected_task: Hash,
+        target: Hash,
+        proof: &[u8],
+        progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+        observation: &mut RejectionObservation,
+    ) -> Result<VerifiedWork, VerificationError<E>> {
+        *observation = RejectionObservation::default();
         // Keep the native Length, Version, zero-Target, Field ordering before
         // hashing all proof bytes for optional reuse. Delegate the first three
         // failures to the original verifier; the shared encoding filter then
@@ -104,26 +201,70 @@ impl RejectionCache {
         // Task/ticket checks stay with the native verifier on a miss, so this
         // filter does not add a second task hash to ordinary cold verification.
         if proof.len() != PROOF_BYTES || &proof[..4] != b"PNW1" || target == [0; 32] {
-            return verify_with_progress(challenge, expected_task, target, proof, progress);
+            return verify_native(
+                challenge,
+                expected_task,
+                target,
+                proof,
+                progress,
+                observation,
+            );
         }
         super::precheck_proof_encoding(proof)?;
         let Some(key) = Self::key(challenge, expected_task, target, proof) else {
             // Preserve the native error ordering and cancellation semantics;
             // malformed lengths never consult or populate the cache.
-            return verify_with_progress(challenge, expected_task, target, proof, progress);
+            return verify_native(
+                challenge,
+                expected_task,
+                target,
+                proof,
+                progress,
+                observation,
+            );
         };
-        if let Some(error) = self.hit(key) {
+        observation.key_hashed = true;
+        if let Some(error) = self.hit(key, observation) {
+            observation.exact_fact_found = true;
             // A cached error is only a performance hint. Callers must still be
             // able to cancel, and must have checked present branch authority.
             progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
+            observation.cached_rejection_returned = true;
             return Err(VerificationError::Relation(error));
         }
-        let result = verify_with_progress(challenge, expected_task, target, proof, progress);
+        let result = verify_native(
+            challenge,
+            expected_task,
+            target,
+            proof,
+            progress,
+            observation,
+        );
         if let Err(VerificationError::Relation(error)) = &result {
-            self.insert(key, *error);
+            observation.publication = self.insert(key, *error);
         }
         result
     }
+}
+
+fn verify_native<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    proof: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+    observation: &mut RejectionObservation,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    observation.native_verifier_started = true;
+    let result = verify_with_progress(challenge, expected_task, target, proof, &mut |point| {
+        let result = progress(point);
+        if point == VerificationProgress::BeforeReplay && result.is_ok() {
+            observation.full_replay_started = true;
+        }
+        result
+    });
+    observation.native_verifier_returned = true;
+    result
 }
 
 #[cfg(test)]
@@ -236,7 +377,9 @@ mod tests {
         });
         let key = RejectionCache::key(challenge, task, [255; 32], &cold_false).unwrap();
         assert!(
-            cache.hit(key).is_none(),
+            cache
+                .hit(key, &mut RejectionObservation::default())
+                .is_none(),
             "contended publication must be skipped"
         );
         // The original warm fact was neither invalidated nor replaced by a
@@ -545,3 +688,7 @@ mod tests {
         assert!(RejectionCache::new(1, Duration::ZERO).is_none());
     }
 }
+
+#[cfg(test)]
+#[path = "rejection_cache_tests.rs"]
+mod observation_tests;

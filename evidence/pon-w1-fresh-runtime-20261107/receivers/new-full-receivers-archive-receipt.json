@@ -1,0 +1,19 @@
+{
+  "all_members_readback_verified": true,
+  "archive": {
+    "bytes": 509713,
+    "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/new-full-receiver-archive-01/new-full-receivers-raw.tar.gz",
+    "sha256": "ef079b827220ceeed5ab2d0d73a4302b9c91109b99e08d8aa83d232dfae802d3"
+  },
+  "complete_resource_accounting_established": false,
+  "index": {
+    "bytes": 29739,
+    "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/new-full-receiver-archive-01/raw-index.json",
+    "sha256": "d04e49adb3ebafde89db14830909f813be242f2216ff1704d865ab89a2dc6087"
+  },
+  "member_count": 78,
+  "node_admission_established": false,
+  "proof_deadline_extended": false,
+  "raw_bytes": 663789,
+  "schema": "TRNM-W1-ROG-NEW-RECEIVER-ARCHIVE1"
+}

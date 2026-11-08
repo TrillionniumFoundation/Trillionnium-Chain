@@ -1,0 +1,111 @@
+{
+  "actual_chainwork": 0,
+  "base_commit": "4699b4079fca323f8db7b9d3644fbb159aa687c0",
+  "consensus_weight_eligible": false,
+  "denomination": "classical-seal-step-oracle-query",
+  "exact_commit_validation": {
+    "capture": "native-validation-source-v2.tar.gz",
+    "commands_failed": 0,
+    "commands_not_started": 0,
+    "commands_passed": 24,
+    "commands_timed_out": 0,
+    "first_attempt": {
+      "capture": "native-validation-source-v1.tar.gz",
+      "commands_failed": 1,
+      "commands_not_started": 0,
+      "commands_passed": 23,
+      "commands_planned": 24,
+      "commands_timed_out": 0,
+      "failure": "source-inventory",
+      "grouped_test_errors": 0,
+      "grouped_tests_passed": 210,
+      "grouped_tests_skipped": 0,
+      "source": "66b4f5a735d350849267e44526be2e12f1d076b5",
+      "summary": "native-validation-source-v1/summary.json"
+    },
+    "full_workspace_unit_tests_executed": false,
+    "original_required_gates": 24,
+    "publication_delta": "evidence only; implementation and configuration unchanged",
+    "python_tests_passed": 419,
+    "runner_bindings": "PASS",
+    "rust_tests_passed": 276,
+    "source": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+    "source_before_after_equal": true,
+    "status": "PASS",
+    "summary": "native-validation-source-v2/summary.json",
+    "test_failures": 0,
+    "test_skipped_or_ignored": 0,
+    "tree": "f272a84a69b034889413ab901793dffe1a5b591b",
+    "waived": 0
+  },
+  "focused_tests": {
+    "accounting": 41,
+    "failed": 0,
+    "inspector": 41,
+    "passed": 100,
+    "reanalysis": 18,
+    "skipped": 0
+  },
+  "fresh_neural_computation_is_credit_basis": false,
+  "fresh_producer_business_contractions_per_ticket_lower_bound": 0,
+  "generated_native_source_inventory_changed": true,
+  "historical_fanout": {
+    "attempts": 42,
+    "distinct_work_ids_across_all_topologies": 2,
+    "full_cell_calls": 28,
+    "global_quota_established": false,
+    "input_sha256": "915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96",
+    "new_experiment_executed": false,
+    "new_failures": 0,
+    "reanalysis_statuses": [
+      "PASS",
+      "PASS",
+      "PASS"
+    ],
+    "summed_local_reservations": 1792,
+    "topologies": [
+      1,
+      2,
+      4
+    ],
+    "verified_receptions": 21
+  },
+  "initial_local_validation": {
+    "errors": 3,
+    "history": "local-validation-history/summary.json",
+    "passed": 247,
+    "skipped": 2,
+    "status": "INCOMPLETE_NATIVE_SKIPS_AND_STAGING_GIT_ERRORS",
+    "total": 252
+  },
+  "native_runtime_logic_changed": false,
+  "native_tree": "15315e5425b0f899ffc2310b83ae318e77dbbf29",
+  "prior_native_tree": "38b2aba7fd25cfddb0e45747d7716a5ada3e9321",
+  "production_activation": false,
+  "qualification": "HOLD",
+  "retained_python_queries": {
+    "complete_seals": 17,
+    "consumer_uses": 0,
+    "declared_independent_control_groups": 1,
+    "distinct_native_inputs": 1088,
+    "helper_events": 1024,
+    "local_issues": 104,
+    "observed_events": 1088,
+    "omitted_retained_trace_rows": 0,
+    "producer_events": 64,
+    "qualification": "HOLD",
+    "reconstructed_native_queries": 0
+  },
+  "schema": "pon-security-work-metering-acceptance-v1",
+  "unresolved_predicates": [
+    "AUTHENTICATED_POLICY_TASK_AND_TARGET_ISSUERS",
+    "TRUSTED_PREQUERY_ORDER_AND_UNOMITTED_PREPROCESSING",
+    "COMPLETE_PUBLIC_COALITION_AND_ASSISTING_QUERY_COVERAGE",
+    "INDEPENDENT_TASK_SUPPLY_AND_UNBIASED_ASSIGNMENT",
+    "CURRENT_TARGET_TASK_AND_CONSUMER_STATE_AT_USE",
+    "GENUINE_DEMAND_CURRENT_CONSUMER_USE_AND_SETTLEMENT",
+    "AUTHENTICATED_METERS_AND_COMPLETE_RESOURCE_TRANSFER",
+    "CHEAPEST_LEGAL_IMPLEMENTATION_AND_PHYSICAL_COST_TRANSFER",
+    "EXISTING_NATIVE_CONSENSUS_PROFILE_REGISTRATION"
+  ]
+}

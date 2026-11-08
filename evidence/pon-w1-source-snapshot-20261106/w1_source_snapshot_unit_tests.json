@@ -1,0 +1,16 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_profile_source_map.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/006e9a6c46c6/chain",
+  "exit_code": 0,
+  "log": "w1_source_snapshot_unit_tests.log"
+}

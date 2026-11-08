@@ -1,0 +1,33 @@
+{
+  "arm": "sequential-unfunded",
+  "complete_resource_accounting_established": false,
+  "cross_host_clock_subtraction_performed": false,
+  "deadline_renewed": false,
+  "deployed_wan_qualified": false,
+  "errors": [],
+  "full_remote_bundle_observed_ns": 1162207539951566,
+  "native_winner_ns": 1155549063640127,
+  "node_admission_established": false,
+  "observed_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "observed_within_original_deadline": true,
+  "original_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_ns": 1162741070990231,
+  "parent_operation": "8891181165039b63703e0ff44857f1a6aa9a732f842a53ee5446dff4fac0ef28",
+  "parent_operation_kind": "original Hepta launch request digest; UNFUNDED, not a NativeTask/provider operation",
+  "payment_authorized": false,
+  "production_qualified": false,
+  "pure_network_latency_established": false,
+  "remaining_original_budget_ns": 533531038665,
+  "remote_complete_with_terminal_readback": true,
+  "remote_job_id": "1a1b7c40d24-12894-c36",
+  "remote_readback_job_id": "1a1b7c50cc2-12894-c3d",
+  "request": {
+    "bytes": 1105,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/crosshost-observation-01/sequential-unfunded/outgoing/request.json",
+    "sha256": "75b6d85dd1b34f34ef2ce52b1a58f36a5523c4b6e6a81873ee526e036e83dee4"
+  },
+  "same_original_parent_clock": true,
+  "schema": "TRNM-W1-PARENT-REMOTE-ACK-OBSERVATION2",
+  "timing_scope": "parent CLOCK_MONOTONIC after the complete remote ACK, actual terminal status and terminal readback bytes reached this collector; includes operator/tool scheduling and transfer",
+  "winner_to_observed_remote_ack_ns": 6658476311439
+}

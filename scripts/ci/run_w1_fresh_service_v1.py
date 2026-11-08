@@ -57,6 +57,112 @@ def load_report(path: Path) -> tuple[dict, bytes]:
     return doc, raw
 
 
+def validate_negative_cache_observation(doc: dict, phases: list) -> dict | None:
+    """Bind actual cache mode/path facts without calling an attempt fresh replay.
+
+    Historical reports explicitly declared disabled and have no extension.
+    Current mode is observed on every started relation attempt in both phases;
+    an absent observation is unknown. All existing business gates still run.
+    """
+    records_by_phase = []
+    for phase in phases:
+        observed = phase.get('observations')
+        require(type(observed) is dict and type(observed.get('records')) is list
+                and len(observed['records']) <= 16384, 'FRESH_CACHE_RECORDS')
+        require(all(type(row) is dict for row in observed['records']), 'FRESH_CACHE_RECORDS')
+        records_by_phase.append(observed['records'])
+    enabled = doc.get('negative_cache_enabled')
+    if enabled is False:
+        require('negative_cache_observation_source' not in doc
+                and not any('work_rejection' in row for rows in records_by_phase for row in rows),
+                'FRESH_CACHE_DISABLED_CONTRADICTION')
+        return None
+    require(enabled is True and doc.get('negative_cache_observation_source')
+            == 'actual-request-work-rejection-observations-v1', 'FRESH_CACHE_MODE_UNKNOWN')
+
+    boolean_fields = ('key_hashed', 'lookup_contended', 'lookup_poisoned',
+                      'exact_fact_found', 'cached_rejection_returned',
+                      'native_verifier_started', 'native_verifier_returned', 'full_replay_started')
+    configuration = None
+    summaries = []
+    for phase, rows in zip(phases, records_by_phase):
+        summary = {'mode': phase.get('mode'), 'relation_attempts': 0,
+                   'completed_cache_observations': 0, 'incomplete_cache_observations': 0,
+                   **{key: 0 for key in boolean_fields}}
+        for row in rows:
+            require(type(row.get('full_work_started')) is bool, 'FRESH_CACHE_ATTEMPT_COVERAGE')
+            if not row['full_work_started']:
+                require('work_rejection' not in row, 'FRESH_CACHE_WITHOUT_ATTEMPT')
+                continue
+            summary['relation_attempts'] += 1
+            observed = row.get('work_rejection')
+            require(type(observed) is dict and observed.get('schema')
+                    == 'public-v3-work-rejection-observation-v1', 'FRESH_CACHE_ATTEMPT_COVERAGE')
+            keys = ('slots', 'retained_software_bytes', 'lifetime_ms',
+                    'lifetime_seconds', 'lifetime_subsec_nanos')
+            require(all(type(observed.get(key)) is int for key in keys), 'FRESH_CACHE_CONFIGURATION')
+            slots, retained, millis, seconds, nanos = (observed[key] for key in keys)
+            require(0 < slots <= 256 and 0 < retained <= 32768
+                    and 0 <= seconds <= 30 and 0 <= nanos < 1_000_000_000
+                    and 0 < seconds * 1_000_000_000 + nanos <= 30_000_000_000
+                    and millis == seconds * 1000 + nanos // 1_000_000,
+                    'FRESH_CACHE_CONFIGURATION')
+            current = {key: observed[key] for key in keys}
+            if configuration is None:
+                configuration = current
+            require(configuration == current, 'FRESH_CACHE_CONFIGURATION_CHANGED')
+            require(type(observed.get('completed')) is bool and 'cache' in observed,
+                    'FRESH_CACHE_COMPLETION')
+            require('full_work_accepted' in row and (row['full_work_accepted'] is None
+                    or type(row['full_work_accepted']) is bool), 'FRESH_CACHE_ATTEMPT_OUTCOME')
+            facts = observed['cache']
+            if not observed['completed']:
+                require(facts is None, 'FRESH_CACHE_COMPLETION')
+                summary['incomplete_cache_observations'] += 1
+                continue
+            require(type(facts) is dict and all(type(facts.get(key)) is bool for key in boolean_fields)
+                    and facts.get('publication') in ('none', 'retained', 'contended', 'poisoned'),
+                    'FRESH_CACHE_FACTS')
+            require(not (facts['lookup_contended'] and facts['lookup_poisoned'])
+                    and (facts['key_hashed'] or not any(facts[key] for key in (
+                        'lookup_contended', 'lookup_poisoned', 'exact_fact_found', 'cached_rejection_returned')))
+                    and (not facts['cached_rejection_returned'] or facts['exact_fact_found'])
+                    and (not facts['full_replay_started'] or (
+                        facts['key_hashed'] and facts['native_verifier_started']))
+                    and (not facts['key_hashed'] or facts['exact_fact_found']
+                         or facts['native_verifier_started'])
+                    and facts['native_verifier_started'] == facts['native_verifier_returned'],
+                    'FRESH_CACHE_PATH_CONTRADICTION')
+            if facts['exact_fact_found']:
+                require(not any(facts[key] for key in (
+                    'lookup_contended', 'lookup_poisoned', 'native_verifier_started',
+                    'native_verifier_returned', 'full_replay_started'))
+                    and facts['publication'] == 'none', 'FRESH_CACHE_PATH_CONTRADICTION')
+            if facts['publication'] != 'none':
+                require(facts['key_hashed'] and facts['native_verifier_returned']
+                        and facts['full_replay_started'] and not facts['exact_fact_found']
+                        and row.get('full_work_accepted') is False, 'FRESH_CACHE_PUBLICATION')
+            if row.get('full_work_accepted') is True:
+                require(facts['native_verifier_returned'] and facts['full_replay_started']
+                        and not facts['exact_fact_found'] and facts['publication'] == 'none',
+                        'FRESH_CACHE_ACCEPTANCE')
+            # The fresh namespace uses unique complete false statements and an
+            # empty receiver owner per phase. A cache hit cannot count as one of
+            # its fresh native transcript rejections, even after cancellation.
+            require(not facts['exact_fact_found'] and not facts['cached_rejection_returned'],
+                    'FRESH_CACHE_REUSED_FACT')
+            summary['completed_cache_observations'] += 1
+            for key in boolean_fields:
+                summary[key] += int(facts[key])
+        require(summary['relation_attempts'] > 0, 'FRESH_CACHE_NO_OBSERVED_ATTEMPTS')
+        summaries.append(summary)
+    return {'schema': 'public-v3-fresh-negative-cache-readback-v1', 'enabled': True,
+            'configuration': configuration, 'phases': summaries,
+            'scope': 'actual relation-attempt path observations; native verifier entry is not '
+                     'full replay, started replay is not completion; path counters cover only '
+                     'completed observations, incomplete paths remain unknown; CPU remains nested'}
+
+
 def validate_fresh_report(path: Path) -> dict:
     """Bounded consistency only; native verification owns proof and State truth."""
     doc, raw = load_report(path)
@@ -77,7 +183,7 @@ def validate_fresh_report(path: Path) -> dict:
     require(doc.get('finite_target_met') is True
             and doc.get('same_signed_business_packets') is True, 'FRESH_BUSINESS_TARGET')
     require(all(doc.get(key) is False for key in (
-        'negative_cache_enabled', 'public_network_ready', 'work_profile_qualified',
+        'public_network_ready', 'work_profile_qualified',
         'resource_fairness_qualified', 'production_activation')), 'FRESH_SCOPE_PROMOTION')
     context = {key: hex_value(doc.get(key), 32) for key in (
         'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
@@ -217,10 +323,14 @@ def validate_fresh_report(path: Path) -> dict:
         return resolved, index
 
     phase_checks = native.validate_confirmation_phases(doc, context, packets, metadata, resolve_attack)
-    return {'schema': FRESH_SCHEMA, 'sha256': native.digest(raw), 'finite_target_met': True,
-            'unique_challenges': len(challenges), 'submitted': submitted,
-            'phases': phase_checks,
-            'scope': 'bounded report consistency, not an independent State/work or fairness proof'}
+    cache = validate_negative_cache_observation(doc, phases)
+    result = {'schema': FRESH_SCHEMA, 'sha256': native.digest(raw), 'finite_target_met': True,
+              'unique_challenges': len(challenges), 'submitted': submitted,
+              'phases': phase_checks,
+              'scope': 'bounded report consistency, not an independent State/work or fairness proof'}
+    if cache is not None:
+        result['negative_cache_observation'] = cache
+    return result
 
 
 def validate_execution(process: dict, log: Path, selector: str, report: Path) -> dict:

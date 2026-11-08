@@ -1,0 +1,348 @@
+{
+  "schema": "trnm-d26-component-readback-capture-v2",
+  "capture_utc": "2026-11-07T16:40:28.663322+00:00",
+  "expected": 20,
+  "verified_source_and_manifests": 14,
+  "unknown": 6,
+  "records": [
+    {
+      "artifact_id": 13578024702,
+      "name": "w1-legal-factorial-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578024702/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578223381,
+      "name": "w1-legal-strategy-v2-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578223381/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578254252,
+      "name": "w1-legal-factorial-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578254252/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578383843,
+      "name": "w1-legal-strategy-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578383843/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578407453,
+      "name": "w1-false-trace-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578407453/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578418855,
+      "name": "w1-false-trace-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578418855/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578458532,
+      "name": "w1-rank-batch-v5-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578458532/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578524978,
+      "name": "w1-legal-factorial-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "UNKNOWN",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip']' timed out after 299.99998698104173 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip']' timed out after 599.9999851579778 seconds"
+          ],
+          "source_bound": false
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578583134,
+      "name": "w1-legal-strategy-v2-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578583134/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578623077,
+      "name": "w1-rank-batch-v5-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578623077/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578719689,
+      "name": "w1-legal-factorial-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "UNKNOWN",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578719689/zip']' timed out after 299.99998456495814 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [
+            "ValueError: ZIP metadata digest mismatch"
+          ],
+          "source_bound": false
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578752856,
+      "name": "w1-legal-strategy-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "UNKNOWN",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578752856/zip']' timed out after 299.9999797879718 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [
+            "ValueError: ZIP metadata digest mismatch"
+          ],
+          "source_bound": false
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578793210,
+      "name": "w1-legal-strategy-v2-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578793210/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578807518,
+      "name": "w1-rank-batch-v5-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "UNKNOWN",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578807518/zip']' timed out after 299.9999813870527 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [
+            "ValueError: ZIP metadata digest mismatch"
+          ],
+          "source_bound": false
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578842636,
+      "name": "w1-legal-strategy-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578842636/zip']' timed out after 299.9999793721363 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578922475,
+      "name": "w1-legal-strategy-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "UNKNOWN",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "ValueError: ZIP metadata digest mismatch"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [
+            "ValueError: ZIP metadata digest mismatch"
+          ],
+          "source_bound": false
+        }
+      ]
+    },
+    {
+      "artifact_id": 13578947026,
+      "name": "w1-false-trace-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "ValueError: ZIP metadata digest mismatch"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13579025854,
+      "name": "w1-rank-batch-v5-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579025854/zip']' timed out after 299.99997234903276 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [],
+          "source_bound": true
+        }
+      ]
+    },
+    {
+      "artifact_id": 13579071557,
+      "name": "w1-legal-strategy-v2-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "UNKNOWN",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip']' timed out after 299.99997315602377 seconds"
+          ],
+          "source_bound": false
+        },
+        {
+          "attempt": "w1-component-artifact-retry-v2",
+          "errors": [
+            "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip']' timed out after 599.9999658360612 seconds"
+          ],
+          "source_bound": false
+        }
+      ]
+    },
+    {
+      "artifact_id": 13579090794,
+      "name": "w1-false-trace-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "local_artifact_readback": "VERIFIED_SOURCE_AND_RETAINED_MANIFESTS",
+      "attempts": [
+        {
+          "attempt": "w1-component-artifact-read-v1",
+          "errors": [
+            "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13579090794/source.json'"
+          ],
+          "source_bound": true
+        }
+      ]
+    }
+  ],
+  "later_results_will_not_modify_this_package": true,
+  "native_gate_validated": false
+}

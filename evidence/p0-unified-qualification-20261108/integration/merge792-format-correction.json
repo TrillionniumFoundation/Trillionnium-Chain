@@ -1,0 +1,11 @@
+{
+  "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+  "before_sha256": "f79bd7d68a16c781c3e1bc58289c21336243a1eee13828e03012d7b4af1f3b85",
+  "after_sha256": "05956d7db78109664edbd0628d6c4cbc6d934ced3b7455504c7351c1ee8d3265",
+  "change": "Only rustfmt layout and optional final comma in an existing two-argument call; no argument or predicate changes.",
+  "initial_helper_assertion": "The first nonwhitespace comparison correctly failed on the optional comma removal after writing; exact replacement is verified here.",
+  "original_checks_retained": [
+    "merge792-main-fmt.stdout",
+    "merge792-v2-fmt.stdout"
+  ]
+}

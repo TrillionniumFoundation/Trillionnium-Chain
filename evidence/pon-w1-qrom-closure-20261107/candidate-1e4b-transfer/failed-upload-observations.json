@@ -1,0 +1,20 @@
+[
+  {
+    "content": [
+      {
+        "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "type": "text"
+      }
+    ],
+    "isError": true
+  },
+  {
+    "content": [
+      {
+        "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+        "type": "text"
+      }
+    ],
+    "isError": true
+  }
+]

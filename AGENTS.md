@@ -4,6 +4,8 @@ Before edits, builds, commits or pushes, run `bash scripts/project-preflight.sh`
 The sole plan is `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
 Actual M00-M17 source ownership is in `config/portability-inventory-v1.json`.
 Preserve concurrent changes and use the existing integration candidate into main.
+For assistant-operated GitHub pushes and API writes, use administrator
+`ProfHepta` through the HeptaRuntime local GitHub channel.
 
 Only reusable candidate components remain. Do not restore retired consensus code,
 protocol trees, deployment jobs or legacy appendices. Git history is the archive.

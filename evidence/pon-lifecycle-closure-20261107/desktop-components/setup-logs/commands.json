@@ -1,0 +1,266 @@
+[
+  {
+    "name": "git-init",
+    "argv": [
+      "/usr/bin/git",
+      "init"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.007700843969359994
+  },
+  {
+    "name": "index-pack",
+    "argv": [
+      "/usr/bin/git",
+      "index-pack",
+      "--stdin"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.745989628136158
+  },
+  {
+    "name": "config-core-repositoryformatversion",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "core.repositoryformatversion",
+      "1"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0031578969210386276
+  },
+  {
+    "name": "config-extensions-partialclone",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "extensions.partialclone",
+      "origin"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0021775548812001944
+  },
+  {
+    "name": "config-remote-origin-url",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "remote.origin.url",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0027329889126122
+  },
+  {
+    "name": "config-remote-origin-promisor",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "remote.origin.promisor",
+      "true"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.002427642000839114
+  },
+  {
+    "name": "config-remote-origin-partialclonefilter",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "remote.origin.partialclonefilter",
+      "blob:none"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0027938999701291323
+  },
+  {
+    "name": "config-user-name",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "user.name",
+      "Codex"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0025960200000554323
+  },
+  {
+    "name": "config-user-email",
+    "argv": [
+      "/usr/bin/git",
+      "config",
+      "user.email",
+      "codex@openai.com"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0025121080689132214
+  },
+  {
+    "name": "symbolic-head",
+    "argv": [
+      "/usr/bin/git",
+      "symbolic-ref",
+      "HEAD",
+      "refs/heads/fix/chain-pon-lifecycle-native-20261107"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0023383069783449173
+  },
+  {
+    "name": "set-base-head",
+    "argv": [
+      "/usr/bin/git",
+      "update-ref",
+      "refs/heads/fix/chain-pon-lifecycle-native-20261107",
+      "88bce414d7ba7f7f6a60dba03943ee20dc501ed7"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.003170537995174527
+  },
+  {
+    "name": "sparse-init",
+    "argv": [
+      "/usr/bin/git",
+      "sparse-checkout",
+      "init",
+      "--cone"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.002952954964712262
+  },
+  {
+    "name": "sparse-select",
+    "argv": [
+      "/usr/bin/git",
+      "sparse-checkout",
+      "set",
+      ".githooks",
+      ".github",
+      "config",
+      "docs",
+      "formal",
+      "qualification",
+      "scripts",
+      "tests",
+      "trillionnium",
+      "evidence/pon-work-native-certificates-20261107",
+      "evidence/pon-actual-certificates-20261107"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.0028421308379620314
+  },
+  {
+    "name": "base-checkout",
+    "argv": [
+      "/usr/bin/git",
+      "reset",
+      "--hard",
+      "88bce414d7ba7f7f6a60dba03943ee20dc501ed7"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 1.1404784158803523
+  },
+  {
+    "name": "preflight",
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.09847958316095173
+  },
+  {
+    "name": "cargo-fetch-offline",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fetch",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 2.7203576860483736
+  },
+  {
+    "name": "cargo-metadata",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 0.19634970114566386
+  },
+  {
+    "name": "base-native-library",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "check",
+      "--profile",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 70.65478203399107
+  },
+  {
+    "name": "base-work-binaries",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "build",
+      "--locked",
+      "--offline",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--example",
+      "pon_work_io",
+      "--example",
+      "pon_zero_io",
+      "--example",
+      "pq_message_oracle"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 37.17489687213674
+  },
+  {
+    "name": "create-python-venv",
+    "argv": [
+      "/usr/bin/python3",
+      "-m",
+      "venv",
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 4.262010087957606
+  },
+  {
+    "name": "python-crypto",
+    "argv": [
+      "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+      "-m",
+      "pip",
+      "install",
+      "cryptography==50.0.2"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 43.167813207022846
+  }
+]

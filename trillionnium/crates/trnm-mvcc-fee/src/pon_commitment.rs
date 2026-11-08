@@ -46,7 +46,11 @@ impl Default for FullRootArithmetic {
 }
 
 impl FullRootArithmetic {
-    fn root(&self, state: &State) -> Result<Hash> {
+    /// Calculate the original complete-State root from every current key/value.
+    /// Retained material is bounded arithmetic only: this does not read storage,
+    /// check a committed root, select a profile or grant execution authority.
+    /// Callers selecting a different root relation must keep that relation.
+    pub fn root(&self, state: &State) -> Result<Hash> {
         // The guard covers only pure arithmetic, never SQL, worker joins or a
         // caller's progress/Host check. Contention and poison keep the original
         // full-root path; optional material cannot introduce a new refusal.

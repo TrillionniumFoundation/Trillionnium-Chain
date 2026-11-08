@@ -1,0 +1,91 @@
+{
+  "expected_total": 666,
+  "prepared_roster_sha256": "950e9ceff839a8c599f4ebdb4a1b6d72bd7719f48557c76c832b74b8518aed72",
+  "source_checked_suites": [
+    {
+      "expected": 37,
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "sha256": "3f1d929a2da0e255b528f2a31701e8ddd65ce5b5a4a94fbcf612842608494c13"
+    },
+    {
+      "expected": 43,
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+    },
+    {
+      "expected": 13,
+      "path": "scripts/ci/test_integration_push_source.py",
+      "sha256": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4"
+    },
+    {
+      "expected": 149,
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "sha256": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b"
+    },
+    {
+      "expected": 29,
+      "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "sha256": "4bcad9c87197e3334d912ecfe3257439959c4a04658ef7c762d98070d8334f62"
+    },
+    {
+      "expected": 79,
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "sha256": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3"
+    },
+    {
+      "expected": 7,
+      "path": "scripts/ci/test_ci_observation_process.py",
+      "sha256": "52cd36b22d529406365b05b431dd943c3b7526ff942a0438555d30467c284720"
+    },
+    {
+      "expected": 4,
+      "path": "scripts/ci/test_record_pq_native_command.py",
+      "sha256": "8ff5a8b900675862511321a7c913d79f9b56185f1db9aac8f231f0fb705b528e"
+    },
+    {
+      "expected": 103,
+      "path": "scripts/ci/test_ci_contract.py",
+      "sha256": "a1ef5e4405c0a4fe1bd0822b7b2d83fbe593d5ce001defad9e11ede2bf73da29"
+    },
+    {
+      "expected": 20,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "sha256": "73358b259307ad1c2bbf2df9ac26853a0cab484e09eda5c240a2a68215a52795"
+    },
+    {
+      "expected": 47,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "sha256": "fb629eeb16792e3d3714a9a1ad7c82304a127d394aa861272c259551175e975e"
+    },
+    {
+      "expected": 34,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+      "sha256": "10e4a10e58a7573790204a1c53a5a0743adabb305d34a07f9d4481043c616ae3"
+    },
+    {
+      "expected": 11,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+      "sha256": "6ed1a512a29600fdbc0c53621bebfc095c2750fb3e7105145fc247cc185162f1"
+    },
+    {
+      "expected": 11,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+      "sha256": "a96e7b50d5582beec2c8d520ddca17b6f90765083c37e472c3c09b219a9cce46"
+    },
+    {
+      "expected": 20,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+      "sha256": "f9e95ff81abb61f31994c5c2d97bd60e32db922de35c48f709cf5d565304433d"
+    },
+    {
+      "expected": 34,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+      "sha256": "23ef7ade9d5ee2e9a80b7e4f71986dfd31af8dbdd8ad45707c8cfefe1c21aa2c"
+    },
+    {
+      "expected": 25,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+      "sha256": "9fbd40ea0426db09cd6323ad7ce0065572882c47179b66bcf1b17dbfb48ee1e8"
+    }
+  ]
+}

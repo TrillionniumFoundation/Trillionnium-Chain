@@ -1,0 +1,69 @@
+{
+  "schema": "integration-push-independent-local-review-controls-v1",
+  "finished_at": "2026-11-07T13:37:31.069497+00:00",
+  "sources_before": {
+    "scripts/ci/integration_push_source.py": "d72d6106fa4bad0f82d88d2c98b06f5cad0c8823e98a7dbda72d4977d0e610d3",
+    "scripts/ci/test_integration_push_source.py": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4",
+    ".github/workflows/pon-priority-acceptance.yml": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+    ".github/workflows/pon-w1-work-security.yml": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490",
+    "scripts/ci/check_ci_contract.py": "8702d589d757625d886caded0757907b1a90e6c914652152cab86ea6ee44d5f7",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+  },
+  "sources_after": {
+    "scripts/ci/integration_push_source.py": "d72d6106fa4bad0f82d88d2c98b06f5cad0c8823e98a7dbda72d4977d0e610d3",
+    "scripts/ci/test_integration_push_source.py": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4",
+    ".github/workflows/pon-priority-acceptance.yml": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+    ".github/workflows/pon-w1-work-security.yml": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490",
+    "scripts/ci/check_ci_contract.py": "8702d589d757625d886caded0757907b1a90e6c914652152cab86ea6ee44d5f7",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+  },
+  "frozen_sources_unchanged": true,
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_integration_push_source.py"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 2626469242,
+      "tests": 13,
+      "log_file": "test_integration_push_source.log",
+      "log_sha256": "2a340471ee08a9c1c0feffe663138bff75d3db73529f6486f061654ea4b1e238",
+      "log_bytes": 112
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 3884985908,
+      "tests": 43,
+      "log_file": "test_ci_source_integrity.log",
+      "log_sha256": "ac61a3f03d2f175f831eda011d7fc15658dc358a0c7bff6dff64c086d8c349c0",
+      "log_bytes": 6898
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 116883045,
+      "tests": null,
+      "log_file": "check_ci_contract.log",
+      "log_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "log_bytes": 180
+    }
+  ],
+  "all_commands_succeeded": true,
+  "real_github_actions_executed": false,
+  "native_business_tests_executed": false,
+  "scope": "Source object/refusal controls and CI structure only; synthetic Git fixtures are not hosted event acceptance"
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "w1-r4-historical-fixture-repair-v1",
+  "initial_commit": "0ad9419a00b08783a9b2ee52bfb79dacc27aa249",
+  "initial_failure": "retained-physical-python: FileNotFoundError for upstream/budget-44.log",
+  "omission_reason": ".gitignore:23:*.log excluded these historical log fixtures from Git tracking",
+  "independent_readonly_manifest_audit_job": "1a1b9d48f51-12894-1722",
+  "source_archive": {
+    "source_archive": "/workspace/scratch/f16ac5871196/physical_cost_proposal.tar.gz",
+    "source_archive_bytes": 179611,
+    "source_archive_sha256": "cd804f4977836352010b6216980de077eb21fe5b4747f52436534237b224414b"
+  },
+  "restored_files": {
+    "run.log": {
+      "bytes": 172,
+      "sha256": "bdcf6874fea9936f1ae688cd10ef49344cb8d5b250aed253ee0def2175caf50d",
+      "archive_member": "physical_cost/run.log"
+    },
+    "tests.log": {
+      "bytes": 3011,
+      "sha256": "fd29295153b5cc445218fd166443209bfb8b24c0b40362e0b4dbdb53554611db",
+      "archive_member": "physical_cost/tests.log"
+    },
+    "upstream/budget-44.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_member": "physical_cost/upstream/budget-44.log"
+    },
+    "upstream/budget-45.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_member": "physical_cost/upstream/budget-45.log"
+    },
+    "upstream/budget-large_caps.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_member": "physical_cost/upstream/budget-large_caps.log"
+    },
+    "upstream/exact-cost.log": {
+      "bytes": 143,
+      "sha256": "8091c6b203ab4bc250b3ee737bc676e50dc13bb9ab459bb2cbd8e1d2b64a8e6e",
+      "archive_member": "physical_cost/upstream/exact-cost.log"
+    },
+    "upstream/unit-tests.log": {
+      "bytes": 2479,
+      "sha256": "6d2fc5acd311937ebe38f186692e3fa27415e931f4f135420435622774fd3c73",
+      "archive_member": "physical_cost/upstream/unit-tests.log"
+    }
+  },
+  "existing_expected_hash_manifests_unchanged": {
+    "SHA256SUMS": "c28063ae03f948af3a58be1ebef41c5d9400120ac308ec573e1e44fe157de2de",
+    "UPSTREAM_SOURCE.json": "c19639f4cc9e560071e6564be6cec93621be00781d69e43d3853b9cde092e56f",
+    "upstream/SHA256SUMS": "a5680efbea9604706feb354d2c3e65dd21565ee668e1fe7b6708971f161f05c7"
+  },
+  "top_manifest_files_checked": 53,
+  "upstream_manifest_files_checked": 37,
+  "restoration": "Original archived bytes restored for versioned checkout; no measurements regenerated, expected hashes changed, or tests waived.",
+  "initial_attempt_archive": {
+    "repository_path": "formal/pon-nakamoto-v1/w1_node_adapter_research/evidence/initial-final-check-v1.tar.gz",
+    "sha256": "aeb5ca81e9328b67b753ac392b1746d4f3ee2435979a0a7d1d75532943d8b1e3",
+    "members": 80
+  },
+  "all_five_production_gates_closed": false,
+  "qualification": "HOLD_NO_GO"
+}

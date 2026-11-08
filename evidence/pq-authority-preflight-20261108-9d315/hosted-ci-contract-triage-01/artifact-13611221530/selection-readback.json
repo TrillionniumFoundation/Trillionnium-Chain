@@ -1,0 +1,309 @@
+{
+  "artifact": 13611221530,
+  "child": {
+    "command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ],
+    "consensus_or_model_authority": false,
+    "host_errors": [],
+    "host_readiness_only": true,
+    "native_child_exit": 1,
+    "schema": "trnm-ci-original-public-host-child-v1"
+  },
+  "findings": [
+    {
+      "path": ".runs[0].process.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".runs[0].process.timed_out",
+      "value": false
+    },
+    {
+      "path": ".runs[0].passed",
+      "value": true
+    },
+    {
+      "path": ".runs[1].process.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".runs[1].process.timed_out",
+      "value": false
+    },
+    {
+      "path": ".runs[1].passed",
+      "value": true
+    },
+    {
+      "path": ".runs[2].process.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".runs[2].process.timed_out",
+      "value": false
+    },
+    {
+      "path": ".runs[2].passed",
+      "value": true
+    },
+    {
+      "path": ".runs[3].process.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".runs[3].process.timed_out",
+      "value": false
+    },
+    {
+      "path": ".runs[3].passed",
+      "value": true
+    },
+    {
+      "path": ".runs[4].process.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".runs[4].process.timed_out",
+      "value": false
+    },
+    {
+      "path": ".runs[4].passed",
+      "value": true
+    },
+    {
+      "path": ".failures",
+      "value": "['CONFIRMATION_TARGET']"
+    },
+    {
+      "path": ".passed",
+      "value": false
+    },
+    {
+      "path": ".confirmation_observation.phases[1].head_response.outcome_detail.status_counts.error",
+      "value": 1
+    },
+    {
+      "path": ".terminal.native_invocations[0].exit_code",
+      "value": 0
+    },
+    {
+      "path": ".terminal.native_invocations[0].timed_out",
+      "value": false
+    },
+    {
+      "path": ".terminal.native_invocations[1].exit_code",
+      "value": 0
+    },
+    {
+      "path": ".terminal.native_invocations[1].timed_out",
+      "value": false
+    },
+    {
+      "path": ".terminal.native_invocations[2].exit_code",
+      "value": 0
+    },
+    {
+      "path": ".terminal.native_invocations[2].timed_out",
+      "value": false
+    },
+    {
+      "path": ".terminal.native_invocations[3].exit_code",
+      "value": 0
+    },
+    {
+      "path": ".terminal.native_invocations[3].timed_out",
+      "value": false
+    },
+    {
+      "path": ".terminal.native_invocations[4].exit_code",
+      "value": 0
+    },
+    {
+      "path": ".terminal.native_invocations[4].timed_out",
+      "value": false
+    },
+    {
+      "path": ".terminal.acceptance_stages.confirmation_report.error",
+      "value": "CONFIRMATION_TARGET"
+    },
+    {
+      "path": ".format_copy.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".format_copy.timed_out",
+      "value": false
+    },
+    {
+      "path": ".format.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".format.timed_out",
+      "value": false
+    },
+    {
+      "path": ".build.exit_code",
+      "value": 0
+    },
+    {
+      "path": ".build.timed_out",
+      "value": false
+    }
+  ],
+  "manifest_keys": [
+    "schema",
+    "source_before",
+    "source_after",
+    "source_recompiled",
+    "all_named_tests_passed",
+    "format_passed",
+    "runs",
+    "failures",
+    "independent_wan_accepted",
+    "work_hardness_accepted",
+    "production_activation",
+    "passed",
+    "execution_finished",
+    "service_report",
+    "sustained_report",
+    "confirmation_report",
+    "confirmation_observation",
+    "terminal",
+    "rustc",
+    "cargo",
+    "build_env",
+    "format_copy",
+    "format",
+    "build",
+    "binary_sha256_before",
+    "binary_sha256_after",
+    "files"
+  ],
+  "selection": [
+    {
+      "bytes": 885,
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "sha256": "11469e9aff191e372f66e787f153d4d47670bc8553f17820571ccae3fae46eb0"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 189,
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+    },
+    {
+      "bytes": 793,
+      "path": "from-zero-native/format-check/process.json",
+      "sha256": "48a130ffaaa5a31b7897d93cf26f3da9a6696faad1d5404336efe1753452b616"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/format-check/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/format-check/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 820,
+      "path": "from-zero-native/format-copy/process.json",
+      "sha256": "611d3843e30c8dea920ea7d80e120c4ec80eb0a1ea36b2976e21fca990c1cd7d"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/format-copy/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/format-copy/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 897,
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "sha256": "4cccbb6ff8892e6c3f1f38af181eef9276cbaee7268f31f0f6289ef697a0327a"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3363,
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "sha256": "0c90cc88d8287191499e87ae9298e2857132a617319c21cd2fe926d3cd0178ea"
+    },
+    {
+      "bytes": 897,
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "sha256": "524012c18df1232c7ac363db950cad07793c178661eb60a10c210d9e17da171c"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 195,
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+    },
+    {
+      "bytes": 911,
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "sha256": "2a43fcc7b903b350cb8a2f15a6ab09853d738bc256a29fcc614b2761819f58a8"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 915,
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "sha256": "fa93bb4af7ac4dd9e3e73a5c596b721872402098ad19e43a962a042016c39f97"
+    },
+    {
+      "bytes": 949,
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "ee207319f66f4073cee4df5dc3423918a718df840130051f1f835e956aec366f"
+    },
+    {
+      "bytes": 0,
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 407,
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "c194798d8353251e8da6c51e898a4e4bf40510a7e94aca85747f1f92cdcc8134"
+    },
+    {
+      "bytes": 65841,
+      "path": "from-zero-native/manifest.json",
+      "sha256": "33d4ca90ac95c038f3c9841118107fcb5a1184c3e08e8ef8a71d89e6db246eb0"
+    },
+    {
+      "bytes": 333,
+      "path": "from-zero-native-host/child-result.json",
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321"
+    },
+    {
+      "bytes": 6904,
+      "path": "from-zero-native-host/systemd-run.log",
+      "sha256": "a76a05de263ed751119208beb8ea19d35c0d828a2b4137ce7759ae79f294782a"
+    }
+  ]
+}

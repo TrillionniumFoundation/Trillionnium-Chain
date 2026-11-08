@@ -1,0 +1,141 @@
+{
+  "blocking_bug_found_in_reviewed_named_completion_controls": false,
+  "cases": [
+    {
+      "case": "real-all-six-fixture-suites",
+      "exit_code": 0,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-load-tests-exit-zero",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-load-tests-empty",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-load-tests-duplicate",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-module-missing",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-import-error",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-skip",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-expected-failure",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-unexpected-success",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-setup-class-failure",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "real-test-body-exit-zero",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "tampered-roster-bytes",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-empty-registered_ids",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-duplicate-registered_ids",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-empty-started_ids",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-duplicate-started_ids",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-empty-success_ids",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-duplicate-success_ids",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-boolean-tests-run",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-float-tests-run",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-boolean-required-total",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-nonboolean-false-qualification",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-extra-pass-flag",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-reordered-suites",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    },
+    {
+      "case": "record-empty-suites",
+      "exit_code": 2,
+      "passed_expected_boundary": true
+    }
+  ],
+  "schema": "TRNM-QROM-CLOSURE-RUNNER-INDEPENDENT-REVIEW1",
+  "source_sha256": {
+    "scripts/ci/test_w1_qrom_closure_controls.py": "83a2fc67822ce82fa7885a156097108156362856c1764d52c83021131932065a",
+    "scripts/ci/w1_qrom_closure_controls.py": "a971cfbf4b76cf22dbceecfe74e931581ecae846d6be58810041ebb02448c546"
+  },
+  "standalone_check_boundary": {
+    "boundary": "check validates structure and claimed completion, not origin. Workflow must bind fresh output to the actual controlled run and source; no cryptographic execution attestation.",
+    "qualification_remains_false_or_null": true,
+    "standalone_check_accepts_consistent_fixture_without_test_execution": true
+  },
+  "workflow_reviewed": false
+}

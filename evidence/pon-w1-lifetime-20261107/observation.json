@@ -1,0 +1,81 @@
+{
+  "artifact_sha256": {
+    "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md": "0d4f5a178696742d185db989e8c1a994295ea1b5259728a5fda00d0ba33ae674",
+    "evidence/pon-w1-lifetime-20261107/README.md": "5e7cc928441a0a3926071b941b601659139282762aed0d672a219f8bc32f7b77",
+    "evidence/pon-w1-lifetime-20261107/counterexamples.json": "648cd68c72978f7211b5862ed278c908dec7cb712dcc96eb1a561f470dd21849",
+    "evidence/pon-w1-lifetime-20261107/local-link-check.json": "cc59b4331abaac759849d3cf48cff2465ad4d613bfb9eabc65085c6bbfd85af1",
+    "evidence/pon-w1-lifetime-20261107/preflight.stdout.log": "c7c16fa4063ae662f66ad87360110011edd94c2df0a2066a261de290db051c78",
+    "evidence/pon-w1-lifetime-20261107/project-input.json": "a6e43a5c55e71154592a3489f566995e7961b91611e15d40a18a948a495f9f89",
+    "evidence/pon-w1-lifetime-20261107/project-report.json": "e91edf52b5295a0f69d8ac2f555ea9807ba0e2881d5d06aece65eb686d315b0c",
+    "evidence/pon-w1-lifetime-20261107/unit-tests.stderr.log": "f28fa828efa46e53a76e4646dad32ca2096929ca4d30c9788f0080853e1a75a0",
+    "scripts/ci/test_w1_lifetime_ledger.py": "eec3d0f217c8dc982834dee71c99969506d7e5d9404a9f80c69df97de01fa591",
+    "scripts/w1_lifetime_ledger.py": "7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6"
+  },
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stderr": "preflight.stderr.log",
+      "stdout": "preflight.stdout.log"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/w1_lifetime_ledger.py",
+        "--input",
+        "evidence/pon-w1-lifetime-20261107/project-input.json"
+      ],
+      "exit_code": 0,
+      "stderr": "project-report.stderr.log",
+      "stdout": "project-report.json"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_lifetime_ledger.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stderr": "unit-tests.stderr.log",
+      "stdout": "unit-tests.stdout.log",
+      "tests": 19
+    }
+  ],
+  "fresh_native_signature_verification": false,
+  "fresh_stark_verification": false,
+  "production_qualified": false,
+  "qrom_model_instantiated": false,
+  "quantum_hardware_or_physical_calibration": false,
+  "schema": "TRNM-W1-LIFETIME-OBSERVATION1",
+  "source_base_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "test_roster": [
+    "test_project_unknowns_do_not_produce_a_target_or_qualification",
+    "test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+    "test_complete_relation_event_count_cannot_drop_failed_attempts",
+    "test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+    "test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+    "test_unknown_factor_survives_known_zero",
+    "test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+    "test_native_permutation_count_cannot_be_the_query_unit",
+    "test_mass_and_reduction_overheads_are_independent_inputs",
+    "test_numeric_inputs_need_explicit_unverified_references",
+    "test_conditional_union_is_exact_and_does_not_require_independence",
+    "test_marginal_or_accepted_only_error_bound_is_refused",
+    "test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+    "test_lifetime_reset_and_per_event_target_counterexamples",
+    "test_exact_lottery_rounding_and_weight_cost_counterexample",
+    "test_source_mutation_missing_source_and_symlink_are_refused",
+    "test_source_lines_remain_independent_of_existing_qualification_labels",
+    "test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+    "test_cli_rejects_malformed_input_without_emitting_a_report"
+  ]
+}

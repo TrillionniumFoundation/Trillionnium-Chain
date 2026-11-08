@@ -1,0 +1,10 @@
+{"phase": "prefix-preserved", "artifact": 13579071557, "prefix_bytes": 81199104, "remaining_bytes": 59418015}
+{"phase": "range-retained", "artifact": 13579071557, "request": 1, "received": 8388608, "remaining_bytes": 51029407}
+{"phase": "range-retained", "artifact": 13579071557, "request": 2, "received": 8388608, "remaining_bytes": 42640799}
+{"phase": "range-retained", "artifact": 13579071557, "request": 3, "received": 8388608, "remaining_bytes": 34252191}
+{"phase": "range-retained", "artifact": 13579071557, "request": 4, "received": 8388608, "remaining_bytes": 25863583}
+{"phase": "range-retained", "artifact": 13579071557, "request": 5, "received": 8388608, "remaining_bytes": 17474975}
+{"phase": "range-retained", "artifact": 13579071557, "request": 6, "received": 8388608, "remaining_bytes": 9086367}
+{"phase": "range-retained", "artifact": 13579071557, "request": 7, "received": 8388608, "remaining_bytes": 697759}
+{"phase": "range-retained", "artifact": 13579071557, "request": 8, "received": 697759, "remaining_bytes": 0}
+{"directory": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-range-recovery-v2/13579071557", "artifact": 13579071557, "completed": true, "zip_bytes": 140617119, "zip_sha256": "878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd", "request_count": 8, "errors": []}

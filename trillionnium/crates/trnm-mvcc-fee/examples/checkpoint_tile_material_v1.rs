@@ -5,7 +5,7 @@ use sha2::{Digest, Sha256};
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 use std::{
-    fs::{File, OpenOptions},
+    fs::File,
     io::Read,
     path::Path,
     time::{Duration, Instant},
@@ -43,18 +43,21 @@ fn hash(v: &str) -> Result<[u8; 32], Box<dyn std::error::Error>> {
     }
     Ok(hex::decode(v)?.try_into().map_err(|_| "PIN_HEX")?)
 }
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
 fn file(path: &Path) -> Result<File, Box<dyn std::error::Error>> {
+    use std::fs::OpenOptions;
     let mut options = OpenOptions::new();
     options.read(true);
-    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
     options.custom_flags(0x20000); // Verified Linux x86_64 O_NOFOLLOW ABI.
-    #[cfg(not(all(target_os = "linux", target_arch = "x86_64")))]
-    return Err("EXAMPLE_LINUX_X86_64_FILE_ADAPTER_REQUIRED".into());
     let f = options.open(path)?;
     if !f.metadata()?.is_file() {
         return Err("REGULAR_FILE".into());
     }
     Ok(f)
+}
+#[cfg(not(all(target_os = "linux", target_arch = "x86_64")))]
+fn file(_path: &Path) -> Result<File, Box<dyn std::error::Error>> {
+    Err("EXAMPLE_LINUX_X86_64_FILE_ADAPTER_REQUIRED".into())
 }
 fn bytes(path: &Path, max: usize) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let f = file(path)?;
@@ -83,6 +86,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let start = Instant::now();
     let mut checkpoint = file(Path::new(&args[1]))?;
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
     let before = checkpoint.metadata()?;
     let activation = bytes(Path::new(&args[2]), MAX_ACTIVATION_BYTES)?;
     let a = bytes(Path::new(&args[3]), 16384)?;
@@ -131,6 +135,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .map_err(|_| "SIGNED_SOURCE_ADMISSION")?;
     let binding = checked.bind_admission(&admission)?;
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
     let after = checkpoint.metadata()?;
     #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
     if (

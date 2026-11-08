@@ -1,0 +1,160 @@
+{
+  "clippy_executed": false,
+  "commands": [
+    {
+      "exit_code": 101,
+      "name": "metadata-workspace-default"
+    },
+    {
+      "exit_code": 101,
+      "name": "metadata-workspace-all-features"
+    },
+    {
+      "exit_code": 0,
+      "name": "metadata-native",
+      "packages": 69,
+      "resolve_nodes": 69,
+      "workspace_members": 1
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt-workspace"
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt-native"
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt-hardened"
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt-v2"
+    }
+  ],
+  "network_enabled_for_cargo": false,
+  "ordered_parents": [
+    "01f8caf22f7f80935c17f868c0f1a5b6cac7249d",
+    "840522d0b65b4989f1a2a1d09c0ad51af1a1956d"
+  ],
+  "retained_files": {
+    "commands.json": {
+      "bytes": 7246,
+      "sha256": "4bf303a42e29f3ac9d29c78672202142995f847ce92f20e130ec8c85cf9685be"
+    },
+    "fmt-hardened.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-hardened.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-native.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-native.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-v2.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-v2.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fmt-workspace.stderr.log": {
+      "bytes": 437,
+      "sha256": "44d0bf02b0209346efe0f61589d002f859a4680e21230c2b3ff7c0aea1c40016"
+    },
+    "fmt-workspace.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "metadata-native.json": {
+      "bytes": 271421,
+      "sha256": "d4efb76d0471405f42710e5a1e42cf0ed9529c529108234c97a1e934699a104c"
+    },
+    "metadata-native.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "metadata-workspace-all-features.json": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "metadata-workspace-all-features.stderr.log": {
+      "bytes": 382,
+      "sha256": "2402e9de8158527c1a46d37c21ef5b104f9fd856dd69bee6e960dd6f4430f8ae"
+    },
+    "metadata-workspace-default.json": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "metadata-workspace-default.stderr.log": {
+      "bytes": 382,
+      "sha256": "2402e9de8158527c1a46d37c21ef5b104f9fd856dd69bee6e960dd6f4430f8ae"
+    },
+    "preflight-results.json": {
+      "bytes": 575,
+      "sha256": "499bc81c85f180070d3bbc0344b83a39d6eb263828da8af1f896289595b66b9f"
+    },
+    "preflight.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.stdout.log": {
+      "bytes": 166,
+      "sha256": "b442b01107bec1d9f3201e6998cc16802694df2f9f3a348a4eef8ac30efd91cd"
+    },
+    "source-after-command.json": {
+      "bytes": 336,
+      "sha256": "944c9b8b450f1968f985235ade353e39305989d3eedd6a28a8ba98537492c882"
+    },
+    "source-after.json": {
+      "bytes": 423,
+      "sha256": "ae4fd2a9c725fa83d3a5cbfcebac38a1259cb0db92f525d62cd7357d75004562"
+    },
+    "source-after.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-after.stdout.log": {
+      "bytes": 423,
+      "sha256": "ae4fd2a9c725fa83d3a5cbfcebac38a1259cb0db92f525d62cd7357d75004562"
+    },
+    "source-before.json": {
+      "bytes": 423,
+      "sha256": "ae4fd2a9c725fa83d3a5cbfcebac38a1259cb0db92f525d62cd7357d75004562"
+    },
+    "source-before.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-before.stdout.log": {
+      "bytes": 423,
+      "sha256": "ae4fd2a9c725fa83d3a5cbfcebac38a1259cb0db92f525d62cd7357d75004562"
+    },
+    "state-after.json": {
+      "bytes": 904,
+      "sha256": "2f65c7e518a36ca6b5e4a21005f4dc8a31541e36f55cde3e336e64e4e74139fe"
+    },
+    "state-before.json": {
+      "bytes": 904,
+      "sha256": "2f65c7e518a36ca6b5e4a21005f4dc8a31541e36f55cde3e336e64e4e74139fe"
+    }
+  },
+  "rust_build_executed": false,
+  "rust_compilation_and_retained_tests_pending_exact_head_ci": true,
+  "source_after_exit_code": 0,
+  "source_and_locks_unchanged": true,
+  "source_before_exit_code": 0,
+  "source_head": "ef9ba3f94975bb14c049ebc3cdd60d5d6a9e7391",
+  "source_tree": "15def345d2d033d9b57323d89ae6c5993c868fc3",
+  "working_tree_clean": true,
+  "workspace_metadata_blocker": "nix 0.30.1 is absent from the selected offline Cargo cache; no lock update or network retry was performed."
+}

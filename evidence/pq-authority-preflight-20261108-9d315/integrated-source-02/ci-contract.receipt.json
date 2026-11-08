@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.2159810580778867,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794126162.5759652,
+  "label": "ci-contract",
+  "logs": {
+    "ci-contract.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/ci-contract.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ci-contract.stdout.log": {
+      "bytes": 378,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/ci-contract.stdout.log",
+      "sha256": "7b1446921b5f46ba5d957c2a60eedaabfbc802f215cd14ec62c1f6fb099c9795"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "artifact_comparison_jobs": 1,
+    "head_jobs": 5,
+    "inline_source_pins": 26,
+    "merge_lanes": 5,
+    "native_cost_architectures": 2,
+    "pq_release_authority_controls": {
+      "complete_release": 52,
+      "groups": {
+        "initial_root_material": 6,
+        "original_release": 37,
+        "quorum_preflight": 9
+      },
+      "python_test_doubles": 18,
+      "tests_executed": false
+    },
+    "tests_executed": false,
+    "w1_actual_reuse_v3_cells": 4
+  },
+  "started_unix_seconds": 1794126162.359984
+}

@@ -1,0 +1,310 @@
+{
+  "excluded": [
+    "private-analysis-only/**",
+    "original Node/M12/target SQLite databases",
+    "private keys"
+  ],
+  "file_count": 59,
+  "files": [
+    {
+      "bytes": 4833,
+      "path": "public/README.md",
+      "sha256": "749052460a3939df7795808dc30b2f927ebb9b382becab727c5a1e36ea904b3e"
+    },
+    {
+      "bytes": 1245,
+      "path": "public/audit-execution/analysis-launch.json",
+      "sha256": "11734f9f3df942f209cd88d0d2a5c0988be8f24707fad6065e4feba1d555350a"
+    },
+    {
+      "bytes": 2947,
+      "path": "public/audit-execution/analysis-streams.json",
+      "sha256": "8040d103569b6db0bb7613ff215656a90f423ca2db9fcc3d9c7f82b699d69f69"
+    },
+    {
+      "bytes": 729,
+      "path": "public/audit-execution/analysis-terminal.json",
+      "sha256": "3173461a2e636380f46133768224d452f21c1f2bbdc2218dea48ae2855fbfdae"
+    },
+    {
+      "bytes": 34222,
+      "path": "public/audit-execution/analyze_state.py",
+      "sha256": "9bcdc654e931b08841c8662b82eca8551300462fc38b72f5b1868875324b9673"
+    },
+    {
+      "bytes": 189,
+      "path": "public/audit-execution/analyzer-install.json",
+      "sha256": "3515e81a9ee2a0d92db2681148a1d8b7f164d02f93d4e2587c75a4100f6e9643"
+    },
+    {
+      "bytes": 8740,
+      "path": "public/audit-execution/collect_state.py",
+      "sha256": "9a25550f9e74575f788dbef1ad12ecb71fbccdd23d374c57eed28a406ea3f654"
+    },
+    {
+      "bytes": 1239,
+      "path": "public/audit-execution/collection-launch.json",
+      "sha256": "2b0d9e633c2f770b81639534fad380e23d4d3b3765d5903a33cce3556a220ca0"
+    },
+    {
+      "bytes": 13928,
+      "path": "public/audit-execution/collection-streams.json",
+      "sha256": "a60dd36d85fa197d6bef672ab4a78857f32455204627b573e5cc13e480cb1727"
+    },
+    {
+      "bytes": 731,
+      "path": "public/audit-execution/collection-terminal.json",
+      "sha256": "2545ceda15058056e482bf92aaf2925e52f3d9d068f7495e614388804186326e"
+    },
+    {
+      "bytes": 186,
+      "path": "public/audit-execution/collector-install.json",
+      "sha256": "cb4a0df28464793557732ff5f5f72dd2876176d3058bc1e15095939dbcc67acf"
+    },
+    {
+      "bytes": 10757,
+      "path": "public/audit-execution/finalize_public.py",
+      "sha256": "85f6746f296666f954e8f45d315a47943b59c664873bf61c043509389a988255"
+    },
+    {
+      "bytes": 189,
+      "path": "public/audit-execution/helper-install.json",
+      "sha256": "711f5bfc4cf3178c8d525170f21c55593d34145a58aa2c2ce8a98a09c7b2592e"
+    },
+    {
+      "bytes": 1197,
+      "path": "public/audit-execution/independent-static-review.txt",
+      "sha256": "8f17441d4c648debabeeb94e0097748615f1f99ad0213fa2b470c7bb68b7f9d3"
+    },
+    {
+      "bytes": 144,
+      "path": "public/audit-execution/initial-install-collect-error.txt",
+      "sha256": "e3ff2f81f0c976e8f2859926e9420a68fb19a93ead3191b9bdebd5098b258e43"
+    },
+    {
+      "bytes": 144,
+      "path": "public/audit-execution/initial-install-helper-error.txt",
+      "sha256": "e3ff2f81f0c976e8f2859926e9420a68fb19a93ead3191b9bdebd5098b258e43"
+    },
+    {
+      "bytes": 1280,
+      "path": "public/audit-execution/new-directory-launch.json",
+      "sha256": "091a6bde745b2da925aea5ca9bfd39cd05288c206f874ec3d5bf50e4b1e86292"
+    },
+    {
+      "bytes": 727,
+      "path": "public/audit-execution/new-directory-terminal.json",
+      "sha256": "3684a8c0f8df5482d38fcd596833ce184bfae44e160c4e40cfa4a64001642b5b"
+    },
+    {
+      "bytes": 3878,
+      "path": "public/audit-execution/public-rows-01-launch.json",
+      "sha256": "f888b4374290a96eb940f82b1d3159fb90a1b8610d5a9188f4cdc950b80f74ec"
+    },
+    {
+      "bytes": 701,
+      "path": "public/audit-execution/public-rows-01-streams.json",
+      "sha256": "a6b6f885aa2684a13592273aa9ce99312490c05012ee2e9c41971f3fa242a981"
+    },
+    {
+      "bytes": 726,
+      "path": "public/audit-execution/public-rows-01-terminal.json",
+      "sha256": "14815994936c9f0b1e9a216feb0e2e5d88d699bfaededade16e0cc7d35096290"
+    },
+    {
+      "bytes": 2587,
+      "path": "public/audit-execution/public-rows-01.py",
+      "sha256": "a8d7d3db6594ef846d570a2ed01a53186da5e238fb7b269f8b16c6d5f6ba4a33"
+    },
+    {
+      "bytes": 3942,
+      "path": "public/audit-execution/public-rows-02-launch.json",
+      "sha256": "09717c2fc05f2eb3dd314698c896f4901daf51de5fc269644fd1332bf5766ad8"
+    },
+    {
+      "bytes": 22515,
+      "path": "public/audit-execution/public-rows-02-streams.json",
+      "sha256": "63153001ba903fe8685bb6bbe5b1f03589288d5026e09acc35c4b81da3bd879a"
+    },
+    {
+      "bytes": 731,
+      "path": "public/audit-execution/public-rows-02-terminal.json",
+      "sha256": "dd3705f841c6fcf43f95483c1d7dc14a10b6f9395f22effc2291163b1ec92c9b"
+    },
+    {
+      "bytes": 2651,
+      "path": "public/audit-execution/public-rows-02.py",
+      "sha256": "094e04772efe18380ab0cc9209ba537bf5c2e68832a693b3b9a6ff3ab0331b7e"
+    },
+    {
+      "bytes": 19275,
+      "path": "public/audit-execution/readback_helpers.py",
+      "sha256": "f69496d01b321776f60c4129a03b9930952b312ceed76f0397348f11af4cd6a1"
+    },
+    {
+      "bytes": 17289,
+      "path": "public/collection.json",
+      "sha256": "2fa8084a18e4c720f163c4c195079ebe656e53ad5d58fa435a7428676c1abd8e"
+    },
+    {
+      "bytes": 5990,
+      "path": "public/original-path-map.json",
+      "sha256": "ad04b296c95f9477a34ea413e0182317fa0ff0273f47447ffeed9ecdd87ad4d4"
+    },
+    {
+      "bytes": 394,
+      "path": "public/prelaunch-failure/parent-preparation.json",
+      "sha256": "00df99c3205e1f32a1a6019fb4e3a4f75d12fb6098ff7d0919e7f4dad65985eb"
+    },
+    {
+      "bytes": 7579,
+      "path": "public/prelaunch-failure/receipt.json",
+      "sha256": "8d6cae7fbf775a9e79abf084e0fe67b3d1bfca0c6026802c11c7c4a693874fcf"
+    },
+    {
+      "bytes": 1078,
+      "path": "public/prelaunch-failure/stderr.log",
+      "sha256": "da97cc7f5fdaa4065f0bbc6943599d7ee419b7afe8b6cf6e4edb81817de924de"
+    },
+    {
+      "bytes": 0,
+      "path": "public/prelaunch-failure/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8633,
+      "path": "public/public-rows-observation.json",
+      "sha256": "33cb22a47e9e3f5c2af32743f529fca831ee2c5ca380532d0ca9e4e8e87ff61c"
+    },
+    {
+      "bytes": 729,
+      "path": "public/raw/cold-terminal.json",
+      "sha256": "a216117af374ac55db04c890a1557169d90e19ff0365ede2fe5e22a08161f04f"
+    },
+    {
+      "bytes": 7569,
+      "path": "public/raw/owner-cancel-cold-readback-02/result.json",
+      "sha256": "e134bcc6b5be3bc3e17d753c26247064212a153d6b3f86943a7342b518016e16"
+    },
+    {
+      "bytes": 2656,
+      "path": "public/raw/owner-cancel-launch-02/original-job-receipt.json",
+      "sha256": "15dcc59764316596e89b952c804e7e81550c6115684eb6c324ca6865bac8a9f9"
+    },
+    {
+      "bytes": 42675,
+      "path": "public/raw/owner-cancel-launch-plans-02/config.json",
+      "sha256": "483f28090674fd4180777786a7458116c80188bbe8ddd9a324b3f0fa862154e1"
+    },
+    {
+      "bytes": 43114,
+      "path": "public/raw/owner-cancel-launch-plans-02/plan.json",
+      "sha256": "65dfcf935393c9802a5cc73569c74b35755eaa7bb2736635a586e556d6f01c1c"
+    },
+    {
+      "bytes": 54614,
+      "path": "public/raw/owner-cancel-run-02/funded-owner-cancellation-result.json",
+      "sha256": "26330c0b15ceb0da601ad986174f17e0ac9fb669ff05ea22d7c182af1ee0f958"
+    },
+    {
+      "bytes": 966,
+      "path": "public/raw/owner-cancel-run-02/native-cancel-dispatch-intent.json",
+      "sha256": "bb251a28b7cec174ee5c91ce94e2b9c198b987fbee5427dfc6320dd96f8543d9"
+    },
+    {
+      "bytes": 49953,
+      "path": "public/raw/owner-cancel-run-02/native-cancel-packet.bin",
+      "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+    },
+    {
+      "bytes": 265,
+      "path": "public/raw/owner-cancel-run-02/native-cancel-submission-observed.json",
+      "sha256": "bea0b20c4feb3d825a124814826fdf94e30ff8c36569c49fc431790c7dd79254"
+    },
+    {
+      "bytes": 191,
+      "path": "public/raw/owner-cancel-run-02/native-cancel-wire.bin",
+      "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+    },
+    {
+      "bytes": 1241,
+      "path": "public/raw/owner-cancel-run-02/native-funded-intent.json",
+      "sha256": "438ac34451f4a47f5222e0797893c6a4ca22c184a661bbd35c37ea4dc00c357c"
+    },
+    {
+      "bytes": 293,
+      "path": "public/raw/owner-cancel-run-02/owner-cancel-m12-outcome.json",
+      "sha256": "099c36750583fbd20e5656ac39e77a10054d92dd19b0bd8d9ab37f1517a72cee"
+    },
+    {
+      "bytes": 45327,
+      "path": "public/raw/owner-cancel-run-02/owner-cancel-reconcile/result.json",
+      "sha256": "31383bf0b1de36f93069c84aa5c67d9a71b95e7e8052c4eea77013d3e8d78302"
+    },
+    {
+      "bytes": 1328,
+      "path": "public/raw/owner-cancel-run-02/owner-cancel-requested.json",
+      "sha256": "0a2516b934e790257008bccd7c4d7eb009db55a64ce7b607e25ce2a74142e2c0"
+    },
+    {
+      "bytes": 42834,
+      "path": "public/raw/owner-cancel-run-02/owner-cancel-start/result.json",
+      "sha256": "e456006cc02e3c350b232633846eb4fb58c5283b32e2eac57a7fc6cd004ce947"
+    },
+    {
+      "bytes": 1259,
+      "path": "public/raw/owner-cancel-run-02/owner-declaration.json",
+      "sha256": "6a411d1fc0e62e6a092b000e5b3820c7e98a20b4f5cec24ba688806c463ab7e4"
+    },
+    {
+      "bytes": 68944,
+      "path": "public/raw/owner-cancel-run-02/target-request.json",
+      "sha256": "d1cf5f237edb4b2d24cd8136e51064a3fce1493fe186ca7d572814c989f77cf6"
+    },
+    {
+      "bytes": 2504,
+      "path": "public/raw/scope-after.json",
+      "sha256": "9287032cba5f84b9b03af34ac4937f232bfca4731339438bd30c8b3753899f6a"
+    },
+    {
+      "bytes": 729,
+      "path": "public/raw/trial-terminal.json",
+      "sha256": "0bc5c5802b9213cf0657e9156e91207ecac9b209fdf2538e90fffc2b798ff1cf"
+    },
+    {
+      "bytes": 26876,
+      "path": "public/source-originals/scripts/w1_generation_target_v2.py",
+      "sha256": "b82961b18d5ea15b05a8763008456e818766d24304442cb7a93ba3be527335ee"
+    },
+    {
+      "bytes": 8314,
+      "path": "public/source-originals/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/task_owner.rs",
+      "sha256": "7434cc692edf2f6886e9fcd315d03000e06790672e34859334dc7f6fd0adce89"
+    },
+    {
+      "bytes": 30535,
+      "path": "public/source-originals/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation.rs",
+      "sha256": "0e5e62adc449eab7aa67b41e64cd2452c3652bf8f0ed3a1722d277ebc37af2a5"
+    },
+    {
+      "bytes": 68208,
+      "path": "public/source-originals/trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db"
+    },
+    {
+      "bytes": 41413,
+      "path": "public/source-originals/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+      "sha256": "acf3c206be4d1ffad879dade186cd70fa0cdf5d8c0a8cf821b8bfce086eb6484"
+    },
+    {
+      "bytes": 18933,
+      "path": "public/state-readback.json",
+      "sha256": "fdf24c78021513e1ba544c5838009351afe2c61fdf50d02ce2a83e7ffa690d93"
+    }
+  ],
+  "full_private_database_publication": false,
+  "publication_complete_for_listed_files": true,
+  "root": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-state-audit-02",
+  "schema": "TRNM-W1-CANCEL02-PUBLIC-ALLOWLIST1",
+  "total_bytes": 742866
+}

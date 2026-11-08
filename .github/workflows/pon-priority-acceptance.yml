@@ -1,5 +1,8 @@
 name: PoN priority acceptance
 on:
+  push:
+    branches:
+      - fix/chain-six-axis-performance-20261103
   pull_request:
 permissions:
   contents: read
@@ -14,6 +17,46 @@ env:
   RUST_TEST_THREADS: "1"
   PYTHONDONTWRITEBYTECODE: "1"
 jobs:
+  push-source-context:
+    # Main is observed once when this resolver runs. Rerun the whole workflow;
+    # failed-job-only retries cannot borrow a different attempt's source context.
+    name: Freeze actual integration push source
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      head: ${{ steps.resolve.outputs.head }}
+      base: ${{ steps.resolve.outputs.base }}
+      merge: ${{ steps.resolve.outputs.merge }}
+      context: ${{ steps.resolve.outputs.context }}
+      context_sha256: ${{ steps.resolve.outputs.context_sha256 }}
+    steps:
+      - name: Checkout the immutable push after object
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Freeze the real push and current main without a PR identity
+        id: resolve
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/integration_push_source.py resolve --output "$RUNNER_TEMP/integration-push-source/context.json"
+      - name: Require source-context refusal controls and unchanged resolver bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_integration_push_source.py 2>&1 | tee "$RUNNER_TEMP/integration-push-source/controls.log"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/integration-push-source/source-after-controls.json"
+      - name: Preserve resolved and failed push context
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: integration-push-source-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/integration-push-source/
+          if-no-files-found: error
+          retention-days: 30
   retained-pressure-failure:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -53,6 +96,8 @@ jobs:
               print(text)
           PY
   native-priorities:
+    needs: push-source-context
+    if: ${{ !cancelled() && (github.event_name == 'pull_request' || needs.push-source-context.result == 'success') }}
     name: native priorities (${{ matrix.runner }}, ${{ matrix.source }}, ${{ matrix.campaign }})
     runs-on: ${{ matrix.runner }}
     # ARM full-capacity advances about 215 seconds per height; 100 minutes expired during height 20.
@@ -68,18 +113,27 @@ jobs:
         # separately for each architecture/source; none replaces another gate.
         campaign: [service-model, state, history]
     env:
-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
-      EXPECTED_MERGE: ${{ github.sha }}
+      EXPECTED_HEAD: ${{ github.event_name == 'push' && needs.push-source-context.outputs.head || github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.merge || github.sha }}
       SOURCE_KIND: ${{ matrix.source }}
-      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && (github.event_name == 'push' && needs.push-source-context.outputs.head || github.event.pull_request.head.sha) || (github.event_name == 'push' && needs.push-source-context.outputs.merge || github.sha) }}
     steps:
       - name: Checkout the exact candidate or the actual PR target merge
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event_name == 'push' && needs.push-source-context.outputs.head || (matrix.source == 'head' && github.event.pull_request.head.sha || github.sha) }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Reproduce the frozen integration-push source
+        if: github.event_name == 'push'
+        env:
+          PUSH_SOURCE_CONTEXT: ${{ needs.push-source-context.outputs.context }}
+          PUSH_SOURCE_CONTEXT_SHA256: ${{ needs.push-source-context.outputs.context_sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/integration_push_source.py materialize --kind "$SOURCE_KIND" --context-json "$PUSH_SOURCE_CONTEXT" --context-sha256 "$PUSH_SOURCE_CONTEXT_SHA256" --output "$RUNNER_TEMP/integration-push-context.json"
       - name: Verify source and original project boundary
         id: source
         shell: bash
@@ -302,11 +356,19 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}"
+      - name: Preserve this lane's actual push source context
+        if: always() && github.event_name == 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+          push_context_out="$RUNNER_TEMP/priority-observations"
+          mkdir -p "$push_context_out"
+          cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"
       - name: Retain successes, failures and unqualified external boundaries
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: priority-${{ matrix.runner }}-${{ matrix.source }}-${{ matrix.campaign }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          name: priority-${{ matrix.runner }}-${{ matrix.source }}-${{ matrix.campaign }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/priority-observations/
           if-no-files-found: error
           retention-days: 30

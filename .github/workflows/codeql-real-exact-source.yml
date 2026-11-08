@@ -122,6 +122,10 @@ jobs:
           if test "$SOURCE_KIND" = prospective-merge; then
             args+=(--expected-base "$EXPECTED_BASE_SHA" --expected-merge "$EXPECTED_SOURCE_SHA")
           fi
+          # Preserve the failure scene before the strict identity check; do not repair it.
+          git --no-replace-objects status --porcelain=v1 --untracked-files=all --ignore-submodules=none > "$identity/worktree-status-after.txt"
+          git --no-replace-objects diff --no-ext-diff --no-textconv --binary -- > "$identity/tracked-worktree-after.patch"
+          git --no-replace-objects diff --no-ext-diff --no-textconv --binary --cached -- > "$identity/tracked-index-after.patch"
           python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$identity/source-after.json" 2>&1 | tee "$identity/source-after.log"
           cmp "$identity/source-before.json" "$identity/source-after.json" 2>&1 | tee "$identity/source-comparison.log"
       - name: Record source and analysis outcomes

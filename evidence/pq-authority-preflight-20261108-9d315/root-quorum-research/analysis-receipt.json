@@ -1,0 +1,334 @@
+{
+  "activation_performed": false,
+  "analysis_scope": "bounded evidence consistency and recomputed statistics; no independent host attestation",
+  "command_count": 877,
+  "command_purpose_counts": {
+    "fixture-keygen": 6,
+    "fixture-public": 6,
+    "sign:ML-DSA-87": 278,
+    "sign:SLH-DSA-SHA2-256s": 151,
+    "verify:ML-DSA-87": 282,
+    "verify:SLH-DSA-SHA2-256s": 153,
+    "version": 1
+  },
+  "configuration": {
+    "canonical_bytes": 8717,
+    "distribution_cost_measured": false,
+    "encode_and_hash_ns": 183922
+  },
+  "controls": [
+    {
+      "expected": "accept",
+      "name": "legal-pair-0",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-1",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-2",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-3",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-4",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-5",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-6",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-7",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "accept",
+      "name": "legal-pair-8",
+      "rejection": null,
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "verification_api_calls": null
+    },
+    {
+      "expected": "reject",
+      "name": "component-cannot-satisfy-AND",
+      "rejection": "scope",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "missing-SLH-family",
+      "rejection": "quorum",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "missing-ML-family",
+      "rejection": "quorum",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "duplicate-signer",
+      "rejection": "signer",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "unknown-signer",
+      "rejection": "signer",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "wrong-context",
+      "rejection": "signature",
+      "result": null,
+      "verification_api_calls": 4
+    },
+    {
+      "expected": "reject",
+      "name": "signed-wrong-state",
+      "rejection": "proposal",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "split-proposal",
+      "rejection": "signature",
+      "result": null,
+      "verification_api_calls": 3
+    },
+    {
+      "expected": "reject",
+      "name": "stale-owner-generation",
+      "rejection": "proposal",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "stale-key-epoch",
+      "rejection": "proposal",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "expired-current-view",
+      "rejection": "expired",
+      "result": null,
+      "verification_api_calls": 0
+    },
+    {
+      "expected": "reject",
+      "name": "last-SLH-signature-bitflip",
+      "rejection": "signature",
+      "result": null,
+      "verification_api_calls": 4
+    }
+  ],
+  "elapsed_ns": 324237033443,
+  "evidence": {
+    "commands.jsonl": {
+      "bytes": 12205278,
+      "sha256": "b86e8409e6bea29d12a7f359c31eba7e42fe19ef985be6c2199fa5f1c853b878"
+    },
+    "observations.jsonl": {
+      "bytes": 17835591,
+      "sha256": "2868b1bdd190988ed13c5312bd9e68d5ab77e1c66aadc30e6653e88a71011dac"
+    }
+  },
+  "expected_negative_command_exits": 3,
+  "groups": {
+    "AND_CANDIDATE": {
+      "elapsed_ns": {
+        "maximum_ns": 5204239172,
+        "median_ns": 4160439066.0,
+        "minimum_ns": 3902124877,
+        "p95_nearest_rank_ns": 4682189710,
+        "samples": 64
+      },
+      "frame_bytes": [
+        75378
+      ],
+      "proposal_bytes": [
+        846
+      ],
+      "sign_and_encode_ns": {
+        "maximum_ns": 5161909741,
+        "median_ns": 4120411648.5,
+        "minimum_ns": 3866233654,
+        "p95_nearest_rank_ns": 4643600678,
+        "samples": 64
+      },
+      "verify_frame_ns": {
+        "maximum_ns": 301864105,
+        "median_ns": 36786620.5,
+        "minimum_ns": 29971214,
+        "p95_nearest_rank_ns": 72509391,
+        "samples": 64
+      }
+    },
+    "ML_COMPONENT": {
+      "elapsed_ns": {
+        "maximum_ns": 414863744,
+        "median_ns": 37428950.5,
+        "minimum_ns": 31125059,
+        "p95_nearest_rank_ns": 47127727,
+        "samples": 64
+      },
+      "frame_bytes": [
+        15484
+      ],
+      "proposal_bytes": [
+        846
+      ],
+      "sign_and_encode_ns": {
+        "maximum_ns": 400483535,
+        "median_ns": 20468252.0,
+        "minimum_ns": 15850676,
+        "p95_nearest_rank_ns": 25184317,
+        "samples": 64
+      },
+      "verify_frame_ns": {
+        "maximum_ns": 52993868,
+        "median_ns": 16539146.5,
+        "minimum_ns": 13283796,
+        "p95_nearest_rank_ns": 20397712,
+        "samples": 64
+      }
+    }
+  },
+  "host_attested": false,
+  "job_id": "1a1b9c56452-12894-16ca",
+  "latency_scope": "command-cold; includes processes, key import, temporary IO and command journal flushing; p95 is a 64-sample statistic, not a production tail",
+  "observed_systemd_properties": {
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "Result=success\nExecMainStatus=0\nMemoryPeak=[not set]\nCPUUsageNSec=[not set]\nCPUQuotaPerSecUSec=infinity\nCPUQuotaPeriodUSec=infinity\nMemoryMax=infinity\nNice=0\nActiveState=inactive\nSubState=dead\n"
+  },
+  "production_qualified": false,
+  "protocol_cost_scope": "frame excludes pre-distribution of full trusted 3+3 configuration; no full management-lifecycle or network cost claim",
+  "requested_runtime_limits": {
+    "cpu_quota_percent": 100,
+    "memory_max_bytes": 2147483648,
+    "nice": 5,
+    "timeout_seconds": 1800
+  },
+  "resource_context": "Host was not isolated; a concurrent release-bundle Cargo compilation/regression job may overlap. CPUQuota is a ceiling, not a reserved core.",
+  "root_effect_executed": false,
+  "sample_pairs": 64,
+  "sample_rows": 128,
+  "schema": "trnm.root-quorum-research-analysis.v1",
+  "source_sha256": "929235622413fdef80833a9f1c99929a3c4ffdf327faaed4baf37bb2189d6741"
+}

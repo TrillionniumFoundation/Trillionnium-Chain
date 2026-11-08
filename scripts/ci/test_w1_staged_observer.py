@@ -74,11 +74,43 @@ class ProcessLifecycleTests(unittest.TestCase):
             self.assertLess(result["wall_seconds"], 2)
 
     def test_late_observed_exit_zero_cannot_pass_the_budget(self):
-        real_sleep = time.sleep
-        with patch.object(stage.time, "sleep", side_effect=lambda _: real_sleep(.4)):
-            _, result = self.run_control("import time;time.sleep(.25)", .2)
+        real_popen, real_sleep = stage.subprocess.Popen, time.sleep
+        observed = {}
+
+        def return_after_original_deadline(*args, **kwargs):
+            child = real_popen(*args, **kwargs)
+            try:
+                declaration = json.loads((Path(kwargs["stdout"].name).parent / "declaration.json").read_text())
+                deadline = declaration["effective_deadline_monotonic"]
+                wait_bound = time.monotonic() + 5
+                while True:
+                    exited = os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                    if exited is not None:
+                        break
+                    self.assertLess(time.monotonic(), wait_bound, "actual control child did not exit")
+                    real_sleep(.01)
+                self.assertEqual((exited.si_pid, exited.si_code, exited.si_status),
+                                 (child.pid, os.CLD_EXITED, 0))
+                observed.update(pid=child.pid, deadline=deadline)
+                # Retain the real zombie for the observer's own wait4. Only this
+                # test delays handoff; the original declared budget never moves.
+                real_sleep(max(0, deadline - time.monotonic()) + .05)
+                observed["handoff"] = time.monotonic()
+                return child
+            except BaseException:
+                child.kill()
+                child.wait()
+                raise
+
+        with patch.object(stage.subprocess, "Popen", side_effect=return_after_original_deadline):
+            out, result = self.run_control("print('actual exit-zero control', flush=True)", 5)
+        self.assertEqual(result["pid"], observed["pid"])
+        self.assertEqual((out / "stdout.log").read_text(), "actual exit-zero control\n")
+        self.assertEqual(result["effective_deadline_monotonic"], observed["deadline"])
+        self.assertGreater(observed["handoff"], observed["deadline"])
         self.assertEqual(result["returncode"], 0)
         self.assertIn("COMPLETION_NOT_OBSERVED_BEFORE_DEADLINE", result["termination_reasons"])
+        self.assertFalse(result["completion_observed_before_deadline"])
         self.assertFalse(result["stage_process_complete"])
 
     def test_exit_zero_cannot_leave_unsettled_descendants(self):
@@ -514,10 +546,11 @@ class CoordinatorFailureTests(unittest.TestCase):
             now[0] += .025
             return value
 
-        def failed_measure(command, output, seconds, *, deadline):
+        def failed_measure(command, output, seconds, *, deadline, environment_overrides):
             self.assertEqual(output.name, "prepare-full-execution")
             self.assertEqual(seconds, 180)
             self.assertEqual(deadline, 100.2)
+            self.assertEqual(environment_overrides, {"RAYON_NUM_THREADS": "8"})
             self.assertGreater(now[0], 100.0)
             self.assertLess(deadline - now[0], .2)
             # Exercise failure only, without a synthetic successful backend.

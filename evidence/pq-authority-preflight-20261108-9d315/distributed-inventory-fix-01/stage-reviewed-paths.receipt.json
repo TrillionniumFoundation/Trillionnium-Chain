@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "add",
+    "--",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/security/PQ_AUTHORITY_PREFLIGHT_20261108.md",
+    "evidence/pq-authority-preflight-20261108-9d315/artifact-index.json",
+    "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.21565589890815318,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794129048.6216784,
+  "label": "stage-reviewed-paths",
+  "logs": {
+    "stage-reviewed-paths.stderr.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/stage-reviewed-paths.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stage-reviewed-paths.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/distributed-inventory-fix-01/stage-reviewed-paths.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {},
+  "started_unix_seconds": 1794129048.406023
+}

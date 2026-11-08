@@ -19,6 +19,9 @@ mod retained_verifier_tests;
 #[path = "initial_root_material_tests.rs"]
 mod initial_root_material_tests;
 
+#[path = "quorum_preflight_tests.rs"]
+mod quorum_preflight_tests;
+
 struct Fixture {
     root: PqReleaseRootV1,
     keys: BTreeMap<ReleaseKeyIdV1, PqNativeSigningKey>,

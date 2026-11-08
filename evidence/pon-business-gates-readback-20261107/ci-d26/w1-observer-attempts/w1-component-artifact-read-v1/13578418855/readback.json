@@ -1,0 +1,364 @@
+{
+  "artifact_id": 13578418855,
+  "metadata": {
+    "id": 13578418855,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQxODg1NQ==",
+    "name": "w1-false-trace-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+    "size_in_bytes": 5554955,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578418855",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578418855/zip",
+    "expired": false,
+    "digest": "sha256:d8862f291bd17cd600865d2e646d4b68d8d5336a401b1d35fb11e5aaa597284d",
+    "created_at": "2026-11-07T14:57:54Z",
+    "updated_at": "2026-11-07T14:57:54Z",
+    "expires_at": "2026-12-07T14:57:52Z",
+    "workflow_run": {
+      "id": 42383368504,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "started_utc": "2026-11-07T15:55:26.711821+00:00",
+  "errors": [
+    "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578418855/source.json'"
+  ],
+  "native_gate_validated": false,
+  "download_argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578418855/zip"
+  ],
+  "download_exit": 0,
+  "zip_bytes": 5554955,
+  "zip_sha256": "d8862f291bd17cd600865d2e646d4b68d8d5336a401b1d35fb11e5aaa597284d",
+  "archive_inventory": [
+    {
+      "path": "cargo-graph.json",
+      "bytes": 840935,
+      "compressed_bytes": 67114
+    },
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 133,
+      "compressed_bytes": 114
+    },
+    {
+      "path": "push-source-context.json",
+      "bytes": 2356,
+      "compressed_bytes": 830
+    },
+    {
+      "path": "query-work-controls.log",
+      "bytes": 3080,
+      "compressed_bytes": 708
+    },
+    {
+      "path": "reader-controls.log",
+      "bytes": 118,
+      "compressed_bytes": 37
+    },
+    {
+      "path": "retained-rejection-clippy.log",
+      "bytes": 216,
+      "compressed_bytes": 144
+    },
+    {
+      "path": "retained-rejection-reader-controls.log",
+      "bytes": 192,
+      "compressed_bytes": 39
+    },
+    {
+      "path": "retained-rejection-tests.log",
+      "bytes": 729,
+      "compressed_bytes": 400
+    },
+    {
+      "path": "runner-controls.log",
+      "bytes": 148,
+      "compressed_bytes": 38
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 512,
+      "compressed_bytes": 288
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 512,
+      "compressed_bytes": 288
+    },
+    {
+      "path": "w1-clippy.log",
+      "bytes": 1973,
+      "compressed_bytes": 678
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/build.stderr",
+      "bytes": 3775,
+      "compressed_bytes": 985
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/build.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/campaign.stdout",
+      "bytes": 30021445,
+      "compressed_bytes": 2433054
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "compressed_bytes": 38
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/cpuinfo.txt",
+      "bytes": 1596,
+      "compressed_bytes": 276
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/manifest.json",
+      "bytes": 24132,
+      "compressed_bytes": 4194
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 725504,
+      "compressed_bytes": 295031
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/rustc.stdout",
+      "bytes": 197,
+      "compressed_bytes": 150
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-false-trace-reuse-v1/uname.stdout",
+      "bytes": 131,
+      "compressed_bytes": 116
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/build.stderr",
+      "bytes": 611,
+      "compressed_bytes": 281
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/build.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/campaign.stdout",
+      "bytes": 30174152,
+      "compressed_bytes": 2438314
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "compressed_bytes": 38
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/cpuinfo.txt",
+      "bytes": 1596,
+      "compressed_bytes": 276
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/manifest.json",
+      "bytes": 26489,
+      "compressed_bytes": 4470
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 725504,
+      "compressed_bytes": 295031
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/rustc.stdout",
+      "bytes": 197,
+      "compressed_bytes": 150
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "path": "w1-full-limb-reuse-v1/uname.stdout",
+      "bytes": 131,
+      "compressed_bytes": 116
+    },
+    {
+      "path": "w1-fuzz-semantics.log",
+      "bytes": 3695,
+      "compressed_bytes": 1080
+    },
+    {
+      "path": "w1-tests.log",
+      "bytes": 16947,
+      "compressed_bytes": 4357
+    }
+  ],
+  "selected_files": {
+    "push-source-context.json": {
+      "bytes": 2356,
+      "sha256": "7e805c926925d02947058011fae4c7fb41ace40fbd6cc2241653922000c755b8"
+    },
+    "source-after.json": {
+      "bytes": 512,
+      "sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+    },
+    "w1-false-trace-reuse-v1/manifest.json": {
+      "bytes": 24132,
+      "sha256": "f5f593822b5b7d7c776635ac9002a82adb6296922c47add880cf46ad181e2868"
+    },
+    "w1-full-limb-reuse-v1/manifest.json": {
+      "bytes": 26489,
+      "sha256": "5a381d8c2c4929cf49030772cf09fd557f756fb402bf9bc2939c47685202450a"
+    }
+  },
+  "manifests": [
+    {
+      "schema": "trnm-w1-false-trace-reuse-execution-v1",
+      "result": "PASS",
+      "error": null,
+      "final_check_error": null,
+      "expected_source_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "expected_commit": null,
+      "execution_context": "github-hosted",
+      "architecture": "arm64",
+      "source_changed": false,
+      "binary_sha256_before": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "binary_sha256_after": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "retained_binary_sha256_before": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "retained_binary_sha256_after": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "failed_commands": null,
+      "commands_without_wait4_usage": null,
+      "production_activation": false,
+      "public_network_ready": false,
+      "work_profile_qualified": false,
+      "resource_fairness_qualified": false,
+      "path": "w1-false-trace-reuse-v1/manifest.json",
+      "source_before_after_equal": true,
+      "source_before": {
+        "commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "source_state": "committed-clean",
+        "tracked_bytes": 1031001045,
+        "tracked_entries": 11017,
+        "tracked_worktree_verified": true,
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+      },
+      "runner_context": {
+        "GITHUB_EVENT_NAME": "push",
+        "GITHUB_JOB": "false-trace-reuse",
+        "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "42383368504",
+        "ImageOS": "ubuntu24-arm64",
+        "ImageVersion": "20261101.172.1",
+        "RUNNER_ARCH": "ARM64",
+        "RUNNER_NAME": "GitHub Actions 1000040704",
+        "RUNNER_OS": "Linux",
+        "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+      },
+      "observation_denominator": 5,
+      "nonzero_or_timedout_observations": [],
+      "shards": [],
+      "artifact_file_hashes_verified": 12
+    },
+    {
+      "schema": "trnm-w1-full-limb-reuse-execution-v1",
+      "result": "PASS",
+      "error": null,
+      "final_check_error": null,
+      "expected_source_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+      "expected_commit": null,
+      "execution_context": "github-hosted",
+      "architecture": "arm64",
+      "source_changed": false,
+      "binary_sha256_before": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "binary_sha256_after": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "retained_binary_sha256_before": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "retained_binary_sha256_after": "40cc5491486318587d4b1db4a305309cd1b6c9b5382926005d191359738083ce",
+      "failed_commands": null,
+      "commands_without_wait4_usage": null,
+      "production_activation": false,
+      "public_network_ready": false,
+      "work_profile_qualified": false,
+      "resource_fairness_qualified": false,
+      "path": "w1-full-limb-reuse-v1/manifest.json",
+      "source_before_after_equal": true,
+      "source_before": {
+        "commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+        "source_state": "committed-clean",
+        "tracked_bytes": 1031001045,
+        "tracked_entries": 11017,
+        "tracked_worktree_verified": true,
+        "tree": "cef3563653b982a8043326ad4b53a4b93ab63906"
+      },
+      "runner_context": {
+        "GITHUB_EVENT_NAME": "push",
+        "GITHUB_JOB": "false-trace-reuse",
+        "GITHUB_REPOSITORY": "TrillionniumFoundation/Trillionnium-Chain",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "42383368504",
+        "ImageOS": "ubuntu24-arm64",
+        "ImageVersion": "20261101.172.1",
+        "RUNNER_ARCH": "ARM64",
+        "RUNNER_NAME": "GitHub Actions 1000040704",
+        "RUNNER_OS": "Linux",
+        "TRNM_COST_RUNNER_LABEL": "ubuntu-24.04-arm"
+      },
+      "observation_denominator": 5,
+      "nonzero_or_timedout_observations": [],
+      "shards": [],
+      "artifact_file_hashes_verified": 12
+    }
+  ],
+  "finished_utc": "2026-11-07T15:55:40.163626+00:00"
+}

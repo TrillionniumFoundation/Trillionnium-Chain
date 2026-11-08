@@ -1,0 +1,15 @@
+{
+  "label": "rustc-native-cfg",
+  "command": [
+    "/home/qian-qi/.cargo/bin/rustc",
+    "+1.95.0",
+    "--print",
+    "cfg",
+    "-C",
+    "target-cpu=native"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.027600290020927787,
+  "stdout_sha256": "41bc512cb9bd73ca84d24862e294a6a11a3710d2aaddec3012dabff640dd396a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

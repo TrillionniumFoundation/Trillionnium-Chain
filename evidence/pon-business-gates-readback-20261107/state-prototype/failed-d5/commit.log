@@ -1,0 +1,3 @@
+[fix/chain-local-state-cell-20261107 d5ccac569] perf(store): prototype canonical row decoding within one complete scan
+ 5 files changed, 388 insertions(+), 10 deletions(-)
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs

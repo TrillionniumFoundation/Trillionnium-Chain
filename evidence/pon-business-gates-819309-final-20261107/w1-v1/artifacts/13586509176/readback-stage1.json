@@ -1,0 +1,59 @@
+{
+  "artifact_id": 13586509176,
+  "metadata": {
+    "id": 13586509176,
+    "name": "w1-legal-factorial-head-arm64-819309fd312298e099642e1253b1d4ba07113e98-1",
+    "size_in_bytes": 174175856,
+    "digest": "sha256:d5e6720c1070b1772107be2d316aea6d27dfdf8dd68535103650730138e9bf38",
+    "expired": false,
+    "created_at": "2026-11-07T19:03:50Z",
+    "updated_at": "2026-11-07T19:03:50Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [
+    "ValueError: GitHub ZIP digest/size mismatch"
+  ],
+  "warnings": [],
+  "archive_authenticated": false,
+  "source_bound": false,
+  "manifest_hashes_complete": false,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "family": "factorial",
+  "arch": "arm64",
+  "source_kind": "head",
+  "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "job": {
+    "id": 128493695680,
+    "name": "W1 factorial legal strategies v3 (arm64, head)",
+    "family": "factorial",
+    "arch": "arm64",
+    "source": "head",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586509176/zip"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "error": "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586509176/zip']' timed out after 239.9999841907993 seconds",
+    "bytes": 39600128,
+    "sha256": "175547cc4131a68a9cbc56f9f856048f02a9acb15f1b399b5dcf54a2271eb021"
+  },
+  "coverage_status": "UNKNOWN",
+  "finished_utc": "2026-11-07T20:15:13.798242+00:00"
+}

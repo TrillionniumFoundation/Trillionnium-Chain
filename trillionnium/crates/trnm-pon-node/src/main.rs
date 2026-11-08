@@ -1,4 +1,5 @@
 //! Ordinary native development entrypoint. Signed transactions remain external inputs.
+mod cell_native_cli;
 mod growth_cli;
 mod host_public_guard;
 #[cfg(all(unix, feature = "pq-native-openssl"))]
@@ -345,6 +346,9 @@ fn authenticated_state_backend(command: &str, args: &BTreeMap<String, String>) -
             | "capacity-observe"
             | "evaluation-observe"
             | "evaluation-round-observe"
+            | "cell-verify-historical"
+            | "cell-verify-live"
+            | "cell-prove-reference"
             | "pool-submit"
             | "mine-loop"
             | "mine"
@@ -1463,6 +1467,8 @@ fn run() -> Result<Value> {
         "status" | "recover" | "pool-status" | "capacity-observe" => "",
         "evaluation-observe" => "--candidate --ancestry-blocks",
         "evaluation-round-observe" => "--candidate --round-blocks",
+        "cell-verify-historical" | "cell-verify-live" => "--cell-parent --cell-expected --cell-expected-sha256 --cell-claim",
+        "cell-prove-reference" => "--cell-parent --cell-expected --cell-expected-sha256 --cell-attempts --output",
         "pool-submit" => "--transactions --pool-policy",
         "pool-push" => "--peer --transactions --pool-context",
         "pool-status-remote" => "--peer",
@@ -1758,6 +1764,15 @@ fn run() -> Result<Value> {
     if growth_network && command != "serve" {
         return growth_network_call(&command, &args, &settings, command_started);
     }
+    if cell_native_cli::is_command(&command) {
+        return cell_native_cli::run(
+            &command,
+            &args,
+            settings,
+            owner_task_config,
+            authenticated_state,
+        );
+    }
     // This local observation has no peer request or signed response counterpart.
     // Reject other profiles before opening or creating a store.
     if command == "capacity-observe"
@@ -1995,14 +2010,31 @@ fn run() -> Result<Value> {
             ingress::call(address, &request)
         };
     }
-    if command == "packet-status"
-        && !Path::new(need(&args, "--store")?)
-            .join("native.sqlite")
-            .is_file()
-    {
-        return Err("PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
-    }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
+    if command == "packet-status" {
+        // A status query cannot start an outside owner or execute Node::recover.
+        // The live owner's existing exact_packet_observation remains available
+        // to that owner; this CLI requires a closed store without outside policy.
+        if owner_task_config.is_some() {
+            return Err("PACKET_STATUS_EXTERNAL_OWNER_UNSUPPORTED".into());
+        }
+        let packet = Packet::decode(&packet_input(&args)?)?;
+        let value = trnm_pon_node::observe_existing_packet(
+            Path::new(need(&args, "--store")?),
+            settings,
+            &packet,
+            if authenticated_state {
+                trnm_pon_node::PacketObservationBackend::AuthenticatedV1
+            } else {
+                trnm_pon_node::PacketObservationBackend::LegacyV2
+            },
+            number(&args, "--workers", 1)? as usize,
+            trnm_pon_node::DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+        )?;
+        return Ok(json!({"result":value,
+            "clock_scope":if args.contains_key("--logical-now"){"logical-test"}else{"local-wall"},
+            "production_activation":false}));
+    }
     let mut node = if growth_network {
         Node::open_with_permanent_account_growth_v2_and_workers(
             Path::new(need(&args, "--store")?),
@@ -2020,10 +2052,6 @@ fn run() -> Result<Value> {
     };
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
-        "packet-status" => {
-            let packet = Packet::decode(&packet_input(&args)?)?;
-            node.exact_packet_observation(&packet)?
-        }
         "capacity-observe" => serde_json::to_value(node.capacity_observation()?)?,
         "evaluation-observe" => {
             let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;

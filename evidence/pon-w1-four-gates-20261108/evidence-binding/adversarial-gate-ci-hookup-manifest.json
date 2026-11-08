@@ -1,0 +1,66 @@
+{
+  "files": [
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "base_sha256": "485bd8ccbb44d7478c82383c8a712d3d19934d306ee024a6e5d9dbcb628771b1",
+      "new_sha256": "18cd9e2b710e79ffcfd86d5075fd57d35fd55ee76522dcbcebcf2e72aed4aeb8"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "base_sha256": "aeb77c30e8b9122f4fbcae3a0e690d22a8cff9f5860ff0dbca891147298aab55",
+      "new_sha256": "02c9c9827d7478f9439c80ea0a45db75f530b9c946d7b140a64804e839da561d"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "base_sha256": "8489163b0620489e07e2a26ed229b6e50ec342e9a01c295bc926b66a23b6a4d7",
+      "new_sha256": "4b3a83c39585c860486e21ab3cf7bee7439331680d3d53a47589749f18556131"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "base_sha256": "889883d40a3676cc73ee831b1ebab2dc6eb9b5dd2c9c7e65ae42ca224c4c67b5",
+      "new_sha256": "4467bd4d6badc77143613a7d32ef2aab74ce6bfaeef07fecb559d0b14a30c417"
+    },
+    {
+      "path": "scripts/ci/test_w1_deployment_evidence_binding.py",
+      "base_sha256": "be8058818d874e81c618dc00ad89588fe474929457b52cdfc64c7a2396547731",
+      "new_sha256": "769d950d268a69348b4f9bee39a7f7cb179a0aee465858676c03e63960f77db5"
+    }
+  ],
+  "patch_sha256": "9a6a9e2c92af1839a54cff5b646ce096506d702a0fec25fbbb3a878dfde69fd0",
+  "new_required_suite_counts": {
+    "deployment-evidence-binding": 12,
+    "deployment-comparison-audit": 20,
+    "owned-process-collector": 14,
+    "owner-cancellation": 8
+  },
+  "required_w1_total_methods": 151,
+  "real_receiver_methods": 11,
+  "local_syntax_checks": [
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/workspace/scratch/ec265b67753e/adversarial-ci-proposal/scripts/ci/ci_job.sh"
+      ],
+      "exit": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "py_compile",
+        "/workspace/scratch/ec265b67753e/adversarial-ci-proposal/scripts/ci/check_ci_contract.py",
+        "/workspace/scratch/ec265b67753e/adversarial-ci-proposal/scripts/ci/test_ci_contract.py"
+      ],
+      "exit": 0,
+      "stderr": ""
+    }
+  ],
+  "full_W1PostwinLaneTests_pending_in_root_full_worktree": true,
+  "partial_checkout_import_blocker": "bounded_process module not copied; not a test result",
+  "commands_for_root": [
+    "python3 scripts/ci/test_ci_contract.py W1PostwinLaneTests -v",
+    "python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v"
+  ]
+}

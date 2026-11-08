@@ -1,0 +1,161 @@
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -2867,14 +2867,14 @@
+             )?;
+         }
+         Ok(())
+     }
+-    /// Only the Legacy reorganization path opts into the existing bounded root
+-    /// arithmetic. It still reads every actual SQL row and checks continuity,
+-    /// canonical grammar and the fresh stored root at every original boundary.
+-    /// Ordinary append/admission, PQ State grammar and the distinct Growth root
+-    /// stay unchanged. Profile exclusion is explicit as well as backend exclusion.
+-    fn legacy_reorg_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
++    /// Legacy reorganization and the final admission fence share bounded
++    /// complete-State root arithmetic. Every caller still reads actual SQL rows
++    /// and checks continuity, canonical grammar and the fresh stored root at its
++    /// original boundary. PQ State grammar and the distinct Growth root keep
++    /// their original paths; profile and backend exclusion remain explicit.
++    fn legacy_persisted_root_arithmetic(&self) -> Option<&pon_commitment::FullRootArithmetic> {
+         (self.state_backend == StateBackend::Legacy
+             && !pq_accounts_v2::enabled(&self.settings.app)
+             && !growth_profile_v2::enabled(&self.settings.app))
+         .then_some(&self.commitment_root_arithmetic)
+@@ -5152,11 +5152,14 @@
+                 .map_err(Error::local_integrity)?;
+             }
+             crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+                 .map_err(Error::local_integrity)?;
+-            self.check_active_before_commit_with_readback(
++            // Keep the last active-state read and all original post-write fences.
++            // Only the classical complete-input root arithmetic is shared.
++            self.check_active_before_commit_with_root_arithmetic(
+                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                 publication_readback.as_mut(),
++                self.legacy_persisted_root_arithmetic(),
+             )?;
+             progress(ExecutionProgress::BeforeDurableCommit)?;
+             if let Some(scope) = publication_readback.as_mut() {
+                 scope.validate_consumed(&tx)?;
+@@ -5832,9 +5835,9 @@
+                             .observe(native_authenticated::HistoryStage::ReadActive)
+                     });
+                 let arithmetic =
+                     matches!(commit_site, native_authenticated::SqlCommitSite::ReorgStep)
+-                        .then(|| self.legacy_reorg_root_arithmetic())
++                        .then(|| self.legacy_persisted_root_arithmetic())
+                         .flatten();
+                 self.check_active_before_commit_with_root_arithmetic(
+                     progress,
+                     readback.as_mut(),
+@@ -6106,9 +6109,9 @@
+                     old,
+                     &self.slot_state_with_progress(next, progress)?,
+                     progress,
+                     readback.as_mut(),
+-                    self.legacy_reorg_root_arithmetic(),
++                    self.legacy_persisted_root_arithmetic(),
+                 )?;
+             }
+             Ok(readback)
+         })?;
+@@ -6328,9 +6331,9 @@
+                         resulting,
+                         &self.slot_state_with_progress(g, progress)?,
+                         progress,
+                         readback.as_mut(),
+-                        self.legacy_reorg_root_arithmetic(),
++                        self.legacy_persisted_root_arithmetic(),
+                     )?;
+                 }
+                 Ok(readback)
+             })?;
+@@ -6342,9 +6345,9 @@
+         let state = self.slot_state_with_progress(g, progress)?;
+         progress()?;
+         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
+             .map_err(|error| Error::from(error).local_integrity())?;
+-        let actual_root = match self.legacy_reorg_root_arithmetic() {
++        let actual_root = match self.legacy_persisted_root_arithmetic() {
+             Some(arithmetic) => arithmetic.root(&state)?,
+             None => self.settings.state_root(&state)?,
+         };
+         ensure(actual_root == self.record(target)?.root, "ROOT").map_err(Error::local_integrity)?;
+@@ -6410,9 +6413,9 @@
+                     target,
+                     &self.slot_state_with_progress(g, progress)?,
+                     progress,
+                     readback.as_mut(),
+-                    self.legacy_reorg_root_arithmetic(),
++                    self.legacy_persisted_root_arithmetic(),
+                 )?;
+             }
+             Ok(readback)
+         })?;
+--- a/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs
+@@ -140,9 +140,9 @@
+     let directory = tempfile::tempdir().unwrap();
+     let cfg = Settings::development(Some(1)).unwrap();
+     let node = Node::open(directory.path(), cfg.clone(), 1).unwrap();
+     let original = node.read_active().unwrap();
+-    let arithmetic = node.legacy_reorg_root_arithmetic().unwrap();
++    let arithmetic = node.legacy_persisted_root_arithmetic().unwrap();
+     for _ in 0..2 {
+         node.check_active_before_commit_with_root_arithmetic(
+             &mut || Ok(()),
+             None,
+@@ -275,22 +275,22 @@
+ #[test]
+ fn legacy_reorg_root_never_selects_the_growth_or_authenticated_relation() {
+     let directory = tempfile::tempdir().unwrap();
+     let legacy = Node::open(&directory.path().join("legacy"), settings(), 1).unwrap();
+-    assert!(legacy.legacy_reorg_root_arithmetic().is_some());
++    assert!(legacy.legacy_persisted_root_arithmetic().is_some());
+     let authenticated =
+         Node::open_with_authenticated_state(&directory.path().join("native"), settings(), 1)
+             .unwrap();
+-    assert!(authenticated.legacy_reorg_root_arithmetic().is_none());
++    assert!(authenticated.legacy_persisted_root_arithmetic().is_none());
+     let growth = Settings::development_with_profiles(
+         Some(1),
+         "native-public-evaluation-dev-v1",
+         growth_profile_v2::PROFILE,
+     )
+     .unwrap();
+     let growth = Node::open(&directory.path().join("growth"), growth, 1).unwrap();
+     assert_eq!(growth.state_backend, StateBackend::Legacy);
+-    assert!(growth.legacy_reorg_root_arithmetic().is_none());
++    assert!(growth.legacy_persisted_root_arithmetic().is_none());
+     let actual = growth.read_active().unwrap();
+     assert_eq!(
+         growth.settings.state_root(&actual.2).unwrap(),
+         growth.record(actual.0).unwrap().root
+@@ -345,14 +345,14 @@
+         // account validation rather than the Legacy constructor's profile gate.
+         let mut node =
+             Node::open_with_pq_network(directory.path(), cfg.clone(), 1, &policy).unwrap();
+         assert_eq!(node.state_backend, StateBackend::PqNetworkV2);
+-        assert!(node.legacy_reorg_root_arithmetic().is_none());
++        assert!(node.legacy_persisted_root_arithmetic().is_none());
+         assert!(node.legacy_admission_readback_schema().is_none());
+         // Isolate the defensive profile predicate. The normal Legacy constructor
+         // already refuses PQ, and no SQL operation runs with this test-only tag.
+         node.state_backend = StateBackend::Legacy;
+-        assert!(node.legacy_reorg_root_arithmetic().is_none());
++        assert!(node.legacy_persisted_root_arithmetic().is_none());
+         node.legacy_admission_schema = Some(BTreeMap::new());
+         assert!(node.legacy_admission_readback_schema().is_none());
+         node.legacy_admission_schema = None;
+         node.state_backend = StateBackend::PqNetworkV2;
+@@ -388,9 +388,9 @@
+         let refusal = node
+             .check_active_before_commit_with_root_arithmetic(
+                 &mut || Ok(()),
+                 None,
+-                node.legacy_reorg_root_arithmetic(),
++                node.legacy_persisted_root_arithmetic(),
+             )
+             .unwrap_err();
+         assert_eq!(refusal.to_string(), expected);
+         tx.rollback().unwrap();

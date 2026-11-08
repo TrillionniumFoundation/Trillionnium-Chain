@@ -1,0 +1,74 @@
+{
+  "actual_bytes": 4438,
+  "actual_sha256": "7af4f3dd403c229456dc0ea102bacad5a763f9137c4a4b19ca233c81daae1df1",
+  "actual_terminal_newline_hex": "0a",
+  "body_comparison": "exact bytes including terminal newlines",
+  "commands": [
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "778",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--json",
+        "number,title,baseRefName,headRefName,headRefOid,isDraft,url,body"
+      ],
+      "exit_code": 0,
+      "label": "before",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7495bef1f1d329333bcaf8b3944d1d97cea9dd7984221ca9754ea917fe2b9e93"
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "--method",
+        "PATCH",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/778",
+        "--input",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-final-1a14f7d48263/pr-body-update-rest/request.json"
+      ],
+      "exit_code": 0,
+      "label": "edit-rest",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c9da288673cfe8a77045b33c45762d116b279a5c6f0b8148c729e1191d732f04"
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "778",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--json",
+        "number,title,baseRefName,headRefName,headRefOid,isDraft,url,body"
+      ],
+      "exit_code": 0,
+      "label": "after",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "68e83563e76e12e8f8723f486b7bbc0e72100e8d0f0dc64be99c34e252277711"
+    }
+  ],
+  "edit_completed_and_read_back": true,
+  "expected_bytes": 4438,
+  "expected_sha256": "7af4f3dd403c229456dc0ea102bacad5a763f9137c4a4b19ca233c81daae1df1",
+  "expected_terminal_newline_hex": "0a",
+  "head_base_title_and_draft_unchanged": true,
+  "original_cli_failure": "gh pr edit rejected deprecated Projects(classic) projectCards lookup; original failure retained separately",
+  "original_cli_failure_stderr_sha256": "9c4f5d81ed2acfc14cd655978ab0fe9f7fe985bba53d8d843aafdf989f122e2c",
+  "pr_identity": {
+    "baseRefName": "fix/chain-w1-v2-proof-ci-20261106",
+    "headRefName": "fix/chain-w1-qrom-implementation-map-20261107",
+    "headRefOid": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+    "isDraft": true,
+    "number": 778,
+    "title": "W1: map frozen recursive proof profile to QROM obligations",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/778"
+  },
+  "rest_body_patch_sent": true,
+  "schema": "TRNM-W1-PR-BODY-READBACK1",
+  "target_head": "1a14f7d4826363daefac9ec10131c66d7e70ece7"
+}

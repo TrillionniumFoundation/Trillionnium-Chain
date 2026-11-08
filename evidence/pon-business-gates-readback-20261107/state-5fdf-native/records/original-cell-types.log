@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized] target(s) in 0.14s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/followup-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test store::bounded_active_state_tests::live_state_cell_extent_and_type_refuse_before_root_and_keep_exact_repair ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1199 filtered out; finished in 0.68s
+

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:05:08.883183+00:00",
+  "exit_code": 0,
+  "log": "logs/preflight-audit.log",
+  "log_bytes": 172,
+  "log_sha256": "7247a4f0a0ea9e4d93e520c05cedda60b082471bdc818db8a3a2ddcfbbe18d9a",
+  "name": "preflight-audit",
+  "pid": 1243007,
+  "start_utc": "2026-11-07T18:05:08.762368+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 120829320
+}

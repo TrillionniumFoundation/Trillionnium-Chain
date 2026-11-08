@@ -78,6 +78,46 @@ fn native(args: &[String]) -> Result<()> {
     );
     Ok(())
 }
+
+/// One complete native replay with an independently supplied header, for the
+/// same fresh-process receiver boundary as the single-receipt verifier. This
+/// command never silently substitutes the existing 1,001-replay benchmark.
+fn native_once(args: &[String]) -> Result<()> {
+    ensure!(
+        args.len() == 3,
+        "--native-once INPUT HEADER EXPECTED_ARTIFACTS"
+    );
+    let input = bounded(&args[0], v2::INPUT_BYTES)?;
+    ensure!(input.len() == v2::INPUT_BYTES, "complete input size");
+    let header = bounded(&args[1], HEADER_BYTES)?;
+    ensure!(header.len() == HEADER_BYTES, "header size");
+    ensure!(
+        input[..HEADER_BYTES] == header,
+        "W1_V2_NATIVE_HEADER_REJECT"
+    );
+    let expected_bytes = bounded(&args[2], 64)?;
+    let expected = artifacts(&expected_bytes)?;
+    let started = Instant::now();
+    let journal =
+        v2::check_complete_relation(&input).map_err(|error| anyhow::anyhow!("{error:?}"))?;
+    let identity = public(&header, &expected, &journal)?;
+    let verify_ns = started.elapsed().as_nanos();
+    println!(
+        "{}",
+        json!({
+            "schema":"TRNM-W1-V2-NATIVE-ONCE1", "profile_id":PROFILE_ID,
+            "iterations":1, "full_replay_calls":1, "full_native_verify_ns":[verify_ns],
+            "work_id":hex::encode(identity), "input_sha256":sha(&input),
+            "header_sha256":sha(&header), "journal_sha256":sha(&journal),
+            "expected_artifacts_sha256":sha(&expected_bytes),
+            "input_bytes":input.len(), "journal_bytes":journal.len(),
+            "sample_scope":"one complete native replay and independent public statement binding; file reads, startup and destruction require the outer receiver observation",
+            "parent_eligibility_checked":false, "admission_authorized":false
+        })
+    );
+    Ok(())
+}
+
 fn run() -> Result<()> {
     for key in [
         "RISC0_DEV_MODE",
@@ -93,6 +133,9 @@ fn run() -> Result<()> {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.first().map(String::as_str) == Some("--native") {
         return native(&args[1..]);
+    }
+    if args.first().map(String::as_str) == Some("--native-once") {
+        return native_once(&args[1..]);
     }
     let many = args.first().map(String::as_str) == Some("--verify-many");
     let args = if many { &args[1..] } else { &args[..] };
@@ -139,6 +182,45 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn saved_full_v2_receipt_verifies_with_independent_artifacts() {
+        let root =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../evidence/pon-w1-full-v2-20261105");
+        let input = std::fs::read(root.join("input.bin")).unwrap();
+        let header = std::fs::read(root.join("header.bin")).unwrap();
+        let expected_bytes = std::fs::read(root.join("expected-artifacts.bin")).unwrap();
+        let receipt_bytes = std::fs::read(root.join("succinct.bin")).unwrap();
+        assert_eq!(input.len(), v2::INPUT_BYTES);
+        assert_eq!(header.len(), HEADER_BYTES);
+        assert_eq!(&input[..HEADER_BYTES], header.as_slice());
+        assert_eq!(
+            sha(&input),
+            "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+        );
+        assert_eq!(
+            sha(&expected_bytes),
+            "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+        );
+        assert_eq!(
+            sha(&receipt_bytes),
+            "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+        );
+        // Expectations come from the saved input and separate A/B file, never
+        // from the receipt. Replay checks the complete native relation too.
+        let expected = artifacts(&expected_bytes).unwrap();
+        let journal = v2::check_complete_relation(&input).unwrap();
+        assert_eq!(
+            expected_bytes.as_slice(),
+            &journal[v2::MODEL_OFFSET..v2::PRODUCT_OFFSET]
+        );
+        let receipt = wire::decode(&receipt_bytes).unwrap();
+        assert_eq!(receipt.journal.bytes, journal);
+        let identity = verify(&header, &expected, &receipt).unwrap();
+        assert_eq!(
+            hex::encode(identity),
+            "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+        );
+    }
     #[test]
     fn expected_artifacts_are_exact_and_never_derived_from_receipt() {
         for n in [0, 32, 63, 65] {

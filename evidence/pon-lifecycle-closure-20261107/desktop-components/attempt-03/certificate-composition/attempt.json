@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "formal/pon-nakamoto-v1/certificate_composition_evidence.py",
+    "--native-run",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-02/native-owner-journal/run.json",
+    "--output-dir",
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/attempt-03/certificate-composition"
+  ],
+  "exact_native_packet_join_checked": true,
+  "production_qualified": false,
+  "raw_journals_checked": 6,
+  "real_signature_and_full_W1_attribution_counterexample_checked": true,
+  "schema": "pon-certificate-composition-attempt-v1",
+  "status": "PASS"
+}

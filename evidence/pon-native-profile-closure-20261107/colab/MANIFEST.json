@@ -1,0 +1,82 @@
+{
+  "evidence_kind": "CONTROLLED_FIXTURE",
+  "file_count": 18,
+  "files": {
+    "README.md": {
+      "sha256": "c9103098a8a7df5bb5e139f88e7f3ce7b29a1d252c715673684196985cdf2fb9",
+      "size_bytes": 5462
+    },
+    "RESULT.json": {
+      "sha256": "09a258443143e4309f333aeaac54e7c9f4297db890548521c3a7dcfd7c1bd85b",
+      "size_bytes": 1633
+    },
+    "cloud/stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "cloud/stdout.log": {
+      "sha256": "e7cde80e79dbcd612107768648a877cc5427d6a670d14136763cdf0d5d7e1ac4",
+      "size_bytes": 15749
+    },
+    "cloud/test-report.json": {
+      "sha256": "6a0226152d11499342a3b159b1a9fb7b9975479e31bb75dde8c9454b802bad81",
+      "size_bytes": 11999
+    },
+    "observations/execution-public.json": {
+      "sha256": "61ded6cb28639e9ffc6c1ab550c51a1bfda528ffe9fce72001cab943356cafb9",
+      "size_bytes": 21947
+    },
+    "observations/host-process-status-public.json": {
+      "sha256": "8e52bfc94e3310e669b6734b064589083791edf16c11c44bf51c2213bd60380b",
+      "size_bytes": 10895
+    },
+    "observations/path-diagnosis-public.json": {
+      "sha256": "757068e7bb6ee78779971cf7b854f8c40692413975a80f39c85a3d85c56bf408",
+      "size_bytes": 1916
+    },
+    "observations/postrun-public.json": {
+      "sha256": "e2c0d6912e07f02ad9d7104be3570a80c05450c22f7e1a9c6ac687c050e2c818",
+      "size_bytes": 1903
+    },
+    "observations/preparation-failures.json": {
+      "sha256": "d67af32cbe4e3ad2f34752d77c802a6f2686479c7e7c86f5da402287d82ed605",
+      "size_bytes": 2343
+    },
+    "observations/readiness-public.json": {
+      "sha256": "87bedf8a13297a353801fbe832b9d8d305577ada3e097cfb3677907b036258c5",
+      "size_bytes": 5772
+    },
+    "observations/setup-path-rejection-public.json": {
+      "sha256": "a76f256405c3802cba5a3b02ebe0dad3c79a84fe8637f73c2a11514c1ea628ca",
+      "size_bytes": 2477
+    },
+    "payload/colab-profile-composition-payload-v1.py": {
+      "sha256": "0c0cef95c1d710138eccf20cd4a63734ace5b9f46e08b87f3279f433d6b2a7bf",
+      "size_bytes": 41865
+    },
+    "source-bindings.json": {
+      "sha256": "f20fe586fae9a6ca2d3e3c24d2e28564556cf941b03601e6b00b7e56c0389f4d",
+      "size_bytes": 1486
+    },
+    "source/grouped_work_composition_v1.py": {
+      "sha256": "0210e710f83e9c8c58af7f362521b49024bca28917a7a2a3793d57669b19843b",
+      "size_bytes": 27772
+    },
+    "source/grouped_work_profile_v1.py": {
+      "sha256": "fbeae97349126a9dc805853e02b9c16a207e14e572fb5d0efe39ac9b25e4aca5",
+      "size_bytes": 31646
+    },
+    "source/test_grouped_work_composition_v1.py": {
+      "sha256": "560a0fbc0716dec003328604bcd54a796d5739b69c139e99b98d91c6b438021d",
+      "size_bytes": 24810
+    },
+    "source/test_grouped_work_profile_v1.py": {
+      "sha256": "3b3faa1aad2edf8a3f17574f29d177678ce44521486837521700bdec2848f639",
+      "size_bytes": 33259
+    }
+  },
+  "includes_private_adapter_source": false,
+  "includes_profile_auth_config_credentials": false,
+  "qualified_native_profile": false,
+  "schema": "pon-profile-colab-public-evidence-manifest-v1"
+}

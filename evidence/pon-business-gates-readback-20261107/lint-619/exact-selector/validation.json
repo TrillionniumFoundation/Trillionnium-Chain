@@ -1,0 +1,100 @@
+{
+  "schema": "trnm-exact-selector-correction-v1",
+  "commit": "6193489c2fb2a1bdab1128ebed2296f19176401b",
+  "required_test": "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes",
+  "original_selector": "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_write",
+  "original_cargo_exit": 0,
+  "original_named_test_executed": false,
+  "original_raw_log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/records/legacy-transaction-scope-regression.log",
+  "original_raw_log_bytes": 3700,
+  "original_raw_log_sha256": "6a9fb9f937915c9a7bdc3b6c21d8cc062d56073f14029abfdf1e8f6990712ce0",
+  "original_result_preserved": true,
+  "production_source_changed": false,
+  "business_gate_pass_claimed": false,
+  "started_unix": 1794066740.8690028,
+  "steps": [
+    {
+      "label": "preflight",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0940251350402832,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-selector-correction-20261107/preflight.log",
+      "bytes": 173,
+      "sha256": "b65db88dd47125c8ea2f185d059283ae1245afaad7460bd9d547ca3a1ec38b5e"
+    },
+    {
+      "label": "old-zero-tests-strictly-refused",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/records/legacy-transaction-scope-regression.log",
+        "--test",
+        "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes"
+      ],
+      "exit_code": 1,
+      "seconds": 0.05627703666687012,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-selector-correction-20261107/old-zero-tests-strictly-refused.log",
+      "bytes": 59,
+      "sha256": "e434674bb6e9ea016e3e83ab232eafc623b54b51f3bdc9e3f3ae0d815fe1d9b7"
+    },
+    {
+      "label": "exact-native",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--tested",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--label",
+        "legacy-transaction-scope-exact",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-selector-correction-20261107/records",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 8.236910581588745,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-selector-correction-20261107/exact-native.log",
+      "bytes": 201,
+      "sha256": "de6017f9b9ab347aa35c35726ac406b3ee3d95d4a321dda536d627dccf04834d"
+    },
+    {
+      "label": "named-test-required",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-selector-correction-20261107/records/legacy-transaction-scope-exact.log",
+        "--test",
+        "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes"
+      ],
+      "exit_code": 0,
+      "seconds": 0.052794456481933594,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-selector-correction-20261107/named-test-required.log",
+      "bytes": 213,
+      "sha256": "c113a1d6f27c7e6d26c71ca43ca319cc866e856be6a7fbd4a045253e7cdc8237"
+    }
+  ],
+  "finished_unix": 1794066749.3154204,
+  "corrected_test_executed_and_passed": true
+}

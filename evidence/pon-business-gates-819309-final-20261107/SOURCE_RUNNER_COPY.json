@@ -1,0 +1,18 @@
+{
+  "schema": "trnm-admission-runner-copy-v1",
+  "files": [
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-source-controls-preparation-20261107/run-final-controls-v3-admission-fence.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/source-controls-preparation/run-final-controls-v3-admission-fence.py",
+      "bytes": 17919,
+      "sha256": "09573875a35c49c4fcffcef2eae8da1e5fbd80e07d262e2235965a802e4edc0c"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-source-controls-preparation-20261107/RUNNER-ADAPTATION-v1.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/source-controls-preparation/RUNNER-ADAPTATION-v1.json",
+      "bytes": 8029,
+      "sha256": "105c6347fe361e380765fe756c3b1a1ee56e61b7a5b20ce2600da28043e85010"
+    }
+  ],
+  "tests_executed": false
+}

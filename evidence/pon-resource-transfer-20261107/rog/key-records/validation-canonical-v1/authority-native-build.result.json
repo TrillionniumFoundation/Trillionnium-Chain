@@ -1,0 +1,43 @@
+{
+  "built_runner": {
+    "bytes": 8147856,
+    "executable": true,
+    "exists": true,
+    "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+    "sha256": "895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec"
+  },
+  "command": [
+    "cargo",
+    "build",
+    "--offline",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--example",
+    "grouped_verification_authority_v0"
+  ],
+  "command_sha256": "be9079d79c6aa4d63b7386b1e4c99a9ad0bc87e19712a8182e327293cf27075d",
+  "effective_cargo_home": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace",
+  "elapsed_seconds": 1.5063692759722471,
+  "ended_utc": "2026-11-07T15:03:24.996473+00:00",
+  "environment_overrides": {},
+  "exit_code": 0,
+  "label": "authority-native-build",
+  "log": "authority-native-build.log",
+  "log_bytes": 194,
+  "log_sha256": "afedb83890de89198738b2a953c060fd92df6f040ddc0fef119621447f1601e2",
+  "ordinal": 10,
+  "original_gate": false,
+  "owned_process_group_cleanup": "SIGKILL",
+  "pid": 2618152,
+  "prior_fresh_floor_gate": false,
+  "process_group": 2618152,
+  "process_started": true,
+  "started_utc": "2026-11-07T15:03:23.490101+00:00",
+  "status": "PASS",
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

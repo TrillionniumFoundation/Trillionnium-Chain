@@ -351,6 +351,9 @@ def make_report(sources: dict, records: list, lock_sha: str, target_bits: int) -
         },
         'limitations': [
             'The toy formula depends on upstream conjectures; a failed budget is not an attack.',
+            'Known up-to-capacity counterexamples and Fenzi-Sanso (2026), https://cic.iacr.org/p/3/3/44, obstruct treating historical toy-formula reproduction as an established soundness bound.',
+            'That paper Table 2 uses BabyBear/degree-4/rate-1/4/50 queries and n=2^21: 92.5 is the displayed negative logarithm of an information-theoretic attack-success lower bound, not a W1 or quantum security guarantee.',
+            'Its FRI connection uses BSCH+26 Lemma 8.4 and list-size bounds; the Lemma 6 attack does not transfer verbatim to ethSTARK. This review establishes no polynomial-time compiled-SNARG or complete W1 attack and does not alter the retained equations.',
             'The upstream proven formula is a component estimator, not a verified RBR or QROM theorem for this implementation.',
             'The sqrt enclosure evaluates the mathematical formula conservatively; it does not emulate f32 rounding.',
             'The four-archive scope omits SHA-extension semantics, all accepted recursive programs, transcript/hash instantiation and composition.',

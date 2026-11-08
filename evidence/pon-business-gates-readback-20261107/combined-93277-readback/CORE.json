@@ -1,0 +1,336 @@
+{
+  "authoritative_exit_code": 1,
+  "authoritative_job_id": "1a1b72f6cb4-12894-987",
+  "authoritative_terminal_state": "failed",
+  "genuine_python_runtime": {
+    "cryptography": "41.0.7",
+    "cryptography_file": "/usr/lib/python3/dist-packages/cryptography/__init__.py",
+    "executable": "/usr/bin/python3",
+    "implementation": "CPython",
+    "numpy": "1.26.4",
+    "numpy_file": "/usr/lib/python3/dist-packages/numpy/__init__.py",
+    "python": "3.12.3",
+    "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "head": "93277a001f4f8a42be65166f6513177b46cddf5b",
+  "native_tests_or_benchmarks_executed_here": false,
+  "original_business_gates_or_production_qualified": false,
+  "original_raw_directory_modified_during_readback": false,
+  "raw_bundle": {
+    "all_manifest_entries_independently_readback_verified": true,
+    "bytes": 1237820,
+    "files": 84,
+    "sha256_manifest": "e89faa858f27abaa02ff474437561e76e45db24d5a273dfab5bca10da3a3e855",
+    "summary_sha256": "705dd312a9623ce4af33972486041abacf37d986297501507106aff97603d9a7"
+  },
+  "repository_result": {
+    "activation": false,
+    "head": "93277a001f4f8a42be65166f6513177b46cddf5b",
+    "local_links": 3635,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1185,
+    "source_state": "committed-clean",
+    "tree": "3e6cdf8a7532145069c9282f9b59d2fc8a8cd081",
+    "workspace_packages": 26
+  },
+  "reruns": 0,
+  "run_directory": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/93277a001f4f8a42be65166f6513177b46cddf5b",
+  "run_ended": "2026-11-07T18:12:42.276603+00:00",
+  "run_started": "2026-11-07T18:05:02.645935+00:00",
+  "schema": "trnm-final-source-controls-readback-v1",
+  "source_before_after": {
+    "byte_identical": true,
+    "bytes": 423,
+    "sha256": "95071e4511a81893dcbb9f8f64e3baa6b04ed43d3978b48b8db19ca8bac3ed05",
+    "tracked_bytes": 1274925144,
+    "tracked_entries": 12390
+  },
+  "static_commands": [
+    {
+      "exit_code": 0,
+      "name": "source-before",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "python-runtime",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "preflight-audit",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "ci-contract",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "pq-research-integration",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "distributed-source-inventory",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "repository-links-and-contracts",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "git-diff-check",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "cargo-version",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "rustc-version",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "fmt-all-check",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "cargo-locked-offline-metadata",
+      "timed_out": false
+    },
+    {
+      "exit_code": 0,
+      "name": "source-after",
+      "timed_out": false
+    }
+  ],
+  "strict_summary_field_note": "Original summary passed_test_methods=587 counts only methods in wholly passing suites; Host additionally contains 76 individually ok methods. Actual total is 663 ok + 1 failure + 1 error.",
+  "suites": [
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 37,
+      "failures": 0,
+      "log": "logs/01-test_pq_research_integration.log",
+      "log_sha256": "4416e1c0391d56ad43fe6da292faa46d9606b6d0924fafaf824550c783a9cf2f",
+      "observed": 37,
+      "ok": 37,
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 43,
+      "failures": 0,
+      "log": "logs/02-test_ci_source_integrity.log",
+      "log_sha256": "20d167f74d423947756fec94fb6975f1fd8dedc3b971063a4e459db03deff109",
+      "observed": 43,
+      "ok": 43,
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 13,
+      "failures": 0,
+      "log": "logs/03-test_integration_push_source.log",
+      "log_sha256": "d3c3ef550e4e72b159abb90d65e1aac60765d465836e91c41eceb3ad19920edc",
+      "observed": 13,
+      "ok": 13,
+      "path": "scripts/ci/test_integration_push_source.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 149,
+      "failures": 0,
+      "log": "logs/04-test_run_from_zero_native.log",
+      "log_sha256": "3f73e50410ee1df09a06beee50eb27e659bf8fa95f005a0c195416771ed85d97",
+      "observed": 149,
+      "ok": 149,
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 29,
+      "failures": 0,
+      "log": "logs/05-test_run_w1_fresh_service_v1.log",
+      "log_sha256": "3103cf3fa9dd27d83a0c8942df7ce8c5fff63e3649125f7564c4347a7affcd46",
+      "observed": 29,
+      "ok": 29,
+      "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 1,
+      "errors": 1,
+      "expected": 78,
+      "failures": 1,
+      "log": "logs/06-test_from_zero_host_ci.log",
+      "log_sha256": "83b209155c43f2bf00378cedf8fc2bc67155c8d7a36e286b623b161c510e0f94",
+      "observed": 78,
+      "ok": 76,
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "strict_suite_pass": false
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 7,
+      "failures": 0,
+      "log": "logs/07-test_ci_observation_process.log",
+      "log_sha256": "6dbc31063242c022d0ad02526c78c224a76d3b30c80be3baa3c8aa8686997826",
+      "observed": 7,
+      "ok": 7,
+      "path": "scripts/ci/test_ci_observation_process.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 4,
+      "failures": 0,
+      "log": "logs/08-test_record_pq_native_command.log",
+      "log_sha256": "d609d9688e0134941b0d4684cf15d166ba0b14b7de8c953d8232284e7da87e70",
+      "observed": 4,
+      "ok": 4,
+      "path": "scripts/ci/test_record_pq_native_command.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 103,
+      "failures": 0,
+      "log": "logs/09-test_ci_contract.log",
+      "log_sha256": "10754e47f08b5345b7c47cc8c9ed618699e05b00fc68b415b29c5fac26a4793e",
+      "observed": 103,
+      "ok": 103,
+      "path": "scripts/ci/test_ci_contract.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 20,
+      "failures": 0,
+      "log": "logs/10-test_useful_cell_numeric_v1.log",
+      "log_sha256": "d7d51d29e2815bea4e59525f8159f53983d41b88c699be8612eb82844fe46eae",
+      "observed": 20,
+      "ok": 20,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 47,
+      "failures": 0,
+      "log": "logs/11-test_useful_cell_relation_v1.log",
+      "log_sha256": "f931c0ca0f31f2861a5143d6c6684ee690ea2482f5d071b3ad62e04a63ee3bbe",
+      "observed": 47,
+      "ok": 47,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 34,
+      "failures": 0,
+      "log": "logs/12-test_useful_cell_execution_v2.log",
+      "log_sha256": "a24957df0621363d738191bfc47bf2bb240e945b32c064a97d9c9a5821a4ffb5",
+      "observed": 34,
+      "ok": 34,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 11,
+      "failures": 0,
+      "log": "logs/13-test_useful_cell_relation_v2.log",
+      "log_sha256": "1c725383e0188ba36d783893b824803597e1955825ce826b4e565ab6f4ad2b36",
+      "observed": 11,
+      "ok": 11,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 11,
+      "failures": 0,
+      "log": "logs/14-test_useful_cell_relation_v2_adversarial.log",
+      "log_sha256": "665f32f5868a5c150663058ae7e895d01a068aaf529e1f68b0b9796bc9562c1f",
+      "observed": 11,
+      "ok": 11,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 20,
+      "failures": 0,
+      "log": "logs/15-test_useful_cell_source_guard_v2.log",
+      "log_sha256": "a49b90b74ab9e873d65b59a2ac362ed21f67c8d0f8f36b6248ff6711ae4c872c",
+      "observed": 20,
+      "ok": 20,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 34,
+      "failures": 0,
+      "log": "logs/16-test_useful_cell_multimodal_execution_v3.log",
+      "log_sha256": "74758f8780aa138090961dd3b23e17e5b2be0ecc924c8eb7e1fdb488bfca3625",
+      "observed": 34,
+      "ok": 34,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+      "strict_suite_pass": true
+    },
+    {
+      "command_exit": 0,
+      "errors": 0,
+      "expected": 25,
+      "failures": 0,
+      "log": "logs/17-test_useful_cell_multimodal_relation_v3.log",
+      "log_sha256": "96c4fdbb01a314178069e86624a5495c92df0f8668f79ca645fee57ba6d51c3b",
+      "observed": 25,
+      "ok": 25,
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+      "strict_suite_pass": true
+    }
+  ],
+  "tests": {
+    "all_controls_passed": false,
+    "cell_formal_ok": 202,
+    "errors": 1,
+    "executed": 665,
+    "failures": 1,
+    "fully_passing_suites": 16,
+    "ok": 663,
+    "skips": 0,
+    "suites_executed": 17
+  },
+  "tree": "3e6cdf8a7532145069c9282f9b59d2fc8a8cd081"
+}

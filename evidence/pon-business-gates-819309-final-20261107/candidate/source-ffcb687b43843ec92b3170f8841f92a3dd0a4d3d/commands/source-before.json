@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+    "--output",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/source-before.json"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T22:02:02.044765+00:00",
+  "exit_code": 0,
+  "log": "logs/source-before.log",
+  "log_bytes": 423,
+  "log_sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721",
+  "name": "source-before",
+  "pid": 1898973,
+  "start_utc": "2026-11-07T22:01:58.255753+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 3789031488
+}

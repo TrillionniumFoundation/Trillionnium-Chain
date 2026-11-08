@@ -31,3 +31,9 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # New successor qualification retains raw successful and failed output unchanged.
 /evidence/pon-closed-round-v1/**/*.log -text -whitespace
+
+# Original-business continuation preserves successful and failed captured bytes.
+/evidence/pon-original-business-continuation-20261107/**/*.log -text -whitespace
+
+# Preserve byte-exact successful and failed proof-chain observations.
+/evidence/pon-w1-qrom-proof-chain-20261108/*.log -text -whitespace

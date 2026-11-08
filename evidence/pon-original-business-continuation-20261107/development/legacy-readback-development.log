@@ -1,0 +1,96 @@
+   Compiling syn v2.0.117
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling libc v0.2.184
+   Compiling libsqlite3-sys v0.37.0
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling foldhash v0.2.0
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling openssl-sys v0.9.117
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling cfg_aliases v0.2.2
+   Compiling curve25519-dalek v4.1.3
+   Compiling borsh v1.8.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling hashlink v0.11.1
+   Compiling serde_derive v1.0.228
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling once_cell v1.21.4
+   Compiling borsh-derive v1.8.0
+   Compiling rusqlite v0.39.0
+   Compiling serde v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling thiserror-impl v1.0.69
+   Compiling foreign-types-shared v0.1.1
+   Compiling openssl v0.10.81
+   Compiling foreign-types v0.3.2
+   Compiling thiserror v1.0.69
+   Compiling digest v0.10.7
+   Compiling openssl-macros v0.1.1
+   Compiling rustix v1.1.4
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-protocol)
+   Compiling sha2 v0.10.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-pon-node)
+error: usage of an `unsafe` block
+   --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:532:18
+    |
+532 |       let result = unsafe {
+    |  __________________^
+533 | |         rusqlite::ffi::sqlite3_exec(
+534 | |             handle as *mut rusqlite::ffi::sqlite3,
+535 | |             sql.as_ptr(),
+...   |
+540 | |     };
+    | |_____^
+    |
+note: the lint level is defined here
+   --> crates/trnm-pon-node/src/lib.rs:2:11
+    |
+  2 | #![forbid(unsafe_code)]
+    |           ^^^^^^^^^^^
+
+error: usage of an `unsafe` block
+   --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:564:26
+    |
+564 |             let handle = unsafe { f.node.db.handle() } as usize;
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error: usage of an `unsafe` block
+   --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:599:22
+    |
+599 |         let handle = unsafe { f.node.db.handle() } as usize;
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0063]: missing field `legacy_admission_schema` in initializer of `store::Node`
+   --> crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs:328:8
+    |
+328 |     Ok(Node {
+    |        ^^^^ missing `legacy_admission_schema`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `trnm-pon-node` (lib test) due to 4 previous errors

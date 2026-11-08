@@ -1,0 +1,455 @@
+{
+  "active_epoch": null,
+  "actual_probability_law_authenticated": false,
+  "all_observed_native_confirmation_intents_registered": true,
+  "all_registered_starts_charged_without_refunds": true,
+  "bank_file_sha256": "300f1aaa58ce62a9a4a11e80dc84ffe4bb5c0755649663e6e37ed06381f36d32",
+  "budget_units": 40,
+  "checkpoint": {
+    "bank_id": "5f62915f38ff25c4f2515ce887422302c8920cef72b7211af72b33d51943fed6",
+    "record_hash": "8816d4e5debaaaed88235514af66372ec7c962b012ec943d9fa5cddd533c90e5",
+    "sequence": 22
+  },
+  "conditional_allowances_proved": false,
+  "epochs": 5,
+  "global_failure_probability": null,
+  "latest_checkpoint_authenticated": false,
+  "lease_transitions": [
+    {
+      "next_epoch": 2,
+      "pending_starts_retained": [],
+      "prior_epoch": 1,
+      "prior_lease_cleanly_ended": true,
+      "unobserved_time_bound": null
+    },
+    {
+      "next_epoch": 3,
+      "pending_starts_retained": [
+        12
+      ],
+      "prior_epoch": 2,
+      "prior_lease_cleanly_ended": false,
+      "unobserved_time_bound": null
+    },
+    {
+      "next_epoch": 4,
+      "pending_starts_retained": [
+        12
+      ],
+      "prior_epoch": 3,
+      "prior_lease_cleanly_ended": true,
+      "unobserved_time_bound": null
+    },
+    {
+      "next_epoch": 5,
+      "pending_starts_retained": [
+        12,
+        18
+      ],
+      "prior_epoch": 4,
+      "prior_lease_cleanly_ended": false,
+      "unobserved_time_bound": null
+    }
+  ],
+  "leases": [
+    {
+      "end_sequence": 10,
+      "epoch": 1,
+      "native_owner_epoch": 1,
+      "open_native_checkpoint": {
+        "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+        "record_hash": "0a8aa608390c13755a80439c50347e6592da9d9a50f98f1901347115da9f4cfc",
+        "sequence": 2
+      },
+      "open_sequence": 1
+    },
+    {
+      "end_sequence": null,
+      "epoch": 2,
+      "native_owner_epoch": 2,
+      "open_native_checkpoint": {
+        "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+        "record_hash": "31db5b203c0f2d555e744d3def2440e16805377d5380702378cd36e64ac242ae",
+        "sequence": 80
+      },
+      "open_sequence": 11
+    },
+    {
+      "end_sequence": 16,
+      "epoch": 3,
+      "native_owner_epoch": 3,
+      "open_native_checkpoint": {
+        "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+        "record_hash": "0e854b22c6fd399f7ec360a8e23b6d80ab1b813a5e0961854d5ef56028fccd0c",
+        "sequence": 82
+      },
+      "open_sequence": 13
+    },
+    {
+      "end_sequence": null,
+      "epoch": 4,
+      "native_owner_epoch": 4,
+      "open_native_checkpoint": {
+        "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+        "record_hash": "df2d25ad2722a0f856f5eaf519c62e58431e545e818d9bbc4197dfde6bdd58cb",
+        "sequence": 88
+      },
+      "open_sequence": 17
+    },
+    {
+      "end_sequence": 22,
+      "epoch": 5,
+      "native_owner_epoch": 5,
+      "open_native_checkpoint": {
+        "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+        "record_hash": "00b96b85296c2cf08fbd98bbcddd6f98dc0de27d87af7a40a81d1e0911f800cd",
+        "sequence": 93
+      },
+      "open_sequence": 19
+    }
+  ],
+  "native_checkpoint": {
+    "journal_id": "1443b4e7f5d758c69117291f19eaf8194a83c8f8ff633f13cb21dbc03c9c77fb",
+    "record_hash": "22c3f5237c542e8a7bf163c30ac3ac3485c8cdad18668e808ed20c050c91b8b0",
+    "sequence": 97
+  },
+  "native_clock_regressions": [],
+  "native_conditional_risk_certified": false,
+  "native_confirmation_intents_covered": 7,
+  "native_outside_lease_intervals": [
+    {
+      "from_epoch": 1,
+      "open_intent_sequence": 79,
+      "physical_elapsed_bound": null,
+      "prior_lease_closed": true,
+      "to_epoch": 2,
+      "unobserved_operation_bound": null
+    },
+    {
+      "from_epoch": 2,
+      "open_intent_sequence": 81,
+      "physical_elapsed_bound": null,
+      "prior_lease_closed": false,
+      "to_epoch": 3,
+      "unobserved_operation_bound": null
+    },
+    {
+      "from_epoch": 3,
+      "open_intent_sequence": 87,
+      "physical_elapsed_bound": null,
+      "prior_lease_closed": true,
+      "to_epoch": 4,
+      "unobserved_operation_bound": null
+    },
+    {
+      "from_epoch": 4,
+      "open_intent_sequence": 92,
+      "physical_elapsed_bound": null,
+      "prior_lease_closed": false,
+      "to_epoch": 5,
+      "unobserved_operation_bound": null
+    }
+  ],
+  "native_unresolved_intents": [],
+  "new_outcomes_for_old_pending_starts_inferred": false,
+  "outcomes_recorded": 6,
+  "physical_pre_registration_independently_attested": false,
+  "raw_native_journal_and_packets_rechecked": true,
+  "records_checked": 23,
+  "remaining_units": 4,
+  "schema": "pon-native-risk-ledger-check-v1",
+  "spent_units": 36,
+  "starts": [
+    {
+      "allowance_units": 1,
+      "charge_retained": true,
+      "epoch": 1,
+      "expected_native_intent_sequence": 12,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "ok": true,
+        "value": {
+          "active_generation": 1,
+          "confirmed": false,
+          "depth": 0,
+          "execution_authority": false,
+          "finalized": false,
+          "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+          "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "included_height": 1,
+          "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+          "observed_height": 1,
+          "observed_now": 100,
+          "observed_tip": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+          "policy": "installed-depth-and-required-work",
+          "reorged": false,
+          "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+          "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+          "work_delta": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 1,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": true,
+      "spent_units_at_start": 1,
+      "start_sequence": 2,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    },
+    {
+      "allowance_units": 2,
+      "charge_retained": true,
+      "epoch": 1,
+      "expected_native_intent_sequence": 69,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "ok": true,
+        "value": {
+          "active_generation": 7,
+          "confirmed": true,
+          "depth": 6,
+          "execution_authority": false,
+          "finalized": false,
+          "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+          "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "included_height": 1,
+          "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+          "observed_height": 7,
+          "observed_now": 100,
+          "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+          "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+          "policy": "installed-depth-and-required-work",
+          "reorged": false,
+          "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+          "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+          "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+        }
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 1,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": true,
+      "spent_units_at_start": 3,
+      "start_sequence": 4,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    },
+    {
+      "allowance_units": 3,
+      "charge_retained": true,
+      "epoch": 1,
+      "expected_native_intent_sequence": 72,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "ok": true,
+        "value": {
+          "active_generation": 7,
+          "confirmed": true,
+          "depth": 6,
+          "execution_authority": false,
+          "finalized": false,
+          "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+          "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "included_height": 1,
+          "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+          "observed_height": 7,
+          "observed_now": 100,
+          "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+          "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+          "policy": "installed-depth-and-required-work",
+          "reorged": false,
+          "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+          "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+          "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+        }
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 1,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": true,
+      "spent_units_at_start": 6,
+      "start_sequence": 6,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    },
+    {
+      "allowance_units": 4,
+      "charge_retained": true,
+      "epoch": 1,
+      "expected_native_intent_sequence": 75,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "error": "MEMBERSHIP",
+        "error_kind": "Unclassified",
+        "ok": false,
+        "requires_owner_stop": false
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 1,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": true,
+      "spent_units_at_start": 10,
+      "start_sequence": 8,
+      "statement_sha256": "2b3e09aa97741e067fb5c1a6c3329c741073d188156013d208fac76d4c0546d4",
+      "transaction": "6363636363636363636363636363636363636363636363636363636363636363"
+    },
+    {
+      "allowance_units": 5,
+      "charge_retained": true,
+      "epoch": 2,
+      "expected_native_intent_sequence": 81,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": null,
+      "native_intent_observed": false,
+      "native_owner_epoch": 2,
+      "native_prepared_observed": false,
+      "native_terminal_observed": false,
+      "outcome_recorded": false,
+      "spent_units_at_start": 15,
+      "start_sequence": 12,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    },
+    {
+      "allowance_units": 6,
+      "charge_retained": true,
+      "epoch": 3,
+      "expected_native_intent_sequence": 83,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "ok": true,
+        "value": {
+          "active_generation": 7,
+          "confirmed": true,
+          "depth": 6,
+          "execution_authority": false,
+          "finalized": false,
+          "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+          "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "included_height": 1,
+          "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+          "observed_height": 7,
+          "observed_now": 100,
+          "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+          "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+          "policy": "installed-depth-and-required-work",
+          "reorged": false,
+          "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+          "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+          "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+        }
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 3,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": true,
+      "spent_units_at_start": 21,
+      "start_sequence": 14,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    },
+    {
+      "allowance_units": 7,
+      "charge_retained": true,
+      "epoch": 4,
+      "expected_native_intent_sequence": 89,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "ok": true,
+        "value": {
+          "active_generation": 7,
+          "confirmed": true,
+          "depth": 6,
+          "execution_authority": false,
+          "finalized": false,
+          "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+          "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "included_height": 1,
+          "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+          "observed_height": 7,
+          "observed_now": 100,
+          "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+          "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+          "policy": "installed-depth-and-required-work",
+          "reorged": false,
+          "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+          "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+          "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+        }
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 4,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": false,
+      "spent_units_at_start": 28,
+      "start_sequence": 18,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    },
+    {
+      "allowance_units": 8,
+      "charge_retained": true,
+      "epoch": 5,
+      "expected_native_intent_sequence": 94,
+      "included": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "law_scope_sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a",
+      "native_confirmation_result": {
+        "ok": true,
+        "value": {
+          "active_generation": 7,
+          "confirmed": true,
+          "depth": 6,
+          "execution_authority": false,
+          "finalized": false,
+          "genesis": "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6",
+          "included_block": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+          "included_height": 1,
+          "network": "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2",
+          "observed_height": 7,
+          "observed_now": 100,
+          "observed_tip": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+          "parameters": "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095",
+          "policy": "installed-depth-and-required-work",
+          "reorged": false,
+          "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+          "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711",
+          "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+        }
+      },
+      "native_intent_observed": true,
+      "native_owner_epoch": 5,
+      "native_prepared_observed": true,
+      "native_terminal_observed": true,
+      "outcome_recorded": true,
+      "spent_units_at_start": 36,
+      "start_sequence": 20,
+      "statement_sha256": "e2b1ee138357e32699ded2eb5d57b4300c5c7556378abb9e30c9423e013e5809",
+      "transaction": "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711"
+    }
+  ],
+  "starts_registered": 8,
+  "supplied_bank_checkpoint_matches": true,
+  "supplied_native_checkpoint_matches": true,
+  "trusted_history_anchor": false,
+  "unit_denominator": 1000,
+  "unresolved_starts": [
+    12,
+    18
+  ],
+  "world_confirmation_attempts_covered": false
+}

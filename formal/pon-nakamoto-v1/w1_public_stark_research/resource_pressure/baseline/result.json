@@ -1,0 +1,1919 @@
+{
+  "schema": "w1-pressure-16x4s-observation-v1",
+  "started_utc": "2026-11-08T03:47:30.333560+00:00",
+  "limits_requested": {
+    "cpu_quota_percent": 25,
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "tasks_max": 256,
+    "deadline_seconds": 4,
+    "requests": 16,
+    "rayon_num_threads": 8
+  },
+  "coordination_cleared": "Root explicitly confirmed backend2GiB cap run and allperformance tasks complete beforethiscampaign; baselinecopiedbeforecarrybuild",
+  "input_manifest_sha256": "ea2e6dcfd1762c0e9b8672af23c6c7df77ba193bdd4905d02472feffde3cb522",
+  "unit": "w1-pressure-f16ac5-af10bab60751.service",
+  "production_node": false,
+  "global_rejection_cost_bound": false,
+  "qualification": "HOLD_NO_GO",
+  "observer_outside_workload_cgroup": true,
+  "deadline_scope": "from first attempted fork through all16 fresh-process verifications; setup/pinning outside",
+  "observer_cost_excluded_from_quota": true,
+  "cache_state": "not flushed; pinning read all inputs before the campaign",
+  "machine": {
+    "system": "Linux",
+    "node": "qian-qi",
+    "release": "7.0.0-38-generic",
+    "version": "#38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "clock_ticks_per_second": 100,
+  "requests": [
+    {
+      "ordinal": 0,
+      "case": "sha-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939684,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.038592,
+        "ru_stime": 0.024923999999999998,
+        "ru_maxrss": 22852,
+        "ru_minflt": 5534,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 25,
+        "ru_nivcsw": 266
+      },
+      "stdout_file": "request-00.stdout.log",
+      "stderr_file": "request-00.stderr.log",
+      "spawn_attempt_ns": 1187316480479462,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316481638194,
+      "membership_before_release": {
+        "pid": 2939684,
+        "starttime_ticks": 118731648,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "16004 kB",
+          "VmRSS": "16004 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316482762760,
+      "released_ns": 1187316482776035,
+      "last_proc_observation": {
+        "pid": 2939684,
+        "starttime_ticks": 118731648,
+        "state": "R",
+        "utime_ticks": 3,
+        "stime_ticks": 2,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "23668 kB",
+          "VmRSS": "23668 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316511453702,
+      "wait_observed_ns": 1187320591206186,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 1497.6772760000001,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1098.442689,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "7ebd7c2b43917c67b6ac16e84409b4416ba0ea26eb78d5535d71ba3b51127e28",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 1,
+      "case": "sha-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939685,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.048313999999999996,
+        "ru_stime": 0.031654,
+        "ru_maxrss": 25908,
+        "ru_minflt": 6610,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 51,
+        "ru_nivcsw": 467
+      },
+      "stdout_file": "request-01.stdout.log",
+      "stderr_file": "request-01.stderr.log",
+      "spawn_attempt_ns": 1187316482833538,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316483503466,
+      "membership_before_release": {
+        "pid": 2939685,
+        "starttime_ticks": 118731648,
+        "state": "S",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "16132 kB",
+          "VmRSS": "16132 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316484517878,
+      "released_ns": 1187316484529755,
+      "last_proc_observation": {
+        "pid": 2939685,
+        "starttime_ticks": 118731648,
+        "state": "S",
+        "utime_ticks": 4,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "28116 kB",
+          "VmRSS": "28116 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316511725239,
+      "wait_observed_ns": 1187320591412897,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 996.737664,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1498.150922,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "08e47af688797aad58443b1a0235d5852fe280e798160540923a0190ca99ccc7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 2,
+      "case": "arith-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939686,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.033407,
+        "ru_stime": 0.034286,
+        "ru_maxrss": 23556,
+        "ru_minflt": 6012,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 40,
+        "ru_nivcsw": 313
+      },
+      "stdout_file": "request-02.stdout.log",
+      "stderr_file": "request-02.stderr.log",
+      "spawn_attempt_ns": 1187316484582489,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316485243728,
+      "membership_before_release": {
+        "pid": 2939686,
+        "starttime_ticks": 118731648,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "15940 kB",
+          "VmRSS": "15940 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316486282685,
+      "released_ns": 1187316486292733,
+      "last_proc_observation": {
+        "pid": 2939686,
+        "starttime_ticks": 118731648,
+        "state": "S",
+        "utime_ticks": 3,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "25640 kB",
+          "VmRSS": "25640 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316511986284,
+      "wait_observed_ns": 1187320591579762,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 893.203807,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1199.8342360000001,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "7667b1cb9ecb470e46bcc8959bc20342dd97a6ebfcbcc81a13629a76f5ebd7ae",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 3,
+      "case": "arith-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939687,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.027124,
+        "ru_stime": 0.022602999999999998,
+        "ru_maxrss": 21692,
+        "ru_minflt": 5393,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 1,
+        "ru_nivcsw": 47
+      },
+      "stdout_file": "request-03.stdout.log",
+      "stderr_file": "request-03.stderr.log",
+      "spawn_attempt_ns": 1187316486343854,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316487272045,
+      "membership_before_release": {
+        "pid": 2939687,
+        "starttime_ticks": 118731648,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "15944 kB",
+          "VmRSS": "15944 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316488343453,
+      "released_ns": 1187316488353288,
+      "last_proc_observation": {
+        "pid": 2939687,
+        "starttime_ticks": 118731648,
+        "state": "R",
+        "utime_ticks": 2,
+        "stime_ticks": 1,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "22856 kB",
+          "VmRSS": "22856 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316512249348,
+      "wait_observed_ns": 1187320486899942,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 1998.9607190000002,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1702.888902,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "7f62c6f4dad00df4c4755c46a648ad5b361dcaef511b92be5715a86ef6e43064",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 4,
+      "case": "sha-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939688,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.028669999999999998,
+        "ru_stime": 0.033585,
+        "ru_maxrss": 23168,
+        "ru_minflt": 5532,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 21,
+        "ru_nivcsw": 169
+      },
+      "stdout_file": "request-04.stdout.log",
+      "stderr_file": "request-04.stderr.log",
+      "spawn_attempt_ns": 1187316488404936,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316489054664,
+      "membership_before_release": {
+        "pid": 2939688,
+        "starttime_ticks": 118731648,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "16012 kB",
+          "VmRSS": "16012 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316490129803,
+      "released_ns": 1187316490143672,
+      "last_proc_observation": {
+        "pid": 2939688,
+        "starttime_ticks": 118731648,
+        "state": "S",
+        "utime_ticks": 2,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "23772 kB",
+          "VmRSS": "23772 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316512503253,
+      "wait_observed_ns": 1187320591723256,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 1599.340911,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1100.125482,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "b5aa5f33fbfdc49b0127d0fb10909f2bea67f0a5292befb21335d9dff9f83d8a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 5,
+      "case": "sha-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939689,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.02167,
+        "ru_stime": 0.032907,
+        "ru_maxrss": 23252,
+        "ru_minflt": 5531,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 16,
+        "ru_nivcsw": 336
+      },
+      "stdout_file": "request-05.stdout.log",
+      "stderr_file": "request-05.stderr.log",
+      "spawn_attempt_ns": 1187316490198340,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316490853554,
+      "membership_before_release": {
+        "pid": 2939689,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "16012 kB",
+          "VmRSS": "16012 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316491909578,
+      "released_ns": 1187316491927313,
+      "last_proc_observation": {
+        "pid": 2939689,
+        "starttime_ticks": 118731649,
+        "state": "S",
+        "utime_ticks": 2,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "23792 kB",
+          "VmRSS": "23792 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316622373479,
+      "wait_observed_ns": 1187320591853518,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 1499.240657,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1401.570787,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "fd9e07e5dd0605a38c68799f60830b9aeecffb8b6d11c6773197fe4cb62f4a1f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 6,
+      "case": "arith-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939690,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.068521,
+        "ru_stime": 0.031673,
+        "ru_maxrss": 26992,
+        "ru_minflt": 6901,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 90,
+        "ru_nivcsw": 754
+      },
+      "stdout_file": "request-06.stdout.log",
+      "stderr_file": "request-06.stderr.log",
+      "spawn_attempt_ns": 1187316491976315,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316492657660,
+      "membership_before_release": {
+        "pid": 2939690,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "15384 kB",
+          "VmRSS": "15384 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316493759054,
+      "released_ns": 1187316493769027,
+      "last_proc_observation": {
+        "pid": 2939690,
+        "starttime_ticks": 118731649,
+        "state": "S",
+        "utime_ticks": 6,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "29284 kB",
+          "VmRSS": "29284 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316832600127,
+      "wait_observed_ns": 1187320690064112,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 999.861667,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 200.690453,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "0678da196db812f2d92b9c6d340ba2511b2cfa9dfd125e6c011df6158251a119",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 7,
+      "case": "arith-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939691,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.019611999999999997,
+        "ru_stime": 0.021013,
+        "ru_maxrss": 16656,
+        "ru_minflt": 3221,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 1,
+        "ru_nivcsw": 49
+      },
+      "stdout_file": "request-07.stdout.log",
+      "stderr_file": "request-07.stderr.log",
+      "spawn_attempt_ns": 1187316493829436,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316494497752,
+      "membership_before_release": {
+        "pid": 2939691,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "15576 kB",
+          "VmRSS": "15576 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316495551632,
+      "released_ns": 1187316495561461,
+      "last_proc_observation": {
+        "pid": 2939691,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 1,
+        "stime_ticks": 1,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "13928 kB",
+          "VmRSS": "13928 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316884341800,
+      "wait_observed_ns": 1187320487224995,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 2505.9959329999997,
+          "phase": "bounded_read_decode_and_proof_shape"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "b7ba90fbd47dc4416b5f6a600b5534fe8af7dc3a57708a08ddd46452845cd4cd",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 8,
+      "case": "sha-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939692,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.023289999999999998,
+        "ru_stime": 0.016937999999999998,
+        "ru_maxrss": 16656,
+        "ru_minflt": 3258,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 3,
+        "ru_nivcsw": 45
+      },
+      "stdout_file": "request-08.stdout.log",
+      "stderr_file": "request-08.stderr.log",
+      "spawn_attempt_ns": 1187316495620429,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316496299078,
+      "membership_before_release": {
+        "pid": 2939692,
+        "starttime_ticks": 118731649,
+        "state": "S",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "16140 kB",
+          "VmRSS": "16140 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316497293507,
+      "released_ns": 1187316497303341,
+      "last_proc_observation": {
+        "pid": 2939692,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 2,
+        "stime_ticks": 1,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "14080 kB",
+          "VmRSS": "14080 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316623815324,
+      "wait_observed_ns": 1187320585803309,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 2600.693129,
+          "phase": "bounded_read_decode_and_proof_shape"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "3b5ad1786fc99a6fb56db152b4dbfa5d3f413aca58d30f5b030463ca9a2f058c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 9,
+      "case": "sha-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939693,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.023527,
+        "ru_stime": 0.013146999999999999,
+        "ru_maxrss": 16236,
+        "ru_minflt": 2974,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 3,
+        "ru_nivcsw": 44
+      },
+      "stdout_file": "request-09.stdout.log",
+      "stderr_file": "request-09.stderr.log",
+      "spawn_attempt_ns": 1187316497357471,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316498031795,
+      "membership_before_release": {
+        "pid": 2939693,
+        "starttime_ticks": 118731649,
+        "state": "S",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "16144 kB",
+          "VmRSS": "16144 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316499165531,
+      "released_ns": 1187316499175938,
+      "last_proc_observation": {
+        "pid": 2939693,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 2,
+        "stime_ticks": 1,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "13332 kB",
+          "VmRSS": "13332 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316624329939,
+      "wait_observed_ns": 1187320487457958,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 3598.9934510000003,
+          "phase": "bounded_read_decode_and_proof_shape"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "9b219cc4234506e9ff6721bed5ac059564b49b03655cd4c454a4063ea4cf88e2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 10,
+      "case": "arith-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939694,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.065831,
+        "ru_stime": 0.032915,
+        "ru_maxrss": 27440,
+        "ru_minflt": 6908,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 58,
+        "ru_nivcsw": 413
+      },
+      "stdout_file": "request-10.stdout.log",
+      "stderr_file": "request-10.stderr.log",
+      "spawn_attempt_ns": 1187316499234635,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316499897652,
+      "membership_before_release": {
+        "pid": 2939694,
+        "starttime_ticks": 118731649,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "15960 kB",
+          "VmRSS": "15960 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316500924676,
+      "released_ns": 1187316500934564,
+      "last_proc_observation": {
+        "pid": 2939694,
+        "starttime_ticks": 118731649,
+        "state": "S",
+        "utime_ticks": 6,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "29224 kB",
+          "VmRSS": "29224 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316725576657,
+      "wait_observed_ns": 1187320690244105,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 1299.864125,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 602.936092,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "a69ac61bbd2efa80277e58835cb2c3a57d8521d35634632df69863c18ea6888b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 11,
+      "case": "arith-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939695,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.029216,
+        "ru_stime": 0.0211,
+        "ru_maxrss": 20548,
+        "ru_minflt": 4925,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 1,
+        "ru_nivcsw": 56
+      },
+      "stdout_file": "request-11.stdout.log",
+      "stderr_file": "request-11.stderr.log",
+      "spawn_attempt_ns": 1187316500991038,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316501667545,
+      "membership_before_release": {
+        "pid": 2939695,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "16092 kB",
+          "VmRSS": "16092 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316502694331,
+      "released_ns": 1187316502704801,
+      "last_proc_observation": {
+        "pid": 2939695,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 2,
+        "stime_ticks": 1,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "20860 kB",
+          "VmRSS": "20860 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316725828586,
+      "wait_observed_ns": 1187320684633067,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 2601.598892,
+          "phase": "bounded_read_decode_and_proof_shape"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "bfd30925804cd291b11509a18ef4ccef54213db9f596bc183975161038cd90c2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 12,
+      "case": "sha-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939696,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.02327,
+        "ru_stime": 0.027148,
+        "ru_maxrss": 22788,
+        "ru_minflt": 5515,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 8,
+        "ru_nivcsw": 69
+      },
+      "stdout_file": "request-12.stdout.log",
+      "stderr_file": "request-12.stderr.log",
+      "spawn_attempt_ns": 1187316502763134,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316503425674,
+      "membership_before_release": {
+        "pid": 2939696,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "15964 kB",
+          "VmRSS": "15964 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316504444955,
+      "released_ns": 1187316504454803,
+      "last_proc_observation": {
+        "pid": 2939696,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 2,
+        "stime_ticks": 2,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "23500 kB",
+          "VmRSS": "23500 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316726091852,
+      "wait_observed_ns": 1187320787571390,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 1299.4462439999998,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 1702.947755,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "277e21a447a0d199ae8329a92fe3952b9394415c682b0ef5b9dc696a8e238481",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 13,
+      "case": "sha-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939697,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.09643199999999999,
+        "ru_stime": 0.026299,
+        "ru_maxrss": 28148,
+        "ru_minflt": 7165,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 124,
+        "ru_nivcsw": 683
+      },
+      "stdout_file": "request-13.stdout.log",
+      "stderr_file": "request-13.stderr.log",
+      "spawn_attempt_ns": 1187316504509073,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/sha-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316505179283,
+      "membership_before_release": {
+        "pid": 2939697,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "16028 kB",
+          "VmRSS": "16028 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316506194304,
+      "released_ns": 1187316506233388,
+      "last_proc_observation": {
+        "pid": 2939697,
+        "starttime_ticks": 118731650,
+        "state": "S",
+        "utime_ticks": 9,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "30396 kB",
+          "VmRSS": "30396 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316783921512,
+      "wait_observed_ns": 1187320591983504,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 598.846074,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 201.34841600000001,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "831f8ca56f0a3c405fb426bfb844b7f39de9aaf58b5223343b93f5d8dccc4657",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "sha proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "sha_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 14,
+      "case": "arith-last-fold-query-value",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939698,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.027358,
+        "ru_stime": 0.016559,
+        "ru_maxrss": 18624,
+        "ru_minflt": 4584,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 1,
+        "ru_nivcsw": 47
+      },
+      "stdout_file": "request-14.stdout.log",
+      "stderr_file": "request-14.stderr.log",
+      "spawn_attempt_ns": 1187316506290775,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-query-value"
+      ],
+      "fork_return_ns": 1187316506967547,
+      "membership_before_release": {
+        "pid": 2939698,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "16092 kB",
+          "VmRSS": "16092 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316508070902,
+      "released_ns": 1187316508080537,
+      "last_proc_observation": {
+        "pid": 2939698,
+        "starttime_ticks": 118731650,
+        "state": "R",
+        "utime_ticks": 2,
+        "stime_ticks": 1,
+        "status": {
+          "State": "R (running)",
+          "VmHWM": "19488 kB",
+          "VmRSS": "19488 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316626686711,
+      "wait_observed_ns": 1187320487640804,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 3199.763346,
+          "phase": "bounded_read_decode_and_proof_shape"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "e342f86a0b4689a980083f9723bb25aaf292fe1b297a01b44bf06a4de6b36702",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(FinalPolyMismatch)",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    },
+    {
+      "ordinal": 15,
+      "case": "arith-last-fold-auth-sibling",
+      "spawned": true,
+      "status": "killed_incomplete_not_rejection",
+      "pid": 2939699,
+      "exit_code": -9,
+      "wait_status": 9,
+      "rusage": {
+        "ru_utime": 0.09436599999999999,
+        "ru_stime": 0.030331999999999998,
+        "ru_maxrss": 28224,
+        "ru_minflt": 7164,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 8,
+        "ru_nvcsw": 68,
+        "ru_nivcsw": 969
+      },
+      "stdout_file": "request-15.stdout.log",
+      "stderr_file": "request-15.stderr.log",
+      "spawn_attempt_ns": 1187316508141641,
+      "command": [
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier",
+        "verify",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling/statement.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-header.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/expected-artifacts.bin",
+        "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/cases/arith-last-fold-auth-sibling"
+      ],
+      "fork_return_ns": 1187316508789042,
+      "membership_before_release": {
+        "pid": 2939699,
+        "starttime_ticks": 118731650,
+        "state": "S",
+        "utime_ticks": 0,
+        "stime_ticks": 0,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "16160 kB",
+          "VmRSS": "16160 kB",
+          "Threads": "1"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/usr/bin/python3.12"
+      },
+      "moved_to_cgroup_ns": 1187316509846568,
+      "released_ns": 1187316509856521,
+      "last_proc_observation": {
+        "pid": 2939699,
+        "starttime_ticks": 118731650,
+        "state": "S",
+        "utime_ticks": 9,
+        "stime_ticks": 2,
+        "status": {
+          "State": "S (sleeping)",
+          "VmHWM": "30292 kB",
+          "VmRSS": "30292 kB",
+          "Threads": "9"
+        },
+        "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+        "exe": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/inputs/verifier"
+      },
+      "verifier_exec_observed_ns": 1187316627227991,
+      "wait_observed_ns": 1187320690392767,
+      "completed_observed_by_deadline": false,
+      "rusage_maxrss_unit": "KiB on Linux",
+      "phase_events": [
+        {
+          "elapsed_ms": 697.515816,
+          "phase": "bounded_read_decode_and_proof_shape"
+        },
+        {
+          "elapsed_ms": 102.915284,
+          "phase": "canonical_plans_and_public_only_sha_air"
+        }
+      ],
+      "final_verifier_object": null,
+      "stdout_sha256": "f060782b16bf1d8a1fe14bf8e82ebd8dc9c607fe1f328787c240c92191167f4f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exact_rejection_error": "arithmetic proof rejected: InvalidOpeningArgument(CommitPhaseMmcsError(CapMismatch))",
+      "expected_rejection_phase": "arith_stark_verify",
+      "controlled_late_rejection": false,
+      "rejection_completed_by_deadline": false
+    }
+  ],
+  "fatal_error": null,
+  "unit_before": {
+    "RuntimeMaxUSec": "20s",
+    "MainPID": "2939680",
+    "Result": "success",
+    "ExecMainCode": "0",
+    "ExecMainStatus": "0",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+    "MemoryCurrent": "258048",
+    "MemoryPeak": "262144",
+    "CPUUsageNSec": "2007000",
+    "TasksCurrent": "1",
+    "Delegate": "yes",
+    "CPUQuotaPerSecUSec": "250ms",
+    "CPUQuotaPeriodUSec": "infinity",
+    "MemoryMax": "2147483648",
+    "MemorySwapMax": "0",
+    "TasksMax": "256",
+    "KillMode": "control-group",
+    "Id": "w1-pressure-f16ac5-af10bab60751.service",
+    "ActiveState": "active",
+    "SubState": "running",
+    "InvocationID": "3a543eaa6af149dcbc6bcb0e56a88039"
+  },
+  "cgroup_before": {
+    "monotonic_ns": 1187316474959649,
+    "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+    "exists": true,
+    "files": {
+      "cpu.max": "25000 100000",
+      "cpu.stat": "usage_usec 2007\nuser_usec 0\nsystem_usec 2007\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "2147483648",
+      "memory.current": "258048",
+      "memory.peak": "262144",
+      "memory.swap.max": "0",
+      "memory.swap.current": "0",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "pids.max": "256",
+      "pids.current": "1",
+      "pids.peak": "1",
+      "pids.events": "max 0",
+      "cgroup.procs": "2939680",
+      "cgroup.events": "populated 1\nfrozen 0"
+    }
+  },
+  "ancestor_limits": [
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice",
+      "limits": {
+        "cpu.max": "max 100000",
+        "memory.max": "max",
+        "memory.swap.max": "max",
+        "pids.max": "max"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service",
+      "limits": {
+        "cpu.max": "max 100000",
+        "memory.max": "max",
+        "memory.swap.max": "max",
+        "pids.max": "max"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice",
+      "limits": {
+        "cpu.max": "max 100000",
+        "memory.max": "max",
+        "memory.swap.max": "max",
+        "pids.max": "314366"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice",
+      "limits": {
+        "cpu.max": "max 100000",
+        "memory.max": "max",
+        "memory.swap.max": "max",
+        "pids.max": "max"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup",
+      "limits": {}
+    }
+  ],
+  "actual_kernel_limits_confirmed": true,
+  "harness_sha256": "83d2277d254731225451b5735329dde360f71284eb4147055df82442f7dd4e5c",
+  "controller_before": {
+    "pid": 2939676,
+    "starttime_ticks": 118731625,
+    "state": "R",
+    "utime_ticks": 14,
+    "stime_ticks": 2,
+    "status": {
+      "State": "R (running)",
+      "VmHWM": "23624 kB",
+      "VmRSS": "23624 kB",
+      "Threads": "1"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9448b2f-12894-1311.service",
+    "exe": "/usr/bin/python3.12"
+  },
+  "sentinel_before": {
+    "pid": 2939680,
+    "starttime_ticks": 118731644,
+    "state": "S",
+    "utime_ticks": 0,
+    "stime_ticks": 0,
+    "status": {
+      "State": "S (sleeping)",
+      "VmHWM": "2420 kB",
+      "VmRSS": "2420 kB",
+      "Threads": "1"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+    "exe": "/usr/bin/sleep"
+  },
+  "child_environment_explicit": {
+    "RAYON_NUM_THREADS": "8"
+  },
+  "cgroup_campaign_start": {
+    "monotonic_ns": 1187316479570816,
+    "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+    "exists": true,
+    "files": {
+      "cpu.max": "25000 100000",
+      "cpu.stat": "usage_usec 2007\nuser_usec 0\nsystem_usec 2007\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "2147483648",
+      "memory.current": "258048",
+      "memory.peak": "262144",
+      "memory.swap.max": "0",
+      "memory.swap.current": "0",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "pids.max": "256",
+      "pids.current": "1",
+      "pids.peak": "1",
+      "pids.events": "max 0",
+      "cgroup.procs": "2939680",
+      "cgroup.events": "populated 1\nfrozen 0"
+    }
+  },
+  "campaign_started_ns": 1187316480444956,
+  "deadline_ns": 1187320480444956,
+  "decision_ns": 1187320480520166,
+  "deadline_expired": true,
+  "unreaped_at_deadline_or_completion": [
+    {
+      "pid": 2939684,
+      "ordinal": 0
+    },
+    {
+      "pid": 2939685,
+      "ordinal": 1
+    },
+    {
+      "pid": 2939686,
+      "ordinal": 2
+    },
+    {
+      "pid": 2939687,
+      "ordinal": 3
+    },
+    {
+      "pid": 2939688,
+      "ordinal": 4
+    },
+    {
+      "pid": 2939689,
+      "ordinal": 5
+    },
+    {
+      "pid": 2939690,
+      "ordinal": 6
+    },
+    {
+      "pid": 2939691,
+      "ordinal": 7
+    },
+    {
+      "pid": 2939692,
+      "ordinal": 8
+    },
+    {
+      "pid": 2939693,
+      "ordinal": 9
+    },
+    {
+      "pid": 2939694,
+      "ordinal": 10
+    },
+    {
+      "pid": 2939695,
+      "ordinal": 11
+    },
+    {
+      "pid": 2939696,
+      "ordinal": 12
+    },
+    {
+      "pid": 2939697,
+      "ordinal": 13
+    },
+    {
+      "pid": 2939698,
+      "ordinal": 14
+    },
+    {
+      "pid": 2939699,
+      "ordinal": 15
+    }
+  ],
+  "kill_events": [
+    {
+      "reason": "four_second_deadline",
+      "requested_ns": 1187320481187136,
+      "method": "cgroup.kill",
+      "returned_ns": 1187320481379614
+    }
+  ],
+  "all_spawned_children_reaped": true,
+  "unit_after_kill": {
+    "RuntimeMaxUSec": "20s",
+    "MainPID": "0",
+    "Result": "signal",
+    "ExecMainCode": "2",
+    "ExecMainStatus": "9",
+    "ControlGroup": "",
+    "MemoryCurrent": "[not set]",
+    "MemoryPeak": "262144",
+    "CPUUsageNSec": "1084885000",
+    "TasksCurrent": "[not set]",
+    "Delegate": "yes",
+    "CPUQuotaPerSecUSec": "250ms",
+    "CPUQuotaPeriodUSec": "infinity",
+    "MemoryMax": "2147483648",
+    "MemorySwapMax": "0",
+    "TasksMax": "256",
+    "KillMode": "control-group",
+    "Id": "w1-pressure-f16ac5-af10bab60751.service",
+    "ActiveState": "failed",
+    "SubState": "failed",
+    "InvocationID": "3a543eaa6af149dcbc6bcb0e56a88039"
+  },
+  "cgroup_after_kill": {
+    "monotonic_ns": 1187320802070825,
+    "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+    "exists": false,
+    "files": {
+      "cpu.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cpu.max'"
+      },
+      "cpu.stat": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cpu.stat'"
+      },
+      "memory.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.max'"
+      },
+      "memory.current": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.current'"
+      },
+      "memory.peak": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.peak'"
+      },
+      "memory.swap.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.swap.max'"
+      },
+      "memory.swap.current": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.swap.current'"
+      },
+      "memory.events": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.events'"
+      },
+      "pids.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.max'"
+      },
+      "pids.current": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.current'"
+      },
+      "pids.peak": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.peak'"
+      },
+      "pids.events": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.events'"
+      },
+      "cgroup.procs": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cgroup.procs'"
+      },
+      "cgroup.events": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cgroup.events'"
+      }
+    }
+  },
+  "cleanup_before_stop_ns": 1187320802929304,
+  "unit_after_cleanup": {
+    "RuntimeMaxUSec": "infinity",
+    "MainPID": "0",
+    "Result": "success",
+    "ExecMainCode": "0",
+    "ExecMainStatus": "0",
+    "ControlGroup": "",
+    "MemoryCurrent": "[not set]",
+    "MemoryPeak": "[not set]",
+    "CPUUsageNSec": "[not set]",
+    "TasksCurrent": "[not set]",
+    "Delegate": "no",
+    "CPUQuotaPerSecUSec": "infinity",
+    "CPUQuotaPeriodUSec": "infinity",
+    "MemoryMax": "infinity",
+    "MemorySwapMax": "infinity",
+    "TasksMax": "142893",
+    "KillMode": "control-group",
+    "Id": "w1-pressure-f16ac5-af10bab60751.service",
+    "ActiveState": "inactive",
+    "SubState": "dead",
+    "InvocationID": ""
+  },
+  "cgroup_after_cleanup": {
+    "monotonic_ns": 1187320834166279,
+    "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service",
+    "exists": false,
+    "files": {
+      "cpu.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cpu.max'"
+      },
+      "cpu.stat": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cpu.stat'"
+      },
+      "memory.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.max'"
+      },
+      "memory.current": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.current'"
+      },
+      "memory.peak": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.peak'"
+      },
+      "memory.swap.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.swap.max'"
+      },
+      "memory.swap.current": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.swap.current'"
+      },
+      "memory.events": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/memory.events'"
+      },
+      "pids.max": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.max'"
+      },
+      "pids.current": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.current'"
+      },
+      "pids.peak": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.peak'"
+      },
+      "pids.events": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/pids.events'"
+      },
+      "cgroup.procs": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cgroup.procs'"
+      },
+      "cgroup.events": {
+        "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service/cgroup.events'"
+      }
+    }
+  },
+  "known_pid_identities_remaining": [],
+  "cleanup_confirmed": true,
+  "summary": {
+    "requested": 16,
+    "spawned": 16,
+    "verifier_exec_observed": 16,
+    "rejection_completed_by_deadline": 0,
+    "controlled_rejection_after_deadline": 0,
+    "killed_incomplete": 16,
+    "unobserved_exit": 0,
+    "sum_worker_user_cpu_seconds": 0.6692,
+    "sum_worker_system_cpu_seconds": 0.417083,
+    "cleanup_confirmed": true,
+    "fatal_error": null,
+    "qualification": "HOLD_NO_GO"
+  },
+  "controller_commands": [
+    {
+      "argv": [
+        "systemd-run",
+        "--user",
+        "--unit=w1-pressure-f16ac5-af10bab60751.service",
+        "--property=Type=exec",
+        "--property=CPUQuota=25%",
+        "--property=MemoryMax=2147483648",
+        "--property=MemorySwapMax=0",
+        "--property=TasksMax=256",
+        "--property=CPUAccounting=yes",
+        "--property=MemoryAccounting=yes",
+        "--property=TasksAccounting=yes",
+        "--property=Delegate=yes",
+        "--property=KillMode=control-group",
+        "--property=TimeoutStopSec=1s",
+        "--property=SendSIGKILL=yes",
+        "--property=RuntimeMaxSec=20s",
+        "/usr/bin/sleep",
+        "infinity"
+      ],
+      "started_ns": 1187316429743306,
+      "finished_ns": 1187316460934237,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Running as unit: w1-pressure-f16ac5-af10bab60751.service; invocation ID: 3a543eaa6af149dcbc6bcb0e56a88039\n"
+    },
+    {
+      "argv": [
+        "systemctl",
+        "--user",
+        "show",
+        "w1-pressure-f16ac5-af10bab60751.service",
+        "--property=Id",
+        "--property=InvocationID",
+        "--property=ActiveState",
+        "--property=SubState",
+        "--property=Result",
+        "--property=MainPID",
+        "--property=ControlGroup",
+        "--property=CPUQuotaPerSecUSec",
+        "--property=CPUQuotaPeriodUSec",
+        "--property=MemoryMax",
+        "--property=MemorySwapMax",
+        "--property=TasksMax",
+        "--property=CPUUsageNSec",
+        "--property=MemoryCurrent",
+        "--property=MemoryPeak",
+        "--property=TasksCurrent",
+        "--property=TasksPeak",
+        "--property=KillMode",
+        "--property=Delegate",
+        "--property=RuntimeMaxUSec",
+        "--property=ExecMainCode",
+        "--property=ExecMainStatus"
+      ],
+      "started_ns": 1187316461048708,
+      "finished_ns": 1187316474801651,
+      "exit_code": 0,
+      "stdout": "RuntimeMaxUSec=20s\nMainPID=2939680\nResult=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=/user.slice/user-1000.slice/user@1000.service/app.slice/w1-pressure-f16ac5-af10bab60751.service\nMemoryCurrent=258048\nMemoryPeak=262144\nCPUUsageNSec=2007000\nTasksCurrent=1\nDelegate=yes\nCPUQuotaPerSecUSec=250ms\nCPUQuotaPeriodUSec=infinity\nMemoryMax=2147483648\nMemorySwapMax=0\nTasksMax=256\nKillMode=control-group\nId=w1-pressure-f16ac5-af10bab60751.service\nActiveState=active\nSubState=running\nInvocationID=3a543eaa6af149dcbc6bcb0e56a88039\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "systemctl",
+        "--user",
+        "show",
+        "w1-pressure-f16ac5-af10bab60751.service",
+        "--property=Id",
+        "--property=InvocationID",
+        "--property=ActiveState",
+        "--property=SubState",
+        "--property=Result",
+        "--property=MainPID",
+        "--property=ControlGroup",
+        "--property=CPUQuotaPerSecUSec",
+        "--property=CPUQuotaPeriodUSec",
+        "--property=MemoryMax",
+        "--property=MemorySwapMax",
+        "--property=TasksMax",
+        "--property=CPUUsageNSec",
+        "--property=MemoryCurrent",
+        "--property=MemoryPeak",
+        "--property=TasksCurrent",
+        "--property=TasksPeak",
+        "--property=KillMode",
+        "--property=Delegate",
+        "--property=RuntimeMaxUSec",
+        "--property=ExecMainCode",
+        "--property=ExecMainStatus"
+      ],
+      "started_ns": 1187320787744601,
+      "finished_ns": 1187320801901850,
+      "exit_code": 0,
+      "stdout": "RuntimeMaxUSec=20s\nMainPID=0\nResult=signal\nExecMainCode=2\nExecMainStatus=9\nControlGroup=\nMemoryCurrent=[not set]\nMemoryPeak=262144\nCPUUsageNSec=1084885000\nTasksCurrent=[not set]\nDelegate=yes\nCPUQuotaPerSecUSec=250ms\nCPUQuotaPeriodUSec=infinity\nMemoryMax=2147483648\nMemorySwapMax=0\nTasksMax=256\nKillMode=control-group\nId=w1-pressure-f16ac5-af10bab60751.service\nActiveState=failed\nSubState=failed\nInvocationID=3a543eaa6af149dcbc6bcb0e56a88039\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "systemctl",
+        "--user",
+        "stop",
+        "w1-pressure-f16ac5-af10bab60751.service"
+      ],
+      "started_ns": 1187320802931482,
+      "finished_ns": 1187320812216252,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "systemctl",
+        "--user",
+        "reset-failed",
+        "w1-pressure-f16ac5-af10bab60751.service"
+      ],
+      "started_ns": 1187320812308335,
+      "finished_ns": 1187320821400660,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "systemctl",
+        "--user",
+        "show",
+        "w1-pressure-f16ac5-af10bab60751.service",
+        "--property=Id",
+        "--property=InvocationID",
+        "--property=ActiveState",
+        "--property=SubState",
+        "--property=Result",
+        "--property=MainPID",
+        "--property=ControlGroup",
+        "--property=CPUQuotaPerSecUSec",
+        "--property=CPUQuotaPeriodUSec",
+        "--property=MemoryMax",
+        "--property=MemorySwapMax",
+        "--property=TasksMax",
+        "--property=CPUUsageNSec",
+        "--property=MemoryCurrent",
+        "--property=MemoryPeak",
+        "--property=TasksCurrent",
+        "--property=TasksPeak",
+        "--property=KillMode",
+        "--property=Delegate",
+        "--property=RuntimeMaxUSec",
+        "--property=ExecMainCode",
+        "--property=ExecMainStatus"
+      ],
+      "started_ns": 1187320821516715,
+      "finished_ns": 1187320833983954,
+      "exit_code": 0,
+      "stdout": "RuntimeMaxUSec=infinity\nMainPID=0\nResult=success\nExecMainCode=0\nExecMainStatus=0\nControlGroup=\nMemoryCurrent=[not set]\nMemoryPeak=[not set]\nCPUUsageNSec=[not set]\nTasksCurrent=[not set]\nDelegate=no\nCPUQuotaPerSecUSec=infinity\nCPUQuotaPeriodUSec=infinity\nMemoryMax=infinity\nMemorySwapMax=infinity\nTasksMax=142893\nKillMode=control-group\nId=w1-pressure-f16ac5-af10bab60751.service\nActiveState=inactive\nSubState=dead\nInvocationID=\n",
+      "stderr": ""
+    }
+  ],
+  "finished_utc": "2026-11-08T03:47:34.848287+00:00",
+  "observer_total_since_campaign_seconds": 4.360192811
+}

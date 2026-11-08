@@ -1,0 +1,24 @@
+{
+  "schema": "secret-review-preparation-observations-v1",
+  "events": [
+    {
+      "observation": "Earlier intended scanner start did not yield a retained job ID or expected script/result files; exact idempotency-key metadata lookup returned rg exit 1 with no stderr. The actual scanner start reused the original key and returned reused=false.",
+      "readback_jobs": [
+        "1a1b7fb0f14-12894-ce8",
+        "1a1b7fba0fc-12894-ced"
+      ]
+    },
+    {
+      "observation": "process_list_page, process_list and initial read_multiple_files returned INVALID_ARGUMENT; no successful scan or permission denial was inferred from those read failures."
+    },
+    {
+      "observation": "One functions.exec scanner preparation failed with a JavaScript template SyntaxError before any remote process was started; corrected before the sole actual scanner job."
+    },
+    {
+      "observation": "One functions.exec report preparation failed with a JavaScript template SyntaxError before any remote report process was started; corrected before this report was written."
+    }
+  ],
+  "actual_scanner_job": "1a1b7feb04e-12894-cf2",
+  "actual_scanner_key": "acceptance-final819-once-sealed-four-package-secret-scan-v1",
+  "scan_count": 1
+}

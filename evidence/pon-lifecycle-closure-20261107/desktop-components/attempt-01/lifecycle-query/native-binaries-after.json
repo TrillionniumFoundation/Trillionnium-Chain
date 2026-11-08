@@ -1,0 +1,10 @@
+{
+  "LQC_NATIVE_PREPARED": {
+    "path": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/target/release/examples/pon_zero_io",
+    "sha256": "acc13f0bc5b611995390fb0fc5a3ca53576f2f1a01e210d7c35a97cdf1e3f515"
+  },
+  "LQC_NATIVE_WORK": {
+    "path": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/target/release/examples/pon_work_io",
+    "sha256": "19f636669306827814872f267c1a9aeaa55e9917217746c7a567a80da86cd365"
+  }
+}

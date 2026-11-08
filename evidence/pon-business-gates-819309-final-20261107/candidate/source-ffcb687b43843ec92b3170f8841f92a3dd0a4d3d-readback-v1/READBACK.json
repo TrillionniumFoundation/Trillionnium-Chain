@@ -1,0 +1,277 @@
+{
+  "schema": "trnm-source-controls-terminal-readback-v1",
+  "readback_utc": "2026-11-07T22:11:37.622240+00:00",
+  "head": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "tree_prelaunch": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+  "output": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "job_id": "1a1b808555c-12894-d0f",
+  "authoritative_status": {
+    "at_unix_ms": 1794089356831,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b808555c-12894-d0f",
+    "launch_nonce": "d7aba1863f2ef97fd6ff2aa7d498e535",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 6984,
+        "stored": 6984
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "summary": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/summary.json",
+    "bytes": 110537,
+    "sha256": "88cc1143023b50fbcb6f6470df53eac6643f547bf788de5c21fe6c0b1505acdc"
+  },
+  "result": {
+    "completed": true,
+    "all_controls_passed": true,
+    "expected_test_methods": 666,
+    "observed_test_methods": 666,
+    "passed_test_methods": 666,
+    "completed_suites": 17,
+    "expected_suites": 17,
+    "source_before_verified": true,
+    "source_after_verified": true,
+    "source_before_after_equal": true,
+    "failures": [],
+    "original_business_gates_accepted": false,
+    "production_qualified": false,
+    "started_utc": "2026-11-07T22:01:58.254207+00:00",
+    "ended_utc": "2026-11-07T22:09:16.770599+00:00"
+  },
+  "source": {
+    "before": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/source-before.json",
+      "bytes": 423,
+      "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+    },
+    "after": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/source-after.json",
+      "bytes": 423,
+      "sha256": "1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721"
+    },
+    "independently_compared_bytes_equal": true,
+    "identity": {
+      "base": null,
+      "candidate": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+      "tested_tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+      "tests_executed_by_identity_check": false,
+      "tracked_worktree_verified": true
+    }
+  },
+  "suites": [
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "expected": 37,
+      "observed": 37,
+      "verbose_starts": 37,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "expected": 43,
+      "observed": 43,
+      "verbose_starts": 43,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_integration_push_source.py",
+      "expected": 13,
+      "observed": 13,
+      "verbose_starts": 13,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "expected": 149,
+      "observed": 149,
+      "verbose_starts": 149,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "expected": 29,
+      "observed": 29,
+      "verbose_starts": 29,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "expected": 79,
+      "observed": 79,
+      "verbose_starts": 79,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_ci_observation_process.py",
+      "expected": 7,
+      "observed": 7,
+      "verbose_starts": 7,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_record_pq_native_command.py",
+      "expected": 4,
+      "observed": 4,
+      "verbose_starts": 4,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "expected": 103,
+      "observed": 103,
+      "verbose_starts": 103,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "expected": 20,
+      "observed": 20,
+      "verbose_starts": 20,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "expected": 47,
+      "observed": 47,
+      "verbose_starts": 47,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+      "expected": 34,
+      "observed": 34,
+      "verbose_starts": 34,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+      "expected": 11,
+      "observed": 11,
+      "verbose_starts": 11,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+      "expected": 11,
+      "observed": 11,
+      "verbose_starts": 11,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+      "expected": 20,
+      "observed": 20,
+      "verbose_starts": 20,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+      "expected": 34,
+      "observed": 34,
+      "verbose_starts": 34,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+      "expected": 25,
+      "observed": 25,
+      "verbose_starts": 25,
+      "process_exit_code": 0,
+      "process_timed_out": false,
+      "passed": true
+    }
+  ],
+  "failed_commands": [],
+  "actual_python_runtime": {
+    "cryptography": "41.0.7",
+    "cryptography_file": "/usr/lib/python3/dist-packages/cryptography/__init__.py",
+    "executable": "/usr/bin/python3",
+    "implementation": "CPython",
+    "numpy": "1.26.4",
+    "numpy_file": "/usr/lib/python3/dist-packages/numpy/__init__.py",
+    "python": "3.12.3",
+    "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "output_files": {
+    "count": 84,
+    "total_bytes": 1241646,
+    "manifest": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/SHA256SUMS",
+      "bytes": 8886,
+      "sha256": "ed8635cd630cf750d68c1b8b809cf0c2e9dba4ffc700323f03c5051dcec8e951"
+    },
+    "manifest_rows": 83,
+    "all_manifest_entries_match": true,
+    "all_original_files_covered_except_manifest_itself": true
+  },
+  "runner": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-source-controls-preparation-20261107/run-final-controls-v3-admission-fence.py",
+    "bytes": 17919,
+    "sha256": "09573875a35c49c4fcffcef2eae8da1e5fbd80e07d262e2235965a802e4edc0c"
+  },
+  "source_or_driver_edited": false,
+  "tests_rerun": false,
+  "result_scope": "C2 full original source/static control attempt passed, including 666 source/unit/formal methods. No native bodies, original fixed-resource service/History qualification, or production-throughput claim."
+}

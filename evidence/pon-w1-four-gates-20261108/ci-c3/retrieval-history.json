@@ -1,0 +1,60 @@
+{
+  "schema": "TRNM-W1-C3-CI-RETRIEVAL-HISTORY1",
+  "scope": "Read-only retrieval of existing C3 CI artifacts; zero test reruns or proof generations.",
+  "first": {
+    "host": "desktop",
+    "job_id": "1a1b91a4911-12894-11d9",
+    "exit_code": 1,
+    "partial_campaign_zip_bytes": 62914560,
+    "partial_file_preserved": true,
+    "reason": "gh artifact retrieval exceeded its 240-second subprocess deadline; protocol/fresh artifacts completed."
+  },
+  "second": {
+    "host": "desktop",
+    "job_id": "1a1b928e889-12894-1240",
+    "exit_code": 0,
+    "artifact_id": 13598547220,
+    "bytes": 70256249,
+    "sha256": "ef0d55c5b0a5ed2b57d5bb848cc7e5a7437849c52b84d14e00279c253daed668",
+    "new_output_path": true,
+    "terminal_publication_confirmed": true
+  },
+  "runtime_readbacks": [
+    {
+      "audit_recorded": true,
+      "job_id": "1a1b91a4911-12894-11d9",
+      "stderr": {
+        "eof": true,
+        "next_offset": 2164,
+        "offset": 0,
+        "size": 2164,
+        "text": "Traceback (most recent call last):\n  File \"/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-ci/read_ci_artifacts.py\", line 33, in <module>\n    results=list(pool.map(one,ROWS))\n            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 619, in result_iterator\n    yield _result_or_cancel(fs.pop())\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 317, in _result_or_cancel\n    return fut.result(timeout)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 456, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/usr/lib/python3.12/concurrent/futures/thread.py\", line 58, in run\n    result = self.fn(*self.args, **self.kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-ci/read_ci_artifacts.py\", line 8, in one\n    r=subprocess.run(['gh','api',f'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/{aid}/zip'],stdout=out,stderr=subprocess.PIPE,timeout=240)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 550, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 1209, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 2116, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.12/subprocess.py\", line 1253, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['gh', 'api', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13598547220/zip']' timed out after 240 seconds\n"
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      }
+    },
+    {
+      "audit_recorded": true,
+      "job_id": "1a1b928e889-12894-1240",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 181,
+        "offset": 0,
+        "size": 181,
+        "text": "{\"artifact_id\": 13598547220, \"bytes\": 70256249, \"sha256\": \"ef0d55c5b0a5ed2b57d5bb848cc7e5a7437849c52b84d14e00279c253daed668\", \"scope\": \"artifact retrieval only; no campaign rerun\"}\n"
+      }
+    }
+  ]
+}

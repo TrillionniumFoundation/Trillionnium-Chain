@@ -1,0 +1,25 @@
+{
+  "schema": "independent-791-store-resolution-read-review-v1",
+  "proposal": "authority-audit/791-resolved/trillionnium/crates/trnm-pon-node/src/store.rs",
+  "sha256": "bf82a44f52d2ab613760e988d282a17b1cb5d12b1032a7c3ee7efb0a89918fc2",
+  "git_blob": "0d6b7d28fbbaf0ff7ed1e5347cb7f07fe88bd7ee",
+  "checks": {
+    "existing_pq_owner_maps_false_true": true,
+    "cold_recovery_branch_is_read_only": true,
+    "growth_recovery_flag_negated_observer": true,
+    "funded_validation_paths_both_retained": true,
+    "owner_no_create_condition": true,
+    "existing_connection_retained": true,
+    "observer_query_only": true
+  },
+  "reviewed": [
+    "Complete stage1-stage2 and stage1-stage3 diffs",
+    "Complete resolution diff against stage2",
+    "ready() local reorg-status read path",
+    "Exact helper extraction comparison and unchanged current-owner/W1/root-arithmetic sections of resolution diff"
+  ],
+  "conclusion": "Static merge content preserves both sides with observation-only recovery refusal; no new runtime result is asserted.",
+  "native_executed": false,
+  "production_qualified": false,
+  "reviewer_edited_candidate": false
+}

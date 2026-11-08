@@ -1,0 +1,78 @@
+{
+  "schema": "pon-resource-transfer-finite-exact-v0",
+  "source": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+    "tested_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+    "candidate": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 10856,
+    "tracked_bytes": 1038667372,
+    "tests_executed_by_identity_check": false
+  },
+  "commands": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_query_floor_v0.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0725434660052997,
+      "log": "test_fresh_work_query_floor_v0.py.log",
+      "bytes": 4912,
+      "sha256": "0949f87f6673c176562a05c9b6ad1934165bf1995a9b5269eb10b308f7c3b111"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_resource_transfer_v0.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.10046423099993262,
+      "log": "test_fresh_work_resource_transfer_v0.py.log",
+      "bytes": 2930,
+      "sha256": "7e52ba8e8ab79d2a59faa649ad1410ef496885d609463e5f03b446462c315a73"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped_fresh_deployment_cost_v0.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.17086395099613583,
+      "log": "test_grouped_fresh_deployment_cost_v0.py.log",
+      "bytes": 3379,
+      "sha256": "0052381c0570de6a4d962f571860e3f1732ae85b1e050074c5f3367b5f2e6eef"
+    }
+  ],
+  "status": "PASS",
+  "actual_chainwork": 0,
+  "physical_or_quantum_lower_bound_proved": false
+}

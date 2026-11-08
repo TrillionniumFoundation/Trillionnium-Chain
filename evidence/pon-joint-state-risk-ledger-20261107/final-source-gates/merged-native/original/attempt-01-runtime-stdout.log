@@ -1,0 +1,5 @@
+{"initial_preflight_returncode": 0, "output": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pon-joint-state-risk-ledger-20261107\", \"remote_policy_mutated\": false}\n"}
+{"stage": "exact-head", "args": ["git", "rev-parse", "HEAD"], "returncode": 0, "elapsed_seconds": 0.0037138250190764666}
+{"stage": "exact-tree", "args": ["git", "rev-parse", "HEAD^{tree}"], "returncode": 0, "elapsed_seconds": 0.003085578791797161}
+{"stage": "initial-clean-tree", "args": ["git", "status", "--porcelain=v1", "--untracked-files=all"], "returncode": 0, "elapsed_seconds": 0.1224173060618341}
+{"stage": "ordered-parents", "args": ["git", "show", "-s", "--format=%P", "HEAD"], "returncode": 0, "elapsed_seconds": 0.02971373894251883}

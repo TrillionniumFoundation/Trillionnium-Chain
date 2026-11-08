@@ -1,0 +1,17 @@
+{
+  ".github/workflows/pon-native-campaign-qualification.yml": {
+    "527e2e58db6d7c1fd84ba88c3131289edea86b1d": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7",
+    "8d8f05566b2a1612a3bf4a6c6c71635df454d397": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7"
+  },
+  "all_native_changed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs"
+  ],
+  "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs": {
+    "527e2e58db6d7c1fd84ba88c3131289edea86b1d": "ec6420becaba837f22d45c917d15554a8e653275",
+    "8d8f05566b2a1612a3bf4a6c6c71635df454d397": "ec6420becaba837f22d45c917d15554a8e653275"
+  }
+}

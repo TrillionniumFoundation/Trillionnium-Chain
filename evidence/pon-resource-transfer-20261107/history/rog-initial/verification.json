@@ -1,0 +1,110 @@
+{
+  "all_archive_and_member_hashes_verified": true,
+  "archives": [
+    {
+      "all_member_bytes_and_modes_verified": true,
+      "archive": "validation-initial-v0.tar.gz",
+      "bytes": 165490,
+      "members": 57,
+      "payload_bytes": 1841082,
+      "sha256": "207b0e36339fe33e6fd01071878cf4b98698820b1b99bb2edca08d26276f0e97"
+    },
+    {
+      "all_member_bytes_and_modes_verified": true,
+      "archive": "python-setup-v0.tar.gz",
+      "bytes": 26096,
+      "members": 5,
+      "payload_bytes": 79531,
+      "sha256": "4866b24aac5bd073c90e111496ef742c0884cc91926a03ba397a0fa4a5670f19"
+    }
+  ],
+  "history_only_not_final_canonical_validation": true,
+  "initial_local_transport_failure_preserved": "transfer-attempt-0.json",
+  "member_count": 62,
+  "original_commands_passed": 24,
+  "original_validation_status": "PASS",
+  "originals_unchanged": true,
+  "pinned_remote_files": [
+    {
+      "bytes": 165490,
+      "chunk_count": 3,
+      "name": "validation-initial-v0.tar.gz",
+      "remote_version": "66306:48262870:165490:1794064288687543176:1794064288687543176",
+      "sha256": "207b0e36339fe33e6fd01071878cf4b98698820b1b99bb2edca08d26276f0e97"
+    },
+    {
+      "bytes": 12039,
+      "chunk_count": 1,
+      "name": "validation-initial-v0.tar.gz.members.json",
+      "remote_version": "66306:48262871:12039:1794064288694846284:1794064288694846284",
+      "sha256": "7737db30af954472e756feced5d53065d45fefe84eb85f52fe8766f27b39ccca"
+    },
+    {
+      "bytes": 26096,
+      "chunk_count": 1,
+      "name": "python-setup-v0.tar.gz",
+      "remote_version": "66306:48262872:26096:1794064288697543001:1794064288697543001",
+      "sha256": "4866b24aac5bd073c90e111496ef742c0884cc91926a03ba397a0fa4a5670f19"
+    },
+    {
+      "bytes": 1404,
+      "chunk_count": 1,
+      "name": "python-setup-v0.tar.gz.members.json",
+      "remote_version": "66306:48262873:1404:1794064288699817131:1794064288699817131",
+      "sha256": "37659d39e17c196517a9d29df553fa3b19665d38f14a85f5a143fa80c8717472"
+    },
+    {
+      "bytes": 7588,
+      "chunk_count": 1,
+      "name": "capture-review.json",
+      "remote_version": "66306:48262874:7588:1794064288705272709:1794064288705272709",
+      "sha256": "6a218a0d6b8e35113dc90d8da8d21f79598dc9b8bad828a098a6278f9335f1f8"
+    }
+  ],
+  "preserved_unqualified_warning_lines": [
+    {
+      "file": "authority-native-build.log",
+      "line": 1,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]"
+    },
+    {
+      "file": "fresh-native-build.log",
+      "line": 50,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/release/deps\"]"
+    },
+    {
+      "file": "native-fresh-admission.log",
+      "line": 1,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    },
+    {
+      "file": "native-header-binding.log",
+      "line": 41,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    },
+    {
+      "file": "native-verification-authority.log",
+      "line": 1,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    },
+    {
+      "file": "strict-workspace-clippy.log",
+      "line": 72,
+      "text": "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\"]; observed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]; allowed=[\"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug\", \"/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target/debug/deps\"]"
+    }
+  ],
+  "python_versions": {
+    "base_prefix": "/usr",
+    "cryptography": "50.0.2",
+    "executable": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv/bin/python",
+    "numpy": "1.26.4",
+    "prefix": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/venv",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "remote_archive_job": "1a1b69066ca-12894-510",
+  "schema": "pon-rog-initial-history-local-verification-v0",
+  "source_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "status": "PASS",
+  "unqualified_warning_count": 6,
+  "verified_utc": "2026-11-07T15:14:38.502618+00:00"
+}

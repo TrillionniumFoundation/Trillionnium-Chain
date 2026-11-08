@@ -1,0 +1,77 @@
+{
+  "observed_unix_time": 1794069452.2574575,
+  "pack_files": {
+    "chain-evidence-recovery-93ddee66-v1": [
+      {
+        "bytes": 92,
+        "mtime": 1794067200.6598144,
+        "name": "pack-9f0f989a4abf28328bd8399c8397bfac1e7ec007.promisor"
+      },
+      {
+        "bytes": 283205631,
+        "mtime": 1794068259.1750083,
+        "name": "tmp_pack_Qk6OHH"
+      },
+      {
+        "bytes": 7903957,
+        "mtime": 1794067200.3454685,
+        "name": "pack-9f0f989a4abf28328bd8399c8397bfac1e7ec007.pack"
+      },
+      {
+        "bytes": 2332828,
+        "mtime": 1794067200.3904662,
+        "name": "pack-9f0f989a4abf28328bd8399c8397bfac1e7ec007.idx"
+      },
+      {
+        "bytes": 333160,
+        "mtime": 1794067200.5054607,
+        "name": "pack-9f0f989a4abf28328bd8399c8397bfac1e7ec007.rev"
+      }
+    ],
+    "chain-evidence-recovery-cache-93ddee66-v2": [
+      {
+        "bytes": 30996648,
+        "mtime": 1794069246.5290031,
+        "name": "pack-a53c38e50754abe12fa82a434b85d54ea4744894.pack"
+      },
+      {
+        "bytes": 27552,
+        "mtime": 1794069246.6321747,
+        "name": "pack-a53c38e50754abe12fa82a434b85d54ea4744894.promisor"
+      },
+      {
+        "bytes": 1396,
+        "mtime": 1794069246.5420027,
+        "name": "pack-a53c38e50754abe12fa82a434b85d54ea4744894.rev"
+      },
+      {
+        "bytes": 10480,
+        "mtime": 1794069246.5290031,
+        "name": "pack-a53c38e50754abe12fa82a434b85d54ea4744894.idx"
+      }
+    ],
+    "chain-evidence-recovery-cache-93ddee66-v3": [
+      {
+        "bytes": 332,
+        "mtime": 1794068964.7652698,
+        "name": "pack-80a0631f08740ca0ffbfc34c50b4cd83bfafa04f.rev"
+      },
+      {
+        "bytes": 3032,
+        "mtime": 1794068964.75827,
+        "name": "pack-80a0631f08740ca0ffbfc34c50b4cd83bfafa04f.idx"
+      },
+      {
+        "bytes": 0,
+        "mtime": 1794068964.7782693,
+        "name": "pack-80a0631f08740ca0ffbfc34c50b4cd83bfafa04f.promisor"
+      },
+      {
+        "bytes": 189258,
+        "mtime": 1794068964.75827,
+        "name": "pack-80a0631f08740ca0ffbfc34c50b4cd83bfafa04f.pack"
+      }
+    ]
+  },
+  "pack_files_modified_by_this_observation": false
+}

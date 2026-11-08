@@ -1,0 +1,306 @@
+{
+  "schema": "trnm-cell-formal-preparation-handoff-v1",
+  "created_utc": "2026-11-07T17:09:53.210100+00:00",
+  "directory": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/handoff",
+  "files": [
+    {
+      "path": "observer/PREPARATION_CORE.from-process.json",
+      "bytes": 4025,
+      "sha256": "f09fd62b9617655415ce4b4a7468e9169da71112eb5315a6ca5baa4a3c39be65",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/PREPARATION_CORE.json"
+    },
+    {
+      "path": "PREPARATION_CORE.json",
+      "bytes": 4230,
+      "sha256": "a217ada91136e23e38e1a32c55b13b4db713afeb740e109a391e654bce15725b",
+      "original_path": null
+    },
+    {
+      "path": "required-objects-before.json",
+      "bytes": 114010,
+      "sha256": "8382c94c6d5b4e45df972f1c57e1d0953cfb6540282e704be26c912f0ed930a9",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/required-objects-before.json"
+    },
+    {
+      "path": "verified-objects-after.json",
+      "bytes": 97900,
+      "sha256": "57c3ee0d45c957169ce58cb53074311e40f6a1b20d0bcb06cc312248464ac75b",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/verified-objects-after.json"
+    },
+    {
+      "path": "imported-objects.json",
+      "bytes": 2957,
+      "sha256": "df8211dbc3743765464b17ddcdb9509d9338c8c12ebae2cef33a7b376e1f1a22",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/imported-objects.json"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 6277,
+      "sha256": "42ea00e16218a6bd94bd9d492d01cb927564b27df19858d590fea973a64a5ebe",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/commands.json"
+    },
+    {
+      "path": "pack-inspection-commands.json",
+      "bytes": 5758,
+      "sha256": "75d3cc29d8f9f15cc5d68fc999c345f67919f32625461244edef352c04e7109b",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/pack-inspection-commands.json"
+    },
+    {
+      "path": "additive-import-commands.json",
+      "bytes": 34798,
+      "sha256": "8f81181fcfb15996e77c322cac40bfaacd0de43bf77cdb1eeb72301b96d2399a",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/additive-import-commands.json"
+    },
+    {
+      "path": "historical-inventory.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/historical-inventory.stdout"
+    },
+    {
+      "path": "historical-inventory.stderr",
+      "bytes": 152,
+      "sha256": "32f9196f299b2e3b04de889673020dafa80bef4ee5b09e89b498e957101b206f",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/historical-inventory.stderr"
+    },
+    {
+      "path": "required-object-presence-before.stdout",
+      "bytes": 1965,
+      "sha256": "ababd40f1c07f756bcedde6bd63b4443b89278e6f38fb44a6c609c67fb9befa7",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/required-object-presence-before.stdout"
+    },
+    {
+      "path": "required-object-presence-before.stderr",
+      "bytes": 152,
+      "sha256": "068e09253e2fbdca9434916e8d9c747a5107105c0915752183c8c8ad2e46534f",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/required-object-presence-before.stderr"
+    },
+    {
+      "path": "project-preflight.stdout",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/project-preflight.stdout"
+    },
+    {
+      "path": "project-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/project-preflight.stderr"
+    },
+    {
+      "path": "pre-import-project-preflight.stdout",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/pre-import-project-preflight.stdout"
+    },
+    {
+      "path": "pre-import-project-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/pre-import-project-preflight.stderr"
+    },
+    {
+      "path": "isolated-index-pack.stdout",
+      "bytes": 46,
+      "sha256": "bb8800e16b149439a747100da9ffbcc8ebc5d7254a7ff50b5bbe3b05183cbfb0",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-index-pack.stdout"
+    },
+    {
+      "path": "isolated-index-pack.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-index-pack.stderr"
+    },
+    {
+      "path": "isolated-object-list.stdout",
+      "bytes": 13270,
+      "sha256": "7f039c56f10b3864a0f695ba2a8434113b100b9cbf321937373c8ea065eb18c3",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/isolated-object-list.stdout"
+    },
+    {
+      "path": "inventory-from-retained-pack.stdout",
+      "bytes": 26365,
+      "sha256": "364f348fff4625e500ba5d1cd66ccdedeee72068e0a6d75209527c833d2799b9",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/inventory-from-retained-pack.stdout"
+    },
+    {
+      "path": "required-object-presence-view-before.stdout",
+      "bytes": 20907,
+      "sha256": "7a3c30de45e94bb0c0ab2017defdfae2b3c5c441cf13e6ecf289450221d4c031",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/required-object-presence-view-before.stdout"
+    },
+    {
+      "path": "required-object-presence-view-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/required-object-presence-view-before.stderr"
+    },
+    {
+      "path": "historical-inventory-after.stdout",
+      "bytes": 26365,
+      "sha256": "364f348fff4625e500ba5d1cd66ccdedeee72068e0a6d75209527c833d2799b9",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/historical-inventory-after.stdout"
+    },
+    {
+      "path": "historical-inventory-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/historical-inventory-after.stderr"
+    },
+    {
+      "path": "historical-names-after.stdout",
+      "bytes": 71793,
+      "sha256": "e8b472d686373dcd3288c3b9c382baf3405299c11d957e602392b0413bf41160",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/historical-names-after.stdout"
+    },
+    {
+      "path": "historical-names-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/historical-names-after.stderr"
+    },
+    {
+      "path": "import-head-before.stdout",
+      "bytes": 41,
+      "sha256": "bfdbb83ef2cb2cc2688db59b086905e3e6488d0c58a4cdd57c1ed4b5346306d6",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/import-head-before.stdout"
+    },
+    {
+      "path": "import-head-after.stdout",
+      "bytes": 41,
+      "sha256": "bfdbb83ef2cb2cc2688db59b086905e3e6488d0c58a4cdd57c1ed4b5346306d6",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/import-head-after.stdout"
+    },
+    {
+      "path": "import-refs-before.stdout",
+      "bytes": 1013,
+      "sha256": "255a6cf51e86cb7e9882b769e5821312c8025758153412985202120bd5699141",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/import-refs-before.stdout"
+    },
+    {
+      "path": "import-refs-after.stdout",
+      "bytes": 1013,
+      "sha256": "255a6cf51e86cb7e9882b769e5821312c8025758153412985202120bd5699141",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/import-refs-after.stdout"
+    },
+    {
+      "path": "import-tracked-status-before.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/import-tracked-status-before.stdout"
+    },
+    {
+      "path": "import-tracked-status-after.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/import-tracked-status-after.stdout"
+    },
+    {
+      "path": "selector-head.stdout",
+      "bytes": 15358,
+      "sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/selector-head.stdout"
+    },
+    {
+      "path": "model-contract-head.stdout",
+      "bytes": 2416,
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/model-contract-head.stdout"
+    },
+    {
+      "path": "initial-inspection-core.json",
+      "bytes": 3464,
+      "sha256": "7888b11a779ae24ec710ecc7db24b32020fb42e97dce6787dc9aa7cd7670f86c",
+      "original_path": "/home/qian-qi/throughput-ci-observation-20261107/cell-formal-preparation-v1/inspection.json"
+    },
+    {
+      "path": "observer/inspect.py",
+      "bytes": 5392,
+      "sha256": "869615f53dca23ac8635c6f3941ce20368820fc96c6a2580e8fb4bc15d408ea5",
+      "original_path": null
+    },
+    {
+      "path": "observer/isolated_pack_inspection.py",
+      "bytes": 7596,
+      "sha256": "b524b10cc383d9bd963ec34b2d989ec85b5e411ce2bc4df4cbc6144a10daa506",
+      "original_path": null
+    },
+    {
+      "path": "observer/additive_import.py",
+      "bytes": 12298,
+      "sha256": "e0c4e7f03406b3d04b821b10bf81cfe993ef837dd8823fbd272055ca34c54cca",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6f3699e-12894-821.status.json",
+      "bytes": 734,
+      "sha256": "37f43cab23c25a83b217022a97b2492fa5705753e26b07991b4b52f0b097252e",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6f4a695-12894-82c.status.json",
+      "bytes": 732,
+      "sha256": "5ef9a10f2a5369079f069ce2a58fbf5bfceb2a3db70c7dc15bfd61c7575f5992",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6f72963-12894-842.status.json",
+      "bytes": 727,
+      "sha256": "42e91ea2fe4dafb085e107b0875324a1619b045eaa089550492a5d6c054b68bb",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6f72963-12894-842.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6f72963-12894-842.stderr",
+      "bytes": 161,
+      "sha256": "155e62a3f1b27d9a4e8c83703ba48c9d4e0efa9c6852a2bd8d8afef2ee41ceb7",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6faeeaa-12894-85a.status.json",
+      "bytes": 732,
+      "sha256": "eb74cc4b4be304e0aa9b8436c0301b925c3754650e4758f3606ff770b1e39f95",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6faeeaa-12894-85a.stdout",
+      "bytes": 3883,
+      "sha256": "e6feeb78a06dd40ffba4d0d59bda28a318ba2b1f644565ef137aad5bec06f733",
+      "original_path": null
+    },
+    {
+      "path": "observer/1a1b6faeeaa-12894-85a.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": null
+    },
+    {
+      "path": "README.md",
+      "bytes": 2065,
+      "sha256": "bd7d1095ee9e285fa0481cbb08477b85016f9ab3210817aa9b53f07ba097418a",
+      "original_path": null
+    }
+  ],
+  "payload_files": 47,
+  "payload_bytes": 488976,
+  "original_pack_copied": false,
+  "original_pack_already_retained_in_repository": {
+    "archive": "evidence/pon-cell-integration-v1-20261107/retained-runs.tar.gz",
+    "archive_bytes": 738021,
+    "archive_sha256": "89cce6db8fd01faecf6da7f4fccbd5edbd9c734a908a40fdbd0b42825edeaeb9",
+    "member": {
+      "path": "raw/remote-prior/original-source-blobs-9fed.pack",
+      "bytes": 381350,
+      "sha256": "3e047d47391e62c96c8ebec5bcd837a4c956eb5c7fd7de2558ef5ca1ad4d305c"
+    },
+    "isolated_strict_index_pack_exit": 0,
+    "pack_objects": 261
+  },
+  "isolated_git_repositories_included": false,
+  "formal_or_native_tests_executed": false
+}

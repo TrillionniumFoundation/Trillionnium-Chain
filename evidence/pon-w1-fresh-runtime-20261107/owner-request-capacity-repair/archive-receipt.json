@@ -1,0 +1,19 @@
+{
+  "archive": {
+    "bytes": 129846,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/owner-request-capacity-repair/raw.tar.gz",
+    "sha256": "ebfb5400a0a82e9bbb4e6ef2d1552d290f1411903e19f4fc79d2e481480f4e83"
+  },
+  "component": "owner-request-capacity-repair",
+  "every_member_readback_verified": true,
+  "excluded_files": 0,
+  "index": {
+    "bytes": 24093,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/owner-request-capacity-repair/raw-index.json",
+    "sha256": "76699900ab9009de46c43615d4f7560c41ee09f62b43c949b863847071442be0"
+  },
+  "members": 61,
+  "no_payload_executed": true,
+  "raw_bytes": 541936,
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1"
+}

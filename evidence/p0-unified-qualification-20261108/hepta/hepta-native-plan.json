@@ -1,0 +1,324 @@
+{
+  "chain_native_commands": [
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_task_operation_v2",
+        "unknown_output_uses_native_once_fence_and_real_delivery_on_both_backends",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "executed_by_this_plan": false,
+      "integration_test": "native_task_operation_v2",
+      "run_at": "FROZEN_CHAIN_CANDIDATE_SHA_REQUIRED",
+      "test": "unknown_output_uses_native_once_fence_and_real_delivery_on_both_backends"
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_task_operation_v2",
+        "current_paid_observation_rechecks_original_receipts_and_settlement_on_both_backends",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "executed_by_this_plan": false,
+      "integration_test": "native_task_operation_v2",
+      "run_at": "FROZEN_CHAIN_CANDIDATE_SHA_REQUIRED",
+      "test": "current_paid_observation_rechecks_original_receipts_and_settlement_on_both_backends"
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "funded_service_contract",
+        "actual_arbitrator_payment_reopens_and_reorg_refund_cannot_claim_service_payment",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "executed_by_this_plan": false,
+      "integration_test": "funded_service_contract",
+      "run_at": "FROZEN_CHAIN_CANDIDATE_SHA_REQUIRED",
+      "test": "actual_arbitrator_payment_reopens_and_reorg_refund_cannot_claim_service_payment"
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "funded_service_contract",
+        "unresolved_native_contract_expiry_refunds_payer_and_is_not_a_service_payment",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "executed_by_this_plan": false,
+      "integration_test": "funded_service_contract",
+      "run_at": "FROZEN_CHAIN_CANDIDATE_SHA_REQUIRED",
+      "test": "unresolved_native_contract_expiry_refunds_payer_and_is_not_a_service_payment"
+    }
+  ],
+  "chain_source": {
+    "frozen_candidate_sha": null,
+    "reference_only_pr787_sha": "e02126dabef04f13792dec45d96ac5d6916d0651",
+    "rule": "Execute at the final single Chain SHA; prior #787 results cannot be attached as its native results."
+  },
+  "coverage": {
+    "CURRENT_REVOCATION": {
+      "meaning": "Actor rechecks current publication, withdrawal and revocation; retained nonce/effect counts cannot be reset to obtain authority.",
+      "scope": "readback5"
+    },
+    "NO_UPDATE": {
+      "meaning": "Synthetic completed no-update decision follows retained model path; adopted readback rejects a no-update coordinator. This does not make unknown evaluation a NoUpdate.",
+      "scope": "readback5"
+    },
+    "REORG": {
+      "meaning": "No reorg/reorganize match in four searched f178 subtrees: hepta-agentd/src, hepta-learning-artifacts/src, hepta-fleet/src, hepta-operations/src. Chain native controls are required at the frozen candidate and still use development ledger fixtures.",
+      "scope": "chain_native_commands"
+    },
+    "RESTART": {
+      "meaning": "Original journal/outbox is reopened; parent fault matrix creates child process exits at prepare/effect/ack boundaries. It does not simulate SIGKILL, power loss, or WAN partitions.",
+      "scope": "readback5, unknown_restart3 and durable_effects4"
+    },
+    "UNKNOWN": {
+      "meaning": "Lost response and acknowledgement remain pending/indeterminate until observation; the original operation is read/reconciled without second execution.",
+      "scope": "unknown_restart3 and durable_effects4"
+    }
+  },
+  "engineering_controls_only": true,
+  "evidence_requirements": [
+    "all native/collector exits independent",
+    "original unedited profiles and lock hashes",
+    "fresh compiled registry including ignored and filtered tests",
+    "each selected nextest attempt and retry retained",
+    "native stdout/stderr and JUnit per scope",
+    "test ELF digest before/after and OS-observed executed ELF where available",
+    "before/after source identity",
+    "any collection errors retained as UNKNOWN"
+  ],
+  "gate_v1_scope": {
+    "all_raw_outcomes_unverified": true,
+    "always_hold": true,
+    "does_not_resolve": "P0 native authority or product qualification. Successful structural tests cannot make RAW_OUTCOME_UNVERIFIED become production authority.",
+    "resolves": "Conservative same-source accounting, strict schema and missing/failure preservation; rejects unsupported promotion."
+  },
+  "hepta_source": {
+    "host": "rog",
+    "root": "/home/qian-qi/work/hepta-p0-source-f178-20261108-99b5",
+    "sha": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+    "tree": "f07e40dbf570539eba6b683f7569804b0eb9ae5e"
+  },
+  "hostout": "/home/qian-qi/work/hepta-p0-native-controls-20261108-99b5-hepta-audit",
+  "native_scopes": [
+    {
+      "argv": [
+        "just",
+        "test",
+        "--locked",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "-E",
+        "test(=neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset) | test(=neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation) | test(=neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution) | test(=neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation) | test(=neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors)",
+        "--success-output",
+        "final",
+        "--failure-output",
+        "final"
+      ],
+      "id": "readback5",
+      "native_exit": null,
+      "outcome": "NOT_OBSERVED_IN_PLAN",
+      "package": "codex-hepta-agentd",
+      "profile_modified": false,
+      "selected_tests": [
+        "neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+        "neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation",
+        "neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+        "neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation",
+        "neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors"
+      ],
+      "test_profile": "local"
+    },
+    {
+      "argv": [
+        "just",
+        "test",
+        "--locked",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "-E",
+        "test(=neuron_generation_runtime::tests::control::uncertain_dispatch_cancels_and_reads_original_without_second_execution) | test(=neuron_generation_runtime::tests::both_drain_paths_retain_unknown_work_and_unacknowledged_output) | test(=neuron_generation_runtime::tests::ordinary_shutdown_reopens_original_pending_and_exact_committed_outbox)",
+        "--success-output",
+        "final",
+        "--failure-output",
+        "final"
+      ],
+      "id": "unknown_restart3",
+      "native_exit": null,
+      "outcome": "NOT_OBSERVED_IN_PLAN",
+      "package": "codex-hepta-agentd",
+      "profile_modified": false,
+      "selected_tests": [
+        "neuron_generation_runtime::tests::control::uncertain_dispatch_cancels_and_reads_original_without_second_execution",
+        "neuron_generation_runtime::tests::both_drain_paths_retain_unknown_work_and_unacknowledged_output",
+        "neuron_generation_runtime::tests::ordinary_shutdown_reopens_original_pending_and_exact_committed_outbox"
+      ],
+      "test_profile": "local"
+    },
+    {
+      "argv": [
+        "just",
+        "test",
+        "--locked",
+        "-p",
+        "codex-hepta-operations",
+        "--lib",
+        "-E",
+        "test(=durable_store::tests::crash_after_dispatch_admission_recovers_as_indeterminate_not_retryable) | test(=durable_store::tests::acknowledgement_loss_stays_indeterminate_until_terminal_observer) | test(=durable_store::tests::retirement_never_discards_an_unreconciled_external_effect) | test(=fault_tests::child_process_kill_matrix_preserves_durable_effect_semantics)",
+        "--success-output",
+        "final",
+        "--failure-output",
+        "final"
+      ],
+      "id": "durable_effects4",
+      "native_exit": null,
+      "outcome": "NOT_OBSERVED_IN_PLAN",
+      "package": "codex-hepta-operations",
+      "profile_modified": false,
+      "selected_tests": [
+        "durable_store::tests::crash_after_dispatch_admission_recovers_as_indeterminate_not_retryable",
+        "durable_store::tests::acknowledgement_loss_stays_indeterminate_until_terminal_observer",
+        "durable_store::tests::retirement_never_discards_an_unreconciled_external_effect",
+        "fault_tests::child_process_kill_matrix_preserves_durable_effect_semantics"
+      ],
+      "test_profile": "local"
+    }
+  ],
+  "nextest": {
+    "local_inherits_default": {
+      "retries": 1,
+      "slow_timeout_period_seconds": 30,
+      "terminate_after": 2
+    },
+    "selected_test_timeout_overrides": [],
+    "sha256": "e999c122a02c3fe74a1b66d254b6419a8a665e8bf540b1d31de7933a6d3753f1",
+    "user_config_exists": false,
+    "version": "0.9.103"
+  },
+  "original_profiles_and_locks": {
+    "AGENTS.md": {
+      "bytes": 22519,
+      "sha256": "c3f80e8386eb170b00af1e21de40d770c4941e464915687e728e2d14a7e79480"
+    },
+    "codex-rs/.cargo/config.toml": {
+      "bytes": 634,
+      "sha256": "b8ae1cea341beb2d4a3c8fb81f97a96f4aee1fd53f769c57f140dfe949806a80"
+    },
+    "codex-rs/.config/nextest.toml": {
+      "bytes": 5987,
+      "sha256": "63f832eabf890a5f3cd7c0e4ee1856b1ca99d4db8952de71b81282265668dc8c"
+    },
+    "codex-rs/Cargo.lock": {
+      "bytes": 417315,
+      "sha256": "4165307bb6c41d08e6c1c362060f2a958c8200ea43fdab2b8b1e6220ad82b55c"
+    },
+    "codex-rs/rust-toolchain.toml": {
+      "bytes": 78,
+      "sha256": "e8b379eaa492bf59d35187de269afd1c4f55d85e0322f6fea32803a3fec1a380"
+    },
+    "justfile": {
+      "bytes": 7838,
+      "sha256": "74f869224eba12fc4212b043428e7f5b35b551d26f5b06161c25d8aca525f124"
+    },
+    "scripts/just-shell.py": {
+      "bytes": 2030,
+      "sha256": "444d6b328d44abf6453b77b6acce2a0c881fc162ff30b20f352c85067797fbe9"
+    },
+    "scripts/run-nextest.py": {
+      "bytes": 10206,
+      "sha256": "45c4e35d1ff24840d9e1e05331af0b89475bfe1aec3231afc56fecb8cea66127"
+    }
+  },
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "resources_observed": {
+    "cpu_max": "200000 100000",
+    "memory_max": "8589934592",
+    "memory_swap_max": "max",
+    "nice": 10,
+    "pids_max": "146420",
+    "public_host_quarter_core_2GiB_zero_swap_256_pids_qualified": false
+  },
+  "schema": "hepta-native-control-plan-v1",
+  "source_observations": [
+    {
+      "bytes": 8549,
+      "path": "/home/qian-qi/work/hepta-p0-source-f178-20261108-99b5/codex-rs/hepta-agentd/src/neuron_generation_update_runtime_tests.rs",
+      "sha256": "22731d0ce359bca34d5ebf7456539661aececeea554c6d253a732028da55d610"
+    },
+    {
+      "bytes": 13574,
+      "path": "/home/qian-qi/work/hepta-p0-source-f178-20261108-99b5/codex-rs/hepta-agentd/src/neuron_generation_learning_runtime_tests.rs",
+      "sha256": "bfd127e95115090105bab515bba5296b6432b18608e2812ed241b5e8e9a1e6b2"
+    },
+    {
+      "bytes": 18433,
+      "path": "/home/qian-qi/work/hepta-p0-source-f178-20261108-99b5/codex-rs/hepta-agentd/src/neuron_generation_adopted_learning_tests.rs",
+      "sha256": "3362451eadb11fcc780ee974bf5d01286f1ad7f169429b21403259c2b733d97f"
+    },
+    {
+      "bytes": 7348,
+      "path": "/home/qian-qi/work/hepta-p0-source-f178-20261108-99b5/codex-rs/hepta-agentd/src/neuron_generation_same_model_runtime_tests.rs",
+      "sha256": "83266199c76815695596113f69577848262078acfdb1d435bd8bdc6038fd727a"
+    }
+  ],
+  "unqualified_or_missing_real_runner_stages": [
+    "Training: adopted fixture directly constructs Training{steps:1,milliseconds:1,artifact_bytes:64}; no real model training is proved.",
+    "Independent evaluation: fixture directly records Qualified; evaluator independence and attack-resistant evaluation are not established.",
+    "Payment: no external payment is authorized or performed; Chain tests use controlled native development ledger receipts.",
+    "Cold fetch/install/load: real local publication/journal/actor operations exercise test fixtures; no single paid released closure is cold-fetched over qualified independent WAN custodians and loaded by a production runtime.",
+    "Next task: selected tests use synthetic worker output; actual new model inference/learning quality is not established.",
+    "Single pair product integration: f178 native tests have no shared production Chain campaign and cannot be combined with old #787/#5045 results as one execution.",
+    "P1 failure domains/WAN: independent custodians, renewal/repair/recovery indicators and required WAN duration remain separate acceptance work."
+  ]
+}

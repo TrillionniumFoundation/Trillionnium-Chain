@@ -1,0 +1,28 @@
+{
+  "name": "test-19",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_cache_modes",
+    "rejection_cache_then_arithmetic_profile_is_refused",
+    "--",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "started_unix_ns": 1794068935247014127,
+  "ended_unix_ns": 1794069007159934072,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-19.log",
+  "log_bytes": 547,
+  "log_sha256": "4553733203ace322c2900767694edd630eb62fd273f1cbaaec0d74fd0a85eacb"
+}

@@ -1,0 +1,10 @@
+    Checking openssl-sys v0.9.117
+    Checking openssl v0.10.81
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-data-availability)
+    Checking trnm-research-protocol v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-research-protocol)
+    Checking trnm-transport v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-transport)
+    Checking trnm-release-bundle v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized] target(s) in 57.32s

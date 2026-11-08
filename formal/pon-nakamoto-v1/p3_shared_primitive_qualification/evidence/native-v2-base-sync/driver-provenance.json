@@ -1,0 +1,10 @@
+{
+  "abba_source_sha256": "cda4fd1cbe74407630c774c9f23a8dc7923171e653fe01f31983ad4bdfc887b1",
+  "abba_campaign_sha256": "e5d7639ecc91cceaecefb62c39549dcab6baec6a4c11e3b709519d5cd479f8e3",
+  "changes": [
+    "source_snapshot additionally records MERGE_HEAD and git write-tree"
+  ],
+  "receive_source_and_campaign_sha256": "cba2cf5579e14b8faf2fbb54333ff4b761b05b0ff435f1c8849d3a6ad4ff6ab0",
+  "fixture_source": "native-v1 self-contained inputs, verified against committed file-index.json",
+  "profile_or_air_changes_in_campaign": false
+}

@@ -1,0 +1,373 @@
+{
+  "artifact_id": 13586686618,
+  "metadata": {
+    "id": 13586686618,
+    "name": "w1-false-trace-prospective-merge-x64-28df21f965e0348690836c9c854dab645827a03d-1",
+    "size_in_bytes": 5571609,
+    "digest": "sha256:37760c10cc44d25b56a3f8f16cf695dd2310df747c7972da018f249a467c2182",
+    "expired": false,
+    "created_at": "2026-11-07T18:51:49Z",
+    "updated_at": "2026-11-07T18:51:49Z",
+    "workflow_run": {
+      "id": 42402618462,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "archive_authenticated": true,
+  "source_bound": true,
+  "manifest_hashes_complete": true,
+  "pure_read_status": "NOT_RUN",
+  "business_qualification": false,
+  "family": "false-trace",
+  "arch": "x64",
+  "source_kind": "prospective-merge",
+  "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+  "job": {
+    "id": 128493695693,
+    "name": "W1 false trace reuse (x64, prospective-merge)",
+    "family": "false-trace",
+    "arch": "x64",
+    "source": "prospective-merge",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13586686618/zip"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 5571609,
+    "sha256": "37760c10cc44d25b56a3f8f16cf695dd2310df747c7972da018f249a467c2182"
+  },
+  "archive_inventory": [
+    {
+      "name": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_expanded": true
+    },
+    {
+      "name": "cargo-graph.json",
+      "bytes": 841183,
+      "sha256": "73ea25d09d5a8fbad28a4a2fd409b5a31292480be37d47c46edf5074f33b1526",
+      "retained_expanded": true
+    },
+    {
+      "name": "push-source-context.json",
+      "bytes": 2356,
+      "sha256": "61782a6bfc1287c8dea4f345f76ecf1b939b0b237812fa9314f33ee45f100973",
+      "retained_expanded": true
+    },
+    {
+      "name": "query-work-controls.log",
+      "bytes": 3080,
+      "sha256": "2862ac18fa27d47e17c01b539d9a3e7d10d2767cda10f9506c98648d3b135318",
+      "retained_expanded": true
+    },
+    {
+      "name": "reader-controls.log",
+      "bytes": 118,
+      "sha256": "0ff2a8f57d691a36c4b6280a799ad0f3500d719d2abf6210f36e010a4a4d253e",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-clippy.log",
+      "bytes": 216,
+      "sha256": "b895a64d23113c568588e4fd76871ef6ead76d83099718a24a10e5d4e08b9ef2",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-reader-controls.log",
+      "bytes": 192,
+      "sha256": "128e0ab26558dbe51e777da71677beacd5a8d78cd2ef75154529d28d46e8460d",
+      "retained_expanded": true
+    },
+    {
+      "name": "retained-rejection-tests.log",
+      "bytes": 729,
+      "sha256": "dfc4ecd0c2373257c724e0a2fcc29ccd226983d8d0838cc72387908ba06fc404",
+      "retained_expanded": true
+    },
+    {
+      "name": "runner-controls.log",
+      "bytes": 148,
+      "sha256": "453da22939b1487f38adeaa4f2472e1de84ad982a50659085101b9e3f88c63fd",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 512,
+      "sha256": "bdca5e149877335223e365561edb2df9f8f2249922bccf618a5b15d11ea13b50",
+      "retained_expanded": true
+    },
+    {
+      "name": "source-before.json",
+      "bytes": 512,
+      "sha256": "bdca5e149877335223e365561edb2df9f8f2249922bccf618a5b15d11ea13b50",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-clippy.log",
+      "bytes": 1958,
+      "sha256": "604364ac0b15131e6d48f45d1a0f5833c980628adf4c184d9e778eb53e718df7",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/build.stderr",
+      "bytes": 3738,
+      "sha256": "d7a2f1b016a236f1ba0cb831c7e1bd372ac5cf095bdf872f0c59688c93d026a7",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/campaign.stdout",
+      "bytes": 30021494,
+      "sha256": "495e5104ceeec29dc2f2dae75e8337a813f084c0b8e07e920ad369dc29834d56",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/cpuinfo.txt",
+      "bytes": 5876,
+      "sha256": "1bbc100a3f4f9d2b51c51380591ca7378e84e01ea88987456bb25c4a4cc13502",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/manifest.json",
+      "bytes": 24126,
+      "sha256": "9e4f50a68098a36792539f3af912add707e45a66496adc5dd940ddff2ac8b4bf",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 715040,
+      "sha256": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+      "retained_expanded": false,
+      "elf_machine": 62
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/rustc.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-false-trace-reuse-v1/uname.stdout",
+      "bytes": 128,
+      "sha256": "2437786a005300b4d25ddff7c65a91bdfe873d85b22086b4a7b863f333197732",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/build.stderr",
+      "bytes": 606,
+      "sha256": "1298a94a59ab5fa814984633fcf675f197734aab78ab8ad35720f9250029bf9c",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/campaign.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/campaign.stdout",
+      "bytes": 30174213,
+      "sha256": "f99cbc58958decb6e63c1cc01c91dfd547fa5d8d004929ae94d431d4a10ae7c1",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cargo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cargo.stdout",
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/cpuinfo.txt",
+      "bytes": 5876,
+      "sha256": "80f6b6ad854b593a03c4c0756266629b9e532fafa04e519237c69679a0bfc584",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/manifest.json",
+      "bytes": 26473,
+      "sha256": "3cb647aed62b4f3e8caab9fcdf7aaac8fed5a1e46a010a0d44e84985a5e09206",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/pon_w1_false_trace_reuse_v1",
+      "bytes": 715040,
+      "sha256": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+      "retained_expanded": false,
+      "elf_machine": 62
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/rustc.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/rustc.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/uname.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-full-limb-reuse-v1/uname.stdout",
+      "bytes": 128,
+      "sha256": "2437786a005300b4d25ddff7c65a91bdfe873d85b22086b4a7b863f333197732",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-fuzz-semantics.log",
+      "bytes": 3664,
+      "sha256": "6eb6a84c666e9291ffe00783f08f4dff56c5246bccc05535041ea64eca275af3",
+      "retained_expanded": true
+    },
+    {
+      "name": "w1-tests.log",
+      "bytes": 16932,
+      "sha256": "b34d8b2aa242b3b2d4e7bef60bdd90e27a5539ccfe42bf000ef69ecc69f3a64d",
+      "retained_expanded": true
+    }
+  ],
+  "source_before": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "prospective-merge",
+    "prospective_merge": "28df21f965e0348690836c9c854dab645827a03d",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "source_after": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+    "kind": "prospective-merge",
+    "prospective_merge": "28df21f965e0348690836c9c854dab645827a03d",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "28df21f965e0348690836c9c854dab645827a03d",
+    "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1277471450,
+    "tracked_entries": 12639,
+    "tracked_worktree_verified": true
+  },
+  "manifests": [
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586686618/members/w1-false-trace-reuse-v1/manifest.json",
+      "member": "w1-false-trace-reuse-v1/manifest.json",
+      "schema": "trnm-w1-false-trace-reuse-execution-v1",
+      "result": "PASS",
+      "file_hashes_verified": 12,
+      "observations": 5,
+      "planned_shards": 0,
+      "shards": 0,
+      "manifest_sha256": "9e4f50a68098a36792539f3af912add707e45a66496adc5dd940ddff2ac8b4bf"
+    },
+    {
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586686618/members/w1-full-limb-reuse-v1/manifest.json",
+      "member": "w1-full-limb-reuse-v1/manifest.json",
+      "schema": "trnm-w1-full-limb-reuse-execution-v1",
+      "result": "PASS",
+      "file_hashes_verified": 12,
+      "observations": 5,
+      "planned_shards": 0,
+      "shards": 0,
+      "manifest_sha256": "3cb647aed62b4f3e8caab9fcdf7aaac8fed5a1e46a010a0d44e84985a5e09206"
+    }
+  ],
+  "job_log": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493695693/logs"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "error": null,
+    "bytes": 210436,
+    "sha256": "c6dee0a8a55ae8188fc73e14209136ad739bba2cca1473703d8ad4ec9e487631"
+  },
+  "coverage_status": "ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING",
+  "finished_utc": "2026-11-07T20:05:04.580568+00:00"
+}

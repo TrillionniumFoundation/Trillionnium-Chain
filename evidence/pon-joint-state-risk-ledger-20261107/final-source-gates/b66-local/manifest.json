@@ -1,0 +1,114 @@
+{
+  "files": [
+    {
+      "bytes": 3140,
+      "path": "README.md",
+      "sha256": "32d1b411eede845b8e3990059727d73b991870672855303a5b1045201cf780bb"
+    },
+    {
+      "bytes": 1111,
+      "path": "delivery-summary.json",
+      "sha256": "5600847a6435dc551dcf3f17304893de0ef2c595bd2b85dbf01df42b2c477fb9"
+    },
+    {
+      "bytes": 2871,
+      "path": "native-complete-local-gates/README.md",
+      "sha256": "ecb9c0437a284efd2d09684fb0c735c7ea49fd1eb8ceb68b20ce662a5e1c8844"
+    },
+    {
+      "bytes": 743,
+      "path": "native-complete-local-gates/attempt-01/check-repository.command.json",
+      "sha256": "201b1a9b5f09491205fcb15fb8f9e80a800d063759c089850f92fe217b29ef7f"
+    },
+    {
+      "bytes": 0,
+      "path": "native-complete-local-gates/attempt-01/check-repository.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "path": "native-complete-local-gates/attempt-01/check-repository.stdout.log",
+      "sha256": "a256115d7938fb4f1b9824d2a029a6f303faf37677ca6293a938749f351511f9"
+    },
+    {
+      "bytes": 658,
+      "path": "native-complete-local-gates/attempt-01/preflight.command.json",
+      "sha256": "8a0c8f54b90b2f0af0c36f65c0697ff1a36ff57b6cc73944e8fddf7acfb6b5b9"
+    },
+    {
+      "bytes": 0,
+      "path": "native-complete-local-gates/attempt-01/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 177,
+      "path": "native-complete-local-gates/attempt-01/preflight.stdout.log",
+      "sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304"
+    },
+    {
+      "bytes": 18570,
+      "path": "native-complete-local-gates/attempt-01/state-after.json",
+      "sha256": "1bd16ff3c1e3373c1d31777ae237cd56e2f686ad034ffff8e8acf4c60d3e64f4"
+    },
+    {
+      "bytes": 18570,
+      "path": "native-complete-local-gates/attempt-01/state-before.json",
+      "sha256": "1bd16ff3c1e3373c1d31777ae237cd56e2f686ad034ffff8e8acf4c60d3e64f4"
+    },
+    {
+      "bytes": 677,
+      "path": "native-complete-local-gates/attempt-01/summary.json",
+      "sha256": "77fd6784d35ce2f3d804f0d74aca49352d8c156512f0cc0a7241e6a61ee28474"
+    },
+    {
+      "bytes": 7154,
+      "path": "native-complete-local-gates/audit_markdown_tracked_targets.py",
+      "sha256": "8af1fee5931815dbf32e35ec6af3b37edc4ffb9fd5a4ec8d944b7b8e21f84021"
+    },
+    {
+      "bytes": 663,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/command.json",
+      "sha256": "6cb1c151e027cf4cc635aaacdf5dd94b1cd0692d83196829c45cf0cc0f8e561b"
+    },
+    {
+      "bytes": 3,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/failures.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "bytes": 1694526,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/local-link-targets.json",
+      "sha256": "d825675b77b18391444296f0d2bcd0eff377d7dcdb2edd36c759365d7be79f12"
+    },
+    {
+      "bytes": 73546,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/markdown-sha256-after.json",
+      "sha256": "5f485b3d2ec512cc959ac07733e22d4c6ea33517326295ef2ea2ae0cf782dd4e"
+    },
+    {
+      "bytes": 73546,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/markdown-sha256-before.json",
+      "sha256": "5f485b3d2ec512cc959ac07733e22d4c6ea33517326295ef2ea2ae0cf782dd4e"
+    },
+    {
+      "bytes": 137,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/state-after.json",
+      "sha256": "b299826db7780ddefcc05c2a0b0641c49e865e70b6be7777a041ac55cd84622b"
+    },
+    {
+      "bytes": 137,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/state-before.json",
+      "sha256": "b299826db7780ddefcc05c2a0b0641c49e865e70b6be7777a041ac55cd84622b"
+    },
+    {
+      "bytes": 1378,
+      "path": "native-complete-local-gates/markdown-tracked-attempt-01/summary.json",
+      "sha256": "1d09b335a0c868418a82141bf00deb80561127c27e4337575213dc439fb8487c"
+    }
+  ],
+  "payload_file_count": 21,
+  "physical_file_count_including_manifest": 22,
+  "schema": "physical-payload-sha256-v1",
+  "self_checksum_excluded_to_avoid_recursion": true,
+  "self_manifest": "manifest.json"
+}
