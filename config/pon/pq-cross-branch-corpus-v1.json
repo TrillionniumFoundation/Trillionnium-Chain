@@ -1707,7 +1707,7 @@
     "trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs": "36eb876aa8d72bbfc59bceeeed10442e63b062e6",
     "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "5078b5fba160a98782fae13e3d1d1374b64df75e",
     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "a58a2466717f3b30258d5971ccc0bf90450659ab",
-    "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs": "586942255c345bbeaa049bc5d39f8a2d82d42d53",
+    "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs": "62a93af58c8cd1f49f3a5c8e26d722eac78c5bbd",
     "trillionnium/crates/trnm-pon-node/src/store/growth.rs": "271d5e1ee6bb5acc2e3094786d5101cf183fca40",
     "trillionnium/crates/trnm-pon-node/src/store/growth/difference_tests.rs": "9edb08c63f08c39ae8acdefdb3c5f7608283193d",
     "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs": "e519d4967106a5472ce30197d6fab99a8d40c814",
