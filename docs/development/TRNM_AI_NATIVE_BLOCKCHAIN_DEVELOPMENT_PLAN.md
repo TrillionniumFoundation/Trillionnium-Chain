@@ -112,6 +112,33 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Final integration repair boundaries, 2026-11-08 UTC:**
+The F4 scoped run at e9b7a60b9519e39b792199dc8756fb9d1245bab8 executed all
+431 named controls and retained four errors: three exact CI-step wiring errors
+and one repository JSON error. Its source-before/after bytes remained identical.
+The final repair makes the CI contract require both the historical 23 and current
+10 controls, matches the exact current rustdoc line 359, and stores the single
+original empty failed-command stdout through a closed raw-byte path mapping.
+The 517 original identities and original export-manifest bytes are unchanged.
+
+The original source-inventory generator adds exactly the new current QROM
+observation configuration, increasing its path roster from 1484 to 1485. This
+changes the generated example/test Rust inventory; the native algorithm and
+main-entry source files remain unchanged. Formal source and dependency lockfiles
+also remain unchanged. The current composition pin is refreshed, while every
+historical work-cost pin and its current-source refusal remain intact.
+Later scoped validation and strict compilation identify their exact committed
+source. No result is transferred to a new binary by source comparison alone.
+
+Original hosted business failures remain open. The ML-DSA workflow's original
+API rejection tests succeeded on all four lanes, but its old readback line
+prevented independent-C execution; the offline repair does not claim that
+unexecuted stage. CodeQL exported no API analyses or checks in 39 polls and
+correctly retained its original deadline refusal. Its explicit local-SARIF lane
+has a different branch/upload scope; empty results, trigger policy, permissions
+and the original wait limit are not weakened. The overall disposition remains
+HOLD / NO-GO.
+
 **Six-capability final evidence composition, 2026-11-08 UTC:**
 The [completed observations](../../evidence/chain-six-full-20261108/OBSERVED_RESULTS.md)
 retain the exact F3 native source, every original campaign failure, separate fresh
@@ -119,8 +146,8 @@ supplements and the actual hosted business counterexamples. Twelve hashed archiv
 preserve original output, source guards, resource controls and reconciliation
 receipts. Delivery adds the explicit current-stage version-3 candidate reader while
 retaining its historical version-2 API, an additive current-source QROM observer,
-six required corpus paths and the exact six-name amortized output reader. Existing
-native runtime, formal and fuzz subtrees remain F3-identical; source equality does
+six required corpus paths and the exact six-name amortized output reader. At the F4 observation,
+native, formal and fuzz subtrees are F3-identical; source equality does
 not transfer a test result or grant quantum, timing or production qualification.
 
 The original native evidence includes 496 Cell controls, both retained complete

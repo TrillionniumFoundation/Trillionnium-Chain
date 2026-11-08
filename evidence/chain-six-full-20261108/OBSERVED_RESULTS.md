@@ -12,7 +12,7 @@ The main review is [Chain draft #821](https://github.com/TrillionniumFoundation/
 | Fresh native learning branches | Hepta edf03ecb8a814a0f5e86b1d6a752aeac80b1a978, tree c7588a07d20310059d4016559fa550d397b7eb09. Both operations used the same compiled archive and all 11,212 tracked source files matched before/after. |
 | Earlier successful NoUpdate branch | Hepta 27849cbdcfc0d4afc69764d6c1742af22c41c293, 44.615 seconds; retained with all preceding v3–v7 failures. |
 | Actual Cell material transport | Fixed #807 commit 0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a and executable SHA-256 f4110b8a9126133303fdee34ed586018ab266433f0ee20d5650c8d6968a54427; a separate real device operation. |
-| Later delivery changes | Current report-version readers, strict named-result parsing, explicit source coverage, documentation and original evidence. Native Rust, formal research implementation and locked dependency subtrees remain identical to F3; later static validation records their own commit. |
+| Later delivery changes | Current report-version readers, strict named-result parsing, explicit source coverage, documentation and original evidence. Native Rust implementation source remains identical to F3 except the regenerated example/test inventory, which adds one configuration input. Formal research code and dependency lockfiles are unchanged; later validation records their own commit. |
 
 Source consistency establishes the stated byte relationship. It does not authenticate an independent operator, turn an old execution into a new one, or establish a complete quantum reduction.
 
@@ -87,8 +87,18 @@ The final baseline import follows six successful imports and ends with PUBLIC_RE
 
 Earlier F2 storage-exhaustion, Unknown launch/publication observations, pre-fix red controls, source refusals, integration failures and failed learning operations remain visible. Later source checks or successful operations do not relabel them.
 
-The existing real-model exports have their own original-byte verifiers under the SmolLM and native-learning evidence directories. Those scripts replay identities and original records; they do not rerun training or authenticate an independent operator. Final delivery validation also identifies the exact later source and the unchanged native subtrees.
+The existing real-model exports have their own original-byte verifiers under the SmolLM and native-learning evidence directories. Those scripts replay identities and original records; they do not rerun training or authenticate an independent operator. Final delivery validation also identifies the exact later source relationship, including the generated inventory exception.
 
 ## Separately bound real-model evidence
 
 The original model/Cell materials are in [the SmolLM and Cell evidence](../smollm-same-iteration-20261108/README.md). The original v8 NoUpdate and retained failures are in [native learning evidence](../hepta-real-native-learning-20261108/README.md). The new positive adoption and independent NoUpdate operation are in [native adoption evidence](../hepta-real-native-adoption-20261108/README.md). Their original-byte verifiers validate consistency and replay the unchanged Chain reader; they do not rerun private training or establish independent operation.
+
+## Final integration findings and bounded repairs
+
+The full F4 scoped run at e9b7a60b9519e39b792199dc8756fb9d1245bab8 executed all 24 commands and all 431 named Python controls: 427 passed and four reported errors. Three errors came from the CI contract's old exact step literal, and one came from a real failed command's empty stdout stored with a JSON extension. The CI and repository CLIs refused consistently, and the source-inventory check also required refresh. F4 remains FAIL; its source-before/after records are identical.
+
+The reviewed repairs require the complete historical 23 plus current 10 control blocks, preserve the one empty original as a raw-byte file with a closed exact mapping and unchanged export manifest, and run the original inventory generator. The generated Rust inventory adds only config/pon/w1-qrom-current-source-observation-v1.json, moving from 1484 to 1485 source paths. This generated example/test file is an explicit exception to native-source byte equality; native algorithms and main entry source remain unchanged. Historical work-cost source pins are unchanged.
+
+Four original hosted ML-DSA artifacts establish that the intended compile-fail API test succeeded at line 359, with the required E0308/current-view type rejection. Its reader still required line 353. The one-byte correction is checked against all four original logs and nineteen labelled invalid variants. The original hosted failures remain, and the downstream independent-C stage was not executed in those jobs.
+
+The original CodeQL exporter made 39 polls with no API analyses or CodeQL checks for the exact PR head/merge and refused at its original deadline. The explicit local-SARIF producer has a different branch filter and upload: never; those records cannot satisfy the API export. The original source identity, 16 exporter controls and trigger attribution are retained. No empty-result acceptance, timeout extension or privilege change is introduced.

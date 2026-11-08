@@ -19,6 +19,9 @@ import cell_learning_completion_join as completion
 import cell_learning_iteration_join as iteration
 
 MANIFEST_SHA256 = "28523b53429d8094760ff67206e95139ae4b868dee1ed9ae80b923882027f351"
+RAW_MANIFEST_PATH = "v3/archive-list.stdout.json"
+RAW_STORED_PATH = "v3/archive-list.stdout.json.raw"
+EMPTY_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 SOURCE = "27849cbdcfc0d4afc69764d6c1742af22c41c293"
 TREE = "af50e58bf382891fb41861810cbf5425ca0da5a9"
 
@@ -34,6 +37,38 @@ def sha(raw):
 
 def read(name):
     return json.loads((ROOT / name).read_bytes())
+
+
+def raw_storage_paths(manifest):
+    def unique_fields(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, "duplicate raw storage field")
+            result[key] = value
+        return result
+
+    mapping_path = ROOT / "original-storage-map-v1.json"
+    require(mapping_path.is_file() and not mapping_path.is_symlink(),
+            "missing raw storage mapping")
+    mapping = json.loads(mapping_path.read_bytes(), object_pairs_hook=unique_fields)
+    expected = {
+        "schema": "hepta-native-original-raw-storage-v1",
+        "export_manifest_sha256": MANIFEST_SHA256,
+        "mappings": [{"manifest_path": RAW_MANIFEST_PATH, "stored_path": RAW_STORED_PATH,
+                      "bytes": 0, "sha256": EMPTY_SHA256}],
+    }
+    require(mapping == expected and type(mapping["mappings"][0]["bytes"]) is int,
+            "raw storage mapping drift")
+    rows = [item for item in manifest["files"] if item["path"] == RAW_MANIFEST_PATH]
+    require(len(rows) == 1 and type(rows[0]["bytes"]) is int and rows[0]["bytes"] == 0
+            and rows[0]["sha256"] == EMPTY_SHA256, "raw storage manifest row drift")
+    original_path = ROOT / RAW_MANIFEST_PATH
+    require(not original_path.exists() and not original_path.is_symlink(),
+            "ambiguous original raw storage")
+    stored_path = ROOT / RAW_STORED_PATH
+    require(stored_path.is_file() and not stored_path.is_symlink()
+            and stored_path.resolve() == stored_path, "missing or aliased raw original")
+    return {RAW_MANIFEST_PATH: stored_path}
 
 
 def checkpoint(run, count):
@@ -93,11 +128,12 @@ def main():
     require(sha((ROOT / "export-manifest.json").read_bytes()) == MANIFEST_SHA256,
             "original export manifest changed")
     manifest = read("export-manifest.json")
+    storage_paths = raw_storage_paths(manifest)
     originals = {}
     for item in manifest["files"]:
         relative = Path(item["path"])
         require(not relative.is_absolute() and ".." not in relative.parts, "path escape")
-        path = ROOT / relative
+        path = storage_paths.get(item["path"], ROOT / relative)
         require(path.is_file() and not path.is_symlink(), "missing original")
         raw = path.read_bytes()
         require(len(raw) == item["bytes"] and sha(raw) == item["sha256"], "changed original " + str(relative))

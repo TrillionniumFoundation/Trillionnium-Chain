@@ -148,6 +148,18 @@ identity, all full model output tensors, real worker counter/PID recovery and
 the unchanged Chain reader. It does not rerun training. Derived reader inputs,
 commands and outputs are in `joins/`; the original material remains unchanged.
 
+The v3 archive-list command failed before the model test and produced an empty
+stdout. Its original logical path remains `v3/archive-list.stdout.json` in the
+unchanged export manifest; its exact zero bytes are stored as
+[`v3/archive-list.stdout.json.raw`](v3/archive-list.stdout.json.raw). The closed,
+single-entry [storage map](original-storage-map-v1.json) binds that logical path
+to the raw copy, the original manifest SHA-256, its original length and its
+original SHA-256. The verifier rejects extra or changed mappings, a coexisting
+logical-path file, missing or aliased raw material, and changed original bytes.
+The other 516 original files retain their original storage paths. All 517
+original identities and the v3 failure remain unchanged; this is a storage
+representation correction, with no exception to the repository JSON gate.
+
 The public evidence contains original bounded run/worker/owner records, this
 verifier and outer orchestration. It contains no private Hepta source patch,
 checkout, compiled private test archive, production credentials or full model

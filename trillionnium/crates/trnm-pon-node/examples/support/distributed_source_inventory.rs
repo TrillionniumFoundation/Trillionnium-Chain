@@ -337,6 +337,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/w1-qrom-current-source-observation-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-current-source-observation-v1.json"
+        )),
+    ),
+    (
         "config/pon/w1-qrom-implementation-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
