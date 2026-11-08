@@ -1,0 +1,71 @@
+[
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "fmt",
+      "--all"
+    ],
+    "returncode": 0,
+    "seconds": 0.5770819187164307
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.1975243091583252
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--lib"
+    ],
+    "returncode": 0,
+    "seconds": 25.273897409439087
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--test",
+      "schedule_proof"
+    ],
+    "returncode": 0,
+    "seconds": 21.076735019683838
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "seconds": 20.96596121788025
+  },
+  {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "build",
+      "--offline",
+      "--locked",
+      "--release",
+      "--examples"
+    ],
+    "returncode": 0,
+    "seconds": 78.65960764884949
+  }
+]

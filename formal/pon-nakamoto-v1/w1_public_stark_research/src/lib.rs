@@ -8,3 +8,5 @@ pub mod proof_wire;
 pub mod public;
 pub mod sha_air;
 pub mod sha_plan;
+
+pub mod sha_schedule_air;

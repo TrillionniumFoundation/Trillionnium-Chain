@@ -1,0 +1,12 @@
+This research crate's src/sha_schedule_air.rs adapts portions of Plonky3
+p3-sha256-air version 0.8.0, published with license MIT OR Apache-2.0.
+Upstream: https://github.com/Plonky3/Plonky3
+The Apache-2.0 option is used for this adaptation; its license is included
+in LICENSE-PLONKY3-APACHE-2.0.
+
+Changes: the canonical public message schedule is independently reconstructed
+into preprocessing, corresponding witness columns and constraints are omitted,
+and the remaining official compression column layout and formulas are adapted
+into the existing complete-public-W1 IV/chaining/output wrapper.
+Exact upstream source hashes and the relation argument are recorded in
+PUBLIC_SCHEDULE_BACKEND.md.
