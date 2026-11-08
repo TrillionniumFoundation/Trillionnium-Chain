@@ -1,4 +1,4 @@
-//! Unexecuted unit-test candidate. MockOwner is a TRUSTED-BOUNDARY TEST DOUBLE.
+//! Unit-test fixtures. MockOwner is a TRUSTED-BOUNDARY TEST DOUBLE.
 //! These tests establish no cryptographic proof, provider freshness or real payment.
 use super::*;
 use crate::native_budget::{NativeBudgetConfigV1, NativeBudgetStoreV1, NativeFundingObservationV1};
@@ -72,6 +72,7 @@ struct MockOwner {
     paid: bool,
     verify_calls: usize,
     payment_observations: usize,
+    claim_calls: usize,
     cancel_during_verify: Option<(PathBuf, Hash)>,
     task_owners: BTreeMap<Hash, (Hash, Hash)>,
 }
@@ -99,6 +100,7 @@ impl MockOwner {
             paid: false,
             verify_calls: 0,
             payment_observations: 0,
+            claim_calls: 0,
             cancel_during_verify: None,
             task_owners: BTreeMap::new(),
         }
@@ -138,6 +140,7 @@ impl NativeFundingOwnerV1 for MockOwner {
 }
 impl NativeGenerationOwnerV2 for MockOwner {
     fn claim_generation_task(&mut self, s: &GenerationStatementV2, journal: Hash) -> Result<()> {
+        self.claim_calls += 1;
         let expected = (s.id()?, journal);
         if let Some(old) = self.task_owners.get(&s.task) {
             require(old == &expected, "UNIT_TEST_TASK_OWNED_BY_ANOTHER_JOURNAL")?;
@@ -479,4 +482,62 @@ fn cancel_before_dispatch_is_terminal_after_cold_reopen_without_repinning_funds(
     ));
     assert_eq!(store.readback(id).unwrap(), prior);
     assert!(store.bind_job(id, job(&s)).is_err());
+}
+
+#[test]
+fn restored_fixed_size_blobs_refuse_before_owner_callbacks_and_cold_reopen() {
+    for (table, field, expected) in [
+        (
+            "native_generation_meta_v2",
+            "journal",
+            "GENERATION_JOURNAL_IDENTITY",
+        ),
+        (
+            "native_generation_meta_v2",
+            "root",
+            "GENERATION_JOURNAL_ROOT_SIZE",
+        ),
+        (
+            "native_generation_events_v2",
+            "root",
+            "GENERATION_JOURNAL_ROOT_SIZE",
+        ),
+    ] {
+        for bytes in [0, 31, 33, 16 * 1024 * 1024] {
+            let d = tempfile::tempdir().unwrap();
+            let path = d.path().join("restored.sqlite");
+            let s = statement();
+            let mut o = MockOwner::new(&s);
+            let mut store = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+            let id = store.prepare(&mut o, s).unwrap();
+            let claims = o.claim_calls;
+            let corrupt = Connection::open(&path).unwrap();
+            // A copied SQLite file need not have honored its stored CHECKs.
+            corrupt
+                .pragma_update(None, "ignore_check_constraints", true)
+                .unwrap();
+            corrupt
+                .execute(&format!("UPDATE {table} SET {field}=zeroblob(?1)"), [bytes])
+                .unwrap();
+            drop(corrupt);
+            assert!(store
+                .recovery_checkpoint_v3()
+                .unwrap_err()
+                .to_string()
+                .contains(expected));
+            assert!(store
+                .begin(&mut o, id)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains(expected));
+            assert_eq!(o.claim_calls, claims);
+            drop(store);
+            assert!(NativeGenerationStoreV2::open(&path, cfg())
+                .err()
+                .unwrap()
+                .to_string()
+                .contains(expected));
+        }
+    }
 }
