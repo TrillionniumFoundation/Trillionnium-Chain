@@ -1,0 +1,42 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/run_new_pair.py",
+      "--source",
+      "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/source",
+      "--target",
+      "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/target",
+      "--output",
+      "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/native-02",
+      "--chain-sha",
+      "bb026697a972521009bc133ae6ed2b653e18e931"
+    ],
+    "created_unix_ms": 1794160761938,
+    "cwd": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200",
+    "env_keys": [
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/usr/bin/python3",
+    "execution_mode": "operator",
+    "host": "rog",
+    "id": "1a1bc509c52-138b0-19e",
+    "idempotency_key": "hepta-36d5-bb026-original39plus3-native-3a200-02",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1bc509c52-138b0-19e",
+    "request_digest": "3e044bca2558bf7521f712c1f5217a08cafadcff1d13da5e88d75584ff18f74c",
+    "request_fingerprint": 4468780061840424821,
+    "ssh_target": "rog-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

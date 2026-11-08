@@ -1,12 +1,16 @@
 {
   "candidate_head": "cbb5d7b63754628d418e860cea194d4beb084c66",
   "command": [
-    "python",
-    "-B",
-    "scripts/ci/check_repository.py"
+    "bash",
+    "scripts/ci/check_canonical_development_plan.sh"
   ],
   "complete_raw_log_retained": false,
   "exit_code": 1,
+  "failing_child": [
+    "python3",
+    "scripts/ci/test_repository.py"
+  ],
+  "index_correction": "The frozen bb026697 evidence index attributed the composite failure to the structural checker. The observed failure was its following test_repository.py child inside the canonical-plan wrapper. The structural report itself succeeded; the wrapper still exited 1 and is not a passing gate.",
   "observation_kind": "tool-output-summary-not-complete-raw-log",
   "qualification": "NOT_PASSED",
   "schema": "trnm-local-check-observation-v1",
@@ -17,6 +21,10 @@
     "status": "FAILED"
   },
   "source_state": "dirty-candidate",
+  "structural_child": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
   "structural_report": {
     "local_links": 5526,
     "result": "PASS",

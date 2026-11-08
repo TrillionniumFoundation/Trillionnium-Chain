@@ -103,6 +103,39 @@ fixture. The structural report completed, but the whole command failed and is
 not a successful repository gate. A fresh final-source run must complete in an
 environment with sufficient space.
 
+## Fresh observations on the frozen pair
+
+The [Cell final-source record](final-source-cell/README.md) and
+[Hepta final-source record](final-source-hepta/README.md) retain new executions
+for Chain `bb026697a972521009bc133ae6ed2b653e18e931` and Hepta
+`36d5eff44f4071bb1f250b1c7706dc690cf0a875`. They do not substitute the input
+commits' results. Cell ran 496 native cases and the five named Python suites
+ran 131 methods. Hepta ran the original 39+3 exact names with fresh JUnit IDs,
+strict source observations and actual 8 GiB / 2 CPU readbacks.
+
+The Hepta archive preserves build-01 exit 2, native-01 source refusal exit 99,
+and the successful native-02 recovery. Only the supported Nextest output-store
+location moved outside source; the original profile and ordinary 60-second
+watchdog were unchanged. The reported 5,400-second supervisor request is not
+asserted to equal systemd's observed infinite RuntimeMax. Actual executable and
+provider load closure remains unproved. These local component rosters are
+separate from the original 32-command and 17-command Chain campaigns.
+
+## Original release inventory refusal remains visible
+
+The original 32-command runner rejected its `release-all-targets` readback even
+though Cargo exited 0 and its sole Unix libtest summary is 55 passed, with no
+failures, ignores, measured cases or filtered cases. Its immutable predicate
+requires exactly 52. The [roster conservation readback](release-roster-conservation/README.md)
+proves all original 52 names appear exactly once and the additional three are
+exactly the complete-content controls already present in `7e044b6`. The release
+crate, original runner and old manifest are byte-identical between `7e044b6`
+and the tested `bb026697` source. The 55-item observation is Unix-specific.
+
+This readback does not alter the original runner or 52-item manifest and does
+not relabel the original 32-command result PASS. Native test outcomes, the old
+collector refusal and complete campaign outcomes are separate facts.
+
 ## Acceptance boundaries
 
 | Gate | What this source contributes | Evidence still required |

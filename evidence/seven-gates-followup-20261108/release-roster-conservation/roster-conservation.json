@@ -1,0 +1,1201 @@
+{
+  "schema": "trnm-release-roster-conservation-evidence-v1",
+  "created_utc": "2026-11-08T18:16:24.731515+00:00",
+  "scope": "Read-only reconciliation of retained stdout and exact source; not a new native run or qualification decision.",
+  "source": {
+    "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+    "baseline_head": "7e044b65454f4c9ea505591727332acffb33e7e5",
+    "crate_trees": {
+      "7e044b65454f4c9ea505591727332acffb33e7e5": "326e561cfdf894b64c8115b538c78809278a80a6",
+      "bb026697a972521009bc133ae6ed2b653e18e931": "326e561cfdf894b64c8115b538c78809278a80a6"
+    },
+    "whole_crate_runner_and_manifest_unchanged": true,
+    "checkout_status_before": "",
+    "checkout_status_after": ""
+  },
+  "native_stdout": {
+    "original_path": "/workspace/scratch/3a200666069f/results/release-bb026697.stdout.log",
+    "retained_path": "release-bb026697.stdout.log",
+    "bytes": 12034,
+    "sha256": "ae0c50c82ed0682bb5ed1fc81620283d68954839f95be03d15a5b52302aabb2a",
+    "libtest_summary_fields": [
+      "passed",
+      "failed",
+      "ignored",
+      "measured",
+      "filtered_out"
+    ],
+    "libtest_summaries": [
+      [
+        55,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "parsed_result_rows": 55,
+    "unique_result_names": 55,
+    "duplicate_names": [],
+    "all_observed_outcomes": [
+      "ok"
+    ],
+    "passed_names": [
+      "content_v1::tests::complete_artifact_and_all_metadata_enter_the_strong_commitment",
+      "content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset",
+      "content_v1::tests::short_long_wrong_locator_and_old_digest_wrapper_are_refused",
+      "pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum",
+      "pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest",
+      "pq_release::tests::activation_requires_live_current_generation_manifest",
+      "pq_release::tests::actual_mldsa_quorum_advances_only_verified_role",
+      "pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_failed_or_missing_callback_never_retains_an_observation",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_public_accept_verification_and_one_checkpoint_advance",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_signature_failure_before_owner_time_failure",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_v0_content_and_exact_signed_message_binding",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_observation_is_bound_to_root_role_message_and_signature_bytes",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_still_checks_current_owner_state_after_valid_signature",
+      "pq_release::tests::current_tests::current_activation_rechecks_publication_expiry_and_replacement",
+      "pq_release::tests::current_tests::current_bundle_check_requires_exact_role_content_and_independent_checkpoint",
+      "pq_release::tests::current_tests::current_check_after_rotation_and_recovery_requires_current_publisher_quorum",
+      "pq_release::tests::current_tests::current_check_rejects_replaced_content_and_rolled_back_owner_against_future_frontier",
+      "pq_release::tests::current_tests::current_check_uses_live_expiry_and_committed_clock_floor_without_mutating_it",
+      "pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum",
+      "pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement",
+      "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
+      "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
+      "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+      "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+      "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+      "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+      "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+      "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+      "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+      "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+      "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+      "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state",
+      "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
+      "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_recovery_rechecks_signatures_and_current_generation",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_require_current_role_membership_and_exact_spki",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_rotation_replaces_keys_only_after_both_quorums",
+      "pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures",
+      "pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation",
+      "pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority",
+      "pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint",
+      "pq_release::tests::validated_root_tests::validated_root_keeps_public_encoding_and_owner_time_distinct",
+      "pq_release::tests::validated_root_tests::validated_root_rotation_keeps_clock_key_and_sequence_rejection_order",
+      "pq_release::tests::validated_root_tests::validated_root_rotation_retains_both_quorums_and_exact_checkpoint_message",
+      "pq_release::tests::validated_root_tests::validated_root_still_checks_all_keys_roles_and_original_error_precedence",
+      "tests::exact_bundle_and_sbom_are_verified",
+      "tests::independent_build_comparison_uses_outputs_not_builder_identity"
+    ],
+    "process_exit_code_reported_by_parent": 0,
+    "process_exit_code_independently_proven_by_this_stdout": false,
+    "source_and_provider_identity_independently_proven_by_this_stdout": false
+  },
+  "original_contract": {
+    "runner": "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+    "manifest": "config/pon/pq-initial-root-material-required-tests-v1.json",
+    "expected_controls": {
+      "complete_release": 52,
+      "initial_root_material": 6,
+      "original_release": 37,
+      "quorum_preflight": 9
+    },
+    "original_partitions": {
+      "original_release": [
+        "pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum",
+        "pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest",
+        "pq_release::tests::activation_requires_live_current_generation_manifest",
+        "pq_release::tests::actual_mldsa_quorum_advances_only_verified_role",
+        "pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys",
+        "pq_release::tests::bundle_quorum_tests::bundle_quorum_failed_or_missing_callback_never_retains_an_observation",
+        "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_public_accept_verification_and_one_checkpoint_advance",
+        "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_signature_failure_before_owner_time_failure",
+        "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_v0_content_and_exact_signed_message_binding",
+        "pq_release::tests::bundle_quorum_tests::bundle_quorum_observation_is_bound_to_root_role_message_and_signature_bytes",
+        "pq_release::tests::bundle_quorum_tests::bundle_quorum_still_checks_current_owner_state_after_valid_signature",
+        "pq_release::tests::current_tests::current_activation_rechecks_publication_expiry_and_replacement",
+        "pq_release::tests::current_tests::current_bundle_check_requires_exact_role_content_and_independent_checkpoint",
+        "pq_release::tests::current_tests::current_check_after_rotation_and_recovery_requires_current_publisher_quorum",
+        "pq_release::tests::current_tests::current_check_rejects_replaced_content_and_rolled_back_owner_against_future_frontier",
+        "pq_release::tests::current_tests::current_check_uses_live_expiry_and_committed_clock_floor_without_mutating_it",
+        "pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum",
+        "pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks",
+        "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
+        "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
+        "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+        "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
+        "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
+        "pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature",
+        "pq_release::tests::retained_verifier_tests::retained_verifiers_recovery_rechecks_signatures_and_current_generation",
+        "pq_release::tests::retained_verifier_tests::retained_verifiers_require_current_role_membership_and_exact_spki",
+        "pq_release::tests::retained_verifier_tests::retained_verifiers_rotation_replaces_keys_only_after_both_quorums",
+        "pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures",
+        "pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation",
+        "pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority",
+        "pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint",
+        "pq_release::tests::validated_root_tests::validated_root_keeps_public_encoding_and_owner_time_distinct",
+        "pq_release::tests::validated_root_tests::validated_root_rotation_keeps_clock_key_and_sequence_rejection_order",
+        "pq_release::tests::validated_root_tests::validated_root_rotation_retains_both_quorums_and_exact_checkpoint_message",
+        "pq_release::tests::validated_root_tests::validated_root_still_checks_all_keys_roles_and_original_error_precedence",
+        "tests::exact_bundle_and_sbom_are_verified",
+        "tests::independent_build_comparison_uses_outputs_not_builder_identity"
+      ],
+      "initial_root_material": [
+        "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+        "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+        "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+        "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+        "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+        "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement"
+      ],
+      "quorum_preflight": [
+        "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+        "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+        "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+        "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+        "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+        "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+        "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+        "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+        "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state"
+      ]
+    },
+    "complete_release_tests": [
+      "pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum",
+      "pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest",
+      "pq_release::tests::activation_requires_live_current_generation_manifest",
+      "pq_release::tests::actual_mldsa_quorum_advances_only_verified_role",
+      "pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_failed_or_missing_callback_never_retains_an_observation",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_public_accept_verification_and_one_checkpoint_advance",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_signature_failure_before_owner_time_failure",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_v0_content_and_exact_signed_message_binding",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_observation_is_bound_to_root_role_message_and_signature_bytes",
+      "pq_release::tests::bundle_quorum_tests::bundle_quorum_still_checks_current_owner_state_after_valid_signature",
+      "pq_release::tests::current_tests::current_activation_rechecks_publication_expiry_and_replacement",
+      "pq_release::tests::current_tests::current_bundle_check_requires_exact_role_content_and_independent_checkpoint",
+      "pq_release::tests::current_tests::current_check_after_rotation_and_recovery_requires_current_publisher_quorum",
+      "pq_release::tests::current_tests::current_check_rejects_replaced_content_and_rolled_back_owner_against_future_frontier",
+      "pq_release::tests::current_tests::current_check_uses_live_expiry_and_committed_clock_floor_without_mutating_it",
+      "pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum",
+      "pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+      "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement",
+      "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
+      "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
+      "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+      "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+      "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+      "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+      "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+      "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+      "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+      "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+      "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+      "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state",
+      "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
+      "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_recovery_rechecks_signatures_and_current_generation",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_require_current_role_membership_and_exact_spki",
+      "pq_release::tests::retained_verifier_tests::retained_verifiers_rotation_replaces_keys_only_after_both_quorums",
+      "pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures",
+      "pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation",
+      "pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority",
+      "pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint",
+      "pq_release::tests::validated_root_tests::validated_root_keeps_public_encoding_and_owner_time_distinct",
+      "pq_release::tests::validated_root_tests::validated_root_rotation_keeps_clock_key_and_sequence_rejection_order",
+      "pq_release::tests::validated_root_tests::validated_root_rotation_retains_both_quorums_and_exact_checkpoint_message",
+      "pq_release::tests::validated_root_tests::validated_root_still_checks_all_keys_roles_and_original_error_precedence",
+      "tests::exact_bundle_and_sbom_are_verified",
+      "tests::independent_build_comparison_uses_outputs_not_builder_identity"
+    ],
+    "immutable_exact_52_predicate_accepts_current_stdout": false,
+    "preserved_rejection": "raw release libtest execution differs from exact 52 passed, zero ignored",
+    "original_32_campaign_pass": false,
+    "original_failure_must_be_retained": true,
+    "runner_edited": false,
+    "manifest_edited": false
+  },
+  "conservation": {
+    "equation": "55 = 37 + 6 + 9 + 3 = original 52 + pre-existing content 3",
+    "original_52_present": 52,
+    "extras": [
+      "content_v1::tests::complete_artifact_and_all_metadata_enter_the_strong_commitment",
+      "content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset",
+      "content_v1::tests::short_long_wrong_locator_and_old_digest_wrapper_are_refused"
+    ],
+    "missing_original": [],
+    "unexpected_extras": [],
+    "original_extra_overlap": [],
+    "native_roster_equals_unix_source_roster": true,
+    "set_conservation_pass": true
+  },
+  "extra_origin": {
+    "introduction_commit": "155c8e3a8c188ba113accb4079e9ad344d5c63a1",
+    "introduction_parent": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+    "introduction_commit_text": "commit 155c8e3a8c188ba113accb4079e9ad344d5c63a1\nAuthor:     Qian QI <102159240+ProfHepta@users.noreply.github.com>\nAuthorDate: Sun Nov 8 14:10:48 2026 +0800\nCommit:     Qian QI <102159240+ProfHepta@users.noreply.github.com>\nCommitDate: Sun Nov 8 14:10:48 2026 +0800\n\n    feat(security): bind CPQ1 authorization to complete content\n    \n    Add versioned SHA-512 commitments over actual state, release artifacts, model payloads and direct dependencies, and migration material. Join the full claim to pinned ML-DSA candidate verification without granting production authority.\n    \n    Preserve legacy locators and all HOLD/NO-GO qualification boundaries. Include exact-source native CI, independent framing vectors, source pins, and the independent fuzz lock dependency.\n",
+    "path_history": "155c8e3a8c188ba113accb4079e9ad344d5c63a1 12e510b211110d93d9ead07e02c07a1eecc28ae9 feat(security): bind CPQ1 authorization to complete content\n",
+    "path": "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs",
+    "path_absent_at_introduction_parent": true,
+    "introduction_is_ancestor_of_baseline": true,
+    "baseline_is_ancestor_of_final": true,
+    "already_present_at_baseline": true,
+    "extra_test_blob_unchanged_since_introduction": true,
+    "not_introduced_by_final_followup": true
+  },
+  "source_roster": {
+    "method": "Manual module-registration review plus direct #[test] source enumeration, reconciled against raw native names; no Cargo command.",
+    "platform": "Unix",
+    "unix_only_tests": [
+      "content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset"
+    ],
+    "per_module": [
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "module": "tests",
+        "test_count": 2
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs",
+        "module": "content_v1::tests",
+        "test_count": 3
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "module": "pq_release::tests",
+        "test_count": 16
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        "module": "pq_release::tests::current_tests",
+        "test_count": 5
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+        "module": "pq_release::tests::validated_root_tests",
+        "test_count": 4
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "module": "pq_release::tests::bundle_quorum_tests",
+        "test_count": 6
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+        "module": "pq_release::tests::retained_verifier_tests",
+        "test_count": 4
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "module": "pq_release::tests::initial_root_material_tests",
+        "test_count": 6
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "module": "pq_release::tests::quorum_preflight_tests",
+        "test_count": 9
+      }
+    ],
+    "all_rust_test_attributes_in_crate": 55,
+    "complete_unix_test_rows": [
+      {
+        "name": "content_v1::tests::complete_artifact_and_all_metadata_enter_the_strong_commitment",
+        "path": "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs",
+        "line": 35,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "content_v1::tests::retained_file_reads_exact_bytes_and_refuses_partial_offset",
+        "path": "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs",
+        "line": 96,
+        "attributes": [
+          "#[test]",
+          "#[cfg(unix)]"
+        ],
+        "platform_condition": [
+          "unix"
+        ]
+      },
+      {
+        "name": "content_v1::tests::short_long_wrong_locator_and_old_digest_wrapper_are_refused",
+        "path": "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs",
+        "line": 70,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 771,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 272,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::activation_requires_live_current_generation_manifest",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 718,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::actual_mldsa_quorum_advances_only_verified_role",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 102,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 119,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bundle_quorum_tests::bundle_quorum_failed_or_missing_callback_never_retains_an_observation",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "line": 159,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_public_accept_verification_and_one_checkpoint_advance",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "line": 185,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_signature_failure_before_owner_time_failure",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "line": 31,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_v0_content_and_exact_signed_message_binding",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "line": 58,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bundle_quorum_tests::bundle_quorum_observation_is_bound_to_root_role_message_and_signature_bytes",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "line": 129,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::bundle_quorum_tests::bundle_quorum_still_checks_current_owner_state_after_valid_signature",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+        "line": 95,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::current_tests::current_activation_rechecks_publication_expiry_and_replacement",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        "line": 191,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::current_tests::current_bundle_check_requires_exact_role_content_and_independent_checkpoint",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        "line": 4,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::current_tests::current_check_after_rotation_and_recovery_requires_current_publisher_quorum",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        "line": 72,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::current_tests::current_check_rejects_replaced_content_and_rolled_back_owner_against_future_frontier",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        "line": 138,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::current_tests::current_check_uses_live_expiry_and_committed_clock_floor_without_mutating_it",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        "line": 42,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 142,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 459,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "line": 23,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "line": 105,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "line": 196,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "line": 149,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "line": 291,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+        "line": 239,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 614,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 241,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 657,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 243,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 134,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 103,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 118,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 180,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 204,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 223,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 296,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+        "line": 328,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 490,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 557,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+        "line": 4,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::retained_verifier_tests::retained_verifiers_recovery_rechecks_signatures_and_current_generation",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+        "line": 135,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::retained_verifier_tests::retained_verifiers_require_current_role_membership_and_exact_spki",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+        "line": 38,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::retained_verifier_tests::retained_verifiers_rotation_replaces_keys_only_after_both_quorums",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+        "line": 84,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 343,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 376,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 307,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 182,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::validated_root_tests::validated_root_keeps_public_encoding_and_owner_time_distinct",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+        "line": 4,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::validated_root_tests::validated_root_rotation_keeps_clock_key_and_sequence_rejection_order",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+        "line": 104,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::validated_root_tests::validated_root_rotation_retains_both_quorums_and_exact_checkpoint_message",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+        "line": 68,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "pq_release::tests::validated_root_tests::validated_root_still_checks_all_keys_roles_and_original_error_precedence",
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+        "line": 27,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "tests::exact_bundle_and_sbom_are_verified",
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "line": 588,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      },
+      {
+        "name": "tests::independent_build_comparison_uses_outputs_not_builder_identity",
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "line": 600,
+        "attributes": [
+          "#[test]"
+        ],
+        "platform_condition": [
+          "all"
+        ]
+      }
+    ],
+    "module_registrations": [
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "line": 9,
+        "text": "pub mod content_v1;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "line": 10,
+        "text": "pub mod pq_release;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "line": 508,
+        "text": "#[cfg(test)]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+        "line": 509,
+        "text": "mod tests {"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+        "line": 156,
+        "text": "#[cfg(test)]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+        "line": 157,
+        "text": "mod tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "line": 31,
+        "text": "mod bundle_quorum;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "line": 34,
+        "text": "mod initial_root_material;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "line": 825,
+        "text": "#[cfg(test)]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+        "line": 826,
+        "text": "mod tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 7,
+        "text": "#[path = \"current_tests.rs\"]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 8,
+        "text": "mod current_tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 10,
+        "text": "#[path = \"validated_root_tests.rs\"]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 11,
+        "text": "mod validated_root_tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 13,
+        "text": "#[path = \"bundle_quorum_tests.rs\"]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 14,
+        "text": "mod bundle_quorum_tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 16,
+        "text": "#[path = \"retained_verifier_tests.rs\"]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 17,
+        "text": "mod retained_verifier_tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 19,
+        "text": "#[path = \"initial_root_material_tests.rs\"]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 20,
+        "text": "mod initial_root_material_tests;"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 22,
+        "text": "#[path = \"quorum_preflight_tests.rs\"]"
+      },
+      {
+        "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+        "line": 23,
+        "text": "mod quorum_preflight_tests;"
+      }
+    ],
+    "static_enumeration_limit": "This is an enumeration of the reviewed direct test definitions, not a general Rust macro/cfg evaluator; the observed native roster supplies the actual command result."
+  },
+  "file_identities": [
+    {
+      "path": "config/pon/pq-initial-root-material-required-tests-v1.json",
+      "bytes": 11991,
+      "sha256": "a359086820e876a3806acdd1225689ff072ebfe10d455ac3a96d8d7060680693",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "0c14ebf5c70fb0f7ee823d324897e12fb41820c8",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "0c14ebf5c70fb0f7ee823d324897e12fb41820c8"
+      }
+    },
+    {
+      "path": "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+      "bytes": 25774,
+      "sha256": "d81437a1cef461666b9103cc3f9e8f8ab0c67a90903b5802f582d2c52cd82710",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "1e1955540157c0b5378d3ab708199fa81678933e",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "1e1955540157c0b5378d3ab708199fa81678933e"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "bytes": 523,
+      "sha256": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "d3ca6d017b48fe5b99c1b360c136a4fabe294b55",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "d3ca6d017b48fe5b99c1b360c136a4fabe294b55"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/README.md",
+      "bytes": 541,
+      "sha256": "8446f6eec10c187aa1bc565437d5f73a16bd62da3846bd4458de38aed0e3e5ea",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "e09e3cfa25e09092a6c07b65ee7f017d8a6b7946",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "e09e3cfa25e09092a6c07b65ee7f017d8a6b7946"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+      "bytes": 5453,
+      "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs",
+      "bytes": 3992,
+      "sha256": "8661b99da563148371ef16f470ab6f112390755ebcf0fc09372e517fb3f100f1",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "0e850dd1e82a8b0ec56d62eab554dd01cf9cfe77",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "0e850dd1e82a8b0ec56d62eab554dd01cf9cfe77"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+      "bytes": 21101,
+      "sha256": "0988aaf2e07828529fd8bb22f52c6ecb53e0390d468af59f9418ae26ad173899",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "bf8395a48b3ed1236a3f4b0e72978356e08e34fc",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "bf8395a48b3ed1236a3f4b0e72978356e08e34fc"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "bytes": 32181,
+      "sha256": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs",
+      "bytes": 1732,
+      "sha256": "abfb3a53626e4f22c765490e4548474cdd5470ab6eeb5d536a6f4def18cb732f",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "d1d010efcc81c70659031b530f754d9451493b7d",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "d1d010efcc81c70659031b530f754d9451493b7d"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+      "bytes": 7081,
+      "sha256": "5659681625a0a3700372e60cf976a7abc8c89c02fb4754cd94e99857861c63c8",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "12588e1f41e270e181dddeeb32cf741d6aea1fe7",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "12588e1f41e270e181dddeeb32cf741d6aea1fe7"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+      "bytes": 7988,
+      "sha256": "fd42c630b92921e87e523466fc639c060ea27155734c8c8489b4f616203eaa1a",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "2e4adc88d48ae0597582a8898818d9b0b97b6a0b",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "2e4adc88d48ae0597582a8898818d9b0b97b6a0b"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs",
+      "bytes": 4281,
+      "sha256": "7f8db58272376287659bce0beb6386dd3070bc646190f11afffc70a8c8671c49",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "d1e812ca5cb0df07e51233005cfd503daeb67e4a",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "d1e812ca5cb0df07e51233005cfd503daeb67e4a"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+      "bytes": 12574,
+      "sha256": "2a3e912d54c4329b85e28c845d8214beb56cba5698ba959a6f4e8ea635082385",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "6ba9115a5a5f40273d039404150165a51dd55eec",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "6ba9115a5a5f40273d039404150165a51dd55eec"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs",
+      "bytes": 13012,
+      "sha256": "0791d81f9f0059ca5672d6c042dd9c9bb7d7f2b5403dafce35631bd0c3c1e34b",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "f8e61f0f8d233b1a0d7729d10155d89cd739d979",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "f8e61f0f8d233b1a0d7729d10155d89cd739d979"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+      "bytes": 8702,
+      "sha256": "98c02700b655abcadb3e27233bd288cc4c1d759999b3da6a51e90ce366b586e1",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "4331a217b34de4b1ad03f75591b446922aa12b10",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "4331a217b34de4b1ad03f75591b446922aa12b10"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+      "bytes": 30314,
+      "sha256": "d07034b3a674a687135aa344e23ab8644dacefd9e1e587fbe76c07150ab0df6e",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "ab2302235dd09d62d7e60a34b7b53163a5224be2",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "ab2302235dd09d62d7e60a34b7b53163a5224be2"
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+      "bytes": 4807,
+      "sha256": "260e8f0d2e659a3066b4c48346a9a1035ffbfae6a3f1b3061136005a54d0f04e",
+      "git_blobs": {
+        "7e044b65454f4c9ea505591727332acffb33e7e5": "cc39b708545fdb0d28b86ea1e0ad113f323a2833",
+        "bb026697a972521009bc133ae6ed2b653e18e931": "cc39b708545fdb0d28b86ea1e0ad113f323a2833"
+      }
+    }
+  ],
+  "qualification": {
+    "overall": "HOLD",
+    "original_32_campaign_pass": false,
+    "no_cargo_rerun": true,
+    "new_native_execution_claimed": false,
+    "whole_chain_pq_qualified": false,
+    "payment_or_wan_qualified": false
+  }
+}
