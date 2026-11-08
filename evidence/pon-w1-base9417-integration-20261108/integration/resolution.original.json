@@ -1,0 +1,67 @@
+{
+  "added_required_from_c7": [
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs"
+  ],
+  "all_resolved_pins_match_actual_bytes": true,
+  "both_parent_pin_path_and_required_unions_preserved": true,
+  "both_parent_required_order_preserved": true,
+  "conflicted_paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "corpus_sha256": "0ebe9e32ea57d97ee39844c4841135cee5d28d9c9562ac55ed68964687e0e61a",
+  "fixed_base": "9417e495165865ef6c1288b39084856e31020634",
+  "inventory_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+  "inventory_bytes_changed": false,
+  "inventory_sha256": "d44dc342ab665b9abfeaf85bafcdb3a115069f45c80ad0fe09a8d6fe3d747b92",
+  "merge_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "old_c7_pin_count": 650,
+  "old_c7_required_count": 558,
+  "other_corpus_fields_unchanged_from_c7": true,
+  "parent": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "pin_changes_from_c7": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": {
+      "new": "82d88759a4ec452dd8befa4de62368876e3120d2",
+      "old": "724e561ebc89e5f1d85399e01a447ce1f4baa673"
+    },
+    "scripts/ci/test_history_stage_diagnostic.py": {
+      "new": "9fa491dd407ae0188142a0699791d620f14ac3f0",
+      "old": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "new": "b9faf7d0a0e0630efb62cf96dee29a3a46acc8ac",
+      "old": "7dd40f051e68cc72853217c31f0d025275114829"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs": {
+      "new": "dfd95d2618b5e8f3066d904ff632cd26f9925c5c",
+      "old": null
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs": {
+      "new": "57f74076e6fd7ec3a856fb384977b68841ca1887",
+      "old": null
+    },
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": {
+      "new": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
+      "old": "d6650671ccc93462623351d05fdf434d52669ce1"
+    }
+  },
+  "pin_count": 652,
+  "plan_after_sha256": "1b3bdf47bc17c7f4877b43a1147ba68d968109fc49c85c7599572fd57d92770e",
+  "plan_append_sha256": "ce3ab53c9a3d448845dee9eb145dfd19ab0c4358da7d98e89903fe949465bc4c",
+  "plan_before_sha256": "c461b79c8bbe6b55b7d228b3d19cf247f6ea67cdcbe83e2b9bfc4a5e34d27e1e",
+  "required_count": 560,
+  "resolved_overlapping_pin_paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "trillionnium/crates/trnm-pon-node/src/store.rs"
+  ],
+  "schema": "TRNM-W1-C8-EXACT-PIN-CONFLICT-RESOLUTION1",
+  "source_guards_or_deadlines_changed": false,
+  "store_auto_merge_blob": "b9faf7d0a0e0630efb62cf96dee29a3a46acc8ac",
+  "store_auto_merge_sha256": "aacb25955bcdc06309252aa348f900a78a9c2257ecb4aab891e50162a79587d3",
+  "store_bytes_modified_by_resolution": false,
+  "tests_executed_by_resolution": 0,
+  "workflow_blob": "82d88759a4ec452dd8befa4de62368876e3120d2",
+  "workflow_only_store_pin_rebound": true,
+  "workflow_sha256": "3cdb2f5137a869f775393c4051cc20b5536185dc80f8738fe188b0f1524b4ade"
+}

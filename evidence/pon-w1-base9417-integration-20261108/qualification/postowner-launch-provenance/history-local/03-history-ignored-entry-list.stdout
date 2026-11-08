@@ -1,0 +1,4 @@
+actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal: test
+
+1 test, 0 benchmarks
+{"schema": "TRNM-W1-C8-HISTORY-COMPILE-AND-LIST1", "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5", "elf_sha256": "cc252a4f811e981a90fa3f8adb8f59b2df20249c32246e8a365928e04e3ca9fd", "listed_test_count": 1, "full_history_executed": false, "test_passes_claimed": 0}

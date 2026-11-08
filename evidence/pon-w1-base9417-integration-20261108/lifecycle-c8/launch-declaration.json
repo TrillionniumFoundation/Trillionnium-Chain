@@ -1,0 +1,68 @@
+{
+  "all_historical_wait_reap_qualified": false,
+  "argv": [
+    "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg",
+    "--exact",
+    "--ignored",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "config": {
+    "bytes": 49328,
+    "path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/config.json",
+    "sha256": "65ebdd227bce004bbc8fdec3baa97c864d64e1fe63047b27b427ec569eb793f4"
+  },
+  "driver": {
+    "bytes": 20830,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/driver-v4.py",
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "env": {
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RAYON_NUM_THREADS": "4",
+    "TRNM_W1_FUNDED_CONFIG": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/config.json"
+  },
+  "gpu_accounting": "UNKNOWN",
+  "original_deadline_ns": 1210689011653932,
+  "original_identity": {
+    "affinity": [
+      8,
+      9,
+      10,
+      11,
+      20,
+      21,
+      22,
+      23
+    ],
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1baa770fd-12894-1c3b.service",
+    "cpu_max": "800000 100000",
+    "memory_max_bytes": 8589934592,
+    "observed_monotonic_ns": 1210569011649228,
+    "pid": 5213,
+    "proc_stat": "5213 (python3.12) R 5196 5213 5213 0 -1 4194304 3424 1836 0 0 162 11 4 7 20 0 1 0 121056721 32907264 4709 18446744073709551615 4325376 7352253 140722183435056 0 0 0 0 16781312 2 0 0 0 17 20 0 0 0 0 0 10653128 12216448 791011328 140722183439435 140722183440348 140722183440348 140722183442404 0\n"
+  },
+  "owner_binary": {
+    "bytes": 467190280,
+    "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+  },
+  "plan": {
+    "bytes": 50299,
+    "path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/plan.json",
+    "sha256": "80701ee1af27ab4239f0f34ae3b9ad92c3f3dd5e007b4bb2f1820168ed11bf98"
+  },
+  "proof_deadline_can_be_extended": false,
+  "public_chain_transactions_sent": false,
+  "schema": "TRNM-W1-OWNER-TIMEOUT-LAUNCH1",
+  "selected_monotonic_ns": 1210569011653932,
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  }
+}

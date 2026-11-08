@@ -7870,3 +7870,18 @@ A new worktree exposed 104 original .log members omitted by the repository ignor
 C6 follow-up CI has genuine original-budget business failures in addition to source gates. The bounded C7 remote observation has zero exact-head checks/runs and no fresh event tuple, while base9417 introduces production changes and two real merge conflicts. A separate fixed-base C8 integration addresses these conflicts; C7 results are not relabeled as C8 qualification. Full generation, original business budget, provider payment, complete resource billing, deployed WAN, actual same-winner Node admission and full security qualifications remain HOLD.
 
 Evidence: [C7 qualification and publication correction](../../evidence/pon-w1-base96-integration-20261108/README.md).
+
+
+2026-11-08 C8 固定 9417 整合候选：C7 `40a3a45d6b8afc5c4706c5235fec47634f4aabbe` 的独立精确资格实际为 69 commands、655 普通 PASS、4 ignored；其昂贵 operation 仅保留 launch-Unknown，未取得 heavy/cold 执行证据，C5/C6 既有真实路径不转记为 C7。本候选从冻结 C7 正常合入固定 `9417e495165865ef6c1288b39084856e31020634`（直接父 `91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c`），理由是实际 prospective 整合在 recent-batch workflow 与 PQ corpus 出现精确 pin 冲突，且上游包含真实生产 historical commitment 的有界 replay-prefix／current-parent 算术保留变化。保留双方 W1/M12 与原缓存边界控制、上游两组既有方法内的新增子例、History source.json 自引用修正及全部必要 pins／required 路径；仅按自动合并后的实际 store.rs、最终 workflow 字节重绑冲突 pin。生成清单为已有路径的 include_bytes 登记，保持原字节并独立 --check；不改 source guard、事件上下文、原 deadline 或接受条件。C8 尚待其最终 commit/tree 的全量精确构建与执行资格以及新 event/base/head/merge tuple；候选检查不继承 C7 PASS，不新增完整 proof、正向付款、完整资源结算或四门资格。冻结仅针对本固定 base，不自动追随以后远端 base 漂移。
+
+### 2026-11-08 — C8 exact qualification and D6 retained-attempt evidence
+
+冻结源码 C8 `4e007a87ceecbec8d265f6a70cfd71d512a514b5`（tree `19a4f1a6e1cec5c27e595fa555b97cddc4717a3c`）已按普通 fast-forward 发布到 PR #782；父提交为 C7 与 `9417e495165865ef6c1288b39084856e31020634`。D6 作为 D5 与 C8 的独立证据 merge，保留原源码保护、预算、旧操作和旧证据清单。
+
+冻结后全部尝试累计 77 条资格命令、697 次普通测试方法执行：696 PASS / 1 FAIL，另 4 ignored；75 个零退出、1 个预声明负控制退出、1 个原始 staged 失败退出。首轮 664 PASS / 1 FAIL，唯一预声明且参数未变的 staged 复核 32 PASS。没有把选定成功覆盖集替代累计结果，没有证明短时限稳定性。C8 三类 target 均为独立复制缓存，fresh target=false；History 本地只编译和列出入口，完整 4105 未执行。
+
+独立 C8 operation `a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9` 实际进入昂贵 r0vm，沿原 120 秒 deadline 得到 original-deadline / exit -9；typed Unknown 先于显式 owner request，随后原 Cancel 的分叉移除、实际 cold reopen 和同一 Cancel 恢复均有原件。主路径及独立冷恢复各 1 PASS，分列于普通资格之外。cold 无新派发/Native 交易/target cancel；新 operation 的 M12 Done 只关闭调度，consumed=null、完整 cap 保留，provider 付款和完整资源结算仍未建立。accepted outcome 无独立时间戳，未另证新 journal append。末次五个出生身份和两个精确 cgroup 缺失只支持当时有界观察，不证明完整历史树 wait/reap。
+
+远端 CI 历史快照窗口 2026-11-08 10:22:55.303–10:24:36.474 UTC：104 checks 为 52 成功 / 25 失败 / 24 未完成 / 3 跳过；15 runs 为 4 成功 / 5 失败 / 6 未完成。C8 原 native campaign 三轮均 return 101 / original_criteria_met=false。六个样本有五个失败，其余 20 个失败根因未采样，内层服务报告未取得，不复用 C6 根因。该快照不是当前全部 CI 终态声明。
+
+D6 按原 SHA256 保留 D5 的 2138 个已跟踪证据文件路径，包括恢复的 104 份旧日志，并对新证据 inventory、Git index/commit 字节与远端不可变子树逐路径核验。四项工程门继续 HOLD：部署 WAN 与同一真实 W1 winner admission、完整历史树计费、同资源完整生成重复实验、原业务预算、正向 provider 付款、完整资源结算及密码学/协议安全资格仍未闭合。详细原件及统计口径见 [C8 / D6 完整证据](../../evidence/pon-w1-base9417-integration-20261108/README.md)。

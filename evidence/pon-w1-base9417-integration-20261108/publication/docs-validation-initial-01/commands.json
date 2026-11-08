@@ -1,0 +1,110 @@
+[
+  {
+    "label": "00-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit": 0,
+    "stdout_sha256": "627e8f778d5de841cb93a89f6793a9e8052cdb7005bc133c1c40a36fd83991b7",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "5eabc826c47aa9f326e01c1fbcea7ba0bd03344bed103f3b9d1946ff29518a7c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-merge",
+    "argv": [
+      "git",
+      "rev-parse",
+      "MERGE_HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "39cd30bde48e955f1af683c5c957d690db77697b1bbde5cffd8b845d8711809d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-stage-exact-evidence",
+    "argv": [
+      "git",
+      "add",
+      "-f",
+      "--",
+      "evidence/pon-w1-base9417-integration-20261108",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-index-runtime-vs-c8",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--name-only",
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "exit": 0,
+    "stdout_sha256": "38b6adae44c95b71717d4c93e2012548acb38e5dd45316804c158f08cc461053",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "05-verify-index-bytes",
+    "argv": [
+      "python3",
+      "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b/evidence/pon-w1-base9417-integration-20261108/verify_git_publication.py",
+      "--rev",
+      "INDEX",
+      "--expected-new-inventory-sha256",
+      "5f46ba76e06a23c445ea58a19bdeaecec3186f1b0a2205303a0026a51cf519d5",
+      "--output",
+      "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/docs-validation-01/git-index-verification.json"
+    ],
+    "exit": 0,
+    "stdout_sha256": "2497c72b6a0473bca934b65ae43eaea8e6d91bc6834299c7ac7ffb1fa1aad7ce",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-source-inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-current-implementation",
+    "argv": [
+      "python3",
+      "scripts/ci/report_current_implementation.py",
+      "--check"
+    ],
+    "exit": 0,
+    "stdout_sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "08-repository-links-and-boundaries",
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit": 2,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "f7e837986988644eb37b0d36cf4695b0a759fa3741ecacd74d178e02297c12c4"
+  }
+]

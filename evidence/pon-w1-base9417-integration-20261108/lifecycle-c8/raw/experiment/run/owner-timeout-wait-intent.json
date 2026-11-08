@@ -1,0 +1,11 @@
+{
+  "config_sha256": "65ebdd227bce004bbc8fdec3baa97c864d64e1fe63047b27b427ec569eb793f4",
+  "deadline_renewed": false,
+  "original_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_ns": 1210689011653932,
+  "original_live_prover_already_observed": true,
+  "refund_authorized_by_timeout": false,
+  "schema": "TRNM-W1-OWNER-TIMEOUT-WAIT1",
+  "started_monotonic_ns": 1210607108110533,
+  "target_cancel_request_sent": false
+}

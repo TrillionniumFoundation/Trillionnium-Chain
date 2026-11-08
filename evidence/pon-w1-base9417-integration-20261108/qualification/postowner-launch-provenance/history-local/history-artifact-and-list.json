@@ -1,0 +1,59 @@
+{
+  "schema": "TRNM-W1-C8-HISTORY-COMPILE-AND-LIST1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "cargo_log_sha256": "7fc8a474de30683169e56063fe9f5c0af00f7f3b952130daac308602fbd1ff9f",
+  "compiler_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "test"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "history_stage_diagnostic",
+      "src_path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+      "edition": "2021",
+      "doc": false,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc"
+    ],
+    "executable": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+    "fresh": false
+  },
+  "elf": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+  "elf_bytes": 9910608,
+  "elf_sha256": "cc252a4f811e981a90fa3f8adb8f59b2df20249c32246e8a365928e04e3ca9fd",
+  "list_argv": [
+    "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+    "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "--exact",
+    "--ignored",
+    "--list"
+  ],
+  "list_exit": 0,
+  "list_stdout_sha256": "4f9692334a60ca2043e6413a73048d2950871c516cc326d2134ff5469cd1e6f6",
+  "list_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "started_monotonic_ns": 1208769467391167,
+  "finished_monotonic_ns": 1208769469451783,
+  "listed_test_count": 1,
+  "full_history_executed": false,
+  "test_passes_claimed": 0,
+  "production_qualified": false,
+  "resource_qualified": false
+}

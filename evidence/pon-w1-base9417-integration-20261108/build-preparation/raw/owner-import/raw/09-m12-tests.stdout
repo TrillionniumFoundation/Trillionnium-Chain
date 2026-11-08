@@ -1,0 +1,16 @@
+
+running 11 tests
+test native_generation_budget_v2::tests::a_second_generation_journal_cannot_claim_the_same_task_or_reset_its_deadline ... ok
+test native_generation_budget_v2::tests::actual_resource_overrun_is_retained_without_clipping_or_positive ... ok
+test native_generation_budget_v2::tests::cancel_after_verified_preserves_cost_and_cancel_after_settlement_intent_is_too_late ... ok
+test native_generation_budget_v2::tests::cancel_before_dispatch_is_terminal_after_cold_reopen_without_repinning_funds ... ok
+test native_generation_budget_v2::tests::cancellation_committed_while_verifier_runs_is_sticky_and_blocks_settlement ... ok
+test native_generation_budget_v2::tests::committed_intent_after_cold_restart_never_reissues_new_even_without_funding ... ok
+test native_generation_budget_v2::tests::generation_namespace_refuses_v1_without_migration_or_writes ... ok
+test native_generation_budget_v2::tests::historical_payment_survives_reorg_and_reobservation_never_mints_a_replacement ... ok
+test native_generation_budget_v2::tests::one_of_two_handles_gets_new_and_unknown_consumes_the_original_reservation ... ok
+test native_generation_budget_v2::tests::original_deadline_and_clock_domain_never_renew_on_replay ... ok
+test native_generation_budget_v2::tests::provider_identity_and_ack_never_substitute_for_full_verifier ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 5.29s
+

@@ -1,0 +1,56 @@
+{
+  "schema": "TRNM-W1-C8-AUDIT-ATTEMPT-HISTORY1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "attempt_job_id": "1a1ba7809b7-12894-1ae5",
+  "terminal": {
+    "at_unix_ms": 1794129815070,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1ba7809b7-12894-1ae5",
+    "launch_nonce": "8794f8d81e4ac29810be956eb8f475dd",
+    "log_bytes": {
+      "stderr": {
+        "seen": 754,
+        "stored": 754
+      },
+      "stdout": {
+        "seen": 0,
+        "stored": 0
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/qian-qi/work/chain-w1-c8-audit-backend-native-20261108-ec265b.py\", line 296, in <module>\n    result,receipt=audit(spec,inputs)\n                   ^^^^^^^^^^^^^^^^^^\n  File \"/home/qian-qi/work/chain-w1-c8-audit-backend-native-20261108-ec265b.py\", line 174, in audit\n    before = add(directory/'source-before.json', pin={'sha256': SOURCE_SHA})\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/qian-qi/work/chain-w1-c8-audit-backend-native-20261108-ec265b.py\", line 158, in add\n    assert sha(b) == pin['sha256'], str(path)\n           ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: /home/qian-qi/work/chain-w1-c8-backend-qualification-20261108-ec265b-01/source-before.json\n",
+  "failed_driver": {
+    "path": "/home/qian-qi/work/chain-w1-c8-audit-backend-native-20261108-ec265b.py",
+    "sha256": "9e331422239d0111a93d794e11e8528eb8d93641750c8e230a8b08af4341c330"
+  },
+  "audit_input_sha256": "d42b282f780d5bad120410df3bb79107365aca62f8243839b1190a4f72ab742d",
+  "classification": "Auditor migration error; not an original qualification/test failure.",
+  "cause": "A broad text replacement changed c7 inside the old C7 source-guard SHA literal, leaving a wrong expected digest. The first source-before record was rejected before reading test outputs or binary hashes.",
+  "observed_C8_source_guard_sha256": "ae4700561bdd1dd273af73d36ca712162d430097daa9d1c3147704c9fe07083c",
+  "remediation_scope": "Pin the already independently read actual C8 source guard digest in a new audit driver and new external output. Preserve original driver, status and diagnostics; do not rerun qualification or modify source.",
+  "original_qualification_modified": false,
+  "tests_run_by_audit": 0,
+  "operations_run_by_audit": 0
+}

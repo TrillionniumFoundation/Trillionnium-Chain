@@ -1,0 +1,126 @@
+{
+  "actual_command_count": 4,
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-02/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_staged_observer.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "02-w1-retained-staged-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 32,
+            "passed": 32,
+            "reported_duration": "18.087s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-02/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "staged-repeat",
+  "durable_job_id": "1a1ba97e353-12894-1bcf",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "f7c7527fb00f542021f0c7ab0469b2c0f2905e0f71b9b55f5e577b8f94c3104f",
+  "provenance": {
+    "effective_omitted_termination_grace_default_seconds": 5,
+    "first_failure_cause_established_by_repeat": false,
+    "new_operation_created": false,
+    "one_predeclared_repeat": true,
+    "original_failed_attempt_relabelled": false,
+    "original_parameters_and_source_preserved": true,
+    "repeat_is_additional_execution": true,
+    "stable_timing_or_whole_host_idle_established": false
+  },
+  "python": {
+    "errors": 0,
+    "failed": 0,
+    "methods": 32,
+    "passed": 32,
+    "skipped": 0
+  },
+  "qualification_complete": true,
+  "rust": {},
+  "schema": "TRNM-W1-C8-INDEPENDENT-COMPONENT-REVIEW1",
+  "scope": "Exact C8 head source and explicit attempt only; no current prospective-merge event qualification.",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "source_guards_before_after_exact_equal": true
+}

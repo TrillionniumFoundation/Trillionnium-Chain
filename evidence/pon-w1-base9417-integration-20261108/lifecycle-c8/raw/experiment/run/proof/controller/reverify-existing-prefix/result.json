@@ -1,0 +1,106 @@
+{
+  "aggregate_process_tree_peak_rss_bytes": null,
+  "canceled_signal": null,
+  "cancellation_event": null,
+  "cancellation_schema": "TRNM-W1-CANCELLATION-HANDOFF1",
+  "cleanup_errors": [],
+  "command": [
+    "/home/qian-qi/work/chain-w1-base9417-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "--r0vm",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+    "prove",
+    "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/proof/checkpoint",
+    "0"
+  ],
+  "complete_proof_claim": false,
+  "completion_observed_before_deadline": true,
+  "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+  "deadline_exhausted_at_snapshot": false,
+  "effective_deadline_monotonic": 1210689.011653932,
+  "effective_remaining_seconds": 95.83242612914182,
+  "environment": {
+    "RAYON_NUM_THREADS": "4",
+    "RISC0_HOME": null,
+    "RUST_LOG": null
+  },
+  "error": null,
+  "explicit_environment_override_names": [
+    "RAYON_NUM_THREADS"
+  ],
+  "final_known_group_probes": [
+    {
+      "group": 6309,
+      "state": "ABSENT"
+    }
+  ],
+  "final_owned_session_members": [],
+  "finished_unix_ns": 1794132932659860300,
+  "group_probe_errors": [],
+  "known_owned_groups": [
+    6309
+  ],
+  "max_bytes_per_output_log": 4194304,
+  "members_after_child_exit": [],
+  "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+  "observer_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "owned_session_observation_complete": true,
+  "pid": 6309,
+  "proc_clock_ticks_per_second": 100,
+  "proc_disappearance_races": [
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/6308/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/6308",
+      "phase": "running",
+      "type": "FileNotFoundError"
+    },
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/6392/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/6392",
+      "phase": "running",
+      "type": "FileNotFoundError"
+    },
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/6504/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/6504",
+      "phase": "running",
+      "type": "FileNotFoundError"
+    }
+  ],
+  "proc_scan_errors": [],
+  "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+  "process_group_remaining_after_child_exit": false,
+  "prover_resource_completeness_established": false,
+  "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+  "result_is_pre_handoff_snapshot": true,
+  "returncode": 0,
+  "rusage": {
+    "involuntary_context_switches": 68,
+    "major_faults": 0,
+    "max_single_process_rss_bytes": 114290688,
+    "minor_faults": 53715,
+    "system_seconds": 0.990119,
+    "user_seconds": 4.265345,
+    "voluntary_context_switches": 1051
+  },
+  "sample_log_truncated": false,
+  "sampled_max_single_process_rss_bytes": 23961600,
+  "schema": "TRNM-W1-STAGE-MEASUREMENT3",
+  "shared_cgroup": {},
+  "signal_attempts": [],
+  "stage_process_complete": true,
+  "started_monotonic": 1210593.179227803,
+  "started_unix_ns": 1794132927186953340,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "0aca0176ea5c45ea8f0b60e460fd4734af889c415b4476da6f2770b1e7b8903b",
+  "termination_grace_seconds": 5,
+  "termination_reasons": [],
+  "timed_out": false,
+  "wall_limit_seconds": 180,
+  "wall_seconds": 5.4729454221669585
+}

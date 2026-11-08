@@ -1,0 +1,90 @@
+{
+  "schema": "TRNM-W1-C8-STRICT-OWNER-IMPORT-TERMINAL1",
+  "request": {
+    "host": "desktop",
+    "executable": "/usr/bin/python3.12",
+    "args": [
+      "-B",
+      "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/import-owner-c8-v1.py",
+      "--out",
+      "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+    "timeout_seconds": 180,
+    "cpu_quota_percent": 200,
+    "memory_max_bytes": 2147483648,
+    "env": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "idempotency_key": "m12-c8-strict-owner-import-01-20261108-ec265b"
+  },
+  "launch_raw_mcp": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/import-owner-c8-v1.py\",\n      \"--out\",\n      \"/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01\"\n    ],\n    \"created_unix_ms\": 1794130691264,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b\",\n    \"env_keys\": [\n      \"PYTHONDONTWRITEBYTECODE\"\n    ],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1ba85c4c0-12894-1b51\",\n    \"idempotency_key\": \"m12-c8-strict-owner-import-01-20261108-ec265b\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba85c4c0-12894-1b51\",\n    \"request_digest\": \"d87988168a6a6f8f10ed201c88403280fc62c1f5e0f461b79f0f1e2ade25a2ac\",\n    \"request_fingerprint\": 15598648414767312783,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1ba85c4c0-12894-1b51\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1ba85c4c0-12894-1b51\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "terminal_raw_mcp": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"at_unix_ms\": 1794130709159,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba85c4c0-12894-1b51\",\n  \"launch_nonce\": \"7fbeb8e6ab2f77573aff831400c98abf\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 1256,\n      \"stored\": 1256\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "read_raw_mcp": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job_id\": \"1a1ba85c4c0-12894-1b51\",\n  \"stderr\": {\n    \"bytes_hex\": \"\",\n    \"eof\": true,\n    \"next_offset\": 0,\n    \"offset\": 0,\n    \"size\": 0,\n    \"text\": \"\"\n  },\n  \"stdout\": {\n    \"bytes_hex\": \"7b226d616e6966657374223a207b2270617468223a20222f686f6d652f7169616e2d71692f776f726b2f636861696e2d77312d62617365393431372d6d31322d746f6f6c732d32303236313130382d6563323635622f6f776e65722d696d706f72742d63382d30312f6d616e69666573742e6a736f6e222c20226279746573223a2035333836342c2022736861323536223a202264376365303434306336386133306364366130306335633165393634613161333630663237373637383438626463613633363637393931653366376432363139227d2c20226578747261637465645f62696e64696e67223a207b2270617468223a20222f686f6d652f7169616e2d71692f776f726b2f636861696e2d77312d62617365393431372d6d31322d746f6f6c732d32303236313130382d6563323635622f6f776e65722d696d706f72742d63382d30312f6578747261637465642d6f776e65722d61727469666163742e6a736f6e222c20226279746573223a20343036322c2022736861323536223a202230656361343330373237306663616434336237623231613662383134313330373239346337623132323231346534633931353361383065336566313738393465227d2c20226f776e65725f62696e617279223a207b2270617468223a20222f686f6d652f7169616e2d71692f776f726b2f636861696e2d77312d62617365393431372d6f776e65722d7461726765742d32303236313130382d6563323635622f64656275672f646570732f74726e6d5f706f6e5f6e6f64652d32633938323933303831653735616638222c20226279746573223a203436373139303238302c2022736861323536223a202231636331646235363963306432316632376161626333646462656634373330636531316136343831633032366233356564363934363063303930323864343536227d2c20227465737473223a207b22706173736564223a2033372c20226661696c6564223a20302c202269676e6f726564223a20347d2c2022636f6d6d616e6473223a2031392c20227261775f6c6f67735f7665726966696564223a2033382c20227261775f6c6f67735f636f70696564223a2033382c2022736f757263655f7072656669785f636f6d7061746962696c6974795f706173736564223a20747275652c2022636f6d70696c65645f636865636b6f75745f6f62736572766174696f6e223a207b2270617468223a20222f686f6d652f7169616e2d71692f776f726b2f636861696e2d77312d62617365393431372d696e746567726174696f6e2d32303236313130382d6563323635622f7472696c6c696f6e6e69756d2f6372617465732f74726e6d2d706f6e2d6e6f6465222c2022656c665f627974655f6f6666736574223a20333939373831302c202273636f7065223a2022436f72726f626f726174696e6720627974652070726573656e63653b20736f757263652062696e64696e6720616c736f207265717569726573206f726967696e616c20657861637420436172676f2061727469666163742c20636c65616e20736f75726365206964656e74697469657320616e642074686520696e646570656e64656e7420636f706965642d6361636865206c61756e63682070726f76656e616e63652e227d2c20226f7065726174696f6e5f63726561746564223a2066616c73652c2022646561646c696e655f73656c6563746564223a2066616c73657d0a\",\n    \"eof\": true,\n    \"next_offset\": 1256,\n    \"offset\": 0,\n    \"size\": 1256,\n    \"text\": \"{\\\"manifest\\\": {\\\"path\\\": \\\"/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json\\\", \\\"bytes\\\": 53864, \\\"sha256\\\": \\\"d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619\\\"}, \\\"extracted_binding\\\": {\\\"path\\\": \\\"/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/extracted-owner-artifact.json\\\", \\\"bytes\\\": 4062, \\\"sha256\\\": \\\"0eca4307270fcad43b7b21a6b8141307294c7b122214e4c9153a80e3ef17894e\\\"}, \\\"owner_binary\\\": {\\\"path\\\": \\\"/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8\\\", \\\"bytes\\\": 467190280, \\\"sha256\\\": \\\"1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456\\\"}, \\\"tests\\\": {\\\"passed\\\": 37, \\\"failed\\\": 0, \\\"ignored\\\": 4}, \\\"commands\\\": 19, \\\"raw_logs_verified\\\": 38, \\\"raw_logs_copied\\\": 38, \\\"source_prefix_compatibility_passed\\\": true, \\\"compiled_checkout_observation\\\": {\\\"path\\\": \\\"/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node\\\", \\\"elf_byte_offset\\\": 3997810, \\\"scope\\\": \\\"Corroborating byte presence; source binding also requires original exact Cargo artifact, clean source identities and the independent copied-cache launch provenance.\\\"}, \\\"operation_created\\\": false, \\\"deadline_selected\\\": false}\\n\"\n  }\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "result": {
+    "manifest": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json",
+      "bytes": 53864,
+      "sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619"
+    },
+    "extracted_binding": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/extracted-owner-artifact.json",
+      "bytes": 4062,
+      "sha256": "0eca4307270fcad43b7b21a6b8141307294c7b122214e4c9153a80e3ef17894e"
+    },
+    "owner_binary": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "bytes": 467190280,
+      "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+    },
+    "tests": {
+      "passed": 37,
+      "failed": 0,
+      "ignored": 4
+    },
+    "commands": 19,
+    "raw_logs_verified": 38,
+    "raw_logs_copied": 38,
+    "source_prefix_compatibility_passed": true,
+    "compiled_checkout_observation": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node",
+      "elf_byte_offset": 3997810,
+      "scope": "Corroborating byte presence; source binding also requires original exact Cargo artifact, clean source identities and the independent copied-cache launch provenance."
+    },
+    "operation_created": false,
+    "deadline_selected": false
+  },
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "target_released_to_resource_after_success": true,
+  "no_new_research_operation": true
+}

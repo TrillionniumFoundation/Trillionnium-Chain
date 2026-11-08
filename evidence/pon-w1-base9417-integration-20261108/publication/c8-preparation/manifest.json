@@ -1,0 +1,97 @@
+{
+  "schema": "TRNM-W1-C8-ROOT-PREPARATION1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "source_freeze_sha256": "422f8e4d6937081954f8290507ae499385590d2ee7011dde719573fd0529ab72",
+  "commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "stdout_sha256": "65586326e5793b95834cbef1dbae480b2b3425a5d1585881b4b33954001542c2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout_sha256": "39cd30bde48e955f1af683c5c957d690db77697b1bbde5cffd8b845d8711809d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "stdout_sha256": "ddf3ac3928890eca54b7939a9b8b8ee2401a5be363245986d54164d325f6b674",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "03-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "new_fmt_paths": [
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs"
+  ],
+  "owner_target": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b",
+  "owner_fresh_target": false,
+  "owner_copy_receipt_sha256": "ce1120304c1679afe96f147a21bdb82ae343f5ce57028bec1b38b75bb53b85e2",
+  "owner_copy_provenance_sha256": "da7e333fd83be87a306b1d99fd4d49dab931a53d48e2bee78d40c6dbe76f51c1",
+  "tool_files": {
+    "core-plan.json": {
+      "bytes": 3053,
+      "sha256": "5671a0eafa30ce522d778e56d0f2586f043f74c64bafaf3301f08a44a6c67581"
+    },
+    "historical-regressions-plan.json": {
+      "bytes": 852,
+      "sha256": "cb6381162e1ad22bb12a5476cafeb9abfd84213e75900c88d05722dcc7f6adb9"
+    },
+    "history-local-plan.json": {
+      "bytes": 1292,
+      "sha256": "a89a9d74df0d974b4831851ab1ac8f1b3a34e166dcd9564d56762894fc72f2ad"
+    },
+    "history_compile_list.py": {
+      "bytes": 2907,
+      "sha256": "434fddeea24ccb11a5975755eef092458c54b526673ef829756e1c727376a563"
+    },
+    "owner-plan.json": {
+      "bytes": 7023,
+      "sha256": "47185c7eefa4e782478f193c1aaefca7748d957937d3d22616d1fa61fd87ec86"
+    },
+    "qualify_source.py": {
+      "bytes": 5715,
+      "sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f"
+    },
+    "staged-plan.json": {
+      "bytes": 637,
+      "sha256": "af2a4739fed7e449f80cffb44b237b3a36015b674174a990c40f017e7b812512"
+    }
+  },
+  "planned_commands_including_receiver_backend_native": 73,
+  "planned_ordinary_method_executions": 665,
+  "planned_ignored": 4,
+  "qualification_claimed": false,
+  "operation_created": false,
+  "deadline_selected": false,
+  "observed_monotonic_ns": 1206833884512914
+}

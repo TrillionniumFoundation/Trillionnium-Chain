@@ -3834,6 +3834,7 @@ impl Node {
         }
         let mut path = reverse_path::ReversePath::new(tempfile::tempfile()?);
         let mut count = 0u64;
+        let mut prefer_replay_prefix = false;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             progress()?;
@@ -3858,8 +3859,20 @@ impl Node {
                     .map_err(Error::local_integrity)?;
                 continuity_v1::check_state(&state, row.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
+                prefer_replay_prefix = self.state_backend == StateBackend::Legacy;
+                if prefer_replay_prefix {
+                    self.historical_commitment_cache
+                        .borrow_mut()
+                        .begin_replay(cur);
+                }
                 let commitment = self
-                    .checked_historical_commitment(cur, &state, row.root, None)?
+                    .checked_historical_commitment(
+                        cur,
+                        &state,
+                        row.root,
+                        None,
+                        prefer_replay_prefix,
+                    )?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
                     native_authenticated::verify_state_with_readback(
@@ -3878,7 +3891,7 @@ impl Node {
             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
             cur = self.parent(cur)?;
         };
-        for _ in 0..count {
+        for replay_index in 0..count {
             progress()?;
             let id = path.pop()?.ok_or("ANCESTRY_LIMIT")?;
             for (index, (key, before, after)) in self
@@ -3910,6 +3923,7 @@ impl Node {
                     &state,
                     self.record(id)?.root,
                     commitment.as_ref(),
+                    prefer_replay_prefix && replay_index < 6,
                 )?
                 .snapshot;
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)

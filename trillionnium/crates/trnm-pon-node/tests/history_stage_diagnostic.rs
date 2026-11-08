@@ -119,7 +119,7 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
         PROFILE,
     )?;
     fs::create_dir(directory.join("packets"))?;
-    let source = json!({"schema":"native-ancestry-long-sync-source-v1","integration_lineage_base":"56a7dfea51669cd829df95c64cbecbe2c4080e56","source_scope":"compiled native observation; exact executed source and binary must be bound by the external runner","index_source":hex::encode(hash(b"ancestry-long-source-v1",&[include_bytes!("../src/ancestry_index.rs")])),"test_source":hex::encode(hash(b"ancestry-long-source-v1",&[include_bytes!("ancestry_long_sync.rs")])),"public_network_ready":false,"hardness_accepted":false,"independent_accepted":false});
+    let source = json!({"schema":"native-ancestry-long-sync-source-v1","integration_lineage_base":"56a7dfea51669cd829df95c64cbecbe2c4080e56","source_scope":"compiled native observation; exact executed source and binary must be bound by the external runner","index_source":hex::encode(hash(b"ancestry-long-source-v1",&[include_bytes!("../src/ancestry_index.rs")])),"test_source":hex::encode(hash(b"ancestry-long-source-v1",&[include_bytes!("history_stage_diagnostic.rs")])),"public_network_ready":false,"hardness_accepted":false,"independent_accepted":false});
     fs::write(
         directory.join("source.json"),
         serde_json::to_vec_pretty(&source)?,

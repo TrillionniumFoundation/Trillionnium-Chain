@@ -1,0 +1,96 @@
+{
+  "schema": "TRNM-W1-C8-OWNER-QUALIFICATION-ATTEMPT2-TERMINAL",
+  "job_id": "1a1ba7cdd03-12894-1b0d",
+  "request": {
+    "host": "desktop",
+    "executable": "/usr/bin/python3.12",
+    "args": [
+      "-B",
+      "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launcher-v2.py"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+    "timeout_seconds": 3600,
+    "cpu_quota_percent": 800,
+    "memory_max_bytes": 8589934592,
+    "env": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "idempotency_key": "m12-c8-exact-owner-02-v2-20261108-ec265b"
+  },
+  "launch": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launcher-v2.py\"\n    ],\n    \"created_unix_ms\": 1794130107651,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b\",\n    \"env_keys\": [\n      \"PYTHONDONTWRITEBYTECODE\"\n    ],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1ba7cdd03-12894-1b0d\",\n    \"idempotency_key\": \"m12-c8-exact-owner-02-v2-20261108-ec265b\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba7cdd03-12894-1b0d\",\n    \"request_digest\": \"e7d7eea49ac617cfe1623451225651659cd943fe57c599f93c6685f22f86372d\",\n    \"request_fingerprint\": 16706083733492864975,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1ba7cdd03-12894-1b0d\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1ba7cdd03-12894-1b0d\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "terminal": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"at_unix_ms\": 1794130508220,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba7cdd03-12894-1b0d\",\n  \"launch_nonce\": \"702d03970c6b5ac1d641717e5c197ddb\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 2647,\n      \"stored\": 2647\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "manifest": {
+    "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+    "bytes": 23587,
+    "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef"
+  },
+  "exit": {
+    "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba7cdd03-12894-1b0d/exit.json",
+    "bytes": 501,
+    "sha256": "6c8782e9d52775623a41f86e4c2ef7e65d414da32c005825850afb753e534d0d"
+  },
+  "actual_owner": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "bytes": 467190280,
+    "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+  },
+  "actual_cargo_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8"
+    ],
+    "executable": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "fresh": true
+  },
+  "declared_owner_tests_only": {
+    "passed": 37,
+    "failed": 0,
+    "ignored": 4
+  },
+  "new_history_module10_separate": true,
+  "research_operation_created": false
+}

@@ -1,0 +1,200 @@
+{
+  "chronology_monotonic_ns": {
+    "explicit_owner_request_recorded": 1210691361115576,
+    "live_first_prove_r0vm_observed": 1210605351876087,
+    "original_budget": 120000000000,
+    "original_deadline": 1210689011653932,
+    "owner_request_after_typed_failure": 1995728,
+    "selected": 1210569011653932,
+    "target_finish_after_deadline": 292570577,
+    "target_terminal_recorded": 1210689304224509,
+    "typed_unknown_recorded": 1210691359119848
+  },
+  "clock_and_identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "config_equals_plan_with_only_four_clock_launch_additions": true,
+    "config_sha256": "65ebdd227bce004bbc8fdec3baa97c864d64e1fe63047b27b427ec569eb793f4",
+    "deadline_renewed": false,
+    "launch_sha256": "5899d168e262852a38380a0d04521bdc002d86d3f8d99449250444aa1c79b015",
+    "main_and_cold_retained_target_objects_equal": true,
+    "original_job_identity_equal_in_start_terminal_and_owner_request": true,
+    "plan_sha256": "80701ee1af27ab4239f0f34ae3b9ad92c3f3dd5e007b4bb2f1820168ed11bf98",
+    "request_sha256": "4384036a001f06211515f94386629dc7082d4b9d8438543e77cf18683ffc0023",
+    "target_instance": "w1-timeout-chain-w1-c8-timeout-reorg-20261108-ec265b-01",
+    "task_scope": "ba49e7f9655b522793039c6a71c9fc83761e1807fded36ef08563cc1b288aad7"
+  },
+  "cold": {
+    "fresh_recursive_scope_qualification": false,
+    "m12_begin": "Done",
+    "meaning": "Dispatch remains closed; resource settlement and payment are not authorized.",
+    "native_transactions_submitted": 0,
+    "new_generation_dispatches": 0,
+    "original_cap_retained": true,
+    "same_retained_target": true,
+    "target_cancel_requests_sent": 0
+  },
+  "failure_and_cap": {
+    "cancellation_at_failure": null,
+    "consumed": null,
+    "failure_kind": "Unknown",
+    "full_cap_retained_in_records": true,
+    "new_cancellation_journal_event_proven": false,
+    "ordering_basis": "Numeric timestamps prove target terminal then typed Unknown then explicit owner request. Accepted outcome has no independent timestamp; source-bound lifecycle records report acceptance after that request.",
+    "original_resource_cap": {
+      "cpu_ns": 960000000000,
+      "gpu_ns": 240000000000,
+      "memory_peak_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "owner_accepted_observed": true,
+    "owner_request_is_not_acceptance": true,
+    "provider_payment_authorized": false,
+    "provider_payment_observed": false,
+    "target_cause": "original-deadline",
+    "target_exit_code": -9,
+    "target_sticky_cancel": false,
+    "typed_failure_native_refund_authorized": false
+  },
+  "finding": "No contradictory record found within this bounded read-only review.",
+  "four_engineering_gates": "HOLD",
+  "jobs": {
+    "cold": {
+      "exit_code": 0,
+      "exit_sha256": "161666fb6ef8c698fddbfcd28150b8f6fb9ccdbcb685f35037e571d82d47e2be",
+      "failed": 0,
+      "ignored": 0,
+      "job_id": "1a1baac4fa2-12894-1c66",
+      "output_complete": true,
+      "output_durable": true,
+      "passed": 1,
+      "reported_seconds": "0.32",
+      "stdout_sha256": "128cbcb8bb85de48506eeb6eb3bcf455524ba10af67e7cfb2d0cc0dcc09dcb77"
+    },
+    "main": {
+      "exit_code": 0,
+      "exit_sha256": "080460e8a13ae31b1545acd3145f495eb1f11efcabd7e11bc835f3697f8a9fb7",
+      "failed": 0,
+      "ignored": 0,
+      "job_id": "1a1baa770fd-12894-1c3b",
+      "output_complete": true,
+      "output_durable": true,
+      "passed": 1,
+      "reported_seconds": "122.68",
+      "stdout_sha256": "c5d0532c39244b097ab564ad3f7e34107385fb1deac8c8468a557e3f525c566a"
+    }
+  },
+  "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+  "process_scope": {
+    "all_historical_descendants_wait_reap": null,
+    "exact_cgroups_recorded_absent": 2,
+    "exact_units_recorded_inactive_mainpid_zero": 2,
+    "existing_observation_sha256": "4631d3661bc1463b348764c7596a5d48ab4f416d1732b1878347de95054174c7",
+    "gpu_accounting": "UNKNOWN",
+    "known_identities_recorded_absent": 5,
+    "observed_interval_ns": [
+      1211050661354711,
+      1211050731547457
+    ],
+    "same_boot_known_identities_checked": {
+      "direct-child": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 6070,
+        "start_ticks": 121058338
+      },
+      "owner": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 5213,
+        "start_ticks": 121056721
+      },
+      "r0vm": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 6749,
+        "start_ticks": 121060474
+      },
+      "runner": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 6568,
+        "start_ticks": 121059897
+      },
+      "worker": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 5939,
+        "start_ticks": 121058198
+      }
+    },
+    "scope": "Time-local observations of the five recorded identities and two exact cgroups/units only; absence does not prove historical reaping or full resource accounting."
+  },
+  "qualification_binding": {
+    "C7_unknown_replayed": false,
+    "all_declared_attempts": {
+      "commands": 77,
+      "executed_methods": 697,
+      "failed_methods": 1,
+      "ignored_methods": 4,
+      "passed_methods": 696
+    },
+    "component_pins_equal_previous_independent_audit": true,
+    "copied_cache_fresh": false,
+    "gate_sha256": "8fed6b6149038a6376df1ce54d243efad20355b270088162894d9ec07c441e3a",
+    "preparation_sha256": "f1a6f9fb64a1cb368e7ef49bae6cf023e141c7a915eb82a703edec7dcad8a8d1",
+    "previous_independent_qualification_manifest_sha256": "d087c47faef1290bfb88edee517c1ee41dee06f23e04ac0ffad1af37c87e8f76",
+    "previous_independent_qualification_summary_sha256": "8137d11fb7db4995a550cbc073c132315dd5828ab23ec712cece1583a6989bfb",
+    "selected_coverage": {
+      "commands": 73,
+      "failed_methods": 0,
+      "ignored_methods": 4,
+      "passed_methods": 665
+    },
+    "these_two_ignored_entry_executions_are_separate_from_697": true
+  },
+  "reorg_and_funds": {
+    "before_equals_restored": true,
+    "boundary": "The source-bound real Node test records fork removal, close/reopen, and restoration of the same original Cancel. This audit compares those records and original successful test output; it does not reopen the Node database. Separate deterministic fixtures cannot be summed as new global funds.",
+    "cross_C5_C6_binary_byte_comparison_by_this_audit": false,
+    "four_readbacks_crossmatched": true,
+    "globally_additive_refund_claimed": false,
+    "gross_research_principal_refund_units": 1000,
+    "independent_database_or_signature_reverification_by_this_audit": false,
+    "m12_readback_unchanged": true,
+    "native_original_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "native_task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+    "net_account_delta_claimed": false,
+    "new_cancel_signed_or_submitted": false,
+    "new_restored_tip_distinct_from_original_and_alternate": true,
+    "original_cancel_inclusion_restored": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+    "original_cancel_packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+    "original_cancel_wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d",
+    "provider_balance_unchanged_recorded": true,
+    "removed_equals_actual_cold_reopen": true,
+    "removed_remaining": 1000,
+    "removed_status": "reserved",
+    "restored_remaining": 0,
+    "restored_status": "cancelled"
+  },
+  "review_scope": {
+    "elf_rehashes": 0,
+    "full_qualification_logs_rehashed_again": false,
+    "new_operations": 0,
+    "new_process_probes": 0,
+    "new_test_methods": 0,
+    "original_bytes_rehashed": 291595,
+    "original_job_streams": 4,
+    "original_json_files": 18,
+    "record_bundle_not_atomic_multi_file_snapshot": true,
+    "signals": 0,
+    "target_database_reads": 0
+  },
+  "schema": "TRNM-W1-C8-INDEPENDENT-LIFECYCLE-REVIEW1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "statement": "a2dd4830465ce6192ef48b53be74582feb886b526a93fb4f8e8f52b1c7cb80e2",
+  "unclosed": [
+    "Complete proof count remains zero for this operation.",
+    "No positive provider payment or complete resource settlement.",
+    "GPU use, aggregate peak resources, and all historical descendant wait/reap remain unknown.",
+    "The NativeTask research maintenance blocks do not establish admission of the original winning W1.",
+    "No new performance, tail latency, deployment budget, or cryptographic/protocol security qualification."
+  ]
+}

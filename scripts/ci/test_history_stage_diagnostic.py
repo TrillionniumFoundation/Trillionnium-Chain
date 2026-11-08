@@ -68,6 +68,8 @@ class Controls(unittest.TestCase):
     def test_exact_original_limits_and_error_recording(self):
         s=(ROOT/diagnostic.SOURCE).read_text()
         self.assertIn('const BLOCKS: u64 = 4105;',s)
+        self.assertIn('include_bytes!("history_stage_diagnostic.rs")',s)
+        self.assertNotIn('include_bytes!("ancestry_long_sync.rs")',s)
         self.assertIn('Duration::from_secs(1800)',s)
         self.assertIn('Instant::now() + Duration::from_secs(30)',s)
         self.assertLess(s.index('while after != tip'),s.index('let observer = ingress::HistoryImportObserver::new()'))

@@ -1,0 +1,15 @@
+{
+  "schema": "TRNM-W1-C8-STAGED-PREEXEC-REVIEW-CORRECTION1",
+  "old_launcher": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/launch_staged.py",
+  "old_sha256": "69b50b16b0c1ee54250e4d89828746ccc7aa9ac0b719782f95a5052e82d32b8c",
+  "old_launcher_executed": false,
+  "new_launcher": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/launch_staged_v2.py",
+  "new_sha256": "a82122b691c7fa287e33dbd1fc70b527e020e9d6afde2236169cefe093b3f253",
+  "reason": "The previous wrapper checked only direct cgroup.procs; the current owned-subtree precondition also needs descendants. The v2 wrapper requires cgroup.events populated=0 before and after a recursive empty cgroup.procs observation.",
+  "official_reference": "https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+  "zombie_reaping_claimed": false,
+  "source_changes": 0,
+  "test_argv_changes": 0,
+  "test_deadline_changes": 0,
+  "tests_executed": 0
+}

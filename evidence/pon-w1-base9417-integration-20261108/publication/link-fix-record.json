@@ -1,0 +1,39 @@
+{
+  "schema": "TRNM-W1-D6-ARCHIVED-MARKDOWN-LINK-FIX1",
+  "initial_job": "1a1bac67b64-12894-1d21",
+  "initial_failure_retained": true,
+  "initial_inventory_sha256": "5f46ba76e06a23c445ea58a19bdeaecec3186f1b0a2205303a0026a51cf519d5",
+  "initial_index_paths_verified": 2984,
+  "renames": [
+    {
+      "old": "d6-readme-final.md",
+      "new": "d6-readme-final.md.txt",
+      "sha256": "fa842812bd747a26c604595fc62b45b3b96c9e518abfce17820c7c866bdafc8d"
+    },
+    {
+      "old": "d6-sole-plan-append.md",
+      "new": "d6-sole-plan-append.md.txt",
+      "sha256": "92edfeedd66f7910d9629e1f035b60f7006b9dd7ed681d4e12465d71f3c9f8e3"
+    },
+    {
+      "old": "d6-pr-body-template.md",
+      "new": "d6-pr-body-template.md.txt",
+      "sha256": "ac65232cabefed44ad3f65d8e0a860bee4e885417d73d6173518a0ff34da7609"
+    }
+  ],
+  "same_source": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "checker_changed": false,
+  "functional_qualification_rerun": false,
+  "continuation_declaration_sha256": "722d194a9589637306d0533fe8eeb9e3e768ccbaf9f2c2846d8f46f9ed3b388b",
+  "publisher_derivation": {
+    "schema": "TRNM-W1-D6-PUBLISHER-QA-PATH-DERIVATION1",
+    "original": "publish_d6.py",
+    "original_sha256": "94bb16b0ad958b6f82447826c21855152bb9581c2bf90899d23c8859850e2702",
+    "derived": "publish_d6_v2.py",
+    "derived_sha256": "aeddc34ac48c510ffa3b3983d620b56065423b16fa9528cbff3f41cf322f2aa6",
+    "exact_old": "v/'docs-validation-01/manifest.json'",
+    "exact_new": "v/'docs-validation-02/manifest.json'",
+    "other_bytes_changed": false,
+    "original_executed": false
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "control_wall_seconds": 0.2,
+  "failed_assertion_line": 156,
+  "failed_method": "ProcessLifecycleTests.test_ignored_sigterm_escalates_and_output_overflow_remains_failure",
+  "fixture_default_argument_limit": {
+    "effective_omitted_argument_default_seconds": 5,
+    "patched_global_seconds": 0.15,
+    "production_definition_lines": [
+      425,
+      426
+    ],
+    "reason": "measure captures TERMINATION_GRACE_SECONDS in its default at function definition; run_control passes no termination_grace_seconds keyword",
+    "source_changed": false,
+    "test_patch_lines": [
+      154,
+      155
+    ]
+  },
+  "fsync_or_CPU_or_host_IO_cause_established": false,
+  "job_id": "1a1ba8f182e-12894-1b97",
+  "observed_termination_reasons": [
+    "DEADLINE_EXHAUSTED_BEFORE_SPAWN"
+  ],
+  "observer_source_sha256": "a3c80e25ec202749225ddd1a4fc45f3f22ab753f5e9e6941e694a3aa4a547df9",
+  "operation_started": false,
+  "original_manifest_sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25",
+  "per_control_record_retention_limit": "The test registers TemporaryDirectory.cleanup with addCleanup; the retained qualifier manifest contains suite output and outer command timing, not the individual observation files. This review did not recover or inspect a former temporary directory.",
+  "per_control_timing_records_present_in_retained_manifest": false,
+  "prior_seven_units": {
+    "all_active_state_inactive": true,
+    "all_load_state_not_found": true,
+    "all_main_pid_zero": true,
+    "control_group_fields_unset": true,
+    "observed_monotonic_ns": 1208971469529700,
+    "whole_host_idle_established": false
+  },
+  "qualification_complete": false,
+  "raw_outcomes": {
+    "errors": 0,
+    "failed": 1,
+    "passed": 31,
+    "ran": 32,
+    "skipped": 0
+  },
+  "recommendation": {
+    "argv_unchanged": true,
+    "if_second_attempt_fails": "Stop; do not retry until green",
+    "maximum_additional_full_suite_attempts": 1,
+    "original_control_parameters_unchanged": true,
+    "predeclare_unique_output_and_terminal_requirements": true,
+    "preserve_original_failed_attempt": true,
+    "source_unchanged": true,
+    "success_interpretation": "Adds actual coverage of previously unentered subcases; does not establish why the first attempt failed, first-attempt success, stable timing, whole-host isolation or production budget qualification"
+  },
+  "schema": "TRNM-W1-C8-STAGED-FIRST-ATTEMPT-SOURCE-READ-REVIEW1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "source_chronology": [
+    {
+      "action": "Set started monotonic time",
+      "line": 450
+    },
+    {
+      "action": "Set effective deadline started+.2 for this call",
+      "line": 451
+    },
+    {
+      "action": "Publish declaration; write_new includes flush and fsync at line318",
+      "line": 470
+    },
+    {
+      "action": "Create stdout/stderr/sample files",
+      "line": 528
+    },
+    {
+      "action": "Compare current monotonic time with original deadline",
+      "line": 531
+    },
+    {
+      "action": "Popen occurs only if budget remains",
+      "line": 534
+    }
+  ],
+  "source_modified": false,
+  "specific_cause_established": false,
+  "stderr": {
+    "bytes": 6501,
+    "sha256": "6523776cafbcfcb998f508af0a9a890ef1714adfc5a06aadd59a952baf4bca4c"
+  },
+  "test_source_sha256": "826b4348d8af00f03c5c3ec1fa1e15ebd30067b9e0fe0fb73f0179d78db5e25d",
+  "tests_executed_by_review": 0,
+  "unreached_in_failed_method": [
+    "actual SIGKILL_DURING_SETTLEMENT assertion success",
+    "OUTPUT_LIMIT subcase begins at test line158"
+  ]
+}

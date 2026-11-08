@@ -1,0 +1,298 @@
+{
+  "schema": "TRNM-W1-C8-STAGED-LAUNCH-INPUT1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "components": {
+    "core": {
+      "job_id": "1a1ba6feff0-12894-1aad",
+      "manifest_sha256": "ed8cd6e6d6e2772ec0bbfc97181581df53e2d116d0c76823f3a68e90defe3daf",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794129948442,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba6feff0-12894-1aad",
+        "launch_nonce": "32e53814c6bcb7b78a6791f164fc4ce5",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 2279,
+            "stored": 2279
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "owner": {
+      "job_id": "1a1ba7cdd03-12894-1b0d",
+      "manifest_sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794130508220,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba7cdd03-12894-1b0d",
+        "launch_nonce": "702d03970c6b5ac1d641717e5c197ddb",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 2647,
+            "stored": 2647
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "receiver": {
+      "job_id": "1a1ba77dd3e-12894-1ae4",
+      "manifest_sha256": "6cefe7af75dc4f075b26bb1f8ac77693769f16ce4a31173708399f334ebda29b",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794129823703,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba77dd3e-12894-1ae4",
+        "launch_nonce": "2a498208327ad9ed6a8647881b411a14",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 930,
+            "stored": 930
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "backend": {
+      "job_id": "1a1ba69e477-12894-1a74",
+      "manifest_sha256": "a3d530e67e3fd916f3c5e906ba0b851c00c3393cef0173db443d644109e1a47d",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794128933972,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba69e477-12894-1a74",
+        "launch_nonce": "f59849cb1a625dcbe0792f3140e07c03",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 648,
+            "stored": 648
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "native": {
+      "job_id": "1a1ba6bcd14-12894-1a85",
+      "manifest_sha256": "0fcf604c56d415907fc721f9262d7b6a843b1db49cd62246d706ccf8d319f310",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794129064621,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba6bcd14-12894-1a85",
+        "launch_nonce": "8d6e3df1c0b3cfe46c06a1a0e20943d3",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 3254,
+            "stored": 3254
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "historical-regressions": {
+      "job_id": "1a1ba88e958-12894-1b6a",
+      "manifest_sha256": "eef45c33e9aae4650c70fcaefc174841e6f75cd8c018139705d459e1fc71c1e6",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794130938535,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba88e958-12894-1b6a",
+        "launch_nonce": "48bd663b7c2260222c7e46819470ee04",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 2221,
+            "stored": 2221
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "history-local": {
+      "job_id": "1a1ba8a832f-12894-1b7a",
+      "manifest_sha256": "b39888daf3d2223c6600a693f663ca213698dffd6d9854ee887afd36af741738",
+      "authoritative_terminal": {
+        "at_unix_ms": 1794131108939,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba8a832f-12894-1b7a",
+        "launch_nonce": "5ad46ff4312efc1bc2988598c22ceb03",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1823,
+            "stored": 1823
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    }
+  },
+  "outer_qualification_timeout_seconds": 600,
+  "qualified_test_parameters_changed": false,
+  "all_agent_quiet_acknowledgements_received": true,
+  "current_adversarial_audit_terminal_failure_is_external_text_match_error_not_a_qualification_failure": true
+}

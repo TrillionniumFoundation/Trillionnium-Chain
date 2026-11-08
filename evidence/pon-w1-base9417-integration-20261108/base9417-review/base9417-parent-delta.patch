@@ -1,0 +1,370 @@
+diff --git a/.github/workflows/pon-recent-batch-acceptance.yml b/.github/workflows/pon-recent-batch-acceptance.yml
+index 7d426d03f..52b110413 100644
+--- a/.github/workflows/pon-recent-batch-acceptance.yml
++++ b/.github/workflows/pon-recent-batch-acceptance.yml
+@@ -73,7 +73,7 @@ jobs:
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs)" = 44acbb5d854a8e0a7c4979b4715bd9949b656cd5
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = a6eb85aa2c2e3ad17244890128ef86975d71ecc9
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
+-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = b9c6f42733d5477836dc184b47bb9381a8be7b3e
++          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 15c49409ca873b9dc16b0a53f051c7c45bc6e781
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index d4f23b03f..240781f2d 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -145,7 +145,7 @@
+     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
+     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "516ca1abb0dfeb6c52b3a99efc8f041390d78223",
+     ".github/workflows/pon-pq-system-continuation.yml": "f6b862182b361eefef62a553f59c3e79e90e1868",
+-    ".github/workflows/pon-recent-batch-acceptance.yml": "7d426d03f9a56de9c4b745da535e774e552673f2",
++    ".github/workflows/pon-recent-batch-acceptance.yml": "52b11041381fb0e069a093a6675563ce71a129d8",
+     ".github/workflows/pon-w1-work-security.yml": "c9ab642e0f23194b32a7b283107d215deb534c7a",
+     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
+@@ -608,7 +608,7 @@
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "e7c3a2f010ae5669501897bf87badbc6d043e488",
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/test_observation.rs": "655f0701562203f2e57c4e71591e08b301ac8b92",
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs": "f680b26569b39923f63eeb2ccb347e33ea46e03e",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "b9c6f42733d5477836dc184b47bb9381a8be7b3e",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "15c49409ca873b9dc16b0a53f051c7c45bc6e781",
+     "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs": "bae5cba609b84c78550c7f4d7e67d0ab9ffde24a",
+     "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
+     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "6f563556fe47a1bb6d780e166355b4f1473c811b",
+@@ -632,6 +632,8 @@
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs": "0182e91efb2dda2eee911e6d8dde769a0e9e50e1",
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs": "15d3fc248c618916cd730ceefec60a06c8a5651c",
++    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs": "dfd95d2618b5e8f3066d904ff632cd26f9925c5c",
++    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs": "57f74076e6fd7ec3a856fb384977b68841ca1887",
+     "trillionnium/crates/trnm-pon-node/src/store/history_page.rs": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+     "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs": "52914aec898d2967db55a7b618aa6bcf99ee424f",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback.rs": "2cca5dce572f70c5180750caecc4a4340620f09a",
+@@ -1141,6 +1143,8 @@
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs",
+     "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_root_tests.rs",
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index b9c6f4273..15c49409c 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -3833,6 +3833,7 @@ impl Node {
+         }
+         let mut path = reverse_path::ReversePath::new(tempfile::tempfile()?);
+         let mut count = 0u64;
++        let mut prefer_replay_prefix = false;
+         let mut cur = tip;
+         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
+             progress()?;
+@@ -3857,8 +3858,20 @@ impl Node {
+                     .map_err(Error::local_integrity)?;
+                 continuity_v1::check_state(&state, row.height, &self.settings.app)
+                     .map_err(|error| Error::from(error).local_integrity())?;
++                prefer_replay_prefix = self.state_backend == StateBackend::Legacy;
++                if prefer_replay_prefix {
++                    self.historical_commitment_cache
++                        .borrow_mut()
++                        .begin_replay(cur);
++                }
+                 let commitment = self
+-                    .checked_historical_commitment(cur, &state, row.root, None)?
++                    .checked_historical_commitment(
++                        cur,
++                        &state,
++                        row.root,
++                        None,
++                        prefer_replay_prefix,
++                    )?
+                     .snapshot;
+                 if self.state_backend == StateBackend::AuthenticatedV1 {
+                     native_authenticated::verify_state_with_readback(
+@@ -3877,7 +3890,7 @@ impl Node {
+             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+             cur = self.parent(cur)?;
+         };
+-        for _ in 0..count {
++        for replay_index in 0..count {
+             progress()?;
+             let id = path.pop()?.ok_or("ANCESTRY_LIMIT")?;
+             for (index, (key, before, after)) in self
+@@ -3909,6 +3922,7 @@ impl Node {
+                     &state,
+                     self.record(id)?.root,
+                     commitment.as_ref(),
++                    prefer_replay_prefix && replay_index < 6,
+                 )?
+                 .snapshot;
+             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs b/trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs
+index a66ede732..dfd95d261 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs
+@@ -14,7 +14,8 @@ const MAX_RETAINED_CHARGE_BYTES: usize = 16 * 1024 * 1024;
+ 
+ #[derive(Default)]
+ pub(super) struct HistoricalCommitments {
+-    material: VecDeque<(Hash, CheckedCommitment)>,
++    material: VecDeque<(Hash, CheckedCommitment, bool)>,
++    replay_anchor: Option<Hash>,
+     payload: usize,
+     retained: usize,
+ }
+@@ -33,23 +34,42 @@ impl HistoricalCommitments {
+     }
+     pub(super) fn clear(&mut self) {
+         self.material.clear();
++        self.replay_anchor = None;
+         self.payload = 0;
+         self.retained = 0;
+     }
+     pub(super) fn candidate(&self, block: Hash, current_root: Hash) -> Option<CheckedCommitment> {
+         self.material
+             .iter()
+-            .find(|(id, snapshot)| *id == block && snapshot.root() == current_root)
+-            .map(|(_, snapshot)| snapshot.clone())
++            .find(|(id, snapshot, _)| *id == block && snapshot.root() == current_root)
++            .map(|(_, snapshot, _)| snapshot.clone())
+     }
+     fn remove(&mut self, index: usize) {
+-        if let Some((_, snapshot)) = self.material.remove(index) {
++        if let Some((_, snapshot, _)) = self.material.remove(index) {
+             self.payload -= snapshot.payload_bytes();
+             self.retained -= snapshot.retained_charge_bytes();
+         }
+     }
++    // A fresh SQL snapshot selects only an eviction preference. No state or
++    // validation is returned, and a different anchor releases every preference.
++    pub(super) fn begin_replay(&mut self, anchor: Hash) {
++        if self.replay_anchor != Some(anchor) {
++            for (_, _, preferred) in &mut self.material {
++                *preferred = false;
++            }
++            self.replay_anchor = Some(anchor);
++        }
++    }
+     pub(super) fn retain(&mut self, block: Hash, snapshot: Option<&CheckedCommitment>) {
+-        if let Some(index) = self.material.iter().position(|(id, _)| *id == block) {
++        self.retain_preferred(block, snapshot, false);
++    }
++    pub(super) fn retain_preferred(
++        &mut self,
++        block: Hash,
++        snapshot: Option<&CheckedCommitment>,
++        preferred: bool,
++    ) {
++        if let Some(index) = self.material.iter().position(|(id, _, _)| *id == block) {
+             self.remove(index);
+         }
+         let Some(snapshot) = snapshot else {
+@@ -60,6 +80,14 @@ impl HistoricalCommitments {
+         if payload > MAX_PAYLOAD_BYTES || retained > MAX_RETAINED_CHARGE_BYTES {
+             return;
+         }
++        // Different forks may share a snapshot anchor. Their first seven
++        // locators must not accumulate more than seven protected candidates.
++        if preferred && self.material.iter().filter(|(_, _, keep)| *keep).count() >= MAX_ENTRIES - 1
++        {
++            if let Some(index) = self.material.iter().position(|(_, _, keep)| *keep) {
++                self.remove(index);
++            }
++        }
+         // Shared Arc versions are deliberately charged in full per entry. This
+         // is extra retained software charge, separate from the original 512 MiB
+         // per-call commitment workspace charge, and bounds neither total Node
+@@ -77,12 +105,21 @@ impl HistoricalCommitments {
+                 && next_payload <= MAX_PAYLOAD_BYTES
+                 && next_retained <= MAX_RETAINED_CHARGE_BYTES
+             {
+-                self.material.push_back((block, snapshot.clone()));
++                self.material
++                    .push_back((block, snapshot.clone(), preferred));
+                 self.payload = next_payload;
+                 self.retained = next_retained;
+                 return;
+             }
+-            self.remove(0);
++            // Keep at most seven prefix candidates, leaving a rotating tail
++            // for the current parent binding. Byte pressure can evict preferred
++            // material too; the existing budgets always take precedence.
++            let victim = self
++                .material
++                .iter()
++                .position(|(_, _, keep)| !keep)
++                .unwrap_or(0);
++            self.remove(victim);
+         }
+     }
+ }
+@@ -93,6 +130,7 @@ impl Node {
+         actual: &State,
+         current_root: Hash,
+         original_prior: Option<&CheckedCommitment>,
++        prefer_replay_prefix: bool,
+     ) -> Result<PreparedCommitment> {
+         // No RefCell guard crosses canonical computation or caller progress.
+         // A miss, changed current SQL root or over-budget entry uses the original
+@@ -106,7 +144,7 @@ impl Node {
+             self.checked_commitment(actual, current_root, material.as_ref().or(original_prior))?;
+         self.historical_commitment_cache
+             .borrow_mut()
+-            .retain(block, prepared.snapshot.as_ref());
++            .retain_preferred(block, prepared.snapshot.as_ref(), prefer_replay_prefix);
+         // changed_keys is relative to the selected arithmetic material. Zero
+         // does not certify unchanged SQL, eligibility or a validation result.
+         Ok(prepared)
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs
+index 308216344..57f74076e 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs
+@@ -94,6 +94,98 @@ fn historical_material_reuses_arithmetic_after_complete_replay_and_reopens() {
+     let reopened = Node::open(directory.path(), settings, 2).unwrap();
+     assert_eq!(reopened.state_at(ids[4]).unwrap(), expected);
+     assert_eq!(reopened.read_active().unwrap(), active);
++    assert_long_replay_prefix_and_tail();
++}
++
++fn assert_long_replay_prefix_and_tail() {
++    let directory = tempfile::tempdir().unwrap();
++    let settings = Settings::development(Some(1)).unwrap();
++    let mut node = Node::open(directory.path(), settings.clone(), 2).unwrap();
++    let mut ids = vec![settings.genesis()];
++    for height in 1..=18 {
++        let packet = node
++            .make(
++                *ids.last().unwrap(),
++                vec![transfer(&settings, height)],
++                development_public(2).unwrap(),
++                1 + height * 10,
++                4096,
++            )
++            .unwrap();
++        ids.push(node.admit(&packet, NOW).unwrap());
++    }
++    let expected = node.state_at(ids[18]).unwrap();
++    assert_eq!(root(&expected).unwrap(), node.record(ids[18]).unwrap().root);
++    {
++        let cache = node.historical_commitment_cache.borrow();
++        assert_eq!(cache.entries(), 8);
++        for id in &ids[..7] {
++            assert!(cache
++                .candidate(*id, node.record(*id).unwrap().root)
++                .is_some());
++        }
++        assert!(cache
++            .candidate(ids[18], node.record(ids[18]).unwrap().root)
++            .is_some());
++    }
++    // A current snapshot with a different anchor must still be read from SQL.
++    let middle = node.state_at(ids[8]).unwrap();
++    node.db
++        .execute(
++            "INSERT OR REPLACE INTO snapshots(block,state) VALUES(?,?)",
++            params![ids[8].as_slice(), canonical(&middle).unwrap()],
++        )
++        .unwrap();
++    assert_eq!(node.state_at(ids[18]).unwrap(), expected);
++    {
++        let cache = node.historical_commitment_cache.borrow();
++        for id in &ids[8..15] {
++            assert!(cache
++                .candidate(*id, node.record(*id).unwrap().root)
++                .is_some());
++        }
++        assert!(cache
++            .candidate(ids[18], node.record(ids[18]).unwrap().root)
++            .is_some());
++    }
++    // Cancellation is still reached at the same checkpoint, with cold retry.
++    for warm in [true, false] {
++        if !warm {
++            node.historical_commitment_cache.borrow_mut().clear();
++        }
++        let mut calls = 0;
++        let error = node
++            .state_at_with_progress(ids[18], &mut || {
++                calls += 1;
++                if calls == 12 {
++                    Err(Error::new(ErrorCode::PublicRequestCancelled))
++                } else {
++                    Ok(())
++                }
++            })
++            .unwrap_err();
++        assert!(error.is(ErrorCode::PublicRequestCancelled));
++        assert_eq!(calls, 12);
++        assert_eq!(node.state_at(ids[18]).unwrap(), expected);
++    }
++    // A second branch sharing the original anchor never reuses a State verdict.
++    let mut parent = ids[4];
++    for height in 5..=18 {
++        let packet = node
++            .make(
++                parent,
++                vec![transfer(&settings, height)],
++                development_public(3).unwrap(),
++                2 + height * 10,
++                4096,
++            )
++            .unwrap();
++        parent = node.admit(&packet, NOW).unwrap();
++    }
++    let fork = node.state_at(parent).unwrap();
++    assert_eq!(root(&fork).unwrap(), node.record(parent).unwrap().root);
++    assert_eq!(node.state_at(ids[18]).unwrap(), expected);
++    assert!(node.historical_commitment_cache.borrow().entries() <= 8);
+ }
+ 
+ #[test]
+@@ -850,6 +942,45 @@ fn independent_entry_payload_and_retention_bounds_discard_without_ledger_rejecti
+         ),
+         (0, 0, 0)
+     );
++    // Same-anchor long replays preserve seven arithmetic prefix candidates
++    // and the latest parent, without increasing any original cache bound.
++    cache.begin_replay([42; 32]);
++    for n in 0..7_u8 {
++        cache.retain_preferred([n; 32], Some(&small), true);
++    }
++    for n in 7..100_u8 {
++        cache.retain([n; 32], Some(&small));
++        assert_eq!(cache.entries(), 8);
++        for prefix in 0..7_u8 {
++            assert!(cache.candidate([prefix; 32], small.root()).is_some());
++        }
++        assert!(cache.candidate([n; 32], small.root()).is_some());
++        assert_eq!(cache.payload_bytes(), 8 * small.payload_bytes());
++        assert_eq!(
++            cache.retained_charge_bytes(),
++            8 * small.retained_charge_bytes()
++        );
++    }
++    // A fork with the same anchor cannot fill every slot with preferences.
++    for n in 100..120_u8 {
++        cache.retain_preferred([n; 32], Some(&small), true);
++        cache.retain([200; 32], Some(&small));
++        assert_eq!(cache.entries(), 8);
++        assert!(cache.candidate([200; 32], small.root()).is_some());
++    }
++    cache.begin_replay([43; 32]);
++    for n in 210..218_u8 {
++        cache.retain([n; 32], Some(&small));
++    }
++    assert!(cache.candidate([119; 32], small.root()).is_none());
++    assert_eq!(cache.entries(), 8);
++    // Byte pressure overrides all preferences, and None removes an old entry.
++    cache.retain_preferred([220; 32], Some(&large), true);
++    cache.retain_preferred([221; 32], Some(&large), true);
++    assert_eq!(cache.entries(), 1);
++    assert!(cache.retained_charge_bytes() <= 16 * 1024 * 1024);
++    cache.retain_preferred([221; 32], None, true);
++    assert_eq!(cache.entries(), 0);
+ }
+ 
+ #[test]

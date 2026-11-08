@@ -1,0 +1,15 @@
+{
+  "authority": "explicit research owner request; ordinary NativeTask tag 3 while Reserved",
+  "cold_action": "observe only this exact wire/packet on canonical ancestry; never re-sign or resubmit",
+  "exact_nonce": 2,
+  "generation_statement": "a2dd4830465ce6192ef48b53be74582feb886b526a93fb4f8e8f52b1c7cb80e2",
+  "gpu_accounting_is_refund_authority": false,
+  "native_task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+  "operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+  "original_reserve_tip": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+  "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+  "packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+  "resource_reservation_released": false,
+  "schema": "TRNM-W1-NATIVE-TASK-CANCEL-INTENT1",
+  "wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+}

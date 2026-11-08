@@ -1,0 +1,26 @@
+{
+  "ack_path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/proof/receiver/ack.json",
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/scripts/run_w1_receiver.py",
+    "--verifier",
+    "/home/qian-qi/work/chain-w1-base9417-native-target-20261108-ec265b/release/w1-verify-v2",
+    "--verifier-sha256",
+    "c667ec4cff650909734c4343fc814d0b3dd8bdb68b5c85085b11bd9c2d68cd2f",
+    "--receipt",
+    "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/proof/checkpoint/succinct.bin",
+    "--header",
+    "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-winner/header.bin",
+    "--expected-artifacts",
+    "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-winner/expected-artifacts.bin",
+    "--out",
+    "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/proof/receiver",
+    "--wall-seconds",
+    "7200",
+    "--deadline-monotonic",
+    "1210689.011653932",
+    "--deadline-boot-id",
+    "14f92beb-43c6-4786-839e-b57307ae8048"
+  ],
+  "schema": "TRNM-W1-COMPLETION-HOOK1"
+}

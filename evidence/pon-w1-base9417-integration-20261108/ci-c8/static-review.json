@@ -1,0 +1,10 @@
+{
+  "schema": "TRNM-W1-C8-CI-OBSERVER-STATIC-REVIEW1",
+  "reviewer": "/root/adversarial_gate",
+  "review_mode": "read-only local source review; 0 SSH/0 API/0 tests/0 changes",
+  "reviewed_base_bytes": 12969,
+  "reviewed_base_sha256": "3c2c1769589733f74093e78e0b1f943938a70db57a80a9b68eda15ea1b705ffe",
+  "observed_result_side_requirement": "Original observer enumeration_complete does not itself require foreign IDs empty or every sample exact-source match. Retained scope-audit.json independently checks both foreign lists empty, original pagination/count/unique constraints and all six job/run/head/check/name identities. No original snapshot was changed.",
+  "boundedness": "2 PR reads, at most 10 pages of 100 per enumeration, at most 6 completed job samples. Literal EXPECTED declarations parsed only from complete timestamp/ANSI-cleaned log lines; missing/conflicting declarations remain null.",
+  "prepublication_local_state": "A prior tool-cell response was not recoverable as a start receipt or script in local functions store. The two local durable inventory attempts were refused their response/source-size bounds and are retained. Publication uses only the original fixed idempotency key, never a replacement identity."
+}

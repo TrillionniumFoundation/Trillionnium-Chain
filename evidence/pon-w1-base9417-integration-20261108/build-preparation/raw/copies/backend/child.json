@@ -1,0 +1,19 @@
+{
+  "destination": "/home/qian-qi/work/chain-w1-base9417-backend-target-20261108-ec265b",
+  "identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "pid": 4004424,
+    "start_ticks": 120591500,
+    "state": "R"
+  },
+  "observed_monotonic_ns": 1205915002343711,
+  "parent_identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "pid": 4004390,
+    "start_ticks": 120591422,
+    "state": "R"
+  },
+  "role": "backend",
+  "schema": "TRNM-W1-C8-CACHE-COPY-CHILD1",
+  "source_target": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b"
+}

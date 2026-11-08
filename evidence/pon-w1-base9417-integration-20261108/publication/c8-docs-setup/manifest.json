@@ -1,0 +1,40 @@
+{
+  "schema": "TRNM-W1-C8-D6-DOCS-SETUP1",
+  "worktree": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+  "branch": "docs/chain-w1-base9417-qualification-20261108-ec265b",
+  "first_parent": "41d717cc9608153dec0daa26ad68ebf8129ed215",
+  "merge_parent": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "conflicts": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "resolution": {
+    "kind": "retain-complete-D5-plan-then-append-exact-C8-delta",
+    "base_sha256": "c461b79c8bbe6b55b7d228b3d19cf247f6ea67cdcbe83e2b9bfc4a5e34d27e1e",
+    "ours_sha256": "ec215a93253054b7e4242971f4efe4f02d60dba32406834642d753cd8fcfd00c",
+    "theirs_sha256": "1b3bdf47bc17c7f4877b43a1147ba68d968109fc49c85c7599572fd57d92770e",
+    "appended_sha256": "ce3ab53c9a3d448845dee9eb145dfd19ab0c4358da7d98e89903fe949465bc4c",
+    "result_sha256": "b71f2ddd3c7f0e06929bcbc40985bbaa400b19a8da217aa7bbe5ec1876a696cc"
+  },
+  "preserved": [
+    {
+      "inventory": "evidence/pon-w1-four-gates-20261108/publication-inventory.json",
+      "sha256": "524bb438ef63bc5fb25ecba3a723e9bb64dc5d7dbf8560797c6788410c282dda",
+      "members_checked": 421
+    },
+    {
+      "inventory": "evidence/pon-w1-base62-integration-20261108/publication-inventory.json",
+      "sha256": "1a25fdb927a8ad7b7e980718cd85a1f0bced231b7f37df1ffa817ce142996d95",
+      "members_checked": 472
+    },
+    {
+      "inventory": "evidence/pon-w1-base96-integration-20261108/publication-inventory.json",
+      "sha256": "9c0c06ea019853aededd8e24475b34480ec05b45f7cc101a3e54d7a27f0b982a",
+      "members_checked": 1242
+    }
+  ],
+  "runtime_index_matches_c8": true,
+  "integration_package_copied": true,
+  "commit_created": false,
+  "pushed": false,
+  "observed_monotonic_ns": 1207675165209731
+}

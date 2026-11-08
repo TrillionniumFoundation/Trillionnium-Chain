@@ -1,0 +1,59 @@
+{
+  "schema": "TRNM-W1-C8-D6-ASSEMBLY-DECLARATION2",
+  "tested_source": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "tested_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "documentation_first_parent": "41d717cc9608153dec0daa26ad68ebf8129ed215",
+  "old_git_paths": 2138,
+  "four_gate_status": [
+    "HOLD",
+    "HOLD",
+    "HOLD",
+    "HOLD"
+  ],
+  "package_manifest_pins": {
+    "integration": "5535e642c8ae2b9b1960be983f1c048d604b18c95e04d0ef2f54c4d6d9238676",
+    "qualification": "d087c47faef1290bfb88edee517c1ee41dee06f23e04ac0ffad1af37c87e8f76",
+    "build-preparation": "0baf614b409ccfc031a6a260f94c69da9b65da394d9b3326d8dcb2aea58c421d",
+    "base9417-review": "e37402e40d0220ce45edf3fef8e6d00a46cf66da9e6f74f661bc524e39c9e2e5",
+    "lifecycle-c8": "7e2792bdc3c4b644413e5228a8ffbc7b32dd5863a49dd4459ac632593a62f601",
+    "ci-c8": "0e8df3440595b3d8b56c5e57ecf78b07f15590d437b28166a31b8bea4b7f1ed4"
+  },
+  "root_files": {
+    "README.md": {
+      "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/d6-readme-final.md",
+      "sha256": "fa842812bd747a26c604595fc62b45b3b96c9e518abfce17820c7c866bdafc8d"
+    },
+    "summary.json": {
+      "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/d6-summary-final.json",
+      "sha256": "d43b905b84ba8a4be0cb2cec9473d623eb8f4e74e06f02c8ba2367074aecd4eb"
+    },
+    "sole-plan-append.md": {
+      "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/d6-sole-plan-append.md",
+      "sha256": "92edfeedd66f7910d9629e1f035b60f7006b9dd7ed681d4e12465d71f3c9f8e3"
+    }
+  },
+  "verify_git_publication_sha256": "4a16432af60fe7c9a8e5d9241f6915f0063d9da4dfdc9a9ed985b59e176e4d1f",
+  "assembly_tool": "assemble_validate_d6_v2.py",
+  "assembly_tool_sha256": "a4a40d69f3bd1bbdfa30a001bc6aa57b27535a556434249212648ca0944ad9d9",
+  "source_publication_tool": "publish_c8_source_v2.py",
+  "source_publication_tool_sha256": "5cd7e0e0741b7b38d32b35eb41da28a02a481badde0f4eb0d20cc9b455ae5537",
+  "sole_plan_unique_heading": "### 2026-11-08 — C8 exact qualification and D6 retained-attempt evidence",
+  "pr_body_template_sha256": "ac65232cabefed44ad3f65d8e0a860bee4e885417d73d6173518a0ff34da7609",
+  "pr_update_tool_sha256": "6105cdd1da03d1332ee6943e22a5b3fdab66009d762eb4016e150848cc90a666",
+  "qualification_counts": {
+    "commands_all_attempts": 77,
+    "ordinary_executions": 697,
+    "passed": 696,
+    "failed": 1,
+    "ignored": 4
+  },
+  "first_attempt_failure_retained": true,
+  "unique_staged_repeat_only": true,
+  "source_guards_or_business_deadlines_weakened": false,
+  "independent_narrative_review": {
+    "scope": "Three local final drafts; no remote I/O, tests, or changes",
+    "required_corrections": 0
+  },
+  "new_ci_queries_authorized_by_this_declaration": false,
+  "new_research_or_test_runs_authorized_by_this_declaration": false
+}

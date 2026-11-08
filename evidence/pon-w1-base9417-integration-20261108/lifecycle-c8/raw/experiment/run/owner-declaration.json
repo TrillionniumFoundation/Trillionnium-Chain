@@ -1,0 +1,24 @@
+{
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "config_sha256": "65ebdd227bce004bbc8fdec3baa97c864d64e1fe63047b27b427ec569eb793f4",
+  "local_proof_plan": {
+    "compression_mode": "balanced",
+    "compression_workers": 2,
+    "rayon_threads": 4,
+    "segment_workers": 2
+  },
+  "native_chain_deadline": 20,
+  "native_obligation_units": 1000,
+  "original_deadline_ns": 1210689011653932,
+  "owner_test_binary": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+  "owner_test_binary_sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456",
+  "payment_scope": "requires unchanged Reserve tip; fixed provider Receipt nonce 1; no intervening owner operation",
+  "provider_receipt_nonce": 1,
+  "public_chain_transactions_sent": false,
+  "research_genesis_only": true,
+  "research_node_path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/research-node",
+  "research_node_write_scope": "one sequential owner for the complete operation; no concurrent writer qualification",
+  "reserve_nonce": 1,
+  "schema": "TRNM-W1-FUNDED-OWNER2",
+  "started_monotonic_ns": 1210569347895914
+}

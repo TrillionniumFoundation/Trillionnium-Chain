@@ -1,0 +1,50 @@
+{
+  "conclusion": "success",
+  "event_declarations": [
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1022,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 2944,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    }
+  ],
+  "event_expected_raw_values": {
+    "EXPECTED_BASE": [
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "EXPECTED_HEAD": [],
+    "EXPECTED_KIND": [],
+    "EXPECTED_MERGE": []
+  },
+  "event_expected_values": {
+    "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+    "EXPECTED_HEAD": null,
+    "EXPECTED_KIND": null,
+    "EXPECTED_MERGE": null
+  },
+  "event_expected_values_inferred_from_API_or_merge": false,
+  "first_failed_step": null,
+  "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "job_id": 128698904380,
+  "job_log": "job-samples/128698904380/log.stdout",
+  "job_metadata": "job-samples/128698904380/metadata.stdout",
+  "log_fetch_exit": 0,
+  "matching_log_line_count": 2,
+  "metadata_fetch_exit": 0,
+  "name": "CodeQL local SARIF (python, prospective-merge)",
+  "run_id": 42470186921,
+  "tuple_and_error_log_lines": [
+    {
+      "line": 1022,
+      "text": "2026-11-08T10:09:55.0163755Z   EXPECTED_BASE_SHA: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 2944,
+      "text": "2026-11-08T10:14:37.1311463Z   EXPECTED_BASE_SHA: 9417e495165865ef6c1288b39084856e31020634"
+    }
+  ]
+}

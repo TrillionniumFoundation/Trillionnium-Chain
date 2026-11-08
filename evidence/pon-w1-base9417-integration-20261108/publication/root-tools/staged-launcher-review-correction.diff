@@ -1,0 +1,41 @@
+--- launch_staged.py
++++ launch_staged_v2.py
+@@ -39,9 +39,26 @@
+  assert fields.get('ActiveState') in ('inactive','failed') and fields.get('MainPID')=='0',(name,pctl.returncode,pctl.stdout,pctl.stderr)
+  cg=fields.get('ControlGroup');cgobs=None
+  if cg:
+-  cgp=pathlib.Path('/sys/fs/cgroup')/cg.lstrip('/');procs=cgp/'cgroup.procs';ev=cgp/'cgroup.events'
+-  cgobs={'path':str(cgp),'exists':cgp.exists(),'procs':procs.read_text() if procs.exists() else None,'events':ev.read_text() if ev.exists() else None}
+-  assert not cgobs['procs'] or not cgobs['procs'].strip(),(name,cgobs)
++  cgp=pathlib.Path('/sys/fs/cgroup')/cg.lstrip('/');exists=cgp.exists()
++  cgobs={'path':str(cgp),'exists':exists,'subtree_procs':[],'events_before':None,'events_after':None}
++  if exists:
++   ev=cgp/'cgroup.events'
++   before=ev.read_text();cgobs['events_before']=before
++   evfields={}
++   for line in before.splitlines():
++    key,value=line.split();assert key not in evfields;evfields[key]=value
++   assert evfields.get('populated')=='0',(name,cgobs)
++   procs_paths=sorted(cgp.rglob('cgroup.procs'))
++   assert cgp/'cgroup.procs' in procs_paths,(name,str(cgp))
++   for procs in procs_paths:
++    raw=procs.read_text()
++    cgobs['subtree_procs'].append({'path':str(procs),'raw':raw})
++    assert not raw.strip(),(name,str(procs),raw)
++   after=ev.read_text();cgobs['events_after']=after
++   evfields={}
++   for line in after.splitlines():
++    key,value=line.split();assert key not in evfields;evfields[key]=value
++   assert evfields.get('populated')=='0',(name,cgobs)
+  checked.append({'component':name,'job_id':job,'manifest':str(p),'manifest_sha256':sha,'command_count':count,'authoritative_terminal':terminal,'current_unit':fields,'unit_query_exit':pctl.returncode,'unit_query_stderr':pctl.stderr,'current_cgroup':cgobs})
+ assert (methods,ignored,nonzero)==(633,4,1),(methods,ignored,nonzero)
+ h=json.loads((v/'exact-history-local-01/history-artifact-and-list.json').read_text())
+@@ -49,7 +66,7 @@
+ plan=tool/'staged-plan.json';assert hashlib.sha256(plan.read_bytes()).hexdigest()=='af2a4739fed7e449f80cffb44b237b3a36015b674174a990c40f017e7b812512'
+ driver=tool/'qualify_source.py';assert hashlib.sha256(driver.read_bytes()).hexdigest()=='d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f'
+ argv=[sys.executable,str(driver),'--repo',str(repo),'--head',head,'--out',str(v/'exact-staged-01'),'--plan',str(plan)]
+-binding={'schema':'TRNM-W1-C8-STAGED-LAUNCH-BINDING1','source_commit':head,'source_tree':tree,'input_sha256':a.input_sha256,'known_current_components':checked,'scope':'Current seven known C8 qualification jobs only; no assertion that the host has no other workloads or that every historical process was reaped','unchanged_original_test_parameters':True,'declared_test_methods':32,'new_operation_not_created':True,'new_operation_deadline_not_selected':True,'argv':argv,'observed_monotonic_ns':time.monotonic_ns()}
++binding={'schema':'TRNM-W1-C8-STAGED-LAUNCH-BINDING2','source_commit':head,'source_tree':tree,'input_sha256':a.input_sha256,'known_current_components':checked,'scope':'Current seven known C8 qualification jobs only; bounded cgroup-v2 observations assert no live processes in each present owned subtree. This does not establish zombie reaping, absence of other host workloads, or reaping/accounting for every historical process','unchanged_original_test_parameters':True,'declared_test_methods':32,'new_operation_not_created':True,'new_operation_deadline_not_selected':True,'argv':argv,'observed_monotonic_ns':time.monotonic_ns()}
+ with (v/'staged-launch-binding.json').open('x') as f:f.write(json.dumps(binding,indent=2)+'\n')
+ print(json.dumps({'schema':binding['schema'],'known_components_terminal_and_currently_inactive':len(checked),'pre_staged_methods':methods,'new_operation_not_created':True}),flush=True)
+ os.execv(sys.executable,argv)

@@ -1,0 +1,94 @@
+{
+  "schema": "TRNM-W1-C8-STAGED-ONE-REPEAT-DECLARATION1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "original": {
+    "job_id": "1a1ba8f182e-12894-1b97",
+    "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+    "manifest_sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25",
+    "stderr_bytes": 6501,
+    "stderr_sha256": "6523776cafbcfcb998f508af0a9a890ef1714adfc5a06aadd59a952baf4bca4c",
+    "terminal": {
+      "at_unix_ms": 1794131331747,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 1,
+      "job_id": "1a1ba8f182e-12894-1b97",
+      "launch_nonce": "e494833d0238ebc4c3108685f56ebb4e",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 706,
+          "stored": 706
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "ran": 32,
+    "passed": 31,
+    "failed": 1,
+    "qualification_complete": false,
+    "unentered_output_limit_subcase": true
+  },
+  "reason": "One bounded unchanged complete-suite repeat is declared to exercise the SIGKILL and OUTPUT_LIMIT subcases that the first attempt did not reach after its original 0.2-second budget expired before spawn. No specific I/O/CPU/load cause was measured; the repeat cannot erase or causally explain the original failure.",
+  "maximum_additional_attempts": 1,
+  "stop_after_second_failure": true,
+  "repeat_out": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-02",
+  "test_plan_sha256": "af2a4739fed7e449f80cffb44b237b3a36015b674174a990c40f017e7b812512",
+  "driver_sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f",
+  "base_wrapper_sha256": "a82122b691c7fa287e33dbd1fc70b527e020e9d6afde2236169cefe093b3f253",
+  "input_sha256": "10d7e0f459ed7ec6b400e8e141c4d59f8b4889c9fcd127bbebaf60c9b6c9ec9f",
+  "planned_job_key": "root-c8-exact-staged-declared-repeat-20261108-ec265b-01",
+  "outer_timeout_seconds": 600,
+  "test_argv_changed": false,
+  "test_parameters_changed": false,
+  "short_timeout_seconds": 0.2,
+  "fixture_grace_note": "The test's patch of the module constant to 0.15 does not change the default argument already captured by measure; the original default is 5 seconds. The frozen source is left unchanged.",
+  "source_changed": false,
+  "environment_overrides": {},
+  "added_cpu_or_memory_limits": false,
+  "priority_changed": false,
+  "required_quiet_window": true,
+  "old_failure_retained": true,
+  "aggregate_must_include_both_attempts": true,
+  "first_campaign": {
+    "commands": 73,
+    "method_executions": 665,
+    "passed": 664,
+    "failed": 1,
+    "ignored": 4,
+    "unexpected_nonzero_commands": 1,
+    "expected_negative_commands": 1
+  },
+  "if_repeat_passes": {
+    "commands_including_repeat": 77,
+    "method_executions": 697,
+    "passed": 696,
+    "failed": 1,
+    "ignored": 4,
+    "all_first_attempts_passed": false
+  },
+  "new_operation_created": false,
+  "deadline_selected": false
+}

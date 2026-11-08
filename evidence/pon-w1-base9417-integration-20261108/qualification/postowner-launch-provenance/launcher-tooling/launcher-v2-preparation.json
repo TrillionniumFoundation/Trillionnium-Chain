@@ -1,0 +1,19 @@
+{
+  "v1_retained": true,
+  "v1_executed": false,
+  "v2_launcher": {
+    "path": "/home/qian-qi/work/chain-w1-c8-postowner-tools-20261108-ec265b/launch_postowner_v2.py",
+    "bytes": 20067,
+    "sha256": "74438b1ed9675a94076d45a5b38405cdcd2dbbacc2d5723581c6e74b10db3c94"
+  },
+  "reason": "stream owner ELF of 467190280 bytes with a 1 MiB buffer and bind actual strict-import receipt shape; original plans/driver/source unchanged",
+  "ast_parse": true,
+  "gate": {
+    "path": "/home/qian-qi/work/chain-w1-c8-postowner-tools-20261108-ec265b/gate-historical-01.json",
+    "bytes": 2804,
+    "sha256": "6285d464d3d54ad591a80f18ca0ca5d3ea5b9ccd032699969d6762eef3ce7d33"
+  },
+  "outer_timeout_seconds": 1800,
+  "original_inner_test_timeout_seconds": 900,
+  "source_changes": 0
+}

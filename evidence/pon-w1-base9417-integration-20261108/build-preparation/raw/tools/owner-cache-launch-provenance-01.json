@@ -1,0 +1,100 @@
+{
+  "schema": "TRNM-W1-C8-OWNER-COPIED-CACHE-LAUNCH-PROVENANCE1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "copy_record": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.json",
+    "bytes": 6439,
+    "sha256": "ce1120304c1679afe96f147a21bdb82ae343f5ce57028bec1b38b75bb53b85e2"
+  },
+  "source_qualifications": [
+    {
+      "bytes": 23342,
+      "device": 2050,
+      "inode": 52862322,
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/manifest.json",
+      "sha256": "6aeb6311539926f0e4f96c9fc2469953fbb879ba5897e7e3e0d16f1399d26261"
+    },
+    {
+      "bytes": 7425,
+      "device": 2050,
+      "inode": 51526144,
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/manifest.json",
+      "sha256": "5025eadebdb08f85b1e8bb8c68076f29adc59d1048b277630deb2618b1189c3c"
+    }
+  ],
+  "source_target": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b",
+  "destination_target": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b",
+  "source_empty_origin_is_historical_only": true,
+  "source_currently_contains_owner_debug_and_History_release": true,
+  "destination_fresh_cargo_target": false,
+  "destination_origin": "copied current C7 owner target, including already-built debug owner and History release artifacts",
+  "initial_destination_binaries": {
+    "debug/deps/trnm_pon_node-2c98293081e75af8": {
+      "bytes": 467950280,
+      "device": 2050,
+      "inode": 53656370,
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "sha256": "ae9ebf85ec7b76ea38c0ca1649d5a5e16f0015c915653eeea486c5090c3ce3c7"
+    },
+    "release/deps/history_stage_diagnostic-9b826b863c9887cc": {
+      "bytes": 9906456,
+      "device": 2050,
+      "inode": 52862751,
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+      "sha256": "d34521c074881d2debead6c818ca6aa54259928948002c3b57ba70efb728dd19"
+    }
+  },
+  "initial_source_binaries": {
+    "debug/deps/trnm_pon_node-2c98293081e75af8": {
+      "bytes": 467950280,
+      "device": 2050,
+      "inode": 52995110,
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "sha256": "ae9ebf85ec7b76ea38c0ca1649d5a5e16f0015c915653eeea486c5090c3ce3c7"
+    },
+    "release/deps/history_stage_diagnostic-9b826b863c9887cc": {
+      "bytes": 9906456,
+      "device": 2050,
+      "inode": 59259559,
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+      "sha256": "d34521c074881d2debead6c818ca6aa54259928948002c3b57ba70efb728dd19"
+    }
+  },
+  "source_regular_metadata_unchanged": true,
+  "source_inode_sharing": 0,
+  "destination_hardlink_count": 0,
+  "destination_duplicate_inode_count": 0,
+  "qualified_for_C8": false,
+  "requires_C8_frozen_commit_tree_and_clean_before_after": true,
+  "required_owner_import_contract": {
+    "commands": 19,
+    "raw_logs": 38,
+    "prior_expected_passed": 37,
+    "prior_expected_ignored": 4,
+    "actual_C8_counts_must_be_measured": true,
+    "exact_Cargo_current_checkout_and_ELF_required": true
+  },
+  "new_store_history_module_controls": {
+    "separate_commands": 4,
+    "separate_tests": 10,
+    "not_added_to_owner_import_19": true,
+    "actual_results": null
+  },
+  "registry_cache_reused": true,
+  "toolchain_reused": true,
+  "independent_cleanroom_build": false,
+  "existing_C7_binary_is_only_initial_cache_not_C8_artifact": true,
+  "C7_unknown_operation_1994_replayed": false,
+  "Cargo_started": false,
+  "operation_created": false,
+  "deadline_selected": false
+}

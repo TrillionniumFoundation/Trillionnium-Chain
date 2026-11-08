@@ -1,0 +1,11 @@
+{
+  "schema": "TRNM-W1-D6-PUBLISHER-QA-PATH-DERIVATION1",
+  "original": "publish_d6.py",
+  "original_sha256": "94bb16b0ad958b6f82447826c21855152bb9581c2bf90899d23c8859850e2702",
+  "derived": "publish_d6_v2.py",
+  "derived_sha256": "aeddc34ac48c510ffa3b3983d620b56065423b16fa9528cbff3f41cf322f2aa6",
+  "exact_old": "v/'docs-validation-01/manifest.json'",
+  "exact_new": "v/'docs-validation-02/manifest.json'",
+  "other_bytes_changed": false,
+  "original_executed": false
+}

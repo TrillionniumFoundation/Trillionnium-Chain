@@ -1,0 +1,60 @@
+{
+  "admission_authorized": false,
+  "cgroup_membership": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1baa770fd-12894-1c3b.service/trnm-w1-generation-a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9\n",
+  "compression_mode": "balanced",
+  "controller_termination_grace_seconds": 12,
+  "entered_monotonic_ns": 1210584836548601,
+  "native_event_provenance_authority": "caller retained actual native process identity and event; JSON alone is not authentication",
+  "original_business_budget_reproduced": false,
+  "original_deadline_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_monotonic_ns": 1210689011653932,
+  "production_qualified": false,
+  "programs": {
+    "r0vm": {
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+      "sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6"
+    },
+    "runner": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "sha256": "258ec975410fddfb984d22671631851c459a8c18ff6424bdb3bce4e3ad124b99"
+    },
+    "verifier": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-native-target-20261108-ec265b/release/w1-verify-v2",
+      "sha256": "c667ec4cff650909734c4343fc814d0b3dd8bdb68b5c85085b11bd9c2d68cd2f"
+    }
+  },
+  "requested_compression_workers": 2,
+  "requested_rayon_threads_per_worker": 4,
+  "requested_segment_workers": 2,
+  "resource_scope_complete": false,
+  "schema": "TRNM-W1-POSTWIN-PROOF2",
+  "winner": {
+    "attempts": 1,
+    "challenge": "75d855619e387368c74253c9afb0265fa85b51f6df9abd410b4c25b982cf6461",
+    "complete_zkvm_proof": false,
+    "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+    "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "input_bytes": 49506,
+    "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+    "native_replay_verified": true,
+    "native_ticket_before_deadline": true,
+    "native_winner_monotonic_ns": 1210573764268699,
+    "node_admission": false,
+    "nonce": 0,
+    "original_deadline_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "original_deadline_monotonic_ns": 1210689011653932,
+    "parent_eligibility_checked": false,
+    "production_qualified": false,
+    "schema": "TRNM-W1-NATIVE-WINNER2",
+    "search_started_monotonic_ns": 1210573756451312,
+    "task_id": "ec934f3a9f196a9d5d4555a6361d8d200ea4e95145db4bf19db1eca84f15ff6a",
+    "ticket": "4485548e58901d8a710ad5f434d1f3ca150905b68bab186de5af3053a3abbedf",
+    "winner_observed": true,
+    "winner_saved_before_deadline": true,
+    "winner_saved_monotonic_ns": 1210574447444855
+  },
+  "winner_intent_path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-winner/intent.json",
+  "winner_intent_sha256": "5ff4340a1cfb59079d5014052b61ac5a573daee1f97914a243979b10420d243d",
+  "winner_record_path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-winner/result.json",
+  "winner_record_sha256": "05f9dc35686bc0d6deb9ed74f89db07f810832f42bdcb96673fe448c81c8f18c"
+}

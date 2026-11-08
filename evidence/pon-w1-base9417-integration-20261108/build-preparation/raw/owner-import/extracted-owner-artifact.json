@@ -1,0 +1,90 @@
+{
+  "cache_basis": "Independent copy of completed C7 owner+History target; original empty creation is historical only; registry/toolchain reused; no cleanroom claim",
+  "cargo_artifact": {
+    "executable": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8"
+    ],
+    "fresh": true,
+    "manifest_path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "test": true
+    }
+  },
+  "cargo_or_node_executed_by_extraction": false,
+  "compiled_checkout_observation": {
+    "elf_byte_offset": 3997810,
+    "path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node",
+    "scope": "Corroborating byte presence; source binding also requires original exact Cargo artifact, clean source identities and the independent copied-cache launch provenance."
+  },
+  "compiler_artifact_stdout": {
+    "bytes": 106475,
+    "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/13-owner-no-run-json.stdout",
+    "sha256": "c82e01d1d1c62603dfa258d5cb72b03797c952c2f83f0eb7442f71b9daa6beb1"
+  },
+  "copied_target_provenance": {
+    "bytes": 4039,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-launch-provenance-01.json",
+    "sha256": "da7e333fd83be87a306b1d99fd4d49dab931a53d48e2bee78d40c6dbe76f51c1"
+  },
+  "copied_target_receipt": {
+    "bytes": 6439,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.json",
+    "sha256": "ce1120304c1679afe96f147a21bdb82ae343f5ce57028bec1b38b75bb53b85e2"
+  },
+  "derived_extraction": true,
+  "extractor": {
+    "bytes": 16751,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/import-owner-c8-v1.py",
+    "sha256": "7c119c06bcc38a2f35ea2afc3ab65a1d75e4cc271807dedb646dcb528028bcf7"
+  },
+  "fresh_cargo_target": false,
+  "original_root_owner_artifact_file_claimed": false,
+  "owner_executable": {
+    "bytes": 467190280,
+    "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+  },
+  "owner_launch_binding": {
+    "bytes": 5360,
+    "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/owner-launch-binding-02.json",
+    "sha256": "c44bdfdaee4718f1ad26de29c8781e1f0b8aab2601a0aa1fd7a62598d621fa32"
+  },
+  "previous_launch_validation_failure": {
+    "bytes": 29603,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-launch-validation-failure-01.json",
+    "sha256": "da784f113addb7e22069461929766e82cd1577a7d442d2f5a928f93308745680"
+  },
+  "qualification_complete": true,
+  "qualification_manifest": {
+    "bytes": 23587,
+    "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+    "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef"
+  },
+  "schema": "TRNM-W1-C8-OWNER-ARTIFACT-EXTRACTION1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+}

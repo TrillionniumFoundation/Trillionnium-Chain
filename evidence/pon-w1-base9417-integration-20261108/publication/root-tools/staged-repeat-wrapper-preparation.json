@@ -1,0 +1,10 @@
+{
+  "schema": "TRNM-W1-C8-STAGED-REPEAT-WRAPPER-PREPARATION1",
+  "original_wrapper_sha256": "a82122b691c7fa287e33dbd1fc70b527e020e9d6afde2236169cefe093b3f253",
+  "new_wrapper_sha256": "1480535874c5f1f5c8c3101fcff743623a982f5b0e01f7e0068a708953c89674",
+  "declaration_sha256": "7b51a7dee784b9375eb1c1dcc9b8f54869538810c763ee1514208ba42912ce95",
+  "test_plan_sha256": "af2a4739fed7e449f80cffb44b237b3a36015b674174a990c40f017e7b812512",
+  "source_changes": 0,
+  "test_changes": 0,
+  "tests_executed": 0
+}

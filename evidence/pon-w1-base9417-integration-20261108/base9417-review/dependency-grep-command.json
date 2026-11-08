@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--no-optional-locks",
+    "grep",
+    "-n",
+    "-E",
+    "fn (checked_snapshot_with_arithmetic|check_and_bind|invalidate_commitment)\\b",
+    "9417e495165865ef6c1288b39084856e31020634",
+    "--",
+    "trillionnium/crates"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+  "started_unix_ns": 1794128493877904325,
+  "finished_unix_ns": 1794128494029876529,
+  "exit_code": 0,
+  "stdout_sha256": "377c5c727353ac513f288962af2c2c124fbb22d3a8902a955f70aad127e0697b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_edits": 0,
+  "test_executions": 0
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "TRNM-W1-C8-OWNER-QUALIFICATION-LAUNCH2",
+  "request": {
+    "host": "desktop",
+    "executable": "/usr/bin/python3.12",
+    "args": [
+      "-B",
+      "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launcher-v2.py"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+    "timeout_seconds": 3600,
+    "cpu_quota_percent": 800,
+    "memory_max_bytes": 8589934592,
+    "env": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "idempotency_key": "m12-c8-exact-owner-02-v2-20261108-ec265b"
+  },
+  "response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launcher-v2.py\"\n    ],\n    \"created_unix_ms\": 1794130107651,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b\",\n    \"env_keys\": [\n      \"PYTHONDONTWRITEBYTECODE\"\n    ],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1ba7cdd03-12894-1b0d\",\n    \"idempotency_key\": \"m12-c8-exact-owner-02-v2-20261108-ec265b\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba7cdd03-12894-1b0d\",\n    \"request_digest\": \"e7d7eea49ac617cfe1623451225651659cd943fe57c599f93c6685f22f86372d\",\n    \"request_fingerprint\": 16706083733492864975,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1ba7cdd03-12894-1b0d\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1ba7cdd03-12894-1b0d\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  }
+}

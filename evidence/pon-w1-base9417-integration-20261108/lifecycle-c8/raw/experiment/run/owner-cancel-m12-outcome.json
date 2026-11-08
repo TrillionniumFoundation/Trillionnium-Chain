@@ -1,0 +1,9 @@
+{
+  "accepted_observed": true,
+  "decision": "CancellationObserved",
+  "journal_event_new": null,
+  "new_event_proven": false,
+  "reason_sha256": "057b1bf9d039851243581ea51aaca287c4f15c54ab3fe955f44c886b7ea213ac",
+  "resource_reservation_released": false,
+  "target_cancel_authorized": true
+}

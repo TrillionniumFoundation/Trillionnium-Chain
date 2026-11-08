@@ -1,0 +1,184 @@
+{
+  "schema": "TRNM-W1-EXACT-SOURCE-QUALIFICATION5",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "repo": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "plan_sha256": "e052004617b963f54b9ccb55e6d6130bc9eb84dd6c0593101b65762ba28530f2",
+  "driver_sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f",
+  "commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "started_monotonic_ns": 1203714095897733,
+      "exit": 0,
+      "finished_monotonic_ns": 1203714210955682,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/00-preflight.stdout",
+        "bytes": 178,
+        "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/00-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "01-source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "started_monotonic_ns": 1203714212692576,
+      "exit": 0,
+      "finished_monotonic_ns": 1203720493760467,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/01-source-before.stdout",
+        "bytes": 423,
+        "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/01-source-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "02-history-release-compile",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "history_stage_diagnostic",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "started_monotonic_ns": 1203720499333992,
+      "exit": 0,
+      "finished_monotonic_ns": 1203875379488414,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/02-history-release-compile.stdout",
+        "bytes": 111134,
+        "sha256": "3161337594e265f107f4b547b6022fd7deb432c904d8bba111c695cb944cf798"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/02-history-release-compile.stderr",
+        "bytes": 4098,
+        "sha256": "6a4c6d9e3e3f082b1e22e03f192ad98a3a949b4dcd431ed6183d257ccd5425f4"
+      }
+    },
+    {
+      "label": "03-history-ignored-entry-list",
+      "argv": [
+        "python3",
+        "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/history_compile_list.py",
+        "--cargo-log",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/02-history-release-compile.stdout",
+        "--repo",
+        "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+        "--head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/history-artifact-and-list.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "started_monotonic_ns": 1203875401522264,
+      "exit": 0,
+      "finished_monotonic_ns": 1203876067953947,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/03-history-ignored-entry-list.stdout",
+        "bytes": 375,
+        "sha256": "7ebdff5484aaf8a21a981de636fc87a82b48c162ce7ea1e7a17d692685c9adff"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/03-history-ignored-entry-list.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "99-source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "started_monotonic_ns": 1203876069295645,
+      "exit": 0,
+      "finished_monotonic_ns": 1203887364667181,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/99-source-after.stdout",
+        "bytes": 423,
+        "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/99-source-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "fresh_proof_generations": 0,
+  "production_qualified": false,
+  "security_qualified": false,
+  "original_business_budget_qualified": false,
+  "resource_billing_complete": false,
+  "payment_qualified": false,
+  "cargo_target": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b",
+  "build_env": {
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "fresh_cargo_target": false,
+  "independent_reproducible_build_established": false,
+  "cache_basis": "Reuse independently completed C7 owner target for release compilation only; no complete History workload",
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "qualification_complete": true,
+  "actual_command_count": 5,
+  "python_test_methods_reported": 0,
+  "rust_test_outcomes": {
+    "passed": 0,
+    "failed": 0,
+    "ignored": 0
+  }
+}

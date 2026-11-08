@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-\"\n    ],\n    \"created_unix_ms\": 1794131002159,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1ba8a832f-12894-1b7a\",\n    \"idempotency_key\": \"c8-history-compile-list-exact-4e007a87-ec265b-01\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba8a832f-12894-1b7a\",\n    \"request_digest\": \"a35ec047c515a607351009ef89a1a76733a7ec349f57ee0c8fb5e094a667ebe4\",\n    \"request_fingerprint\": 11772057890474796551,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1ba8a832f-12894-1b7a\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1ba8a832f-12894-1b7a\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}

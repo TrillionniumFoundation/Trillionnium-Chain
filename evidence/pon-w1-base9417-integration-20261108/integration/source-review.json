@@ -1,0 +1,33 @@
+{
+  "conclusion": "No concrete new correctness defect found in the reviewed cache authority, state/root validation, rollback, fork and cancellation boundaries.",
+  "fixed_base": "9417e495165865ef6c1288b39084856e31020634",
+  "independent_peer_review": {
+    "agent": "/root/resource_experiment",
+    "result": "No concrete new correctness problem found in the same narrow boundary; no source writes or tests.",
+    "scope": "Canonical key/value comparison, fresh-root check, full-root fallback, invalidation, SQL corruption/rollback, fork and cancellation source controls."
+  },
+  "limitations": [
+    "Not a complete protocol/cryptographic audit.",
+    "The historical Rust module has not been executed by this integration work.",
+    "No performance, business-deadline, history 4105-block workload, RSS, resource settlement or winner Node admission qualification is established.",
+    "C7 lifecycle remains launch-Unknown; C5/C6 lifecycle results retain their own source identities."
+  ],
+  "observations": [
+    "Candidate lookup requires the exact block identifier and freshly read current SQL root. It returns immutable arithmetic material, never State or a validity decision.",
+    "checked_historical_commitment retains the original checked_commitment call on actual State/current_root and releases cache RefCell borrows before computation/progress callbacks.",
+    "pon_commitment.rs checked_snapshot_with_arithmetic lines 778-803 still validates actual canonical state and compares the resulting prepared root with expected_root; prepare_unchanged_snapshot lines 877-900 compares every actual key/value canonical byte sequence. A differing sequence falls back to the original preparation path.",
+    "Legacy replay anchor and first six successor entries receive eviction preference. At most seven preferred entries leave a rotating tail; eight-entry, 2 MiB payload and 16 MiB software-retained charge bounds remain. Byte pressure can evict preferred entries. These are not RSS caps.",
+    "begin_replay changes preference only. Node invalidation clears active and historical arithmetic caches, and clear resets the anchor.",
+    "Existing foreign SQL snapshot/delta/root corruption, same-connection writes/savepoint rollback, schema/authorizer reprepare, final-writer corruption, wrong block/root, CPU/progress and invalidation controls remain in the 10-method module.",
+    "New 131 test lines extend two existing methods, including long replay, anchor transition, same-anchor fork, original branch readback, warm/cold cancellation at progress checkpoint 12, bounded preference and byte-pressure eviction."
+  ],
+  "review_type": "Read-only source diagnosis; no Rust test execution",
+  "reviewed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs"
+  ],
+  "schema": "TRNM-W1-C8-BOUNDED-HISTORY-SOURCE-REVIEW1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+}

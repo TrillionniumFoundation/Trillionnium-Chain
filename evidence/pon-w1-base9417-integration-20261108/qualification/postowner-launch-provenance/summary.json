@@ -1,0 +1,152 @@
+{
+  "schema": "TRNM-W1-C8-POSTOWNER-EVIDENCE1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "scope": "two completed post-owner qualification groups only; not total C8 qualification",
+  "postowner_groups_complete": true,
+  "global_c8_qualification_claimed": false,
+  "historical": {
+    "job_id": "1a1ba88e958-12894-1b6a",
+    "terminal": {
+      "at_unix_ms": 1794130938535,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1ba88e958-12894-1b6a",
+      "launch_nonce": "48bd663b7c2260222c7e46819470ee04",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 2221,
+          "stored": 2221
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "manifest_sha256": "eef45c33e9aae4650c70fcaefc174841e6f75cd8c018139705d459e1fc71c1e6",
+    "commands": 4,
+    "rust_passed": 10,
+    "rust_failed": 0,
+    "rust_ignored": 0,
+    "actual_test_seconds": 23.01,
+    "command_elapsed_seconds": 24.082311893
+  },
+  "history": {
+    "job_id": "1a1ba8a832f-12894-1b7a",
+    "terminal": {
+      "at_unix_ms": 1794131108939,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1ba8a832f-12894-1b7a",
+      "launch_nonce": "5ad46ff4312efc1bc2988598c22ceb03",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 1823,
+          "stored": 1823
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "manifest_sha256": "b39888daf3d2223c6600a693f663ca213698dffd6d9854ee887afd36af741738",
+    "commands": 5,
+    "test_passes": 0,
+    "listed_ignored_tests": 1,
+    "full_history_executed": false,
+    "compile_elapsed_seconds": 82.79316411,
+    "artifact_record_sha256": "918a5de9baf6514ea5a87c3bbb812467bbb465f48d9e6fceb53ab3f89a808e40",
+    "elf": {
+      "bytes": 9910608,
+      "sha256": "cc252a4f811e981a90fa3f8adb8f59b2df20249c32246e8a365928e04e3ca9fd",
+      "published": false
+    }
+  },
+  "owner_prerequisite": {
+    "job_id": "1a1ba7cdd03-12894-1b0d",
+    "manifest_sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef",
+    "strict_import_job_id": "1a1ba85c4c0-12894-1b51",
+    "strict_import_manifest_sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619",
+    "owner_elf_sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456",
+    "owner_elf_bytes": 467190280,
+    "owner_elf_unchanged_after_both_groups": true,
+    "counts_are_prerequisites_not_additional_passes": true
+  },
+  "actual_qualification_commands": 9,
+  "actual_additional_rust_passes": 10,
+  "actual_additional_rust_ignored": 0,
+  "target_origin": "independent copy of qualified C7 owner and History cache, reused after exact C8 owner qualification",
+  "fresh_cargo_target": false,
+  "independent_cleanroom_build": false,
+  "source_changes": 0,
+  "full_history_workloads": 0,
+  "fresh_proof_generations": 0,
+  "new_operations": 0,
+  "original_business_budget_qualified": false,
+  "production_qualified": false,
+  "security_qualified": false,
+  "resource_billing_complete": false,
+  "payment_qualified": false,
+  "v1_prepared_not_executed": true,
+  "v2_launcher_sha256": "74438b1ed9675a94076d45a5b38405cdcd2dbbacc2d5723581c6e74b10db3c94",
+  "target_handed_back_to_m12_owner": true,
+  "original_outer_timeouts_seconds": {
+    "historical": 1800,
+    "history": 2400
+  },
+  "original_inner_timeouts_seconds": {
+    "historical_test": 900,
+    "history_release_compile": 1800,
+    "history_list_command": 120
+  },
+  "limitations": [
+    "No complete 4105-block History workload was executed locally.",
+    "The 10 historical test passes do not establish business-budget or tail-latency improvements.",
+    "The two groups do not replace or overwrite any other C8 component's failures, including the separately retained staged32 attempt.",
+    "Compiler artifact bytes are not published; only their actual Cargo binding, size and hashes are retained.",
+    "Authoritative wrapper terminals describe these processes, not an audit of all historical process ownership or resource settlement."
+  ],
+  "frozen_unix_ns": 1794131618263673486
+}

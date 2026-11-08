@@ -1,0 +1,655 @@
+{
+  "actual_command_count": 19,
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "02-cargo-version",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustc",
+        "-vV"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "03-rustc-version",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/terminal.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/timeout.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/terminal.rs",
+        "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs",
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "04-owned-fmt",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "05-locked-graph-default",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "06-locked-graph-all-features",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "07-m12-strict-clippy",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "08-node-strict-clippy",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "native_generation_budget_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "09-m12-tests",
+      "outcomes": {
+        "named_rust": [
+          {
+            "name": "native_generation_budget_v2::tests::a_second_generation_journal_cannot_claim_the_same_task_or_reset_its_deadline",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::actual_resource_overrun_is_retained_without_clipping_or_positive",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::cancel_after_verified_preserves_cost_and_cancel_after_settlement_intent_is_too_late",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::cancel_before_dispatch_is_terminal_after_cold_reopen_without_repinning_funds",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::cancellation_committed_while_verifier_runs_is_sticky_and_blocks_settlement",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::committed_intent_after_cold_restart_never_reissues_new_even_without_funding",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::generation_namespace_refuses_v1_without_migration_or_writes",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::historical_payment_survives_reorg_and_reobservation_never_mints_a_replacement",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::one_of_two_handles_gets_new_and_unknown_consumes_the_original_reservation",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::original_deadline_and_clock_domain_never_renew_on_replay",
+            "outcome": "ok"
+          },
+          {
+            "name": "native_generation_budget_v2::tests::provider_identity_and_ack_never_substitute_for_full_verifier",
+            "outcome": "ok"
+          }
+        ],
+        "python": [],
+        "rust": [
+          {
+            "failed": 0,
+            "filtered_out": 46,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 11,
+            "reported_duration": "5.29s",
+            "terminal": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "async_w1_generation_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "10-node-short-tests",
+      "outcomes": {
+        "named_rust": [
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::cancellation::tests::actual_native_receipt_refuses_new_owner_cancel_without_writing_intent",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::cancellation::tests::actual_owner_cancel_cold_reopen_and_reorg_preserve_veto_and_full_cap",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::cancellation::tests::actual_two_handle_same_reason_replay_never_claims_new_event",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::cancellation::tests::prepared_only_cold_reader_refuses_before_begin_without_mutation",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::cancellation::tests::provider_unknown_is_not_owner_cancel_and_no_resource_refund",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::cancellation::tests::requested_policy_too_late_and_plan_are_conservative",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation",
+            "outcome": "ignored, explicit resource-heavy fresh full-W1 proof; requires clean frozen source and TRNM_W1_FUNDED_CONFIG"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_owner_cancel_after_segment_start",
+            "outcome": "ignored, explicit owner cancellation of a real expensive W1 worker; requires a new research Node and original operation"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg",
+            "outcome": "ignored, explicit new research operation; actual r0vm original deadline, principal refund and real fork/cold round trip"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile",
+            "outcome": "ignored, read-only cold reconciliation of an existing owner-cancel attempt; never dispatches generation or cancellation"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::local_proof_plan_defaults_and_both_fresh_trial_argv_are_exact",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::local_proof_plan_refuses_nonintegers_missing_fields_and_resource_overcommit",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::heavy::shared_research_node_uses_declared_reserve_nonce_and_rejects_old_nonce_after_cold_open",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::real_native_payment_cold_reopen_reorg_and_duplicate_with_explicit_verifier_fixture",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::real_node_task_owner_assignment_survives_cold_reopen_and_refuses_another_generation_journal",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::real_owner_signed_wrong_subject_or_sender_never_creates_settlement_intent",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::real_receipt_closes_native_cancel_but_service_cancel_still_blocks_new_settlement_intent",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::real_reserved_task_cancel_and_owner_wire_negative_controls",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::success_shaped_verifier_response_with_wrong_sdk_cannot_produce_positive",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::terminal::qualified_terminal_cost_is_recorded_once_and_overruns_are_never_clipped",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::terminal::real_native_reorg_preserves_terminal_cost_and_local_owner_cancel_without_replay",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::terminal::terminal_reconciliation_rejects_job_source_clock_and_cancel_authority_changes",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::terminal::terminal_unknown_closes_dispatch_once_and_preserves_native_funding_and_cap",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::async_w1_generation_v2::tests::terminal::timeout_requires_original_deadline_and_retains_complete_identity_after_expiry",
+            "outcome": "ok"
+          }
+        ],
+        "python": [],
+        "rust": [
+          {
+            "failed": 0,
+            "filtered_out": 1187,
+            "ignored": 4,
+            "measured": 0,
+            "passed": 20,
+            "reported_duration": "30.67s",
+            "terminal": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "store::legacy_admission_root_tests::",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "11-legacy-admission-root-tests",
+      "outcomes": {
+        "named_rust": [
+          {
+            "name": "store::legacy_admission_root_tests::ordinary_admission_final_root_rechecks_warm_active_state_and_claim",
+            "outcome": "ok"
+          }
+        ],
+        "python": [],
+        "rust": [
+          {
+            "failed": 0,
+            "filtered_out": 1210,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "reported_duration": "1.95s",
+            "terminal": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "store::legacy_reorg_root_tests::",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "12-legacy-reorg-root-tests",
+      "outcomes": {
+        "named_rust": [
+          {
+            "name": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::legacy_reorg_root_tests::legacy_reorg_root_never_selects_the_growth_or_authenticated_relation",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::legacy_reorg_root_tests::legacy_reorg_root_preserves_pq_v2_and_v6_state_validation",
+            "outcome": "ok"
+          },
+          {
+            "name": "store::legacy_reorg_root_tests::legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors",
+            "outcome": "ok"
+          }
+        ],
+        "python": [],
+        "rust": [
+          {
+            "failed": 0,
+            "filtered_out": 1206,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5,
+            "reported_duration": "3.95s",
+            "terminal": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium",
+      "exit": 0,
+      "label": "13-owner-no-run-json",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "14-backend-metadata-default",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "15-backend-metadata-all",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "16-verifier-metadata-default",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "17-verifier-metadata-all",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "owner",
+  "durable_job_id": "1a1ba7cdd03-12894-1b0d",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef",
+  "provenance": {
+    "all_copied_file_content_hashes_claimed": false,
+    "copied_C7_cache_provenance_checked": true,
+    "copy_metadata_regular_files_checked_at_launch": 3065,
+    "exact_original_38_log_hashes_recomputed": true,
+    "fresh_target": false,
+    "import_commands_added_to_qualification_count": 0,
+    "import_record_is_derived_not_original_root_artifact": true,
+    "independent_cleanroom_build": false,
+    "launcher_v2_changed_line_numbers": [
+      13,
+      14,
+      103
+    ],
+    "new_historical_module10_included": false,
+    "new_operation_created": false,
+    "owner_elf_hash_recomputed_by_original_strict_import": true,
+    "owner_elf_rehashed_by_this_audit": false,
+    "owner_executable": {
+      "bytes": 467190280,
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+    },
+    "previous_predispatch_failure_preserved": true,
+    "previous_predispatch_failure_qualification_commands": 0,
+    "unique_actual_C8_Cargo_artifact_reparsed": true
+  },
+  "python": {},
+  "rust": {
+    "failed": 0,
+    "ignored": 4,
+    "passed": 37
+  },
+  "schema": "TRNM-W1-C8-INDEPENDENT-COMPONENT-REVIEW1",
+  "scope": "Exact C8 head source only, not current prospective-merge event qualification.",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "source_guards_before_after_exact_equal": true
+}
