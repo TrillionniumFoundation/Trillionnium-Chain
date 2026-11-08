@@ -10477,3 +10477,11 @@ and recovery namespaces, and real Cell quality/owner use. A successful source
 contract check or synthetic certificate leaves production HOLD_NO_GO.
 
 The complete scalar MU1 reuse probe additionally retains a winning outer-ticket hybrid and rejects its stale unit transcript without new credit; legal prepared-matrix reuse remains allowed and unqualified as a minimum cost. The embedded distributed source inventory includes both new native research files and the existing upstream history diagnostic.
+
+### 2026-11-08 — Six-capability composed continuation (d9fb)
+
+The six capability continuations and exact original PR heads #801–#811 are integrated on the #812 base. The [composition index](../../evidence/chain-six-full-20261108/README.md) records source ancestry, explicit continuation cherry-picks, current scope and the exact-source execution entry point.
+
+New changes bind money observations across transaction exit, complete Growth confirmation routing, retain durable proof-verification starts, export original learning completion checkpoints, preserve complete Cell/research controls and review the PQ lifetime/effect path mappings. CI commands retain strict independent literals and original refusal diagnostics. Source/lock refusals and integration failures remain separate observations.
+
+Final composition campaigns must identify their own frozen source and actual outcomes. Prior branch passes do not qualify this composition. General work cost, joint time/difficulty security, independent operators, complete irreversible external-effect reconciliation, equal-resource proof gain and whole-chain quantum/lifetime composition remain HOLD / NO-GO. Genuine model-process and actual-device observations retain their own exact sources and scope. No production activation is authorized by a source or finite-fixture PASS.
