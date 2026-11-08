@@ -21,6 +21,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
+                               check_from_zero_host_callsites,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
@@ -29,6 +30,17 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
+
+
+# Independent command inventory, not imported from the checker's expectation.
+PQ_MIGRATION_TEST_COMMANDS = (
+    "    PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover "
+    "-s formal/pon-nakamoto-v1 -p 'test_pq_account_migration.py' -v\n",
+    "    PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover "
+    "-s formal/pon-nakamoto-v1 -p 'test_pq_migration_journal_owner.py' -v\n",
+    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 "
+    "-p 'test_pq_seed_relation_vectors_v1.py' -v\n",
+)
 
 
 SYNTHETIC_GROWTH_PIPELINE = r'''python3() {
@@ -133,6 +145,89 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_pq_migration_commands_cannot_be_removed_skipped_repointed_or_moved(self):
+        for command in PQ_MIGRATION_TEST_COMMANDS:
+            self.assertEqual(self.script.count(command), 1)
+            variants = {
+                'removed': self.script.replace(command, ''),
+                'stubbed': self.script.replace(command, '    true # omitted migration test\n'),
+                'duplicated': self.script.replace(command, command * 2),
+                'skipped': self.script.replace(
+                    command, '    if false; then\n' + command + '    fi\n'),
+                'conditional': self.script.replace(
+                    command, '    if\n' + command + '    then :; fi\n'),
+                'swallowed': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'backgrounded': self.script.replace(command, command.rstrip() + ' &\n'),
+                'unmatched test selector': self.script.replace(
+                    command, command.replace('test_pq_', 'test_unmatched_pq_')),
+                'moved to repository-truth': self.script.replace(command, '').replace(
+                    '  repository-truth)\n', '  repository-truth)\n' + command),
+                'duplicated in repository-truth': self.script.replace(
+                    '  repository-truth)\n', '  repository-truth)\n' + command),
+            }
+            if 'PYTHONWARNINGS=' in command:
+                variants['removed warning policy'] = self.script.replace(
+                    command, command.replace('PYTHONWARNINGS=error::ResourceWarning ', ''))
+                variants['ignored resource warnings'] = self.script.replace(
+                    command, command.replace('error::ResourceWarning', 'ignore::ResourceWarning'))
+            for label, changed in variants.items():
+                with self.subTest(command=command.strip(), change=label), self.assertRaisesRegex(
+                    ValueError, 'offline migration and seed relation controls',
+                ):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_pq_migration_prefix_preserves_the_original_ordered_from_zero_callsite(self):
+        block = ''.join(PQ_MIGRATION_TEST_COMMANDS)
+        host = ('    python3 scripts/ci/run_from_zero_host.py -- '
+                'python3 scripts/ci/run_from_zero_native.py --out '
+                '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
+        self.assertEqual(self.script.count(block), 1)
+        self.assertEqual(self.script.count(host), 1)
+        variants = {
+            'swapped migration checks': self.script.replace(
+                block, PQ_MIGRATION_TEST_COMMANDS[1] + PQ_MIGRATION_TEST_COMMANDS[0]
+                + PQ_MIGRATION_TEST_COMMANDS[2]),
+            'migration checks after native call': self.script.replace(block, '').replace(
+                host, host + block),
+            'missing fixed Host parent': self.script.replace(
+                host, host.replace('python3 scripts/ci/run_from_zero_host.py -- ', '')),
+            'changed native output': self.script.replace(
+                host, host.replace('/from-zero-native"', '/other-native"')),
+        }
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-ci-callsite-') as directory:
+            root = Path(directory)
+            for relative in ('.github/workflows/trnm-required-baseline.yml',
+                             '.github/workflows/pon-priority-acceptance.yml'):
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text((ROOT / relative).read_text())
+            path = root / 'scripts/ci/ci_job.sh'
+            path.parent.mkdir(parents=True)
+            path.write_text(self.script)
+            check_from_zero_host_callsites(root)
+            for label, changed in variants.items():
+                with self.subTest(change=label):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(changed, self.lanes)
+                    path.write_text(changed)
+                    with self.assertRaisesRegex(ValueError, 'unchanged from-zero argv'):
+                        check_from_zero_host_callsites(root)
+
+    def test_pq_migration_commands_keep_actual_shell_failure_propagation(self):
+        # Only this harmless synthetic shell function executes; no cryptography
+        # test, native service, provider installation or ledger is invoked here.
+        prelude = ('set -euo pipefail\nunset PYTHONWARNINGS\n'
+                   'python3() { printf "synthetic migration test called %s\\n" '
+                   '"${PYTHONWARNINGS-unset}"; return 23; }\n')
+        for command in PQ_MIGRATION_TEST_COMMANDS:
+            with self.subTest(command=command.strip()):
+                result = subprocess.run(
+                    ['bash', '-c', prelude + command + 'printf "synthetic lane continued\\n"\n'],
+                    capture_output=True, text=True, timeout=5)
+                self.assertEqual(result.returncode, 23, result.stderr)
+                warnings = 'error::ResourceWarning' if 'PYTHONWARNINGS=' in command else 'unset'
+                self.assertEqual(result.stdout, f'synthetic migration test called {warnings}\n')
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
@@ -396,9 +491,12 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_selected_lane_cannot_be_wrapped_in_an_outer_shell_condition(self):
         start = self.script.index('case "${1:?required job}" in\n')
         prefix, dispatch = self.script[:start], self.script[start:]
-        for changed in (prefix + 'if false; then\n' + dispatch + 'fi\n',
-                        prefix + 'if\n' + dispatch + 'then :; fi\n'):
-            with self.subTest(changed=changed), self.assertRaisesRegex(ValueError, 'lane dispatch'):
+        variants = {
+            'false outer branch': prefix + 'if false; then\n' + dispatch + 'fi\n',
+            'outer condition swallows failure': prefix + 'if\n' + dispatch + 'then :; fi\n',
+        }
+        for label, changed in variants.items():
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'lane dispatch'):
                 check_independent_conformance(changed, self.lanes)
 
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
