@@ -1,0 +1,66 @@
+[
+  {
+    "details": {
+      "C": 1,
+      "M": 1,
+      "Q": 0,
+      "declared_before_this_owner_first_call": true
+    },
+    "event_hash": "7058531d3414e5c2e4861f364bec30defff183c7617724885afad69e8d1b4165",
+    "kind": "open-reference-scope",
+    "phase": "classical-prefix",
+    "previous": "0000000000000000000000000000000000000000000000000000000000000000",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-invalid-full-trace-control",
+    "sequence": 1
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "output_index": 0,
+      "packet_sha256": "5918280d314b45bb722a0c9ff83c4258d97fecaf13264b4cfd471addb8cf9784"
+    },
+    "event_hash": "d6a2bfe89ad8c2c0dc5b691dbc75e8dc3b8285060ab006200cdae6967ca2d850",
+    "kind": "complete-output-attempt",
+    "phase": "classical-prefix",
+    "previous": "7058531d3414e5c2e4861f364bec30defff183c7617724885afad69e8d1b4165",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-invalid-full-trace-control",
+    "sequence": 2
+  },
+  {
+    "details": {
+      "actor_label": "publisher",
+      "context_digest": "4a872dbc9dddbd7f84bdca233543de5b8fd6a70345bbeaf968768c52e79a986d",
+      "marked": false,
+      "ordered_root": "275a9acd076e24f7735ac32675888fddf1a4e2435d0144ed2b7d0221bb41e646",
+      "resource_kind": "reference-full-value-terminal-call",
+      "ticket": "c6d7f22f2fea2f569c1bbaa3151cd93a70788c9f5694c01560b56d0d7784ce4d"
+    },
+    "event_hash": "d0e8211327539bcde216521c9bc5ea85caf9fa2b66b76f3ff075ebcb47069b70",
+    "kind": "actual-terminal-sha256",
+    "phase": "classical-prefix",
+    "previous": "d6a2bfe89ad8c2c0dc5b691dbc75e8dc3b8285060ab006200cdae6967ca2d850",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-invalid-full-trace-control",
+    "sequence": 3
+  },
+  {
+    "details": {
+      "accepted": false,
+      "actor_label": "publisher",
+      "credit_added": 0,
+      "full_native_units_checked": null,
+      "output_index": 0,
+      "packet_sha256": "5918280d314b45bb722a0c9ff83c4258d97fecaf13264b4cfd471addb8cf9784",
+      "reason": "NATIVE_W1_INVALID"
+    },
+    "event_hash": "a125a93a68db861cb0cc469e749128cdc45fea7acfcd0c931021f2fe71565e45",
+    "kind": "complete-output-result",
+    "phase": "classical-prefix",
+    "previous": "d0e8211327539bcde216521c9bc5ea85caf9fa2b66b76f3ff075ebcb47069b70",
+    "schema": "pon-lifecycle-query-reference-event-v1",
+    "scope": "lqc1-invalid-full-trace-control",
+    "sequence": 4
+  }
+]

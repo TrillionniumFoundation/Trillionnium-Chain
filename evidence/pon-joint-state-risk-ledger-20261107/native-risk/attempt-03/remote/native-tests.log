@@ -1,0 +1,20 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.68s
+     Running tests/native_risk_ledger.rs (/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_risk_ledger-66b309f1fcce5d0a)
+
+running 12 tests
+test a_new_bank_cannot_reset_a_native_journal_with_previous_confirmation_intents ... ok
+test bank_capacity_refusal_precedes_native_dispatch_and_torn_tail_is_not_repaired ... ok
+test dropped_pre_dispatch_start_is_spent_pending_and_never_automatically_replayed ... ok
+test exclusive_bank_lock_and_supplied_checkpoint_refuse_competing_or_stale_bank ... ok
+test forwarded_native_failure_reports_its_effective_stop_condition ... ok
+test full_native_suffix_rejects_a_confirmation_outside_the_risk_wrapper ... ok
+test incomplete_native_observation_keeps_charge_and_native_stop_before_recovery ... ok
+test native_risk_process_child ... ignored, owned subprocess helper, actually executed twice by the process-cut test
+test real_confirmed_unconfirmed_error_and_two_process_cuts_keep_all_eight_charges ... ok
+test real_native_errors_spend_and_caps_survive_legacy_and_authenticated_reopen ... ok
+test recovery_rejects_registration_after_closed_or_incomplete_native_prefix ... ok
+test rejected_scope_has_no_native_call_and_bank_scope_and_budget_are_immutable ... ok
+
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 18.08s
+

@@ -1,0 +1,37 @@
+{
+  "baseline_ci_sha256": "c542132338da2e9bdd6fa036f980eb1e5a11f38d2b9a58b29761f94027c6054c",
+  "cargo_graph_lock_fmt_clippy_full_tests_are_preserved_requirements": true,
+  "cc1_tests_protocol_only": true,
+  "current_ci_sha256": "95be194ab855805856fd55747bf4bf820ceb7f036677b363f8372f5cc5dd2708",
+  "lanes": {
+    "external-evidence-contract": {
+      "all_previous_commands_retained_in_order": true,
+      "baseline_lines": 30,
+      "current_lines": 30
+    },
+    "fuzz-smoke": {
+      "all_previous_commands_retained_in_order": true,
+      "baseline_lines": 5,
+      "current_lines": 5
+    },
+    "protocol-contract": {
+      "all_previous_commands_retained_in_order": true,
+      "baseline_lines": 80,
+      "current_lines": 87
+    },
+    "repository-truth": {
+      "all_previous_commands_retained_in_order": true,
+      "baseline_lines": 69,
+      "current_lines": 70
+    },
+    "rust-baseline": {
+      "all_previous_commands_retained_in_order": true,
+      "baseline_lines": 89,
+      "current_lines": 89
+    }
+  },
+  "runtime_gates_executed_by_this_static_review": false,
+  "schema": "pon-ci-dependency-retained-sequence-review-v1",
+  "source_base_commit": "88bce414d7ba7f7f6a60dba03943ee20dc501ed7",
+  "workflow_unchanged": true
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "pon-native-execution-local-source-readback-v1",
+  "base_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "source_bridge_sha256": "e6a9b70b236cdd6abce08283aa4f539372523769842210b2044b1e1171b79177",
+  "records": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "sha256": "fdd161cfee7e994f092e048020ae8dce140e852edf0c9e99ec9edce1cc838d21",
+      "git_blob": "e8e3afa160cbf6e958d2d6b47b2cf7561f229ba4",
+      "bytes_equal_to_source_pin": true,
+      "fact_records_cross_checked": 1
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541",
+      "git_blob": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+      "bytes_equal_to_source_pin": true,
+      "fact_records_cross_checked": 4
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "sha256": "e00f2b736cb22c42468cd494eece859eb78fe1005a7c83c621f14c319c74f743",
+      "git_blob": "dc7610506c476b865445e6ff7227f0c3d40f436f",
+      "bytes_equal_to_source_pin": true,
+      "fact_records_cross_checked": 1
+    }
+  ],
+  "native_runtime_observed": false,
+  "physical_clock_authenticated": false,
+  "all_branch_world_coverage_attested": false,
+  "native_six_successor_risk_bound": null
+}

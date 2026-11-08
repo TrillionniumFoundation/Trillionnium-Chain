@@ -1,0 +1,1843 @@
+[
+  {
+    "C": 0,
+    "M": 32,
+    "Q": 1,
+    "actual_native_risk": false,
+    "credit_threshold": 4096,
+    "new": {
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "all_coherent_list_bound": {
+        "denominator": 87112285931760246646623899502532662132736,
+        "numerator": 55599423
+      },
+      "bound": {
+        "denominator": 87112285931760246646623899502532662132736,
+        "numerator": 55599423
+      },
+      "classical_prefix_cap_C": 0,
+      "complete_outputs_cap_M": 32,
+      "credit_threshold": 4096,
+      "global_prefix_law_may_be_reused_at_observed_start": false,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-lifetime-prefix-list-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "padded_distinct_prefix_C_effective": 0,
+      "physical_resource_tail_proved": false,
+      "post_prefix_cap_Q": 1,
+      "prefix_cases": [
+        {
+          "bound": {
+            "denominator": 87112285931760246646623899502532662132736,
+            "numerator": 55599423
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "known_successes_s": 0,
+          "required_unknown_successes": 32,
+          "unknown_output_slots": 32
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "global_prefix_probability": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "known_successes_at_least": 32
+        }
+      ],
+      "prefix_convolution_bound": {
+        "denominator": 87112285931760246646623899502532662132736,
+        "numerator": 55599423
+      },
+      "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+      "production_qualified": false,
+      "required_distinct_successes": 32,
+      "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "virtual_output_queries_added": 0
+    },
+    "older_virtual_check_bound": {
+      "denominator": 2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576,
+      "numerator": 140454045173069371481143492358807086428419762188630077033390956101290961603360424107510831797633
+    }
+  },
+  {
+    "C": 8,
+    "M": 32,
+    "Q": 1,
+    "actual_native_risk": false,
+    "credit_threshold": 4096,
+    "new": {
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "all_coherent_list_bound": {
+        "denominator": 6901746346790563787434755862277025452451108972170386555162524223799296,
+        "numerator": 408882146009532301585760649706383917938015051074043579893
+      },
+      "bound": {
+        "denominator": 374144419156711147060143317175368453031918731001856,
+        "numerator": 31883194553326541695
+      },
+      "classical_prefix_cap_C": 8,
+      "complete_outputs_cap_M": 32,
+      "credit_threshold": 4096,
+      "global_prefix_law_may_be_reused_at_observed_start": false,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-lifetime-prefix-list-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "padded_distinct_prefix_C_effective": 8,
+      "physical_resource_tail_proved": false,
+      "post_prefix_cap_Q": 1,
+      "prefix_cases": [
+        {
+          "bound": {
+            "denominator": 87112285931760246646623899502532662132736,
+            "numerator": 55599423
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 4294967296,
+            "numerator": 2562890625
+          },
+          "known_successes_s": 0,
+          "required_unknown_successes": 32,
+          "unknown_output_slots": 32
+        },
+        {
+          "bound": {
+            "denominator": 2722258935367507707706996859454145691648,
+            "numerator": 25330321
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 170859375
+          },
+          "known_successes_s": 1,
+          "required_unknown_successes": 31,
+          "unknown_output_slots": 31
+        },
+        {
+          "bound": {
+            "denominator": 5444517870735015415413993718908291383296,
+            "numerator": 736373101
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1073741824,
+            "numerator": 79734375
+          },
+          "known_successes_s": 2,
+          "required_unknown_successes": 30,
+          "unknown_output_slots": 30
+        },
+        {
+          "bound": {
+            "denominator": 85070591730234615865843651857942052864,
+            "numerator": 166711845
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 5315625
+          },
+          "known_successes_s": 3,
+          "required_unknown_successes": 29,
+          "unknown_output_slots": 29
+        },
+        {
+          "bound": {
+            "denominator": 10633823966279326983230456482242756608,
+            "numerator": 300920617
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 2147483648,
+            "numerator": 1771875
+          },
+          "known_successes_s": 4,
+          "required_unknown_successes": 28,
+          "unknown_output_slots": 28
+        },
+        {
+          "bound": {
+            "denominator": 332306998946228968225951765070086144,
+            "numerator": 135300697
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 23625
+          },
+          "known_successes_s": 5,
+          "required_unknown_successes": 27,
+          "unknown_output_slots": 27
+        },
+        {
+          "bound": {
+            "denominator": 83076749736557242056487941267521536,
+            "numerator": 484780167
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1073741824,
+            "numerator": 1575
+          },
+          "known_successes_s": 6,
+          "required_unknown_successes": 26,
+          "unknown_output_slots": 26
+        },
+        {
+          "bound": {
+            "denominator": 649037107316853453566312041152512,
+            "numerator": 54052687
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 15
+          },
+          "known_successes_s": 7,
+          "required_unknown_successes": 25,
+          "unknown_output_slots": 25
+        },
+        {
+          "bound": {
+            "denominator": 81129638414606681695789005144064,
+            "numerator": 95993725
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 4294967296,
+            "numerator": 1
+          },
+          "known_successes_s": 8,
+          "required_unknown_successes": 24,
+          "unknown_output_slots": 24
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "global_prefix_probability": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "known_successes_at_least": 32
+        }
+      ],
+      "prefix_convolution_bound": {
+        "denominator": 374144419156711147060143317175368453031918731001856,
+        "numerator": 31883194553326541695
+      },
+      "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+      "production_qualified": false,
+      "required_distinct_successes": 32,
+      "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "virtual_output_queries_added": 0
+    },
+    "older_virtual_check_bound": {
+      "denominator": 1,
+      "numerator": 1
+    }
+  },
+  {
+    "C": 8,
+    "M": 64,
+    "Q": 1,
+    "actual_native_risk": false,
+    "credit_threshold": 8192,
+    "new": {
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "all_coherent_list_bound": {
+        "denominator": 1174271291386916613944740298394668513687841274454159935353645485766104512557304221731849499192384351515967488,
+        "numerator": 36796250728806127705557820380135878558473743329910747707808595
+      },
+      "bound": {
+        "denominator": 63657374260452690195888927762793067532858387302060507832379389042324415617604272068231168,
+        "numerator": 150592658686204077471
+      },
+      "classical_prefix_cap_C": 8,
+      "complete_outputs_cap_M": 64,
+      "credit_threshold": 8192,
+      "global_prefix_law_may_be_reused_at_observed_start": false,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-lifetime-prefix-list-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "padded_distinct_prefix_C_effective": 8,
+      "physical_resource_tail_proved": false,
+      "post_prefix_cap_Q": 1,
+      "prefix_cases": [
+        {
+          "bound": {
+            "denominator": 14821387422376473014217086081112052205218558037201992197050570753012880593911808,
+            "numerator": 214805695
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 4294967296,
+            "numerator": 2562890625
+          },
+          "known_successes_s": 0,
+          "required_unknown_successes": 64,
+          "unknown_output_slots": 64
+        },
+        {
+          "bound": {
+            "denominator": 463168356949264781694283940034751631413079938662562256157830336031652518559744,
+            "numerator": 102503521
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 170859375
+          },
+          "known_successes_s": 1,
+          "required_unknown_successes": 63,
+          "unknown_output_slots": 63
+        },
+        {
+          "bound": {
+            "denominator": 1852673427797059126777135760139006525652319754650249024631321344126610074238976,
+            "numerator": 6256351773
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1073741824,
+            "numerator": 79734375
+          },
+          "known_successes_s": 2,
+          "required_unknown_successes": 62,
+          "unknown_output_slots": 62
+        },
+        {
+          "bound": {
+            "denominator": 28948022309329048855892746252171976963317496166410141009864396001978282409984,
+            "numerator": 1490502413
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 5315625
+          },
+          "known_successes_s": 3,
+          "required_unknown_successes": 61,
+          "unknown_output_slots": 61
+        },
+        {
+          "bound": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 2838523553
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 2147483648,
+            "numerator": 1771875
+          },
+          "known_successes_s": 4,
+          "required_unknown_successes": 60,
+          "unknown_output_slots": 60
+        },
+        {
+          "bound": {
+            "denominator": 113078212145816597093331040047546785012958969400039613319782796882727665664,
+            "numerator": 1350328065
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 23625
+          },
+          "known_successes_s": 5,
+          "required_unknown_successes": 59,
+          "unknown_output_slots": 59
+        },
+        {
+          "bound": {
+            "denominator": 28269553036454149273332760011886696253239742350009903329945699220681916416,
+            "numerator": 5134653239
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1073741824,
+            "numerator": 1575
+          },
+          "known_successes_s": 6,
+          "required_unknown_successes": 58,
+          "unknown_output_slots": 58
+        },
+        {
+          "bound": {
+            "denominator": 220855883097298041197912187592864814478435487109452369765200775161577472,
+            "numerator": 609614771
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 536870912,
+            "numerator": 15
+          },
+          "known_successes_s": 7,
+          "required_unknown_successes": 57,
+          "unknown_output_slots": 57
+        },
+        {
+          "bound": {
+            "denominator": 27606985387162255149739023449108101809804435888681546220650096895197184,
+            "numerator": 1156988793
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 4294967296,
+            "numerator": 1
+          },
+          "known_successes_s": 8,
+          "required_unknown_successes": 56,
+          "unknown_output_slots": 56
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "global_prefix_probability": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "known_successes_at_least": 64
+        }
+      ],
+      "prefix_convolution_bound": {
+        "denominator": 63657374260452690195888927762793067532858387302060507832379389042324415617604272068231168,
+        "numerator": 150592658686204077471
+      },
+      "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+      "production_qualified": false,
+      "required_distinct_successes": 64,
+      "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "virtual_output_queries_added": 0
+    },
+    "older_virtual_check_bound": {
+      "denominator": 1,
+      "numerator": 1
+    }
+  },
+  {
+    "C": 25,
+    "M": 64,
+    "Q": 1,
+    "actual_native_risk": false,
+    "credit_threshold": 8192,
+    "new": {
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "all_coherent_list_bound": {
+        "denominator": 60383398797144661635864873295812302254670739526663046854019300803929986598274381633378027602842540280663494000492221518396329354078796682120982948022923136698390325231616,
+        "numerator": 24850640899109005170363115714146188408057515494892766107846163810095491695528765642805303742349436844093781528652774918725438504843466470012785560929001383165
+      },
+      "bound": {
+        "denominator": 18788340662190665823115844774314696219005460391266558965658327772257672200916867547709591987078149624255479808,
+        "numerator": 2135873315991116996645584597527357984575701745
+      },
+      "classical_prefix_cap_C": 25,
+      "complete_outputs_cap_M": 64,
+      "credit_threshold": 8192,
+      "global_prefix_law_may_be_reused_at_observed_start": false,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-lifetime-prefix-list-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "padded_distinct_prefix_C_effective": 25,
+      "physical_resource_tail_proved": false,
+      "post_prefix_cap_Q": 1,
+      "prefix_cases": [
+        {
+          "bound": {
+            "denominator": 14821387422376473014217086081112052205218558037201992197050570753012880593911808,
+            "numerator": 214805695
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 252511682940423488616943359375
+          },
+          "known_successes_s": 0,
+          "required_unknown_successes": 64,
+          "unknown_output_slots": 64
+        },
+        {
+          "bound": {
+            "denominator": 463168356949264781694283940034751631413079938662562256157830336031652518559744,
+            "numerator": 102503521
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 420852804900705814361572265625
+          },
+          "known_successes_s": 1,
+          "required_unknown_successes": 63,
+          "unknown_output_slots": 63
+        },
+        {
+          "bound": {
+            "denominator": 1852673427797059126777135760139006525652319754650249024631321344126610074238976,
+            "numerator": 6256351773
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 84170560980141162872314453125
+          },
+          "known_successes_s": 2,
+          "required_unknown_successes": 62,
+          "unknown_output_slots": 62
+        },
+        {
+          "bound": {
+            "denominator": 28948022309329048855892746252171976963317496166410141009864396001978282409984,
+            "numerator": 1490502413
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 43020508945405483245849609375
+          },
+          "known_successes_s": 3,
+          "required_unknown_successes": 61,
+          "unknown_output_slots": 61
+        },
+        {
+          "bound": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 2838523553
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 633825300114114700748351602688,
+            "numerator": 31548373226630687713623046875
+          },
+          "known_successes_s": 4,
+          "required_unknown_successes": 60,
+          "unknown_output_slots": 60
+        },
+        {
+          "bound": {
+            "denominator": 113078212145816597093331040047546785012958969400039613319782796882727665664,
+            "numerator": 1350328065
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 633825300114114700748351602688,
+            "numerator": 8833544503456592559814453125
+          },
+          "known_successes_s": 5,
+          "required_unknown_successes": 59,
+          "unknown_output_slots": 59
+        },
+        {
+          "bound": {
+            "denominator": 28269553036454149273332760011886696253239742350009903329945699220681916416,
+            "numerator": 5134653239
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 981504944828510284423828125
+          },
+          "known_successes_s": 6,
+          "required_unknown_successes": 58,
+          "unknown_output_slots": 58
+        },
+        {
+          "bound": {
+            "denominator": 220855883097298041197912187592864814478435487109452369765200775161577472,
+            "numerator": 609614771
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 177605656683254241943359375
+          },
+          "known_successes_s": 7,
+          "required_unknown_successes": 57,
+          "unknown_output_slots": 57
+        },
+        {
+          "bound": {
+            "denominator": 27606985387162255149739023449108101809804435888681546220650096895197184,
+            "numerator": 1156988793
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 106563394009952545166015625
+          },
+          "known_successes_s": 8,
+          "required_unknown_successes": 56,
+          "unknown_output_slots": 56
+        },
+        {
+          "bound": {
+            "denominator": 862718293348820473429344482784628181556388621521298319395315527974912,
+            "numerator": 548451547
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 13419094060512542724609375
+          },
+          "known_successes_s": 9,
+          "required_unknown_successes": 55,
+          "unknown_output_slots": 55
+        },
+        {
+          "bound": {
+            "denominator": 431359146674410236714672241392314090778194310760649159697657763987456,
+            "numerator": 4155737905
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 158456325028528675187087900672,
+            "numerator": 178921254140167236328125
+          },
+          "known_successes_s": 10,
+          "required_unknown_successes": 54,
+          "unknown_output_slots": 54
+        },
+        {
+          "bound": {
+            "denominator": 6739986666787659948666753771754907668409286105635143120275902562304,
+            "numerator": 983044971
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 158456325028528675187087900672,
+            "numerator": 16265568558197021484375
+          },
+          "known_successes_s": 11,
+          "required_unknown_successes": 53,
+          "unknown_output_slots": 53
+        },
+        {
+          "bound": {
+            "denominator": 842498333348457493583344221469363458551160763204392890034487820288,
+            "numerator": 1858393219
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 2530199553497314453125
+          },
+          "known_successes_s": 12,
+          "required_unknown_successes": 52,
+          "unknown_output_slots": 52
+        },
+        {
+          "bound": {
+            "denominator": 26328072917139296674479506920917608079723773850137277813577744384,
+            "numerator": 877351423
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 168679970233154296875
+          },
+          "known_successes_s": 13,
+          "required_unknown_successes": 51,
+          "unknown_output_slots": 51
+        },
+        {
+          "bound": {
+            "denominator": 6582018229284824168619876730229402019930943462534319453394436096,
+            "numerator": 3309885771
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 158456325028528675187087900672,
+            "numerator": 4819427720947265625
+          },
+          "known_successes_s": 14,
+          "required_unknown_successes": 50,
+          "unknown_output_slots": 50
+        },
+        {
+          "bound": {
+            "denominator": 25711008708143844408671393477458601640355247900524685364822016,
+            "numerator": 194879675
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 158456325028528675187087900672,
+            "numerator": 235616466357421875
+          },
+          "known_successes_s": 15,
+          "required_unknown_successes": 49,
+          "unknown_output_slots": 49
+        },
+        {
+          "bound": {
+            "denominator": 3213876088517980551083924184682325205044405987565585670602752,
+            "numerator": 366727613
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 78538822119140625
+          },
+          "known_successes_s": 16,
+          "required_unknown_successes": 48,
+          "unknown_output_slots": 48
+        },
+        {
+          "bound": {
+            "denominator": 100433627766186892221372630771322662657637687111424552206336,
+            "numerator": 172310763
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 2771958427734375
+          },
+          "known_successes_s": 17,
+          "required_unknown_successes": 47,
+          "unknown_output_slots": 47
+        },
+        {
+          "bound": {
+            "denominator": 100433627766186892221372630771322662657637687111424552206336,
+            "numerator": 2587376837
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 20533025390625
+          },
+          "known_successes_s": 18,
+          "required_unknown_successes": 46,
+          "unknown_output_slots": 46
+        },
+        {
+          "bound": {
+            "denominator": 1569275433846670190958947355801916604025588861116008628224,
+            "numerator": 606220729
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 504319921875
+          },
+          "known_successes_s": 19,
+          "required_unknown_successes": 45,
+          "unknown_output_slots": 45
+        },
+        {
+          "bound": {
+            "denominator": 196159429230833773869868419475239575503198607639501078528,
+            "numerator": 1134669285
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 633825300114114700748351602688,
+            "numerator": 20172796875
+          },
+          "known_successes_s": 20,
+          "required_unknown_successes": 44,
+          "unknown_output_slots": 44
+        },
+        {
+          "bound": {
+            "denominator": 6129982163463555433433388108601236734474956488734408704,
+            "numerator": 530147981
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 633825300114114700748351602688,
+            "numerator": 320203125
+          },
+          "known_successes_s": 21,
+          "required_unknown_successes": 43,
+          "unknown_output_slots": 43
+        },
+        {
+          "bound": {
+            "denominator": 1532495540865888858358347027150309183618739122183602176,
+            "numerator": 1978491103
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 1940625
+          },
+          "known_successes_s": 22,
+          "required_unknown_successes": 42,
+          "unknown_output_slots": 42
+        },
+        {
+          "bound": {
+            "denominator": 11972621413014756705924586149611790497021399392059392,
+            "numerator": 230360529
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 316912650057057350374175801344,
+            "numerator": 16875
+          },
+          "known_successes_s": 23,
+          "required_unknown_successes": 41,
+          "unknown_output_slots": 41
+        },
+        {
+          "bound": {
+            "denominator": 1496577676626844588240573268701473812127674924007424,
+            "numerator": 428404859
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 375
+          },
+          "known_successes_s": 24,
+          "required_unknown_successes": 40,
+          "unknown_output_slots": 40
+        },
+        {
+          "bound": {
+            "denominator": 46768052394588893382517914646921056628989841375232,
+            "numerator": 198818105
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 1
+          },
+          "known_successes_s": 25,
+          "required_unknown_successes": 39,
+          "unknown_output_slots": 39
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "global_prefix_probability": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "known_successes_at_least": 64
+        }
+      ],
+      "prefix_convolution_bound": {
+        "denominator": 18788340662190665823115844774314696219005460391266558965658327772257672200916867547709591987078149624255479808,
+        "numerator": 2135873315991116996645584597527357984575701745
+      },
+      "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+      "production_qualified": false,
+      "required_distinct_successes": 64,
+      "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "virtual_output_queries_added": 0
+    },
+    "older_virtual_check_bound": {
+      "denominator": 1,
+      "numerator": 1
+    }
+  },
+  {
+    "C": 64,
+    "M": 64,
+    "Q": 1,
+    "actual_native_risk": false,
+    "credit_threshold": 8192,
+    "new": {
+      "actual_sha_independent_uniform_tickets_proved": false,
+      "all_coherent_list_bound": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "bound": {
+        "denominator": 1716199415032652428745475199770348304317358825035826352348615864796385795849414013030639910165363638744324077847870214509280496999929160953143507072778764288,
+        "numerator": 7407784346501537694966810450116594797646931144963816150458649461865321136592530054041063289777630563263
+      },
+      "classical_prefix_cap_C": 64,
+      "complete_outputs_cap_M": 64,
+      "credit_threshold": 8192,
+      "global_prefix_law_may_be_reused_at_observed_start": false,
+      "hidden_inventory_output_extraction_and_cap_attested": false,
+      "input_parameters_attest_complete_joint_initial_state": false,
+      "input_parameters_attest_full_lifetime_query_coverage": false,
+      "mandatory_u_minimum_gate_cost_proved": false,
+      "maximum_identity_credit": 128,
+      "model": "mu1-ideal-lifetime-prefix-list-v1",
+      "native_identity_and_weight_bridge_proved": false,
+      "native_six_successor_risk_certified": false,
+      "p": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "padded_distinct_prefix_C_effective": 64,
+      "physical_resource_tail_proved": false,
+      "post_prefix_cap_Q": 1,
+      "prefix_cases": [
+        {
+          "bound": {
+            "denominator": 14821387422376473014217086081112052205218558037201992197050570753012880593911808,
+            "numerator": 214805695
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 115792089237316195423570985008687907853269984665640564039457584007913129639936,
+            "numerator": 1861403728794734215467410604755702820123364205073812627233564853668212890625
+          },
+          "known_successes_s": 0,
+          "required_unknown_successes": 64,
+          "unknown_output_slots": 64
+        },
+        {
+          "bound": {
+            "denominator": 463168356949264781694283940034751631413079938662562256157830336031652518559744,
+            "numerator": 102503521
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 124093581919648947697827373650380188008224280338254175148904323577880859375
+          },
+          "known_successes_s": 1,
+          "required_unknown_successes": 63,
+          "unknown_output_slots": 63
+        },
+        {
+          "bound": {
+            "denominator": 1852673427797059126777135760139006525652319754650249024631321344126610074238976,
+            "numerator": 6256351773
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 521193044062525580330874969331596789634541977420667535625398159027099609375
+          },
+          "known_successes_s": 2,
+          "required_unknown_successes": 62,
+          "unknown_output_slots": 62
+        },
+        {
+          "bound": {
+            "denominator": 28948022309329048855892746252171976963317496166410141009864396001978282409984,
+            "numerator": 1490502413
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 359044097020850955339047201095100010637128917778682080097496509552001953125
+          },
+          "known_successes_s": 3,
+          "required_unknown_successes": 61,
+          "unknown_output_slots": 61
+        },
+        {
+          "bound": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 2838523553
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 1460112661218127218378791951120073376590990932299973792396485805511474609375
+          },
+          "known_successes_s": 4,
+          "required_unknown_successes": 60,
+          "unknown_output_slots": 60
+        },
+        {
+          "bound": {
+            "denominator": 113078212145816597093331040047546785012958969400039613319782796882727665664,
+            "numerator": 1350328065
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 292022532243625443675758390224014675318198186459994758479297161102294921875
+          },
+          "known_successes_s": 5,
+          "required_unknown_successes": 59,
+          "unknown_output_slots": 59
+        },
+        {
+          "bound": {
+            "denominator": 28269553036454149273332760011886696253239742350009903329945699220681916416,
+            "numerator": 5134653239
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 382873986719420026152661000515930352083859844469770905561745166778564453125
+          },
+          "known_successes_s": 6,
+          "required_unknown_successes": 58,
+          "unknown_output_slots": 58
+        },
+        {
+          "bound": {
+            "denominator": 220855883097298041197912187592864814478435487109452369765200775161577472,
+            "numerator": 609614771
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 105746148712982673889782562047256954385066052282127202488481998443603515625
+          },
+          "known_successes_s": 7,
+          "required_unknown_successes": 57,
+          "unknown_output_slots": 57
+        },
+        {
+          "bound": {
+            "denominator": 27606985387162255149739023449108101809804435888681546220650096895197184,
+            "numerator": 1156988793
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 14474011154664524427946373126085988481658748083205070504932198000989141204992,
+            "numerator": 401835365109334160781173735779576426663250998672083369456231594085693359375
+          },
+          "known_successes_s": 8,
+          "required_unknown_successes": 56,
+          "unknown_output_slots": 56
+        },
+        {
+          "bound": {
+            "denominator": 862718293348820473429344482784628181556388621521298319395315527974912,
+            "numerator": 548451547
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 20835907820483993521986786299681740641798199931145063601434230804443359375
+          },
+          "known_successes_s": 9,
+          "required_unknown_successes": 55,
+          "unknown_output_slots": 55
+        },
+        {
+          "bound": {
+            "denominator": 431359146674410236714672241392314090778194310760649159697657763987456,
+            "numerator": 4155737905
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 15279665735021595249456976619766609803985346616173046641051769256591796875
+          },
+          "known_successes_s": 10,
+          "required_unknown_successes": 54,
+          "unknown_output_slots": 54
+        },
+        {
+          "bound": {
+            "denominator": 6739986666787659948666753771754907668409286105635143120275902562304,
+            "numerator": 983044971
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 2500308938458079222638414355961808877015783991737407632172107696533203125
+          },
+          "known_successes_s": 11,
+          "required_unknown_successes": 53,
+          "unknown_output_slots": 53
+        },
+        {
+          "bound": {
+            "denominator": 842498333348457493583344221469363458551160763204392890034487820288,
+            "numerator": 1858393219
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 2944808305295071084440799130355019344040812256935168989002704620361328125
+          },
+          "known_successes_s": 12,
+          "required_unknown_successes": 52,
+          "unknown_output_slots": 52
+        },
+        {
+          "bound": {
+            "denominator": 26328072917139296674479506920917608079723773850137277813577744384,
+            "numerator": 877351423
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 196320553686338072296053275357001289602720817129011265933513641357421875
+          },
+          "known_successes_s": 13,
+          "required_unknown_successes": 51,
+          "unknown_output_slots": 51
+        },
+        {
+          "bound": {
+            "denominator": 6582018229284824168619876730229402019930943462534319453394436096,
+            "numerator": 3309885771
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 95355697504792777972368733744829197807035825462662614881992340087890625
+          },
+          "known_successes_s": 14,
+          "required_unknown_successes": 50,
+          "unknown_output_slots": 50
+        },
+        {
+          "bound": {
+            "denominator": 25711008708143844408671393477458601640355247900524685364822016,
+            "numerator": 194879675
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 10595077500532530885818748193869910867448425051406957209110260009765625
+          },
+          "known_successes_s": 15,
+          "required_unknown_successes": 49,
+          "unknown_output_slots": 49
+        },
+        {
+          "bound": {
+            "denominator": 3213876088517980551083924184682325205044405987565585670602752,
+            "numerator": 366727613
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 28948022309329048855892746252171976963317496166410141009864396001978282409984,
+            "numerator": 34610586501739600893674577433308375500331521834596060216426849365234375
+          },
+          "known_successes_s": 16,
+          "required_unknown_successes": 48,
+          "unknown_output_slots": 48
+        },
+        {
+          "bound": {
+            "denominator": 100433627766186892221372630771322662657637687111424552206336,
+            "numerator": 172310763
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 407183370608701186984406793333039711768606139230541884899139404296875
+          },
+          "known_successes_s": 17,
+          "required_unknown_successes": 47,
+          "unknown_output_slots": 47
+        },
+        {
+          "bound": {
+            "denominator": 100433627766186892221372630771322662657637687111424552206336,
+            "numerator": 2587376837
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 141760136434140413246423105827058270023144359583966434001922607421875
+          },
+          "known_successes_s": 18,
+          "required_unknown_successes": 46,
+          "unknown_output_slots": 46
+        },
+        {
+          "bound": {
+            "denominator": 1569275433846670190958947355801916604025588861116008628224,
+            "numerator": 606220729
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 11440291712228875454974496259727509510639720247127115726470947265625
+          },
+          "known_successes_s": 19,
+          "required_unknown_successes": 45,
+          "unknown_output_slots": 45
+        },
+        {
+          "bound": {
+            "denominator": 196159429230833773869868419475239575503198607639501078528,
+            "numerator": 1134669285
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 6864175027337325272984697755836505706383832148276269435882568359375
+          },
+          "known_successes_s": 20,
+          "required_unknown_successes": 44,
+          "unknown_output_slots": 44
+        },
+        {
+          "bound": {
+            "denominator": 6129982163463555433433388108601236734474956488734408704,
+            "numerator": 530147981
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 239701350160985961913751350203814484984832233749330043792724609375
+          },
+          "known_successes_s": 21,
+          "required_unknown_successes": 43,
+          "unknown_output_slots": 43
+        },
+        {
+          "bound": {
+            "denominator": 1532495540865888858358347027150309183618739122183602176,
+            "numerator": 1978491103
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 62467624587408462801765503386448623359683551825582981109619140625
+          },
+          "known_successes_s": 22,
+          "required_unknown_successes": 42,
+          "unknown_output_slots": 42
+        },
+        {
+          "bound": {
+            "denominator": 11972621413014756705924586149611790497021399392059392,
+            "numerator": 230360529
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 3802377148798775996629204553957742291458998806774616241455078125
+          },
+          "known_successes_s": 23,
+          "required_unknown_successes": 41,
+          "unknown_output_slots": 41
+        },
+        {
+          "bound": {
+            "denominator": 1496577676626844588240573268701473812127674924007424,
+            "numerator": 428404859
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 14474011154664524427946373126085988481658748083205070504932198000989141204992,
+            "numerator": 3464388068905551463595497482494831865551532246172428131103515625
+          },
+          "known_successes_s": 24,
+          "required_unknown_successes": 40,
+          "unknown_output_slots": 40
+        },
+        {
+          "bound": {
+            "denominator": 46768052394588893382517914646921056628989841375232,
+            "numerator": 198818105
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 46191840918740686181273299766597758207353763282299041748046875
+          },
+          "known_successes_s": 25,
+          "required_unknown_successes": 39,
+          "unknown_output_slots": 39
+        },
+        {
+          "bound": {
+            "denominator": 23384026197294446691258957323460528314494920687616,
+            "numerator": 1473508569
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 9238368183748137236254659953319551641470752656459808349609375
+          },
+          "known_successes_s": 26,
+          "required_unknown_successes": 38,
+          "unknown_output_slots": 38
+        },
+        {
+          "bound": {
+            "denominator": 365375409332725729550921208179070754913983135744,
+            "numerator": 340589687
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 433404927138801499972440837316225879476405680179595947265625
+          },
+          "known_successes_s": 27,
+          "required_unknown_successes": 37,
+          "unknown_output_slots": 37
+        },
+        {
+          "bound": {
+            "denominator": 45671926166590716193865151022383844364247891968,
+            "numerator": 628471751
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 152723640991768147609336295054289119434542953968048095703125
+          },
+          "known_successes_s": 28,
+          "required_unknown_successes": 36,
+          "unknown_output_slots": 36
+        },
+        {
+          "bound": {
+            "denominator": 1427247692705959881058285969449495136382746624,
+            "numerator": 289277739
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 3159799468795203053986268173537016264162957668304443359375
+          },
+          "known_successes_s": 29,
+          "required_unknown_successes": 35,
+          "unknown_output_slots": 35
+        },
+        {
+          "bound": {
+            "denominator": 356811923176489970264571492362373784095686656,
+            "numerator": 1062709235
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 491524361812587141731197271439091418869793415069580078125
+          },
+          "known_successes_s": 30,
+          "required_unknown_successes": 34,
+          "unknown_output_slots": 34
+        },
+        {
+          "bound": {
+            "denominator": 696898287454081973172991196020261297061888,
+            "numerator": 30424577
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 17969707851212863246086781966590438969433307647705078125
+          },
+          "known_successes_s": 31,
+          "required_unknown_successes": 33,
+          "unknown_output_slots": 33
+        },
+        {
+          "bound": {
+            "denominator": 87112285931760246646623899502532662132736,
+            "numerator": 55599423
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 57896044618658097711785492504343953926634992332820282019728792003956564819968,
+            "numerator": 39533357272668299141390920326498965732753276824951171875
+          },
+          "known_successes_s": 32,
+          "required_unknown_successes": 32,
+          "unknown_output_slots": 32
+        },
+        {
+          "bound": {
+            "denominator": 2722258935367507707706996859454145691648,
+            "numerator": 25330321
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 79865368227612725538163475407068617641925811767578125
+          },
+          "known_successes_s": 33,
+          "required_unknown_successes": 31,
+          "unknown_output_slots": 31
+        },
+        {
+          "bound": {
+            "denominator": 5444517870735015415413993718908291383296,
+            "numerator": 736373101
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 9709123196298017614443402892624028027057647705078125
+          },
+          "known_successes_s": 34,
+          "required_unknown_successes": 30,
+          "unknown_output_slots": 30
+        },
+        {
+          "bound": {
+            "denominator": 85070591730234615865843651857942052864,
+            "numerator": 166711845
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 277403519894229074698382939789257943630218505859375
+          },
+          "known_successes_s": 35,
+          "required_unknown_successes": 29,
+          "unknown_output_slots": 29
+        },
+        {
+          "bound": {
+            "denominator": 10633823966279326983230456482242756608,
+            "numerator": 300920617
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 59590385755056616046319298176951706409454345703125
+          },
+          "known_successes_s": 36,
+          "required_unknown_successes": 28,
+          "unknown_output_slots": 28
+        },
+        {
+          "bound": {
+            "denominator": 332306998946228968225951765070086144,
+            "numerator": 135300697
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 751590450964678040223847004033625125885009765625
+          },
+          "known_successes_s": 37,
+          "required_unknown_successes": 27,
+          "unknown_output_slots": 27
+        },
+        {
+          "bound": {
+            "denominator": 83076749736557242056487941267521536,
+            "numerator": 484780167
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 71203305880864235389627610908448696136474609375
+          },
+          "known_successes_s": 38,
+          "required_unknown_successes": 26,
+          "unknown_output_slots": 26
+        },
+        {
+          "bound": {
+            "denominator": 649037107316853453566312041152512,
+            "numerator": 54052687
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 1582295686241427453102835797965526580810546875
+          },
+          "known_successes_s": 39,
+          "required_unknown_successes": 25,
+          "unknown_output_slots": 25
+        },
+        {
+          "bound": {
+            "denominator": 81129638414606681695789005144064,
+            "numerator": 95993725
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 14474011154664524427946373126085988481658748083205070504932198000989141204992,
+            "numerator": 527431895413809151034278599321842193603515625
+          },
+          "known_successes_s": 40,
+          "required_unknown_successes": 24,
+          "unknown_output_slots": 24
+        },
+        {
+          "bound": {
+            "denominator": 2535301200456458802993406410752,
+            "numerator": 42411063
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 2572838514213703175776968777179718017578125
+          },
+          "known_successes_s": 41,
+          "required_unknown_successes": 23,
+          "unknown_output_slots": 23
+        },
+        {
+          "bound": {
+            "denominator": 1267650600228229401496703205376,
+            "numerator": 298210433
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 187858050244175152517048513889312744140625
+          },
+          "known_successes_s": 42,
+          "required_unknown_successes": 22,
+          "unknown_output_slots": 22
+        },
+        {
+          "bound": {
+            "denominator": 19807040628566084398385987584,
+            "numerator": 65147203
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 3203780701838646011918656826019287109375
+          },
+          "known_successes_s": 43,
+          "required_unknown_successes": 21,
+          "unknown_output_slots": 21
+        },
+        {
+          "bound": {
+            "denominator": 2475880078570760549798248448,
+            "numerator": 113135883
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 407753907506736765153283596038818359375
+          },
+          "known_successes_s": 44,
+          "required_unknown_successes": 20,
+          "unknown_output_slots": 20
+        },
+        {
+          "bound": {
+            "denominator": 77371252455336267181195264,
+            "numerator": 48776855
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 3020399314864716778913211822509765625
+          },
+          "known_successes_s": 45,
+          "required_unknown_successes": 19,
+          "unknown_output_slots": 19
+        },
+        {
+          "bound": {
+            "denominator": 19342813113834066795298816,
+            "numerator": 166943899
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 166340831833129329853191375732421875
+          },
+          "known_successes_s": 46,
+          "required_unknown_successes": 18,
+          "unknown_output_slots": 18
+        },
+        {
+          "bound": {
+            "denominator": 75557863725914323419136,
+            "numerator": 8851833
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 2123499980848459530040740966796875
+          },
+          "known_successes_s": 47,
+          "required_unknown_successes": 17,
+          "unknown_output_slots": 17
+        },
+        {
+          "bound": {
+            "denominator": 9444732965739290427392,
+            "numerator": 14876479
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 28948022309329048855892746252171976963317496166410141009864396001978282409984,
+            "numerator": 802211103876084711348724365234375
+          },
+          "known_successes_s": 48,
+          "required_unknown_successes": 16,
+          "unknown_output_slots": 16
+        },
+        {
+          "bound": {
+            "denominator": 295147905179352825856,
+            "numerator": 6183721
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 1091443678742972396392822265625
+          },
+          "known_successes_s": 49,
+          "required_unknown_successes": 15,
+          "unknown_output_slots": 15
+        },
+        {
+          "bound": {
+            "denominator": 295147905179352825856,
+            "numerator": 81260565
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 43657747149718895855712890625
+          },
+          "known_successes_s": 50,
+          "required_unknown_successes": 14,
+          "unknown_output_slots": 14
+        },
+        {
+          "bound": {
+            "denominator": 4611686018427387904,
+            "numerator": 16455761
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 399482653657558524169921875
+          },
+          "known_successes_s": 51,
+          "required_unknown_successes": 13,
+          "unknown_output_slots": 13
+        },
+        {
+          "bound": {
+            "denominator": 576460752303423488,
+            "numerator": 26237549
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 26632176910503901611328125
+          },
+          "known_successes_s": 52,
+          "required_unknown_successes": 12,
+          "unknown_output_slots": 12
+        },
+        {
+          "bound": {
+            "denominator": 18014398509481984,
+            "numerator": 10266213
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 100498780794354345703125
+          },
+          "known_successes_s": 53,
+          "required_unknown_successes": 11,
+          "unknown_output_slots": 11
+        },
+        {
+          "bound": {
+            "denominator": 4503599627370496,
+            "numerator": 31440431
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 2729596515402216796875
+          },
+          "known_successes_s": 54,
+          "required_unknown_successes": 10,
+          "unknown_output_slots": 10
+        },
+        {
+          "bound": {
+            "denominator": 35184372088832,
+            "numerator": 2931245
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 16543009184255859375
+          },
+          "known_successes_s": 55,
+          "required_unknown_successes": 9,
+          "unknown_output_slots": 9
+        },
+        {
+          "bound": {
+            "denominator": 4398046511104,
+            "numerator": 4235391
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 14474011154664524427946373126085988481658748083205070504932198000989141204992,
+            "numerator": 1417972215793359375
+          },
+          "known_successes_s": 56,
+          "required_unknown_successes": 8,
+          "unknown_output_slots": 8
+        },
+        {
+          "bound": {
+            "denominator": 137438953472,
+            "numerator": 1470421
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 1658447036015625
+          },
+          "known_successes_s": 57,
+          "required_unknown_successes": 7,
+          "unknown_output_slots": 7
+        },
+        {
+          "bound": {
+            "denominator": 68719476736,
+            "numerator": 7763497
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 26687653453125
+          },
+          "known_successes_s": 58,
+          "required_unknown_successes": 6,
+          "unknown_output_slots": 6
+        },
+        {
+          "bound": {
+            "denominator": 1073741824,
+            "numerator": 1197519
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 90466621875
+          },
+          "known_successes_s": 59,
+          "required_unknown_successes": 5,
+          "unknown_output_slots": 5
+        },
+        {
+          "bound": {
+            "denominator": 134217728,
+            "numerator": 1345615
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 7237005577332262213973186563042994240829374041602535252466099000494570602496,
+            "numerator": 2010369375
+          },
+          "known_successes_s": 60,
+          "required_unknown_successes": 4,
+          "unknown_output_slots": 4
+        },
+        {
+          "bound": {
+            "denominator": 4194304,
+            "numerator": 328771
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 2197125
+          },
+          "known_successes_s": 61,
+          "required_unknown_successes": 3,
+          "unknown_output_slots": 3
+        },
+        {
+          "bound": {
+            "denominator": 1048576,
+            "numerator": 509763
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 3618502788666131106986593281521497120414687020801267626233049500247285301248,
+            "numerator": 14175
+          },
+          "known_successes_s": 62,
+          "required_unknown_successes": 2,
+          "unknown_output_slots": 2
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "exact_relaxed_game_when_Q_zero": false,
+          "global_prefix_probability": {
+            "denominator": 1809251394333065553493296640760748560207343510400633813116524750123642650624,
+            "numerator": 15
+          },
+          "known_successes_s": 63,
+          "required_unknown_successes": 1,
+          "unknown_output_slots": 1
+        },
+        {
+          "bound": {
+            "denominator": 1,
+            "numerator": 1
+          },
+          "global_prefix_probability": {
+            "denominator": 115792089237316195423570985008687907853269984665640564039457584007913129639936,
+            "numerator": 1
+          },
+          "known_successes_at_least": 64
+        }
+      ],
+      "prefix_convolution_bound": {
+        "denominator": 1716199415032652428745475199770348304317358825035826352348615864796385795849414013030639910165363638744324077847870214509280496999929160953143507072778764288,
+        "numerator": 7407784346501537694966810450116594797646931144963816150458649461865321136592530054041063289777630563263
+      },
+      "probability_scope": "global_unconditioned_from_independent_joint_initial_state",
+      "production_qualified": false,
+      "required_distinct_successes": 64,
+      "terminal_domain_size": 13407807929942597099574024998205846127479365820592393377723561443721764030073546976801874298166903427690031858186486050853753882811946569946433649006084096,
+      "virtual_output_queries_added": 0
+    },
+    "older_virtual_check_bound": {
+      "denominator": 1,
+      "numerator": 1
+    }
+  }
+]

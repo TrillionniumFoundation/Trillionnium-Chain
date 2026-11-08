@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/verify-transfer.py"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+  "elapsed_seconds": 0.11493818800227018,
+  "exit_code": 0,
+  "name": "transfer-verification",
+  "started_at_utc": "2026-11-07T23:42:40.946120+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "path": "transfer-verification.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 789,
+      "path": "transfer-verification.stdout.log",
+      "sha256": "cb4ed221b6459ab0489de068f33fbe8c231ccda637ec55dd5afd8813ba3563a5"
+    }
+  }
+}

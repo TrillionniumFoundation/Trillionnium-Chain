@@ -1,0 +1,2678 @@
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs:15:
+         return Err("USAGE: native_owner_journal_v1 NEW_OUTPUT_DIRECTORY".into());
+     }
+     let executable = std::env::current_exe()?;
+-    let report = native_journal_scenario::run(Path::new(&arguments[0]),|plan| {
+-        Ok(Command::new(&executable).arg("--crash-child").arg(plan).output()?)
++    let report = native_journal_scenario::run(Path::new(&arguments[0]), |plan| {
++        Ok(Command::new(&executable)
++            .arg("--crash-child")
++            .arg(plan)
++            .output()?)
+     })?;
+-    println!("{}",serde_json::json!({"recorded":Path::new(&arguments[0]).join("run.json"),
++    println!(
++        "{}",
++        serde_json::json!({"recorded":Path::new(&arguments[0]).join("run.json"),
+         "native_execution_exercised":true,"journals":report["journals"].as_array().map(Vec::len),
+-        "actual_child_exit":report["crash_child"]["exit_code"],"six_successor_risk_qualified":false}));
++        "actual_child_exit":report["crash_child"]["exit_code"],"six_successor_risk_qualified":false})
++    );
+     Ok(())
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:6:
+ use std::path::{Path, PathBuf};
+ use std::process::Output;
+ use trnm_crypto_primitives::{pon_work, sign_hex, signing_key_from_hex};
+-use trnm_pon_node::native_owner_journal::{JournalCheckpoint, JournalMakeRequest, JournaledNativeOwner, NativeJournalOptions};
++use trnm_pon_node::native_owner_journal::{
++    JournalCheckpoint, JournalMakeRequest, JournaledNativeOwner, NativeJournalOptions,
++};
+ use trnm_pon_node::{development_public, Error, Packet, Result, Settings};
+ use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:24:
+ }
+ 
+ fn options(pin: Option<JournalCheckpoint>) -> NativeJournalOptions {
+-    NativeJournalOptions { observed_now:NOW,expected_checkpoint:pin,..NativeJournalOptions::default() }
++    NativeJournalOptions {
++        observed_now: NOW,
++        expected_checkpoint: pin,
++        ..NativeJournalOptions::default()
++    }
+ }
+ fn open(root: &Path, label: &str, pin: Option<JournalCheckpoint>) -> Result<JournaledNativeOwner> {
+-    JournaledNativeOwner::open(&root.join(format!("{label}-store")), &root.join(format!("{label}-journal")),
+-        Settings::development(Some(1))?,options(pin))
++    JournaledNativeOwner::open(
++        &root.join(format!("{label}-store")),
++        &root.join(format!("{label}-journal")),
++        Settings::development(Some(1))?,
++        options(pin),
++    )
+ }
+-fn make(node: &mut JournaledNativeOwner, parent: Hash, timestamp: u64, miner: u64,
+-    transactions: Vec<Vec<u8>>) -> Result<Packet> {
+-    node.make(JournalMakeRequest { parent,transactions,miner:development_public(miner)?,timestamp,max_attempts:4096 },NOW)
++fn make(
++    node: &mut JournaledNativeOwner,
++    parent: Hash,
++    timestamp: u64,
++    miner: u64,
++    transactions: Vec<Vec<u8>>,
++) -> Result<Packet> {
++    node.make(
++        JournalMakeRequest {
++            parent,
++            transactions,
++            miner: development_public(miner)?,
++            timestamp,
++            max_attempts: 4096,
++        },
++        NOW,
++    )
+ }
+ fn signed_transfer(settings: &Settings) -> Result<Vec<u8>> {
+     let mut payload = development_public(1)?.to_vec();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:39:
+     payload.extend(1_u64.to_le_bytes());
+-    let mut transaction = Envelope { network:settings.network(),sender:development_public(0)?,nonce:1,
+-        expiry:1000,fee_limit:1_000_000,tag:1,payload,signature:[0;64] };
++    let mut transaction = Envelope {
++        network: settings.network(),
++        sender: development_public(0)?,
++        nonce: 1,
++        expiry: 1000,
++        fee_limit: 1_000_000,
++        tag: 1,
++        payload,
++        signature: [0; 64],
++    };
+     let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
+         .map_err(|e| Error::from(format!("JOURNAL_TEST_KEY:{e:?}")))?;
+-    transaction.signature = hex::decode(sign_hex(&key,&transaction.signing_digest()
+-        .map_err(|e| Error::from(format!("JOURNAL_TEST_SIGN:{e:?}")))?))
+-        .map_err(|e| Error::from(format!("JOURNAL_TEST_HEX:{e}")))?.try_into().map_err(|_| "JOURNAL_TEST_SIGNATURE")?;
+-    transaction.encode().map_err(|e| Error::from(format!("JOURNAL_TEST_TRANSACTION:{e:?}")))
++    transaction.signature = hex::decode(sign_hex(
++        &key,
++        &transaction
++            .signing_digest()
++            .map_err(|e| Error::from(format!("JOURNAL_TEST_SIGN:{e:?}")))?,
++    ))
++    .map_err(|e| Error::from(format!("JOURNAL_TEST_HEX:{e}")))?
++    .try_into()
++    .map_err(|_| "JOURNAL_TEST_SIGNATURE")?;
++    transaction
++        .encode()
++        .map_err(|e| Error::from(format!("JOURNAL_TEST_TRANSACTION:{e:?}")))
+ }
+ fn copy_tree(source: &Path, target: &Path) -> Result<()> {
+     fs::create_dir(target)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:51:
+     for entry in fs::read_dir(source)? {
+         let entry = entry?;
+         let kind = entry.file_type()?;
+-        if kind.is_dir() { copy_tree(&entry.path(),&target.join(entry.file_name()))?; }
+-        else if kind.is_file() { fs::copy(entry.path(),target.join(entry.file_name()))?; }
+-        else { return Err("JOURNAL_TEST_COPY_SPECIAL_FILE".into()); }
++        if kind.is_dir() {
++            copy_tree(&entry.path(), &target.join(entry.file_name()))?;
++        } else if kind.is_file() {
++            fs::copy(entry.path(), target.join(entry.file_name()))?;
++        } else {
++            return Err("JOURNAL_TEST_COPY_SPECIAL_FILE".into());
++        }
+     }
+     Ok(())
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:60:
+ fn write_new(path: &Path, value: &impl Serialize) -> Result<()> {
+-    let mut file = fs::OpenOptions::new().write(true).create_new(true).open(path)?;
+-    serde_json::to_writer_pretty(&mut file,value)?;
++    let mut file = fs::OpenOptions::new()
++        .write(true)
++        .create_new(true)
++        .open(path)?;
++    serde_json::to_writer_pretty(&mut file, value)?;
+     file.write_all(b"\n")?;
+     file.sync_all()?;
+     Ok(())
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:69:
+ /// after native activation succeeds; process exit releases the real owner lock.
+ pub fn crash_child(plan_path: &Path) -> Result<()> {
+     let plan: CrashPlan = serde_json::from_slice(&fs::read(plan_path)?)?;
+-    let mut owner = JournaledNativeOwner::open(&plan.store,&plan.journal,Settings::development(Some(1))?,
+-        options(Some(plan.checkpoint)))?;
++    let mut owner = JournaledNativeOwner::open(
++        &plan.store,
++        &plan.journal,
++        Settings::development(Some(1))?,
++        options(Some(plan.checkpoint)),
++    )?;
+     for path in &plan.packets {
+-        owner.admit(&Packet::decode(&fs::read(path)?)?,NOW)?;
++        owner.admit(&Packet::decode(&fs::read(path)?)?, NOW)?;
+     }
+-    let pending = owner.begin_activation(plan.target,NOW)?;
+-    if !pending.native_succeeded() { return Err("JOURNAL_TEST_NATIVE_ACTIVATION_FAILED".into()); }
+-    println!("{}",json!({"native_activation_returned_success":true,"intent_sequence":pending.intent_sequence(),
+-        "terminal_observation_written":false,"exit_after_native_commit":true}));
++    let pending = owner.begin_activation(plan.target, NOW)?;
++    if !pending.native_succeeded() {
++        return Err("JOURNAL_TEST_NATIVE_ACTIVATION_FAILED".into());
++    }
++    println!(
++        "{}",
++        json!({"native_activation_returned_success":true,"intent_sequence":pending.intent_sequence(),
++        "terminal_observation_written":false,"exit_after_native_commit":true})
++    );
+     std::io::stdout().flush()?;
+     std::process::exit(CRASH_EXIT)
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:91:
+     let genesis = settings.genesis();
+     let transaction = signed_transfer(&settings)?;
+     let transaction_id = hash(b"tx-id", &[&transaction]);
+-    let mut alice = open(&root,"alice",None)?;
+-    let mut bob = open(&root,"bob",None)?;
++    let mut alice = open(&root, "alice", None)?;
++    let mut bob = open(&root, "bob", None)?;
+     let mut alice_packets = Vec::new();
+     let mut tip = genesis;
+     for height in 1..=7 {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:99:
+-        let packet = make(&mut alice,tip,height*10+1,0,if height==1 { vec![transaction.clone()] } else { vec![] })?;
+-        tip = alice.admit(&packet,NOW)?;
+-        alice.activate_observed(tip,NOW)?;
++        let packet = make(
++            &mut alice,
++            tip,
++            height * 10 + 1,
++            0,
++            if height == 1 {
++                vec![transaction.clone()]
++            } else {
++                vec![]
++            },
++        )?;
++        tip = alice.admit(&packet, NOW)?;
++        alice.activate_observed(tip, NOW)?;
+         alice_packets.push(packet);
+     }
+     let target_block = alice_packets[0].id()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:105:
+     let a7 = tip;
+-    let confirmation = alice.confirmation(transaction_id,target_block,NOW)?;
+-    if !confirmation.confirmed { return Err("JOURNAL_TEST_SIX_SUCCESSORS".into()); }
++    let confirmation = alice.confirmation(transaction_id, target_block, NOW)?;
++    if !confirmation.confirmed {
++        return Err("JOURNAL_TEST_SIX_SUCCESSORS".into());
++    }
+     let before_hidden = serde_json::to_value(alice.observe(NOW)?)?;
+     let mut bob_packets = Vec::new();
+     tip = genesis;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:111:
+     for height in 1..=8 {
+-        let packet = make(&mut bob,tip,height*10+2,2,vec![])?;
+-        tip = bob.admit(&packet,NOW)?;
+-        bob.activate_observed(tip,NOW)?;
++        let packet = make(&mut bob, tip, height * 10 + 2, 2, vec![])?;
++        tip = bob.admit(&packet, NOW)?;
++        bob.activate_observed(tip, NOW)?;
+         bob_packets.push(packet);
+     }
+     let b8 = tip;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:121:
+     }
+     // A complete actual producer output is retained while still unadmitted,
+     // then imported after the original owner is dropped and reopened.
+-    let a8_packet = make(&mut alice,a7,81,0,vec![])?;
++    let a8_packet = make(&mut alice, a7, 81, 0, vec![])?;
+     let before_restart = alice.status()?;
+     let pin = alice.finish(NOW)?;
+-    write_new(&root.join("alice-before-restart-checkpoint.json"),&pin)?;
+-    let mut alice = open(&root,"alice",Some(pin))?;
++    write_new(&root.join("alice-before-restart-checkpoint.json"), &pin)?;
++    let mut alice = open(&root, "alice", Some(pin))?;
+     let after_restart = alice.status()?;
+-    let a8 = alice.admit(&a8_packet,NOW)?;
++    let a8 = alice.admit(&a8_packet, NOW)?;
+     // Import the exact same packet once more: no second block identity/credit.
+-    alice.admit(&a8_packet,NOW)?;
+-    let a9_packet = make(&mut alice,a8,91,0,vec![])?;
+-    let a9 = alice.admit(&a9_packet,NOW)?;
++    alice.admit(&a8_packet, NOW)?;
++    let a9_packet = make(&mut alice, a8, 91, 0, vec![])?;
++    let a9 = alice.admit(&a9_packet, NOW)?;
+     let mut invalid = bob_packets[0].clone();
+-    invalid.proof[4+2*pon_work::CELLS*4] ^= 1;
+-    let invalid_error = alice.admit(&invalid,NOW).expect_err("actual invalid product must be refused");
+-    if !invalid_error.to_string().starts_with("WORK:") { return Err("JOURNAL_TEST_INVALID_PRODUCT_KIND".into()); }
+-    for packet in &bob_packets { alice.admit(packet,NOW)?; }
+-    let tie = alice.activate_observed(bob_packets[6].id()?,NOW)?;
+-    if tie != a7 { return Err("JOURNAL_TEST_TIE_REPLACED".into()); }
+-    let selected = alice.activate_observed(b8,NOW)?;
+-    if selected != b8 { return Err("JOURNAL_TEST_REORG_NOT_EXECUTED".into()); }
+-    let reorged = alice.confirmation(transaction_id,target_block,NOW)?;
+-    if !reorged.reorged { return Err("JOURNAL_TEST_REORG_NOT_OBSERVED".into()); }
+-    let future = make(&mut alice,a9,FUTURE,0,vec![])?;
+-    alice.admit(&future,NOW).expect_err("future header must be deferred");
+-    let future_id = alice.admit(&future,FUTURE)?;
+-    let child = make(&mut alice,future_id,105,0,vec![])?;
+-    let child_id = alice.admit(&child,FUTURE)?;
+-    alice.activate_observed(child_id,NOW).expect_err("future ancestor must be deferred");
++    invalid.proof[4 + 2 * pon_work::CELLS * 4] ^= 1;
++    let invalid_error = alice
++        .admit(&invalid, NOW)
++        .expect_err("actual invalid product must be refused");
++    if !invalid_error.to_string().starts_with("WORK:") {
++        return Err("JOURNAL_TEST_INVALID_PRODUCT_KIND".into());
++    }
++    for packet in &bob_packets {
++        alice.admit(packet, NOW)?;
++    }
++    let tie = alice.activate_observed(bob_packets[6].id()?, NOW)?;
++    if tie != a7 {
++        return Err("JOURNAL_TEST_TIE_REPLACED".into());
++    }
++    let selected = alice.activate_observed(b8, NOW)?;
++    if selected != b8 {
++        return Err("JOURNAL_TEST_REORG_NOT_EXECUTED".into());
++    }
++    let reorged = alice.confirmation(transaction_id, target_block, NOW)?;
++    if !reorged.reorged {
++        return Err("JOURNAL_TEST_REORG_NOT_OBSERVED".into());
++    }
++    let future = make(&mut alice, a9, FUTURE, 0, vec![])?;
++    alice
++        .admit(&future, NOW)
++        .expect_err("future header must be deferred");
++    let future_id = alice.admit(&future, FUTURE)?;
++    let child = make(&mut alice, future_id, 105, 0, vec![])?;
++    let child_id = alice.admit(&child, FUTURE)?;
++    alice
++        .activate_observed(child_id, NOW)
++        .expect_err("future ancestor must be deferred");
+     let deferred = serde_json::to_value(alice.observe(NOW)?)?;
+     let mature = serde_json::to_value(alice.observe(FUTURE)?)?;
+     let alice_status = alice.status()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:158:
+ 
+     // The crash receiver opens with only A1..A7, so original Node::recover
+     // cannot preselect B8 before the specific activation under observation.
+-    let mut receiver = open(&root,"crash",None)?;
++    let mut receiver = open(&root, "crash", None)?;
+     for packet in &alice_packets {
+-        let id = receiver.admit(packet,NOW)?;
+-        receiver.activate_observed(id,NOW)?;
++        let id = receiver.admit(packet, NOW)?;
++        receiver.activate_observed(id, NOW)?;
+     }
+-    let crash_confirmation = receiver.confirmation(transaction_id,target_block,NOW)?;
+-    if !crash_confirmation.confirmed { return Err("JOURNAL_TEST_CRASH_REFERENCE".into()); }
++    let crash_confirmation = receiver.confirmation(transaction_id, target_block, NOW)?;
++    if !crash_confirmation.confirmed {
++        return Err("JOURNAL_TEST_CRASH_REFERENCE".into());
++    }
+     let crash_before_pin = receiver.finish(NOW)?;
+-    copy_tree(&root.join("crash-store"),&root.join("old-crash-store"))?;
+-    copy_tree(&root.join("crash-journal"),&root.join("old-crash-journal"))?;
+-    let packet_paths = bob_packets.iter().map(|packet| {
+-        let raw = packet.encode()?;
+-        let digest = crate_digest(&raw);
+-        Ok(root.join("bob-journal").join("packets").join(format!("{digest}.pnp1")))
+-    }).collect::<Result<Vec<_>>>()?;
++    copy_tree(&root.join("crash-store"), &root.join("old-crash-store"))?;
++    copy_tree(&root.join("crash-journal"), &root.join("old-crash-journal"))?;
++    let packet_paths = bob_packets
++        .iter()
++        .map(|packet| {
++            let raw = packet.encode()?;
++            let digest = crate_digest(&raw);
++            Ok(root
++                .join("bob-journal")
++                .join("packets")
++                .join(format!("{digest}.pnp1")))
++        })
++        .collect::<Result<Vec<_>>>()?;
+     let plan_path = root.join("crash-plan.json");
+-    write_new(&plan_path,&CrashPlan { store:root.join("crash-store"),journal:root.join("crash-journal"),
+-        checkpoint:crash_before_pin.clone(),packets:packet_paths,target:b8 })?;
++    write_new(
++        &plan_path,
++        &CrashPlan {
++            store: root.join("crash-store"),
++            journal: root.join("crash-journal"),
++            checkpoint: crash_before_pin.clone(),
++            packets: packet_paths,
++            target: b8,
++        },
++    )?;
+     let output = spawn_crash(&plan_path)?;
+     if output.status.code() != Some(CRASH_EXIT) {
+-        return Err(format!("JOURNAL_TEST_CHILD_EXIT:{:?}:{}",output.status.code(),String::from_utf8_lossy(&output.stderr)).into());
++        return Err(format!(
++            "JOURNAL_TEST_CHILD_EXIT:{:?}:{}",
++            output.status.code(),
++            String::from_utf8_lossy(&output.stderr)
++        )
++        .into());
+     }
+     let child_stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+     if !child_stdout.contains("\"native_activation_returned_success\":true") {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:185:
+         return Err("JOURNAL_TEST_CHILD_NATIVE_RESULT".into());
+     }
+-    let mut receiver = open(&root,"crash",Some(crash_before_pin))?;
++    let mut receiver = open(&root, "crash", Some(crash_before_pin))?;
+     let recovered = receiver.status()?;
+-    if recovered["unresolved_intents"].as_array().is_none_or(Vec::is_empty)
+-        || recovered["last_census"]["active_tip"] != hex::encode(b8) {
++    if recovered["unresolved_intents"]
++        .as_array()
++        .is_none_or(Vec::is_empty)
++        || recovered["last_census"]["active_tip"] != hex::encode(b8)
++    {
+         return Err("JOURNAL_TEST_GAP_WAS_ERASED".into());
+     }
+-    let crash_reorged = receiver.confirmation(transaction_id,target_block,NOW)?;
+-    if !crash_reorged.reorged { return Err("JOURNAL_TEST_CRASH_REORG".into()); }
++    let crash_reorged = receiver.confirmation(transaction_id, target_block, NOW)?;
++    if !crash_reorged.reorged {
++        return Err("JOURNAL_TEST_CRASH_REORG".into());
++    }
+     let recovered_pin = receiver.finish(NOW)?;
+-    write_new(&root.join("crash-recovered-checkpoint.json"),&recovered_pin)?;
++    write_new(
++        &root.join("crash-recovered-checkpoint.json"),
++        &recovered_pin,
++    )?;
+ 
+     // Preserve the newest real files, restore an actual earlier DB+sidecar
+     // snapshot, and prove the saved external checkpoint refuses that prefix.
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:200:
+-    fs::rename(root.join("crash-store"),root.join("recovered-crash-store"))?;
+-    fs::rename(root.join("crash-journal"),root.join("recovered-crash-journal"))?;
+-    copy_tree(&root.join("old-crash-store"),&root.join("crash-store"))?;
+-    copy_tree(&root.join("old-crash-journal"),&root.join("crash-journal"))?;
+-    let stale = open(&root,"crash",Some(recovered_pin.clone()));
++    fs::rename(root.join("crash-store"), root.join("recovered-crash-store"))?;
++    fs::rename(
++        root.join("crash-journal"),
++        root.join("recovered-crash-journal"),
++    )?;
++    copy_tree(&root.join("old-crash-store"), &root.join("crash-store"))?;
++    copy_tree(&root.join("old-crash-journal"), &root.join("crash-journal"))?;
++    let stale = open(&root, "crash", Some(recovered_pin.clone()));
+     let stale_error = match stale {
+         Ok(_) => return Err("JOURNAL_TEST_ROLLBACK_PIN_ACCEPTED".into()),
+         Err(error) => error.to_string(),
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:208:
+     };
+-    if stale_error != "OWNER_JOURNAL_CHECKPOINT" { return Err(format!("JOURNAL_TEST_WRONG_PIN_REFUSAL:{stale_error}").into()); }
++    if stale_error != "OWNER_JOURNAL_CHECKPOINT" {
++        return Err(format!("JOURNAL_TEST_WRONG_PIN_REFUSAL:{stale_error}").into());
++    }
+     // With no external pin, an internally consistent old world can be opened.
+     // It still has no fresh-state, history-authentication or security authority.
+-    let unpinned = open(&root,"crash",None)?;
++    let unpinned = open(&root, "crash", None)?;
+     let unpinned_status = unpinned.status()?;
+     if unpinned_status["fresh_resource_state_attested"] != false
+-        || unpinned_status["trusted_history_anchor"] != false {
++        || unpinned_status["trusted_history_anchor"] != false
++    {
+         return Err("JOURNAL_TEST_UNPINNED_ESCALATION".into());
+     }
+     let unpinned_checkpoint = unpinned.finish(NOW)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:219:
+     // A real producer finishes, its exact packet bytes reach the sidecar, but
+     // the terminal record budget is exhausted. Reopen inventories the orphan
+     // without pretending there was a complete production observation.
+-    let mut orphan = JournaledNativeOwner::open(&root.join("orphan-store"),&root.join("orphan-journal"),settings.clone(),
+-        NativeJournalOptions { maximum_records:5,..options(None) })?;
++    let mut orphan = JournaledNativeOwner::open(
++        &root.join("orphan-store"),
++        &root.join("orphan-journal"),
++        settings.clone(),
++        NativeJournalOptions {
++            maximum_records: 5,
++            ..options(None)
++        },
++    )?;
+     let orphan_before_pin = orphan.checkpoint()?;
+-    let orphan_error = make(&mut orphan,genesis,13,3,vec![]).expect_err("terminal budget must refuse a completed production observation");
+-    if orphan_error.to_string() != "OWNER_JOURNAL_RECORD_BUDGET" { return Err("JOURNAL_TEST_ORPHAN_BUDGET".into()); }
++    let orphan_error = make(&mut orphan, genesis, 13, 3, vec![])
++        .expect_err("terminal budget must refuse a completed production observation");
++    if orphan_error.to_string() != "OWNER_JOURNAL_RECORD_BUDGET" {
++        return Err("JOURNAL_TEST_ORPHAN_BUDGET".into());
++    }
+     drop(orphan);
+-    let mut orphan = open(&root,"orphan",Some(orphan_before_pin))?;
++    let mut orphan = open(&root, "orphan", Some(orphan_before_pin))?;
+     let orphan_before_admit = orphan.status()?;
+-    let orphan_artifacts = orphan_before_admit["orphan_artifacts_at_open"].as_array().ok_or("JOURNAL_TEST_ORPHAN")?;
+-    if orphan_artifacts.len() != 1 || !orphan_before_admit["registry"].as_object().ok_or("JOURNAL_TEST_ORPHAN")?.is_empty() {
++    let orphan_artifacts = orphan_before_admit["orphan_artifacts_at_open"]
++        .as_array()
++        .ok_or("JOURNAL_TEST_ORPHAN")?;
++    if orphan_artifacts.len() != 1
++        || !orphan_before_admit["registry"]
++            .as_object()
++            .ok_or("JOURNAL_TEST_ORPHAN")?
++            .is_empty()
++    {
+         return Err("JOURNAL_TEST_ORPHAN_INVENTORY".into());
+     }
+-    let orphan_path = root.join("orphan-journal").join(orphan_artifacts[0]["path"].as_str().ok_or("JOURNAL_TEST_ORPHAN")?);
++    let orphan_path = root.join("orphan-journal").join(
++        orphan_artifacts[0]["path"]
++            .as_str()
++            .ok_or("JOURNAL_TEST_ORPHAN")?,
++    );
+     let orphan_packet = Packet::decode(&fs::read(orphan_path)?)?;
+-    let orphan_id = orphan.admit(&orphan_packet,NOW)?;
++    let orphan_id = orphan.admit(&orphan_packet, NOW)?;
+     let orphan_after_admit = orphan.status()?;
+-    if orphan_after_admit["registry"][hex::encode(orphan_id)]["origin_class"] != "gap_or_recovery_discovery" {
++    if orphan_after_admit["registry"][hex::encode(orphan_id)]["origin_class"]
++        != "gap_or_recovery_discovery"
++    {
+         return Err("JOURNAL_TEST_ORPHAN_LAUNDERED".into());
+     }
+     let orphan_checkpoint = orphan.finish(NOW)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:266:
+         "native_runtime_attested":false,"trusted_history_anchor":false,"world_coverage_attested":false,
+         "fresh_resource_state_attested":false,"physical_clock_authenticated":false,
+         "probabilistic_environment_bound":false,"six_successor_risk_qualified":false,"probability_bound":null});
+-    write_new(&root.join("run.json"),&report)?;
++    write_new(&root.join("run.json"), &report)?;
+     Ok(report)
+ }
+ fn crate_digest(bytes: &[u8]) -> String {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs:273:
+-    use sha2::{Digest,Sha256};
++    use sha2::{Digest, Sha256};
+     hex::encode(Sha256::digest(bytes))
+ }
+ fn crash_before_pin_from_plan(path: &Path) -> Result<JournalCheckpoint> {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:4:
+ //! commit without a completed observation remains an unresolved intent after
+ //! restart. No clock, fresh-resource state, remote inventory or probability
+ //! authority is granted by this journal or by a matching caller-supplied pin.
+-use crate::{ensure, Error, Node, Observation, OwnerCensus, OwnerCensusLimits, Packet, Result, Settings};
++use crate::{
++    ensure, Error, Node, Observation, OwnerCensus, OwnerCensusLimits, Packet, Result, Settings,
++};
+ use fs2::FileExt;
+ use serde::{Deserialize, Serialize};
+ use serde_json::{json, Value};
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:135:
+ }
+ 
+ fn text<'a>(value: &'a Value, key: &str) -> Result<&'a str> {
+-    value[key].as_str().ok_or_else(|| "OWNER_JOURNAL_FIELDS".into())
++    value[key]
++        .as_str()
++        .ok_or_else(|| "OWNER_JOURNAL_FIELDS".into())
+ }
+ fn number(value: &Value, key: &str) -> Result<u64> {
+-    value[key].as_u64().ok_or_else(|| "OWNER_JOURNAL_FIELDS".into())
++    value[key]
++        .as_u64()
++        .ok_or_else(|| "OWNER_JOURNAL_FIELDS".into())
+ }
+ fn sha(bytes: &[u8]) -> String {
+     hex::encode(Sha256::digest(bytes))
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:165:
+     json!({"active_tip":value["active_tip"],"active_generation":value["active_generation"],
+         "state_slot":value["state_slot"],"rows":rows})
+ }
+-fn native_result<T>(result: &Result<T>, describe: impl FnOnce(&T) -> Result<Value>) -> Result<Value> {
++fn native_result<T>(
++    result: &Result<T>,
++    describe: impl FnOnce(&T) -> Result<Value>,
++) -> Result<Value> {
+     match result {
+         Ok(value) => Ok(json!({"ok":true,"value":describe(value)?})),
+         Err(error) => Ok(json!({"ok":false,"error":error.to_string(),
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:176:
+ impl Replay {
+     fn note_raw(&mut self, digest: &str, origin: &str, sequence: u64, epoch: u64) -> Result<()> {
+         crate::digest(digest)?;
+-        self.raw_sources.entry(digest.to_owned()).or_insert_with(|| RawSource {
+-            origin_class:origin.to_owned(),first_sequence:sequence,first_epoch:epoch,
+-        });
++        self.raw_sources
++            .entry(digest.to_owned())
++            .or_insert_with(|| RawSource {
++                origin_class: origin.to_owned(),
++                first_sequence: sequence,
++                first_epoch: epoch,
++            });
+         Ok(())
+     }
+     fn observe_clock(&mut self, sequence: u64, epoch: u64, now: u64) {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:185:
+         if self.last_clock.is_some_and(|old| now < old) {
+-            self.clock_regressions.push(json!({"sequence":sequence,"epoch":epoch,
++            self.clock_regressions
++                .push(json!({"sequence":sequence,"epoch":epoch,
+                 "previous_validation_now":self.last_clock,"validation_now":now}));
+         }
+         self.last_clock = Some(now);
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:190:
+     }
+-    fn see(&mut self, item: &Value, origin: &str, sequence: u64, epoch: u64, checked: bool) -> Result<()> {
++    fn see(
++        &mut self,
++        item: &Value,
++        origin: &str,
++        sequence: u64,
++        epoch: u64,
++        checked: bool,
++    ) -> Result<()> {
+         let id = text(item, "id")?;
+         crate::digest(id)?;
+         let weight = text(item, "required_work_hex")?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:195:
+         ensure(weight.len() == 128, "OWNER_JOURNAL_WEIGHT")?;
+         let packet_sha = text(item, "packet_sha256")?;
+-        self.note_raw(packet_sha,origin,sequence,epoch)?;
+-        let source = self.raw_sources.get(packet_sha).ok_or("OWNER_JOURNAL_ARTIFACT")?;
++        self.note_raw(packet_sha, origin, sequence, epoch)?;
++        let source = self
++            .raw_sources
++            .get(packet_sha)
++            .ok_or("OWNER_JOURNAL_ARTIFACT")?;
+         if let Some(previous) = self.registry.get_mut(id) {
+-            ensure(previous.required_work_hex == weight && previous.packet_sha256 == packet_sha,
+-                "OWNER_JOURNAL_BLOCK_IDENTITY")?;
++            ensure(
++                previous.required_work_hex == weight && previous.packet_sha256 == packet_sha,
++                "OWNER_JOURNAL_BLOCK_IDENTITY",
++            )?;
+             previous.native_relation_rechecked_by_census |= checked;
+         } else {
+-            self.registry.insert(id.to_owned(), SeenBlock {
+-                origin_class: source.origin_class.clone(), first_seen_sequence: source.first_sequence,
+-                first_seen_epoch: source.first_epoch, required_work_hex: weight.to_owned(),
+-                packet_sha256: packet_sha.to_owned(), native_relation_rechecked_by_census: checked,
+-            });
++            self.registry.insert(
++                id.to_owned(),
++                SeenBlock {
++                    origin_class: source.origin_class.clone(),
++                    first_seen_sequence: source.first_sequence,
++                    first_seen_epoch: source.first_epoch,
++                    required_work_hex: weight.to_owned(),
++                    packet_sha256: packet_sha.to_owned(),
++                    native_relation_rechecked_by_census: checked,
++                },
++            );
+         }
+         Ok(())
+     }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:212:
+     fn census(&mut self, value: &Value, origin: &str, sequence: u64, epoch: u64) -> Result<()> {
+-        ensure(text(value, "schema")? == "pon-native-owner-census-v1"
+-            && value["complete_for_all_admitted_rows_in_snapshot"] == true
+-            && value["local_candidate_relation_rechecked"] == true
+-            && value["exact_source_schema_rechecked"] == true, "OWNER_JOURNAL_CENSUS")?;
++        ensure(
++            text(value, "schema")? == "pon-native-owner-census-v1"
++                && value["complete_for_all_admitted_rows_in_snapshot"] == true
++                && value["local_candidate_relation_rechecked"] == true
++                && value["exact_source_schema_rechecked"] == true,
++            "OWNER_JOURNAL_CENSUS",
++        )?;
+         for key in ["network", "parameters", "genesis"] {
+-            ensure(value[key] == self.header["context"][key], "OWNER_JOURNAL_CONTEXT")?;
++            ensure(
++                value[key] == self.header["context"][key],
++                "OWNER_JOURNAL_CONTEXT",
++            )?;
+         }
+-        ensure(value["state_backend"] == self.header["backend"], "OWNER_JOURNAL_BACKEND")?;
++        ensure(
++            value["state_backend"] == self.header["backend"],
++            "OWNER_JOURNAL_BACKEND",
++        )?;
+         let rows = value["rows"].as_array().ok_or("OWNER_JOURNAL_CENSUS")?;
+-        ensure(!rows.is_empty() && rows.len() <= crate::MAX_CENSUS_BLOCKS, "OWNER_JOURNAL_CENSUS")?;
++        ensure(
++            !rows.is_empty() && rows.len() <= crate::MAX_CENSUS_BLOCKS,
++            "OWNER_JOURNAL_CENSUS",
++        )?;
+         for row in rows {
+             if row["parent"].is_null() {
+                 ensure(row["id"] == value["genesis"], "OWNER_JOURNAL_GENESIS")?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:226:
+             } else {
+-                ensure(row["full_native_work_replayed"] == true
+-                    && row["full_native_application_replayed"] == true
+-                    && row["retained_state_and_deltas_equal"] == true, "OWNER_JOURNAL_CENSUS")?;
++                ensure(
++                    row["full_native_work_replayed"] == true
++                        && row["full_native_application_replayed"] == true
++                        && row["retained_state_and_deltas_equal"] == true,
++                    "OWNER_JOURNAL_CENSUS",
++                )?;
+                 self.see(row, origin, sequence, epoch, true)?;
+             }
+         }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:237:
+         let p = &frame.payload;
+         let kind = text(p, "kind")?;
+         if frame.sequence == 0 {
+-            ensure(kind == "header" && text(p, "schema")? == "pon-native-owner-journal-v1",
+-                "OWNER_JOURNAL_HEADER")?;
++            ensure(
++                kind == "header" && text(p, "schema")? == "pon-native-owner-journal-v1",
++                "OWNER_JOURNAL_HEADER",
++            )?;
+             self.journal_id = text(p, "journal_id")?.to_owned();
+             crate::digest(&self.journal_id)?;
+             self.header = p.clone();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:247:
+         let epoch = number(p, "epoch")?;
+         match kind {
+             "open_intent" => {
+-                ensure(epoch == self.last_epoch.checked_add(1).ok_or("OWNER_JOURNAL_EPOCH")?,
+-                    "OWNER_JOURNAL_EPOCH")?;
++                ensure(
++                    epoch
++                        == self
++                            .last_epoch
++                            .checked_add(1)
++                            .ok_or("OWNER_JOURNAL_EPOCH")?,
++                    "OWNER_JOURNAL_EPOCH",
++                )?;
+                 let expected: Vec<u64> = self.pending.keys().copied().collect();
+-                ensure(p["prior_unresolved_intents"] == json!(expected), "OWNER_JOURNAL_GAP_ERASURE")?;
+-                for artifact in p["orphan_artifacts_at_open"].as_array().ok_or("OWNER_JOURNAL_ORPHANS")? {
+-                    self.note_raw(text(artifact,"sha256")?,"gap_or_recovery_discovery",frame.sequence,epoch)?;
++                ensure(
++                    p["prior_unresolved_intents"] == json!(expected),
++                    "OWNER_JOURNAL_GAP_ERASURE",
++                )?;
++                for artifact in p["orphan_artifacts_at_open"]
++                    .as_array()
++                    .ok_or("OWNER_JOURNAL_ORPHANS")?
++                {
++                    self.note_raw(
++                        text(artifact, "sha256")?,
++                        "gap_or_recovery_discovery",
++                        frame.sequence,
++                        epoch,
++                    )?;
+                 }
+                 if self.last_epoch != 0 {
+                     self.outside_lease_intervals.push(json!({"from_epoch":self.last_epoch,
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:265:
+                 self.current_intent = Some(frame.sequence);
+                 let now = number(p, "observed_now")?;
+                 self.observe_clock(frame.sequence, epoch, now);
+-                self.pending.insert(frame.sequence, Intent { epoch, operation: "open".to_owned(),
+-                    observed_now: now, started_ns: 0, input: Value::Null, before: None });
++                self.pending.insert(
++                    frame.sequence,
++                    Intent {
++                        epoch,
++                        operation: "open".to_owned(),
++                        observed_now: now,
++                        started_ns: 0,
++                        input: Value::Null,
++                        before: None,
++                    },
++                );
+             }
+             "open_observed" => {
+                 let intent = number(p, "intent_sequence")?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:273:
+                 let pending = self.pending.get(&intent).ok_or("OWNER_JOURNAL_INTENT")?;
+-                ensure(self.current_intent == Some(intent) && pending.epoch == epoch
+-                    && pending.operation == "open" && number(p, "observed_now")? == pending.observed_now,
+-                    "OWNER_JOURNAL_INTENT")?;
++                ensure(
++                    self.current_intent == Some(intent)
++                        && pending.epoch == epoch
++                        && pending.operation == "open"
++                        && number(p, "observed_now")? == pending.observed_now,
++                    "OWNER_JOURNAL_INTENT",
++                )?;
+                 number(p, "elapsed_ns")?;
+-                self.census(&p["census"], if epoch == 1 { "initial_carry_in" } else { "gap_or_recovery_discovery" }, frame.sequence, epoch)?;
++                self.census(
++                    &p["census"],
++                    if epoch == 1 {
++                        "initial_carry_in"
++                    } else {
++                        "gap_or_recovery_discovery"
++                    },
++                    frame.sequence,
++                    epoch,
++                )?;
+                 self.pending.remove(&intent);
+                 self.current_intent = None;
+                 self.active_epoch = Some(epoch);
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:282:
+             }
+             "intent" => {
+-                ensure(self.active_epoch == Some(epoch) && self.current_intent.is_none(), "OWNER_JOURNAL_PENDING")?;
++                ensure(
++                    self.active_epoch == Some(epoch) && self.current_intent.is_none(),
++                    "OWNER_JOURNAL_PENDING",
++                )?;
+                 let operation = text(p, "operation")?;
+-                ensure(matches!(operation, "make" | "admit" | "activate_observed" | "confirmation" | "census"),
+-                    "OWNER_JOURNAL_OPERATION")?;
++                ensure(
++                    matches!(
++                        operation,
++                        "make" | "admit" | "activate_observed" | "confirmation" | "census"
++                    ),
++                    "OWNER_JOURNAL_OPERATION",
++                )?;
+                 let now = number(p, "observed_now")?;
+                 self.observe_clock(frame.sequence, epoch, now);
+                 if operation == "admit" {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:291:
+-                    self.note_raw(text(&p["input"]["artifact"],"sha256")?,"external_input",frame.sequence,epoch)?;
++                    self.note_raw(
++                        text(&p["input"]["artifact"], "sha256")?,
++                        "external_input",
++                        frame.sequence,
++                        epoch,
++                    )?;
+                 }
+-                self.pending.insert(frame.sequence, Intent { epoch, operation: operation.to_owned(),
+-                    observed_now: now, started_ns: number(p,"elapsed_ns")?, input: p["input"].clone(), before: None });
++                self.pending.insert(
++                    frame.sequence,
++                    Intent {
++                        epoch,
++                        operation: operation.to_owned(),
++                        observed_now: now,
++                        started_ns: number(p, "elapsed_ns")?,
++                        input: p["input"].clone(),
++                        before: None,
++                    },
++                );
+                 self.current_intent = Some(frame.sequence);
+             }
+             "prepared" => {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:298:
+                 let intent = number(p, "intent_sequence")?;
+                 let previous = self.pending.get(&intent).ok_or("OWNER_JOURNAL_INTENT")?;
+-                ensure(self.current_intent == Some(intent) && self.active_epoch == Some(epoch)
+-                    && previous.epoch == epoch && previous.before.is_none()
+-                    && number(p, "elapsed_ns")? >= previous.started_ns
+-                    && number(&p["census"], "observed_now")? == previous.observed_now, "OWNER_JOURNAL_INTENT")?;
++                ensure(
++                    self.current_intent == Some(intent)
++                        && self.active_epoch == Some(epoch)
++                        && previous.epoch == epoch
++                        && previous.before.is_none()
++                        && number(p, "elapsed_ns")? >= previous.started_ns
++                        && number(&p["census"], "observed_now")? == previous.observed_now,
++                    "OWNER_JOURNAL_INTENT",
++                )?;
+                 if let Some(old) = &self.last_census {
+-                    ensure(census_state(old) == census_state(&p["census"]), "OWNER_JOURNAL_UNOBSERVED_STATE_CHANGE")?;
++                    ensure(
++                        census_state(old) == census_state(&p["census"]),
++                        "OWNER_JOURNAL_UNOBSERVED_STATE_CHANGE",
++                    )?;
+                 }
+-                self.census(&p["census"], "gap_or_recovery_discovery", frame.sequence, epoch)?;
+-                self.pending.get_mut(&intent).ok_or("OWNER_JOURNAL_INTENT")?.before = Some(p["census"].clone());
++                self.census(
++                    &p["census"],
++                    "gap_or_recovery_discovery",
++                    frame.sequence,
++                    epoch,
++                )?;
++                self.pending
++                    .get_mut(&intent)
++                    .ok_or("OWNER_JOURNAL_INTENT")?
++                    .before = Some(p["census"].clone());
+             }
+             "terminal" => {
+                 let intent = number(p, "intent_sequence")?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:312:
+-                let previous = self.pending.get(&intent).ok_or("OWNER_JOURNAL_INTENT")?.clone();
+-                ensure(self.current_intent == Some(intent) && self.active_epoch == Some(epoch)
+-                    && previous.epoch == epoch && previous.before.is_some()
+-                    && p["operation"] == previous.operation && number(p,"elapsed_ns")? >= previous.started_ns
+-                    && number(&p["census"],"observed_now")? == previous.observed_now,
+-                    "OWNER_JOURNAL_INTENT")?;
++                let previous = self
++                    .pending
++                    .get(&intent)
++                    .ok_or("OWNER_JOURNAL_INTENT")?
++                    .clone();
++                ensure(
++                    self.current_intent == Some(intent)
++                        && self.active_epoch == Some(epoch)
++                        && previous.epoch == epoch
++                        && previous.before.is_some()
++                        && p["operation"] == previous.operation
++                        && number(p, "elapsed_ns")? >= previous.started_ns
++                        && number(&p["census"], "observed_now")? == previous.observed_now,
++                    "OWNER_JOURNAL_INTENT",
++                )?;
+                 ensure(p["result"]["ok"].is_boolean(), "OWNER_JOURNAL_RESULT")?;
+                 if previous.operation == "make" && p["result"]["ok"] == true {
+-                    self.see(&p["result"]["value"], "recorded_local_production", frame.sequence, epoch, false)?;
++                    self.see(
++                        &p["result"]["value"],
++                        "recorded_local_production",
++                        frame.sequence,
++                        epoch,
++                        false,
++                    )?;
+                 }
+-                self.census(&p["census"], if previous.operation == "admit" { "external_input" } else { "gap_or_recovery_discovery" }, frame.sequence, epoch)?;
++                self.census(
++                    &p["census"],
++                    if previous.operation == "admit" {
++                        "external_input"
++                    } else {
++                        "gap_or_recovery_discovery"
++                    },
++                    frame.sequence,
++                    epoch,
++                )?;
+                 self.pending.remove(&intent);
+                 self.current_intent = None;
+-                self.completed_calls = self.completed_calls.checked_add(1).ok_or("OWNER_JOURNAL_SEQUENCE")?;
++                self.completed_calls = self
++                    .completed_calls
++                    .checked_add(1)
++                    .ok_or("OWNER_JOURNAL_SEQUENCE")?;
+             }
+             "lease_end" => {
+-                ensure(self.active_epoch == Some(epoch) && self.current_intent.is_none(), "OWNER_JOURNAL_PENDING")?;
++                ensure(
++                    self.active_epoch == Some(epoch) && self.current_intent.is_none(),
++                    "OWNER_JOURNAL_PENDING",
++                )?;
+                 if let Some(old) = &self.last_census {
+-                    ensure(census_state(old) == census_state(&p["census"]), "OWNER_JOURNAL_UNOBSERVED_STATE_CHANGE")?;
++                    ensure(
++                        census_state(old) == census_state(&p["census"]),
++                        "OWNER_JOURNAL_UNOBSERVED_STATE_CHANGE",
++                    )?;
+                 }
+-                self.observe_clock(frame.sequence, epoch, number(p,"observed_now")?);
+-                self.census(&p["census"], "gap_or_recovery_discovery", frame.sequence, epoch)?;
++                self.observe_clock(frame.sequence, epoch, number(p, "observed_now")?);
++                self.census(
++                    &p["census"],
++                    "gap_or_recovery_discovery",
++                    frame.sequence,
++                    epoch,
++                )?;
+                 self.active_epoch = None;
+             }
+             _ => return Err("OWNER_JOURNAL_RECORD_KIND".into()),
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:357:
+ fn directory(path: &Path) -> Result<()> {
+     if !path.exists() {
+         fs::DirBuilder::new().mode(0o700).create(path)?;
+-        if let Some(parent) = path.parent() { File::open(parent)?.sync_all()?; }
++        if let Some(parent) = path.parent() {
++            File::open(parent)?.sync_all()?;
++        }
+     }
+     let metadata = fs::symlink_metadata(path)?;
+-    ensure(metadata.is_dir() && !metadata.file_type().is_symlink(), "OWNER_JOURNAL_DIRECTORY")
++    ensure(
++        metadata.is_dir() && !metadata.file_type().is_symlink(),
++        "OWNER_JOURNAL_DIRECTORY",
++    )
+ }
+ fn safe_absolute(path: &Path) -> Result<()> {
+-    ensure(path.is_absolute() && !path.components().any(|c| matches!(c, Component::ParentDir | Component::CurDir)),
+-        "OWNER_JOURNAL_PATH")
++    ensure(
++        path.is_absolute()
++            && !path
++                .components()
++                .any(|c| matches!(c, Component::ParentDir | Component::CurDir)),
++        "OWNER_JOURNAL_PATH",
++    )
+ }
+ fn read_packet_file(path: &Path, length: u64) -> Result<Vec<u8>> {
+-    ensure((1..=1_048_576).contains(&length),"OWNER_JOURNAL_ARTIFACT")?;
+-    let file = OpenOptions::new().read(true).custom_flags(libc::O_NOFOLLOW|libc::O_CLOEXEC).open(path)?;
++    ensure((1..=1_048_576).contains(&length), "OWNER_JOURNAL_ARTIFACT")?;
++    let file = OpenOptions::new()
++        .read(true)
++        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
++        .open(path)?;
+     let metadata = file.metadata()?;
+-    ensure(metadata.is_file() && metadata.len() == length,"OWNER_JOURNAL_ARTIFACT")?;
++    ensure(
++        metadata.is_file() && metadata.len() == length,
++        "OWNER_JOURNAL_ARTIFACT",
++    )?;
+     let mut raw = Vec::with_capacity(length as usize);
+-    file.take(length+1).read_to_end(&mut raw)?;
+-    ensure(raw.len() as u64 == length,"OWNER_JOURNAL_ARTIFACT")?;
++    file.take(length + 1).read_to_end(&mut raw)?;
++    ensure(raw.len() as u64 == length, "OWNER_JOURNAL_ARTIFACT")?;
+     Ok(raw)
+ }
+-fn references(value: &Value, found: &mut BTreeMap<String,u64>) -> Result<()> {
++fn references(value: &Value, found: &mut BTreeMap<String, u64>) -> Result<()> {
+     match value {
+         Value::Object(map) => {
+             if map.get("artifact_kind").and_then(Value::as_str) == Some("native-pnp1-packet") {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:383:
+-                let digest = text(value,"sha256")?;
++                let digest = text(value, "sha256")?;
+                 crate::digest(digest)?;
+-                let length = number(value,"bytes")?;
+-                ensure((1..=1_048_576).contains(&length),"OWNER_JOURNAL_ARTIFACT")?;
+-                if let Some(old) = found.insert(digest.to_owned(),length) { ensure(old == length,"OWNER_JOURNAL_ARTIFACT")?; }
++                let length = number(value, "bytes")?;
++                ensure((1..=1_048_576).contains(&length), "OWNER_JOURNAL_ARTIFACT")?;
++                if let Some(old) = found.insert(digest.to_owned(), length) {
++                    ensure(old == length, "OWNER_JOURNAL_ARTIFACT")?;
++                }
+             }
+-            for child in map.values() { references(child,found)?; }
++            for child in map.values() {
++                references(child, found)?;
++            }
+         }
+-        Value::Array(items) => for child in items { references(child,found)?; },
++        Value::Array(items) => {
++            for child in items {
++                references(child, found)?;
++            }
++        }
+         _ => (),
+     }
+     Ok(())
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:395:
+ }
+ 
+ impl Sidecar {
+-    fn open(path: &Path, store: &Path, settings: &Settings, options: NativeJournalOptions) -> Result<Self> {
++    fn open(
++        path: &Path,
++        store: &Path,
++        settings: &Settings,
++        options: NativeJournalOptions,
++    ) -> Result<Self> {
+         safe_absolute(path)?;
+         safe_absolute(store)?;
+-        ensure(!path.starts_with(store) && !store.starts_with(path), "OWNER_JOURNAL_SEPARATE_DIRECTORY")?;
+-        ensure((1..=MAX_RECORDS).contains(&options.maximum_records)
+-            && (4096..=MAX_JOURNAL_BYTES).contains(&options.maximum_journal_bytes)
+-            && (1..=MAX_ARTIFACT_BYTES).contains(&options.maximum_artifact_bytes),"OWNER_JOURNAL_LIMITS")?;
++        ensure(
++            !path.starts_with(store) && !store.starts_with(path),
++            "OWNER_JOURNAL_SEPARATE_DIRECTORY",
++        )?;
++        ensure(
++            (1..=MAX_RECORDS).contains(&options.maximum_records)
++                && (4096..=MAX_JOURNAL_BYTES).contains(&options.maximum_journal_bytes)
++                && (1..=MAX_ARTIFACT_BYTES).contains(&options.maximum_artifact_bytes),
++            "OWNER_JOURNAL_LIMITS",
++        )?;
+         directory(path)?;
+-        let lock = OpenOptions::new().read(true).write(true).create(true).truncate(false)
+-            .mode(0o600).custom_flags(libc::O_NOFOLLOW|libc::O_CLOEXEC).open(path.join("owner.lock"))?;
+-        ensure(lock.metadata()?.is_file(),"OWNER_JOURNAL_LOCK")?;
+-        lock.try_lock_exclusive().map_err(|_| Error::from("OWNER_JOURNAL_BUSY"))?;
++        let lock = OpenOptions::new()
++            .read(true)
++            .write(true)
++            .create(true)
++            .truncate(false)
++            .mode(0o600)
++            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
++            .open(path.join("owner.lock"))?;
++        ensure(lock.metadata()?.is_file(), "OWNER_JOURNAL_LOCK")?;
++        lock.try_lock_exclusive()
++            .map_err(|_| Error::from("OWNER_JOURNAL_BUSY"))?;
+         directory(&path.join("packets"))?;
+-        let mut file = OpenOptions::new().read(true).append(true).create(true)
+-            .mode(0o600).custom_flags(libc::O_NOFOLLOW|libc::O_CLOEXEC).open(path.join("journal.pnoj1"))?;
++        let mut file = OpenOptions::new()
++            .read(true)
++            .append(true)
++            .create(true)
++            .mode(0o600)
++            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
++            .open(path.join("journal.pnoj1"))?;
+         let metadata = file.metadata()?;
+-        ensure(metadata.is_file() && metadata.len() <= options.maximum_journal_bytes,"OWNER_JOURNAL_LENGTH")?;
++        ensure(
++            metadata.is_file() && metadata.len() <= options.maximum_journal_bytes,
++            "OWNER_JOURNAL_LENGTH",
++        )?;
+         let mut replay = Replay::default();
+         let mut hashes = Vec::new();
+         let mut artifact_hashes = BTreeMap::new();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:418:
+         let mut length = metadata.len();
+         if length == 0 {
+-            ensure(options.expected_checkpoint.is_none(),"OWNER_JOURNAL_CHECKPOINT_MISSING")?;
++            ensure(
++                options.expected_checkpoint.is_none(),
++                "OWNER_JOURNAL_CHECKPOINT_MISSING",
++            )?;
+             file.write_all(MAGIC)?;
+             file.sync_all()?;
+             File::open(path)?.sync_all()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:424:
+             length = MAGIC.len() as u64;
+         } else {
+             file.seek(SeekFrom::Start(0))?;
+-            let mut magic = [0;8];
+-            file.read_exact(&mut magic).map_err(|_| Error::from("OWNER_JOURNAL_TORN_TAIL"))?;
+-            ensure(&magic == MAGIC,"OWNER_JOURNAL_MAGIC")?;
++            let mut magic = [0; 8];
++            file.read_exact(&mut magic)
++                .map_err(|_| Error::from("OWNER_JOURNAL_TORN_TAIL"))?;
++            ensure(&magic == MAGIC, "OWNER_JOURNAL_MAGIC")?;
+             let mut position = 8_u64;
+             while position < length {
+-                ensure((hashes.len() as u64) < options.maximum_records,"OWNER_JOURNAL_RECORD_BUDGET")?;
+-                let mut size = [0;4];
+-                file.read_exact(&mut size).map_err(|_| Error::from("OWNER_JOURNAL_TORN_TAIL"))?;
++                ensure(
++                    (hashes.len() as u64) < options.maximum_records,
++                    "OWNER_JOURNAL_RECORD_BUDGET",
++                )?;
++                let mut size = [0; 4];
++                file.read_exact(&mut size)
++                    .map_err(|_| Error::from("OWNER_JOURNAL_TORN_TAIL"))?;
+                 let size = u32::from_be_bytes(size) as usize;
+-                ensure((1..=MAX_FRAME).contains(&size),"OWNER_JOURNAL_FRAME_LENGTH")?;
+-                let end = position.checked_add(4 + size as u64 + 32).ok_or("OWNER_JOURNAL_LENGTH")?;
+-                ensure(end <= length,"OWNER_JOURNAL_TORN_TAIL")?;
+-                let mut raw = vec![0;size];
++                ensure(
++                    (1..=MAX_FRAME).contains(&size),
++                    "OWNER_JOURNAL_FRAME_LENGTH",
++                )?;
++                let end = position
++                    .checked_add(4 + size as u64 + 32)
++                    .ok_or("OWNER_JOURNAL_LENGTH")?;
++                ensure(end <= length, "OWNER_JOURNAL_TORN_TAIL")?;
++                let mut raw = vec![0; size];
+                 file.read_exact(&mut raw)?;
+-                let mut digest = [0;32];
++                let mut digest = [0; 32];
+                 file.read_exact(&mut digest)?;
+-                ensure(frame_hash(&raw) == digest,"OWNER_JOURNAL_HASH")?;
++                ensure(frame_hash(&raw) == digest, "OWNER_JOURNAL_HASH")?;
+                 let frame: Frame = serde_json::from_slice(&raw)?;
+                 let expected = hashes.last().cloned().unwrap_or_else(|| "00".repeat(32));
+-                ensure(frame.sequence == hashes.len() as u64 && frame.previous_hash == expected,"OWNER_JOURNAL_CHAIN")?;
++                ensure(
++                    frame.sequence == hashes.len() as u64 && frame.previous_hash == expected,
++                    "OWNER_JOURNAL_CHAIN",
++                )?;
+                 replay.apply(&frame)?;
+-                references(&frame.payload,&mut artifact_hashes)?;
++                references(&frame.payload, &mut artifact_hashes)?;
+                 hashes.push(hex::encode(digest));
+                 position = end;
+             }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:455:
+         let mut orphan_artifacts_at_open = Vec::new();
+         let mut artifact_bytes = 0_u64;
+         for entry in fs::read_dir(path.join("packets"))? {
+-            ensure((artifact_hashes.len() as u64) < MAX_RECORDS,"OWNER_JOURNAL_ARTIFACT_BUDGET")?;
++            ensure(
++                (artifact_hashes.len() as u64) < MAX_RECORDS,
++                "OWNER_JOURNAL_ARTIFACT_BUDGET",
++            )?;
+             let entry = entry?;
+             let filename = entry.file_name();
+-            let digest = filename.to_str().and_then(|name| name.strip_suffix(".pnp1")).ok_or("OWNER_JOURNAL_ARTIFACT")?;
++            let digest = filename
++                .to_str()
++                .and_then(|name| name.strip_suffix(".pnp1"))
++                .ok_or("OWNER_JOURNAL_ARTIFACT")?;
+             crate::digest(digest)?;
+             let meta = fs::symlink_metadata(entry.path())?;
+-            ensure(meta.is_file() && !meta.file_type().is_symlink(),"OWNER_JOURNAL_ARTIFACT")?;
++            ensure(
++                meta.is_file() && !meta.file_type().is_symlink(),
++                "OWNER_JOURNAL_ARTIFACT",
++            )?;
+             let length = meta.len();
+-            artifact_bytes = artifact_bytes.checked_add(length).ok_or("OWNER_JOURNAL_ARTIFACT_BUDGET")?;
+-            ensure(artifact_bytes <= options.maximum_artifact_bytes,"OWNER_JOURNAL_ARTIFACT_BUDGET")?;
+-            let raw = read_packet_file(&entry.path(),length)?;
+-            ensure(sha(&raw) == digest,"OWNER_JOURNAL_ARTIFACT")?;
++            artifact_bytes = artifact_bytes
++                .checked_add(length)
++                .ok_or("OWNER_JOURNAL_ARTIFACT_BUDGET")?;
++            ensure(
++                artifact_bytes <= options.maximum_artifact_bytes,
++                "OWNER_JOURNAL_ARTIFACT_BUDGET",
++            )?;
++            let raw = read_packet_file(&entry.path(), length)?;
++            ensure(sha(&raw) == digest, "OWNER_JOURNAL_ARTIFACT")?;
+             let packet = Packet::decode(&raw).map_err(|_| Error::from("OWNER_JOURNAL_ARTIFACT"))?;
+             if !referenced.contains_key(digest) {
+                 orphan_artifacts_at_open.push(json!({"artifact_kind":"native-pnp1-packet",
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:473:
+                     "sha256":digest,"bytes":length,"id":hex::encode(packet.id()?),
+                     "path":format!("packets/{digest}.pnp1")}));
+             }
+-            artifact_hashes.insert(digest.to_owned(),length);
++            artifact_hashes.insert(digest.to_owned(), length);
+         }
+-        for (digest,length) in referenced {
+-            ensure(artifact_hashes.get(&digest) == Some(&length),"OWNER_JOURNAL_ARTIFACT")?;
++        for (digest, length) in referenced {
++            ensure(
++                artifact_hashes.get(&digest) == Some(&length),
++                "OWNER_JOURNAL_ARTIFACT",
++            )?;
+         }
+-        orphan_artifacts_at_open.sort_by(|a,b| a["sha256"].as_str().cmp(&b["sha256"].as_str()));
+-        let mut sidecar = Self { directory:path.to_owned(),_lock:lock,file,identity:(metadata.dev(),metadata.ino()),
+-            length,hashes,replay,options,artifact_bytes,artifact_hashes,orphan_artifacts_at_open,supplied_checkpoint_matches:None };
++        orphan_artifacts_at_open.sort_by(|a, b| a["sha256"].as_str().cmp(&b["sha256"].as_str()));
++        let mut sidecar = Self {
++            directory: path.to_owned(),
++            _lock: lock,
++            file,
++            identity: (metadata.dev(), metadata.ino()),
++            length,
++            hashes,
++            replay,
++            options,
++            artifact_bytes,
++            artifact_hashes,
++            orphan_artifacts_at_open,
++            supplied_checkpoint_matches: None,
++        };
+         let context = json!({"network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())});
+         if sidecar.hashes.is_empty() {
+-            let mut nonce = [0;32];
++            let mut nonce = [0; 32];
+             File::open("/dev/urandom")?.read_exact(&mut nonce)?;
+             sidecar.append(json!({"kind":"header","schema":"pon-native-owner-journal-v1",
+                 "journal_id":hex::encode(nonce),"store_path":store.to_str().ok_or("OWNER_JOURNAL_PATH")?,
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:493:
+                 "fresh_resource_state_attested":false,"physical_clock_authenticated":false,
+                 "history_before_first_open_known":false,"world_coverage_attested":false}))?;
+         }
+-        ensure(sidecar.replay.header["store_path"] == store.to_str().ok_or("OWNER_JOURNAL_PATH")?
+-            && sidecar.replay.header["backend"] == sidecar.options.backend.name()
+-            && sidecar.replay.header["context"] == context,"OWNER_JOURNAL_CONTEXT")?;
++        ensure(
++            sidecar.replay.header["store_path"] == store.to_str().ok_or("OWNER_JOURNAL_PATH")?
++                && sidecar.replay.header["backend"] == sidecar.options.backend.name()
++                && sidecar.replay.header["context"] == context,
++            "OWNER_JOURNAL_CONTEXT",
++        )?;
+         if let Some(pin) = &sidecar.options.expected_checkpoint {
+-            ensure(pin.journal_id == sidecar.replay.journal_id
+-                && sidecar.hashes.get(usize::try_from(pin.sequence).map_err(|_| "OWNER_JOURNAL_CHECKPOINT")?) == Some(&pin.record_hash),
+-                "OWNER_JOURNAL_CHECKPOINT")?;
++            ensure(
++                pin.journal_id == sidecar.replay.journal_id
++                    && sidecar.hashes.get(
++                        usize::try_from(pin.sequence).map_err(|_| "OWNER_JOURNAL_CHECKPOINT")?,
++                    ) == Some(&pin.record_hash),
++                "OWNER_JOURNAL_CHECKPOINT",
++            )?;
+             sidecar.supplied_checkpoint_matches = Some(true);
+         }
+         Ok(sidecar)
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:507:
+     fn guard(&self) -> Result<()> {
+         let actual = self.file.metadata()?;
+         let named = fs::symlink_metadata(self.directory.join("journal.pnoj1"))?;
+-        ensure(named.is_file() && !named.file_type().is_symlink()
+-            && (actual.dev(),actual.ino()) == self.identity
+-            && (named.dev(),named.ino()) == self.identity && actual.len() == self.length,
+-            "OWNER_JOURNAL_REPLACED")
++        ensure(
++            named.is_file()
++                && !named.file_type().is_symlink()
++                && (actual.dev(), actual.ino()) == self.identity
++                && (named.dev(), named.ino()) == self.identity
++                && actual.len() == self.length,
++            "OWNER_JOURNAL_REPLACED",
++        )
+     }
+     fn append(&mut self, payload: Value) -> Result<u64> {
+         self.guard()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:517:
+-        let frame = Frame { sequence:self.hashes.len() as u64,
+-            previous_hash:self.hashes.last().cloned().unwrap_or_else(|| "00".repeat(32)),payload };
++        let frame = Frame {
++            sequence: self.hashes.len() as u64,
++            previous_hash: self
++                .hashes
++                .last()
++                .cloned()
++                .unwrap_or_else(|| "00".repeat(32)),
++            payload,
++        };
+         let raw = serde_json::to_vec(&frame)?;
+-        ensure(raw.len() <= MAX_FRAME && frame.sequence < self.options.maximum_records,
+-            "OWNER_JOURNAL_RECORD_BUDGET")?;
+-        let next_length = self.length.checked_add(4 + raw.len() as u64 + 32).ok_or("OWNER_JOURNAL_LENGTH")?;
+-        ensure(next_length <= self.options.maximum_journal_bytes,"OWNER_JOURNAL_BYTE_BUDGET")?;
++        ensure(
++            raw.len() <= MAX_FRAME && frame.sequence < self.options.maximum_records,
++            "OWNER_JOURNAL_RECORD_BUDGET",
++        )?;
++        let next_length = self
++            .length
++            .checked_add(4 + raw.len() as u64 + 32)
++            .ok_or("OWNER_JOURNAL_LENGTH")?;
++        ensure(
++            next_length <= self.options.maximum_journal_bytes,
++            "OWNER_JOURNAL_BYTE_BUDGET",
++        )?;
+         let digest = frame_hash(&raw);
+         self.file.write_all(&(raw.len() as u32).to_be_bytes())?;
+         self.file.write_all(&raw)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:538:
+         let raw = packet.encode()?;
+         let digest = sha(&raw);
+         let length = raw.len() as u64;
+-        let path = self.directory.join("packets").join(format!("{digest}.pnp1"));
++        let path = self
++            .directory
++            .join("packets")
++            .join(format!("{digest}.pnp1"));
+         if self.artifact_hashes.get(&digest) == Some(&length) {
+-            ensure(sha(&read_packet_file(&path,length)?) == digest,"OWNER_JOURNAL_ARTIFACT")?;
++            ensure(
++                sha(&read_packet_file(&path, length)?) == digest,
++                "OWNER_JOURNAL_ARTIFACT",
++            )?;
+         } else {
+-            let next = self.artifact_bytes.checked_add(length).ok_or("OWNER_JOURNAL_ARTIFACT_BUDGET")?;
+-            ensure(next <= self.options.maximum_artifact_bytes,"OWNER_JOURNAL_ARTIFACT_BUDGET")?;
+-            match OpenOptions::new().write(true).create_new(true).mode(0o600)
+-                .custom_flags(libc::O_NOFOLLOW|libc::O_CLOEXEC).open(&path) {
++            let next = self
++                .artifact_bytes
++                .checked_add(length)
++                .ok_or("OWNER_JOURNAL_ARTIFACT_BUDGET")?;
++            ensure(
++                next <= self.options.maximum_artifact_bytes,
++                "OWNER_JOURNAL_ARTIFACT_BUDGET",
++            )?;
++            match OpenOptions::new()
++                .write(true)
++                .create_new(true)
++                .mode(0o600)
++                .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
++                .open(&path)
++            {
+                 Ok(mut file) => {
+                     file.write_all(&raw)?;
+                     file.sync_all()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:553:
+                 }
+                 Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+                     let meta = fs::symlink_metadata(&path)?;
+-                    ensure(meta.is_file() && !meta.file_type().is_symlink() && meta.len() == length
+-                        && sha(&read_packet_file(&path,length)?) == digest,"OWNER_JOURNAL_ARTIFACT")?;
++                    ensure(
++                        meta.is_file()
++                            && !meta.file_type().is_symlink()
++                            && meta.len() == length
++                            && sha(&read_packet_file(&path, length)?) == digest,
++                        "OWNER_JOURNAL_ARTIFACT",
++                    )?;
+                 }
+                 Err(error) => return Err(error.into()),
+             }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:561:
+-            self.artifact_hashes.insert(digest.clone(),length);
++            self.artifact_hashes.insert(digest.clone(), length);
+             self.artifact_bytes = next;
+         }
+-        Ok(json!({"artifact_kind":"native-pnp1-packet","sha256":digest,"bytes":length,
+-            "id":hex::encode(packet.id()?),"path":format!("packets/{digest}.pnp1")}))
++        Ok(
++            json!({"artifact_kind":"native-pnp1-packet","sha256":digest,"bytes":length,
++            "id":hex::encode(packet.id()?),"path":format!("packets/{digest}.pnp1")}),
++        )
+     }
+     fn checkpoint(&self) -> Result<JournalCheckpoint> {
+         self.guard()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:569:
+-        Ok(JournalCheckpoint { journal_id:self.replay.journal_id.clone(),
+-            sequence:self.hashes.len().checked_sub(1).ok_or("OWNER_JOURNAL_HEADER")? as u64,
+-            record_hash:self.hashes.last().ok_or("OWNER_JOURNAL_HEADER")?.clone() })
++        Ok(JournalCheckpoint {
++            journal_id: self.replay.journal_id.clone(),
++            sequence: self
++                .hashes
++                .len()
++                .checked_sub(1)
++                .ok_or("OWNER_JOURNAL_HEADER")? as u64,
++            record_hash: self.hashes.last().ok_or("OWNER_JOURNAL_HEADER")?.clone(),
++        })
+     }
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:583:
+ }
+ 
+ impl JournaledNativeOwner {
+-    pub fn open(store: &Path, journal: &Path, settings: Settings, options: NativeJournalOptions) -> Result<Self> {
++    pub fn open(
++        store: &Path,
++        journal: &Path,
++        settings: Settings,
++        options: NativeJournalOptions,
++    ) -> Result<Self> {
+         let clock = Instant::now();
+-        let mut sidecar = Sidecar::open(journal,store,&settings,options)?;
+-        let epoch = sidecar.replay.last_epoch.checked_add(1).ok_or("OWNER_JOURNAL_EPOCH")?;
++        let mut sidecar = Sidecar::open(journal, store, &settings, options)?;
++        let epoch = sidecar
++            .replay
++            .last_epoch
++            .checked_add(1)
++            .ok_or("OWNER_JOURNAL_EPOCH")?;
+         let prior: Vec<_> = sidecar.replay.pending.keys().copied().collect();
+         let intent = sidecar.append(json!({"kind":"open_intent","epoch":epoch,
+             "process_id":std::process::id(),"observed_now":sidecar.options.observed_now,
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:596:
+         // Original Node::open may execute native recovery. Never put its intent
+         // after this call, or describe reopening as a read-only observation.
+         let node = match sidecar.options.backend {
+-            JournalBackend::Legacy => Node::open(store,settings,sidecar.options.workers)?,
+-            JournalBackend::AuthenticatedV1 => Node::open_with_authenticated_state(store,settings,sidecar.options.workers)?,
++            JournalBackend::Legacy => Node::open(store, settings, sidecar.options.workers)?,
++            JournalBackend::AuthenticatedV1 => {
++                Node::open_with_authenticated_state(store, settings, sidecar.options.workers)?
++            }
+         };
+-        let mut owner = Self { node,sidecar,epoch,clock,blocked:true };
++        let mut owner = Self {
++            node,
++            sidecar,
++            epoch,
++            clock,
++            blocked: true,
++        };
+         let now = owner.sidecar.options.observed_now;
+-        let (census,artifacts) = owner.capture(now)?;
++        let (census, artifacts) = owner.capture(now)?;
+         owner.sidecar.append(json!({"kind":"open_observed","epoch":epoch,"intent_sequence":intent,
+             "elapsed_ns":owner.elapsed()?,"observed_now":now,"census":census,"artifacts":artifacts}))?;
+         owner.blocked = false;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:608:
+         Ok(owner)
+     }
+     fn elapsed(&self) -> Result<u64> {
+-        u64::try_from(self.clock.elapsed().as_nanos()).map_err(|_| "OWNER_JOURNAL_CLOCK_RANGE".into())
++        u64::try_from(self.clock.elapsed().as_nanos())
++            .map_err(|_| "OWNER_JOURNAL_CLOCK_RANGE".into())
+     }
+     fn ready(&self) -> Result<()> {
+-        ensure(!self.blocked && self.sidecar.replay.current_intent.is_none()
+-            && self.sidecar.replay.active_epoch == Some(self.epoch),"OWNER_JOURNAL_UNRESOLVED")?;
++        ensure(
++            !self.blocked
++                && self.sidecar.replay.current_intent.is_none()
++                && self.sidecar.replay.active_epoch == Some(self.epoch),
++            "OWNER_JOURNAL_UNRESOLVED",
++        )?;
+         self.sidecar.guard()
+     }
+-    fn capture(&mut self, now: u64) -> Result<(Value,Vec<Value>)> {
+-        let observed = self.node.native_owner_census(now,self.sidecar.options.census_limits)?;
++    fn capture(&mut self, now: u64) -> Result<(Value, Vec<Value>)> {
++        let observed = self
++            .node
++            .native_owner_census(now, self.sidecar.options.census_limits)?;
+         let census = serde_json::to_value(observed)?;
+         let rows = census["rows"].as_array().ok_or("OWNER_JOURNAL_CENSUS")?;
+         let mut artifacts = Vec::new();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:623:
+         for row in rows {
+-            if row["parent"].is_null() { continue; }
+-            let packet = self.node.packet(crate::digest(text(row,"id")?)?)?;
++            if row["parent"].is_null() {
++                continue;
++            }
++            let packet = self.node.packet(crate::digest(text(row, "id")?)?)?;
+             let artifact = self.sidecar.artifact(&packet)?;
+-            ensure(artifact["sha256"] == row["packet_sha256"] && artifact["bytes"] == row["packet_bytes"],
+-                "OWNER_JOURNAL_SNAPSHOT_PACKET")?;
++            ensure(
++                artifact["sha256"] == row["packet_sha256"]
++                    && artifact["bytes"] == row["packet_bytes"],
++                "OWNER_JOURNAL_SNAPSHOT_PACKET",
++            )?;
+             artifacts.push(artifact);
+         }
+-        Ok((census,artifacts))
++        Ok((census, artifacts))
+     }
+     fn begin(&mut self, operation: &str, now: u64, input: Value) -> Result<u64> {
+         self.ready()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:635:
+         self.blocked = true;
+-        let intent = self.sidecar.append(json!({"kind":"intent","epoch":self.epoch,"operation":operation,
+-            "observed_now":now,"elapsed_ns":self.elapsed()?,"input":input}))?;
+-        let (census,artifacts) = self.capture(now)?;
+-        self.sidecar.append(json!({"kind":"prepared","epoch":self.epoch,"intent_sequence":intent,
+-            "elapsed_ns":self.elapsed()?,"census":census,"artifacts":artifacts}))?;
++        let intent = self.sidecar.append(
++            json!({"kind":"intent","epoch":self.epoch,"operation":operation,
++            "observed_now":now,"elapsed_ns":self.elapsed()?,"input":input}),
++        )?;
++        let (census, artifacts) = self.capture(now)?;
++        self.sidecar.append(
++            json!({"kind":"prepared","epoch":self.epoch,"intent_sequence":intent,
++            "elapsed_ns":self.elapsed()?,"census":census,"artifacts":artifacts}),
++        )?;
+         Ok(intent)
+     }
+     fn terminal(&mut self, intent: u64, operation: &str, now: u64, result: Value) -> Result<()> {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:644:
+         let native_requires_stop = result["requires_owner_stop"] == true;
+-        let (census,artifacts) = self.capture(now)?;
+-        self.sidecar.append(json!({"kind":"terminal","epoch":self.epoch,"intent_sequence":intent,
++        let (census, artifacts) = self.capture(now)?;
++        self.sidecar.append(
++            json!({"kind":"terminal","epoch":self.epoch,"intent_sequence":intent,
+             "operation":operation,"elapsed_ns":self.elapsed()?,"result":result,
+-            "census":census,"artifacts":artifacts}))?;
++            "census":census,"artifacts":artifacts}),
++        )?;
+         self.blocked = native_requires_stop;
+         Ok(())
+     }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:653:
+         let intent = self.begin("make",observed_now,json!({"parent":hex::encode(request.parent),
+             "transactions":request.transactions.iter().map(hex::encode).collect::<Vec<_>>(),
+             "miner":hex::encode(request.miner),"timestamp":request.timestamp,"max_attempts":request.max_attempts}))?;
+-        let result = self.node.make(request.parent,request.transactions,request.miner,request.timestamp,request.max_attempts);
++        let result = self.node.make(
++            request.parent,
++            request.transactions,
++            request.miner,
++            request.timestamp,
++            request.max_attempts,
++        );
+         let outcome = native_result(&result, |packet| {
+             let artifact = self.sidecar.artifact(packet)?;
+-            Ok(json!({"id":hex::encode(packet.id()?),"parent":hex::encode(packet.header.parent),
++            Ok(
++                json!({"id":hex::encode(packet.id()?),"parent":hex::encode(packet.header.parent),
+                 "height":packet.header.height,"target":hex::encode(packet.header.target),"timestamp":packet.header.timestamp,
+                 "required_work_hex":hex::encode(crate::consensus::required_work(packet.header.target)?.bytes()),
+                 "packet_sha256":artifact["sha256"],"proof_sha256":sha(&packet.proof),
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:663:
+-                "packet_bytes":artifact["bytes"],"artifact":artifact}))
++                "packet_bytes":artifact["bytes"],"artifact":artifact}),
++            )
+         })?;
+-        self.terminal(intent,"make",observed_now,outcome)?;
++        self.terminal(intent, "make", observed_now, outcome)?;
+         result
+     }
+     pub fn admit(&mut self, packet: &Packet, observed_now: u64) -> Result<Hash> {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:669:
+         self.ready()?;
+         let artifact = self.sidecar.artifact(packet)?;
+-        let intent = self.begin("admit",observed_now,json!({"id":hex::encode(packet.id()?),"artifact":artifact}))?;
+-        let result = self.node.admit(packet,observed_now);
+-        let outcome = native_result(&result,|id| Ok(json!({"id":hex::encode(id)})))?;
+-        self.terminal(intent,"admit",observed_now,outcome)?;
++        let intent = self.begin(
++            "admit",
++            observed_now,
++            json!({"id":hex::encode(packet.id()?),"artifact":artifact}),
++        )?;
++        let result = self.node.admit(packet, observed_now);
++        let outcome = native_result(&result, |id| Ok(json!({"id":hex::encode(id)})))?;
++        self.terminal(intent, "admit", observed_now, outcome)?;
+         result
+     }
+     pub fn activate_observed(&mut self, target: Hash, observed_now: u64) -> Result<Hash> {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:678:
+-        self.begin_activation(target,observed_now)?.finish()
++        self.begin_activation(target, observed_now)?.finish()
+     }
+     /// Executes real native activation but deliberately leaves the journal's
+     /// intent unresolved. Only `PendingActivation::finish` creates a receipt.
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:682:
+-    pub fn begin_activation(&mut self, target: Hash, observed_now: u64) -> Result<PendingActivation<'_>> {
+-        let intent = self.begin("activate_observed",observed_now,json!({"target":hex::encode(target)}))?;
+-        let result = self.node.activate_observed(target,observed_now);
+-        Ok(PendingActivation { owner:self,intent,observed_now,result })
++    pub fn begin_activation(
++        &mut self,
++        target: Hash,
++        observed_now: u64,
++    ) -> Result<PendingActivation<'_>> {
++        let intent = self.begin(
++            "activate_observed",
++            observed_now,
++            json!({"target":hex::encode(target)}),
++        )?;
++        let result = self.node.activate_observed(target, observed_now);
++        Ok(PendingActivation {
++            owner: self,
++            intent,
++            observed_now,
++            result,
++        })
+     }
+-    pub fn confirmation(&mut self, transaction: Hash, included: Hash, observed_now: u64) -> Result<Observation> {
+-        let intent = self.begin("confirmation",observed_now,json!({"transaction":hex::encode(transaction),"included":hex::encode(included)}))?;
+-        let result = self.node.confirmation(transaction,included,observed_now);
+-        let outcome = native_result(&result,|value| Ok(serde_json::to_value(value)?))?;
+-        self.terminal(intent,"confirmation",observed_now,outcome)?;
++    pub fn confirmation(
++        &mut self,
++        transaction: Hash,
++        included: Hash,
++        observed_now: u64,
++    ) -> Result<Observation> {
++        let intent = self.begin(
++            "confirmation",
++            observed_now,
++            json!({"transaction":hex::encode(transaction),"included":hex::encode(included)}),
++        )?;
++        let result = self.node.confirmation(transaction, included, observed_now);
++        let outcome = native_result(&result, |value| Ok(serde_json::to_value(value)?))?;
++        self.terminal(intent, "confirmation", observed_now, outcome)?;
+         result
+     }
+     pub fn observe(&mut self, observed_now: u64) -> Result<OwnerCensus> {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:695:
+-        let intent = self.begin("census",observed_now,Value::Null)?;
+-        let result = self.node.native_owner_census(observed_now,self.sidecar.options.census_limits);
+-        let outcome = native_result(&result,|value| Ok(serde_json::to_value(value)?))?;
+-        self.terminal(intent,"census",observed_now,outcome)?;
++        let intent = self.begin("census", observed_now, Value::Null)?;
++        let result = self
++            .node
++            .native_owner_census(observed_now, self.sidecar.options.census_limits);
++        let outcome = native_result(&result, |value| Ok(serde_json::to_value(value)?))?;
++        self.terminal(intent, "census", observed_now, outcome)?;
+         result
+     }
+-    pub fn checkpoint(&self) -> Result<JournalCheckpoint> { self.sidecar.checkpoint() }
++    pub fn checkpoint(&self) -> Result<JournalCheckpoint> {
++        self.sidecar.checkpoint()
++    }
+     /// A diagnostic projection, not independently authenticated execution.
+     pub fn status(&self) -> Result<Value> {
+         let checkpoint = self.checkpoint()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:705:
+-        let unresolved = self.sidecar.replay.pending.iter().map(|(sequence,intent)| json!({
++        let unresolved = self
++            .sidecar
++            .replay
++            .pending
++            .iter()
++            .map(|(sequence, intent)| {
++                json!({
+             "intent_sequence":sequence,"epoch":intent.epoch,"operation":intent.operation,
+-            "input":intent.input,"prepared":intent.before.is_some()})).collect::<Vec<_>>();
+-        Ok(json!({"schema":"pon-native-owner-journal-status-v1","checkpoint":checkpoint,
++            "input":intent.input,"prepared":intent.before.is_some()})
++            })
++            .collect::<Vec<_>>();
++        Ok(
++            json!({"schema":"pon-native-owner-journal-status-v1","checkpoint":checkpoint,
+             "epoch":self.epoch,"blocked":self.blocked,"recorded_calls_completed":self.sidecar.replay.completed_calls,
+             "unresolved_intents":unresolved,"outside_lease_intervals":self.sidecar.replay.outside_lease_intervals,
+             "clock_regressions":self.sidecar.replay.clock_regressions,"registry":self.sidecar.replay.registry,
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:717:
+             "fresh_resource_state_attested":false,"native_runtime_attested":false,
+             "trusted_history_anchor":false,"physical_clock_authenticated":false,"world_coverage_attested":false,
+             "all_ever_native_api_calls_covered":false,"probabilistic_environment_bound":false,
+-            "six_successor_risk_qualified":false,"probability_bound":null}))
++            "six_successor_risk_qualified":false,"probability_bound":null}),
++        )
+     }
+     /// End the covered lease while still holding Node. Its subsequent Drop and
+     /// every interval until the next observed open are outside this lease.
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:724:
+     pub fn finish(mut self, observed_now: u64) -> Result<JournalCheckpoint> {
+         self.ready()?;
+         self.blocked = true;
+-        let (census,artifacts) = self.capture(observed_now)?;
+-        self.sidecar.append(json!({"kind":"lease_end","epoch":self.epoch,"observed_now":observed_now,
++        let (census, artifacts) = self.capture(observed_now)?;
++        self.sidecar.append(
++            json!({"kind":"lease_end","epoch":self.epoch,"observed_now":observed_now,
+             "elapsed_ns":self.elapsed()?,"census":census,"artifacts":artifacts,
+-            "coverage_ends_before_native_owner_drop":true}))?;
++            "coverage_ends_before_native_owner_drop":true}),
++        )?;
+         self.sidecar.checkpoint()
+     }
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs:741:
+ }
+ impl PendingActivation<'_> {
+     /// This reports only the live native return, never journal completeness.
+-    pub fn native_succeeded(&self) -> bool { self.result.is_ok() }
+-    pub fn intent_sequence(&self) -> u64 { self.intent }
++    pub fn native_succeeded(&self) -> bool {
++        self.result.is_ok()
++    }
++    pub fn intent_sequence(&self) -> u64 {
++        self.intent
++    }
+     pub fn finish(self) -> Result<Hash> {
+-        let outcome = native_result(&self.result,|tip| Ok(json!({"selected":hex::encode(tip)})))?;
+-        self.owner.terminal(self.intent,"activate_observed",self.observed_now,outcome)?;
++        let outcome = native_result(&self.result, |tip| Ok(json!({"selected":hex::encode(tip)})))?;
++        self.owner
++            .terminal(self.intent, "activate_observed", self.observed_now, outcome)?;
+         self.result
+     }
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:6:
+ use std::path::{Path, PathBuf};
+ use std::process::Output;
+ use trnm_crypto_primitives::{pon_work, sign_hex, signing_key_from_hex};
+-use trnm_pon_node::native_owner_journal::{JournalCheckpoint, JournalMakeRequest, JournaledNativeOwner, NativeJournalOptions};
++use trnm_pon_node::native_owner_journal::{
++    JournalCheckpoint, JournalMakeRequest, JournaledNativeOwner, NativeJournalOptions,
++};
+ use trnm_pon_node::{development_public, Error, Packet, Result, Settings};
+ use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:24:
+ }
+ 
+ fn options(pin: Option<JournalCheckpoint>) -> NativeJournalOptions {
+-    NativeJournalOptions { observed_now:NOW,expected_checkpoint:pin,..NativeJournalOptions::default() }
++    NativeJournalOptions {
++        observed_now: NOW,
++        expected_checkpoint: pin,
++        ..NativeJournalOptions::default()
++    }
+ }
+ fn open(root: &Path, label: &str, pin: Option<JournalCheckpoint>) -> Result<JournaledNativeOwner> {
+-    JournaledNativeOwner::open(&root.join(format!("{label}-store")), &root.join(format!("{label}-journal")),
+-        Settings::development(Some(1))?,options(pin))
++    JournaledNativeOwner::open(
++        &root.join(format!("{label}-store")),
++        &root.join(format!("{label}-journal")),
++        Settings::development(Some(1))?,
++        options(pin),
++    )
+ }
+-fn make(node: &mut JournaledNativeOwner, parent: Hash, timestamp: u64, miner: u64,
+-    transactions: Vec<Vec<u8>>) -> Result<Packet> {
+-    node.make(JournalMakeRequest { parent,transactions,miner:development_public(miner)?,timestamp,max_attempts:4096 },NOW)
++fn make(
++    node: &mut JournaledNativeOwner,
++    parent: Hash,
++    timestamp: u64,
++    miner: u64,
++    transactions: Vec<Vec<u8>>,
++) -> Result<Packet> {
++    node.make(
++        JournalMakeRequest {
++            parent,
++            transactions,
++            miner: development_public(miner)?,
++            timestamp,
++            max_attempts: 4096,
++        },
++        NOW,
++    )
+ }
+ fn signed_transfer(settings: &Settings) -> Result<Vec<u8>> {
+     let mut payload = development_public(1)?.to_vec();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:39:
+     payload.extend(1_u64.to_le_bytes());
+-    let mut transaction = Envelope { network:settings.network(),sender:development_public(0)?,nonce:1,
+-        expiry:1000,fee_limit:1_000_000,tag:1,payload,signature:[0;64] };
++    let mut transaction = Envelope {
++        network: settings.network(),
++        sender: development_public(0)?,
++        nonce: 1,
++        expiry: 1000,
++        fee_limit: 1_000_000,
++        tag: 1,
++        payload,
++        signature: [0; 64],
++    };
+     let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
+         .map_err(|e| Error::from(format!("JOURNAL_TEST_KEY:{e:?}")))?;
+-    transaction.signature = hex::decode(sign_hex(&key,&transaction.signing_digest()
+-        .map_err(|e| Error::from(format!("JOURNAL_TEST_SIGN:{e:?}")))?))
+-        .map_err(|e| Error::from(format!("JOURNAL_TEST_HEX:{e}")))?.try_into().map_err(|_| "JOURNAL_TEST_SIGNATURE")?;
+-    transaction.encode().map_err(|e| Error::from(format!("JOURNAL_TEST_TRANSACTION:{e:?}")))
++    transaction.signature = hex::decode(sign_hex(
++        &key,
++        &transaction
++            .signing_digest()
++            .map_err(|e| Error::from(format!("JOURNAL_TEST_SIGN:{e:?}")))?,
++    ))
++    .map_err(|e| Error::from(format!("JOURNAL_TEST_HEX:{e}")))?
++    .try_into()
++    .map_err(|_| "JOURNAL_TEST_SIGNATURE")?;
++    transaction
++        .encode()
++        .map_err(|e| Error::from(format!("JOURNAL_TEST_TRANSACTION:{e:?}")))
+ }
+ fn copy_tree(source: &Path, target: &Path) -> Result<()> {
+     fs::create_dir(target)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:51:
+     for entry in fs::read_dir(source)? {
+         let entry = entry?;
+         let kind = entry.file_type()?;
+-        if kind.is_dir() { copy_tree(&entry.path(),&target.join(entry.file_name()))?; }
+-        else if kind.is_file() { fs::copy(entry.path(),target.join(entry.file_name()))?; }
+-        else { return Err("JOURNAL_TEST_COPY_SPECIAL_FILE".into()); }
++        if kind.is_dir() {
++            copy_tree(&entry.path(), &target.join(entry.file_name()))?;
++        } else if kind.is_file() {
++            fs::copy(entry.path(), target.join(entry.file_name()))?;
++        } else {
++            return Err("JOURNAL_TEST_COPY_SPECIAL_FILE".into());
++        }
+     }
+     Ok(())
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:60:
+ fn write_new(path: &Path, value: &impl Serialize) -> Result<()> {
+-    let mut file = fs::OpenOptions::new().write(true).create_new(true).open(path)?;
+-    serde_json::to_writer_pretty(&mut file,value)?;
++    let mut file = fs::OpenOptions::new()
++        .write(true)
++        .create_new(true)
++        .open(path)?;
++    serde_json::to_writer_pretty(&mut file, value)?;
+     file.write_all(b"\n")?;
+     file.sync_all()?;
+     Ok(())
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:69:
+ /// after native activation succeeds; process exit releases the real owner lock.
+ pub fn crash_child(plan_path: &Path) -> Result<()> {
+     let plan: CrashPlan = serde_json::from_slice(&fs::read(plan_path)?)?;
+-    let mut owner = JournaledNativeOwner::open(&plan.store,&plan.journal,Settings::development(Some(1))?,
+-        options(Some(plan.checkpoint)))?;
++    let mut owner = JournaledNativeOwner::open(
++        &plan.store,
++        &plan.journal,
++        Settings::development(Some(1))?,
++        options(Some(plan.checkpoint)),
++    )?;
+     for path in &plan.packets {
+-        owner.admit(&Packet::decode(&fs::read(path)?)?,NOW)?;
++        owner.admit(&Packet::decode(&fs::read(path)?)?, NOW)?;
+     }
+-    let pending = owner.begin_activation(plan.target,NOW)?;
+-    if !pending.native_succeeded() { return Err("JOURNAL_TEST_NATIVE_ACTIVATION_FAILED".into()); }
+-    println!("{}",json!({"native_activation_returned_success":true,"intent_sequence":pending.intent_sequence(),
+-        "terminal_observation_written":false,"exit_after_native_commit":true}));
++    let pending = owner.begin_activation(plan.target, NOW)?;
++    if !pending.native_succeeded() {
++        return Err("JOURNAL_TEST_NATIVE_ACTIVATION_FAILED".into());
++    }
++    println!(
++        "{}",
++        json!({"native_activation_returned_success":true,"intent_sequence":pending.intent_sequence(),
++        "terminal_observation_written":false,"exit_after_native_commit":true})
++    );
+     std::io::stdout().flush()?;
+     std::process::exit(CRASH_EXIT)
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:91:
+     let genesis = settings.genesis();
+     let transaction = signed_transfer(&settings)?;
+     let transaction_id = hash(b"tx-id", &[&transaction]);
+-    let mut alice = open(&root,"alice",None)?;
+-    let mut bob = open(&root,"bob",None)?;
++    let mut alice = open(&root, "alice", None)?;
++    let mut bob = open(&root, "bob", None)?;
+     let mut alice_packets = Vec::new();
+     let mut tip = genesis;
+     for height in 1..=7 {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:99:
+-        let packet = make(&mut alice,tip,height*10+1,0,if height==1 { vec![transaction.clone()] } else { vec![] })?;
+-        tip = alice.admit(&packet,NOW)?;
+-        alice.activate_observed(tip,NOW)?;
++        let packet = make(
++            &mut alice,
++            tip,
++            height * 10 + 1,
++            0,
++            if height == 1 {
++                vec![transaction.clone()]
++            } else {
++                vec![]
++            },
++        )?;
++        tip = alice.admit(&packet, NOW)?;
++        alice.activate_observed(tip, NOW)?;
+         alice_packets.push(packet);
+     }
+     let target_block = alice_packets[0].id()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:105:
+     let a7 = tip;
+-    let confirmation = alice.confirmation(transaction_id,target_block,NOW)?;
+-    if !confirmation.confirmed { return Err("JOURNAL_TEST_SIX_SUCCESSORS".into()); }
++    let confirmation = alice.confirmation(transaction_id, target_block, NOW)?;
++    if !confirmation.confirmed {
++        return Err("JOURNAL_TEST_SIX_SUCCESSORS".into());
++    }
+     let before_hidden = serde_json::to_value(alice.observe(NOW)?)?;
+     let mut bob_packets = Vec::new();
+     tip = genesis;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:111:
+     for height in 1..=8 {
+-        let packet = make(&mut bob,tip,height*10+2,2,vec![])?;
+-        tip = bob.admit(&packet,NOW)?;
+-        bob.activate_observed(tip,NOW)?;
++        let packet = make(&mut bob, tip, height * 10 + 2, 2, vec![])?;
++        tip = bob.admit(&packet, NOW)?;
++        bob.activate_observed(tip, NOW)?;
+         bob_packets.push(packet);
+     }
+     let b8 = tip;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:121:
+     }
+     // A complete actual producer output is retained while still unadmitted,
+     // then imported after the original owner is dropped and reopened.
+-    let a8_packet = make(&mut alice,a7,81,0,vec![])?;
++    let a8_packet = make(&mut alice, a7, 81, 0, vec![])?;
+     let before_restart = alice.status()?;
+     let pin = alice.finish(NOW)?;
+-    write_new(&root.join("alice-before-restart-checkpoint.json"),&pin)?;
+-    let mut alice = open(&root,"alice",Some(pin))?;
++    write_new(&root.join("alice-before-restart-checkpoint.json"), &pin)?;
++    let mut alice = open(&root, "alice", Some(pin))?;
+     let after_restart = alice.status()?;
+-    let a8 = alice.admit(&a8_packet,NOW)?;
++    let a8 = alice.admit(&a8_packet, NOW)?;
+     // Import the exact same packet once more: no second block identity/credit.
+-    alice.admit(&a8_packet,NOW)?;
+-    let a9_packet = make(&mut alice,a8,91,0,vec![])?;
+-    let a9 = alice.admit(&a9_packet,NOW)?;
++    alice.admit(&a8_packet, NOW)?;
++    let a9_packet = make(&mut alice, a8, 91, 0, vec![])?;
++    let a9 = alice.admit(&a9_packet, NOW)?;
+     let mut invalid = bob_packets[0].clone();
+-    invalid.proof[4+2*pon_work::CELLS*4] ^= 1;
+-    let invalid_error = alice.admit(&invalid,NOW).expect_err("actual invalid product must be refused");
+-    if !invalid_error.to_string().starts_with("WORK:") { return Err("JOURNAL_TEST_INVALID_PRODUCT_KIND".into()); }
+-    for packet in &bob_packets { alice.admit(packet,NOW)?; }
+-    let tie = alice.activate_observed(bob_packets[6].id()?,NOW)?;
+-    if tie != a7 { return Err("JOURNAL_TEST_TIE_REPLACED".into()); }
+-    let selected = alice.activate_observed(b8,NOW)?;
+-    if selected != b8 { return Err("JOURNAL_TEST_REORG_NOT_EXECUTED".into()); }
+-    let reorged = alice.confirmation(transaction_id,target_block,NOW)?;
+-    if !reorged.reorged { return Err("JOURNAL_TEST_REORG_NOT_OBSERVED".into()); }
+-    let future = make(&mut alice,a9,FUTURE,0,vec![])?;
+-    alice.admit(&future,NOW).expect_err("future header must be deferred");
+-    let future_id = alice.admit(&future,FUTURE)?;
+-    let child = make(&mut alice,future_id,105,0,vec![])?;
+-    let child_id = alice.admit(&child,FUTURE)?;
+-    alice.activate_observed(child_id,NOW).expect_err("future ancestor must be deferred");
++    invalid.proof[4 + 2 * pon_work::CELLS * 4] ^= 1;
++    let invalid_error = alice
++        .admit(&invalid, NOW)
++        .expect_err("actual invalid product must be refused");
++    if !invalid_error.to_string().starts_with("WORK:") {
++        return Err("JOURNAL_TEST_INVALID_PRODUCT_KIND".into());
++    }
++    for packet in &bob_packets {
++        alice.admit(packet, NOW)?;
++    }
++    let tie = alice.activate_observed(bob_packets[6].id()?, NOW)?;
++    if tie != a7 {
++        return Err("JOURNAL_TEST_TIE_REPLACED".into());
++    }
++    let selected = alice.activate_observed(b8, NOW)?;
++    if selected != b8 {
++        return Err("JOURNAL_TEST_REORG_NOT_EXECUTED".into());
++    }
++    let reorged = alice.confirmation(transaction_id, target_block, NOW)?;
++    if !reorged.reorged {
++        return Err("JOURNAL_TEST_REORG_NOT_OBSERVED".into());
++    }
++    let future = make(&mut alice, a9, FUTURE, 0, vec![])?;
++    alice
++        .admit(&future, NOW)
++        .expect_err("future header must be deferred");
++    let future_id = alice.admit(&future, FUTURE)?;
++    let child = make(&mut alice, future_id, 105, 0, vec![])?;
++    let child_id = alice.admit(&child, FUTURE)?;
++    alice
++        .activate_observed(child_id, NOW)
++        .expect_err("future ancestor must be deferred");
+     let deferred = serde_json::to_value(alice.observe(NOW)?)?;
+     let mature = serde_json::to_value(alice.observe(FUTURE)?)?;
+     let alice_status = alice.status()?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:158:
+ 
+     // The crash receiver opens with only A1..A7, so original Node::recover
+     // cannot preselect B8 before the specific activation under observation.
+-    let mut receiver = open(&root,"crash",None)?;
++    let mut receiver = open(&root, "crash", None)?;
+     for packet in &alice_packets {
+-        let id = receiver.admit(packet,NOW)?;
+-        receiver.activate_observed(id,NOW)?;
++        let id = receiver.admit(packet, NOW)?;
++        receiver.activate_observed(id, NOW)?;
+     }
+-    let crash_confirmation = receiver.confirmation(transaction_id,target_block,NOW)?;
+-    if !crash_confirmation.confirmed { return Err("JOURNAL_TEST_CRASH_REFERENCE".into()); }
++    let crash_confirmation = receiver.confirmation(transaction_id, target_block, NOW)?;
++    if !crash_confirmation.confirmed {
++        return Err("JOURNAL_TEST_CRASH_REFERENCE".into());
++    }
+     let crash_before_pin = receiver.finish(NOW)?;
+-    copy_tree(&root.join("crash-store"),&root.join("old-crash-store"))?;
+-    copy_tree(&root.join("crash-journal"),&root.join("old-crash-journal"))?;
+-    let packet_paths = bob_packets.iter().map(|packet| {
+-        let raw = packet.encode()?;
+-        let digest = crate_digest(&raw);
+-        Ok(root.join("bob-journal").join("packets").join(format!("{digest}.pnp1")))
+-    }).collect::<Result<Vec<_>>>()?;
++    copy_tree(&root.join("crash-store"), &root.join("old-crash-store"))?;
++    copy_tree(&root.join("crash-journal"), &root.join("old-crash-journal"))?;
++    let packet_paths = bob_packets
++        .iter()
++        .map(|packet| {
++            let raw = packet.encode()?;
++            let digest = crate_digest(&raw);
++            Ok(root
++                .join("bob-journal")
++                .join("packets")
++                .join(format!("{digest}.pnp1")))
++        })
++        .collect::<Result<Vec<_>>>()?;
+     let plan_path = root.join("crash-plan.json");
+-    write_new(&plan_path,&CrashPlan { store:root.join("crash-store"),journal:root.join("crash-journal"),
+-        checkpoint:crash_before_pin.clone(),packets:packet_paths,target:b8 })?;
++    write_new(
++        &plan_path,
++        &CrashPlan {
++            store: root.join("crash-store"),
++            journal: root.join("crash-journal"),
++            checkpoint: crash_before_pin.clone(),
++            packets: packet_paths,
++            target: b8,
++        },
++    )?;
+     let output = spawn_crash(&plan_path)?;
+     if output.status.code() != Some(CRASH_EXIT) {
+-        return Err(format!("JOURNAL_TEST_CHILD_EXIT:{:?}:{}",output.status.code(),String::from_utf8_lossy(&output.stderr)).into());
++        return Err(format!(
++            "JOURNAL_TEST_CHILD_EXIT:{:?}:{}",
++            output.status.code(),
++            String::from_utf8_lossy(&output.stderr)
++        )
++        .into());
+     }
+     let child_stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+     if !child_stdout.contains("\"native_activation_returned_success\":true") {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:185:
+         return Err("JOURNAL_TEST_CHILD_NATIVE_RESULT".into());
+     }
+-    let mut receiver = open(&root,"crash",Some(crash_before_pin))?;
++    let mut receiver = open(&root, "crash", Some(crash_before_pin))?;
+     let recovered = receiver.status()?;
+-    if recovered["unresolved_intents"].as_array().is_none_or(Vec::is_empty)
+-        || recovered["last_census"]["active_tip"] != hex::encode(b8) {
++    if recovered["unresolved_intents"]
++        .as_array()
++        .is_none_or(Vec::is_empty)
++        || recovered["last_census"]["active_tip"] != hex::encode(b8)
++    {
+         return Err("JOURNAL_TEST_GAP_WAS_ERASED".into());
+     }
+-    let crash_reorged = receiver.confirmation(transaction_id,target_block,NOW)?;
+-    if !crash_reorged.reorged { return Err("JOURNAL_TEST_CRASH_REORG".into()); }
++    let crash_reorged = receiver.confirmation(transaction_id, target_block, NOW)?;
++    if !crash_reorged.reorged {
++        return Err("JOURNAL_TEST_CRASH_REORG".into());
++    }
+     let recovered_pin = receiver.finish(NOW)?;
+-    write_new(&root.join("crash-recovered-checkpoint.json"),&recovered_pin)?;
++    write_new(
++        &root.join("crash-recovered-checkpoint.json"),
++        &recovered_pin,
++    )?;
+ 
+     // Preserve the newest real files, restore an actual earlier DB+sidecar
+     // snapshot, and prove the saved external checkpoint refuses that prefix.
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:200:
+-    fs::rename(root.join("crash-store"),root.join("recovered-crash-store"))?;
+-    fs::rename(root.join("crash-journal"),root.join("recovered-crash-journal"))?;
+-    copy_tree(&root.join("old-crash-store"),&root.join("crash-store"))?;
+-    copy_tree(&root.join("old-crash-journal"),&root.join("crash-journal"))?;
+-    let stale = open(&root,"crash",Some(recovered_pin.clone()));
++    fs::rename(root.join("crash-store"), root.join("recovered-crash-store"))?;
++    fs::rename(
++        root.join("crash-journal"),
++        root.join("recovered-crash-journal"),
++    )?;
++    copy_tree(&root.join("old-crash-store"), &root.join("crash-store"))?;
++    copy_tree(&root.join("old-crash-journal"), &root.join("crash-journal"))?;
++    let stale = open(&root, "crash", Some(recovered_pin.clone()));
+     let stale_error = match stale {
+         Ok(_) => return Err("JOURNAL_TEST_ROLLBACK_PIN_ACCEPTED".into()),
+         Err(error) => error.to_string(),
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:208:
+     };
+-    if stale_error != "OWNER_JOURNAL_CHECKPOINT" { return Err(format!("JOURNAL_TEST_WRONG_PIN_REFUSAL:{stale_error}").into()); }
++    if stale_error != "OWNER_JOURNAL_CHECKPOINT" {
++        return Err(format!("JOURNAL_TEST_WRONG_PIN_REFUSAL:{stale_error}").into());
++    }
+     // With no external pin, an internally consistent old world can be opened.
+     // It still has no fresh-state, history-authentication or security authority.
+-    let unpinned = open(&root,"crash",None)?;
++    let unpinned = open(&root, "crash", None)?;
+     let unpinned_status = unpinned.status()?;
+     if unpinned_status["fresh_resource_state_attested"] != false
+-        || unpinned_status["trusted_history_anchor"] != false {
++        || unpinned_status["trusted_history_anchor"] != false
++    {
+         return Err("JOURNAL_TEST_UNPINNED_ESCALATION".into());
+     }
+     let unpinned_checkpoint = unpinned.finish(NOW)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:219:
+     // A real producer finishes, its exact packet bytes reach the sidecar, but
+     // the terminal record budget is exhausted. Reopen inventories the orphan
+     // without pretending there was a complete production observation.
+-    let mut orphan = JournaledNativeOwner::open(&root.join("orphan-store"),&root.join("orphan-journal"),settings.clone(),
+-        NativeJournalOptions { maximum_records:5,..options(None) })?;
++    let mut orphan = JournaledNativeOwner::open(
++        &root.join("orphan-store"),
++        &root.join("orphan-journal"),
++        settings.clone(),
++        NativeJournalOptions {
++            maximum_records: 5,
++            ..options(None)
++        },
++    )?;
+     let orphan_before_pin = orphan.checkpoint()?;
+-    let orphan_error = make(&mut orphan,genesis,13,3,vec![]).expect_err("terminal budget must refuse a completed production observation");
+-    if orphan_error.to_string() != "OWNER_JOURNAL_RECORD_BUDGET" { return Err("JOURNAL_TEST_ORPHAN_BUDGET".into()); }
++    let orphan_error = make(&mut orphan, genesis, 13, 3, vec![])
++        .expect_err("terminal budget must refuse a completed production observation");
++    if orphan_error.to_string() != "OWNER_JOURNAL_RECORD_BUDGET" {
++        return Err("JOURNAL_TEST_ORPHAN_BUDGET".into());
++    }
+     drop(orphan);
+-    let mut orphan = open(&root,"orphan",Some(orphan_before_pin))?;
++    let mut orphan = open(&root, "orphan", Some(orphan_before_pin))?;
+     let orphan_before_admit = orphan.status()?;
+-    let orphan_artifacts = orphan_before_admit["orphan_artifacts_at_open"].as_array().ok_or("JOURNAL_TEST_ORPHAN")?;
+-    if orphan_artifacts.len() != 1 || !orphan_before_admit["registry"].as_object().ok_or("JOURNAL_TEST_ORPHAN")?.is_empty() {
++    let orphan_artifacts = orphan_before_admit["orphan_artifacts_at_open"]
++        .as_array()
++        .ok_or("JOURNAL_TEST_ORPHAN")?;
++    if orphan_artifacts.len() != 1
++        || !orphan_before_admit["registry"]
++            .as_object()
++            .ok_or("JOURNAL_TEST_ORPHAN")?
++            .is_empty()
++    {
+         return Err("JOURNAL_TEST_ORPHAN_INVENTORY".into());
+     }
+-    let orphan_path = root.join("orphan-journal").join(orphan_artifacts[0]["path"].as_str().ok_or("JOURNAL_TEST_ORPHAN")?);
++    let orphan_path = root.join("orphan-journal").join(
++        orphan_artifacts[0]["path"]
++            .as_str()
++            .ok_or("JOURNAL_TEST_ORPHAN")?,
++    );
+     let orphan_packet = Packet::decode(&fs::read(orphan_path)?)?;
+-    let orphan_id = orphan.admit(&orphan_packet,NOW)?;
++    let orphan_id = orphan.admit(&orphan_packet, NOW)?;
+     let orphan_after_admit = orphan.status()?;
+-    if orphan_after_admit["registry"][hex::encode(orphan_id)]["origin_class"] != "gap_or_recovery_discovery" {
++    if orphan_after_admit["registry"][hex::encode(orphan_id)]["origin_class"]
++        != "gap_or_recovery_discovery"
++    {
+         return Err("JOURNAL_TEST_ORPHAN_LAUNDERED".into());
+     }
+     let orphan_checkpoint = orphan.finish(NOW)?;
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:266:
+         "native_runtime_attested":false,"trusted_history_anchor":false,"world_coverage_attested":false,
+         "fresh_resource_state_attested":false,"physical_clock_authenticated":false,
+         "probabilistic_environment_bound":false,"six_successor_risk_qualified":false,"probability_bound":null});
+-    write_new(&root.join("run.json"),&report)?;
++    write_new(&root.join("run.json"), &report)?;
+     Ok(report)
+ }
+ fn crate_digest(bytes: &[u8]) -> String {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/../examples/support/native_journal_scenario.rs:273:
+-    use sha2::{Digest,Sha256};
++    use sha2::{Digest, Sha256};
+     hex::encode(Sha256::digest(bytes))
+ }
+ fn crash_before_pin_from_plan(path: &Path) -> Result<JournalCheckpoint> {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:8:
+ use std::path::Path;
+ use std::process::Command;
+ use trnm_crypto_primitives::pon_work;
+-use trnm_pon_node::native_owner_journal::{JournalBackend, JournalMakeRequest,
+-    JournaledNativeOwner, NativeJournalOptions};
++use trnm_pon_node::native_owner_journal::{
++    JournalBackend, JournalMakeRequest, JournaledNativeOwner, NativeJournalOptions,
++};
+ use trnm_pon_node::{development_public, Node, Packet, Settings};
+ use trnm_protocol::pon_wire::Hash;
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:16:
+-fn settings() -> Settings { Settings::development(Some(1)).unwrap() }
++fn settings() -> Settings {
++    Settings::development(Some(1)).unwrap()
++}
+ fn open(root: &Path, options: NativeJournalOptions) -> JournaledNativeOwner {
+-    JournaledNativeOwner::open(&root.join("store"),&root.join("journal"),settings(),options).unwrap()
++    JournaledNativeOwner::open(
++        &root.join("store"),
++        &root.join("journal"),
++        settings(),
++        options,
++    )
++    .unwrap()
+ }
+ fn make(owner: &mut JournaledNativeOwner) -> Packet {
+-    owner.make(JournalMakeRequest { parent:settings().genesis(),transactions:vec![],
+-        miner:development_public(0).unwrap(),timestamp:11,max_attempts:4096 },100).unwrap()
++    owner
++        .make(
++            JournalMakeRequest {
++                parent: settings().genesis(),
++                transactions: vec![],
++                miner: development_public(0).unwrap(),
++                timestamp: 11,
++                max_attempts: 4096,
++            },
++            100,
++        )
++        .unwrap()
+ }
+ fn external_packet(root: &Path) -> Packet {
+-    Node::open(root,settings(),1).unwrap().make(settings().genesis(),vec![],development_public(1).unwrap(),12,4096).unwrap()
++    Node::open(root, settings(), 1)
++        .unwrap()
++        .make(
++            settings().genesis(),
++            vec![],
++            development_public(1).unwrap(),
++            12,
++            4096,
++        )
++        .unwrap()
+ }
+ fn digest(raw: &[u8]) -> String {
+-    use sha2::{Digest,Sha256};
++    use sha2::{Digest, Sha256};
+     hex::encode(Sha256::digest(raw))
+ }
+ fn assert_refused(root: &Path, options: NativeJournalOptions, expected: &str) {
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:32:
+-    match JournaledNativeOwner::open(&root.join("store"),&root.join("journal"),settings(),options) {
++    match JournaledNativeOwner::open(
++        &root.join("store"),
++        &root.join("journal"),
++        settings(),
++        options,
++    ) {
+         Ok(_) => panic!("expected {expected}"),
+-        Err(error) => assert_eq!(error.to_string(),expected),
++        Err(error) => assert_eq!(error.to_string(), expected),
+     }
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:38:
+ #[test]
+ fn actual_legacy_and_authenticated_restart_preserve_unadmitted_output_identity() {
+-    for backend in [JournalBackend::Legacy,JournalBackend::AuthenticatedV1] {
++    for backend in [JournalBackend::Legacy, JournalBackend::AuthenticatedV1] {
+         let root = tempfile::tempdir().unwrap();
+-        let options = NativeJournalOptions { backend,..NativeJournalOptions::default() };
+-        let mut owner = open(root.path(),options.clone());
++        let options = NativeJournalOptions {
++            backend,
++            ..NativeJournalOptions::default()
++        };
++        let mut owner = open(root.path(), options.clone());
+         let packet = make(&mut owner);
+         let block = hex::encode(packet.id().unwrap());
+         let before = owner.status().unwrap();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:47:
+-        assert_eq!(before["registry"][&block]["first_seen_epoch"],1);
+-        assert_eq!(before["registry"][&block]["native_relation_rechecked_by_census"],false);
++        assert_eq!(before["registry"][&block]["first_seen_epoch"], 1);
++        assert_eq!(
++            before["registry"][&block]["native_relation_rechecked_by_census"],
++            false
++        );
+         let pin = owner.finish(100).unwrap();
+-        let mut owner = open(root.path(),NativeJournalOptions { expected_checkpoint:Some(pin),..options });
+-        owner.admit(&packet,100).unwrap();
+-        owner.admit(&packet,100).unwrap();
+-        owner.activate_observed(packet.id().unwrap(),100).unwrap();
++        let mut owner = open(
++            root.path(),
++            NativeJournalOptions {
++                expected_checkpoint: Some(pin),
++                ..options
++            },
++        );
++        owner.admit(&packet, 100).unwrap();
++        owner.admit(&packet, 100).unwrap();
++        owner.activate_observed(packet.id().unwrap(), 100).unwrap();
+         let after = owner.status().unwrap();
+-        assert_eq!(after["registry"].as_object().unwrap().len(),1);
+-        assert_eq!(after["registry"][&block]["first_seen_sequence"],before["registry"][&block]["first_seen_sequence"]);
+-        assert_eq!(after["registry"][&block]["origin_class"],"recorded_local_production");
+-        assert_eq!(after["registry"][&block]["native_relation_rechecked_by_census"],true);
+-        assert_eq!(after["outside_lease_intervals"].as_array().unwrap().len(),1);
+-        assert_eq!(after["fresh_resource_state_attested"],false);
+-        assert_eq!(after["trusted_history_anchor"],false);
++        assert_eq!(after["registry"].as_object().unwrap().len(), 1);
++        assert_eq!(
++            after["registry"][&block]["first_seen_sequence"],
++            before["registry"][&block]["first_seen_sequence"]
++        );
++        assert_eq!(
++            after["registry"][&block]["origin_class"],
++            "recorded_local_production"
++        );
++        assert_eq!(
++            after["registry"][&block]["native_relation_rechecked_by_census"],
++            true
++        );
++        assert_eq!(
++            after["outside_lease_intervals"].as_array().unwrap().len(),
++            1
++        );
++        assert_eq!(after["fresh_resource_state_attested"], false);
++        assert_eq!(after["trusted_history_anchor"], false);
+         owner.finish(100).unwrap();
+     }
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:67:
+ fn actual_two_branch_process_cut_recovery_and_saved_checkpoint_rollback() {
+     let temporary = tempfile::tempdir().unwrap();
+     let executable = std::env::current_exe().unwrap();
+-    let report = scenario::run(&temporary.path().join("run"),|plan| {
+-        Ok(Command::new(&executable).args(["--exact","native_journal_process_child","--ignored","--nocapture"])
+-            .env("NATIVE_JOURNAL_CHILD_PLAN",plan).output()?)
+-    }).unwrap();
+-    assert_eq!(report["crash_child"]["exit_code"],scenario::CRASH_EXIT);
+-    assert_eq!(report["before_hidden"]["local_view_commitment"],report["after_hidden"]["local_view_commitment"]);
+-    assert_eq!(report["stale_checkpoint_refusal"],"OWNER_JOURNAL_CHECKPOINT");
+-    assert_eq!(report["recovered_status"]["unresolved_intents"].as_array().unwrap().len(),1);
+-    assert_eq!(report["recovered_status"]["unresolved_intents"][0]["operation"],"activate_observed");
+-    assert_eq!(report["invalid_same_id_packet"]["id"],report["bob_status"]["registry"].as_object().unwrap()
+-        .iter().find(|(_,value)| value["packet_sha256"] == report["invalid_same_id_packet"]["valid_packet_sha256"]).unwrap().0.as_str());
+-    assert_ne!(report["invalid_same_id_packet"]["sha256"],report["invalid_same_id_packet"]["valid_packet_sha256"]);
+-    assert_eq!(report["six_successor_risk_qualified"],false);
++    let report = scenario::run(&temporary.path().join("run"), |plan| {
++        Ok(Command::new(&executable)
++            .args([
++                "--exact",
++                "native_journal_process_child",
++                "--ignored",
++                "--nocapture",
++            ])
++            .env("NATIVE_JOURNAL_CHILD_PLAN", plan)
++            .output()?)
++    })
++    .unwrap();
++    assert_eq!(report["crash_child"]["exit_code"], scenario::CRASH_EXIT);
++    assert_eq!(
++        report["before_hidden"]["local_view_commitment"],
++        report["after_hidden"]["local_view_commitment"]
++    );
++    assert_eq!(
++        report["stale_checkpoint_refusal"],
++        "OWNER_JOURNAL_CHECKPOINT"
++    );
++    assert_eq!(
++        report["recovered_status"]["unresolved_intents"]
++            .as_array()
++            .unwrap()
++            .len(),
++        1
++    );
++    assert_eq!(
++        report["recovered_status"]["unresolved_intents"][0]["operation"],
++        "activate_observed"
++    );
++    assert_eq!(
++        report["invalid_same_id_packet"]["id"],
++        report["bob_status"]["registry"]
++            .as_object()
++            .unwrap()
++            .iter()
++            .find(|(_, value)| value["packet_sha256"]
++                == report["invalid_same_id_packet"]["valid_packet_sha256"])
++            .unwrap()
++            .0
++            .as_str()
++    );
++    assert_ne!(
++        report["invalid_same_id_packet"]["sha256"],
++        report["invalid_same_id_packet"]["valid_packet_sha256"]
++    );
++    assert_eq!(report["six_successor_risk_qualified"], false);
+ }
+ 
+ #[test]
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:86:
+ #[ignore = "owned subprocess helper, actually executed by the process-cut test"]
+ fn native_journal_process_child() {
+-    let plan = std::env::var_os("NATIVE_JOURNAL_CHILD_PLAN").expect("explicit parent plan required");
++    let plan =
++        std::env::var_os("NATIVE_JOURNAL_CHILD_PLAN").expect("explicit parent plan required");
+     scenario::crash_child(Path::new(&plan)).unwrap();
+     panic!("the native commit cut must terminate this child");
+ }
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:93:
+ #[test]
+ fn dropped_pending_native_activation_blocks_reuse_and_remains_unresolved_after_reopen() {
+     let root = tempfile::tempdir().unwrap();
+-    let mut owner = open(root.path(),NativeJournalOptions::default());
++    let mut owner = open(root.path(), NativeJournalOptions::default());
+     let packet = make(&mut owner);
+-    owner.admit(&packet,100).unwrap();
++    owner.admit(&packet, 100).unwrap();
+     let pin = owner.checkpoint().unwrap();
+-    let pending = owner.begin_activation(packet.id().unwrap(),100).unwrap();
++    let pending = owner.begin_activation(packet.id().unwrap(), 100).unwrap();
+     assert!(pending.native_succeeded());
+     drop(pending);
+-    assert_eq!(owner.observe(100).unwrap_err().to_string(),"OWNER_JOURNAL_UNRESOLVED");
+-    assert_eq!(owner.status().unwrap()["unresolved_intents"].as_array().unwrap().len(),1);
++    assert_eq!(
++        owner.observe(100).unwrap_err().to_string(),
++        "OWNER_JOURNAL_UNRESOLVED"
++    );
++    assert_eq!(
++        owner.status().unwrap()["unresolved_intents"]
++            .as_array()
++            .unwrap()
++            .len(),
++        1
++    );
+     drop(owner);
+-    let owner = open(root.path(),NativeJournalOptions { expected_checkpoint:Some(pin),..NativeJournalOptions::default() });
++    let owner = open(
++        root.path(),
++        NativeJournalOptions {
++            expected_checkpoint: Some(pin),
++            ..NativeJournalOptions::default()
++        },
++    );
+     let status = owner.status().unwrap();
+-    assert_eq!(status["last_census"]["active_tip"],hex::encode(packet.id().unwrap()));
+-    assert_eq!(status["unresolved_intents"].as_array().unwrap().len(),1);
+-    assert_eq!(status["unresolved_intents"][0]["prepared"],true);
++    assert_eq!(
++        status["last_census"]["active_tip"],
++        hex::encode(packet.id().unwrap())
++    );
++    assert_eq!(status["unresolved_intents"].as_array().unwrap().len(), 1);
++    assert_eq!(status["unresolved_intents"][0]["prepared"], true);
+     owner.finish(100).unwrap();
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:114:
+ #[test]
+ fn torn_tail_is_preserved_and_refused_before_reopening_native_store() {
+     let root = tempfile::tempdir().unwrap();
+-    open(root.path(),NativeJournalOptions::default()).finish(100).unwrap();
++    open(root.path(), NativeJournalOptions::default())
++        .finish(100)
++        .unwrap();
+     let path = root.path().join("journal/journal.pnoj1");
+-    fs::OpenOptions::new().append(true).open(&path).unwrap().write_all(&[0]).unwrap();
++    fs::OpenOptions::new()
++        .append(true)
++        .open(&path)
++        .unwrap()
++        .write_all(&[0])
++        .unwrap();
+     let torn = fs::read(&path).unwrap();
+-    assert_refused(root.path(),NativeJournalOptions::default(),"OWNER_JOURNAL_TORN_TAIL");
+-    assert_eq!(fs::read(path).unwrap(),torn);
++    assert_refused(
++        root.path(),
++        NativeJournalOptions::default(),
++        "OWNER_JOURNAL_TORN_TAIL",
++    );
++    assert_eq!(fs::read(path).unwrap(), torn);
+ }
+ 
+ #[test]
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:126:
+ fn wrong_prior_checkpoint_refuses_without_appending_an_open_intent() {
+     let root = tempfile::tempdir().unwrap();
+-    let mut pin = open(root.path(),NativeJournalOptions::default()).finish(100).unwrap();
++    let mut pin = open(root.path(), NativeJournalOptions::default())
++        .finish(100)
++        .unwrap();
+     pin.record_hash = "ff".repeat(32);
+     let path = root.path().join("journal/journal.pnoj1");
+     let before = fs::read(&path).unwrap();
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:132:
+-    assert_refused(root.path(),NativeJournalOptions { expected_checkpoint:Some(pin),..NativeJournalOptions::default() },"OWNER_JOURNAL_CHECKPOINT");
+-    assert_eq!(fs::read(path).unwrap(),before);
++    assert_refused(
++        root.path(),
++        NativeJournalOptions {
++            expected_checkpoint: Some(pin),
++            ..NativeJournalOptions::default()
++        },
++        "OWNER_JOURNAL_CHECKPOINT",
++    );
++    assert_eq!(fs::read(path).unwrap(), before);
+ }
+ 
+ #[test]
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:137:
+ fn sidecar_lock_is_exclusive_and_new_namespace_never_claims_fresh_resources() {
+     let root = tempfile::tempdir().unwrap();
+-    let owner = open(root.path(),NativeJournalOptions::default());
+-    assert_refused(root.path(),NativeJournalOptions::default(),"OWNER_JOURNAL_BUSY");
++    let owner = open(root.path(), NativeJournalOptions::default());
++    assert_refused(
++        root.path(),
++        NativeJournalOptions::default(),
++        "OWNER_JOURNAL_BUSY",
++    );
+     let status = owner.status().unwrap();
+-    for field in ["fresh_resource_state_attested","initial_resource_state_known","trusted_history_anchor",
+-        "world_coverage_attested","physical_clock_authenticated","all_ever_native_api_calls_covered"] {
+-        assert_eq!(status[field],false);
++    for field in [
++        "fresh_resource_state_attested",
++        "initial_resource_state_known",
++        "trusted_history_anchor",
++        "world_coverage_attested",
++        "physical_clock_authenticated",
++        "all_ever_native_api_calls_covered",
++    ] {
++        assert_eq!(status[field], false);
+     }
+-    assert_eq!(status["initial_world_inventory_bound"],Value::Null);
++    assert_eq!(status["initial_world_inventory_bound"], Value::Null);
+     owner.finish(100).unwrap();
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:150:
+ #[test]
+ fn referenced_packet_corruption_is_refused_and_never_overwritten_on_resume() {
+     let root = tempfile::tempdir().unwrap();
+-    let mut owner = open(root.path(),NativeJournalOptions::default());
++    let mut owner = open(root.path(), NativeJournalOptions::default());
+     let packet = make(&mut owner);
+-    owner.admit(&packet,100).unwrap();
++    owner.admit(&packet, 100).unwrap();
+     let pin = owner.finish(100).unwrap();
+-    let path = root.path().join("journal/packets").join(format!("{}.pnp1",digest(&packet.encode().unwrap())));
++    let path = root
++        .path()
++        .join("journal/packets")
++        .join(format!("{}.pnp1", digest(&packet.encode().unwrap())));
+     let mut corrupted = fs::read(&path).unwrap();
+     corrupted[400] ^= 1;
+-    fs::write(&path,&corrupted).unwrap();
+-    assert_refused(root.path(),NativeJournalOptions { expected_checkpoint:Some(pin),..NativeJournalOptions::default() },"OWNER_JOURNAL_ARTIFACT");
+-    assert_eq!(fs::read(path).unwrap(),corrupted);
++    fs::write(&path, &corrupted).unwrap();
++    assert_refused(
++        root.path(),
++        NativeJournalOptions {
++            expected_checkpoint: Some(pin),
++            ..NativeJournalOptions::default()
++        },
++        "OWNER_JOURNAL_ARTIFACT",
++    );
++    assert_eq!(fs::read(path).unwrap(), corrupted);
+ }
+ 
+ #[test]
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:166:
+ fn terminal_budget_failure_preserves_real_native_effect_and_unresolved_debt() {
+     let root = tempfile::tempdir().unwrap();
+-    let mut owner = open(root.path(),NativeJournalOptions { maximum_records:8,..NativeJournalOptions::default() });
++    let mut owner = open(
++        root.path(),
++        NativeJournalOptions {
++            maximum_records: 8,
++            ..NativeJournalOptions::default()
++        },
++    );
+     let packet = make(&mut owner);
+     let pin = owner.checkpoint().unwrap();
+-    assert_eq!(owner.admit(&packet,100).unwrap_err().to_string(),"OWNER_JOURNAL_RECORD_BUDGET");
++    assert_eq!(
++        owner.admit(&packet, 100).unwrap_err().to_string(),
++        "OWNER_JOURNAL_RECORD_BUDGET"
++    );
+     let failed = owner.status().unwrap();
+-    assert_eq!(failed["blocked"],true);
+-    assert_eq!(failed["unresolved_intents"].as_array().unwrap().len(),1);
++    assert_eq!(failed["blocked"], true);
++    assert_eq!(failed["unresolved_intents"].as_array().unwrap().len(), 1);
+     drop(owner);
+-    let owner = open(root.path(),NativeJournalOptions { expected_checkpoint:Some(pin),..NativeJournalOptions::default() });
++    let owner = open(
++        root.path(),
++        NativeJournalOptions {
++            expected_checkpoint: Some(pin),
++            ..NativeJournalOptions::default()
++        },
++    );
+     let recovered = owner.status().unwrap();
+-    assert_eq!(recovered["last_census"]["rows"].as_array().unwrap().len(),2);
+-    assert_eq!(recovered["unresolved_intents"][0]["operation"],"admit");
+-    assert_eq!(recovered["fresh_resource_state_attested"],false);
++    assert_eq!(
++        recovered["last_census"]["rows"].as_array().unwrap().len(),
++        2
++    );
++    assert_eq!(recovered["unresolved_intents"][0]["operation"], "admit");
++    assert_eq!(recovered["fresh_resource_state_attested"], false);
+     owner.finish(100).unwrap();
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:186:
+     let root = tempfile::tempdir().unwrap();
+     let producer = tempfile::tempdir().unwrap();
+     let packet = external_packet(producer.path());
+-    let mut owner = open(root.path(),NativeJournalOptions { maximum_artifact_bytes:1,..NativeJournalOptions::default() });
++    let mut owner = open(
++        root.path(),
++        NativeJournalOptions {
++            maximum_artifact_bytes: 1,
++            ..NativeJournalOptions::default()
++        },
++    );
+     let before = owner.checkpoint().unwrap();
+-    assert_eq!(owner.admit(&packet,100).unwrap_err().to_string(),"OWNER_JOURNAL_ARTIFACT_BUDGET");
+-    assert_eq!(owner.checkpoint().unwrap(),before);
+-    assert_eq!(owner.status().unwrap()["last_census"]["rows"].as_array().unwrap().len(),1);
++    assert_eq!(
++        owner.admit(&packet, 100).unwrap_err().to_string(),
++        "OWNER_JOURNAL_ARTIFACT_BUDGET"
++    );
++    assert_eq!(owner.checkpoint().unwrap(), before);
++    assert_eq!(
++        owner.status().unwrap()["last_census"]["rows"]
++            .as_array()
++            .unwrap()
++            .len(),
++        1
++    );
+     owner.finish(100).unwrap();
+ }
+ 
+Diff in /home/qian-qi/work/chain-pon-lifecycle-closure-20261107/checkout/trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs:201:
+     let packet = external_packet(producer.path());
+     let id: Hash = packet.id().unwrap();
+     let mut invalid = packet.clone();
+-    invalid.proof[4+2*pon_work::CELLS*4] ^= 1;
+-    assert_eq!(invalid.id().unwrap(),id);
+-    let mut owner = open(root.path(),NativeJournalOptions::default());
+-    assert!(owner.admit(&invalid,100).unwrap_err().to_string().starts_with("WORK:"));
+-    assert!(owner.status().unwrap()["registry"].as_object().unwrap().is_empty());
+-    owner.admit(&packet,100).unwrap();
++    invalid.proof[4 + 2 * pon_work::CELLS * 4] ^= 1;
++    assert_eq!(invalid.id().unwrap(), id);
++    let mut owner = open(root.path(), NativeJournalOptions::default());
++    assert!(owner
++        .admit(&invalid, 100)
++        .unwrap_err()
++        .to_string()
++        .starts_with("WORK:"));
++    assert!(owner.status().unwrap()["registry"]
++        .as_object()
++        .unwrap()
++        .is_empty());
++    owner.admit(&packet, 100).unwrap();
+     let status = owner.status().unwrap();
+     let registered = &status["registry"][hex::encode(id)];
+-    assert_eq!(registered["packet_sha256"],digest(&packet.encode().unwrap()));
+-    assert_ne!(registered["packet_sha256"],digest(&invalid.encode().unwrap()));
+-    assert_eq!(registered["native_relation_rechecked_by_census"],true);
+-    assert_eq!(registered["origin_class"],"external_input");
++    assert_eq!(
++        registered["packet_sha256"],
++        digest(&packet.encode().unwrap())
++    );
++    assert_ne!(
++        registered["packet_sha256"],
++        digest(&invalid.encode().unwrap())
++    );
++    assert_eq!(registered["native_relation_rechecked_by_census"], true);
++    assert_eq!(registered["origin_class"], "external_input");
+     owner.finish(100).unwrap();
+ }
+-
+ 

@@ -1,0 +1,69 @@
+{
+  "actual_native_child_exchanges_this_evidence_run": 519,
+  "aggregate_winners": 5,
+  "claims": {
+    "actual_sha_independent_uniform_tickets_proved": false,
+    "all_algorithm_minimum_gate_cost_proved": false,
+    "all_units_full_existing_w1_relation": true,
+    "frozen_research_relation": true,
+    "native_consensus_activation": false,
+    "native_six_successor_risk_certified": false,
+    "one_final_aggregate_lottery": true,
+    "physical_resource_tail_proved": false,
+    "production_qualified": false
+  },
+  "dedup_increments": [
+    32,
+    0,
+    16
+  ],
+  "dedup_total": 48,
+  "elapsed_native_ns_are_minimum_cost_certificate": false,
+  "native_binary_sha256": {
+    "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pon_work_io": "41222016523672bd32670358f693476560f8641c03f6c738c7a75a2f0f0c7437",
+    "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pon_zero_io": "368293c7cf20a3c1b9a50d39be0b1bdb84bb80b44331968c76323599fd698749"
+  },
+  "native_calls_by_mode": {
+    "generic": 468,
+    "prove": 17,
+    "verify": 34
+  },
+  "native_child_expected_nonzero_rejections": 14,
+  "native_child_successes": 505,
+  "nonce_attempts_including_all_losses": 98,
+  "nonce_search_complete_units_constructed": 449,
+  "observed_stopped_fixture_fraction": {
+    "decimal_approximation": 0.05102040816326531,
+    "denominator": 98,
+    "numerator": 5
+  },
+  "preparation_reuse": {
+    "A_B_product_prefix_byte_identical": true,
+    "challenge_specific_full_traces_distinct": true,
+    "minimum_cost_inferred": false,
+    "same_prepared_object_reused": true
+  },
+  "profile": "pon-mandatory-w1-64-research-v1",
+  "query_initial_state_certificate_for_actual_W1": false,
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "result": "PASS",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/MANDATORY_UNITS_RELATION_V1.md": "29bfa2d9aa76931d7dd01f10a44912ccb2699e46c0eca01822886efb7861bc97",
+    "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/mandatory_units_evidence.py": "858583cd221a720d231155299f174e985b223a89a11fed1604d43846769acb35",
+    "formal/pon-nakamoto-v1/mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/mandatory_units_tests.py": "84a2af7f96225fdbc1fc5af2a2abdbc1baae66bc7a8845850001827c14d2ea30",
+    "formal/pon-nakamoto-v1/mandatory_units_vectors.py": "78b4986be8531023c0ef1967b2c9c331899fffe0758be8077445f78327bd0a0c",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+  },
+  "statistical_probability_or_independence_estimate": false,
+  "subunit_tickets_above_T0_in_valid_envelopes": 13,
+  "test_execution_count_not_included_in_child_exchange_count": true,
+  "whole_MU1_winning_positive_vectors": 5,
+  "whole_envelope_negative_controls": 20
+}

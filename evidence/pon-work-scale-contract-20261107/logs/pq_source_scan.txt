@@ -1,0 +1,1 @@
+{"reviewed_roles_mapped":22,"schema":"trnm-pq-rust-source-authority-inventory-v1","scope":"All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof","source_files_read":1169,"status":"HOLD_INCOMPLETE_AUTHORITY_TRACING","unreviewed_indicator_files":85,"whole_chain_pq_qualified":false}
