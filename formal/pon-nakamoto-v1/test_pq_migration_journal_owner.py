@@ -24,6 +24,10 @@ H = b"H"*32
 RECEIPT = b"R"*48
 STMT = MigrationStatement(N, O, K, H, 3, 5, 9999)
 PROOF = SignedMigration(STMT, b"", b"")
+REUSED_KEY_PROOF = SignedMigration(
+    MigrationStatement(N, b"P"*32, K, H, 3, 5, 9999), b"", b"")
+DISTINCT_PROOF = SignedMigration(
+    MigrationStatement(N, b"P"*32, b"Q"*32, H, 3, 5, 9999), b"", b"")
 
 
 class OwnedMigrationJournalTests(unittest.TestCase):
@@ -33,8 +37,8 @@ class OwnedMigrationJournalTests(unittest.TestCase):
         self.root = Path(temp.name)
         self.path = self.root / "migration.db"
 
-    def open(self):
-        j = OfflineMigrationJournal(self.path)
+    def open(self, path=None):
+        j = OfflineMigrationJournal(path or self.path)
         self.addCleanup(j.close)
         return j
 
@@ -49,6 +53,28 @@ class OwnedMigrationJournalTests(unittest.TestCase):
     def rows(self):
         with closing(sqlite3.connect(self.path)) as db:
             return db.execute("SELECT count(*) FROM main.pq_migration").fetchone()[0]
+
+    @staticmethod
+    def records(path):
+        with closing(sqlite3.connect(path)) as db:
+            return db.execute(
+                "SELECT network,old_pub,new_key_id,statement,receipt "
+                "FROM main.pq_migration ORDER BY network,old_pub").fetchall()
+
+    def assert_unchanged(self, journal, records, changes):
+        self.assertFalse(journal.db.in_transaction)
+        self.assertEqual(journal.db.total_changes, changes)
+        self.assertEqual(self.records(journal.path), records)
+
+    @staticmethod
+    def install_erasing_trigger(journal, name, *, temporary=False):
+        # A hidden trigger can erase the first fact before UNIQUE is checked,
+        # then leave the new row intact for a misleading successful readback.
+        qualifier = "TEMP " if temporary else ""
+        journal.db.execute(
+            f'CREATE {qualifier}TRIGGER "{name}" BEFORE INSERT ON main.pq_migration '
+            "BEGIN DELETE FROM pq_migration "
+            "WHERE network=NEW.network AND new_key_id=NEW.new_key_id; END")
 
     def test_honest_commit_repeat_cold_reopen(self):
         j = self.open()
@@ -92,6 +118,95 @@ class OwnedMigrationJournalTests(unittest.TestCase):
         with self.assertRaisesRegex(Reject, "temporary SQLite"):
             self.consume(j)
         self.assertEqual(self.rows(), 0)
+
+    def test_sqlite_lookalike_persistent_trigger_rejected_on_cold_open(self):
+        for name in ("sqliteXerase_prior", "sqliteYerase_prior"):
+            with self.subTest(name=name):
+                path = self.root / f"{name}.db"
+                j = self.open(path)
+                self.assertEqual(self.consume(j)[0], "FIRST_RECORD")
+                before = self.records(path)
+                self.install_erasing_trigger(j, name)
+                j.close()
+                with self.assertRaisesRegex(Reject, "foreign"):
+                    with closing(OfflineMigrationJournal(path)):
+                        pass
+                self.assertEqual(self.records(path), before)
+
+    def test_sqlite_lookalike_persistent_trigger_cannot_erase_or_reuse_key(self):
+        for name in ("sqliteXerase_prior", "sqliteYerase_prior"):
+            with self.subTest(name=name):
+                j = self.open(self.root / f"{name}.db")
+                self.assertEqual(self.consume(j)[0], "FIRST_RECORD")
+                self.install_erasing_trigger(j, name)
+                before = self.records(j.path)
+                changes = j.db.total_changes
+                with self.assertRaisesRegex(Reject, "foreign"):
+                    self.consume(j, REUSED_KEY_PROOF)
+                self.assert_unchanged(j, before, changes)
+                j.db.execute(f'DROP TRIGGER "{name}"')
+                with self.assertRaisesRegex(Reject, "PQ key reused by another old account"):
+                    self.consume(j, REUSED_KEY_PROOF)
+                self.assert_unchanged(j, before, changes)
+                self.assertEqual(self.consume(j)[0], "ALREADY_RECORDED")
+
+    def test_sqlite_lookalike_persistent_table_rejected_on_consume_and_cold_open(self):
+        for name in ("sqliteXeffects", "sqliteYeffects"):
+            for operation in ("consume", "cold_open"):
+                with self.subTest(name=name, operation=operation):
+                    path = self.root / f"{name}-{operation}.db"
+                    j = self.open(path)
+                    self.assertEqual(self.consume(j)[0], "FIRST_RECORD")
+                    j.db.execute(f'CREATE TABLE "{name}"(value INTEGER)')
+                    before = self.records(path)
+                    changes = j.db.total_changes
+                    if operation == "consume":
+                        with self.assertRaisesRegex(Reject, "foreign"):
+                            self.consume(j, DISTINCT_PROOF)
+                        self.assert_unchanged(j, before, changes)
+                    else:
+                        j.close()
+                        with self.assertRaisesRegex(Reject, "foreign"):
+                            with closing(OfflineMigrationJournal(path)):
+                                pass
+                        self.assertEqual(self.records(path), before)
+                    with closing(sqlite3.connect(path)) as db:
+                        self.assertEqual(db.execute(
+                            f'SELECT count(*) FROM "{name}"').fetchone(), (0,))
+
+    def test_sqlite_lookalike_temp_trigger_cannot_erase_or_reuse_key(self):
+        for name in ("sqliteXerase_prior", "sqliteYerase_prior"):
+            with self.subTest(name=name):
+                j = self.open(self.root / f"{name}.db")
+                self.assertEqual(self.consume(j)[0], "FIRST_RECORD")
+                self.install_erasing_trigger(j, name, temporary=True)
+                before = self.records(j.path)
+                changes = j.db.total_changes
+                with self.assertRaisesRegex(Reject, "temporary SQLite"):
+                    self.consume(j, REUSED_KEY_PROOF)
+                self.assert_unchanged(j, before, changes)
+                j.db.execute(f'DROP TRIGGER temp."{name}"')
+                with self.assertRaisesRegex(Reject, "PQ key reused by another old account"):
+                    self.consume(j, REUSED_KEY_PROOF)
+                self.assert_unchanged(j, before, changes)
+                self.assertEqual(self.consume(j)[0], "ALREADY_RECORDED")
+
+    def test_sqlite_lookalike_temp_table_rejected_before_write(self):
+        for name in ("sqliteXeffects", "sqliteYeffects"):
+            with self.subTest(name=name):
+                j = self.open(self.root / f"{name}.db")
+                self.assertEqual(self.consume(j)[0], "FIRST_RECORD")
+                j.db.execute(f'CREATE TEMP TABLE "{name}"(value INTEGER)')
+                before = self.records(j.path)
+                changes = j.db.total_changes
+                with self.assertRaisesRegex(Reject, "temporary SQLite"):
+                    self.consume(j, DISTINCT_PROOF)
+                self.assert_unchanged(j, before, changes)
+                self.assertEqual(j.db.execute(
+                    f'SELECT count(*) FROM temp."{name}"').fetchone(), (0,))
+                j.db.execute(f'DROP TABLE temp."{name}"')
+                self.assertEqual(self.consume(j, DISTINCT_PROOF)[0], "FIRST_RECORD")
+                self.assertEqual(self.consume(j)[0], "ALREADY_RECORDED")
 
     def test_mid_transaction_rename_never_acknowledged(self):
         j = self.open()

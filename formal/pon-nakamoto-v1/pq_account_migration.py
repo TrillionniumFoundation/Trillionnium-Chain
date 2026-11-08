@@ -121,8 +121,10 @@ class OfflineMigrationJournal:
           PRIMARY KEY (network,old_pub),
           UNIQUE (network,new_key_id)
         ) WITHOUT ROWID"""
-    SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
-    TEMP_QUERY = "SELECT name FROM sqlite_temp_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1"
+    # GLOB treats '_' literally. LIKE would also exclude caller-created names
+    # such as sqliteXtrigger, hiding changes from the exact-schema audit.
+    SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT GLOB 'sqlite_*' ORDER BY type,name"
+    TEMP_QUERY = "SELECT name FROM sqlite_temp_master WHERE name NOT GLOB 'sqlite_*' LIMIT 1"
     EXPECTED_SCHEMA = [("table", "pq_migration", DDL)]
 
     @staticmethod

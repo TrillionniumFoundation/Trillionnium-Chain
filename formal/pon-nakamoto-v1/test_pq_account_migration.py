@@ -2,7 +2,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from pathlib import Path
-import subprocess
 import tempfile
 import unittest
 
@@ -10,6 +9,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 from pq_envelope import Reject, public_key_id
+from pq_openssl_backend import run as run_pinned_openssl
 from pq_account_migration import (MigrationStatement, SignedMigration,
     OfflineMigrationJournal, make_signed_migration, verify_migration)
 
@@ -21,10 +21,10 @@ class DualPossessionTests(unittest.TestCase):
         cls.addClassCleanup(cls.temp.cleanup)
         cls.directory = Path(cls.temp.name)
         cls.new_private, cls.new_public = cls.directory / "pq.priv", cls.directory / "pq.pub"
-        subprocess.run(["openssl", "genpkey", "-algorithm", "ML-DSA-65", "-out", str(cls.new_private)],
-                       check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["openssl", "pkey", "-in", str(cls.new_private), "-pubout", "-out", str(cls.new_public)],
-                       check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Key generation and every later signature use the same explicit backend.
+        # The hosted provider setup does not replace the runner's PATH openssl.
+        run_pinned_openssl(["genpkey", "-algorithm", "ML-DSA-65", "-out", str(cls.new_private)])
+        run_pinned_openssl(["pkey", "-in", str(cls.new_private), "-pubout", "-out", str(cls.new_public)])
         cls.pem = cls.new_public.read_bytes()
         cls.old = Ed25519PrivateKey.generate()
         cls.old_public = cls.old.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
