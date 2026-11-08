@@ -52,3 +52,18 @@ Python/source controls cannot qualify #796.
 The [seven-layer review](../../docs/security/PQ_SEVEN_LAYER_REVIEW_20261108.md)
 and [root policy contract](../../docs/security/PQ_ROOT_RECOVERY_POLICY_V1.md)
 describe the remaining proof, state, custody, content and execution obligations.
+
+## Embedded source inventory repair
+
+The [inventory repair record](distributed-inventory-repair.json) preserves a
+failed generation-consistency check at `d8280daa8651ca387813b25e2a712f3fd1c82a1d`.
+The native embedded source inventory omitted the two new composition configs
+and two lifetime configs already present in #790. The canonical generator adds
+all four entries; its one existing corpus pin changes while the 727-path set
+stays fixed. This changes the generated native source inventory, with no new
+authorization rule or production permission. The repaired committed source
+requires its own command receipts; earlier results do not automatically apply.
+
+The record also retains a separate local full-diff failure caused by an absent
+historical Git object. Scoped repair checks do not substitute for the complete
+desktop checkout's source and diff checks.
