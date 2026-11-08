@@ -1,0 +1,72 @@
+{
+  "M12_phase_observation": null,
+  "actual_runtime_deadline_observation": null,
+  "confirmed_cold_test_passes": 0,
+  "confirmed_heavy_test_passes": 0,
+  "confirmed_new_complete_fresh_proofs": 0,
+  "consumed_resources_observation": null,
+  "deterministic_research_fixture_refunds_must_not_be_added_across_C5_C6_C7": true,
+  "exact_same_request_readback": {
+    "retried_launch": false,
+    "reused": true,
+    "status_authoritative": false
+  },
+  "final_readonly": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "config_launch_declaration_Node_run_target_seen": false,
+    "exact_cgroup_exists": false,
+    "exact_job_directory_exists": false,
+    "exact_main_pid": 0,
+    "exact_systemd_active_state": "inactive",
+    "exact_systemd_load_state": "not-found",
+    "exit": 0,
+    "job": "1a1ba50b185-12894-19ad",
+    "observed_monotonic_ns": 1204892964908336,
+    "observed_unix_ns": "1794127226972598241",
+    "scope": "absence at these observation times; not retrospective proof of no execution",
+    "signals_sent": 0,
+    "state": "succeeded",
+    "unix_timestamp_encoding": "decimal string to preserve all nanoseconds in JSON consumers"
+  },
+  "further_dispatch_cancel_or_deadline_actions_stopped": true,
+  "independent_cold_attempted": false,
+  "lifecycle_completed": false,
+  "new_key_or_alternative_transport_for_original_operation": false,
+  "old_C5_C6_actual_records_unchanged": true,
+  "original_request": {
+    "authoritative_execution_terminal": null,
+    "idempotency_key": "w1-c7-only-original120s-heavy-timeout-reorg-20261108-ec265b-01",
+    "job": "1a1ba4cf251-12894-1994",
+    "original_research_duration_intent_ns": 120000000000,
+    "outer_requested_timeout_seconds": 240,
+    "state": "launch_unknown"
+  },
+  "plan": {
+    "bytes": 50283,
+    "path": "/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01/plan.json",
+    "sha256": "3fc21976c7c60c705d12080126ebf090c81d9f01bec182b94f679fa073429591"
+  },
+  "planned_principal": 1000,
+  "planned_principal_is_not_actual_funding_evidence": true,
+  "preparation": {
+    "complete": true,
+    "durable": true,
+    "exit": 0,
+    "job": "1a1ba4b4ca5-12894-198a",
+    "prepared_plan_deadline_selected": false,
+    "state": "succeeded"
+  },
+  "principal_refunded_observation": null,
+  "principal_reserved_observation": null,
+  "provider_operation": "b515f62d1a8ade59f4bf3a01ae5ef774d463ed43adc129de88602555cca945c1",
+  "provider_payment_observation": null,
+  "r0vm_live_observation": null,
+  "reorg_observation": null,
+  "resource_cap_reservation_observation": null,
+  "schema": "TRNM-W1-C7-LAUNCH-UNKNOWN-SUMMARY1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "target_terminal_observation": null
+}

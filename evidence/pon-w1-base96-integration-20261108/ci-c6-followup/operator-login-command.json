@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "user",
+    "--jq",
+    ".login"
+  ],
+  "exit_code": 0
+}

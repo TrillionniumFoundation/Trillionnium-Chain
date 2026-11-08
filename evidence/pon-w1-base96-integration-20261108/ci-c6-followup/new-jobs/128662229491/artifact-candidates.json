@@ -1,0 +1,58 @@
+[
+  {
+    "bytes": 11129217,
+    "compressed_bytes": 457115,
+    "crc32": "07a402b0",
+    "is_dir": false,
+    "name": "from-zero-native/confirmation/report.json"
+  },
+  {
+    "bytes": 950,
+    "compressed_bytes": 561,
+    "crc32": "f75f3397",
+    "is_dir": false,
+    "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+  },
+  {
+    "bytes": 73128,
+    "compressed_bytes": 11086,
+    "crc32": "afc6a79b",
+    "is_dir": false,
+    "name": "from-zero-native/manifest.json"
+  },
+  {
+    "bytes": 3475417,
+    "compressed_bytes": 71563,
+    "crc32": "063527fa",
+    "is_dir": false,
+    "name": "from-zero-native/native/report.json"
+  },
+  {
+    "bytes": 19721897,
+    "compressed_bytes": 778224,
+    "crc32": "85bf6d77",
+    "is_dir": false,
+    "name": "from-zero-native/native/sustained/report.json"
+  },
+  {
+    "bytes": 333,
+    "compressed_bytes": 217,
+    "crc32": "f5952b0c",
+    "is_dir": false,
+    "name": "from-zero-native-host/child-result.json"
+  },
+  {
+    "bytes": 7953,
+    "compressed_bytes": 2089,
+    "crc32": "f00620a1",
+    "is_dir": false,
+    "name": "from-zero-native-host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "from-zero-native-host/seal-parent-receipt.log"
+  }
+]

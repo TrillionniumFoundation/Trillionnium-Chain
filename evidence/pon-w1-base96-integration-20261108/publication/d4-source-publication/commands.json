@@ -1,0 +1,141 @@
+[
+  {
+    "label": "00-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199648778982233,
+    "finished_monotonic_ns": 1199648781794900,
+    "stdout_sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-tree",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199648782217148,
+    "finished_monotonic_ns": 1199648785410921,
+    "stdout_sha256": "e2059c28cc09f2ae380af00a8528faa78303e6c817f4f8e2fcd22c8f92ecfe2a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199648785837219,
+    "finished_monotonic_ns": 1199648860074400,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199648860580920,
+    "finished_monotonic_ns": 1199648980024654,
+    "stdout_sha256": "dfe7ed4bf1a2fa120ab384a40149f30a0e1c5c6d6c17ad1bd0ee1a3e0185db83",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-authenticated-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199648980866057,
+    "finished_monotonic_ns": 1199651777400520,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "05-fast-forward-ancestry",
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199651783994584,
+    "finished_monotonic_ns": 1199651791331489,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-remote-before",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199651792450988,
+    "finished_monotonic_ns": 1199655264974391,
+    "stdout_sha256": "aa8f4b011fd77746e074b3f4002ea67a52ba2d0c453b7b490eb62fa55d4d55c2",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-source-push",
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562:refs/heads/fix/chain-w1-runtime-integrated-20261107"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199655266038477,
+    "finished_monotonic_ns": 1199661262084706,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "38680ee9e1e3c618240865f79a8c9f872a7db8a34d73f0f62d2458e20afe53f8"
+  },
+  {
+    "label": "08-remote-after",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199661263141099,
+    "finished_monotonic_ns": 1199665050961435,
+    "stdout_sha256": "178a1ff171ffb63c3e4e455e23da75d36af6a7df7e999cdf004b3b0ae4807d8b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "09-pr-readback",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit_code": 0,
+    "started_monotonic_ns": 1199665052146494,
+    "finished_monotonic_ns": 1199667203899608,
+    "stdout_sha256": "7677a6a9ae76f73eed8eabb685fe30e0b3891db8c88e08e87a230505e04aae83",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

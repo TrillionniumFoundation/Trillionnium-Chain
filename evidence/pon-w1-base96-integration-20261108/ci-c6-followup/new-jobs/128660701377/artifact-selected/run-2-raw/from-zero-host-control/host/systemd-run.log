@@ -1,0 +1,7 @@
+Running as unit: trnm-phase-42457886578-1-original-campaign-5093.service
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 36.561s
+CPU time consumed: 9.140s
+Memory peak: 3.2M
+Memory swap peak: 0B

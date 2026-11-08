@@ -1,0 +1,17 @@
+{
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456320219",
+  "exit_code": 0,
+  "finished_unix_ns": 1794125714882350222,
+  "label": "history/run-metadata",
+  "started_unix_ns": 1794125710109442063,
+  "stderr": {
+    "bytes": 0,
+    "path": "history/run-metadata.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 14619,
+    "path": "history/run-metadata.raw.json",
+    "sha256": "27aa6b3ffae3183b697769f01ef4ae7fd84c7bc15cb8a24674abd4819cfc1cec"
+  }
+}

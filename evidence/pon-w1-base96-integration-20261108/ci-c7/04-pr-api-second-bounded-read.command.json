@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+  ],
+  "cwd": null,
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794127697086562638,
+  "label": "04-pr-api-second-bounded-read",
+  "started_unix_ns": 1794127694361302151,
+  "stderr": {
+    "bytes": 0,
+    "path": "04-pr-api-second-bounded-read.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 27678,
+    "path": "04-pr-api-second-bounded-read.stdout",
+    "sha256": "e37d4b0472b64724291a3354640cda242c2183dd78a06ba30162c5d52b8cf8a0"
+  },
+  "timed_out": false
+}

@@ -1,0 +1,8 @@
+Running as unit: trnm-from-zero-42456320219-1-diagnostic-4739.service
+{"failures": ["ValueError:HISTORY_NATIVE_PROCESS_REQUIRED", "ValueError:required-native-test: expected one passed, zero failed/ignored/measured", "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"], "passed": false, "schema": "trnm-ci-history-diagnostic-execution-v1", "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal", "target": "history_stage_diagnostic"}
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 53min 52.907s
+CPU time consumed: 13min 28.167s
+Memory peak: 3.7M
+Memory swap peak: 0B

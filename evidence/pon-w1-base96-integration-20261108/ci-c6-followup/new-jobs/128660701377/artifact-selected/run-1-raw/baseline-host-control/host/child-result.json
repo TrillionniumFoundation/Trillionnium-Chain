@@ -1,0 +1,19 @@
+{
+  "binary_sha256": "949b246e4e75858ac6ffa3179903cf992f8675d362964214d7daf74b31111a5f",
+  "binary_sha256_after": "949b246e4e75858ac6ffa3179903cf992f8675d362964214d7daf74b31111a5f",
+  "consensus_or_model_authority": false,
+  "host_errors": [],
+  "job_sha256": "832e994cc8fe6d5d7f8607e24eb38984bf1290d8863596adf1f011006b0ed622",
+  "native_argv": [
+    "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+    "--exact",
+    "multiprocess_phase_owner_entry",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "native_child_exit": 0,
+  "native_selector": "multiprocess_phase_owner_entry",
+  "runtime_business_deadline_changed": false,
+  "schema": "fixed-public-phase-external-actors-v1"
+}

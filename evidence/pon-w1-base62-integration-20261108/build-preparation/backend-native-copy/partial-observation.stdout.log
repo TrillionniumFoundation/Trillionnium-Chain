@@ -1,0 +1,5 @@
+{"path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b", "exists": true, "du": "1619497625\t/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b"}
+{"path": "/home/qian-qi/work/chain-w1-base62-native-target-20261108-ec265b", "exists": true, "du": "376579857\t/home/qian-qi/work/chain-w1-base62-native-target-20261108-ec265b"}
+{"rsync": "/usr/bin/rsync", "free": 129983819776}
+    PID    PPID STAT     ELAPSED     TIME WCHAN                    COMMAND
+

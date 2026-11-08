@@ -1,0 +1,48 @@
+   Compiling typenum v1.20.1
+   Compiling zeroize v1.8.2
+   Compiling cmov v0.5.4
+   Compiling sha2-asm v0.6.4
+   Compiling serde_core v1.0.228
+   Compiling generic-array v0.14.7
+   Compiling rusqlite v0.39.0
+   Compiling num-traits v0.2.19
+   Compiling libc v0.2.184
+   Compiling keccak v0.2.2
+   Compiling ctutils v0.4.6
+   Compiling sponge-cursor v0.1.0
+   Compiling thiserror v1.0.69
+   Compiling hex v0.4.3
+   Compiling anyhow v1.0.103
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling digest v0.10.7
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-transport)
+   Compiling sha2 v0.10.9
+   Compiling hybrid-array v0.4.15
+   Compiling getrandom v0.4.2
+   Compiling fs2 v0.4.3
+   Compiling curve25519-dalek v4.1.3
+   Compiling crypto-common v0.2.2
+   Compiling module-lattice v0.2.3
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling rustix v1.1.4
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.149
+   Compiling digest v0.11.3
+   Compiling signature v3.0.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling shake v0.1.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-service-settlement)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 46s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8)

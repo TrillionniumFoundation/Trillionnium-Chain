@@ -1,0 +1,126 @@
+{
+  "actual_command_count": 4,
+  "actual_nonzero_commands": [],
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_staged_observer.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "02-w1-retained-staged-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 32,
+            "passed": 32,
+            "reported_duration": "18.694s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "staged",
+  "durable_exit": 0,
+  "durable_job_id": "1a1ba46df81-12894-196b",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "4311dac940b8c5e46100f4c555999684de483665fdad90d2cee546ca99dccc5c",
+  "provenance": {
+    "launch_provenance_pins": {
+      "staged-launch-binding.json": "17d8b2a18aa78e6bdc95339ee3223bc28dc04c37a1963623a4720b5e06e85bcd"
+    },
+    "original_fixture_parameters_unchanged": true,
+    "scope": "Actual 32-method raw result and original launch binding are retained. Original six known component manifests and job IDs match independent terminal records. Recorded inactive/PID0 units do not prove host-wide idle state or full historical descendant reclamation. No new test run in this audit.",
+    "single_declared_staged_attempt": true,
+    "six_known_component_manifest_and_job_bindings_match": true,
+    "six_known_units_recorded_inactive_pid0_before_launch": true
+  },
+  "python": {
+    "errors": 0,
+    "failed": 0,
+    "methods": 32,
+    "passed": 32,
+    "skipped": 0
+  },
+  "rust": {},
+  "schema": "TRNM-W1-C7-INDEPENDENT-COMPONENT-REVIEW1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "source_guards_before_after_exact_equal": true
+}

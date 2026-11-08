@@ -1,0 +1,53 @@
+[
+  {
+    "label": "00-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "93854a74f6a1cca02ba17b52edcf1ac43625492eb842bad7856e8c640a7cf2ce",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-update",
+    "argv": [
+      "gh",
+      "pr",
+      "edit",
+      "782",
+      "--repo",
+      "TrillionniumFoundation/Trillionnium-Chain",
+      "--body-file",
+      "/home/qian-qi/work/chain-w1-base62-integration-tools-20261108-ec265b/pr782-c6-body.md"
+    ],
+    "exit_code": 1,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "9c4f5d81ed2acfc14cd655978ab0fe9f7fe985bba53d8d843aafdf989f122e2c"
+  }
+]

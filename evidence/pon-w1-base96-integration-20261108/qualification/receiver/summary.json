@@ -1,0 +1,129 @@
+{
+  "actual_command_count": 4,
+  "actual_nonzero_commands": [],
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-receiver-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_w1_receiver_real.py",
+        "--verifier",
+        "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b/release/w1-verify-v2",
+        "--verifier-sha256",
+        "93a1721d829846da2a4ab01f41238cf5d95351ce002556cc0840d009629e4219",
+        "--receipt",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "--input",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/input.bin",
+        "--header",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/header.bin",
+        "--expected-artifacts",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+        "--out",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-receiver-01/real-receiver-controls"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "02-real-receiver-controls",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 11,
+            "passed": 11,
+            "reported_duration": "11.030s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-receiver-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "receiver",
+  "durable_exit": 0,
+  "durable_job_id": "1a1ba33b2ba-12894-18f3",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "9f7eb12ae0f01eb79946fbff4cf9e69330f642cf5dec08ff50cf71c1ec904a1c",
+  "provenance": {
+    "actual_original_nov5_receipt_used": true,
+    "native_binding_and_20_actual_logs_rechecked": true,
+    "new_receipts_generated": 0,
+    "winning_w1_node_admission_established": false
+  },
+  "python": {
+    "errors": 0,
+    "failed": 0,
+    "methods": 11,
+    "passed": 11,
+    "skipped": 0
+  },
+  "rust": {},
+  "schema": "TRNM-W1-C7-INDEPENDENT-COMPONENT-REVIEW1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "source_guards_before_after_exact_equal": true
+}

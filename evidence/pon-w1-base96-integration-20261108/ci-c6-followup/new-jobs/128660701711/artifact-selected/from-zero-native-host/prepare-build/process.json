@@ -1,0 +1,32 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_v3_from_zero",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 184156370937,
+  "user_cpu_ns": 334623328000,
+  "system_cpu_ns": 13763351000,
+  "cpu_ns": 348386679000,
+  "max_rss_kib": 1496952,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 4956674,
+  "major_faults": 1484,
+  "voluntary_switches": 8212,
+  "involuntary_switches": 3294,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "fdef353567e01afe7413b60861f0c6823ce8f7a2b2dd9e90d6d28a6f431f3991",
+  "stderr_sha256": "54e5f8597db39756f906bd2d96e71b87a7c7965841fca847747fc9fa57edac9e"
+}

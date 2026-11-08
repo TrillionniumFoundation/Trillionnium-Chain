@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/compare/9417e495165865ef6c1288b39084856e31020634...40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "--jq",
+    "{base_commit:.base_commit.sha,merge_base_commit:.merge_base_commit.sha,status:.status,ahead_by:.ahead_by,behind_by:.behind_by,total_commits:.total_commits,commits:[.commits[]|{sha:.sha,parents:[.parents[].sha]}]}"
+  ],
+  "cwd": null,
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794127704795021914,
+  "label": "06-base-vs-c7-compare-projection",
+  "started_unix_ns": 1794127699663823778,
+  "stderr": {
+    "bytes": 0,
+    "path": "06-base-vs-c7-compare-projection.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 1751,
+    "path": "06-base-vs-c7-compare-projection.stdout",
+    "sha256": "570a8567afd0148e4aa6be71b472abab6cf306eb00172034e91daa06303d06ca"
+  },
+  "timed_out": false
+}

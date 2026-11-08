@@ -1,0 +1,191 @@
+{
+  "all_four_engineering_gates_closed": false,
+  "attempts": {
+    "controlled_freeze": {
+      "actual_commands": 6,
+      "exit": 0,
+      "job_id": "1a1ba2a7986-12894-18c2",
+      "output_complete": true,
+      "output_durable": true,
+      "pushed": false,
+      "same_create_only_atomic_claim": true,
+      "tests_executed": 0
+    },
+    "merge_preparation_02": {
+      "actual_commands": 18,
+      "exit": 0
+    },
+    "original_freeze_launch": {
+      "automatic_retry": false,
+      "job_id": "1a1ba24c731-12894-1899",
+      "nonexecution_reconciled_readonly": true,
+      "original_state": "launch_unknown"
+    },
+    "precommit_01": {
+      "actual_commands": 12,
+      "exit": 1,
+      "failed_methods": 0,
+      "method_executions": 134,
+      "passed": 134,
+      "skipped": 0,
+      "sole_failed_command": "04-source-inventory"
+    },
+    "readonly_reconciliation": {
+      "exact_candidate_diff_preserved": true,
+      "exit": 0,
+      "freeze_output_absent": true,
+      "job_id": "1a1ba277f4d-12894-18af",
+      "original_jobdir_and_both_units_absent": true
+    },
+    "repair_01": {
+      "actual_commands": 10,
+      "exit": 0,
+      "method_executions": 49,
+      "passed": 49,
+      "repeated_methods": 49,
+      "skipped": 0
+    },
+    "setup_01": {
+      "actual_commands": 5,
+      "exit": 1,
+      "failure": "absent-ref probe incorrectly expected exit1; actual128 before worktree creation",
+      "test_methods": 0
+    }
+  },
+  "changed_paths": [
+    ".github/workflows/pon-history-stage-diagnostic.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/run_from_zero_host.py",
+    "scripts/ci/run_history_diagnostic.py",
+    "scripts/ci/test_history_stage_diagnostic.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+  ],
+  "ci_guard_or_event_context_changed": false,
+  "ci_reruns": 0,
+  "diff": {
+    "deletions": 1,
+    "files": 8,
+    "insertions": 1131,
+    "preplan_merge_tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+    "preplan_tree_is_final_source_tree": false
+  },
+  "distinct_first_cohort_methods": 134,
+  "full_proof_generations": 0,
+  "ignored_history_4105_block_workload_executions": 0,
+  "inventory_repair": {
+    "added_inventory_files": [
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ],
+    "additional_existing_pin_mirrors": 0,
+    "all_other_corpus_fields_unchanged": true,
+    "corpus_after_sha256": "8026562eb0d7c2c7cf749b34b748439608750e23d4cbe631e77c2299c29f9f12",
+    "corpus_before_sha256": "e415a8c7806ff884eee1b33a1e303f13c41c1c76ae3e2b32309fe136d93b36aa",
+    "existing_pin_updates": {
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+        "new": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+        "old": "5076e6953e98868fae50d95e9e47db14b65929ea"
+      }
+    },
+    "final_plan_appended_paragraphs": 1,
+    "guard_or_event_context_changed": false,
+    "inventory_after_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+    "inventory_after_sha256": "d44dc342ab665b9abfeaf85bafcdb3a115069f45c80ad0fe09a8d6fe3d747b92",
+    "inventory_before_blob": "5076e6953e98868fae50d95e9e47db14b65929ea",
+    "inventory_before_sha256": "0f81413fb5938e9e304689ad908cf626d22e7a38f9b0364cdbfd87aac17626a2",
+    "inventory_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "pin_count": 650,
+    "plan_prior_c6_bytes_preserved": true,
+    "removed_inventory_files": [],
+    "required_count": 558,
+    "schema": "TRNM-W1-C7-INVENTORY-EXACT-PIN-REPAIR1"
+  },
+  "new_operations": 0,
+  "new_pr_event_tuple_verified_by_this_package": false,
+  "new_worktree": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "ordinary_method_executions_total": 183,
+  "original_c6_head_unchanged": true,
+  "original_c6_worktree_clean_at_freeze": true,
+  "original_failures_rewritten": false,
+  "packing_actions": {
+    "cargo_runs": 0,
+    "pushes": 0,
+    "source_commits": 0,
+    "source_edits": 0,
+    "test_runs": 0
+  },
+  "parents": [
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+  ],
+  "postcommit_source_qualification_claimed": false,
+  "precommit_suites": [
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 6,
+      "name": "05-history-diagnostic-controls",
+      "passed": 6,
+      "skipped": 0,
+      "stderr_sha256": "99c2aeda2d9d3a20aff1039bd49531953828afc472e786a777c472eb3a4ea62e"
+    },
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 79,
+      "name": "06-host-routing-controls",
+      "passed": 79,
+      "skipped": 0,
+      "stderr_sha256": "b7e8a586fd99121aa3cb389b298f1e1016811bc36946221da75894f6c077fa07"
+    },
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 39,
+      "name": "07-pq-rejection-controls",
+      "passed": 39,
+      "skipped": 0,
+      "stderr_sha256": "9db3ecf6f8970346a01d42b3e40b8fc29768477fe364e58ecd196f59f022b8bb"
+    },
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 10,
+      "name": "08-w1-ci-contract-controls",
+      "passed": 10,
+      "skipped": 0,
+      "stderr_sha256": "24043603273e3920b93d50481ffa0b89b613211fa08561b234891b3158b6a355"
+    },
+    {
+      "attempt": "precommit-repair-01",
+      "failed": 0,
+      "methods": 39,
+      "name": "06-pq-rejection-controls",
+      "passed": 39,
+      "skipped": 0,
+      "stderr_sha256": "c7ed07ee35d8f3efbca2b91578648f4bef24021c1f333e5610a422629d77c931"
+    },
+    {
+      "attempt": "precommit-repair-01",
+      "failed": 0,
+      "methods": 10,
+      "name": "07-w1-ci-contract-controls",
+      "passed": 10,
+      "skipped": 0,
+      "stderr_sha256": "f1cf7677127411b9238e3d85ff8fe4111e0c5bc2a26d5852ce9f666598dadcf6"
+    }
+  ],
+  "raw_archive": {
+    "bytes": 117622,
+    "members": 128,
+    "sha256": "a54c8b67a906d28fbf8990e04dbed0c3ac5ced6d5e9dc74bbf55aeb78fd0fb94"
+  },
+  "repair_repeat_executions": 49,
+  "schema": "TRNM-W1-C7-INTEGRATION-PUBLICATION1",
+  "scope": "Precommit integration and local freeze evidence only. Independent exact committed-source qualification, actual CI event tuple and any later lifecycle use separate records.",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_freeze_original_sha256": "089190fdc5d2ff41609235bc582676351ae575842cf812163d50e66c4f3c49a3",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "source_worktree_clean_at_freeze": true
+}

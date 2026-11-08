@@ -1,0 +1,70 @@
+{
+  "cache_basis": "New empty C7 target checked immediately before exec; existing registry/toolchain reused; not a cleanroom",
+  "cargo_artifact": {
+    "executable": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8"
+    ],
+    "fresh": true,
+    "manifest_path": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "test": true
+    }
+  },
+  "cargo_or_node_executed_by_extraction": false,
+  "compiled_checkout_observation": {
+    "elf_byte_offset": 25378794,
+    "path": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node",
+    "scope": "Corroborating byte presence; source binding also requires original exact Cargo artifact, clean source identities and empty-target build provenance."
+  },
+  "compiler_artifact_stdout": {
+    "bytes": 106401,
+    "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/13-owner-no-run-json.stdout",
+    "sha256": "20edcf717c1e355df1c1f8fd9b7732d3adf732ef212a726c7db2a5ade8ea60d8"
+  },
+  "derived_extraction": true,
+  "extractor": {
+    "bytes": 11539,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/import-owner-c7-v1.py",
+    "sha256": "c9a76e5e9c86a7ce2f94c006bf130940a30f250008d96ab06392aa83dfd3853e"
+  },
+  "fresh_cargo_target": true,
+  "original_root_owner_artifact_file_claimed": false,
+  "owner_executable": {
+    "bytes": 467950280,
+    "path": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "ae9ebf85ec7b76ea38c0ca1649d5a5e16f0015c915653eeea486c5090c3ce3c7"
+  },
+  "qualification_complete": true,
+  "qualification_manifest": {
+    "bytes": 23342,
+    "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/manifest.json",
+    "sha256": "6aeb6311539926f0e4f96c9fc2469953fbb879ba5897e7e3e0d16f1399d26261"
+  },
+  "schema": "TRNM-W1-C7-OWNER-ARTIFACT-EXTRACTION1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+}

@@ -1,0 +1,464 @@
+{
+  "archive_sha256": "3895103c42a25630c143cce33bee1f71ffd6f2ede5b1f344cc3cf605f72dec56",
+  "members": [
+    {
+      "encoding": "utf8",
+      "raw_bytes": 894,
+      "raw_sha256": "ad28479c915ec2c19a6db5a15ecb9cf8d9e125db5a6144c676757d3cffa92681",
+      "stored_bytes": 894,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/build/process.json",
+      "stored_sha256": "ad28479c915ec2c19a6db5a15ecb9cf8d9e125db5a6144c676757d3cffa92681",
+      "zip_member": "from-zero-native/build/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 62,
+      "raw_sha256": "9ba21e9ae2f9eaebeb075bb454cb4e4f2f949f247ac35e99e04f280f42ea9df4",
+      "stored_bytes": 62,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/build/stderr",
+      "stored_sha256": "9ba21e9ae2f9eaebeb075bb454cb4e4f2f949f247ac35e99e04f280f42ea9df4",
+      "zip_member": "from-zero-native/build/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 108243,
+      "raw_sha256": "cff30db40d625fe0b7aea6287b6021d525a8e3bf3ad46cf5557a70048311694a",
+      "stored_bytes": 108243,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/build/stdout",
+      "stored_sha256": "cff30db40d625fe0b7aea6287b6021d525a8e3bf3ad46cf5557a70048311694a",
+      "zip_member": "from-zero-native/build/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 878,
+      "raw_sha256": "f35b8e118352f267f42d13c83741cff59c93c6edb84c8d32996759c01ad4e4d3",
+      "stored_bytes": 878,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "stored_sha256": "f35b8e118352f267f42d13c83741cff59c93c6edb84c8d32996759c01ad4e4d3",
+      "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 189,
+      "raw_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "stored_bytes": 189,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "stored_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "zip_member": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "encoding": "gzip-lossless-utf8",
+      "raw_bytes": 9840789,
+      "raw_sha256": "f879b09389fe551af03c1bf91f1ef614261a7ca88d8c12d5cc23d873834c8929",
+      "stored_bytes": 418147,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/confirmation/report.json.gz",
+      "stored_sha256": "ba60a565c7c7a604bdcc42f5127379e90151a30a612013027505b2fbe5d9712f",
+      "zip_member": "from-zero-native/confirmation/report.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 793,
+      "raw_sha256": "8393f66d8f1a8f025dfb02e1b2231593c54b2eb2ddcfc808e2d37f7fcc555660",
+      "stored_bytes": 793,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/format-check/process.json",
+      "stored_sha256": "8393f66d8f1a8f025dfb02e1b2231593c54b2eb2ddcfc808e2d37f7fcc555660",
+      "zip_member": "from-zero-native/format-check/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/format-check/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/format-check/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/format-check/stdout",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/format-check/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 826,
+      "raw_sha256": "ab54a1cf2ca367d07a918d29386d46817feadba1035cb21c2c40f7e11208d07f",
+      "stored_bytes": 826,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/format-copy/process.json",
+      "stored_sha256": "ab54a1cf2ca367d07a918d29386d46817feadba1035cb21c2c40f7e11208d07f",
+      "zip_member": "from-zero-native/format-copy/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/format-copy/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/format-copy/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/format-copy/stdout",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/format-copy/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 891,
+      "raw_sha256": "e1aa70ad57173c2356f83ed58b03e81ec058a2cb68c3f32cc59a77131866e72c",
+      "stored_bytes": 891,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "stored_sha256": "e1aa70ad57173c2356f83ed58b03e81ec058a2cb68c3f32cc59a77131866e72c",
+      "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 3365,
+      "raw_sha256": "81e075688542b14fe34a78a03efe93216d5609f38f1c84778f2c5aa11d360c9c",
+      "stored_bytes": 3365,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "stored_sha256": "81e075688542b14fe34a78a03efe93216d5609f38f1c84778f2c5aa11d360c9c",
+      "zip_member": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 890,
+      "raw_sha256": "f139ae6238814d80f13458d4ffd0b127afe274b32178f8b706c2b219c7157f5e",
+      "stored_bytes": 890,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "stored_sha256": "f139ae6238814d80f13458d4ffd0b127afe274b32178f8b706c2b219c7157f5e",
+      "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 195,
+      "raw_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+      "stored_bytes": 195,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "stored_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+      "zip_member": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 905,
+      "raw_sha256": "cd2154dd5b031a3e1d876d1b25cbed8eaae92a43ff654ee212c9dfedbd7e9ef7",
+      "stored_bytes": 905,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "stored_sha256": "cd2154dd5b031a3e1d876d1b25cbed8eaae92a43ff654ee212c9dfedbd7e9ef7",
+      "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 922,
+      "raw_sha256": "3148312c484007008d20bd060fe79063d1324b5ea615b946a0c867ceab2e28b2",
+      "stored_bytes": 922,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "stored_sha256": "3148312c484007008d20bd060fe79063d1324b5ea615b946a0c867ceab2e28b2",
+      "zip_member": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 941,
+      "raw_sha256": "1eb38e102ea82054a4a7aa36f7e1e5b8b83f1c5d2d6bfb37f053811d423efbb2",
+      "stored_bytes": 941,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "stored_sha256": "1eb38e102ea82054a4a7aa36f7e1e5b8b83f1c5d2d6bfb37f053811d423efbb2",
+      "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 413,
+      "raw_sha256": "e77a4ed81c02300e63c70060a738f8df274c9aad7b204fdb497c303ef8199821",
+      "stored_bytes": 413,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "stored_sha256": "e77a4ed81c02300e63c70060a738f8df274c9aad7b204fdb497c303ef8199821",
+      "zip_member": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 72871,
+      "raw_sha256": "31d6857a1874ac67b45a0efe40ca76e6544af9da38920fbf2249033e15d4746c",
+      "stored_bytes": 72871,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/manifest.json",
+      "stored_sha256": "31d6857a1874ac67b45a0efe40ca76e6544af9da38920fbf2249033e15d4746c",
+      "zip_member": "from-zero-native/manifest.json"
+    },
+    {
+      "encoding": "gzip-lossless-utf8",
+      "raw_bytes": 3476611,
+      "raw_sha256": "aff415393e9cab10b065fd30a18586e5167061ab5a835a74b4085f34f70898cc",
+      "stored_bytes": 76452,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/native/report.json.gz",
+      "stored_sha256": "c3e6ee54dcb169ba8fc0432a973aac769634d66ed2382e74ab3ebf705ac7a873",
+      "zip_member": "from-zero-native/native/report.json"
+    },
+    {
+      "encoding": "gzip-lossless-utf8",
+      "raw_bytes": 18522160,
+      "raw_sha256": "ecf31989a7ba5aef5e29641c4ab0beb07f1df8fae1938dbcd1a34556f491786c",
+      "stored_bytes": 756657,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native/native/sustained/report.json.gz",
+      "stored_sha256": "52e4d157c9cc819729dc87930045c33b97d4dc5bc67b77b3f546581b356e18a3",
+      "zip_member": "from-zero-native/native/sustained/report.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 200,
+      "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "stored_bytes": 200,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/actual-systemd-parent-after.log",
+      "stored_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "zip_member": "from-zero-native-host/actual-systemd-parent-after.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 200,
+      "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "stored_bytes": 200,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/actual-systemd-parent.log",
+      "stored_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "zip_member": "from-zero-native-host/actual-systemd-parent.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1628,
+      "raw_sha256": "efe71f8733f4414bf81eccaba227f985fc4bb97f01aaa8c732b55b6ac2dc916e",
+      "stored_bytes": 1628,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/after-provision.json",
+      "stored_sha256": "efe71f8733f4414bf81eccaba227f985fc4bb97f01aaa8c732b55b6ac2dc916e",
+      "zip_member": "from-zero-native-host/after-provision.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 2795,
+      "raw_sha256": "e334371751993a4f26fc2a21124f9222fc53c32ff25ab6ef6818c8e9b129c2e0",
+      "stored_bytes": 2795,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/before-provision.json",
+      "stored_sha256": "e334371751993a4f26fc2a21124f9222fc53c32ff25ab6ef6818c8e9b129c2e0",
+      "zip_member": "from-zero-native-host/before-provision.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 10,
+      "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "stored_bytes": 10,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/child-final-load-state.log",
+      "stored_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "zip_member": "from-zero-native-host/child-final-load-state.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 10,
+      "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "stored_bytes": 10,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/child-load-state.log",
+      "stored_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "zip_member": "from-zero-native-host/child-load-state.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 339,
+      "raw_sha256": "65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03",
+      "stored_bytes": 339,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/child-result.json",
+      "stored_sha256": "65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03",
+      "zip_member": "from-zero-native-host/child-result.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 7645,
+      "raw_sha256": "3b7584203e7eba730aa80539b6e3d42f705f8c67d322a82c381a4d407d783372",
+      "stored_bytes": 7645,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/controller-result.json",
+      "stored_sha256": "3b7584203e7eba730aa80539b6e3d42f705f8c67d322a82c381a4d407d783372",
+      "zip_member": "from-zero-native-host/controller-result.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1701,
+      "raw_sha256": "bc5655a7f3b06a7233b8757c34425be781354b8cf9a9b596e5392f8fd4704a87",
+      "stored_bytes": 1701,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/inside-after.json",
+      "stored_sha256": "bc5655a7f3b06a7233b8757c34425be781354b8cf9a9b596e5392f8fd4704a87",
+      "zip_member": "from-zero-native-host/inside-after.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/install-reviewed-unit.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native-host/install-reviewed-unit.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1688,
+      "raw_sha256": "18f2c3665fce8d320a33cae34fc7fdbf91b706aec61abb85bf0a17f0037d431a",
+      "stored_bytes": 1688,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/inside-before.json",
+      "stored_sha256": "18f2c3665fce8d320a33cae34fc7fdbf91b706aec61abb85bf0a17f0037d431a",
+      "zip_member": "from-zero-native-host/inside-before.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1663,
+      "raw_sha256": "35c496d7cc35cc0fc1e6a9a95797f5b71da5e50182e4813e667d0d1fc92d1f11",
+      "stored_bytes": 1663,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/outside-after.json",
+      "stored_sha256": "35c496d7cc35cc0fc1e6a9a95797f5b71da5e50182e4813e667d0d1fc92d1f11",
+      "zip_member": "from-zero-native-host/outside-after.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 146,
+      "raw_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+      "stored_bytes": 146,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/parent-properties.log",
+      "stored_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+      "zip_member": "from-zero-native-host/parent-properties.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 921,
+      "raw_sha256": "dcc0ec004661c452603750e3e8c77eb6ae0798b2c3ded60f505b603b26f21bcb",
+      "stored_bytes": 921,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/prepare-build/process.json",
+      "stored_sha256": "dcc0ec004661c452603750e3e8c77eb6ae0798b2c3ded60f505b603b26f21bcb",
+      "zip_member": "from-zero-native-host/prepare-build/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 6896,
+      "raw_sha256": "e910e7d2e73867125a3ebbaea345ef41a1fcd6ccd5a69a4f1e562ec90551c0b9",
+      "stored_bytes": 6896,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/prepare-build/stderr",
+      "stored_sha256": "e910e7d2e73867125a3ebbaea345ef41a1fcd6ccd5a69a4f1e562ec90551c0b9",
+      "zip_member": "from-zero-native-host/prepare-build/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 108363,
+      "raw_sha256": "19aafe79fb7adbf9e8f4b9efa8fab0a799d00cc6d12cf35dbf3211f7ace6d793",
+      "stored_bytes": 108363,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/prepare-build/stdout",
+      "stored_sha256": "19aafe79fb7adbf9e8f4b9efa8fab0a799d00cc6d12cf35dbf3211f7ace6d793",
+      "zip_member": "from-zero-native-host/prepare-build/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 3406,
+      "raw_sha256": "2b18c287f9aafdf6970148f4781b6dbbfd75d3625f77f8483cef2b20e9681274",
+      "stored_bytes": 3406,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/prepare-build.json",
+      "stored_sha256": "2b18c287f9aafdf6970148f4781b6dbbfd75d3625f77f8483cef2b20e9681274",
+      "zip_member": "from-zero-native-host/prepare-build.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/seal-parent-directory.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native-host/seal-parent-directory.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/seal-parent-receipt.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native-host/seal-parent-receipt.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/start-fixed-parent.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native-host/start-fixed-parent.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/systemd-reload.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "from-zero-native-host/systemd-reload.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 6921,
+      "raw_sha256": "9284cbdb1b2491d428f77a4a251e22410752c2d71ee778f19f1c7c2ce11274f5",
+      "stored_bytes": 6921,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/systemd-run.log",
+      "stored_sha256": "9284cbdb1b2491d428f77a4a251e22410752c2d71ee778f19f1c7c2ce11274f5",
+      "zip_member": "from-zero-native-host/systemd-run.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 229,
+      "raw_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+      "stored_bytes": 229,
+      "stored_path": "new-jobs/128660701605/artifact-selected/from-zero-native-host/unprovisioned-parent.json",
+      "stored_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+      "zip_member": "from-zero-native-host/unprovisioned-parent.json"
+    }
+  ]
+}

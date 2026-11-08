@@ -1,0 +1,24 @@
+{
+  "command": [
+    "rustfmt",
+    "--edition",
+    "2021",
+    "/home/runner/work/_temp/ci-observations/from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 278353473,
+  "user_cpu_ns": 34146000,
+  "system_cpu_ns": 18077000,
+  "cpu_ns": 52223000,
+  "max_rss_kib": 102368,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 7410,
+  "major_faults": 0,
+  "voluntary_switches": 3,
+  "involuntary_switches": 3,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

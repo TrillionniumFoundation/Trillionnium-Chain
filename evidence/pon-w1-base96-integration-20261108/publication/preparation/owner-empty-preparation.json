@@ -1,0 +1,13 @@
+{
+  "schema": "TRNM-W1-C7-EMPTY-TARGET-PREPARATION1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "target": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b",
+  "device": 2050,
+  "inode": 52862300,
+  "entries_at_creation": 0,
+  "created_monotonic_ns": 1202642954713449,
+  "copied_cache": false,
+  "reused_registry_toolchain": true,
+  "cleanroom": false
+}

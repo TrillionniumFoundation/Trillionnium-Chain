@@ -1,0 +1,450 @@
+[
+  {
+    "bytes": 113843,
+    "compressed_bytes": 3930,
+    "crc32": "52fa09bc",
+    "is_dir": false,
+    "name": "actual-cpu-depletion/report.json"
+  },
+  {
+    "bytes": 3474081,
+    "compressed_bytes": 71173,
+    "crc32": "f8d11ab0",
+    "is_dir": false,
+    "name": "debug-from-zero/report.json"
+  },
+  {
+    "bytes": 19840862,
+    "compressed_bytes": 785531,
+    "crc32": "49ab9352",
+    "is_dir": false,
+    "name": "debug-from-zero/sustained/report.json"
+  },
+  {
+    "bytes": 12461825,
+    "compressed_bytes": 513002,
+    "crc32": "515fcd99",
+    "is_dir": false,
+    "name": "from-zero-native/confirmation/report.json"
+  },
+  {
+    "bytes": 941,
+    "compressed_bytes": 558,
+    "crc32": "25700196",
+    "is_dir": false,
+    "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+  },
+  {
+    "bytes": 72813,
+    "compressed_bytes": 10978,
+    "crc32": "3ca1322c",
+    "is_dir": false,
+    "name": "from-zero-native/manifest.json"
+  },
+  {
+    "bytes": 3477135,
+    "compressed_bytes": 72022,
+    "crc32": "819d2eb8",
+    "is_dir": false,
+    "name": "from-zero-native/native/report.json"
+  },
+  {
+    "bytes": 19696580,
+    "compressed_bytes": 777196,
+    "crc32": "de9a54bf",
+    "is_dir": false,
+    "name": "from-zero-native/native/sustained/report.json"
+  },
+  {
+    "bytes": 339,
+    "compressed_bytes": 220,
+    "crc32": "eefef992",
+    "is_dir": false,
+    "name": "from-zero-native-host/child-result.json"
+  },
+  {
+    "bytes": 7644,
+    "compressed_bytes": 1975,
+    "crc32": "b8146fa9",
+    "is_dir": false,
+    "name": "from-zero-native-host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "from-zero-native-host/seal-parent-receipt.log"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/maximum-head.stderr"
+  },
+  {
+    "bytes": 824,
+    "compressed_bytes": 424,
+    "crc32": "cd55b42c",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/maximum-head.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/maximum.stderr"
+  },
+  {
+    "bytes": 4169,
+    "compressed_bytes": 1506,
+    "crc32": "1a3fbdad",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/maximum.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/previous-plus-one-head.stderr"
+  },
+  {
+    "bytes": 825,
+    "compressed_bytes": 424,
+    "crc32": "acd02b82",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/previous-plus-one-head.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/previous-plus-one.stderr"
+  },
+  {
+    "bytes": 4169,
+    "compressed_bytes": 1506,
+    "crc32": "309570c2",
+    "is_dir": false,
+    "name": "observation-cli/capacity-boundary/previous-plus-one.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/io-failure/honest-head.stderr"
+  },
+  {
+    "bytes": 826,
+    "compressed_bytes": 426,
+    "crc32": "d07448c6",
+    "is_dir": false,
+    "name": "observation-cli/io-failure/honest-head.stdout"
+  },
+  {
+    "bytes": 192,
+    "compressed_bytes": 129,
+    "crc32": "054ecc4a",
+    "is_dir": false,
+    "name": "observation-cli/io-failure/owner.stderr"
+  },
+  {
+    "bytes": 1579,
+    "compressed_bytes": 748,
+    "crc32": "9811a8c8",
+    "is_dir": false,
+    "name": "observation-cli/io-failure/owner.stdout"
+  },
+  {
+    "bytes": 268,
+    "compressed_bytes": 224,
+    "crc32": "acb7fd3e",
+    "is_dir": false,
+    "name": "observation-cli/miner-failure/owner.stderr"
+  },
+  {
+    "bytes": 1578,
+    "compressed_bytes": 755,
+    "crc32": "7bfc2247",
+    "is_dir": false,
+    "name": "observation-cli/miner-failure/owner.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/normal/default-head.stderr"
+  },
+  {
+    "bytes": 825,
+    "compressed_bytes": 424,
+    "crc32": "fded0db5",
+    "is_dir": false,
+    "name": "observation-cli/normal/default-head.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/normal/default.stderr"
+  },
+  {
+    "bytes": 4169,
+    "compressed_bytes": 1507,
+    "crc32": "2d7677e1",
+    "is_dir": false,
+    "name": "observation-cli/normal/default.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/normal/observed-head.stderr"
+  },
+  {
+    "bytes": 826,
+    "compressed_bytes": 425,
+    "crc32": "6e4b3fd9",
+    "is_dir": false,
+    "name": "observation-cli/normal/observed-head.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/normal/observed.stderr"
+  },
+  {
+    "bytes": 4169,
+    "compressed_bytes": 1508,
+    "crc32": "0de57a95",
+    "is_dir": false,
+    "name": "observation-cli/normal/observed.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/partial/capacity-one.stderr"
+  },
+  {
+    "bytes": 4169,
+    "compressed_bytes": 1509,
+    "crc32": "381439e3",
+    "is_dir": false,
+    "name": "observation-cli/partial/capacity-one.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/partial/head-one.stderr"
+  },
+  {
+    "bytes": 826,
+    "compressed_bytes": 426,
+    "crc32": "8deeaabc",
+    "is_dir": false,
+    "name": "observation-cli/partial/head-one.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/partial/head-two.stderr"
+  },
+  {
+    "bytes": 826,
+    "compressed_bytes": 427,
+    "crc32": "1dad079e",
+    "is_dir": false,
+    "name": "observation-cli/partial/head-two.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/partial/killed.stderr"
+  },
+  {
+    "bytes": 1579,
+    "compressed_bytes": 747,
+    "crc32": "c6a57296",
+    "is_dir": false,
+    "name": "observation-cli/partial/killed.stdout"
+  },
+  {
+    "bytes": 39,
+    "compressed_bytes": 41,
+    "crc32": "3771b52b",
+    "is_dir": false,
+    "name": "observation-cli/refusals/bad-capacity.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/bad-capacity.stdout"
+  },
+  {
+    "bytes": 36,
+    "compressed_bytes": 38,
+    "crc32": "e1b6de52",
+    "is_dir": false,
+    "name": "observation-cli/refusals/capacity-alone.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/capacity-alone.stdout"
+  },
+  {
+    "bytes": 32,
+    "compressed_bytes": 34,
+    "crc32": "6fb0644d",
+    "is_dir": false,
+    "name": "observation-cli/refusals/directory.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/directory.stdout"
+  },
+  {
+    "bytes": 32,
+    "compressed_bytes": 34,
+    "crc32": "6fb0644d",
+    "is_dir": false,
+    "name": "observation-cli/refusals/existing.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/existing.stdout"
+  },
+  {
+    "bytes": 48,
+    "compressed_bytes": 50,
+    "crc32": "7f2b750b",
+    "is_dir": false,
+    "name": "observation-cli/refusals/legacy.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/legacy.stdout"
+  },
+  {
+    "bytes": 48,
+    "compressed_bytes": 50,
+    "crc32": "7f2b750b",
+    "is_dir": false,
+    "name": "observation-cli/refusals/no-explicit.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/no-explicit.stdout"
+  },
+  {
+    "bytes": 44,
+    "compressed_bytes": 46,
+    "crc32": "025fca2b",
+    "is_dir": false,
+    "name": "observation-cli/refusals/other-command.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/other-command.stdout"
+  },
+  {
+    "bytes": 32,
+    "compressed_bytes": 34,
+    "crc32": "6fb0644d",
+    "is_dir": false,
+    "name": "observation-cli/refusals/symlink.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/symlink.stdout"
+  },
+  {
+    "bytes": 28,
+    "compressed_bytes": 30,
+    "crc32": "e5355dd7",
+    "is_dir": false,
+    "name": "observation-cli/refusals/too-many.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/too-many.stdout"
+  },
+  {
+    "bytes": 48,
+    "compressed_bytes": 50,
+    "crc32": "7f2b750b",
+    "is_dir": false,
+    "name": "observation-cli/refusals/v2.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/v2.stdout"
+  },
+  {
+    "bytes": 28,
+    "compressed_bytes": 30,
+    "crc32": "e5355dd7",
+    "is_dir": false,
+    "name": "observation-cli/refusals/zero.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "observation-cli/refusals/zero.stdout"
+  },
+  {
+    "bytes": 51042,
+    "compressed_bytes": 7975,
+    "crc32": "5a0146bd",
+    "is_dir": false,
+    "name": "valid-work-root-rejection/report.json"
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-c",
+      "python3 -B /home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-driver-01.py"
+    ],
+    "created_unix_ms": 1794124708230,
+    "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+    "env_keys": [],
+    "executable": "/bin/sh",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1ba2a7986-12894-18c2",
+    "idempotency_key": "ec265b-c7-base96-controlled-freeze-after-proven-nonlaunch-01",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba2a7986-12894-18c2",
+    "request_digest": "8697225af77b4e09529318cfd012a4191eccd5ba356c31dbe6eb6b36e8256835",
+    "request_fingerprint": 9698258096660106761,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1ba2a7986-12894-18c2"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1ba2a7986-12894-18c2"
+  },
+  "local_record_pending": false,
+  "reused": false
+}
+

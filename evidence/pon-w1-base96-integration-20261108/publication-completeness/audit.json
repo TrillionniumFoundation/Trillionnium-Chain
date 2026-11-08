@@ -1,0 +1,963 @@
+{
+  "schema": "TRNM-W1-D4-GIT-INDEX-COMPLETENESS-AUDIT1",
+  "public_commit": "3daf5d06e84aeb02530e14eecc7ba1f8ec674e24",
+  "groups": [
+    {
+      "directory": "pon-w1-four-gates-20261108",
+      "inventory_members": 421,
+      "present_in_d4_git_tree": 346,
+      "missing_members": 75,
+      "missing_bytes": 1000778
+    },
+    {
+      "directory": "pon-w1-base62-integration-20261108",
+      "inventory_members": 472,
+      "present_in_d4_git_tree": 443,
+      "missing_members": 29,
+      "missing_bytes": 7438
+    }
+  ],
+  "missing": [
+    {
+      "path": "ci-c5/business/archive-finalization-01.stderr.log",
+      "bytes": 135,
+      "sha256": "344d08a39dbb52ca28990dc3caad4344deb36832170d678c6ef2174086d843bf",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/archive-finalization-01.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/build.stderr.log",
+      "bytes": 4021,
+      "sha256": "dd72d72e50720bf68ac768ec25ba06ae6db306e16093c6d90b60a51c45516e28",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/build.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/build.stdout.log",
+      "bytes": 111546,
+      "sha256": "0241cfcd58cf7cf279848a3daa4f39390c768f61c19b9d05dbb6fc912ecffc4d",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/build.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/dependency-fetch.log",
+      "bytes": 3548,
+      "sha256": "7e02fc8a3316bd9971eb9340513328044d7295d6c3afb089988ee3f2e1ab5b7a",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/dependency-fetch.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/policy-reader-controls.log",
+      "bytes": 11767,
+      "sha256": "4197906b1a1e13c7d76c52c319a78c05237de6ce647455975277bb69b5129df8",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/policy-reader-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/preflight.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/run-1.stderr.log",
+      "bytes": 1615,
+      "sha256": "a36a54df99db7be3392343d1a9ac49c2969cbb55f5c11e1314a1e8c3719d9eb8",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/run-1.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/run-1.stdout.log",
+      "bytes": 271,
+      "sha256": "84b1560807b13f75c81711cdbfeb06f335da330abe3abd3c234157b792a28e5d",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/run-1.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/run-2.stderr.log",
+      "bytes": 1615,
+      "sha256": "7663d112594ddaeefe3c00f4264ae644fbc860a511d14f97d423dd619e1c65fc",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/run-2.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/run-2.stdout.log",
+      "bytes": 271,
+      "sha256": "dab3cb7480d9e3daa41fa6b4b0c4efe5c65867f465d15ae5530f54bab18e5406",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/run-2.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/run-3.stderr.log",
+      "bytes": 1615,
+      "sha256": "1965ffcdd2685e7758ddf42df217e35848bb2e368ea336187979529b4fdc2bee",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/run-3.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/run-3.stdout.log",
+      "bytes": 271,
+      "sha256": "6f95d24c4cb6a77ed336a94cda540d509a646f967df4b16f4aec551e8fe54f39",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/run-3.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/source-after.log",
+      "bytes": 423,
+      "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/source-after.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/systemd-run.log",
+      "bytes": 7172,
+      "sha256": "c3c1c6edc1df7ce059ff49653400f29ef00490371f9aa6d0f80e336bc9736b1b",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/systemd-run.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/toolchain-install.log",
+      "bytes": 257,
+      "sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/toolchain-install.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/original-native-campaign/unit-cleanup.log",
+      "bytes": 150,
+      "sha256": "1523a1444631ff45c85cfbde9f7a6754e8ab820033f156a07675fe50d31ecd19",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/original-native-campaign/unit-cleanup.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service/build.log",
+      "bytes": 108305,
+      "sha256": "2f342d6e9e7f962ac1ca3ac36a7a9a8cc78828577ea7139b76516018e6f82e72",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service/build.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service/fresh.log",
+      "bytes": 914,
+      "sha256": "6928f39657c0d24f24e6b4bf092b2be74de7bf8f3b12581202ae454fd913d043",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service/fresh.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service/original.log",
+      "bytes": 420,
+      "sha256": "2a677c7c5b1819911d535fd9ee53b99dd98f471b5eedc93895a13207a737359d",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service/original.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-controls.log",
+      "bytes": 128,
+      "sha256": "dde9c5441c744f225a9eb2bf7fcb8c110d1fe1bcf7d1a05fd1fdd4a1036375d7",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/actual-systemd-parent-after.log",
+      "bytes": 200,
+      "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/actual-systemd-parent-after.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/actual-systemd-parent.log",
+      "bytes": 200,
+      "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/actual-systemd-parent.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/child-final-load-state.log",
+      "bytes": 10,
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/child-final-load-state.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/child-load-state.log",
+      "bytes": 10,
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/child-load-state.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/install-reviewed-unit.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/install-reviewed-unit.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/parent-properties.log",
+      "bytes": 146,
+      "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/parent-properties.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/seal-parent-directory.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/seal-parent-directory.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/seal-parent-receipt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/seal-parent-receipt.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/start-fixed-parent.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/start-fixed-parent.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/systemd-reload.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/systemd-reload.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/systemd-run.log",
+      "bytes": 542,
+      "sha256": "8ae6679bb7ebffac66399c2708f2b974e439ee706d9432158ab128406807f47d",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/fresh-service-host/systemd-run.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/original-host-controls.log",
+      "bytes": 178,
+      "sha256": "080d571d841c795e16c5c58748b3d791e11371b9ccb8b3e96eb9c82ad95d72dc",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/original-host-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/original-native-controls.log",
+      "bytes": 24541,
+      "sha256": "afe3f3e56a4b0842c6f2b2a5fa7d1d1df954d63dcaf7ebe0008c9a3bb0675b42",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/original-native-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-head/preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-head/preflight.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service/build.log",
+      "bytes": 108305,
+      "sha256": "900de00469277c9c8c678ec8b25add8f03c337a0f4775237719d388ececf8e33",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service/build.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service/fresh.log",
+      "bytes": 927,
+      "sha256": "fcac5d46aca151223687c2ef7941ad38a663051e43780f13e221f8b3b68b13ff",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service/fresh.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service/original.log",
+      "bytes": 433,
+      "sha256": "cd7d811d92287d9ea4dfb25c19139c4259ad0fde4645f84cc0daa835333db6c2",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service/original.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-controls.log",
+      "bytes": 128,
+      "sha256": "79c420557c941fb0bb74600cb2057b67c94000883c96cf7ea4fead0b962a8c36",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/actual-systemd-parent-after.log",
+      "bytes": 200,
+      "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/actual-systemd-parent-after.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/actual-systemd-parent.log",
+      "bytes": 200,
+      "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/actual-systemd-parent.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/child-final-load-state.log",
+      "bytes": 10,
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/child-final-load-state.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/child-load-state.log",
+      "bytes": 10,
+      "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/child-load-state.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/install-reviewed-unit.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/install-reviewed-unit.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/parent-properties.log",
+      "bytes": 146,
+      "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/parent-properties.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/seal-parent-directory.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/seal-parent-directory.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/seal-parent-receipt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/seal-parent-receipt.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/start-fixed-parent.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/start-fixed-parent.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/systemd-reload.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/systemd-reload.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/systemd-run.log",
+      "bytes": 542,
+      "sha256": "5193b4f96c021cea0cc59db6de463c719679dc22ea53b3b0a9ce5340677f35eb",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/fresh-service-host/systemd-run.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/original-host-controls.log",
+      "bytes": 178,
+      "sha256": "a13e948ad441b856539d7be9390081433ee30ca7acc65db01b3ac8c7cc12825e",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/original-host-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/original-native-controls.log",
+      "bytes": 24541,
+      "sha256": "e609eea19474496ddd3075319ff55f971ec31561d07a755dcbaeddc87b82ce3e",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/original-native-controls.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/artifacts/w1-fresh-prospective-merge/preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/artifacts/w1-fresh-prospective-merge/preflight.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/preflight.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/raw/original-native-campaign-log.log",
+      "bytes": 201090,
+      "sha256": "efa4622ac40e7532aba12154fab809ac06eeb19aac094c0006cb5457a8396a36",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/original-native-campaign-log.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/raw/retained-pressure-failure-log.log",
+      "bytes": 4109,
+      "sha256": "62b5260f647e221aa9559c9625f9dd7705233c9b7e1fac1856c9fcc3a4b9d14b",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/retained-pressure-failure-log.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/raw/w1-fresh-head-log.log",
+      "bytes": 184869,
+      "sha256": "237cba003a26ea394cf802b75812ab6350e0cfa4d605739ec66b25eac8d19722",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-head-log.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "ci-c5/business/raw/w1-fresh-prospective-merge-log.log",
+      "bytes": 185669,
+      "sha256": "5492f8c4723498a5eca508c66029251387fb022e36f51b954f5b8d301d9d117e",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-prospective-merge-log.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "failed-operation/raw/jobs/failed/stderr.log",
+      "bytes": 423,
+      "sha256": "7fa5c2791684e93f9c9808f8112a10c0b6fd19de124a0bdb4915817506633cc6",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/failed-operation/raw/jobs/failed/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "failed-operation/raw/jobs/failed/stdout.log",
+      "bytes": 650,
+      "sha256": "6d9f5b4d716fd04f7d8f7f7ab2267880d6fcfefc68ed972c014d104956a91318",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/failed-operation/raw/jobs/failed/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "failed-operation/raw/run/owner-cancel-start-command/stderr.log",
+      "bytes": 1074,
+      "sha256": "7411bd99264dcce201d2714b9c984dcf6830bbeede15d8916aeb24fb7f73abd4",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/failed-operation/raw/run/owner-cancel-start-command/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "failed-operation/raw/run/owner-cancel-start-command/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/failed-operation/raw/run/owner-cancel-start-command/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/cold-readback-01/target-reconcile/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/cold-readback-01/target-reconcile/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/cold-readback-01/target-reconcile/stdout.log",
+      "bytes": 3564,
+      "sha256": "6242d48d9c845e21d0981233aef11ee880171189bd89d426ef338797f58e31da",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/cold-readback-01/target-reconcile/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/jobs/actual/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/jobs/actual/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/jobs/actual/stdout.log",
+      "bytes": 510,
+      "sha256": "9e5b5b9d0f1f57da8b7581b845b7e7fe9ec35537e88444825c1ed51b2efa8dd7",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/jobs/actual/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/jobs/cold/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/jobs/cold/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/jobs/cold/stdout.log",
+      "bytes": 216,
+      "sha256": "c1702f39561c072f040a7fb454fb9ca868cf0bd3216581355a8fb9df8df8c8c7",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/jobs/cold/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/native-independent-process/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/native-independent-process/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/native-independent-process/stdout.log",
+      "bytes": 849,
+      "sha256": "b1449da7065df109aa15d4f09ca1edf2a888a78abaead9c7a8eefe165052e599",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/native-independent-process/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/native-winner-process/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/native-winner-process/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/native-winner-process/stdout.log",
+      "bytes": 1067,
+      "sha256": "e1f279da6efd504498bc8c9c1562d9bdb9a10119705a2bfcae51a91264fa24eb",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/native-winner-process/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/owner-cancel-reconcile-command/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/owner-cancel-reconcile-command/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/owner-cancel-reconcile-command/stdout.log",
+      "bytes": 201,
+      "sha256": "7e2262f3b90ad5f6ce6573bbd298195742227938fef84aa693c1743516ce7214",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/owner-cancel-reconcile-command/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/owner-cancel-start-command/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/owner-cancel-start-command/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c5/raw/run/owner-cancel-start-command/stdout.log",
+      "bytes": 197,
+      "sha256": "4a7e17b2acfade7705d851aa62d954db7a71e657debfa0c4035c8c704d36377d",
+      "repo_path": "evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw/run/owner-cancel-start-command/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "base96-observation/object-presence.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/base96-observation/object-presence.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "base96-observation/read-observations/archive-attempt-01.stderr.log",
+      "bytes": 619,
+      "sha256": "032312e1ab78b8f0bd1e69c11f33b7db27ea80195c3c0b1785589b1dd86cb8c8",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/base96-observation/read-observations/archive-attempt-01.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "base96-observation/read-observations/archive-attempt-01.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/base96-observation/read-observations/archive-attempt-01.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "base96-observation/read-observations/archive-attempt-02.stderr.log",
+      "bytes": 111,
+      "sha256": "475261a81c62e71437737a1ee42a64239c8ca339d2ae30787e763291cc67add5",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/base96-observation/read-observations/archive-attempt-02.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "base96-observation/read-observations/archive-attempt-02.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/base96-observation/read-observations/archive-attempt-02.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "base96-observation/selected-hunks.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/base96-observation/selected-hunks.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/backend-native-copy/partial-observation.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/backend-native-copy/partial-observation.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/backend-native-copy/partial-observation.stdout.log",
+      "bytes": 485,
+      "sha256": "6ed01c2f9a35ea0624143b04717937b674d3fed5ed59bdab1a0bf9e8492cdcfc",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/backend-native-copy/partial-observation.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/backend-native-copy/runtime/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/backend-native-copy/runtime/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/backend-native-copy/runtime/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/backend-native-copy/runtime/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/owner-copy/copy.stderr.log",
+      "bytes": 164,
+      "sha256": "c3379a50e874c3afc3d427ab4d86febe187533c457345e0d9b433c856f44f018",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/owner-copy/copy.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/owner-copy/copy.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/owner-copy/copy.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/owner-copy/preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/owner-copy/preflight.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/owner-copy/runtime/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/owner-copy/runtime/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "build-preparation/owner-copy/runtime/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/build-preparation/owner-copy/runtime/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/independent-cold-reconcile/target-reconcile/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/independent-cold-reconcile/target-reconcile/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/independent-cold-reconcile/target-reconcile/stdout.log",
+      "bytes": 3564,
+      "sha256": "edcdc6251539ccf060ed62ebfc94ae4e6efdc85c8e13fb0256e81cdf195d624b",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/independent-cold-reconcile/target-reconcile/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/native-independent-process/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/native-independent-process/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/native-independent-process/stdout.log",
+      "bytes": 849,
+      "sha256": "1d7efb14996f4a1ff811519eee9692ceb88d7053f243eed3161219fcfcdcb214",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/native-independent-process/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/native-winner-process/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/native-winner-process/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/native-winner-process/stdout.log",
+      "bytes": 1067,
+      "sha256": "9a52e76eaeec0d962e3f1510797854efb97699a440ea94b5be1cca03aa91d231",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/native-winner-process/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/owner-cancel-reconcile-command/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/owner-cancel-reconcile-command/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/owner-cancel-reconcile-command/stdout.log",
+      "bytes": 201,
+      "sha256": "7e2262f3b90ad5f6ce6573bbd298195742227938fef84aa693c1743516ce7214",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/owner-cancel-reconcile-command/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/owner-cancel-start-command/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/owner-cancel-start-command/stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "lifecycle-c6/raw/run/owner-cancel-start-command/stdout.log",
+      "bytes": 197,
+      "sha256": "4a7e17b2acfade7705d851aa62d954db7a71e657debfa0c4035c8c704d36377d",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/lifecycle-c6/raw/run/owner-cancel-start-command/stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "qualification/audit-records/backend-isolated-job.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/qualification/audit-records/backend-isolated-job.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "qualification/audit-records/completed-components-job.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/qualification/audit-records/completed-components-job.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "qualification/audit-records/publication-preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/qualification/audit-records/publication-preflight.stderr.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    },
+    {
+      "path": "qualification/audit-records/publication-preflight.stdout.log",
+      "bytes": 181,
+      "sha256": "1a6648a1694ecdfb1047f814a24abc3f223e8a80374fb6b053255b3ca79b3a4b",
+      "repo_path": "evidence/pon-w1-base62-integration-20261108/qualification/audit-records/publication-preflight.stdout.log",
+      "old_worktree_bytes_verified": true,
+      "in_d4_git_tree": false,
+      "in_d5_checkout": false
+    }
+  ],
+  "present_count": 789,
+  "all_old_worktree_member_bytes_verified": true,
+  "git_ignore_exit": 0,
+  "observed_monotonic_ns": 1203342163296260,
+  "no_repairs_yet": true
+}

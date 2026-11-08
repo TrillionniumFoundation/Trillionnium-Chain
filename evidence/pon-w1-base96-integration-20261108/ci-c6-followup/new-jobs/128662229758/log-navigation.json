@@ -1,0 +1,159 @@
+{
+  "candidate_count": 6,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 111,
+      "text": "2026-11-08T07:22:16.6376292Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 142,
+      "text": "2026-11-08T07:22:16.6416461Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 667,
+      "text": "2026-11-08T07:22:16.6963537Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 747,
+      "text": "2026-11-08T07:22:16.7049655Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1183,
+      "text": "2026-11-08T07:24:00.6336613Z   \"summary\": {"
+    },
+    {
+      "line": 1205,
+      "text": "2026-11-08T07:28:37.6131158Z ##[error]Process completed with exit code 1."
+    }
+  ],
+  "job_id": 128662229758,
+  "kind": "executed-failure",
+  "last_candidates": [
+    {
+      "line": 111,
+      "text": "2026-11-08T07:22:16.6376292Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 142,
+      "text": "2026-11-08T07:22:16.6416461Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 667,
+      "text": "2026-11-08T07:22:16.6963537Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 747,
+      "text": "2026-11-08T07:22:16.7049655Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1183,
+      "text": "2026-11-08T07:24:00.6336613Z   \"summary\": {"
+    },
+    {
+      "line": 1205,
+      "text": "2026-11-08T07:28:37.6131158Z ##[error]Process completed with exit code 1."
+    }
+  ],
+  "log_lines": 1285,
+  "log_sha256": "d9e9db08f7706378b3fdd76d8dab5a92ceded9d5c9c78b563fb54bb83c1fca18",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 1262,
+      "text": "2026-11-08T07:28:39.6562089Z Beginning upload of artifact content to blob storage"
+    },
+    {
+      "line": 1263,
+      "text": "2026-11-08T07:28:40.4543546Z (node:6841) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities."
+    },
+    {
+      "line": 1264,
+      "text": "2026-11-08T07:28:40.8865631Z Uploaded bytes 8388608"
+    },
+    {
+      "line": 1265,
+      "text": "2026-11-08T07:28:40.9524813Z Uploaded bytes 8754015"
+    },
+    {
+      "line": 1266,
+      "text": "2026-11-08T07:28:40.9929490Z Finished uploading artifact content to blob storage!"
+    },
+    {
+      "line": 1267,
+      "text": "2026-11-08T07:28:40.9930513Z SHA256 digest of uploaded artifact zip is 9ca83e6f1ce0156c57b727f01b7852ebaf6581cc350eb9ba82431182198e8752"
+    },
+    {
+      "line": 1268,
+      "text": "2026-11-08T07:28:40.9932323Z Finalizing artifact upload"
+    },
+    {
+      "line": 1269,
+      "text": "2026-11-08T07:28:41.3961120Z Artifact cost-arm64-2bdd252aa6c300b7431b9ee897b254b7953cf562-1.zip successfully finalized. Artifact ID 13608946704"
+    },
+    {
+      "line": 1270,
+      "text": "2026-11-08T07:28:41.3962326Z Artifact cost-arm64-2bdd252aa6c300b7431b9ee897b254b7953cf562-1 has been successfully uploaded! Final size is 8754015 bytes. Artifact ID is 13608946704"
+    },
+    {
+      "line": 1271,
+      "text": "2026-11-08T07:28:41.3966153Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/artifacts/13608946704"
+    },
+    {
+      "line": 1272,
+      "text": "2026-11-08T07:28:41.4221639Z Post job cleanup."
+    },
+    {
+      "line": 1273,
+      "text": "2026-11-08T07:28:41.5023376Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1274,
+      "text": "2026-11-08T07:28:41.5063067Z git version 2.56.0"
+    },
+    {
+      "line": 1275,
+      "text": "2026-11-08T07:28:41.5099765Z Temporarily overriding HOME='/home/runner/work/_temp/ecee3530-868d-4f95-a91d-d54fd2cadaf9' before making global git config changes"
+    },
+    {
+      "line": 1276,
+      "text": "2026-11-08T07:28:41.5100868Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1277,
+      "text": "2026-11-08T07:28:41.5105823Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1278,
+      "text": "2026-11-08T07:28:41.5152044Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1279,
+      "text": "2026-11-08T07:28:41.5188024Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1280,
+      "text": "2026-11-08T07:28:41.5445427Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1281,
+      "text": "2026-11-08T07:28:41.5482089Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1282,
+      "text": "2026-11-08T07:28:41.5742297Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1283,
+      "text": "2026-11-08T07:28:41.5781891Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1284,
+      "text": "2026-11-08T07:28:41.6199923Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1285,
+      "text": "2026-11-08T07:28:41.6605136Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

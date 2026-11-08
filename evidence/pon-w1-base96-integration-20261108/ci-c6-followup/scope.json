@@ -1,0 +1,102 @@
+{
+  "CI_reruns": 0,
+  "history_run": 42456320219,
+  "history_source": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "schema": "TRNM-W1-C6-LATER-FAILURE-READ-SCOPE1",
+  "selected_new_failure_jobs": [
+    {
+      "job_id": 128662532819,
+      "name": "prospective-merge (rust-baseline)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229998,
+      "name": "prospective-merge (external-evidence-contract)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229957,
+      "name": "prospective-merge (fuzz-smoke)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229947,
+      "name": "prospective-merge (protocol-contract)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229937,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229935,
+      "name": "prospective Rust shard (quality)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229865,
+      "name": "cross-arch-cost (x64)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229854,
+      "name": "prospective-merge (repository-truth)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229829,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229758,
+      "name": "cross-arch-cost (arm64)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229746,
+      "name": "prospective Rust shard (runtime)",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128662229491,
+      "name": "protocol-contract",
+      "run_id": "42457886543"
+    },
+    {
+      "job_id": 128660702010,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "run_id": "42457886518"
+    },
+    {
+      "job_id": 128660701948,
+      "name": "W1 fresh challenge service (x64, head)",
+      "run_id": "42457886518"
+    },
+    {
+      "job_id": 128660701711,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "run_id": "42457886555"
+    },
+    {
+      "job_id": 128660701637,
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "run_id": "42457886555"
+    },
+    {
+      "job_id": 128660701605,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "run_id": "42457886555"
+    },
+    {
+      "job_id": 128660701377,
+      "name": "original native campaign (x64, head, release)",
+      "run_id": "42457886578"
+    }
+  ],
+  "snapshot_path": "/home/qian-qi/work/chain-w1-c7-remote-observation-20261108-ec265b-01/snapshot.json",
+  "snapshot_sha256": "1e65f320701a9f1e948a8b4930f97835ee9c02d926446e081ecd07d9ca028f3e",
+  "source_edits": 0,
+  "workflow_dispatches": 0
+}

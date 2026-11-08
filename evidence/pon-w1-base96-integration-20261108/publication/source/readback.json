@@ -1,0 +1,78 @@
+{
+  "schema": "TRNM-W1-C7-SOURCE-PUBLICATION1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "source_parents": [
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+  ],
+  "actor": "ProfHepta",
+  "push_kind": "ordinary-fast-forward",
+  "components": [
+    {
+      "name": "core",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-ci-core-01/manifest.json",
+      "sha256": "d74f30544e9a41d00b209e4016085d33a0ef678cd33a4e64532ab25b20bf3e1d",
+      "commands": 20
+    },
+    {
+      "name": "owner",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/manifest.json",
+      "sha256": "6aeb6311539926f0e4f96c9fc2469953fbb879ba5897e7e3e0d16f1399d26261",
+      "commands": 19
+    },
+    {
+      "name": "receiver",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-receiver-01/manifest.json",
+      "sha256": "9f7eb12ae0f01eb79946fbff4cf9e69330f642cf5dec08ff50cf71c1ec904a1c",
+      "commands": 4
+    },
+    {
+      "name": "history-local",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/manifest.json",
+      "sha256": "5025eadebdb08f85b1e8bb8c68076f29adc59d1048b277630deb2618b1189c3c",
+      "commands": 5
+    },
+    {
+      "name": "staged",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+      "sha256": "4311dac940b8c5e46100f4c555999684de483665fdad90d2cee546ca99dccc5c",
+      "commands": 4
+    },
+    {
+      "name": "backend",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/manifest.json",
+      "sha256": "7f9368578b4cb5d12f5e4f50e8a1fbfa320545ebd901a489ca4984ca6e657d9b",
+      "commands": 7
+    },
+    {
+      "name": "native",
+      "manifest": "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json",
+      "sha256": "3870f4ff23cc1d9591b92fe5751536b104a6fb5a0db8576f0e5ad09b8cc87681",
+      "commands": 10
+    }
+  ],
+  "qualified_command_count": 69,
+  "ordinary_methods_reported": 655,
+  "ordinary_ignored": 4,
+  "expected_negative_exit_commands": 1,
+  "before_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "after_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "api_base_before": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "api_base_after": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "api_head_after": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "api_merge_after": null,
+  "pr_draft": true,
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/782",
+  "new_ci_not_yet_qualified": true,
+  "tested_base_parent_matches_current_remote_base": false,
+  "observed_unix_ns": 1794126848687374716
+}

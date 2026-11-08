@@ -1,0 +1,211 @@
+{
+  "candidate_count": 13,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 112,
+      "text": "2026-11-08T07:21:25.7501086Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 143,
+      "text": "2026-11-08T07:21:25.7600724Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 668,
+      "text": "2026-11-08T07:21:25.7866654Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 748,
+      "text": "2026-11-08T07:21:25.7918500Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1013,
+      "text": "2026-11-08T07:21:31.0281067Z Traceback (most recent call last):"
+    },
+    {
+      "line": 1020,
+      "text": "2026-11-08T07:21:31.0283601Z     raise ValueError('merge parents differ from the event base and candidate')"
+    },
+    {
+      "line": 1021,
+      "text": "2026-11-08T07:21:31.0283850Z ValueError: merge parents differ from the event base and candidate"
+    },
+    {
+      "line": 1022,
+      "text": "2026-11-08T07:21:31.0430858Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1037,
+      "text": "2026-11-08T07:21:31.2342307Z Traceback (most recent call last):"
+    },
+    {
+      "line": 1044,
+      "text": "2026-11-08T07:21:31.2344993Z     raise ValueError('merge parents differ from the event base and candidate')"
+    },
+    {
+      "line": 1045,
+      "text": "2026-11-08T07:21:31.2345240Z ValueError: merge parents differ from the event base and candidate"
+    },
+    {
+      "line": 1046,
+      "text": "2026-11-08T07:21:31.2479502Z ##[error]Process completed with exit code 1."
+    }
+  ],
+  "job_id": 128662229854,
+  "kind": "source-guard-sample",
+  "last_candidates": [
+    {
+      "line": 112,
+      "text": "2026-11-08T07:21:25.7501086Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 143,
+      "text": "2026-11-08T07:21:25.7600724Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 668,
+      "text": "2026-11-08T07:21:25.7866654Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 748,
+      "text": "2026-11-08T07:21:25.7918500Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1013,
+      "text": "2026-11-08T07:21:31.0281067Z Traceback (most recent call last):"
+    },
+    {
+      "line": 1020,
+      "text": "2026-11-08T07:21:31.0283601Z     raise ValueError('merge parents differ from the event base and candidate')"
+    },
+    {
+      "line": 1021,
+      "text": "2026-11-08T07:21:31.0283850Z ValueError: merge parents differ from the event base and candidate"
+    },
+    {
+      "line": 1022,
+      "text": "2026-11-08T07:21:31.0430858Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1037,
+      "text": "2026-11-08T07:21:31.2342307Z Traceback (most recent call last):"
+    },
+    {
+      "line": 1044,
+      "text": "2026-11-08T07:21:31.2344993Z     raise ValueError('merge parents differ from the event base and candidate')"
+    },
+    {
+      "line": 1045,
+      "text": "2026-11-08T07:21:31.2345240Z ValueError: merge parents differ from the event base and candidate"
+    },
+    {
+      "line": 1046,
+      "text": "2026-11-08T07:21:31.2479502Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1069,
+      "text": "2026-11-08T07:21:31.4073662Z ##[error]No files were found with the provided path: /home/runner/work/_temp/ci-observations/. No artifacts will be uploaded."
+    }
+  ],
+  "log_lines": 1083,
+  "log_sha256": "ea9333a46f05aa32067905003048bab3df690deed679f61876516975c796b17a",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 1060,
+      "text": "2026-11-08T07:21:31.2912506Z   RUST_TEST_THREADS: 1"
+    },
+    {
+      "line": 1061,
+      "text": "2026-11-08T07:21:31.2912621Z   CARGO_TERM_COLOR: never"
+    },
+    {
+      "line": 1062,
+      "text": "2026-11-08T07:21:31.2912757Z   PYTHONDONTWRITEBYTECODE: 1"
+    },
+    {
+      "line": 1063,
+      "text": "2026-11-08T07:21:31.2912978Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d"
+    },
+    {
+      "line": 1064,
+      "text": "2026-11-08T07:21:31.2913208Z   TRNM_EXPECTED_CANDIDATE_SHA: 2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    },
+    {
+      "line": 1065,
+      "text": "2026-11-08T07:21:31.2913435Z   TRNM_EXPECTED_BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+    },
+    {
+      "line": 1066,
+      "text": "2026-11-08T07:21:31.2913609Z ##[endgroup]"
+    },
+    {
+      "line": 1067,
+      "text": "2026-11-08T07:21:31.4051069Z (node:2237) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead."
+    },
+    {
+      "line": 1068,
+      "text": "2026-11-08T07:21:31.4051881Z (Use `node --trace-deprecation ...` to show where the warning was created)"
+    },
+    {
+      "line": 1069,
+      "text": "2026-11-08T07:21:31.4073662Z ##[error]No files were found with the provided path: /home/runner/work/_temp/ci-observations/. No artifacts will be uploaded."
+    },
+    {
+      "line": 1070,
+      "text": "2026-11-08T07:21:31.4252313Z Post job cleanup."
+    },
+    {
+      "line": 1071,
+      "text": "2026-11-08T07:21:31.4855185Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1072,
+      "text": "2026-11-08T07:21:31.4888543Z git version 2.56.0"
+    },
+    {
+      "line": 1073,
+      "text": "2026-11-08T07:21:31.4912144Z Temporarily overriding HOME='/home/runner/work/_temp/82b77a17-7405-4cfd-a8c6-c7db2b7bfa55' before making global git config changes"
+    },
+    {
+      "line": 1074,
+      "text": "2026-11-08T07:21:31.4913087Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1075,
+      "text": "2026-11-08T07:21:31.4915588Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1076,
+      "text": "2026-11-08T07:21:31.4952244Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1077,
+      "text": "2026-11-08T07:21:31.4986759Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1078,
+      "text": "2026-11-08T07:21:31.5213259Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1079,
+      "text": "2026-11-08T07:21:31.5250923Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1080,
+      "text": "2026-11-08T07:21:31.5497934Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1081,
+      "text": "2026-11-08T07:21:31.5535267Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1082,
+      "text": "2026-11-08T07:21:31.5864114Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1083,
+      "text": "2026-11-08T07:21:31.6110861Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

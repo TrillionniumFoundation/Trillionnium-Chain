@@ -7854,3 +7854,19 @@ C5 checkout、原目标缓存、两个已发布证据分支身份和所有旧操
 [C6事后证据](../../evidence/pon-w1-base62-integration-20261108/README.md) 保留完整原件、失败、构建来源与独立严格摘要核验。原[C5四门证据](../../evidence/pon-w1-four-gates-20261108/README.md)421个成员及清单自身422文件逐字节保留；新增完整proof0、完整生成ABBA未执行，原业务与全部部署/安全门仍HOLD。
 
 期间base又推进96a241bf43f6a46d35dfb3d4ced9594ed8ceca75；新增可执行历史诊断/Host辅助及pins5条，无production Rust src/M12/W1 generation改变。静态与实际GitHub merge tree均d73e57c9e7a5764a1ab33540c97af587bb6e4a69；实际merge7b4a63b6f08687e93270407772951aa71087ca3d parents=[96a241,C6]。07:19:50的85项CI快照40fail/10success/3skip/32running；38prospective在source绑定前置步骤失败，export另因ordered-parent guard失败（16离线tests通过），一项缺历史artifact。原事件base62与actual96不一致被严格拒绝，不改guard、不倒填事件，也不将skipped业务算成实测失败或通过。新候选正常整合base96后须另核新事件与源码资格；本事后文档不冒充被执行source。
+
+
+**2026-11-08：C7 固定 base96 最小整合，等待新事件与精确源码资格。** 已冻结 C6 `2bdd252aa6c300b7431b9ee897b254b7953cf562` 在独立新研究 Node/M12 operation 实际完成原 120 秒自然 deadline→Failure Unknown→独立 owner veto／本金退款→同一原 Cancel 的重组恢复及独立 cold；main 与 cold 各有 1 个实际 heavy 入口通过，Done 仅闭合派发，consumed=null、全 cap 保留、无 provider 付款、0 新完整 proof，确定性 NativeTask Cancel 与 C5 同 wire/packet，不能累计两轮本金。C6 首轮 staged 两项失败、原 backend 900 秒／124、唯一同源码同参数 32 项隔离复核及新 cached backend attempt 均各自保留，不把原失败改为通过。本 C7 将固定 base `96a241bf43f6a46d35dfb3d4ced9594ed8ceca75` 正常合入 C6：新增 4 个独立 History 诊断路径、Host helper 增加 6 行、corpus 增加 5 项 pin／required；集成检查保留了 embedded source inventory 的原失败，随后使用仓库原生成器仅注册新增 Rust integration test，并将该既有 inventory pin 精确重绑；全部既有 pin 路径和拒绝条件保留。生产 Rust src、M12 与 W1 生成代码不变，最终 C7 tree 不以未加计划段和清单修复的静态 d73 预览替代。已观察的 39 项远端 CI source-context 前置拒绝（38 个 prospective-merge lane 与 1 个 CodeQL export）绑定事件 base62，而实际 merge 父提交使用 base96/C6，属于正确拒绝；不更改 guard/context、不重写原事件，也不将其他 artifact／业务失败归入该原因。C7 必须独立核验新事件的 base/head/merge 有序父提交与 canonical tree，并在冻结的新 source commit/tree 上另取精确资格；本段不授予新候选、原业务预算、完整资源或部署安全资格，四门继续 HOLD。
+
+
+### 2026-11-08 — C7 exact qualification and D5 publication correction
+
+C7 source 40a3a45d6b8afc5c4706c5235fec47634f4aabbe / tree 4b25e3194a0682adff40bb476f2e7c0a395639fe completed 69 exact-source commands: 68 exit 0 and one declared unknown-stage source-probe exit 1. Independent raw review counted 614 Python + 41 Rust = 655 ordinary PASS and four ignored. History was release-compiled/listed only (zero executed test passes); staged 32 ran once with original parameters after all six known current qualification jobs were terminal/inactive.
+
+C7 prepared intent b515f62d1a8ade59f4bf3a01ae5ef774d463ed43adc129de88602555cca945c1 did not obtain a provable application launch: original job 1a1ba4cf251-12894-1994 remains launch-Unknown, same-key reconciliation did not relaunch, and bounded final observations found no config/Node/target. Actual deadline, M12/funding/cap state, refund/reorg/cold remain unobserved; absence is not proof of no execution. No alternate replay occurred. The earlier C5/C6 actual lifecycles retain their own identities.
+
+A new worktree exposed 104 original .log members omitted by the repository ignore rule (C5 75; C6 29). D5 restores exact bytes under unchanged old inventory hashes and verifies all 895 old paths through Git blobs. Earlier local completeness counts did not prove public availability; the PR correction states this explicitly.
+
+C6 follow-up CI has genuine original-budget business failures in addition to source gates. The bounded C7 remote observation has zero exact-head checks/runs and no fresh event tuple, while base9417 introduces production changes and two real merge conflicts. A separate fixed-base C8 integration addresses these conflicts; C7 results are not relabeled as C8 qualification. Full generation, original business budget, provider payment, complete resource billing, deployed WAN, actual same-winner Node admission and full security qualifications remain HOLD.
+
+Evidence: [C7 qualification and publication correction](../../evidence/pon-w1-base96-integration-20261108/README.md).

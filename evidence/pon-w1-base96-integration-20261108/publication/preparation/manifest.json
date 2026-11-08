@@ -1,0 +1,100 @@
+{
+  "schema": "TRNM-W1-C7-ROOT-PREPARATION1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "source_freeze_sha256": "089190fdc5d2ff41609235bc582676351ae575842cf812163d50e66c4f3c49a3",
+  "tool_files": {
+    "core-plan.json": {
+      "bytes": 3053,
+      "sha256": "3d81ede06e9c34aa6eb8627805ed7c49170adee6745fca4d7e6e104f1731905c"
+    },
+    "history-local-plan.json": {
+      "bytes": 1274,
+      "sha256": "e052004617b963f54b9ccb55e6d6130bc9eb84dd6c0593101b65762ba28530f2"
+    },
+    "history_compile_list.py": {
+      "bytes": 2907,
+      "sha256": "01d0d3d4c726d56a723c087fcf6a14824512a8abe786d28465584543e02d3275"
+    },
+    "launch_owner.py": {
+      "bytes": 1782,
+      "sha256": "8631bd49109c0b0d0f3562751946d0d229836e0cc532e67b52fe0467877d789b"
+    },
+    "owner-plan.json": {
+      "bytes": 6364,
+      "sha256": "211cbe1ab1b6b9525134f91f36f93ee5fc1d81b34e3c1a3bf894b72c01ba806c"
+    },
+    "qualify_source.py": {
+      "bytes": 5715,
+      "sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f"
+    },
+    "staged-plan.json": {
+      "bytes": 637,
+      "sha256": "852763cb52a6bde4447d56abaa72af3e9c3494ae329d283ef09faafee134a542"
+    }
+  },
+  "commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "stdout_sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "stdout_sha256": "1a404a1e57ff243f509d32f848cb967d065ddb4c836b0d2bdbedac0a7da481d0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "03-clean",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "owner_preparation": {
+    "schema": "TRNM-W1-C7-EMPTY-TARGET-PREPARATION1",
+    "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+    "target": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b",
+    "device": 2050,
+    "inode": 52862300,
+    "entries_at_creation": 0,
+    "created_monotonic_ns": 1202642954713449,
+    "copied_cache": false,
+    "reused_registry_toolchain": true,
+    "cleanroom": false
+  },
+  "owner_preparation_sha256": "d9e66a4ee1cb9cdbe0a1399b7e347f53866f6a5c0b8739711bbebfb0a6fe49a1",
+  "declared_python_methods_core_and_staged": 603,
+  "qualification_already_claimed": false,
+  "deadline_selected": false,
+  "operation_created": false
+}

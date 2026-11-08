@@ -1,0 +1,181 @@
+{
+  "actual_command_count": 7,
+  "actual_nonzero_commands": [
+    "source-probe"
+  ],
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "metadata",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "compiler-version",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--bin",
+        "w1-staged-prover-v2",
+        "--features",
+        "retained-v2-guest",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "build",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+        "--r0vm",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+        "source-binding-probe",
+        "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/source-probe-must-remain-absent"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 1,
+      "label": "source-probe",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "backend",
+  "durable_exit": 0,
+  "durable_job_id": "1a1ba2c4819-12894-18cb",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "7f9368578b4cb5d12f5e4f50e8a1fbfa320545ebd901a489ca4984ca6e657d9b",
+  "provenance": {
+    "binary_bindings": {
+      "runner": {
+        "bytes": 47813072,
+        "cargo_reported_fresh": false,
+        "copied_into_publication": false,
+        "current_nlink": 2,
+        "independently_rehashed": true,
+        "path": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+        "sha256": "268a2a56a4896aa8da926937f1643c9d2c3dfc690f9b6e3ffa1c7d7e2858dd46"
+      }
+    },
+    "cache_copy_outer_budget_seconds": 1800,
+    "copied_c6_cache_provenance_checked": true,
+    "expensive_proof_started": false,
+    "fresh_target": false,
+    "historic_native243_rerun": false,
+    "independent_cleanroom_build": false,
+    "probe_exit1_expected_unknown_stage": true,
+    "qualification_budget_seconds": 2400
+  },
+  "python": {},
+  "rust": {},
+  "schema": "TRNM-W1-C7-INDEPENDENT-COMPONENT-REVIEW1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "source_guards_before_after_exact_equal": true
+}

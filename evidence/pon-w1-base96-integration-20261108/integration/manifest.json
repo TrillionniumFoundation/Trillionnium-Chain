@@ -1,0 +1,189 @@
+{
+  "files_including_manifest": 37,
+  "members": [
+    {
+      "bytes": 4969,
+      "path": "README.md",
+      "sha256": "47013ba382997ba9406a6deb4c7e70dc0326f52a71d472dc37741a7a441faaaa"
+    },
+    {
+      "bytes": 7164,
+      "path": "attempts/precommit-checks-01.manifest.json",
+      "sha256": "f57bfb6aaf656d9fd77bbf9c2fa334e8c59c3bad3551d2b809726355081e2c54"
+    },
+    {
+      "bytes": 6168,
+      "path": "attempts/precommit-repair-01.manifest.json",
+      "sha256": "51bc2f09b8045f0ec2eae4b53d78cb31e5afbd3c2936cd1195ff5a777e2e499b"
+    },
+    {
+      "bytes": 1668,
+      "path": "context-review/README.md",
+      "sha256": "c371c8e171a0dbd9a46aca6cd2f656e83c9495f98ac5c5747f099e94fb290670"
+    },
+    {
+      "bytes": 717,
+      "path": "context-review/manifest.json",
+      "sha256": "0a32b8e8b28ad941ce47df8fb768842a675ad33a1d88c4b925d9f8eb8333a553"
+    },
+    {
+      "bytes": 48518,
+      "path": "context-review/snapshot.original.json",
+      "sha256": "0c199a0715ebb25ab6585639a0557c979af48b69323e5bc52599db5ddd283b5c"
+    },
+    {
+      "bytes": 6813,
+      "path": "context-review/source-extract.json",
+      "sha256": "48641395a01ea18e6d38d7a729f5b6368f2088cd35ea92d1e731fcc20c55a6eb"
+    },
+    {
+      "bytes": 8725,
+      "path": "context-review/summary.json",
+      "sha256": "6d7abc85e41f4fe9981f27b73ac2e42fe72c522a201203b62f4d06da12247f31"
+    },
+    {
+      "bytes": 1322,
+      "path": "inventory-repair.original.json",
+      "sha256": "dea839d8ce403f5e1c6aaf3429904672a662b8bb82acb5e167e86cd4897ff078"
+    },
+    {
+      "bytes": 18955,
+      "path": "job-readbacks/context-source-review-output.json",
+      "sha256": "46e51aa834308a5a19c26ac61f831b44dc90287bbeac3a3242fc5b7d6a529325"
+    },
+    {
+      "bytes": 734,
+      "path": "job-readbacks/context-source-review-status.json",
+      "sha256": "9e95d5fe2db4f0b7868c6ab0401461691e9969c52c53e3af146a96266854d2a8"
+    },
+    {
+      "bytes": 1150,
+      "path": "job-readbacks/controlled-freeze-launch.json",
+      "sha256": "0a290fd32633db1710eb64829a801f722f0794ed2823d901dd3b0197d826d502"
+    },
+    {
+      "bytes": 1879,
+      "path": "job-readbacks/controlled-freeze-output.json",
+      "sha256": "8addc541547fcaf3c5945a825ed8b1bb3f003dd1c56819d769bfd061fda4e16d"
+    },
+    {
+      "bytes": 732,
+      "path": "job-readbacks/controlled-freeze-status.json",
+      "sha256": "0a70a906f55006c808648b4b1ec9a1717bec44455f69ce8eb5368a3fece1cfec"
+    },
+    {
+      "bytes": 3889,
+      "path": "job-readbacks/inventory-review-output.json",
+      "sha256": "86653336d9c13f78aa569b348c9c599b1e23949e8ac1a81dd62ee9ab9c7c85f3"
+    },
+    {
+      "bytes": 734,
+      "path": "job-readbacks/inventory-review-status.json",
+      "sha256": "dddfa411c00e425eb689edd9ec5b3ec2ebcaf4b15e2ce979b1ba2b7538f3b34f"
+    },
+    {
+      "bytes": 1205,
+      "path": "job-readbacks/merge-preparation-output.json",
+      "sha256": "d58cd356a4b231425c2bbb38aedb34cc01ab336f77491aa69636a5ce7a7c4a78"
+    },
+    {
+      "bytes": 732,
+      "path": "job-readbacks/merge-preparation-status.json",
+      "sha256": "7b961bd52f244d454ab8f238339c42bddfbe905e65faf1ac03e041c7f119ecb2"
+    },
+    {
+      "bytes": 4056,
+      "path": "job-readbacks/precommit-attempt-01-output.json",
+      "sha256": "abf746070d49a4f695124e1e096655d797a44a7f841bd3910ded19add2a17ed6"
+    },
+    {
+      "bytes": 735,
+      "path": "job-readbacks/precommit-attempt-01-status.json",
+      "sha256": "706b7e8d16a8a2c3b758e2d89b1faad06e0fe96c0903d6e6e714f6ffb54ca6c1"
+    },
+    {
+      "bytes": 3106,
+      "path": "job-readbacks/repair-output.json",
+      "sha256": "3db3d37bf502044862c62f35f5f8f70bb1c5a177364845a00a21bd38fbc0d399"
+    },
+    {
+      "bytes": 732,
+      "path": "job-readbacks/repair-status.json",
+      "sha256": "4b40f661df0c727cbc3f6b08a5467662990977eb62f3fdef3ec22da87e48cbe1"
+    },
+    {
+      "bytes": 1943,
+      "path": "job-readbacks/setup-attempt-01-output.json",
+      "sha256": "467e1ac8e4b0ef8702c2b852070d0d6f5cb4d1201c9998599705025236687bee"
+    },
+    {
+      "bytes": 733,
+      "path": "job-readbacks/setup-attempt-01-status.json",
+      "sha256": "f0af0ff2bfba27c6579a0fba2509c7301e06e9b8e211b01cd931239b0787abad"
+    },
+    {
+      "bytes": 117622,
+      "path": "raw-logs.tar.gz",
+      "sha256": "a54c8b67a906d28fbf8990e04dbed0c3ac5ced6d5e9dc74bbf55aeb78fd0fb94"
+    },
+    {
+      "bytes": 40754,
+      "path": "raw-output-index.json",
+      "sha256": "a9a23447be61971780d9faf79c9c321bee1e69d58408cca6e9cdfae7775a3dd7"
+    },
+    {
+      "bytes": 1984,
+      "path": "recorded-drivers/context-source-extract.py",
+      "sha256": "fe3bc16ba8d9faa7aea6e56ce66c5ee4ecba59a65b3281a5dc2896909f3c17fb"
+    },
+    {
+      "bytes": 7897,
+      "path": "recorded-drivers/freeze-controlled-continuation.py",
+      "sha256": "47fcf82dc323583a0d85635379de160674605e83bb278f73d915533f45f3d67e"
+    },
+    {
+      "bytes": 6525,
+      "path": "recorded-drivers/freeze-original-never-launched.py",
+      "sha256": "6449b53ecd8f36a4f35c256c3758b246fd24fc9cd3ddbfc5baad4f3e7df90aec"
+    },
+    {
+      "bytes": 1540,
+      "path": "recorded-drivers/inventory-readonly-review.py",
+      "sha256": "9ff604458ac8d99759188c0bc5e5f307a3916a548599735301783499ab43e32a"
+    },
+    {
+      "bytes": 3693,
+      "path": "recorded-drivers/merge-preparation-attempt-01.py",
+      "sha256": "89e92f21a1bfc5d9273922987b61b3b5fb351bbedc1cb144cc39454b41e88fa6"
+    },
+    {
+      "bytes": 3786,
+      "path": "recorded-drivers/merge-preparation-attempt-02.py",
+      "sha256": "c0e02598f4d7d2469245f20f5c5086dbb673c35a1a484b84a64c8a49f7d2e03e"
+    },
+    {
+      "bytes": 7878,
+      "path": "recorded-drivers/precommit-checks-attempt-01.py",
+      "sha256": "bea1439800634537567bd408bb8b79e45dfd90ab6d1a921395b1129e8a2deb75"
+    },
+    {
+      "bytes": 10050,
+      "path": "recorded-drivers/precommit-repair-checks.py",
+      "sha256": "08940fe952b5ada552e6b7009ea371363c98d2398918fc15d26ec3253da34e85"
+    },
+    {
+      "bytes": 8181,
+      "path": "source-freeze.original.json",
+      "sha256": "089190fdc5d2ff41609235bc582676351ae575842cf812163d50e66c4f3c49a3"
+    },
+    {
+      "bytes": 6682,
+      "path": "summary.json",
+      "sha256": "6bc179cda10a508ca0a07ca0164d65921ef947ab6a90137683ffc4aad5fd1f83"
+    }
+  ],
+  "members_excluding_self": 36,
+  "schema": "TRNM-W1-C7-INTEGRATION-PUBLICATION-MANIFEST1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+}

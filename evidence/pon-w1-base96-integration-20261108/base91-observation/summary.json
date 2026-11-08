@@ -1,0 +1,85 @@
+{
+  "actual_merge": false,
+  "base96_delta": {
+    "deletions": 3,
+    "insertions": 5,
+    "paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "scripts/ci/test_history_stage_diagnostic.py",
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ],
+    "scope": "History source.json self-label correction, two assertions inside an existing method, and two matching corpus blob pins"
+  },
+  "canonical_helper_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "canonical_order": [
+    "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+    "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+  ],
+  "canonical_static_tree": "e8550e15374ce6a0cc60f435ccd4a0c401741930",
+  "ci_source_guard_or_event_context_changes": false,
+  "documentation_is_posthoc": true,
+  "frozen_source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "frozen_source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "full_history_4105_block_workload_executed": false,
+  "isolated_canonical_matches_ordinary_merge_tree": true,
+  "m12_or_w1_generation_changes": false,
+  "new_candidate_created": false,
+  "new_operations": 0,
+  "new_proofs": 0,
+  "new_tree_source_qualification_established": false,
+  "observed_base": "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+  "observed_base_parent": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "observed_base_tree": "cb9c954cf657b2e57c2f0c61badffdd6941abe6d",
+  "old_c7_elf_relabelled_as_new_tree": false,
+  "only_changed_pins": {
+    "scripts/ci/test_history_stage_diagnostic.py": {
+      "new": "9fa491dd407ae0188142a0699791d620f14ac3f0",
+      "old": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": {
+      "new": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
+      "old": "d6650671ccc93462623351d05fdf434d52669ce1"
+    }
+  },
+  "production_rust_src_changes": false,
+  "publication_state": "filesystem and archive verified; Git index/commit readback is the publishing owner responsibility",
+  "pushes": 0,
+  "raw_archive_members": 40,
+  "raw_archive_sha256": "b712261d44401efa28527a80a9f676c64d8e056d1493d16201a7734cacb9c5a9",
+  "required_path_count": 558,
+  "schema": "TRNM-W1-C7-BASE91-PUBLICATION1",
+  "source_pin_count": 650,
+  "source_worktree_writes": 0,
+  "static_inventory": {
+    "actual_merge_performed": false,
+    "c7_existing_readonly_renderer_matches_inventory": true,
+    "extra_generated_inventory_registration_fix_needed_for_this_delta": false,
+    "generator_same_bytes": true,
+    "generator_sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33",
+    "history_blob_base91_and_hypothetical_tree": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
+    "history_blob_c7": "d6650671ccc93462623351d05fdf434d52669ce1",
+    "history_registration": "    (\n        \"trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs\",\n        include_bytes!(concat!(\n            env!(\"CARGO_MANIFEST_DIR\"),\n            \"/../../../trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs\"\n        )),\n    ),\n",
+    "hypothetical_merge_tree": "e8550e15374ce6a0cc60f435ccd4a0c401741930",
+    "inventory_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+    "inventory_registered_file_count": 1279,
+    "inventory_same_bytes": true,
+    "inventory_sha256": "d44dc342ab665b9abfeaf85bafcdb3a115069f45c80ad0fe09a8d6fe3d747b92",
+    "limits": [
+      "Static consistency does not imply complete source qualification or a completed gate on a new worktree.",
+      "A future integrated source must build/bind its own ELF and run exact source guards; the old C7 binary cannot borrow the new History bytes or commit identity.",
+      "C7 History local scope remains compile/list only; no 4105-block workload execution or qualification is asserted."
+    ],
+    "new_tree_check_command_executed": false,
+    "new_tree_compiled": false,
+    "new_tree_worktree_created": false,
+    "path_set_sha256": "e6679c18a985b4dbd8cea43094cc26a7270831b6768f53dc7c89b5863ca19058",
+    "reason": "The generated Rust file registers include_bytes paths; it stores neither a fixed digest nor literal old History bytes. Changed contents at the same registered path are incorporated at compilation. Unchanged path set and generator leave the generated registration text unchanged.",
+    "same_all_tracked_path_set": true,
+    "schema": "TRNM-W1-C7-BASE91-INVENTORY-STATIC-CONSISTENCY1",
+    "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "source_mutations": 0,
+    "tests_executed": 0,
+    "tracked_paths": 15390
+  },
+  "tests_executed": 0
+}

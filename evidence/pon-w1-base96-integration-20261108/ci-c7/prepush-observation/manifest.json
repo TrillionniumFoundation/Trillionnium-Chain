@@ -1,0 +1,126 @@
+{
+  "directory": "/home/qian-qi/work/chain-w1-c7-remote-observation-20261108-ec265b-01",
+  "file_count_excluding_manifest": 23,
+  "files": [
+    {
+      "bytes": 0,
+      "path": "00-operator-login.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1221,
+      "path": "00-operator-login.stdout",
+      "sha256": "7c74c02d36c5bd329a2548622396a9ae72bce8c5e2295ed239eb1ce9308caf5f"
+    },
+    {
+      "bytes": 0,
+      "path": "01-actual-git-refs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 306,
+      "path": "01-actual-git-refs.stdout",
+      "sha256": "c63c587549ea7a4176c6257f7a010d0b59c4153710f6454ad685ea3d27e55c34"
+    },
+    {
+      "bytes": 0,
+      "path": "02-pr-api.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 26616,
+      "path": "02-pr-api.stdout",
+      "sha256": "d69b9b632870938fdd0f2b9a97b477de09bb7b61e1d84d4bf5bf352c1bc42035"
+    },
+    {
+      "bytes": 0,
+      "path": "03-history-base96-runs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14655,
+      "path": "03-history-base96-runs.stdout",
+      "sha256": "13fb45b9cede2578a8ccf5f56b7491676c78f6df5ce2170ce52ebd313953d64c"
+    },
+    {
+      "bytes": 0,
+      "path": "04-local-C7.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 164,
+      "path": "04-local-C7.stdout",
+      "sha256": "a0b3717b783631fb16c978cc7c3b736461eca914d6f13dcec21ce040470b1b17"
+    },
+    {
+      "bytes": 0,
+      "path": "05-actual-merge-object.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 164,
+      "path": "05-actual-merge-object.stdout",
+      "sha256": "55dc319078d4e0aceec9980a2dd4cde5da15c12e562620038087723076226400"
+    },
+    {
+      "bytes": 0,
+      "path": "10-C6-checks-page-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 377310,
+      "path": "10-C6-checks-page-1.stdout",
+      "sha256": "6bc085979302202a41f5d701b1af26ec2c164b19519da8c77d6d6dc897f57f2b"
+    },
+    {
+      "bytes": 0,
+      "path": "10-C6-checks-page-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18915,
+      "path": "10-C6-checks-page-2.stdout",
+      "sha256": "31427629711557b4d1e091c6cb489547997a4f7191c0b75d006b284142728875"
+    },
+    {
+      "bytes": 556225,
+      "path": "C6-all-checks.json",
+      "sha256": "786ed0626997fed00dc705b43e7c66e9f9891eeb72dff9a8ddae3350573c16b5"
+    },
+    {
+      "bytes": 21862,
+      "path": "C6-check-transitions.json",
+      "sha256": "11c1a3f3808a7cc462eaa1724af6510abf12a72df5dcbcd50d0441d7c4c4c843"
+    },
+    {
+      "bytes": 57750,
+      "path": "C6-failure-metadata.json",
+      "sha256": "1eacf03ee3ede8b62f02c89868629468df000a6a5e5d774f0c42747158f1d522"
+    },
+    {
+      "bytes": 1908,
+      "path": "README.md",
+      "sha256": "a92e66fcc728ad15aef2089ff81656ff759120ed81879cca302cacb38fb745aa"
+    },
+    {
+      "bytes": 5839,
+      "path": "commands.json",
+      "sha256": "de2052567e4006909be4c1def392c30041ffeaa41dbbea08adbef20cb6cab024"
+    },
+    {
+      "bytes": 48517,
+      "path": "prior-C6-071950-snapshot.json",
+      "sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307"
+    },
+    {
+      "bytes": 14431,
+      "path": "snapshot.json",
+      "sha256": "1e65f320701a9f1e948a8b4930f97835ee9c02d926446e081ecd07d9ca028f3e"
+    }
+  ],
+  "manifest_excludes_itself": true,
+  "maximum_file_bytes": 556225,
+  "mutations_outside_new_external_directory": false,
+  "schema": "TRNM-W1-C7-REMOTE-OBSERVATION-MANIFEST1",
+  "total_bytes_excluding_manifest": 1145883
+}

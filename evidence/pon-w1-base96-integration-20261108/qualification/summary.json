@@ -1,0 +1,167 @@
+{
+  "actual_command_count": 69,
+  "all_actual_command_outputs_rehashed": true,
+  "all_component_jobs_succeeded_complete_durable": true,
+  "all_four_engineering_gates_closed": false,
+  "all_tar_members_readback_verified": true,
+  "audit_attempt_history": [
+    {
+      "driver_sha256": "236ea6fccac307c733d1903c43fe59903a2658c5f310d1ee4224153ff50062fa",
+      "exit": 1,
+      "interpretation": "Audit-only assertion error after sealing core, owner, receiver; required current Cargo backend binary nlink==1 without basis. No qualification command or test failed here.",
+      "job_id": "1a1ba4785b2-12894-1972"
+    },
+    {
+      "driver_sha256": "f4cd49e61d7b108380146db840f790ce1efe42b574b2bd505fff1a6a328ca1b8",
+      "exit": 0,
+      "interpretation": "Only backend/native records continued. Current Cargo ELF regular-file hashes verified, link counts recorded, original isolated cache-copy inode evidence retained; no tests rerun.",
+      "job_id": "1a1ba488995-12894-1978"
+    },
+    {
+      "driver_sha256": "d368cefef50d73ff2d4e178990ae5cbfeea7025bd8dc202acb4345330efd8712",
+      "exit": 0,
+      "interpretation": "History compile/list and single staged32 records independently audited after their terminal qualification; no workload or tests rerun. History list counts 0 passes.",
+      "job_id": "1a1ba525296-12894-19ba"
+    }
+  ],
+  "c5_c6_lifecycle_relabelled_as_c7": false,
+  "c7_lifecycle_separate_status": "launch-Unknown; no heavy/cold execution qualification claimed",
+  "documentation_is_posthoc": true,
+  "expected_nonzero_command": {
+    "actual_exit": 1,
+    "component": "backend",
+    "label": "source-probe",
+    "meaning": "Actual committed source identity emitted, then unknown stage rejected without starting a proof"
+  },
+  "git_index_or_committed_publication_verified_by_this_audit": false,
+  "historical_abba_rebound_to_c7_generation": false,
+  "history_full_workload_executions": 0,
+  "history_list_adds_ordinary_or_ignored_method_executions": false,
+  "history_listed_ignored_entry_count": 1,
+  "hosted_ci_or_new_event_tuple_qualified_by_this_package": false,
+  "ignored_methods": 4,
+  "new_full_proof_generations_in_qualification": 0,
+  "operations_started_by_qualification_or_audit": 0,
+  "ordinary_passes": 655,
+  "publication_scope": "Only explicit logs, source identities, Cargo metadata, plans, drivers, readbacks and posthoc reviews; no ELF, databases, state trees, process environments or credentials.",
+  "python": {
+    "errors": 0,
+    "failed": 0,
+    "methods": 614,
+    "passed": 614,
+    "skipped": 0
+  },
+  "qualification_components": [
+    {
+      "actual_commands": 20,
+      "component": "core",
+      "component_publication_manifest_sha256": "95b6f4758f7f181c1994e80707fffbe87d61ff06ebb45410f3b3c537db152fd9",
+      "durable_job_id": "1a1ba2faec5-12894-18dc",
+      "original_manifest_sha256": "d74f30544e9a41d00b209e4016085d33a0ef678cd33a4e64532ab25b20bf3e1d",
+      "python": {
+        "errors": 0,
+        "failed": 0,
+        "methods": 571,
+        "passed": 571,
+        "skipped": 0
+      },
+      "raw_members": 59,
+      "rust": {}
+    },
+    {
+      "actual_commands": 19,
+      "component": "owner",
+      "component_publication_manifest_sha256": "9dfc3ca6815faaca75cefaefe7093ec00c5d1a267edae4a50a2c7bcb5e55255f",
+      "durable_job_id": "1a1ba308706-12894-18e2",
+      "original_manifest_sha256": "6aeb6311539926f0e4f96c9fc2469953fbb879ba5897e7e3e0d16f1399d26261",
+      "python": {},
+      "raw_members": 48,
+      "rust": {
+        "failed": 0,
+        "ignored": 4,
+        "passed": 37
+      }
+    },
+    {
+      "actual_commands": 4,
+      "component": "receiver",
+      "component_publication_manifest_sha256": "3ec6bfaaac0107c483374d8e74c71259d5b048ea884c83cc386909de8c65f8e4",
+      "durable_job_id": "1a1ba33b2ba-12894-18f3",
+      "original_manifest_sha256": "9f7eb12ae0f01eb79946fbff4cf9e69330f642cf5dec08ff50cf71c1ec904a1c",
+      "python": {
+        "errors": 0,
+        "failed": 0,
+        "methods": 11,
+        "passed": 11,
+        "skipped": 0
+      },
+      "raw_members": 18,
+      "rust": {}
+    },
+    {
+      "actual_commands": 7,
+      "component": "backend",
+      "component_publication_manifest_sha256": "416d477156ccc76a7e7370fef0652d9518b36bbdaf3fcb468c10b533bde450be",
+      "durable_job_id": "1a1ba2c4819-12894-18cb",
+      "original_manifest_sha256": "7f9368578b4cb5d12f5e4f50e8a1fbfa320545ebd901a489ca4984ca6e657d9b",
+      "python": {},
+      "raw_members": 24,
+      "rust": {}
+    },
+    {
+      "actual_commands": 10,
+      "component": "native",
+      "component_publication_manifest_sha256": "30abdf8425a57aa483fd9c3b5410bd8aa7a9a3f515073f81c55c415a94bea352",
+      "durable_job_id": "1a1ba2df8dc-12894-18d2",
+      "original_manifest_sha256": "3870f4ff23cc1d9591b92fe5751536b104a6fb5a0db8576f0e5ad09b8cc87681",
+      "python": {},
+      "raw_members": 30,
+      "rust": {
+        "failed": 0,
+        "ignored": 0,
+        "passed": 4
+      }
+    },
+    {
+      "actual_commands": 5,
+      "component": "history-local",
+      "component_publication_manifest_sha256": "0eea6a914ba780d3a5e90a3195ac157549d483da1239ab734f320ca511596de5",
+      "durable_job_id": "1a1ba3edb11-12894-1938",
+      "original_manifest_sha256": "5025eadebdb08f85b1e8bb8c68076f29adc59d1048b277630deb2618b1189c3c",
+      "python": {},
+      "raw_members": 20,
+      "rust": {}
+    },
+    {
+      "actual_commands": 4,
+      "component": "staged",
+      "component_publication_manifest_sha256": "894c07d94057a4e4b6b9d5463a07516b83156e6f18cf8fd3842ec6e863f9b184",
+      "durable_job_id": "1a1ba46df81-12894-196b",
+      "original_manifest_sha256": "4311dac940b8c5e46100f4c555999684de483665fdad90d2cee546ca99dccc5c",
+      "python": {
+        "errors": 0,
+        "failed": 0,
+        "methods": 32,
+        "passed": 32,
+        "skipped": 0
+      },
+      "raw_members": 15,
+      "rust": {}
+    }
+  ],
+  "raw_archive_members_total": 214,
+  "rust": {
+    "failed": 0,
+    "ignored": 4,
+    "passed": 41
+  },
+  "schema": "TRNM-W1-C7-QUALIFICATION-INDEPENDENT-SUMMARY1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "source_parents": [
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+  ]
+}

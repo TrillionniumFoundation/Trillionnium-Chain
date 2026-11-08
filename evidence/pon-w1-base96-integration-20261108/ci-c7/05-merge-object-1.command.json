@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/7b4a63b6f08687e93270407772951aa71087ca3d"
+  ],
+  "cwd": null,
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794127699663071494,
+  "label": "05-merge-object-1",
+  "started_unix_ns": 1794127697088539235,
+  "stderr": {
+    "bytes": 0,
+    "path": "05-merge-object-1.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 2812,
+    "path": "05-merge-object-1.stdout",
+    "sha256": "c6ef16d912bf0782527df4bd487d36865ee46b1840034a814dbc977013b36b93"
+  },
+  "timed_out": false
+}

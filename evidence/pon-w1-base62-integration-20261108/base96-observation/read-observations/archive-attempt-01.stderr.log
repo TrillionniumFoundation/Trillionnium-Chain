@@ -1,0 +1,3 @@
+Traceback (most recent call last):
+  File "<stdin>", line 86, in <module>
+AssertionError: ('1a1b9f41ba0-12894-17c5', {'at_unix_ms': 1794121163441, 'cancelled': False, 'exit_code': 0, 'job_id': '1a1b9f41ba0-12894-17c5', 'launch_nonce': 'f9ae30a2a806cca7c9f377c7ee722657', 'log_bytes': {'stderr': {'seen': 0, 'stored': 0}, 'stdout': {'seen': 1353, 'stored': 1353}}, 'log_errors': {'stderr': None, 'stdout': None}, 'log_synced': {'stderr': True, 'stdout': True}, 'log_truncated': {'stderr': False, 'stdout': False}, 'output_complete': True, 'output_durable': True, 'terminal_publication_protocol': 1, 'timed_out': False})

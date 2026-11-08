@@ -1,0 +1,1084 @@
+{
+  "archive_sha256": "4d1875c0584a6021c7bb196418ca0696ff79eba7533f7fa2100f1db409aa789f",
+  "artifact_id": 13609280526,
+  "members": [
+    {
+      "bytes": 3974,
+      "compressed_bytes": 1006,
+      "crc32": "ea734314",
+      "is_dir": false,
+      "name": "cross-arch-cost/build.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-cost/campaign-0.stderr"
+    },
+    {
+      "bytes": 3322,
+      "compressed_bytes": 308,
+      "crc32": "bc750aab",
+      "is_dir": false,
+      "name": "cross-arch-cost/build-configuration-v1.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-cost/build.stdout"
+    },
+    {
+      "bytes": 1483158,
+      "compressed_bytes": 96365,
+      "crc32": "3c3b212d",
+      "is_dir": false,
+      "name": "cross-arch-cost/campaign-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-cost/campaign-1.stderr"
+    },
+    {
+      "bytes": 701335,
+      "compressed_bytes": 42912,
+      "crc32": "8aa6c2c3",
+      "is_dir": false,
+      "name": "cross-arch-cost/campaign-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-cost/cargo.stderr"
+    },
+    {
+      "bytes": 36,
+      "compressed_bytes": 38,
+      "crc32": "71504da5",
+      "is_dir": false,
+      "name": "cross-arch-cost/cargo.stdout"
+    },
+    {
+      "bytes": 5952,
+      "compressed_bytes": 939,
+      "crc32": "23ddf50e",
+      "is_dir": false,
+      "name": "cross-arch-cost/cpuinfo.txt"
+    },
+    {
+      "bytes": 8927,
+      "compressed_bytes": 2466,
+      "crc32": "2b163654",
+      "is_dir": false,
+      "name": "cross-arch-cost/manifest.json"
+    },
+    {
+      "bytes": 676392,
+      "compressed_bytes": 285878,
+      "crc32": "64a82426",
+      "is_dir": false,
+      "name": "cross-arch-cost/pon_reused_cost"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-cost/rustc.stderr"
+    },
+    {
+      "bytes": 196,
+      "compressed_bytes": 151,
+      "crc32": "5e616a24",
+      "is_dir": false,
+      "name": "cross-arch-cost/rustc.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-cost/uname.stderr"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 115,
+      "crc32": "be1e0d03",
+      "is_dir": false,
+      "name": "cross-arch-cost/uname.stdout"
+    },
+    {
+      "bytes": 3322,
+      "compressed_bytes": 308,
+      "crc32": "bc750aab",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/build-configuration-v1.json"
+    },
+    {
+      "bytes": 206,
+      "compressed_bytes": 138,
+      "crc32": "09f416b3",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/build.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/build.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/campaign-0.stderr"
+    },
+    {
+      "bytes": 357742,
+      "compressed_bytes": 21448,
+      "crc32": "2612bd82",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/campaign-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/campaign-1.stderr"
+    },
+    {
+      "bytes": 171042,
+      "compressed_bytes": 10259,
+      "crc32": "9dcadf70",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/campaign-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/cargo.stderr"
+    },
+    {
+      "bytes": 36,
+      "compressed_bytes": 38,
+      "crc32": "71504da5",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/cargo.stdout"
+    },
+    {
+      "bytes": 5952,
+      "compressed_bytes": 945,
+      "crc32": "50293742",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/cpuinfo.txt"
+    },
+    {
+      "bytes": 10671,
+      "compressed_bytes": 3130,
+      "crc32": "f9d6e578",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/manifest.json"
+    },
+    {
+      "bytes": 697984,
+      "compressed_bytes": 291763,
+      "crc32": "ce76cd1b",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/pon_maintenance_cost"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/rustc.stderr"
+    },
+    {
+      "bytes": 196,
+      "compressed_bytes": 151,
+      "crc32": "5e616a24",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/rustc.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/uname.stderr"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 115,
+      "crc32": "be1e0d03",
+      "is_dir": false,
+      "name": "cross-arch-maintenance-cost/uname.stdout"
+    },
+    {
+      "bytes": 3322,
+      "compressed_bytes": 308,
+      "crc32": "bc750aab",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/build-configuration-v1.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/build.stdout"
+    },
+    {
+      "bytes": 206,
+      "compressed_bytes": 138,
+      "crc32": "08367c84",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/build.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/campaign-0.stderr"
+    },
+    {
+      "bytes": 266217,
+      "compressed_bytes": 21959,
+      "crc32": "ce6f9f0f",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/campaign-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/campaign-1.stderr"
+    },
+    {
+      "bytes": 124376,
+      "compressed_bytes": 9855,
+      "crc32": "f2f4be9e",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/campaign-1.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/cargo.stderr"
+    },
+    {
+      "bytes": 36,
+      "compressed_bytes": 38,
+      "crc32": "71504da5",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/cargo.stdout"
+    },
+    {
+      "bytes": 5952,
+      "compressed_bytes": 938,
+      "crc32": "ad722edc",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/cpuinfo.txt"
+    },
+    {
+      "bytes": 9349,
+      "compressed_bytes": 2607,
+      "crc32": "344817a8",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/manifest.json"
+    },
+    {
+      "bytes": 650472,
+      "compressed_bytes": 275683,
+      "crc32": "e59423fc",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/pon_one_zero_locality_cost"
+    },
+    {
+      "bytes": 196,
+      "compressed_bytes": 151,
+      "crc32": "5e616a24",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/rustc.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/rustc.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/uname.stderr"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 115,
+      "crc32": "be1e0d03",
+      "is_dir": false,
+      "name": "cross-arch-one-zero-locality-cost/uname.stdout"
+    },
+    {
+      "bytes": 3322,
+      "compressed_bytes": 308,
+      "crc32": "bc750aab",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/build-configuration-v1.json"
+    },
+    {
+      "bytes": 206,
+      "compressed_bytes": 137,
+      "crc32": "0f3fd458",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/build.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/build.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/campaign-0.stderr"
+    },
+    {
+      "bytes": 220514,
+      "compressed_bytes": 15557,
+      "crc32": "4a57313e",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/campaign-0.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/campaign-1.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/cargo.stderr"
+    },
+    {
+      "bytes": 103636,
+      "compressed_bytes": 7121,
+      "crc32": "e479d7af",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/campaign-1.stdout"
+    },
+    {
+      "bytes": 36,
+      "compressed_bytes": 38,
+      "crc32": "71504da5",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/cargo.stdout"
+    },
+    {
+      "bytes": 5952,
+      "compressed_bytes": 938,
+      "crc32": "fb1e803b",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/cpuinfo.txt"
+    },
+    {
+      "bytes": 10396,
+      "compressed_bytes": 3031,
+      "crc32": "f6026d72",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/manifest.json"
+    },
+    {
+      "bytes": 672960,
+      "compressed_bytes": 283520,
+      "crc32": "a7fda2d3",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/pon_zero_locality_cost"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/rustc.stderr"
+    },
+    {
+      "bytes": 196,
+      "compressed_bytes": 151,
+      "crc32": "5e616a24",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/rustc.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/uname.stderr"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 115,
+      "crc32": "be1e0d03",
+      "is_dir": false,
+      "name": "cross-arch-zero-locality-cost/uname.stdout"
+    },
+    {
+      "bytes": 893,
+      "compressed_bytes": 502,
+      "crc32": "b6b2069b",
+      "is_dir": false,
+      "name": "from-zero-native/build/process.json"
+    },
+    {
+      "bytes": 62,
+      "compressed_bytes": 64,
+      "crc32": "ff527264",
+      "is_dir": false,
+      "name": "from-zero-native/build/stderr"
+    },
+    {
+      "bytes": 111414,
+      "compressed_bytes": 7783,
+      "crc32": "2fd523ee",
+      "is_dir": false,
+      "name": "from-zero-native/build/stdout"
+    },
+    {
+      "bytes": 885,
+      "compressed_bytes": 519,
+      "crc32": "607ead47",
+      "is_dir": false,
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "bytes": 189,
+      "compressed_bytes": 136,
+      "crc32": "40e2fc58",
+      "is_dir": false,
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33622,
+      "crc32": "5e4b18b9",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": "dfac9927",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/receiver/owner.lock"
+    },
+    {
+      "bytes": 393216,
+      "compressed_bytes": 24384,
+      "crc32": "8492c385",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": "dfac9927",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/receiver/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": "cb142e8e",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/producer/owner.lock"
+    },
+    {
+      "bytes": 12347611,
+      "compressed_bytes": 509940,
+      "crc32": "73eb36b9",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/report.json"
+    },
+    {
+      "bytes": 791,
+      "compressed_bytes": 413,
+      "crc32": "8170c6b2",
+      "is_dir": false,
+      "name": "from-zero-native/format-check/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-check/stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-check/stdout"
+    },
+    {
+      "bytes": 820,
+      "compressed_bytes": 443,
+      "crc32": "dc686f52",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy/stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy/stdout"
+    },
+    {
+      "bytes": 1035,
+      "compressed_bytes": 563,
+      "crc32": "dd129c35",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy-source/examples/support/w1_from_zero.rs"
+    },
+    {
+      "bytes": 11911,
+      "compressed_bytes": 3812,
+      "crc32": "43dacd18",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs"
+    },
+    {
+      "bytes": 79067,
+      "compressed_bytes": 18284,
+      "crc32": "3fd5c45c",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+    },
+    {
+      "bytes": 79067,
+      "compressed_bytes": 18284,
+      "crc32": "3fd5c45c",
+      "is_dir": false,
+      "name": "from-zero-native/formatted.rs"
+    },
+    {
+      "bytes": 897,
+      "compressed_bytes": 530,
+      "crc32": "4984e9a1",
+      "is_dir": false,
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "bytes": 3366,
+      "compressed_bytes": 1349,
+      "crc32": "346b6136",
+      "is_dir": false,
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "bytes": 897,
+      "compressed_bytes": 525,
+      "crc32": "01892dac",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "bytes": 195,
+      "compressed_bytes": 141,
+      "crc32": "76575159",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "bytes": 911,
+      "compressed_bytes": 539,
+      "crc32": "fe9dbb72",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "bytes": 915,
+      "compressed_bytes": 398,
+      "crc32": "cb153947",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "bytes": 948,
+      "compressed_bytes": 564,
+      "crc32": "e951bcb6",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "bytes": 407,
+      "compressed_bytes": 264,
+      "crc32": "95c523fa",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "bytes": 73035,
+      "compressed_bytes": 11079,
+      "crc32": "a058bdc6",
+      "is_dir": false,
+      "name": "from-zero-native/manifest.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13060,
+      "crc32": "3d69de8a",
+      "is_dir": false,
+      "name": "from-zero-native/native/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/producer/owner.lock"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13377,
+      "crc32": "bb6ae04b",
+      "is_dir": false,
+      "name": "from-zero-native/native/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/receiver/owner.lock"
+    },
+    {
+      "bytes": 3475129,
+      "compressed_bytes": 71539,
+      "crc32": "085bdde8",
+      "is_dir": false,
+      "name": "from-zero-native/native/report.json"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13067,
+      "crc32": "f8d4c5dd",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/producer/owner.lock"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13385,
+      "crc32": "c7c301f3",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/receiver/owner.lock"
+    },
+    {
+      "bytes": 19811649,
+      "compressed_bytes": 781178,
+      "crc32": "a9f11ed5",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/report.json"
+    },
+    {
+      "bytes": 10971816,
+      "compressed_bytes": 4425718,
+      "crc32": "ab215172",
+      "is_dir": false,
+      "name": "from-zero-native/public_v3_from_zero"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": "b37d4686",
+      "is_dir": false,
+      "name": "from-zero-native-host/actual-systemd-parent-after.log"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": "b37d4686",
+      "is_dir": false,
+      "name": "from-zero-native-host/actual-systemd-parent.log"
+    },
+    {
+      "bytes": 1626,
+      "compressed_bytes": 789,
+      "crc32": "ca46f14c",
+      "is_dir": false,
+      "name": "from-zero-native-host/after-provision.json"
+    },
+    {
+      "bytes": 2793,
+      "compressed_bytes": 706,
+      "crc32": "f7f0dcf8",
+      "is_dir": false,
+      "name": "from-zero-native-host/before-provision.json"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": "132d2814",
+      "is_dir": false,
+      "name": "from-zero-native-host/child-final-load-state.log"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": "132d2814",
+      "is_dir": false,
+      "name": "from-zero-native-host/child-load-state.log"
+    },
+    {
+      "bytes": 333,
+      "compressed_bytes": 217,
+      "crc32": "f5952b0c",
+      "is_dir": false,
+      "name": "from-zero-native-host/child-result.json"
+    },
+    {
+      "bytes": 7644,
+      "compressed_bytes": 1983,
+      "crc32": "afd057f1",
+      "is_dir": false,
+      "name": "from-zero-native-host/controller-result.json"
+    },
+    {
+      "bytes": 1696,
+      "compressed_bytes": 815,
+      "crc32": "ae08b86e",
+      "is_dir": false,
+      "name": "from-zero-native-host/inside-after.json"
+    },
+    {
+      "bytes": 1683,
+      "compressed_bytes": 803,
+      "crc32": "16c7ffac",
+      "is_dir": false,
+      "name": "from-zero-native-host/inside-before.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/install-reviewed-unit.log"
+    },
+    {
+      "bytes": 1660,
+      "compressed_bytes": 832,
+      "crc32": "391d6a13",
+      "is_dir": false,
+      "name": "from-zero-native-host/outside-after.json"
+    },
+    {
+      "bytes": 146,
+      "compressed_bytes": 111,
+      "crc32": "f132333d",
+      "is_dir": false,
+      "name": "from-zero-native-host/parent-properties.log"
+    },
+    {
+      "bytes": 919,
+      "compressed_bytes": 517,
+      "crc32": "b28e5ed1",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build/process.json"
+    },
+    {
+      "bytes": 4803,
+      "compressed_bytes": 1197,
+      "crc32": "01696657",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build/stderr"
+    },
+    {
+      "bytes": 111512,
+      "compressed_bytes": 7843,
+      "crc32": "703485d5",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build/stdout"
+    },
+    {
+      "bytes": 3425,
+      "compressed_bytes": 1232,
+      "crc32": "da04e03e",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/seal-parent-directory.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/seal-parent-receipt.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/start-fixed-parent.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/systemd-reload.log"
+    },
+    {
+      "bytes": 6902,
+      "compressed_bytes": 1401,
+      "crc32": "00d07939",
+      "is_dir": false,
+      "name": "from-zero-native-host/systemd-run.log"
+    },
+    {
+      "bytes": 3199,
+      "compressed_bytes": 1222,
+      "crc32": "50ab0390",
+      "is_dir": false,
+      "name": "public-fixture-parent.json"
+    },
+    {
+      "bytes": 229,
+      "compressed_bytes": 139,
+      "crc32": "794c098a",
+      "is_dir": false,
+      "name": "from-zero-native-host/unprovisioned-parent.json"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 238,
+      "crc32": "1b44c535",
+      "is_dir": false,
+      "name": "source.json"
+    },
+    {
+      "bytes": 206,
+      "compressed_bytes": 136,
+      "crc32": "487eee36",
+      "is_dir": false,
+      "name": "work-rejection/build.stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "work-rejection/cargo.stderr"
+    },
+    {
+      "bytes": 36,
+      "compressed_bytes": 38,
+      "crc32": "71504da5",
+      "is_dir": false,
+      "name": "work-rejection/cargo.stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "work-rejection/build.stdout"
+    },
+    {
+      "bytes": 5952,
+      "compressed_bytes": 938,
+      "crc32": "a37bcd31",
+      "is_dir": false,
+      "name": "work-rejection/cpuinfo.txt"
+    },
+    {
+      "bytes": 193388,
+      "compressed_bytes": 61755,
+      "crc32": "95894f13",
+      "is_dir": false,
+      "name": "work-rejection/manifest.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "work-rejection/native.stderr"
+    },
+    {
+      "bytes": 11186939,
+      "compressed_bytes": 1131267,
+      "crc32": "68fdd5d5",
+      "is_dir": false,
+      "name": "work-rejection/native.stdout"
+    },
+    {
+      "bytes": 707512,
+      "compressed_bytes": 296148,
+      "crc32": "bc2f83cf",
+      "is_dir": false,
+      "name": "work-rejection/pon_rejection_cost"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "work-rejection/rustc.stderr"
+    },
+    {
+      "bytes": 196,
+      "compressed_bytes": 151,
+      "crc32": "5e616a24",
+      "is_dir": false,
+      "name": "work-rejection/rustc.stdout"
+    },
+    {
+      "bytes": 91878,
+      "compressed_bytes": 8975,
+      "crc32": "eca124ff",
+      "is_dir": false,
+      "name": "work-rejection/summary.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "work-rejection/uname.stderr"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 115,
+      "crc32": "be1e0d03",
+      "is_dir": false,
+      "name": "work-rejection/uname.stdout"
+    }
+  ]
+}

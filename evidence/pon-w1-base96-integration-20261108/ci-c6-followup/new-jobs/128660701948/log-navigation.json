@@ -1,0 +1,275 @@
+{
+  "candidate_count": 29,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 115,
+      "text": "2026-11-08T07:18:53.3309408Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 146,
+      "text": "2026-11-08T07:18:53.3446031Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 671,
+      "text": "2026-11-08T07:18:53.3945060Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 751,
+      "text": "2026-11-08T07:18:53.4020272Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1110,
+      "text": "2026-11-08T07:19:10.7037830Z test_failed_late_exhausted_and_unknown_attempts_are_separate (__main__.AttackAttemptObservationTests.test_failed_late_exhausted_and_unknown_attempts_are_separate) ... ok"
+    },
+    {
+      "line": 1137,
+      "text": "2026-11-08T07:19:11.6509283Z test_explicit_v1_reproduces_unchanged_historical_summary (__main__.CompleteConfirmationObservationTests.test_explicit_v1_reproduces_unchanged_historical_summary) ... ok"
+    },
+    {
+      "line": 1138,
+      "text": "2026-11-08T07:19:11.7071376Z test_failed_and_unfinished_resource_samples_are_counted_without_nested_cpu_sum (__main__.CompleteConfirmationObservationTests.test_failed_and_unfinished_resource_samples_are_counted_without_nested_cpu_sum) ... ok"
+    },
+    {
+      "line": 1145,
+      "text": "2026-11-08T07:19:12.3479527Z test_v2_cannot_report_timely_ack_when_deadline_flag_disagrees_with_real_elapsed (__main__.CompleteConfirmationObservationTests.test_v2_cannot_report_timely_ack_when_deadline_flag_disagrees_with_real_elapsed) ... ok"
+    },
+    {
+      "line": 1147,
+      "text": "2026-11-08T07:19:12.5124199Z test_business_start_at_or_after_window_retains_failed_offer (__main__.ConfirmationObservationTests.test_business_start_at_or_after_window_retains_failed_offer) ... ok"
+    },
+    {
+      "line": 1148,
+      "text": "2026-11-08T07:19:12.5516732Z test_configured_deadline_alone_does_not_invent_observation_coverage (__main__.ConfirmationObservationTests.test_configured_deadline_alone_does_not_invent_observation_coverage) ... ok"
+    },
+    {
+      "line": 1151,
+      "text": "2026-11-08T07:19:12.7068423Z test_failed_and_late_calls_cannot_pollute_success_latency (__main__.ConfirmationObservationTests.test_failed_and_late_calls_cannot_pollute_success_latency) ... ok"
+    },
+    {
+      "line": 1152,
+      "text": "2026-11-08T07:19:12.7457421Z test_failed_business_retains_denominator_and_censor_bound_without_fake_latency (__main__.ConfirmationObservationTests.test_failed_business_retains_denominator_and_censor_bound_without_fake_latency) ... ok"
+    }
+  ],
+  "job_id": 128660701948,
+  "kind": "executed-failure",
+  "last_candidates": [
+    {
+      "line": 115,
+      "text": "2026-11-08T07:18:53.3309408Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 146,
+      "text": "2026-11-08T07:18:53.3446031Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 671,
+      "text": "2026-11-08T07:18:53.3945060Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 751,
+      "text": "2026-11-08T07:18:53.4020272Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1110,
+      "text": "2026-11-08T07:19:10.7037830Z test_failed_late_exhausted_and_unknown_attempts_are_separate (__main__.AttackAttemptObservationTests.test_failed_late_exhausted_and_unknown_attempts_are_separate) ... ok"
+    },
+    {
+      "line": 1137,
+      "text": "2026-11-08T07:19:11.6509283Z test_explicit_v1_reproduces_unchanged_historical_summary (__main__.CompleteConfirmationObservationTests.test_explicit_v1_reproduces_unchanged_historical_summary) ... ok"
+    },
+    {
+      "line": 1138,
+      "text": "2026-11-08T07:19:11.7071376Z test_failed_and_unfinished_resource_samples_are_counted_without_nested_cpu_sum (__main__.CompleteConfirmationObservationTests.test_failed_and_unfinished_resource_samples_are_counted_without_nested_cpu_sum) ... ok"
+    },
+    {
+      "line": 1145,
+      "text": "2026-11-08T07:19:12.3479527Z test_v2_cannot_report_timely_ack_when_deadline_flag_disagrees_with_real_elapsed (__main__.CompleteConfirmationObservationTests.test_v2_cannot_report_timely_ack_when_deadline_flag_disagrees_with_real_elapsed) ... ok"
+    },
+    {
+      "line": 1147,
+      "text": "2026-11-08T07:19:12.5124199Z test_business_start_at_or_after_window_retains_failed_offer (__main__.ConfirmationObservationTests.test_business_start_at_or_after_window_retains_failed_offer) ... ok"
+    },
+    {
+      "line": 1148,
+      "text": "2026-11-08T07:19:12.5516732Z test_configured_deadline_alone_does_not_invent_observation_coverage (__main__.ConfirmationObservationTests.test_configured_deadline_alone_does_not_invent_observation_coverage) ... ok"
+    },
+    {
+      "line": 1151,
+      "text": "2026-11-08T07:19:12.7068423Z test_failed_and_late_calls_cannot_pollute_success_latency (__main__.ConfirmationObservationTests.test_failed_and_late_calls_cannot_pollute_success_latency) ... ok"
+    },
+    {
+      "line": 1152,
+      "text": "2026-11-08T07:19:12.7457421Z test_failed_business_retains_denominator_and_censor_bound_without_fake_latency (__main__.ConfirmationObservationTests.test_failed_business_retains_denominator_and_censor_bound_without_fake_latency) ... ok"
+    },
+    {
+      "line": 1153,
+      "text": "2026-11-08T07:19:12.8005248Z test_failed_or_missing_samples_cannot_unlock_successful_latency_tails (__main__.ConfirmationObservationTests.test_failed_or_missing_samples_cannot_unlock_successful_latency_tails) ... ok"
+    },
+    {
+      "line": 1163,
+      "text": "2026-11-08T07:19:14.3264480Z test_failed_work_count_cannot_exceed_finished_work_or_erase_honest_verifications (__main__.ConfirmationReportTests.test_failed_work_count_cannot_exceed_finished_work_or_erase_honest_verifications) ... ok"
+    },
+    {
+      "line": 1168,
+      "text": "2026-11-08T07:19:15.1827413Z test_overlap_cannot_be_inferred_from_only_a_positive_summary (__main__.ConfirmationReportTests.test_overlap_cannot_be_inferred_from_only_a_positive_summary) ... ok"
+    },
+    {
+      "line": 1174,
+      "text": "2026-11-08T07:19:16.4593777Z test_summary_flags_cannot_promote_scope_or_replace_success (__main__.ConfirmationReportTests.test_summary_flags_cannot_promote_scope_or_replace_success) ... ok"
+    },
+    {
+      "line": 1178,
+      "text": "2026-11-08T07:19:16.9345647Z test_positive_binding_does_not_rewrite_explicit_v1_failed_readback (__main__.ConfirmedObservationBindingTests.test_positive_binding_does_not_rewrite_explicit_v1_failed_readback) ... ok"
+    },
+    {
+      "line": 1189,
+      "text": "2026-11-08T07:19:18.9234582Z test_count_summary_must_equal_raw_calls (__main__.ExecutionBoundaryTests.test_count_summary_must_equal_raw_calls) ... ok"
+    },
+    {
+      "line": 1194,
+      "text": "2026-11-08T07:19:19.4470468Z test_failed_confirmation_retains_native_completion_and_failure_exit (__main__.ExecutionBoundaryTests.test_failed_confirmation_retains_native_completion_and_failure_exit) ... ok"
+    },
+    {
+      "line": 1195,
+      "text": "2026-11-08T07:19:19.5382741Z test_failed_earlier_report_leaves_later_acceptance_unexecuted_but_retains_bytes (__main__.ExecutionBoundaryTests.test_failed_earlier_report_leaves_later_acceptance_unexecuted_but_retains_bytes) ... ok"
+    },
+    {
+      "line": 1196,
+      "text": "2026-11-08T07:19:19.6167035Z test_failed_raw_report_change_retains_both_input_and_final_identities (__main__.ExecutionBoundaryTests.test_failed_raw_report_change_retains_both_input_and_final_identities) ... ok"
+    },
+    {
+      "line": 1202,
+      "text": "2026-11-08T07:19:19.9483149Z test_honest_deadline_failure_cannot_hide_behind_summary (__main__.ExecutionBoundaryTests.test_honest_deadline_failure_cannot_hide_behind_summary) ... ok"
+    },
+    {
+      "line": 1204,
+      "text": "2026-11-08T07:19:20.1664027Z test_lost_honest_probe_refused_despite_positive_summary (__main__.ExecutionBoundaryTests.test_lost_honest_probe_refused_despite_positive_summary) ... ok"
+    },
+    {
+      "line": 1218,
+      "text": "2026-11-08T07:19:21.4634897Z test_sustained_deadline_boolean_must_match_actual_elapsed_interval (__main__.ExecutionBoundaryTests.test_sustained_deadline_boolean_must_match_actual_elapsed_interval) ... ok"
+    },
+    {
+      "line": 1223,
+      "text": "2026-11-08T07:19:22.1490479Z test_sustained_honest_deadline_and_missing_reads_refused (__main__.ExecutionBoundaryTests.test_sustained_honest_deadline_and_missing_reads_refused) ... ok"
+    },
+    {
+      "line": 1244,
+      "text": "2026-11-08T07:19:25.0699807Z test_failed_import_is_retained_without_changing_its_native_or_host_outcome (__main__.HistoryImportObservationTests.test_failed_import_is_retained_without_changing_its_native_or_host_outcome) ... ok"
+    },
+    {
+      "line": 1249,
+      "text": "2026-11-08T07:19:25.3514716Z test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency (__main__.ReceiveClockObservationTests.test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency) ... ok"
+    },
+    {
+      "line": 1250,
+      "text": "2026-11-08T07:19:25.4088389Z test_failed_receive_clock_retains_unknown_instead_of_zero (__main__.ReceiveClockObservationTests.test_failed_receive_clock_retains_unknown_instead_of_zero) ... ok"
+    },
+    {
+      "line": 1290,
+      "text": "2026-11-08T07:24:02.2768124Z ##[error]Process completed with exit code 1."
+    }
+  ],
+  "log_lines": 1384,
+  "log_sha256": "1b6d8aa6d326072904e82018893e14b51798b1b5952c6b75e62fc03e4658d162",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 1361,
+      "text": "2026-11-08T07:24:04.4499907Z Root directory input is valid!"
+    },
+    {
+      "line": 1362,
+      "text": "2026-11-08T07:24:04.6909878Z Beginning upload of artifact content to blob storage"
+    },
+    {
+      "line": 1363,
+      "text": "2026-11-08T07:24:05.3112521Z (node:5677) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities."
+    },
+    {
+      "line": 1364,
+      "text": "2026-11-08T07:24:05.5362911Z Uploaded bytes 5532060"
+    },
+    {
+      "line": 1365,
+      "text": "2026-11-08T07:24:05.5548490Z Finished uploading artifact content to blob storage!"
+    },
+    {
+      "line": 1366,
+      "text": "2026-11-08T07:24:05.5550159Z SHA256 digest of uploaded artifact zip is 2367b455fc67d701575fb28acdbe87d85f300794110adeb26c7f866fbca85845"
+    },
+    {
+      "line": 1367,
+      "text": "2026-11-08T07:24:05.5551892Z Finalizing artifact upload"
+    },
+    {
+      "line": 1368,
+      "text": "2026-11-08T07:24:05.9803908Z Artifact w1-fresh-service-head-2bdd252aa6c300b7431b9ee897b254b7953cf562-1.zip successfully finalized. Artifact ID 13609060373"
+    },
+    {
+      "line": 1369,
+      "text": "2026-11-08T07:24:05.9806333Z Artifact w1-fresh-service-head-2bdd252aa6c300b7431b9ee897b254b7953cf562-1 has been successfully uploaded! Final size is 5532060 bytes. Artifact ID is 13609060373"
+    },
+    {
+      "line": 1370,
+      "text": "2026-11-08T07:24:05.9811053Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/artifacts/13609060373"
+    },
+    {
+      "line": 1371,
+      "text": "2026-11-08T07:24:06.0075934Z Post job cleanup."
+    },
+    {
+      "line": 1372,
+      "text": "2026-11-08T07:24:06.0939229Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1373,
+      "text": "2026-11-08T07:24:06.0986949Z git version 2.56.0"
+    },
+    {
+      "line": 1374,
+      "text": "2026-11-08T07:24:06.1026084Z Temporarily overriding HOME='/home/runner/work/_temp/ec636d9a-8968-4128-809d-7a975e2f9d7d' before making global git config changes"
+    },
+    {
+      "line": 1375,
+      "text": "2026-11-08T07:24:06.1027394Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1376,
+      "text": "2026-11-08T07:24:06.1031596Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1377,
+      "text": "2026-11-08T07:24:06.1073729Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1378,
+      "text": "2026-11-08T07:24:06.1137649Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1379,
+      "text": "2026-11-08T07:24:06.1449099Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1380,
+      "text": "2026-11-08T07:24:06.1501725Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1381,
+      "text": "2026-11-08T07:24:06.1798483Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1382,
+      "text": "2026-11-08T07:24:06.1848530Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1383,
+      "text": "2026-11-08T07:24:06.2293174Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1384,
+      "text": "2026-11-08T07:24:06.2673239Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

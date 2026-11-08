@@ -24,6 +24,7 @@ from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
                                         capture, validate, write_new)
 import run_from_zero_native as native
 import run_history_native as history
+import run_history_diagnostic as diagnostic
 import run_public_fixture_native as architecture
 import public_fixture_host_lease as lease
 
@@ -80,6 +81,7 @@ def validate_command(command: list[str]) -> Path:
         'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
         'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
         'python3', history.SCRIPT, '--out'], [
+        'python3', diagnostic.SCRIPT, '--out'], [
         'python3', architecture.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
@@ -232,6 +234,8 @@ def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
         return architecture.validate_preparation(output)
     if command[1] == history.SCRIPT:
         return history.validate_preparation(output)
+    if command[1] == diagnostic.SCRIPT:
+        return diagnostic.validate_preparation(output)
     return prepare_native_build(receipts)
 
 
@@ -240,6 +244,8 @@ def bind_command(command: list[str], prepared: dict, output: Path) -> dict:
         return architecture.bind_execution(prepared, output)
     if command[1] == history.SCRIPT:
         return history.bind_execution(prepared, output)
+    if command[1] == diagnostic.SCRIPT:
+        return diagnostic.bind_execution(prepared, output)
     binder = (bind_prepared_fresh_execution if command[1]
               == 'scripts/ci/run_w1_fresh_service_v1.py' else bind_prepared_execution)
     return binder(prepared, output)

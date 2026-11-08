@@ -1,0 +1,198 @@
+[
+  {
+    "bytes": 112913,
+    "compressed_bytes": 7833,
+    "crc32": "7ac9679a",
+    "is_dir": false,
+    "name": "history-diagnostic/build.jsonl"
+  },
+  {
+    "bytes": 80,
+    "compressed_bytes": 77,
+    "crc32": "3e2865ac",
+    "is_dir": false,
+    "name": "history-diagnostic/execution-start.json"
+  },
+  {
+    "bytes": 6896,
+    "compressed_bytes": 1518,
+    "crc32": "5320e8ca",
+    "is_dir": false,
+    "name": "history-diagnostic/build.stderr"
+  },
+  {
+    "bytes": 989,
+    "compressed_bytes": 537,
+    "crc32": "15a21cef",
+    "is_dir": false,
+    "name": "history-diagnostic/history-resources.txt"
+  },
+  {
+    "bytes": 632,
+    "compressed_bytes": 393,
+    "crc32": "5f1f1a91",
+    "is_dir": false,
+    "name": "history-diagnostic/long-history/config.json"
+  },
+  {
+    "bytes": 514,
+    "compressed_bytes": 320,
+    "crc32": "d998eb9b",
+    "is_dir": false,
+    "name": "history-diagnostic/long-history/source.json"
+  },
+  {
+    "bytes": 315,
+    "compressed_bytes": 185,
+    "crc32": "bc963e82",
+    "is_dir": false,
+    "name": "history-diagnostic/long-history/summary.json"
+  },
+  {
+    "bytes": 5076,
+    "compressed_bytes": 1473,
+    "crc32": "448fc3a4",
+    "is_dir": false,
+    "name": "history-diagnostic/manifest.json"
+  },
+  {
+    "bytes": 3531,
+    "compressed_bytes": 1165,
+    "crc32": "48f44278",
+    "is_dir": false,
+    "name": "history-diagnostic/preparation.json"
+  },
+  {
+    "bytes": 200,
+    "compressed_bytes": 145,
+    "crc32": "b37d4686",
+    "is_dir": false,
+    "name": "history-diagnostic-host/actual-systemd-parent-after.log"
+  },
+  {
+    "bytes": 200,
+    "compressed_bytes": 145,
+    "crc32": "b37d4686",
+    "is_dir": false,
+    "name": "history-diagnostic-host/actual-systemd-parent.log"
+  },
+  {
+    "bytes": 1621,
+    "compressed_bytes": 784,
+    "crc32": "5649b435",
+    "is_dir": false,
+    "name": "history-diagnostic-host/after-provision.json"
+  },
+  {
+    "bytes": 2788,
+    "compressed_bytes": 702,
+    "crc32": "f13e9157",
+    "is_dir": false,
+    "name": "history-diagnostic-host/before-provision.json"
+  },
+  {
+    "bytes": 10,
+    "compressed_bytes": 12,
+    "crc32": "132d2814",
+    "is_dir": false,
+    "name": "history-diagnostic-host/child-final-load-state.log"
+  },
+  {
+    "bytes": 10,
+    "compressed_bytes": 12,
+    "crc32": "132d2814",
+    "is_dir": false,
+    "name": "history-diagnostic-host/child-load-state.log"
+  },
+  {
+    "bytes": 346,
+    "compressed_bytes": 216,
+    "crc32": "fed75bd5",
+    "is_dir": false,
+    "name": "history-diagnostic-host/child-result.json"
+  },
+  {
+    "bytes": 7750,
+    "compressed_bytes": 1901,
+    "crc32": "2d7c875d",
+    "is_dir": false,
+    "name": "history-diagnostic-host/controller-result.json"
+  },
+  {
+    "bytes": 1697,
+    "compressed_bytes": 819,
+    "crc32": "e637f7b7",
+    "is_dir": false,
+    "name": "history-diagnostic-host/inside-after.json"
+  },
+  {
+    "bytes": 1675,
+    "compressed_bytes": 803,
+    "crc32": "a269250d",
+    "is_dir": false,
+    "name": "history-diagnostic-host/inside-before.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "history-diagnostic-host/install-reviewed-unit.log"
+  },
+  {
+    "bytes": 1666,
+    "compressed_bytes": 834,
+    "crc32": "2c4ea97f",
+    "is_dir": false,
+    "name": "history-diagnostic-host/outside-after.json"
+  },
+  {
+    "bytes": 146,
+    "compressed_bytes": 111,
+    "crc32": "f132333d",
+    "is_dir": false,
+    "name": "history-diagnostic-host/parent-properties.log"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "history-diagnostic-host/seal-parent-directory.log"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "history-diagnostic-host/seal-parent-receipt.log"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "history-diagnostic-host/start-fixed-parent.log"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "history-diagnostic-host/systemd-reload.log"
+  },
+  {
+    "bytes": 648,
+    "compressed_bytes": 431,
+    "crc32": "e181b3fc",
+    "is_dir": false,
+    "name": "history-diagnostic-host/systemd-run.log"
+  },
+  {
+    "bytes": 229,
+    "compressed_bytes": 139,
+    "crc32": "794c098a",
+    "is_dir": false,
+    "name": "history-diagnostic-host/unprovisioned-parent.json"
+  }
+]

@@ -1,0 +1,179 @@
+[
+  {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "cwd": null,
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127676667668961,
+    "label": "00-operator-login",
+    "started_unix_ns": 1794127675246936364,
+    "stderr": {
+      "bytes": 0,
+      "path": "00-operator-login.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 10,
+      "path": "00-operator-login.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    "timed_out": false
+  },
+  {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "cwd": null,
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127684007359065,
+    "label": "01-pr-api",
+    "started_unix_ns": 1794127676669023747,
+    "stderr": {
+      "bytes": 0,
+      "path": "01-pr-api.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 27678,
+      "path": "01-pr-api.stdout",
+      "sha256": "e37d4b0472b64724291a3354640cda242c2183dd78a06ba30162c5d52b8cf8a0"
+    },
+    "timed_out": false
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-six-axis-performance-20261103",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/pull/782/head",
+      "refs/pull/782/merge"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127694359438240,
+    "label": "02-actual-git-refs",
+    "started_unix_ns": 1794127684010182936,
+    "stderr": {
+      "bytes": 0,
+      "path": "02-actual-git-refs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 306,
+      "path": "02-actual-git-refs.stdout",
+      "sha256": "b5a15a421bd7bb6d304f829b781939cdcff5bb438ff8fe8dd87e647a9552693f"
+    },
+    "timed_out": false
+  },
+  {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/40a3a45d6b8afc5c4706c5235fec47634f4aabbe/check-runs?filter=all&per_page=100&page=1"
+    ],
+    "cwd": null,
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127685934122246,
+    "label": "03-c7-checks-page-1",
+    "started_unix_ns": 1794127684010668700,
+    "stderr": {
+      "bytes": 0,
+      "path": "03-c7-checks-page-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 33,
+      "path": "03-c7-checks-page-1.stdout",
+      "sha256": "e83cfac35507982a40cfeb776ce85aa0367e7646f81fe857df4a6c841ea8a170"
+    },
+    "timed_out": false
+  },
+  {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "cwd": null,
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127697086562638,
+    "label": "04-pr-api-second-bounded-read",
+    "started_unix_ns": 1794127694361302151,
+    "stderr": {
+      "bytes": 0,
+      "path": "04-pr-api-second-bounded-read.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 27678,
+      "path": "04-pr-api-second-bounded-read.stdout",
+      "sha256": "e37d4b0472b64724291a3354640cda242c2183dd78a06ba30162c5d52b8cf8a0"
+    },
+    "timed_out": false
+  },
+  {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/7b4a63b6f08687e93270407772951aa71087ca3d"
+    ],
+    "cwd": null,
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127699663071494,
+    "label": "05-merge-object-1",
+    "started_unix_ns": 1794127697088539235,
+    "stderr": {
+      "bytes": 0,
+      "path": "05-merge-object-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2812,
+      "path": "05-merge-object-1.stdout",
+      "sha256": "c6ef16d912bf0782527df4bd487d36865ee46b1840034a814dbc977013b36b93"
+    },
+    "timed_out": false
+  },
+  {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/compare/9417e495165865ef6c1288b39084856e31020634...40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+      "--jq",
+      "{base_commit:.base_commit.sha,merge_base_commit:.merge_base_commit.sha,status:.status,ahead_by:.ahead_by,behind_by:.behind_by,total_commits:.total_commits,commits:[.commits[]|{sha:.sha,parents:[.parents[].sha]}]}"
+    ],
+    "cwd": null,
+    "error": null,
+    "exit_code": 0,
+    "finished_unix_ns": 1794127704795021914,
+    "label": "06-base-vs-c7-compare-projection",
+    "started_unix_ns": 1794127699663823778,
+    "stderr": {
+      "bytes": 0,
+      "path": "06-base-vs-c7-compare-projection.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1751,
+      "path": "06-base-vs-c7-compare-projection.stdout",
+      "sha256": "570a8567afd0148e4aa6be71b472abab6cf306eb00172034e91daa06303d06ca"
+    },
+    "timed_out": false
+  }
+]

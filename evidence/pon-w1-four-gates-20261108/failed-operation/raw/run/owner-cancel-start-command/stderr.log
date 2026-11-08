@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py", line 395, in <module>
+    main()
+  File "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py", line 375, in main
+    result = start(rt, target, c, args.request, out)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py", line 234, in start
+    trigger = live_first_prover(rt, target, c, request, group, selected_group)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py", line 144, in live_first_prover
+    require(manifest["schema"] == "TRNM-W1-STAGED-PROOF2"
+  File "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py", line 39, in require
+    raise ValueError(message)
+ValueError: actual prepared full execution changed

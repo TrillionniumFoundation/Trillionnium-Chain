@@ -1,0 +1,13 @@
+{
+  "schema": "TRNM-W1-C6-PR-BODY-PUBLICATION2",
+  "pr": 782,
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/782",
+  "head": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "draft": true,
+  "body_sha256": "908569b1128f2ceb4232b2861759d87862a7a19c9c675c5e85161ddf46874962",
+  "body_exact_readback": true,
+  "performed_patch": true,
+  "docs_commit": "3daf5d06e84aeb02530e14eecc7ba1f8ec674e24",
+  "prior_gh_graphql_failure_preserved": "1a1ba27f13e-12894-18b2",
+  "observed_unix_ns": 1794125028418986237
+}

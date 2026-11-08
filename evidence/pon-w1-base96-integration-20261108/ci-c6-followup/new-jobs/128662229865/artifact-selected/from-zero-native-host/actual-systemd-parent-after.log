@@ -1,0 +1,8 @@
+ControlGroup=/trnmponpublic.slice
+CPUQuotaPerSecUSec=250ms
+CPUQuotaPeriodUSec=100ms
+MemoryMax=2147483648
+MemorySwapMax=0
+TasksMax=256
+FragmentPath=/run/systemd/system/trnmponpublic.slice
+DropInPaths=

@@ -1,0 +1,247 @@
+{
+  "config": {
+    "blocks": 4105,
+    "clock_scope": "10-second logical headers under observed wall clock; no real-time long-window claim",
+    "evaluation_policy": "native-public-evaluation-dev-v1",
+    "genesis": "5a4765e6f255135d4cc500b65090c8526ae4a35e3b37eba59b75e5e912ef2c09",
+    "genesis_timestamp": 1794079744,
+    "hardness_accepted": false,
+    "network": "2133efc4a6d7a4bf25658c1f345b5778b600af2344c31196e1940361acfb8224",
+    "parameters": "1ed42025eb1265d100f0d935fa6343a041e5f8aa6d5bbc2e0d4bdd1721a89ba9",
+    "production_activation": false,
+    "public_network_ready": false,
+    "renew_every": 900,
+    "task_profile": "signed-task-lifecycle-dev-v3"
+  },
+  "error_lines": [
+    {
+      "line": 3,
+      "text": "test actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED"
+    },
+    {
+      "line": 29,
+      "text": "thread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (5091) panicked at crates/trnm-pon-node/tests/history_stage_diagnostic.rs:487:12:"
+    },
+    {
+      "line": 30,
+      "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }"
+    },
+    {
+      "line": 37,
+      "text": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3215.89s"
+    }
+  ],
+  "exit_records": [
+    {
+      "line": 25,
+      "record": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1800000008599,
+          "lifetime_reached_before_shutdown": true,
+          "reason": "lifetime_expired",
+          "stop_requested_before_shutdown": false
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1800001895467,
+        "stop_requested_when_exited": true
+      }
+    },
+    {
+      "line": 26,
+      "record": {
+        "diagnostic_only": true,
+        "diagnostic_scope": "instrumented campaign; retains all attempted calls; nested phase and Host CPU are not additive; buffering and observer overhead remain included in service lifetime; not original resource qualification",
+        "elapsed_ns": 3214405739726,
+        "failure_location": {
+          "activation_cursor": null,
+          "advertised_page_complete": null,
+          "completed_import_calls": 2759,
+          "durable_committed_blocks": null,
+          "head_rpc_elapsed_ns": 6492502,
+          "last_history_rpc_elapsed_ns": 104796,
+          "last_import_call_expression_elapsed_ns": null,
+          "last_requested_after": "d50271e63e806c88c317463967190498bbe345384a5e52f519263db2ae3235a3",
+          "last_successful_after": "d50271e63e806c88c317463967190498bbe345384a5e52f519263db2ae3235a3",
+          "pinned_tip": "980d1ad1d06de1c801066c880eac1d2e19f5dcedf0119c3e9a5c77d18f821fbe",
+          "production_activation": false,
+          "schema": "native-ancestry-independent-sync-failure-location-v1",
+          "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+          "stage": "history-rpc"
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+        "scope": "observed signed full-history replay, not a qualification verdict",
+        "sync_error": "IO: Connection refused (os error 111)"
+      }
+    }
+  ],
+  "failures": [
+    "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+    "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+    "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+  ],
+  "history_log_lines": 38,
+  "history_log_sha256": "0f1af76ec902e6cd3c06b4df99589508650a525a25897a9513404fb4dd470c80",
+  "job_id": 128655993256,
+  "last_by_schema": [
+    {
+      "line": 19,
+      "schema": "actual-pnw1-progress",
+      "shape": {
+        "nested": {},
+        "scalars": {
+          "elapsed_ns": 1350803663524,
+          "height": 4000,
+          "kind": "actual-pnw1-progress"
+        }
+      }
+    },
+    {
+      "line": 24,
+      "schema": "independent-native-fullsync-progress",
+      "shape": {
+        "nested": {},
+        "scalars": {
+          "elapsed_ns": 3040791719000,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        }
+      }
+    },
+    {
+      "line": 25,
+      "schema": "native-ancestry-public-server-exit-evidence-v1",
+      "shape": {
+        "nested": {
+          "loop_exit_before_internal_shutdown": [
+            "configured_lifetime_ns",
+            "elapsed_ns",
+            "lifetime_reached_before_shutdown",
+            "reason",
+            "stop_requested_before_shutdown"
+          ]
+        },
+        "scalars": {
+          "configured_lifetime_seconds": 1800,
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001895467,
+          "stop_requested_when_exited": true
+        }
+      }
+    },
+    {
+      "line": 26,
+      "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+      "shape": {
+        "nested": {
+          "diagnostic_history_rpc": {
+            "length": 2760
+          },
+          "diagnostic_import": {
+            "length": 2759
+          },
+          "failure_location": [
+            "activation_cursor",
+            "advertised_page_complete",
+            "completed_import_calls",
+            "durable_committed_blocks",
+            "head_rpc_elapsed_ns",
+            "last_history_rpc_elapsed_ns",
+            "last_import_call_expression_elapsed_ns",
+            "last_requested_after",
+            "last_successful_after",
+            "pinned_tip",
+            "production_activation",
+            "schema",
+            "scope",
+            "stage"
+          ],
+          "native_legacy_reorg_observation": [
+            "after",
+            "before",
+            "delta_computed",
+            "enabled",
+            "production_activation",
+            "schema",
+            "scope"
+          ]
+        },
+        "scalars": {
+          "diagnostic_only": true,
+          "diagnostic_scope": "instrumented campaign; retains all attempted calls; nested phase and Host CPU are not additive; buffering and observer overhead remain included in service lifetime; not original resource qualification",
+          "elapsed_ns": 3214405739726,
+          "production_activation": false,
+          "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+          "scope": "observed signed full-history replay, not a qualification verdict",
+          "sync_error": "IO: Connection refused (os error 111)"
+        }
+      }
+    },
+    {
+      "line": 27,
+      "schema": "native-history-stage-diagnostic-v1",
+      "shape": {
+        "nested": {},
+        "scalars": {
+          "diagnostic_only": true,
+          "error": "IO: Connection refused (os error 111)",
+          "hardness_accepted": false,
+          "independent_accepted": false,
+          "passed": false,
+          "production_activation": false,
+          "public_network_ready": false,
+          "resource_qualification": false,
+          "schema": "native-history-stage-diagnostic-v1"
+        }
+      }
+    }
+  ],
+  "manifest_passed": false,
+  "process": {
+    "cleanup_errors": [],
+    "command": [
+      "/usr/bin/time",
+      "-v",
+      "-o",
+      "/home/runner/work/_temp/history-stage-diagnostic/history-diagnostic/history-resources.txt",
+      "/home/runner/work/_temp/target-history-diagnostic/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+      "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+      "--exact",
+      "--ignored",
+      "--show-output"
+    ],
+    "exit_code": 101,
+    "failure": null,
+    "pid": 5089,
+    "started": true
+  },
+  "resources": "Command exited with non-zero status 101\n\tCommand being timed: \"/home/runner/work/_temp/target-history-diagnostic/release/deps/history_stage_diagnostic-9b826b863c9887cc actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\"\n\tUser time (seconds): 329.81\n\tSystem time (seconds): 474.14\n\tPercent of CPU this job got: 24%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 53:36.09\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 354136\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 369837\n\tVoluntary context switches: 4732463\n\tInvoluntary context switches: 102509\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 3443240\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 101\n",
+  "schema_counts": {
+    "actual-pnw1-progress": 8,
+    "independent-native-fullsync-progress": 5,
+    "native-ancestry-independent-sync-exit-evidence-v1": 1,
+    "native-ancestry-public-server-exit-evidence-v1": 1,
+    "native-history-stage-diagnostic-v1": 1
+  },
+  "summary": {
+    "diagnostic_only": true,
+    "error": "IO: Connection refused (os error 111)",
+    "hardness_accepted": false,
+    "independent_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "resource_qualification": false,
+    "schema": "native-history-stage-diagnostic-v1"
+  }
+}

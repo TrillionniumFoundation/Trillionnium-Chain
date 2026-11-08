@@ -1,0 +1,51 @@
+[
+  {
+    "bytes": 6896,
+    "compressed_bytes": 1523,
+    "crc32": "b8cf1ae2",
+    "is_dir": false,
+    "name": "history-native/build.stderr"
+  },
+  {
+    "bytes": 971,
+    "compressed_bytes": 526,
+    "crc32": "26627960",
+    "is_dir": false,
+    "name": "history-native/history-resources.txt"
+  },
+  {
+    "bytes": 259,
+    "compressed_bytes": 160,
+    "crc32": "c3eab677",
+    "is_dir": false,
+    "name": "history-native/long-history/summary.json"
+  },
+  {
+    "bytes": 4904,
+    "compressed_bytes": 1445,
+    "crc32": "051250f4",
+    "is_dir": false,
+    "name": "history-native/manifest.json"
+  },
+  {
+    "bytes": 7731,
+    "compressed_bytes": 1909,
+    "crc32": "ea91e501",
+    "is_dir": false,
+    "name": "history-native-host/controller-result.json"
+  },
+  {
+    "bytes": 335,
+    "compressed_bytes": 216,
+    "crc32": "891e0e1f",
+    "is_dir": false,
+    "name": "history-native-host/child-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "history-native-host/seal-parent-receipt.log"
+  }
+]

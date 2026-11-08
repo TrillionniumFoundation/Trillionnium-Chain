@@ -1,0 +1,777 @@
+{
+  "all_original_bytes_and_archive_members_reverified": true,
+  "archive": "raw-logs.tar.gz",
+  "archive_sha256": "a54c8b67a906d28fbf8990e04dbed0c3ac5ced6d5e9dc74bbf55aeb78fd0fb94",
+  "members": [
+    {
+      "bytes": 0,
+      "member": "freeze-01/00-preflight-dev.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/00-preflight-dev.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "freeze-01/00-preflight-dev.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/00-preflight-dev.stdout",
+      "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/01-stage-exact-paths.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/01-stage-exact-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/01-stage-exact-paths.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/01-stage-exact-paths.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/02-preflight-staged.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/02-preflight-staged.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 181,
+      "member": "freeze-01/02-preflight-staged.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/02-preflight-staged.stdout",
+      "sha256": "4f11ac4ce445e7b2ab810404315363ac98299cc72e1fba85df7076c178d665a8"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/03-staged-whitespace.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/03-staged-whitespace.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/03-staged-whitespace.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/03-staged-whitespace.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/04-local-merge-commit.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/04-local-merge-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 117,
+      "member": "freeze-01/04-local-merge-commit.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/04-local-merge-commit.stdout",
+      "sha256": "3ba26b0f9bd38a6c480f01b0d8514c7e26e0242397e7191c941ae0a065a361d0"
+    },
+    {
+      "bytes": 0,
+      "member": "freeze-01/05-postcommit-preflight.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/05-postcommit-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "freeze-01/05-postcommit-preflight.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/05-postcommit-preflight.stdout",
+      "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    },
+    {
+      "bytes": 3278,
+      "member": "freeze-01/commands.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/commands.json",
+      "sha256": "bee59159f0d61bec41408520a08541ede62fd76b528c73c3666e1ae0886d24c3"
+    },
+    {
+      "bytes": 502,
+      "member": "freeze-01/commit-message.txt",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/commit-message.txt",
+      "sha256": "cc1d631186ab7211c696f8fe8b220d886dba778f0fe0d81c879981251a4cb96f"
+    },
+    {
+      "bytes": 577,
+      "member": "freeze-01/source-diff-stat.txt",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/source-diff-stat.txt",
+      "sha256": "193ab16995e653239cb9f08dba75a21e7ce7181cf28f33e9ed0537f760ee05f1"
+    },
+    {
+      "bytes": 71406,
+      "member": "freeze-01/source-diff.patch",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/source-diff.patch",
+      "sha256": "511a8c21cf92b15451e43a8aa44f66dcf6f548f5a5b469ef8f39ef7848ffa9fa"
+    },
+    {
+      "bytes": 8181,
+      "member": "freeze-01/source-freeze.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/source-freeze.json",
+      "sha256": "089190fdc5d2ff41609235bc582676351ae575842cf812163d50e66c4f3c49a3"
+    },
+    {
+      "bytes": 437,
+      "member": "freeze-01/source-name-status.txt",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/source-name-status.txt",
+      "sha256": "702a95ede27c0238a0484e8ff5d7c50ccb5ccb09437d8188b5b9731480cfa88b"
+    },
+    {
+      "bytes": 657,
+      "member": "inventory-readonly-review/generated-inventory.diff",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/inventory-review-01/generated-inventory.diff",
+      "sha256": "0bf47488fa60ebe1b27afab710a308505f9465a124d2031244c8229c172bf9d5"
+    },
+    {
+      "bytes": 1196,
+      "member": "inventory-readonly-review/summary.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/inventory-review-01/summary.json",
+      "sha256": "8445609dbd2e83b23aec5f801df457c7a5db8bb098be21170a1936de18b8d40d"
+    },
+    {
+      "bytes": 7897,
+      "member": "launch-reconciliation/freeze-driver-01.py",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-driver-01.py",
+      "sha256": "47fcf82dc323583a0d85635379de160674605e83bb278f73d915533f45f3d67e"
+    },
+    {
+      "bytes": 28497,
+      "member": "launch-reconciliation/freeze-launch-reconciliation-01.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-launch-reconciliation-01.json",
+      "sha256": "f04d22247e9bf6ef73f110158fe62fa8b29953a96369d53bcabe165e9144931f"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/00-source-preflight.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/00-source-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "merge-preparation-02/00-source-preflight.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/00-source-preflight.stdout",
+      "sha256": "dfe7ed4bf1a2fa120ab384a40149f30a0e1c5c6d6c17ad1bd0ee1a3e0185db83"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/01-source-head.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/01-source-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "member": "merge-preparation-02/01-source-head.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/01-source-head.stdout",
+      "sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/02-source-status.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/02-source-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/02-source-status.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/02-source-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/03-base-object.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/03-base-object.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7,
+      "member": "merge-preparation-02/03-base-object.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/03-base-object.stdout",
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/04a-branch-format.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/04a-branch-format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/04a-branch-format.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/04a-branch-format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/04b-branch-absent.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/04b-branch-absent.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/04b-branch-absent.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/04b-branch-absent.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8272,
+      "member": "merge-preparation-02/05-create-worktree.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/05-create-worktree.stderr",
+      "sha256": "14844825384457da84f0c85caf56d9b23b7e687a05c43dd2b3bf99a67de79d8a"
+    },
+    {
+      "bytes": 88,
+      "member": "merge-preparation-02/05-create-worktree.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/05-create-worktree.stdout",
+      "sha256": "35e2ab38c29a3cfa0189b8568263280524dc2cec4f4555be5ab38821169156ee"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/06-new-preflight.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/06-new-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "merge-preparation-02/06-new-preflight.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/06-new-preflight.stdout",
+      "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    },
+    {
+      "bytes": 55,
+      "member": "merge-preparation-02/07-merge-base96.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/07-merge-base96.stderr",
+      "sha256": "b0a553d20817e5980c564f1485d89ea0f776bc5f8ebf0f34a0a4010e2bcb9099"
+    },
+    {
+      "bytes": 55,
+      "member": "merge-preparation-02/07-merge-base96.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/07-merge-base96.stdout",
+      "sha256": "acda84041b634d8a61bc55fcd38712ee46348405942bafb2f2a0dee6cd746dde"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/08-merge-head.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/08-merge-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "member": "merge-preparation-02/08-merge-head.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/08-merge-head.stdout",
+      "sha256": "50b30d530cbcc5ffd5714011f3703374c16438578f48d0b96532069784765327"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/09-index-tree.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/09-index-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "member": "merge-preparation-02/09-index-tree.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/09-index-tree.stdout",
+      "sha256": "aa48bed738be6562723d1dc61c3148b620ae39f1278be89ff72f0580b7cd612a"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/10-merge-paths.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/10-merge-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 287,
+      "member": "merge-preparation-02/10-merge-paths.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/10-merge-paths.stdout",
+      "sha256": "b6c985276548428343fcf9f5b04cecf9f5eb65847a8d57719cd8c8305b25c9fc"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/11-merge-numstat.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/11-merge-numstat.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 306,
+      "member": "merge-preparation-02/11-merge-numstat.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/11-merge-numstat.stdout",
+      "sha256": "c899ae4c104afc3b0d1042174993c08c600f78c5cba3d5df49aaeb3cf80d4848"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/12-merge-patch.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/12-merge-patch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 66137,
+      "member": "merge-preparation-02/12-merge-patch.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/12-merge-patch.stdout",
+      "sha256": "ba79695840cf403a422cdedcd2e4f6470a014f76b7de2eff9a571f1d98a2e4ad"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/13-base-log.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/13-base-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 113,
+      "member": "merge-preparation-02/13-base-log.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/13-base-log.stdout",
+      "sha256": "af9884ebf1b8b3f8908ae63dba68fe5d6735b2e3523146233c04ecb1ac1c2f9b"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/14-instruction-paths.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/14-instruction-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 10,
+      "member": "merge-preparation-02/14-instruction-paths.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/14-instruction-paths.stdout",
+      "sha256": "954ec5dad7eaf581ad4bfa090369b244ac0120b43722ef2efff5ba89fc52046f"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/15-original-c6-head-after.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/15-original-c6-head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "member": "merge-preparation-02/15-original-c6-head-after.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/15-original-c6-head-after.stdout",
+      "sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/16-original-c6-status-after.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/16-original-c6-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "merge-preparation-02/16-original-c6-status-after.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/16-original-c6-status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8591,
+      "member": "merge-preparation-02/commands.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/commands.json",
+      "sha256": "722ab088acf18480bc287fe6cd6cd43126232a75d3f31c0ca1df1e79010d63bc"
+    },
+    {
+      "bytes": 9662,
+      "member": "merge-preparation-02/merge-preparation.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/merge-preparation.json",
+      "sha256": "b6d0398e450a81997140b8e42ab633aabe58efd4df982dd2ba0184ebf62b03ec"
+    },
+    {
+      "bytes": 17376,
+      "member": "merge-preparation-02/plan-tail-before.txt",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/plan-tail-before.txt",
+      "sha256": "20ba93684c017598e69282b96374f748adb2ad72d2bd0735a497c48f3742f983"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/00-preflight.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/00-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "precommit-checks-01/00-preflight.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/00-preflight.stdout",
+      "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/01-format.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/01-format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/01-format.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/01-format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/02-ci-contract.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/02-ci-contract.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "member": "precommit-checks-01/02-ci-contract.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/02-ci-contract.stdout",
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/03-pq-source-pins.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/03-pq-source-pins.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 557,
+      "member": "precommit-checks-01/03-pq-source-pins.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/03-pq-source-pins.stdout",
+      "sha256": "7e6bdf32bcc0240c48849d8e4eaed57ba468fe015b6ff99166584618b421396f"
+    },
+    {
+      "bytes": 76,
+      "member": "precommit-checks-01/04-source-inventory.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/04-source-inventory.stderr",
+      "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/04-source-inventory.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/04-source-inventory.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 791,
+      "member": "precommit-checks-01/05-history-diagnostic-controls.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/05-history-diagnostic-controls.stderr",
+      "sha256": "99c2aeda2d9d3a20aff1039bd49531953828afc472e786a777c472eb3a4ea62e"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/05-history-diagnostic-controls.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/05-history-diagnostic-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14229,
+      "member": "precommit-checks-01/06-host-routing-controls.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/06-host-routing-controls.stderr",
+      "sha256": "b7e8a586fd99121aa3cb389b298f1e1016811bc36946221da75894f6c077fa07"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/06-host-routing-controls.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/06-host-routing-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5643,
+      "member": "precommit-checks-01/07-pq-rejection-controls.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/07-pq-rejection-controls.stderr",
+      "sha256": "9db3ecf6f8970346a01d42b3e40b8fc29768477fe364e58ecd196f59f022b8bb"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/07-pq-rejection-controls.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/07-pq-rejection-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1725,
+      "member": "precommit-checks-01/08-w1-ci-contract-controls.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/08-w1-ci-contract-controls.stderr",
+      "sha256": "24043603273e3920b93d50481ffa0b89b613211fa08561b234891b3158b6a355"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/08-w1-ci-contract-controls.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/08-w1-ci-contract-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/09-diff-check.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/09-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/09-diff-check.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/09-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/10-index-diff-check.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/10-index-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/10-index-diff-check.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/10-index-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/11-source-c6-status.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/11-source-c6-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-checks-01/11-source-c6-status.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/11-source-c6-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 69046,
+      "member": "precommit-checks-01/candidate-full-diff.patch",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/candidate-full-diff.patch",
+      "sha256": "f6d11203ad0bc65ae5693f0c69985858300906ae17e66588dc2525c63da5a41b"
+    },
+    {
+      "bytes": 6224,
+      "member": "precommit-checks-01/commands.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/commands.json",
+      "sha256": "95b462932963f4feaaa82da4af95c508b802c0cc75a736da22fe6997d5cdebbf"
+    },
+    {
+      "bytes": 7164,
+      "member": "precommit-checks-01/manifest.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/manifest.json",
+      "sha256": "f57bfb6aaf656d9fd77bbf9c2fa334e8c59c3bad3551d2b809726355081e2c54"
+    },
+    {
+      "bytes": 1501,
+      "member": "precommit-checks-01/merge-scope-and-pins.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/merge-scope-and-pins.json",
+      "sha256": "d1ebaa70647de21b9b66b8c2111472b9ae4adc8991e1a82f5879e50985d3e8a5"
+    },
+    {
+      "bytes": 1904,
+      "member": "precommit-checks-01/plan-append.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-checks-01/plan-append.json",
+      "sha256": "e279eb28b07dab517980f1c96443145ea80bc89a7ae6877697e83114ede7e136"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/00-preflight.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/00-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "precommit-repair-01/00-preflight.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/00-preflight.stdout",
+      "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/01-refresh-inventory.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/01-refresh-inventory.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35,
+      "member": "precommit-repair-01/01-refresh-inventory.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/01-refresh-inventory.stdout",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/02-source-inventory.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/02-source-inventory.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35,
+      "member": "precommit-repair-01/02-source-inventory.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/02-source-inventory.stdout",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/03-pq-source-pins.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/03-pq-source-pins.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 557,
+      "member": "precommit-repair-01/03-pq-source-pins.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/03-pq-source-pins.stdout",
+      "sha256": "7e6bdf32bcc0240c48849d8e4eaed57ba468fe015b6ff99166584618b421396f"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/04-ci-contract.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/04-ci-contract.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 180,
+      "member": "precommit-repair-01/04-ci-contract.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/04-ci-contract.stdout",
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/05-format.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/05-format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/05-format.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/05-format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5643,
+      "member": "precommit-repair-01/06-pq-rejection-controls.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/06-pq-rejection-controls.stderr",
+      "sha256": "c7ed07ee35d8f3efbca2b91578648f4bef24021c1f333e5610a422629d77c931"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/06-pq-rejection-controls.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/06-pq-rejection-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1725,
+      "member": "precommit-repair-01/07-w1-ci-contract-controls.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/07-w1-ci-contract-controls.stderr",
+      "sha256": "f1cf7677127411b9238e3d85ff8fe4111e0c5bc2a26d5852ce9f666598dadcf6"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/07-w1-ci-contract-controls.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/07-w1-ci-contract-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/08-diff-check.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/08-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/08-diff-check.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/08-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/09-source-c6-status.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/09-source-c6-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "precommit-repair-01/09-source-c6-status.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/09-source-c6-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 577,
+      "member": "precommit-repair-01/candidate-diff-stat.txt",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/candidate-diff-stat.txt",
+      "sha256": "193ab16995e653239cb9f08dba75a21e7ce7181cf28f33e9ed0537f760ee05f1"
+    },
+    {
+      "bytes": 71406,
+      "member": "precommit-repair-01/candidate-full-diff.patch",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/candidate-full-diff.patch",
+      "sha256": "511a8c21cf92b15451e43a8aa44f66dcf6f548f5a5b469ef8f39ef7848ffa9fa"
+    },
+    {
+      "bytes": 5182,
+      "member": "precommit-repair-01/commands.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/commands.json",
+      "sha256": "66d7404acfb481a77a7e9966e3b8d441c6fa638c6699ea2a368dd209d86d01fe"
+    },
+    {
+      "bytes": 1322,
+      "member": "precommit-repair-01/exact-repair.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/exact-repair.json",
+      "sha256": "dea839d8ce403f5e1c6aaf3429904672a662b8bb82acb5e167e86cd4897ff078"
+    },
+    {
+      "bytes": 6168,
+      "member": "precommit-repair-01/manifest.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/manifest.json",
+      "sha256": "51bc2f09b8045f0ec2eae4b53d78cb31e5afbd3c2936cd1195ff5a777e2e499b"
+    },
+    {
+      "bytes": 180,
+      "member": "precommit-repair-01/old-inventory-pin-references.txt",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/precommit-repair-01/old-inventory-pin-references.txt",
+      "sha256": "21640e6ae3fc1b1c66b47455f032fdf1126d2bfa82efddbfbe4c02bb55802406"
+    },
+    {
+      "bytes": 0,
+      "member": "setup-attempt-01/00-source-preflight.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/00-source-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 178,
+      "member": "setup-attempt-01/00-source-preflight.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/00-source-preflight.stdout",
+      "sha256": "dfe7ed4bf1a2fa120ab384a40149f30a0e1c5c6d6c17ad1bd0ee1a3e0185db83"
+    },
+    {
+      "bytes": 0,
+      "member": "setup-attempt-01/01-source-head.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/01-source-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "member": "setup-attempt-01/01-source-head.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/01-source-head.stdout",
+      "sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b"
+    },
+    {
+      "bytes": 0,
+      "member": "setup-attempt-01/02-source-status.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/02-source-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "setup-attempt-01/02-source-status.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/02-source-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "member": "setup-attempt-01/03-base-object.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/03-base-object.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7,
+      "member": "setup-attempt-01/03-base-object.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/03-base-object.stdout",
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8"
+    },
+    {
+      "bytes": 86,
+      "member": "setup-attempt-01/04-branch-absent.stderr",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/04-branch-absent.stderr",
+      "sha256": "211f99cf21ac85acacb436c4a37a1cfb0ce0e2289fda293643b82b9e5f918c3f"
+    },
+    {
+      "bytes": 0,
+      "member": "setup-attempt-01/04-branch-absent.stdout",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/04-branch-absent.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2317,
+      "member": "setup-attempt-01/commands.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/commands.json",
+      "sha256": "f3e271168b41792545e23fefa0f5f50f50d4125851736d00ccd07671292f9a46"
+    },
+    {
+      "bytes": 2999,
+      "member": "setup-attempt-01/merge-preparation.json",
+      "original_path": "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-01/merge-preparation.json",
+      "sha256": "06b9283c01bdacd2276dd953455c8bc577613426ba6e5e3f5d91a6f6bc87c9a6"
+    }
+  ],
+  "members_count": 128,
+  "schema": "TRNM-W1-C7-INTEGRATION-RAW-INDEX1"
+}

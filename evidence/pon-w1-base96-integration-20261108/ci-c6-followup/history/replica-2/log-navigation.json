@@ -1,0 +1,151 @@
+{
+  "candidate_count": 5,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 110,
+      "text": "2026-11-08T06:52:26.0304803Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 141,
+      "text": "2026-11-08T06:52:26.0338281Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 664,
+      "text": "2026-11-08T06:52:26.0761299Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 744,
+      "text": "2026-11-08T06:52:26.0827674Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1117,
+      "text": "2026-11-08T07:35:40.2776549Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_diagnostic.py\", \"--out\", \"/home/runner/work/_temp/history-stage-diagnostic/history-diagnostic\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42456320219-1-diagnostic-4514.service\", \"current_service\": \"trnm-from-zero-42456320219-1-diagnostic-4514.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"40d6c365-70ce-482b-a0e8-42bdeee3b957\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6880, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794120930169726007, \"device\": 29, \"inode\": 1460, \"mtime_ns\": 1794120930169726007, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794120931866578759, \"device\": 29, \"inode\": 1506, \"mtime_ns\": 1794120931866578759, \"path\": \"/run/trnm-public-fixture-42456320219-1-diagnostic/parent.json\", \"sha256\": \"4bc62ddc5eaad895ab4e01aacaff67aab859607cabfddfedbb279ece728f3584\", \"size_bytes\": 3244}, \"seal_sha256\": \"4bc62ddc5eaad895ab4e01aacaff67aab859607cabfddfedbb279ece728f3584\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\""
+    }
+  ],
+  "job_id": 128655993533,
+  "kind": "history-success",
+  "last_candidates": [
+    {
+      "line": 110,
+      "text": "2026-11-08T06:52:26.0304803Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 141,
+      "text": "2026-11-08T06:52:26.0338281Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 664,
+      "text": "2026-11-08T06:52:26.0761299Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 744,
+      "text": "2026-11-08T06:52:26.0827674Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1117,
+      "text": "2026-11-08T07:35:40.2776549Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_history_diagnostic.py\", \"--out\", \"/home/runner/work/_temp/history-stage-diagnostic/history-diagnostic\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42456320219-1-diagnostic-4514.service\", \"current_service\": \"trnm-from-zero-42456320219-1-diagnostic-4514.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"40d6c365-70ce-482b-a0e8-42bdeee3b957\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 6880, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794120930169726007, \"device\": 29, \"inode\": 1460, \"mtime_ns\": 1794120930169726007, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794120931866578759, \"device\": 29, \"inode\": 1506, \"mtime_ns\": 1794120931866578759, \"path\": \"/run/trnm-public-fixture-42456320219-1-diagnostic/parent.json\", \"sha256\": \"4bc62ddc5eaad895ab4e01aacaff67aab859607cabfddfedbb279ece728f3584\", \"size_bytes\": 3244}, \"seal_sha256\": \"4bc62ddc5eaad895ab4e01aacaff67aab859607cabfddfedbb279ece728f3584\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\""
+    }
+  ],
+  "log_lines": 1173,
+  "log_sha256": "3cf348e0cb26b490412961abe93e6d430cb29859aac45d376c6ee96f6173265a",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 1150,
+      "text": "2026-11-08T07:35:45.7369315Z Uploaded bytes 41943040"
+    },
+    {
+      "line": 1151,
+      "text": "2026-11-08T07:35:46.2420592Z Uploaded bytes 50331648"
+    },
+    {
+      "line": 1152,
+      "text": "2026-11-08T07:35:46.7582669Z Uploaded bytes 58720256"
+    },
+    {
+      "line": 1153,
+      "text": "2026-11-08T07:35:47.2149207Z Uploaded bytes 64440198"
+    },
+    {
+      "line": 1154,
+      "text": "2026-11-08T07:35:47.2556161Z Finished uploading artifact content to blob storage!"
+    },
+    {
+      "line": 1155,
+      "text": "2026-11-08T07:35:47.2559139Z SHA256 digest of uploaded artifact zip is 7c6fb8dce6c5ef23885ddef2ef571d639531c89205f19c9bae7221fef827ea26"
+    },
+    {
+      "line": 1156,
+      "text": "2026-11-08T07:35:47.2561291Z Finalizing artifact upload"
+    },
+    {
+      "line": 1157,
+      "text": "2026-11-08T07:35:47.7237711Z Artifact history-stage-diagnostic-x64-2-96a241bf43f6a46d35dfb3d4ced9594ed8ceca75-1.zip successfully finalized. Artifact ID 13608847990"
+    },
+    {
+      "line": 1158,
+      "text": "2026-11-08T07:35:47.7239189Z Artifact history-stage-diagnostic-x64-2-96a241bf43f6a46d35dfb3d4ced9594ed8ceca75-1 has been successfully uploaded! Final size is 64440198 bytes. Artifact ID is 13608847990"
+    },
+    {
+      "line": 1159,
+      "text": "2026-11-08T07:35:47.7245318Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456320219/artifacts/13608847990"
+    },
+    {
+      "line": 1160,
+      "text": "2026-11-08T07:35:47.7541922Z Post job cleanup."
+    },
+    {
+      "line": 1161,
+      "text": "2026-11-08T07:35:47.8261492Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1162,
+      "text": "2026-11-08T07:35:47.8296113Z git version 2.56.0"
+    },
+    {
+      "line": 1163,
+      "text": "2026-11-08T07:35:47.8326718Z Temporarily overriding HOME='/home/runner/work/_temp/af141b7c-3578-4044-ad46-232cb28de344' before making global git config changes"
+    },
+    {
+      "line": 1164,
+      "text": "2026-11-08T07:35:47.8327845Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1165,
+      "text": "2026-11-08T07:35:47.8329988Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1166,
+      "text": "2026-11-08T07:35:47.8361829Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1167,
+      "text": "2026-11-08T07:35:47.8390424Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1168,
+      "text": "2026-11-08T07:35:47.8612174Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1169,
+      "text": "2026-11-08T07:35:47.8647205Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1170,
+      "text": "2026-11-08T07:35:47.8845364Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1171,
+      "text": "2026-11-08T07:35:47.8872679Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1172,
+      "text": "2026-11-08T07:35:47.9198827Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1173,
+      "text": "2026-11-08T07:35:47.9471920Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

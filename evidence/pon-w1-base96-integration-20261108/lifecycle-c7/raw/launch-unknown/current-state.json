@@ -1,0 +1,49 @@
+{
+  "Native_transactions_sent": 0,
+  "Node_opened": false,
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "complete_historical_reap_established": false,
+  "currently_observed_owned_processes": [],
+  "expected_cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1ba4cf251-12894-1994.service",
+  "expected_cgroup_exists": false,
+  "job_directory_exists": false,
+  "launch_or_execution_history_remains_unknown": true,
+  "observed_monotonic_ns": 1204892964908336,
+  "observed_unix_ns": 1794127226972598241,
+  "operation_or_deadline_modified": false,
+  "original_job_id": "1a1ba4cf251-12894-1994",
+  "root": "/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01",
+  "root_artifact_presence": {
+    "config.json": false,
+    "launch-declaration.json": false,
+    "plan.json": true,
+    "research-node": false,
+    "run": false,
+    "target-state": false
+  },
+  "schema": "TRNM-W1-C7-LAUNCH-UNKNOWN-CURRENT-STATE1",
+  "scope": "One read-only current-state snapshot of the exact original job unit/cgroup and operation root; absence is not retrospective proof of no process history.",
+  "signals_sent": 0,
+  "systemd": {
+    "argv": [
+      "/usr/bin/systemctl",
+      "--user",
+      "show",
+      "hepta-runtime-job-1a1ba4cf251-12894-1994.service",
+      "--no-pager",
+      "--property=LoadState,ActiveState,SubState,MainPID,ControlPID,Result,ControlGroup"
+    ],
+    "exit_code": 0,
+    "fields": {
+      "ActiveState": "inactive",
+      "ControlGroup": "",
+      "ControlPID": "0",
+      "LoadState": "not-found",
+      "MainPID": "0",
+      "Result": "success",
+      "SubState": "dead"
+    },
+    "stderr": "",
+    "stdout": "MainPID=0\nControlPID=0\nResult=success\nControlGroup=\nLoadState=not-found\nActiveState=inactive\nSubState=dead\n"
+  }
+}

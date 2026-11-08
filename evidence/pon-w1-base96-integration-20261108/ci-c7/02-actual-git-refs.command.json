@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "--no-optional-locks",
+    "ls-remote",
+    "origin",
+    "refs/heads/fix/chain-six-axis-performance-20261103",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+    "refs/pull/782/head",
+    "refs/pull/782/merge"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794127694359438240,
+  "label": "02-actual-git-refs",
+  "started_unix_ns": 1794127684010182936,
+  "stderr": {
+    "bytes": 0,
+    "path": "02-actual-git-refs.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 306,
+    "path": "02-actual-git-refs.stdout",
+    "sha256": "b5a15a421bd7bb6d304f829b781939cdcff5bb438ff8fe8dd87e647a9552693f"
+  },
+  "timed_out": false
+}

@@ -1,0 +1,75 @@
+{
+  "cache_copy": {
+    "bytes": 4472,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+    "sha256": "5b142b1a66eb8a8d757b21028eb358c1bac39e4644e26d1aef334f03374abbeb"
+  },
+  "cache_origin": {
+    "copy_record": {
+      "bytes": 4472,
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+      "sha256": "5b142b1a66eb8a8d757b21028eb358c1bac39e4644e26d1aef334f03374abbeb"
+    },
+    "fresh_cargo_target": false,
+    "independent_cleanroom_build": false,
+    "initial_binaries": {
+      "release/w1-staged-prover-v2": {
+        "bytes": 47812232,
+        "device": 2050,
+        "inode": 57689439,
+        "nlink": 1,
+        "path": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+        "sha256": "9ff491a702f6833a73c10129d688ad77a905fc7ebaedfbc8784c7f8c485b77ac"
+      }
+    },
+    "kind": "copied-from-qualified-target",
+    "prior_attempt_history": "Preserved by the pinned source qualification and its immutable provenance; not replaced by this copy.",
+    "qualification_budget_seconds": 2400,
+    "reflink_auto_may_share_copy_on_write_extents": true,
+    "registry_cache_reused": true,
+    "source": {
+      "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+    },
+    "source_qualification": {
+      "bytes": 11652,
+      "path": "/home/qian-qi/work/chain-w1-c6-backend-qualification-20261108-ec265b-02/manifest.json",
+      "sha256": "f7c538e360541f15ebea2f8aea7e2fc50bde53ee1cdcd1354b3624b042c2979c"
+    },
+    "source_target": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b",
+    "toolchain_reused": true
+  },
+  "driver": {
+    "bytes": 11389,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-backend-copied-v1.py",
+    "sha256": "26f1b479b09912be1607359b89d3868b0fd636240b56915db53ddf2e0150e4dd"
+  },
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RAYON_NUM_THREADS": "2",
+    "RISC0_HOME": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/task-risc0",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTFMT": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "RUSTUP_TOOLCHAIN": "1.95.0"
+  },
+  "expensive_proof_started": false,
+  "fresh_cargo_target": false,
+  "guest_compilation_performed": false,
+  "independent_cleanroom_build": false,
+  "qualification_budget_seconds": 2400,
+  "registry_cache_reused": true,
+  "repo": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "schema": "TRNM-W1-BACKEND-QUALIFICATION-DECLARATION1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "target": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b",
+  "target_origin": "copied-from-qualified-target",
+  "toolchain_reused": true
+}

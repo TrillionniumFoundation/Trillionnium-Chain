@@ -1,0 +1,842 @@
+[
+  {
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "job_id": 128662229865,
+    "native_all_passed": true,
+    "native_execution_completed": true,
+    "phases": [
+      {
+        "business": {
+          "business_start_delay_ns": 91127,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "lower_bound_reaches_original_window_end": null,
+          "observed_success_latency_ns": 2291778440,
+          "original_window_remaining_at_business_start_ns": 3999908873,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": true,
+          "reported_independently_confirmed_in_window": 1,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": 2291778440,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": 2291778440,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 1
+          },
+          "unconfirmed": 0,
+          "unconfirmed_latency_lower_bound_ns": null,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": 2291778440,
+          "business_started_ns": 91127,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": 2291869567,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": 2290147010,
+          "reported_final_observation_ended_ns": 2291869567,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "attack-free-baseline",
+        "verification_errors": [],
+        "window_ns": 4000000000,
+        "workers": 0
+      },
+      {
+        "business": {
+          "business_start_delay_ns": 14627924,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3985372076,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3985372076,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": null,
+          "business_started_ns": 14627924,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": null,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": null,
+          "reported_final_observation_ended_ns": null,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "from-zero-pressure",
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    ],
+    "raw_finite_target_met": false
+  },
+  {
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "job_id": 128662229758,
+    "native_all_passed": true,
+    "native_execution_completed": true,
+    "phases": [
+      {
+        "business": {
+          "business_start_delay_ns": 181757,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "lower_bound_reaches_original_window_end": null,
+          "observed_success_latency_ns": 1814360555,
+          "original_window_remaining_at_business_start_ns": 3999818243,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": true,
+          "reported_independently_confirmed_in_window": 1,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": 1814360555,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": 1814360555,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 1
+          },
+          "unconfirmed": 0,
+          "unconfirmed_latency_lower_bound_ns": null,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": 1814360555,
+          "business_started_ns": 181757,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": 1814542312,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": 1813304556,
+          "reported_final_observation_ended_ns": 1814542312,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "attack-free-baseline",
+        "verification_errors": [],
+        "window_ns": 4000000000,
+        "workers": 0
+      },
+      {
+        "business": {
+          "business_start_delay_ns": 78575410,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3921424590,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3921424590,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": null,
+          "business_started_ns": 78575410,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": null,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": null,
+          "reported_final_observation_ended_ns": null,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "from-zero-pressure",
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    ],
+    "raw_finite_target_met": false
+  },
+  {
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "job_id": 128662229491,
+    "native_all_passed": true,
+    "native_execution_completed": true,
+    "phases": [
+      {
+        "business": {
+          "business_start_delay_ns": 119528,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "lower_bound_reaches_original_window_end": null,
+          "observed_success_latency_ns": 2824878643,
+          "original_window_remaining_at_business_start_ns": 3999880472,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": true,
+          "reported_independently_confirmed_in_window": 1,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": 2824878643,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": 2824878643,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 1
+          },
+          "unconfirmed": 0,
+          "unconfirmed_latency_lower_bound_ns": null,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": 2824878643,
+          "business_started_ns": 119528,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": 2824998171,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": 2754123916,
+          "reported_final_observation_ended_ns": 2824998171,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "attack-free-baseline",
+        "verification_errors": [],
+        "window_ns": 4000000000,
+        "workers": 0
+      },
+      {
+        "business": {
+          "business_start_delay_ns": 51932735,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3948067265,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3948067265,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": null,
+          "business_started_ns": 51932735,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": null,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": null,
+          "reported_final_observation_ended_ns": null,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "from-zero-pressure",
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    ],
+    "raw_finite_target_met": false
+  },
+  {
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "job_id": 128660701711,
+    "native_all_passed": true,
+    "native_execution_completed": true,
+    "phases": [
+      {
+        "business": {
+          "business_start_delay_ns": 159422,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "lower_bound_reaches_original_window_end": null,
+          "observed_success_latency_ns": 1786019790,
+          "original_window_remaining_at_business_start_ns": 3999840578,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": true,
+          "reported_independently_confirmed_in_window": 1,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": 1786019790,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": 1786019790,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 1
+          },
+          "unconfirmed": 0,
+          "unconfirmed_latency_lower_bound_ns": null,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": 1786019790,
+          "business_started_ns": 159422,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": 1786179212,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": 1785310460,
+          "reported_final_observation_ended_ns": 1786179212,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "attack-free-baseline",
+        "verification_errors": [],
+        "window_ns": 4000000000,
+        "workers": 0
+      },
+      {
+        "business": {
+          "business_start_delay_ns": 68661232,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3931338768,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3931338768,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": null,
+          "business_started_ns": 68661232,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": null,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": null,
+          "reported_final_observation_ended_ns": null,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "from-zero-pressure",
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    ],
+    "raw_finite_target_met": false
+  },
+  {
+    "failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "job_id": 128660701605,
+    "native_all_passed": true,
+    "native_execution_completed": true,
+    "phases": [
+      {
+        "business": {
+          "business_start_delay_ns": 131134,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.25,
+          "lower_bound_reaches_original_window_end": null,
+          "observed_success_latency_ns": 3085104124,
+          "original_window_remaining_at_business_start_ns": 3999868866,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": true,
+          "reported_independently_confirmed_in_window": 1,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": 3085104124,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": 3085104124,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 1
+          },
+          "unconfirmed": 0,
+          "unconfirmed_latency_lower_bound_ns": null,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": 3085104124,
+          "business_started_ns": 131134,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": 3085235258,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": 3014556957,
+          "reported_final_observation_ended_ns": 3085235258,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "attack-free-baseline",
+        "verification_errors": [],
+        "window_ns": 4000000000,
+        "workers": 0
+      },
+      {
+        "business": {
+          "business_start_delay_ns": 99223097,
+          "business_started_before_original_window_end": true,
+          "independent_confirmed_transactions_per_window_second": 0.0,
+          "lower_bound_reaches_original_window_end": true,
+          "observed_success_latency_ns": null,
+          "original_window_remaining_at_business_start_ns": 3900776903,
+          "pre_business_window_overrun_ns": 0,
+          "reported_finite_business_target_met": false,
+          "reported_independently_confirmed_in_window": 0,
+          "required_signed_transactions": 1,
+          "successful_latency": {
+            "max_ns": null,
+            "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+            "min_ns": null,
+            "minimum_samples": {
+              "p50": 2,
+              "p95": 20,
+              "p99": 100
+            },
+            "missing_samples": 0,
+            "p50_ns": null,
+            "p95_ns": null,
+            "p99_ns": null,
+            "samples": 0
+          },
+          "unconfirmed": 1,
+          "unconfirmed_latency_lower_bound_ns": 3900776903,
+          "unknown": 0
+        },
+        "clock": {
+          "business_start_to_independent_confirmation_ns": null,
+          "business_started_ns": 99223097,
+          "clock_scope": "client phase-local monotonic epoch; original pressure window begins at zero",
+          "original_window_to_independent_confirmation_ns": null,
+          "receiver_and_client_epochs_correlated": true,
+          "receiver_to_independent_confirmation_ns": null,
+          "reported_final_observation_ended_ns": null,
+          "scope": "original client window and optional same-process receiver epoch; exact receive latency is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; failed, late or unconfirmed returns never receive successful-confirmation credit"
+        },
+        "mode": "from-zero-pressure",
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    ],
+    "raw_finite_target_met": false
+  },
+  {
+    "fresh_log": "\nrunning 1 test\ntest fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-42457886518-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}\n\nthread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5423) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:\nfresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nFAILED\n\nfailures:\n\nfailures:\n    fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.70s\n\n",
+    "job_id": 128660701948,
+    "manifest": {
+      "all_named_tests_passed": false,
+      "attack_workers": 16,
+      "binary_sha256_after": "ea408a3e97b5e375b94c810b7c47e38886278907736aec767fa3ffec321533ef",
+      "binary_sha256_before": "ea408a3e97b5e375b94c810b7c47e38886278907736aec767fa3ffec321533ef",
+      "build": {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 16288710484,
+        "executed": true,
+        "exit_code": 0,
+        "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "log": "build.log",
+        "process_exit_code": 0,
+        "source_after_verified": true,
+        "source_before_verified": true,
+        "source_verified": true,
+        "timed_out": false
+      },
+      "execution_finished": true,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "independent_wan_accepted": false,
+      "passed": false,
+      "production_activation": false,
+      "requested_window_ns": 4000000000,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 2,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "c86f4864a83496bc49248d45ac612570161689058220e4ef227cc07c4b4ba285",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 24702777505,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "830a5d267df3ab9b7ddd1a0dab3711adb1109c58e4895f130eaf3730f431b065",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 24486102954,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "schema": "trnm-w1-fresh-service-execution-v1",
+      "source_after": {
+        "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683087594,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+      },
+      "source_before": {
+        "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683087594,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+      },
+      "source_expected": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "source_recompiled": true,
+      "work_hardness_accepted": false
+    },
+    "original_log": "\nrunning 1 test\ntest from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-42457886518-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.89s\n\n"
+  },
+  {
+    "history_log": "\nrunning 1 test\ntest actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED\n\nsuccesses:\n\nsuccesses:\n\nfailures:\n\n---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----\n{\"elapsed_ns\":43509590960,\"height\":500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":111187279987,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":201003716689,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":311006303946,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":445011054491,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":595805760690,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":768102410478,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":968404613849,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":1236706538016,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":1467892173754,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":1699902240243,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":1944303045911,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":2191403221990,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":2423505023940,\"height\":3000,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":2646708350050,\"height\":3500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000502746,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001573022,\"stop_requested_when_exited\":true}\n{\"elapsed_ns\":2812305665118,\"failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":null,\"completed_import_calls\":3853,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6448880,\"last_history_rpc_elapsed_ns\":139751,\"last_import_call_expression_elapsed_ns\":null,\"last_requested_after\":\"5d8ae436a8ceb9d5485cd92237a1e9c93c4a1b666f9020f6092940af3b287058\",\"last_successful_after\":\"5d8ae436a8ceb9d5485cd92237a1e9c93c4a1b666f9020f6092940af3b287058\",\"pinned_tip\":\"7c04e12199d6b0be7959afdf6f2e5af738e4b1282d900cce43f18bb926be93e6\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"history-rpc\"},\"native_legacy_reorg_observation\":{\"after\":{\"backend\":\"legacy\",\"counter_scope\":\"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset\",\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"enabled\":true,\"has_consensus_authority\":false,\"interval_scope\":\"component intervals are not complete importer time; nested observations are not generally additive\",\"roles\":[{\"collector_stage\":\"verify_state\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"staging_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}},{\"collector_stage\":\"read_active\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"active_tail_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}}],\"schema\":\"pon-native-legacy-reorg-observation-v1\",\"scope\":\"explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused\",\"sql_commit\":{\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"has_consensus_authority\":false,\"observation_failed\":false,\"pre_commit_refusals\":\"remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations\",\"schema\":\"pon-native-legacy-reorg-sql-commit-call-observation-v1\",\"scope\":\"explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync\",\"sites\":[{\"calls_in_flight\":0,\"site\":\"admission_persistence\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"atomic\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_step\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_termination\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}}]},\"stage_observation_failed\":false,\"stage_outcomes\":\"calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters\"},\"before\":{\"backend\":\"legacy\",\"counter_scope\":\"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset\",\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"enabled\":true,\"has_consensus_authority\":false,\"interval_scope\":\"component intervals are not complete importer time; nested observations are not generally additive\",\"roles\":[{\"collector_stage\":\"verify_state\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"staging_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}},{\"collector_stage\":\"read_active\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"active_tail_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}}],\"schema\":\"pon-native-legacy-reorg-observation-v1\",\"scope\":\"explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused\",\"sql_commit\":{\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"has_consensus_authority\":false,\"observation_failed\":false,\"pre_commit_refusals\":\"remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations\",\"schema\":\"pon-native-legacy-reorg-sql-commit-call-observation-v1\",\"scope\":\"explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync\",\"sites\":[{\"calls_in_flight\":0,\"site\":\"admission_persistence\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"atomic\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_step\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_termination\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}}]},\"stage_observation_failed\":false,\"stage_outcomes\":\"calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters\"},\"delta_computed\":false,\"enabled\":true,\"production_activation\":false,\"schema\":\"native-ancestry-legacy-reorg-observation-pair-v1\",\"scope\":\"Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced.\"},\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}\n{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}\n\nthread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4868) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:474:12:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2812.31s\n\n",
+    "job_id": 128660701637,
+    "manifest": {
+      "binary_after": {
+        "ctime_ns": 1794122497069005970,
+        "device": 66305,
+        "inode": 9706427,
+        "mtime_ns": 1794122497067005934,
+        "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+        "sha256": "a56f516f7a327e77d06db4d09d9f8bb502fe30a55b0507c31a42830fb585c370",
+        "size_bytes": 9844688
+      },
+      "binary_before": {
+        "ctime_ns": 1794122497069005970,
+        "device": 66305,
+        "inode": 9706427,
+        "mtime_ns": 1794122497067005934,
+        "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+        "sha256": "a56f516f7a327e77d06db4d09d9f8bb502fe30a55b0507c31a42830fb585c370",
+        "size_bytes": 9844688
+      },
+      "compilation_in_native_measurement": false,
+      "failures": [
+        "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+        "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+      ],
+      "hardness_accepted": false,
+      "independent_accepted": false,
+      "job": {
+        "GITHUB_JOB": "native-priorities",
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_ID": "42457886555"
+      },
+      "log": {
+        "ctime_ns": 1794125327241044589,
+        "device": 66305,
+        "inode": 9706432,
+        "mtime_ns": 1794125327241044589,
+        "path": "/home/runner/work/_temp/priority-observations/history-native/history.log",
+        "sha256": "6438873a592b07368fae7ba96b907c6c5c2e79b80e1899bde094829dac83bc1d",
+        "size_bytes": 11359
+      },
+      "named_execution": null,
+      "native_execution_authenticated": false,
+      "passed": false,
+      "preparation_sha256": "40a7a8e9b12dfffa6f61d091e6d7e764584f367a6f18a19478aee58dbbf8ec81",
+      "process": {
+        "cleanup_errors": [],
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+          "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+          "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+          "--exact",
+          "--ignored",
+          "--show-output"
+        ],
+        "exit_code": 101,
+        "failure": null,
+        "pid": 4866,
+        "started": true
+      },
+      "production_activation": false,
+      "public_network_ready": false,
+      "resources": {
+        "ctime_ns": 1794125327242044606,
+        "device": 66305,
+        "inode": 9706433,
+        "mtime_ns": 1794125327242044606,
+        "path": "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "sha256": "32a7d438f0fc60c911de440c9ed3af339c581091e637da448e4efe08fe5c41ae",
+        "size_bytes": 971
+      },
+      "schema": "trnm-ci-history-native-execution-v1",
+      "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+      "source_after": {
+        "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683087594,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+      },
+      "source_before": {
+        "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683087594,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+      },
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "summary_file": {
+        "ctime_ns": 1794125327241044589,
+        "device": 66305,
+        "inode": 9706442,
+        "mtime_ns": 1794125327241044589,
+        "path": "/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json",
+        "sha256": "8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17",
+        "size_bytes": 259
+      },
+      "target": "ancestry_long_sync",
+      "whole_test_command_preserved": true
+    },
+    "resources": "Command exited with non-zero status 101\n\tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\"\n\tUser time (seconds): 253.23\n\tSystem time (seconds): 449.72\n\tPercent of CPU this job got: 24%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 46:52.30\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 18572\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 524626\n\tVoluntary context switches: 5283439\n\tInvoluntary context switches: 73923\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 3874312\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 101\n",
+    "summary": {
+      "error": "IO: Connection refused (os error 111)",
+      "hardness_accepted": false,
+      "independent_accepted": false,
+      "passed": false,
+      "production_activation": false,
+      "public_network_ready": false,
+      "schema": "native-ancestry-long-sync-observation-v1"
+    }
+  }
+]

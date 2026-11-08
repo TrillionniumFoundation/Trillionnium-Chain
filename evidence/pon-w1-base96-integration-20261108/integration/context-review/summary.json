@@ -1,0 +1,135 @@
+{
+  "schema": "TRNM-W1-C7-CI-CONTEXT-MINIMAL-ROUTE-REVIEW1",
+  "examined_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "status": "RECOMMEND_NEW_C7_INTEGRATION_AND_NEW_EVENT_TUPLE_VERIFICATION_WITH_UNCHANGED_GUARDS",
+  "observed_snapshot": {
+    "source_head": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "api_base_sha": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "actual_base_sha": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "api_merge_commit_sha": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "actual_merge": {
+      "commit": "7b4a63b6f08687e93270407772951aa71087ca3d",
+      "tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+      "parents": [
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+      ]
+    },
+    "check_run_count": 85,
+    "status_counts": {
+      "completed:skipped": 3,
+      "in_progress:None": 32,
+      "completed:failure": 40,
+      "completed:success": 10
+    },
+    "all_ci_terminal": false
+  },
+  "findings": [
+    "PR workflows bind expected base directly to github.event.pull_request.base.sha and candidate to github.event.pull_request.head.sha; prospective source is github.sha.",
+    "verify_ci_source.py refuses a different actual ordered parent tuple before canonical merge-tree reproduction and tracked raw source verification.",
+    "CodeQL export independently freezes the event head/base and GITHUB_SHA, compares live PR identities, then requires exact ordered merge parents. Its current refusal is consistent with the same mismatched tuple.",
+    "The integration push resolver is a distinct push/main snapshot protocol. It explicitly refuses PR events and cannot be used as an unreviewed fallback for these PR failures.",
+    "The 39 source-context failures are 38 prospective-merge lanes plus CodeQL export; retained-pressure-failure is separate. The snapshot is not an all-terminal CI verdict.",
+    "There is no evidence in these reads that a guard implementation change is needed. A new C7 may produce a consistent new event but cannot guarantee platform event/API consistency."
+  ],
+  "recommendation": [
+    "Integrate the reviewed fixed base96 through a new C7 with unchanged guards/context and retain C6/D4 and all failures.",
+    "Before any new candidate is claimed qualified, read the new PR event candidate/base/GITHUB_SHA tuple and actual immutable merge commit parents/tree. If no base drift occurred, require [base96,C7] and canonical merge tree.",
+    "Do not replace the expected base using the observed merge parent, latest branch tip, or API response inside the old failed event; do not relax equality to ancestry or equal-tree checks.",
+    "Do not rerun old failed jobs expecting them to adopt new event values; keep their original source identities and skip outcomes.",
+    "If a fresh C7 event still declares stale base62 while its actual merge parents use stable base96/C7, first preserve the full safely selected event/API/ref observations and investigate the upstream snapshot inconsistency. Any later resolver change requires an explicit new protocol and retained failure/attempt binding."
+  ],
+  "required_controls": [
+    "Existing source-integrity suite (43 methods at examined C6): canonical ancestor and divergent acceptance, injected/omitted tree refusal, conflict refusal, local/environment merge-driver isolation, raw tracked-byte/mode/path checks.",
+    "Explicit original event-base62 versus actual base96 merge parents must continue to refuse even if one base is an ancestor or the source trees happen to coincide.",
+    "Candidate drift, reversed or extra parents, and right parents with a noncanonical tree must refuse before business execution.",
+    "Existing CodeQL export controls retain PR head/base drift and wrong ordered-parent rejection; the examined original export ran 16 offline controls before its actual source-context failure.",
+    "Existing integration-push controls retain PR-event exclusion, run/attempt/digest binding and inability to borrow a prior resolver snapshot.",
+    "New C7 source qualification must bind its exact commit/tree; prior C6 source receipts or static d73 preview are not C7 test receipts."
+  ],
+  "review_limits": [
+    "Read-only review; no guard/context edits, CI reruns or test executions by this review.",
+    "Full original webhook event JSON was not independently retrieved here; expected values are evidenced by the actual job context read by the coordinating agents, workflow expressions, original export-failure context and the retained API/git snapshot.",
+    "The retained artifact failure and any later business-stage failures require their own evidence and are not resolved by this source-context diagnosis."
+  ],
+  "original_source_pins": [
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "bytes": 11231
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/.github/workflows/pon-w1-transparent-profile.yml",
+      "sha256": "18cd9e2b710e79ffcfd86d5075fd57d35fd55ee76522dcbcebcf2e72aed4aeb8",
+      "bytes": 27935
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/.github/workflows/codeql-real-exact-source.yml",
+      "sha256": "380342ee51055f99bd06da806cf00d5053cb9082013dcca8e92c045e5907cb1d",
+      "bytes": 7522
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/.github/workflows/pon-owned-process-cleanup.yml",
+      "sha256": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+      "bytes": 12058
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/.github/workflows/pon-pq-system-continuation.yml",
+      "sha256": "f364ad07f09b80fdf5ab8a349364356fa6c57e75daa35fd4bf1da3634a7e1120",
+      "bytes": 12858
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/ci/test_ci_source_integrity.py",
+      "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+      "bytes": 25907
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/ci/integration_push_source.py",
+      "sha256": "d72d6106fa4bad0f82d88d2c98b06f5cad0c8823e98a7dbda72d4977d0e610d3",
+      "bytes": 14458,
+      "read_form": "selected source lines from full file with full SHA256"
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/export-failure-context.json",
+      "sha256": "307028dc5c26c4d9cc8b558377feb4e5ca033c470592f19433438d4c5f8532f4",
+      "bytes": 7893
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/export_codeql_analysis.py",
+      "sha256": "31217ef028048e8e47ad71257a8978fe4971d9a97c664a96b0d311bb8e7a98bf",
+      "bytes": 18932,
+      "read_form": "selected source lines from full file with full SHA256"
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/snapshot.json",
+      "sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307",
+      "bytes": 48517
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/test_export_codeql_analysis.py",
+      "sha256": "7327eb8a26f66c87ee7e48604a7cd0e22424fa5e684e3d8c7c52c28f1f0103df",
+      "bytes": 19272,
+      "read_form": "selected source lines from full file with full SHA256"
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/ci/test_ci_contract.py",
+      "sha256": "4467bd4d6badc77143613a7d32ef2aab74ce6bfaeef07fecb559d0b14a30c417",
+      "bytes": 107053,
+      "read_form": "selected source lines from full file with full SHA256"
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/ci/test_integration_push_source.py",
+      "sha256": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4",
+      "bytes": 16518,
+      "read_form": "selected source lines from full file with full SHA256"
+    },
+    {
+      "original_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/.github/workflows/codeql-analysis-export.yml",
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      "bytes": 3293,
+      "read_form": "selected source lines from full file with full SHA256"
+    }
+  ],
+  "audit_job": "1a1ba11ba59-12894-183d"
+}
+

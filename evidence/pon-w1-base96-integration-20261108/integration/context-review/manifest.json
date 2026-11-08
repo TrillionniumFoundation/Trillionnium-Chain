@@ -1,0 +1,27 @@
+{
+  "ci_reruns": 0,
+  "members": [
+    {
+      "bytes": 1668,
+      "path": "README.md",
+      "sha256": "c371c8e171a0dbd9a46aca6cd2f656e83c9495f98ac5c5747f099e94fb290670"
+    },
+    {
+      "bytes": 48518,
+      "path": "snapshot.original.json",
+      "sha256": "0c199a0715ebb25ab6585639a0557c979af48b69323e5bc52599db5ddd283b5c"
+    },
+    {
+      "bytes": 6813,
+      "path": "source-extract.json",
+      "sha256": "48641395a01ea18e6d38d7a729f5b6368f2088cd35ea92d1e731fcc20c55a6eb"
+    },
+    {
+      "bytes": 8725,
+      "path": "summary.json",
+      "sha256": "6d7abc85e41f4fe9981f27b73ac2e42fe72c522a201203b62f4d06da12247f31"
+    }
+  ],
+  "schema": "TRNM-W1-C7-CI-CONTEXT-REVIEW-FILES1",
+  "tests_executed": 0
+}

@@ -1,0 +1,34 @@
+{
+  "component": "backend",
+  "files": [
+    {
+      "bytes": 1017,
+      "path": "README.md",
+      "sha256": "b62b08338d70033352d05c78b523e9746c963917cae8f4c8f50fdf64c6e0a694"
+    },
+    {
+      "bytes": 144640,
+      "path": "raw-logs.tar.gz",
+      "sha256": "24f34f2ef6d4fbbf438a1e4072c88d2ee9173814e01a66be9f8e0f1a954894a6"
+    },
+    {
+      "bytes": 6441,
+      "path": "raw-output-index.json",
+      "sha256": "3820be424d8fc6ac5862a456cc93ebece2906168e37d525d6c76360836b0d5f3"
+    },
+    {
+      "bytes": 5282,
+      "path": "summary.json",
+      "sha256": "c2dd81e6018f5b2ce0048f8a7247b245b560bb68f602fee19c5885cfe4485f3f"
+    }
+  ],
+  "filesystem_members_verified": true,
+  "git_index_or_commit_verified_by_this_audit": false,
+  "raw_tar_members": 24,
+  "raw_tar_readback_verified": true,
+  "schema": "TRNM-W1-C7-COMPONENT-PUBLICATION1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  }
+}

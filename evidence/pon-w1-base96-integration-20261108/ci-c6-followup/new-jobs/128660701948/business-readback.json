@@ -1,0 +1,254 @@
+{
+  "fresh": {
+    "nested": {
+      "construction_coverage": [
+        "accounting_scope",
+        "all_context_bindings_and_challenges_unique",
+        "all_nested_cpu_measurements_known",
+        "constructed",
+        "exhausted",
+        "full_transcript_rejections",
+        "nested_from_zero_construction_cpu_ns",
+        "submitted",
+        "unique_challenges",
+        "unique_packet_indices"
+      ],
+      "phases": {
+        "length": 2
+      },
+      "signed_honest_packets": {
+        "length": 7
+      }
+    },
+    "scalars": {
+      "attack_workers": 16,
+      "attacker_setup_and_workers_cpu_ns": 365123245,
+      "finite_target_met": false,
+      "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+      "honest_chain_acquisition_wall_ns": 186133081,
+      "honest_chain_process_cpu_ns": 36686180,
+      "honest_chain_process_cpu_scope": "entire process during seven-block acquisition before service; not isolated W1 or exclusive producer CPU",
+      "negative_cache_enabled": true,
+      "negative_cache_observation_source": "actual-request-work-rejection-observations-v1",
+      "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+      "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+      "per_worker_attempt_cap": 1024,
+      "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+      "production_activation": false,
+      "public_network_ready": false,
+      "requested_window_ns": 4000000000,
+      "resource_fairness_qualified": false,
+      "same_signed_business_packets": true,
+      "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+      "scope": "explicit diagnostic with actual business assertion; separate from unchanged retained-packet original gate; one host/operator, no WAN fairness or cheapest-work claim",
+      "shared_material_setup_cpu_ns": 50214,
+      "shared_material_setup_wall_ns": 55374,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+      "work_profile_qualified": false
+    }
+  },
+  "fresh_log": "\nrunning 1 test\ntest fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-42457886518-1/fresh-service/fresh/report.json\",\"schema\":\"public-v3-fresh-challenge-confirmation-pressure-v1\"}\n\nthread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5423) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:\nfresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\nFAILED\n\nfailures:\n\nfailures:\n    fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.70s\n\n",
+  "job_id": 128660701948,
+  "manifest": {
+    "all_named_tests_passed": false,
+    "attack_workers": 16,
+    "binary_sha256_after": "ea408a3e97b5e375b94c810b7c47e38886278907736aec767fa3ffec321533ef",
+    "binary_sha256_before": "ea408a3e97b5e375b94c810b7c47e38886278907736aec767fa3ffec321533ef",
+    "build": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_from_zero",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 16288710484,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "log": "build.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    "execution_finished": true,
+    "failures": [
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+      "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+    ],
+    "independent_wan_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "requested_window_ns": 4000000000,
+    "runs": [
+      {
+        "failure": "CONFIRMATION_TARGET",
+        "failure_diagnostic": {
+          "acceptance_authority": false,
+          "finite_target_met": false,
+          "last_history_replay": {
+            "history_call_index": 2,
+            "phase": "from-zero-pressure",
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE"
+          },
+          "native_returncode": 0,
+          "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+        },
+        "log_sha256": "c86f4864a83496bc49248d45ac612570161689058220e4ef227cc07c4b4ba285",
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "passed": false,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+            "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 24702777505,
+          "executed": true,
+          "exit_code": 0,
+          "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "log": "original.log",
+          "process_exit_code": 0,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        "report_path": "original/report.json"
+      },
+      {
+        "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+        "failure_diagnostic": {
+          "acceptance_authority": false,
+          "finite_target_met": false,
+          "last_history_replay": {
+            "history_call_index": 1,
+            "phase": "from-zero-pressure",
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE"
+          },
+          "native_returncode": 101,
+          "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+        },
+        "log_sha256": "830a5d267df3ab9b7ddd1a0dab3711adb1109c58e4895f130eaf3730f431b065",
+        "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+        "passed": false,
+        "process": {
+          "command": [
+            "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+            "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1",
+            "--ignored"
+          ],
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 24486102954,
+          "executed": true,
+          "exit_code": 101,
+          "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "log": "fresh.log",
+          "process_exit_code": 101,
+          "source_after_verified": true,
+          "source_before_verified": true,
+          "source_verified": true,
+          "timed_out": false
+        },
+        "report_path": "fresh/report.json"
+      }
+    ],
+    "schema": "trnm-w1-fresh-service-execution-v1",
+    "source_after": {
+      "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683087594,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+    },
+    "source_before": {
+      "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683087594,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+    },
+    "source_expected": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "source_recompiled": true,
+    "work_hardness_accepted": false
+  },
+  "original": {
+    "nested": {
+      "from_zero_construction": {
+        "length": 16
+      },
+      "phases": {
+        "length": 2
+      },
+      "signed_honest_packets": {
+        "length": 7
+      }
+    },
+    "scalars": {
+      "attacker_construction_cpu_ns": 7568742,
+      "attacker_construction_wall_ns": 7568259,
+      "finite_target_met": false,
+      "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+      "honest_chain_acquisition_wall_ns": 185737630,
+      "honest_chain_aggregate_cpu_ns": null,
+      "honest_chain_process_cpu_ns": 36630443,
+      "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+      "invariant_target_met": true,
+      "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+      "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+      "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+      "production_activation": false,
+      "public_network_ready": false,
+      "same_packet_sequence_in_both_runs": true,
+      "schema": "public-v3-signed-confirmation-pressure-v1",
+      "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+      "strongest_honest_producer_used": false,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+      "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+      "work_profile_qualified": false
+    }
+  },
+  "original_log": "\nrunning 1 test\ntest from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline ... {\"finite_target_met\":false,\"report_path\":\"/home/runner/work/_temp/w1-fresh-service-head-42457886518-1/fresh-service/original/report.json\",\"schema\":\"public-v3-signed-confirmation-pressure-v1\"}\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.89s\n\n"
+}
