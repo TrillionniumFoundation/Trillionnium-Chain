@@ -1,0 +1,21 @@
+{
+  "elapsed_seconds": 37.06583385611884,
+  "end_unix_ns": 1794164873008423946,
+  "error": "AssertionError([])",
+  "exit_code": 100,
+  "junit_candidates": [],
+  "log_sha256": "5bba35cd9151b83ab51e164a6100d439737c188bc9e0e7359f1ad889bdb0e8b5",
+  "model_test_started": true,
+  "operation": "learning-d9fb-native-v4",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "recorded_unix_ns": 1794164873224004875,
+  "result": "FAIL",
+  "schema": "hepta-real-model-native-archived-run-v1",
+  "source": "4f559bfe1ff226251f42f2d2f1fbc87f615bcb11",
+  "start_unix_ns": 1794164835942589490,
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 66, in <module>\n    assert len(junit)==1,junit\n           ^^^^^^^^^^^^^\nAssertionError: []\n",
+  "tracked_after": 11207,
+  "tracked_before": 11207,
+  "tree": "be7b966d2bfb15f326fa36ff3617f76718bd44ac"
+}

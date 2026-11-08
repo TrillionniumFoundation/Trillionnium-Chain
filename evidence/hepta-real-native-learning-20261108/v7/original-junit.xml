@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="1" failures="1" errors="0" uuid="c312dd94-ce6e-49eb-9958-98c8827b6fec" timestamp="2026-11-09T03:37:08.249+08:00" time="40.174">
+    <testsuite name="codex-hepta-agentd" tests="1" disabled="0" errors="0" failures="1">
+        <testcase name="neuron_generation_runtime::tests::update::real_learning::actual_smollm_training_no_update_native_next_use_and_cold_readback" classname="codex-hepta-agentd" timestamp="2026-11-09T03:37:08.252+08:00" time="40.171">
+            <failure type="test failure with exit code 101"/>
+            <system-out>(stdout not captured)</system-out>
+            <system-err>(stderr not captured)</system-err>
+        </testcase>
+    </testsuite>
+</testsuites>

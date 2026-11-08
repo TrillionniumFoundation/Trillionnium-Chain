@@ -1,0 +1,64 @@
+{
+  "initial_head": "b550673b2be0c4d92388c05a39c8127839a3e18dafd70c592c2085821115f0c8",
+  "owners": {
+    "dataset": "learning-d9fb-native-v7-observer",
+    "evaluator": "learning-d9fb-native-v7-evaluator",
+    "evidence_trust_digest": "dd2e3360bb69834cd24e4ec7a982b348c88c479f031073d2596a62b5493c1898",
+    "experience": "learning-d9fb-native-v7-observer",
+    "next_use_observer": "learning-d9fb-native-v7-observer",
+    "proposal": "unused-research-no-update-proposal",
+    "selector": "learning-d9fb-native-v7-selector",
+    "trainer": "learning-d9fb-native-v7-trainer"
+  },
+  "request": {
+    "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+    "budget": {
+      "maximum_artifact_bytes": 1048576,
+      "maximum_dataset_bytes": 16384,
+      "maximum_dataset_rows": 4,
+      "maximum_training_milliseconds": 90000,
+      "maximum_training_steps": 10
+    },
+    "cell_id": "learning-d9fb-native-v7-cell",
+    "completed_task_receipt": "4bc015c34f383f1008fa952bdf18eecc39882b1777031ccc0ee92f9bd83d8e54",
+    "envelope": {
+      "base_commit": "b2e9e01830e808a7df815eb50ed6c0c3f4b77c341aea76a5b616092e761dde4c",
+      "base_tree": "2792ce09bebcf92e90447b08e3c7d9b7a02101a5db4ac4954f28c40cd2362983",
+      "envelope_id": "learning-d9fb-native-v7-envelope",
+      "expiry_unix_seconds": 1794167228,
+      "grammar_digest": "edab27d49526de6cb52c2623fce0d22c3609063590051b1d515515e49283e90a",
+      "maximum_candidates": 1,
+      "maximum_diff_bytes": 1048576,
+      "maximum_files": 1,
+      "maximum_parallel_sandboxes": 1,
+      "objective_digest": "23599fe5d9d7511cec05fd59f6546cd9c8946cc113f59cffcb3acfd922b162b2"
+    },
+    "evaluation_profile": "23599fe5d9d7511cec05fd59f6546cd9c8946cc113f59cffcb3acfd922b162b2",
+    "operation_id": "learning-d9fb-native-v7",
+    "principal_id": "162a87e00aa4e28da7826467f4994a929dc228f3c54a5fe506f98f0e7d0e11f4",
+    "selected_artifact_digest": "a946c2cd7073092e607fb5ee3fd9b2dc78053ba5dc3d357a0a27c273ebbf95e2",
+    "selected_bundle": {
+      "artifact_id": "learning-d9fb-native-v7-retained",
+      "components": {
+        "base": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+        "calibration": "23599fe5d9d7511cec05fd59f6546cd9c8946cc113f59cffcb3acfd922b162b2",
+        "cell_adapter": "e1a9ce940c9d4b04bb827490708604178d4e2391e7afd81a3ca63008389d1e53",
+        "composition": "fa676279f85d221afbd8ff426adce107dc2831c4205f7523adb5857b9d13cc3c",
+        "encoder": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+        "heads": "9f6f30b24aaafe0c3961df84e4983d752c9459961ab9a155a8c77ef29b622bce",
+        "normalizer": "22f89eba1d9c0089b8628b95d67c735e42af2362ab0ca5693886acf540124890",
+        "numeric_profile": "185e747bb90e4c793ea9c2bc0ce8606f88780d7154873e153a902f4da4e2ee4e",
+        "organ_adapter": null,
+        "output_schema": "62853d4704a4e8999187a11a57a7471b2f82b88093be21f36c8631e71ef9d4e5",
+        "state_schema": "44f5f811de7c00a82c22415f4ab45f0e704e639845016fd3433440fa6f7b45fd",
+        "state_semantics": "0b9697299a65031e1cd03cd90ed3261b9880dc1a640822702ae467136b498a38",
+        "tokenizer": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c"
+      },
+      "generation": 1,
+      "rollback_predecessor": null,
+      "training_lineage": null
+    },
+    "source_run_id": "learning-d9fb-native-v7-source"
+  },
+  "schema": "trnm-cell-learning-freeze-expectations-v2"
+}

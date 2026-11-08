@@ -17,6 +17,23 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Actual native NoUpdate iteration and recovery, 2026-11-08 UTC:**
+The [same-iteration native model evidence](../../evidence/hepta-real-native-learning-20261108/README.md)
+now records original Hepta source `27849cbdcfc0d4afc69764d6c1742af22c41c293`
+passing its actual model test in 44.615 seconds under the unchanged 60-second
+watchdog and zero retries. The new operation freezes its profile and coordinator
+before its own ten-step training, evaluates the exact candidate, correctly retains
+the parent after a 3/4 to 1/4 regression, executes a new next task through the
+original generation actor, ACKs it and completes the original NextUse checkpoint.
+Original Fleet retirement/restart, generation-owner and learning-owner recovery
+then pass; the actual worker PID changes while its live persisted forward counter
+stays at one on replay. Native daemon OS restart remains false. The unchanged
+Chain reader joins original checkpoint 0/5/6 and the exact ACKed readback. All five
+earlier failures and their preparation/publication/nonce boundaries remain.
+These 517 original records qualify the research NoUpdate execution branch only:
+new-candidate adoption, original Parameter/OPE qualification, independent custody,
+production FinalUse, payment and activation remain unqualified.
+
 **Actual model execution, NoUpdate and Cell payload loading, 2026-11-08 UTC:**
 The [original SmolLM execution evidence](../../evidence/smollm-same-iteration-20261108/README.md)
 retains two actual ten-step generations and a separate fresh ten-step controlled

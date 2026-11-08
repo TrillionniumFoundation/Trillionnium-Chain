@@ -1,0 +1,65 @@
+{
+  "changed_from_tested_source": [
+    "codex-rs/hepta-agentd/src/neuron_generation_real_learning_process.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_real_learning_tests.rs",
+    "codex-rs/hepta-agentd/src/neuron_generation_real_learning_trust.rs",
+    "scripts/research/smollm_learning_process_v1.py"
+  ],
+  "changed_tracked_paths": [
+    "codex-rs/hepta-agentd/src/neuron_generation_real_learning_tests.rs",
+    "scripts/research/smollm_learning_process_v1.py"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+        "fix",
+        "-p",
+        "codex-hepta-agentd",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "label": "fix",
+      "log_sha256": "fe1c0171b4d90f46791d1fc6a0138f75b548d70959ad13e2efb4a2f571175328"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--tests",
+        "-p",
+        "codex-hepta-agentd",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "label": "strict-clippy",
+      "log_sha256": "9c570dafd1c0f3e9003d49868132d3bcf13d1c94a5f7c6f963129d9cbbfaa3b7"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+        "fmt",
+        "--base",
+        "0fdb2900e319eb0e162390e41b9589b6f755bc35"
+      ],
+      "exit_code": 0,
+      "label": "fmt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "end_unix_ns": 1794168289223377250,
+  "git_status": " M codex-rs/hepta-agentd/src/neuron_generation_real_learning_process.rs\n M codex-rs/hepta-agentd/src/neuron_generation_real_learning_tests.rs\n M codex-rs/hepta-agentd/src/neuron_generation_real_learning_trust.rs\n M scripts/research/smollm_learning_process_v1.py\n",
+  "result": "PASS_MAINTENANCE",
+  "schema": "hepta-real-native-maintenance-v1",
+  "source_bytes_unchanged_from_pre_maintenance": false,
+  "start_unix_ns": 1794168123504768461,
+  "tested_source": "27849cbdcfc0d4afc69764d6c1742af22c41c293",
+  "tests_rerun_after_maintenance": false,
+  "tracked_entries_after": 11207,
+  "tracked_entries_before": 11207
+}
