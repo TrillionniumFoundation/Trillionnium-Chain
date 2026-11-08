@@ -1,6 +1,12 @@
 //! A complete, explicitly declared model/environment byte plan. This does not
 //! discover undeclared runtime dependencies or authorize execution of any file.
 
+pub(in crate::cell) mod network;
+pub use network::{
+    fetch_complete_version, CellVersionFetchFailureV1, CellVersionFetchObservationV1,
+    CellVersionFetchTransportReportV1,
+};
+
 use std::{collections::BTreeSet, time::Instant};
 
 use sha2::{Digest, Sha512};
