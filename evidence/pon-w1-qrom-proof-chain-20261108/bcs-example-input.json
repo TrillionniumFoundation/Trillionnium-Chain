@@ -1,0 +1,31 @@
+{
+  "declared_query_domains": {
+    "commutativity_max_queries": "1024",
+    "pqsr_max_queries": "1024",
+    "vc_max_queries": "1024"
+  },
+  "input_kind": "hypothetical",
+  "parameters": {
+    "ell_max": "16",
+    "k": "2",
+    "kappa_rrbr": {
+      "denominator": "1208925819614629174706176",
+      "numerator": "1"
+    },
+    "n_y": "1",
+    "n_y_prime": "1",
+    "q_pi": "2",
+    "q_r_input": "1",
+    "q_r_output": "4",
+    "q_v": "3",
+    "q_y": "1",
+    "r_min": "64",
+    "sigma": "96",
+    "t": "5"
+  },
+  "schema": "TRNM-W1-CDHZ-MARCH-BCS-ASSUMED-INPUT1",
+  "target_error": {
+    "denominator": "4294967296",
+    "numerator": "1"
+  }
+}

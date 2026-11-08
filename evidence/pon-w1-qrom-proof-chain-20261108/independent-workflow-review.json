@@ -1,0 +1,559 @@
+{
+  "actual_named_controls_reexecuted": false,
+  "all_checks_behaved_as_expected": true,
+  "checks": [
+    {
+      "accepted": true,
+      "behaved_as_expected": true,
+      "expected_acceptance": true,
+      "kind": "actual workflow inline",
+      "name": "actual_named_controls_independent_completion",
+      "output": "Independently required all 69 named successful controls.\n",
+      "returncode": 0
+    },
+    {
+      "accepted": true,
+      "behaved_as_expected": true,
+      "expected_acceptance": true,
+      "kind": "actual workflow inline",
+      "name": "actual_report_scope_with_four_actual_reports",
+      "output": "Fixed candidates remain distinct; implementation checks and hypothetical arithmetic only.\n",
+      "returncode": 0
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "missing_named_completion",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 24, in <module>\n  File \"<stdin>\", line 17, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1019, in read_bytes\n    with self.open(mode='rb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<case-output>/named-controls.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "run_and_check_early_zero_exit_without_records",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 24, in <module>\n  File \"<stdin>\", line 17, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1019, in read_bytes\n    with self.open(mode='rb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<case-output>/named-controls.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "check_early_zero_exit_with_empty_log",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 48, in <module>\n  File \"<stdin>\", line 19, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py\", line 359, in loads\n    return cls(**kw).decode(s)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py\", line 338, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py\", line 356, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "named_completion_missing_started_identity",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 37, in <module>\n  File \"<stdin>\", line 9, in require\nValueError: missing/duplicate test identity\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "named_completion_test_hash_changed",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 33, in <module>\n  File \"<stdin>\", line 9, in require\nValueError: test source identity\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "named_completion_test_count_changed",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 35, in <module>\n  File \"<stdin>\", line 9, in require\nValueError: test count\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_missing_replay",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 18, in <module>\n  File \"<stdin>\", line 7, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<case-output>/fri-query-replay.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_missing_query",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 19, in <module>\n  File \"<stdin>\", line 7, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<case-output>/query-expression.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_missing_bcs_unknown",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 20, in <module>\n  File \"<stdin>\", line 7, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<case-output>/bcs-unknown.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_missing_bcs_example",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 20, in <module>\n  File \"<stdin>\", line 7, in read\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<case-output>/bcs-example.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_empty_replay_qualification",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 53, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_null_for_required_false",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 53, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_query_zero_for_false",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 47, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_bcs_zero_for_false",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 36, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_bcs_one_for_true",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 36, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_query_true_promotion",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 47, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_bcs_true_promotion",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 36, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "scope_replay_true_promotion",
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 53, in <module>\n  File \"<stdin>\", line 15, in qualification\n  File \"<stdin>\", line 10, in require\nValueError: missing, promoted or mistyped qualification\n",
+      "returncode": 1
+    },
+    {
+      "accepted": true,
+      "behaved_as_expected": true,
+      "expected_acceptance": true,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_positive_with_complete_records",
+      "output": "All exact-source observations completed; QROM qualification remains HOLD.\n",
+      "returncode": 0
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_observations",
+      "output": "Required observations incomplete: observations; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_checkout",
+      "output": "Required observations incomplete: checkout; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_source_before",
+      "output": "Required observations incomplete: source_before; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_preflight",
+      "output": "Required observations incomplete: preflight; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_controls",
+      "output": "Required observations incomplete: controls; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_completion",
+      "output": "Required observations incomplete: completion; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_replay",
+      "output": "Required observations incomplete: replay; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_query_expression",
+      "output": "Required observations incomplete: query_expression; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_bcs",
+      "output": "Required observations incomplete: bcs; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_report_scopes",
+      "output": "Required observations incomplete: report_scopes; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_skipped_source_after",
+      "output": "Required observations incomplete: source_after; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_missing_scope_completion",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/report-scopes-independent.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_scope_early_zero_exit_without_report_files",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/report-scopes-independent.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_missing_named_completion",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/completion-independent.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_missing_preflight_completion",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/preflight.log'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_preflight_early_zero_exit",
+      "output": "Required observations incomplete: ; Expecting value: line 1 column 1 (char 0)\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_source_changed_after",
+      "output": "Required observations incomplete: ; source identity or bytes changed\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_missing_source_before",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/source-before.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_missing_source_after",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/source-after.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_wrong_source_sha",
+      "output": "Required observations incomplete: ; source identity or bytes changed\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_named_count_changed",
+      "output": "Required observations incomplete: ; independent named completion missing or incomplete\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_named_roster_changed",
+      "output": "Required observations incomplete: ; independent named completion missing or incomplete\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_scope_false_completion",
+      "output": "Required observations incomplete: ; report scope check did not complete or report bytes changed\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_scope_stale_report_hash",
+      "output": "Required observations incomplete: ; report scope check did not complete or report bytes changed\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_report_missing_after_scope",
+      "output": "Required observations incomplete: ; [Errno 2] No such file or directory: '<case-output>/bcs-example.json'\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_failure_outcome",
+      "output": "Required observations incomplete: replay; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual aggregate command with explicitly synthetic source and stage metadata; not hosted CI",
+      "name": "aggregate_failure_conclusion",
+      "output": "Required observations incomplete: replay; None\n",
+      "returncode": 1
+    },
+    {
+      "accepted": true,
+      "behaved_as_expected": true,
+      "expected_acceptance": true,
+      "kind": "actual workflow inline",
+      "name": "fresh_observations_first_reservation",
+      "output": "",
+      "returncode": 0
+    },
+    {
+      "accepted": false,
+      "behaved_as_expected": true,
+      "expected_acceptance": false,
+      "kind": "actual workflow inline",
+      "name": "fresh_observations_refuses_reuse",
+      "output": "mkdir: cannot create directory \u2018<case-output>/w1-qrom-proof-chain-head-123-1\u2019: File exists\n",
+      "returncode": 1
+    },
+    {
+      "accepted": true,
+      "behaved_as_expected": true,
+      "expected_acceptance": true,
+      "kind": "actual workflow inline",
+      "name": "fresh_observations_separate_merge_directory",
+      "output": "",
+      "returncode": 0
+    },
+    {
+      "accepted": true,
+      "behaved_as_expected": true,
+      "expected_acceptance": true,
+      "kind": "actual workflow inline",
+      "name": "fresh_observations_separate_retry_directory",
+      "output": "",
+      "returncode": 0
+    }
+  ],
+  "historical_fixed_findings": [
+    {
+      "finding": "The run/check entrypoints in one module could both exit zero without a named completion record.",
+      "resolution": "Independent inline file/roster/hash/count/name/checker validation plus final completion record."
+    },
+    {
+      "finding": "Qualification self-comparison, empty dict and loose bool equality could weaken report scope.",
+      "resolution": "Fixed literal identities and exact key/type identity checks; negative cases reject."
+    },
+    {
+      "finding": "Preflight zero exit without a PASS record was not independently distinguished.",
+      "resolution": "Final parses and checks exact audit project/remote-policy PASS record."
+    },
+    {
+      "finding": "At workflow SHA-256 1671c839eac91791f48bb234bf5dfe40a51a8fecb3e9daed4cb65de41f36f93d the final aggregator accepted success metadata even with no scope or report files.",
+      "resolution": "Final snapshot requires independently written scope record and rehashes all four report files; missing/stale cases reject."
+    }
+  ],
+  "hosted_ci_executed": false,
+  "input_observation_sha256": {
+    "bcs-example.json": "c6519f731e31e8ed07e28fd2157795eca8cee886e19bb877f9933b00f08463cf",
+    "bcs-unknown.json": "c8899c334ee8aff11e66535093facc7dbc78e1257a433a67a06e4db1e3bd50f4",
+    "completion.log": "c3e48d60f3ab01a62abe9142c6c69afc5cb049c5210a6174e4f7602df16b4abb",
+    "fri-query-replay.json": "8880a5a780601c24985fbe0676c796368c26b30cd8c0f7f4da24930a7f9a4413",
+    "named-controls.json": "e19f2196c911c0194f2d401b782a866a62b2bb3e7dd33babd1146bf540e65645",
+    "preflight.log": "848f505395a90319d00a8d39be5ceba71aece3eb807d3fdeb91e4deef6f4f74b",
+    "query-expression.json": "1c35da23e29fc1d09124683a5c3ec303b53791bd1f2eae470c04c37246dbc4fa"
+  },
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "hosted_exact_head_and_merge_run_verified": false,
+    "local_workflow_contract_review_completed": true,
+    "post_quantum_soundness_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "remaining_blocking_findings": [],
+  "review_date": "2026-11-08",
+  "schema": "TRNM-W1-QROM-WORKFLOW-INDEPENDENT-REVIEW1",
+  "scope": "Independent local workflow-command review, actual stored reports and 69-test completion record, explicitly synthetic stage/source metadata for aggregate rejection tests. This does not attest a hosted run or cryptographic security.",
+  "source_verifier_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "static_checks": [
+    {
+      "check": "two immutable event source choices",
+      "detail": "Matrix is head and prospective-merge; expected head comes from github.event.pull_request.head.sha and expected merge from github.sha.",
+      "result": "PASS"
+    },
+    {
+      "check": "exact checkout and no persisted credentials",
+      "detail": "Checkout uses EXPECTED_SOURCE, fetch-depth 0, persist-credentials false, immutable action SHA.",
+      "result": "PASS"
+    },
+    {
+      "check": "source verifier semantics",
+      "detail": "verify_ci_source.py checks exact HEAD; merge ordered parents [event base,event head] and canonical merge tree; hashes raw tracked bytes and modes; rejects hidden index state, replace refs, grafts, untracked files, dirty bytes.",
+      "result": "PASS"
+    },
+    {
+      "check": "before and after source binding",
+      "detail": "Both invocations receive the same event values, final aggregation requires identical records, expected tested commit and tracked_worktree_verified is True.",
+      "result": "PASS"
+    },
+    {
+      "check": "all eleven prerequisite outcomes and conclusions",
+      "detail": "Final always step requires both outcome and conclusion success for every required stage; no continue-on-error in workflow.",
+      "result": "PASS"
+    },
+    {
+      "check": "scope independence",
+      "detail": "Scope validator uses literal candidate/source/hash/schema values and exact expected qualification keys with identity comparisons; no imports from generators.",
+      "result": "PASS"
+    },
+    {
+      "check": "completion independence",
+      "detail": "Separate inline validator checks pinned roster, current test-file hashes, registered/started/successful names, counts, absence of skips/errors and checker PASS output; final also requires the independent 69-test record.",
+      "result": "PASS"
+    },
+    {
+      "check": "record freshness and retention",
+      "detail": "Exclusive mkdir per source/run/attempt; independent completion, scope and final records use exclusive creation; upload runs always and fails when no files.",
+      "result": "PASS"
+    }
+  ],
+  "workflow_path": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+  "workflow_sha256": "028b76e835ef3e381e0c4bc9e04a753584f4e783bf6a26f6fe2aeacbfcf1759c",
+  "workflow_unchanged_during_review": true
+}

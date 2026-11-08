@@ -1,0 +1,39 @@
+{
+  "schema": "TRNM-W1-P3-SOURCE-MANIFEST1",
+  "scope": "public immutable external P3 source identity; no protocol qualification",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "revision": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "profile": "external-p3-research-cc836dfc13ef",
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+      "blob_sha": "4001a5064ad9944c741ccc5f4d19df18fc3ea16c",
+      "sha256": "b39c2405e8c2263cfd52fc162e6a92ccfdc7c83ce8ebaca179b32e2187b8137d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cc836dfc13ef0006eb0878abd8cb5eca9a76bec0/formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs",
+      "blob_sha": "233667d008670ae91bfb170f15d9b86440d1d1ec",
+      "sha256": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cc836dfc13ef0006eb0878abd8cb5eca9a76bec0/formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/packed_carry_backend.rs",
+      "blob_sha": "a37071d8a26d9f0a898dd8dae6058dc474901c7e",
+      "sha256": "43049ce43de27d02335a14ccc39fe5c51ba32d66651ae39235d7526224be65ea",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cc836dfc13ef0006eb0878abd8cb5eca9a76bec0/formal/pon-nakamoto-v1/w1_public_stark_research/examples/packed_carry_backend.rs"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "blob_sha": "b1471a6c56e64fb1b7b150cecea9c55806c6d560",
+      "sha256": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cc836dfc13ef0006eb0878abd8cb5eca9a76bec0/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+      "blob_sha": "58c5110b6a01fc6c3bc76d6321a704120cd95f6c",
+      "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cc836dfc13ef0006eb0878abd8cb5eca9a76bec0/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock"
+    }
+  ]
+}
