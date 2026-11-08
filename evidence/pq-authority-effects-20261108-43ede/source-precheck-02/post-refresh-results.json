@@ -1,0 +1,111 @@
+{
+  "phase": "source2-working-tree",
+  "source_parent": "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+  "results": [
+    {
+      "label": "ci",
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.086,
+      "stdout_sha256": "6fc779ad5aad0652ee5f49b3379abfed8e6d4ab6414cff0102c7a0a520ac904a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "ci-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 19.752,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "40de09ca28c1605ee3ffddf38a354cb41321c3fac4266f6e4bfa8c8682b4c685"
+    },
+    {
+      "label": "integration",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.191,
+      "stdout_sha256": "a20898943bb1331f23f0e420649c1959e45a2baeec9ba5c8856b91c93836665d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "trace",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_authority_trace.py",
+        "--summary-only"
+      ],
+      "exit_code": 0,
+      "seconds": 5.798,
+      "stdout_sha256": "92015c6d5bdd6031eb72fbe62741c602144315e9229ba8f5f82213f99d6b0929",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "trace-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_authority_trace.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.441,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e13c649bad790251a881f054a9d5d244c597b63d83013d79dcebf9f5e65580fa"
+    },
+    {
+      "label": "scan-tests",
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_authority_surface_scan.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.254,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "47414b860719c409984cb86328acc4d2b02a51485d8244378b8d2ce0334e712c"
+    },
+    {
+      "label": "claim",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout_sha256": "b7cf818ebeb554caf34f80bb588153e3d1f285098d01b4a2c86a27d0a4f8c2f0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.063,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_tests_executed": 0,
+  "whole_chain_pq_qualified": false
+}

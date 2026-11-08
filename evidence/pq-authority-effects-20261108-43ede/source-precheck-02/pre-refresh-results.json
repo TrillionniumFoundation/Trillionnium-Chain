@@ -1,0 +1,40 @@
+{
+  "source_parent": "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+  "measured_at": "2026-11-08T12:07:57.552487+00:00",
+  "phase": "working-tree-before-reviewed-source2-pin-refresh",
+  "results": [
+    {
+      "label": "distributed-before",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+    },
+    {
+      "label": "trace-before",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_authority_trace.py",
+        "--summary-only"
+      ],
+      "exit_code": 2,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4e48fc02aea670ecd556602e600dac57a6347d9aeefcf3916ce5ac29fdee962a"
+    },
+    {
+      "label": "ci-before",
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "82dd69b5b78c41d4900a798bf3f9f97912ae5dd6a855f49b0e6f1c7ce7278dbc"
+    }
+  ],
+  "runtime_tests_executed": 0
+}

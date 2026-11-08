@@ -1,0 +1,12 @@
+{
+  "schema": "trnm-reviewed-source-pin-precheck-v1",
+  "exit_code": 1,
+  "passed": false,
+  "stage": "before intentional store guard pin refresh",
+  "source_base": "01e2c4c010c3cf65d1cf094368961efc1abab445",
+  "source_store_sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+  "logs": {
+    "stale-inline-pin.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stale-inline-pin.stderr.log": "9bff2f7e5dc8acbfc09a2082ac703265570faefb026a8c3121d4ed7d588972d4"
+  }
+}

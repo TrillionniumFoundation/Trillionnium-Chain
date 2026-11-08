@@ -32,6 +32,8 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
+from check_ci_contract import (check_pq_authority_trace_controls, PQ_CLASSICAL_PROFILE_STEP,
+                               PQ_CLASSICAL_OWNER_STEP)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -689,6 +691,188 @@ class W1ReuseV3LaneTests(unittest.TestCase):
             self.assertNotEqual(run(after).returncode, 0)
             env['TRNM_EXPECTED_BASE_SHA'] = base
             self.assertEqual(run(after).returncode, 0)
+
+
+class PqAuthorityTraceCiTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-trace-ci-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        for relative in ('scripts/ci/ci_job.sh', PQ_RELEASE_WORKFLOW,
+                         'scripts/ci/check_required_native_test.py'):
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, path)
+
+    def reject(self, relative, before, after):
+        path = self.root / relative
+        original = path.read_text()
+        self.assertIn(before, original)
+        path.write_text(original.replace(before, after, 1))
+        try:
+            with self.assertRaises(ValueError):
+                check_pq_authority_trace_controls(self.root)
+        finally:
+            path.write_text(original)
+
+    def test_real_wiring_keeps_four_sources_without_qualification(self):
+        result = check_pq_authority_trace_controls(self.root)
+        self.assertEqual(result['hosted_source_cells'], 4)
+        self.assertEqual(result['additional_native_owner_controls'], 4)
+        self.assertFalse(result['tests_executed'])
+        self.assertFalse(result['whole_chain_pq_qualified'])
+
+    def test_repository_cannot_skip_trace_or_swallow_failure(self):
+        path = 'scripts/ci/ci_job.sh'
+        for command in (
+                "    python3 scripts/ci/test_pq_authority_trace.py -v\n",
+                '    python3 scripts/ci/pq_authority_trace.py --summary-only\n'):
+            for after in ('', '    true # ' + command.lstrip(), command.rstrip() + ' || true\n'):
+                with self.subTest(command=command, after=after):
+                    self.reject(path, command, after)
+
+    def test_hosted_trace_cannot_be_removed_or_conditionally_skipped(self):
+        step = '      - name: Require retained source and claim controls\n'
+        self.reject(PQ_RELEASE_WORKFLOW, step, step + '        if: false\n')
+        self.reject(PQ_RELEASE_WORKFLOW, '  native:\n', '  native:\n    if: false\n')
+        test_command = '          bash "$PQ_OUT/run-command.sh" test_pq_authority_trace python3 scripts/ci/test_pq_authority_trace.py -v\n'
+        self.reject(PQ_RELEASE_WORKFLOW, test_command, '')
+        self.reject(PQ_RELEASE_WORKFLOW, test_command, test_command.replace(
+            'python3 scripts/ci/test_pq_authority_trace.py -v',
+            'python3 -m unittest discover -s scripts/ci -p test_pq_authority_trace.py -v'))
+        command = '          bash "$PQ_OUT/run-command.sh" pq-authority-trace python3 scripts/ci/pq_authority_trace.py --summary-only\n'
+        self.reject(PQ_RELEASE_WORKFLOW, command, command.rstrip() + ' || true\n')
+        self.reject(PQ_RELEASE_WORKFLOW, command, '')
+
+    def test_changed_manifest_alone_still_triggers_native_controls(self):
+        self.reject(PQ_RELEASE_WORKFLOW, '      - config/pon/pq-authority-traces-v1.json\n', '')
+
+    def test_profile_listener_control_requires_actual_exact_execution(self):
+        for changed in (
+                '',
+                PQ_CLASSICAL_PROFILE_STEP.replace('-- --exact --show-output', '-- --show-output'),
+                PQ_CLASSICAL_PROFILE_STEP.replace('python3 scripts/ci/check_required_native_test.py', 'true #'),
+                PQ_CLASSICAL_PROFILE_STEP.replace('        shell: bash\n', '        continue-on-error: true\n        shell: bash\n')):
+            with self.subTest(changed=changed[:80]):
+                self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_PROFILE_STEP, changed)
+
+    def test_owner_refusal_step_cannot_be_removed_skipped_duplicated_or_moved(self):
+        for changed in (
+                '',
+                PQ_CLASSICAL_OWNER_STEP + PQ_CLASSICAL_OWNER_STEP,
+                PQ_CLASSICAL_OWNER_STEP.replace("if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}", 'if: false'),
+                PQ_CLASSICAL_OWNER_STEP.replace('        shell: bash\n', '        continue-on-error: true\n        shell: bash\n')):
+            with self.subTest(changed=changed[:100]):
+                self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_OWNER_STEP, changed)
+        self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_PROFILE_STEP + PQ_CLASSICAL_OWNER_STEP,
+                    PQ_CLASSICAL_OWNER_STEP + PQ_CLASSICAL_PROFILE_STEP)
+
+    def test_owner_refusal_loop_requires_each_exact_selector_and_native_harness(self):
+        for selector in self.owner_selectors():
+            for changed in (PQ_CLASSICAL_OWNER_STEP.replace(selector, selector + '_unmatched'),
+                            PQ_CLASSICAL_OWNER_STEP.replace(selector, '')):
+                with self.subTest(selector=selector, changed=changed):
+                    self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_OWNER_STEP, changed)
+        for before, after in (('-- --exact --show-output', '-- --show-output'),
+                              ('--lib --all-features', '--lib'),
+                              ('-p trnm-pon-node --lib', '-p trnm-pon-node --test public_submit_recovery'),
+                              ('-- --exact --show-output', '-- --exact --ignored --show-output')):
+            with self.subTest(before=before, after=after):
+                self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_OWNER_STEP,
+                            PQ_CLASSICAL_OWNER_STEP.replace(before, after))
+
+    def test_owner_refusal_readback_and_failure_collection_cannot_be_weakened(self):
+        reader = ('            if ! python3 scripts/ci/check_required_native_test.py '
+                  '"$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then\n'
+                  '              failed=1\n            fi\n')
+        self.assertIn(reader, PQ_CLASSICAL_OWNER_STEP)
+        for changed in (
+                PQ_CLASSICAL_OWNER_STEP.replace(reader, ''),
+                PQ_CLASSICAL_OWNER_STEP.replace(reader, '            true # omitted actual readback\n'),
+                PQ_CLASSICAL_OWNER_STEP.replace('--test "$selector"', '--test another::control'),
+                PQ_CLASSICAL_OWNER_STEP.replace('              failed=1\n', '              failed=0\n'),
+                PQ_CLASSICAL_OWNER_STEP.replace('              failed=1\n', '              exit 1\n'),
+                PQ_CLASSICAL_OWNER_STEP.replace('          test "$failed" = 0\n', '          true\n'),
+                PQ_CLASSICAL_OWNER_STEP.replace('            fi\n            if ! python3', '            elif ! python3')):
+            with self.subTest(changed=changed):
+                self.reject(PQ_RELEASE_WORKFLOW, PQ_CLASSICAL_OWNER_STEP, changed)
+
+    @staticmethod
+    def owner_selectors():
+        # Independent expected names, not read from the checker constant.
+        return [
+            'store::pq_owner_rejection_tests::pq_account_rejects_classical_task_owner_before_any_durable_effect',
+            'store::pq_owner_rejection_tests::pq_account_rejects_classical_mining_owner_before_any_durable_effect',
+            'store::pq_owner_rejection_tests::classical_task_owner_with_signed_catalog_still_opens',
+            'store::pq_owner_rejection_tests::classical_mining_owner_with_signed_catalog_still_opens',
+        ]
+
+    def test_actual_owner_loop_runs_and_reads_all_four_after_failures(self):
+        # Substitute only recorded Cargo execution. Execute the actual workflow
+        # loop and unchanged native-test reader; synthetic logs are not Rust work.
+        recorder = r"""#!/usr/bin/env bash
+set -euo pipefail
+label="$1"
+shift
+for expected in cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features; do
+  test "${1:-}" = "$expected"
+  shift
+done
+selector="$1"
+shift
+test "$*" = '-- --exact --show-output --test-threads=1'
+printf '%s\t%s\n' "$label" "$selector" >> "$PQ_OUT/calls.tsv"
+mode=pass
+if test "$selector" = "$TRNM_SYNTHETIC_TARGET"; then mode="$TRNM_SYNTHETIC_MODE"; fi
+case "$mode" in
+  missing) exit 0 ;;
+  zero)
+    printf '%s\n' 'running 0 tests' 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s' > "$PQ_OUT/$label.log" ;;
+  ignored)
+    printf 'running 1 test\ntest %s ... ignored\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 3 filtered out; finished in 0.00s\n' "$selector" > "$PQ_OUT/$label.log" ;;
+  *)
+    actual="$selector"
+    if test "$mode" = wrong; then actual="${selector}::wrong"; fi
+    printf 'running 1 test\ntest %s ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s\n' "$actual" > "$PQ_OUT/$label.log"
+    if test "$mode" = duplicate; then printf 'test %s ... ok\n' "$selector" >> "$PQ_OUT/$label.log"; fi ;;
+esac
+if test "$mode" = process; then exit 7; fi
+"""
+        workflow = (self.root / PQ_RELEASE_WORKFLOW).read_text()
+        marker = '      - name: Require classical owner rejection before durable effects\n'
+        self.assertEqual(workflow.count(marker), 1)
+        step = workflow.split(marker, 1)[1].split('\n      - ', 1)[0]
+        loop = textwrap.dedent(step.split('        run: |\n', 1)[1]) + '\n'
+        prefix = r"""python3() {
+  if test "${1:-}" = scripts/ci/check_required_native_test.py; then
+    printf '%s\t%s\n' "$2" "$4" >> "$PQ_OUT/readbacks.tsv"
+  fi
+  command python3 "$@"
+}
+"""
+        selectors = self.owner_selectors()
+        for mode in ('pass', 'zero', 'ignored', 'wrong', 'duplicate', 'process', 'missing'):
+            with self.subTest(mode=mode):
+                output = self.root / ('owner-loop-' + mode)
+                output.mkdir()
+                (output / 'run-command.sh').write_text(recorder)
+                env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', PQ_OUT=str(output),
+                           TRNM_SYNTHETIC_TARGET=selectors[0], TRNM_SYNTHETIC_MODE=mode)
+                result = subprocess.run(['bash', '-c', prefix + loop], cwd=self.root, env=env,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode == 0, mode == 'pass', result.stderr)
+                calls = [line.split('\t') for line in (output / 'calls.tsv').read_text().splitlines()]
+                self.assertEqual([selector for _, selector in calls], selectors)
+                reads = [line.split('\t') for line in (output / 'readbacks.tsv').read_text().splitlines()]
+                self.assertEqual([selector for _, selector in reads], selectors)
+                self.assertEqual(len({label for label, _ in calls}), 4)
+                for label, selector in calls:
+                    if mode in ('zero', 'ignored', 'wrong', 'duplicate', 'missing') and selector == selectors[0]:
+                        continue
+                    execution = json.loads((output / (label + '-execution.json')).read_text())
+                    self.assertEqual(execution['test'], selector)
+                    self.assertEqual(execution['executed_tests'], 1)
+                    self.assertEqual(execution['scope'], 'named-libtest-execution-only')
 
 
 class PqReleaseAuthorityCiTests(unittest.TestCase):
