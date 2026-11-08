@@ -15,7 +15,13 @@ on:
       - docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md
       - docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md
       - scripts/cell_complete_version_vector.py
+      - scripts/cell_version_content_vector.py
+      - docs/development/specs/pon/CELL_FULL_CONTENT_V2.md
+      - docs/development/specs/pon/CELL_SEALED_LOADER_V1.md
+      - docs/development/specs/pon/CELL_RS46_CUSTODY_V1.md
+      - docs/development/specs/pon/CELL_BEP52_PEER_V1.md
       - formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json
+      - formal/pon-nakamoto-v1/vectors/cell-version-content-v2.json
       - trillionnium/crates/trnm-data-availability/**
       - trillionnium/crates/trnm-pon-node/**
       - trillionnium/crates/trnm-crypto-primitives/**
@@ -147,6 +153,7 @@ jobs:
           bash "$OUT/run-command.sh" next-python python3 -B -m unittest discover -s formal/next-architecture-security -p 'test_*.py' -v || status=1
           bash "$OUT/run-command.sh" counterexample-fixture python3 -B formal/next-architecture-security/counterexamples.py --check-fixture || status=1
           bash "$OUT/run-command.sh" complete-version-vector python3 -B scripts/cell_complete_version_vector.py --check || status=1
+          bash "$OUT/run-command.sh" complete-content-vector python3 -B scripts/cell_version_content_vector.py --check || status=1
           exit "$status"
       - name: Verify locked graph and unchanged all-source formatting
         id: graph_format
@@ -236,14 +243,14 @@ jobs:
             bash "$OUT/run-command.sh" "clippy-$package" cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p "$package" --all-targets -- -D warnings || status=1
           done
           exit "$status"
-      - name: Retain both release Cell examples as bounded local observations
+      - name: Retain release Cell component observations
         id: examples
         if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
         shell: bash
         run: |
           set -euo pipefail
           status=0
-          for example in cell_bep52_cost_v1 cell_rs46_cost_v1; do
+          for example in cell_bep52_cost_v1 cell_rs46_cost_v1 cell_signed_sealed_pipeline_v1; do
             command_status=0
             timeout --signal=TERM --kill-after=10s 600 cargo +1.95.0 run --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --example "$example" > "$OUT/$example.json" 2> "$OUT/$example.log" || command_status=$?
             printf '%s\n' "$command_status" > "$OUT/$example.exit"

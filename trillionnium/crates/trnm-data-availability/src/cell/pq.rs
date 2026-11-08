@@ -13,7 +13,12 @@ use trnm_protocol::pq_frame::{
     ml_dsa_65_key_id_from_spki, ML_DSA_65_SIGNATURE_BYTES, ML_DSA_65_SPKI_BYTES,
 };
 
+mod content;
 mod version;
+pub use content::{
+    CellPqContentAuthorizationV4, CellPqContentExpectationV4, CellPqContentStatementV4,
+    VerifiedCellPqContentV4, CELL_PQ_CONTENT_BYTES_V4,
+};
 pub use version::{
     CellPqVersionAuthorizationV3, CellPqVersionExpectationV3, CellPqVersionStatementV3,
     VerifiedCellPqVersionV3, CELL_PQ_VERSION_BYTES_V3,
