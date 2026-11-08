@@ -1,0 +1,23 @@
+{
+  "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "prefix": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install",
+  "files": {
+    "bin/openssl": {
+      "bytes": 8933408,
+      "sha256": "4467365b708d585d6d01da86ae47d43f096bc61454ebc24fb099544f52ca028d"
+    },
+    "lib/libcrypto.a": {
+      "bytes": 12381496,
+      "sha256": "409a32858cd67ac8d1736f1e05c16c92956d014f3c1c0519fc178cf59a28aacd"
+    },
+    "lib/libssl.a": {
+      "bytes": 2123138,
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  },
+  "ml_dsa_65_positive_verify": "Signature Verified Successfully",
+  "wrong_message_exit": 1,
+  "preexisting_provider": true,
+  "rebuilt_in_this_task": false,
+  "whole_chain_pq_qualified": false
+}

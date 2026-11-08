@@ -10438,3 +10438,23 @@ witness verification, normalized-cost report readback and head/prospective-merge
 All W1 minimum-cost, adaptive portfolio, complete initial-state, mixed-mining
 CP/CG/CQ, original Host/WAN and production gates retain their existing HOLD.
 No native consensus parameter or activation is changed.
+
+## Fixed-probability cost contract and bounded branch schedule, 2026-11-08
+
+Continue the existing MU1 and joint-consensus research on one explicitly joined
+source. The [executable cost-contract continuation](../protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md)
+binds MU1's frozen target/context and keeps actual classical/quantum lower
+envelopes unknown. Exact common-credit feasibility returns a schedule or a
+verifiable contradictory cycle. Additive lifecycle-potential synthesis returns
+a checked finite Bellman certificate or Farkas witness, preserving initial
+potential and a non-refillable eta account; no finite action menu certifies all
+legal W1 algorithms. The bounded Rust C0/C1 component replays original PNH1/PGH2
+work with branch-derived anchors and separates historical work from wall-clock
+eligibility. Existing admission, stored profile and work scoring are unchanged.
+Original native/History/PQ failures remain open. Required next gates are the
+actual joint cost lower envelope, complete legal-strategy/initial-state
+simulation, resource/tail/network composition, explicit new native admission
+and recovery namespaces, and real Cell quality/owner use. A successful source
+contract check or synthetic certificate leaves production HOLD_NO_GO.
+
+The complete scalar MU1 reuse probe additionally retains a winning outer-ticket hybrid and rejects its stale unit transcript without new credit; legal prepared-matrix reuse remains allowed and unqualified as a minimum cost. The embedded distributed source inventory includes both new native research files and the existing upstream history diagnostic.

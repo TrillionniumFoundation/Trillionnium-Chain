@@ -1,0 +1,11 @@
+{
+  "head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "tree": "cfa1bf87756380e7b1a638715767bab39293da39",
+  "merge_base": "ae90d186b79a9269bdb7d9ac8dfc0bcf7e5bfe0c",
+  "parents": [
+    "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+    "b16bae2824e6c8236ef2011fc93a74df3ac7f039"
+  ],
+  "pythonpath_removed": true,
+  "cargo_target_dir": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-target"
+}

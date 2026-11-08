@@ -1,0 +1,26 @@
+{
+  "cycle": [
+    {
+      "model_id": "classical",
+      "multiplier": "1/16",
+      "source": "u16",
+      "target": "u1"
+    },
+    {
+      "model_id": "quantum",
+      "multiplier": "4",
+      "source": "u1",
+      "target": "u16"
+    }
+  ],
+  "cycle_product": "1/4",
+  "problem_sha256": "21e30fbad4ea0f17284a6aeefda70b9d92ea9bf5cf941e2c86fc870f6e1285a5",
+  "qualification": {
+    "domain": "finite_declared_envelopes",
+    "lifecycle_composition": "not_proved",
+    "lower_bound_claims": "unverified_declarations",
+    "native_consensus": "not_qualified"
+  },
+  "schema": "pon-credit-feasibility-result-v1",
+  "status": "infeasible"
+}

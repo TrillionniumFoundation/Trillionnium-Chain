@@ -709,6 +709,25 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     check_independent_conformance(moved, self.lanes)
 
+    def test_branch_schedule_export_and_full_reader_cannot_be_omitted_or_forged(self):
+        commands = [line + '\n' for line in self.script.splitlines()
+                    if 'TRNM_WORK_SCHEDULE_RESEARCH_DIR' in line
+                    or 'trnm_schedule_' in line]
+        self.assertGreaterEqual(len(commands), 9)
+        for command in commands:
+            for replacement in ('', command * 2, '      true # suppressed schedule evidence\n'):
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        for old, new in [
+            ('in pnh1-authenticated pgh2-growth; do', 'in pnh1-authenticated; do'),
+            ('sha256sum "$trnm_schedule_dir/report.json"', 'printf stale-prior-report'),
+            ('--report-sha256 "$trnm_schedule_digest"', '--skip-full-work'),
+        ]:
+            with self.subTest(old=old):
+                with self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(old, new), self.lanes)
+
     def test_native_daa_reader_requires_fresh_full_work_export_and_actual_digest(self):
         lines = [line + '\n' for line in self.script.splitlines()
                  if 'TRNM_DAA_EVIDENCE_DIR' in line]

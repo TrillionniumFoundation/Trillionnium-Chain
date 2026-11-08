@@ -1,0 +1,176 @@
+{
+  "schema": "pon-evidence-local-links-v1",
+  "readme_sha256": "03934b72aa2afdda9e6491e71406b2978c8f75f3798439e2b313289a98155f06",
+  "links": [
+    {
+      "link": "../../docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+      "path": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md"
+    },
+    {
+      "link": "../../docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md",
+      "path": "docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md"
+    },
+    {
+      "link": "../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "link": "final-tested-source.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-tested-source.json"
+    },
+    {
+      "link": "exact-source-qa-final.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/exact-source-qa-final.json"
+    },
+    {
+      "link": "final-native-checks.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-native-checks.json"
+    },
+    {
+      "link": "final-source-identity-before.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-source-identity-before.json"
+    },
+    {
+      "link": "final-source-identity-after.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-source-identity-after.json"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/MANDATORY_UNITS_RELATION_V1.md",
+      "path": "formal/pon-nakamoto-v1/MANDATORY_UNITS_RELATION_V1.md"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md",
+      "path": "formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/credit_feasibility.py",
+      "path": "formal/pon-nakamoto-v1/credit_feasibility.py"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md",
+      "path": "formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md",
+      "path": "formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md"
+    },
+    {
+      "link": "../../formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py"
+    },
+    {
+      "link": "actual-mu1-reuse/report.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/actual-mu1-reuse/report.json"
+    },
+    {
+      "link": "../../trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+      "path": "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs"
+    },
+    {
+      "link": "../../trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs",
+      "path": "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs"
+    },
+    {
+      "link": "native-final/pnh1-authenticated/report.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/native-final/pnh1-authenticated/report.json"
+    },
+    {
+      "link": "final-12-pnh1-authenticated-reader.stdout.txt",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-12-pnh1-authenticated-reader.stdout.txt"
+    },
+    {
+      "link": "native-final/pgh2-growth/report.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/native-final/pgh2-growth/report.json"
+    },
+    {
+      "link": "final-12-pgh2-growth-reader.stdout.txt",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-12-pgh2-growth-reader.stdout.txt"
+    },
+    {
+      "link": "../../scripts/pon_branch_work_schedule_reader.py",
+      "path": "scripts/pon_branch_work_schedule_reader.py"
+    },
+    {
+      "link": "../../docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md",
+      "path": "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md"
+    },
+    {
+      "link": "retained-joint-native/pnh1-authenticated/joint-daa.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/retained-joint-native/pnh1-authenticated/joint-daa.json"
+    },
+    {
+      "link": "retained-joint-native/pgh2-growth/joint-daa.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/retained-joint-native/pgh2-growth/joint-daa.json"
+    },
+    {
+      "link": "../../trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+      "path": "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs"
+    },
+    {
+      "link": "../../trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs",
+      "path": "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs"
+    },
+    {
+      "link": "../../trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+      "path": "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    },
+    {
+      "link": "final-native-checks.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-native-checks.json"
+    },
+    {
+      "link": "exact-source-qa-final.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/exact-source-qa-final.json"
+    },
+    {
+      "link": "artifact-manifest.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/artifact-manifest.json"
+    },
+    {
+      "link": "archive-code-preservation.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/archive-code-preservation.json"
+    },
+    {
+      "link": "archive-links.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/archive-links.json"
+    },
+    {
+      "link": "tool-versions.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/tool-versions.json"
+    },
+    {
+      "link": "provider-validation.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/provider-validation.json"
+    },
+    {
+      "link": "final-native-binaries.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/final-native-binaries.json"
+    },
+    {
+      "link": "failed-process-observations.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/failed-process-observations.json"
+    },
+    {
+      "link": "launch-reconciliation.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/launch-reconciliation.json"
+    },
+    {
+      "link": "development-review-findings.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/development-review-findings.json"
+    },
+    {
+      "link": "implementation-files.json",
+      "path": "evidence/pon-fixed-probability-contract-20261108/implementation-files.json"
+    }
+  ],
+  "all_exist": true,
+  "anchor_validation_included": false
+}

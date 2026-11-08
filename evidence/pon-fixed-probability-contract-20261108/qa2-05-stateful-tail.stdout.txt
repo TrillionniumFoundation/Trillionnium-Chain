@@ -1,0 +1,198 @@
+{
+  "adaptive_policy_checks": {
+    "cases": 6156,
+    "max_probability_over_bound": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "strict_cases": 5220
+  },
+  "claim_flags": {
+    "actual_w1_quantum_transition_certificate": false,
+    "actual_w1_resource_tail": false,
+    "cheapest_legal_work_lower_bound": false,
+    "native_consensus_failure_mapping": false,
+    "physical_time_bound": false,
+    "production_qualification": false,
+    "six_successor_risk_bound": false
+  },
+  "erased_potential_failures": [
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_1",
+      "valid": false
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_2",
+      "valid": false
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_3",
+      "valid": false
+    }
+  ],
+  "independent_binomial_checks": {
+    "all_equal": true,
+    "cases": 324
+  },
+  "invalid_certificate_refused": true,
+  "law": {
+    "capacity": 3,
+    "gamma": {
+      "denominator": 4,
+      "numerator": 5
+    },
+    "p": {
+      "denominator": 4,
+      "numerator": 1
+    },
+    "potential": {
+      "stash_0": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "stash_1": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "stash_2": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "stash_3": {
+        "denominator": 1,
+        "numerator": 8
+      }
+    },
+    "z": {
+      "denominator": 1,
+      "numerator": 2
+    }
+  },
+  "schema": "stateful-tail-finite-toy-v1",
+  "status": "ABSTRACT_CERTIFICATE_ONLY_HOLD_FOR_W1",
+  "transition_checks": [
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "state": "stash_0",
+      "valid": true
+    },
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "state": "stash_1",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "state": "stash_1",
+      "valid": true
+    },
+    {
+      "action": "generate",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "state": "stash_2",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "state": "stash_2",
+      "valid": true
+    },
+    {
+      "action": "release",
+      "lhs": {
+        "denominator": 1,
+        "numerator": 8
+      },
+      "rhs": {
+        "denominator": 1,
+        "numerator": 8
+      },
+      "state": "stash_3",
+      "valid": true
+    }
+  ],
+  "zero_new_resource_counterexample": {
+    "actual_probability": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "budget": 0,
+    "certified_bound_with_potential": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "horizon": 1,
+    "initial_stash": 1,
+    "invalid_bound_after_reset_to_one": {
+      "denominator": 2,
+      "numerator": 1
+    },
+    "threshold": 1
+  }
+}

@@ -1,0 +1,6 @@
+{"receipt": "/tmp/trnm-ci-raw-source-lc21abfv/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-kgf0s3p6/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-ek59gvai/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-f8uspqud/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-k51knoxg/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/tmp/trnm-ci-raw-source-k51knoxg/.git/receipt-FAIL", "result": "FAIL"}

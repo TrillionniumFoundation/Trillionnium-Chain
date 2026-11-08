@@ -1,0 +1,11 @@
+{
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "manifest": "tests/fuzz/Cargo.toml",
+  "lock_sha256": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+  "workspace_members": [
+    "trnm-development-fuzz"
+  ],
+  "packages": 147,
+  "resolved_nodes": 147,
+  "exit": 0
+}

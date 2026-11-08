@@ -1,0 +1,14 @@
+{
+  "label": "final-04-diff-check",
+  "argv": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "exit": 0,
+  "duration_seconds": 0.04013487510383129,
+  "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "source_head_after": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "native_passed_counts": [],
+  "unittest_counts": []
+}

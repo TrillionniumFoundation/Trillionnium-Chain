@@ -1,0 +1,11 @@
+{
+  "label": "qa2-05-stateful-tail",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/stateful_tail.py"
+  ],
+  "exit": 0,
+  "source_head": "103cdf67108a667d8570388f9dd402210c160157",
+  "duration_seconds": 1.350132942898199,
+  "unittest_count": []
+}

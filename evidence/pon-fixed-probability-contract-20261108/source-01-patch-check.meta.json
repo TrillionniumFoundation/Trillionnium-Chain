@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "apply",
+    "--check",
+    "-"
+  ],
+  "exit": 1,
+  "duration_seconds": 0.0065580070950090885,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "ae90d186b79a9269bdb7d9ac8dfc0bcf7e5bfe0c"
+}
