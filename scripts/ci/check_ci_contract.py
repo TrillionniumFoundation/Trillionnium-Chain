@@ -416,6 +416,9 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
     python3 formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py -v
+    python3 formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
@@ -1542,7 +1545,9 @@ def validate(root: Path = ROOT) -> dict:
                  'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                  'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                  'test_useful_cell_multimodal_execution_v3.py',
-                 'test_useful_cell_multimodal_relation_v3.py'):
+                 'test_useful_cell_multimodal_relation_v3.py',
+                 'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
+                 'test_service_work_settlement_v1.py'):
         source = root / 'formal/pon-nakamoto-v1' / name
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)

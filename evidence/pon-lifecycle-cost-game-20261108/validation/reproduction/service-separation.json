@@ -1,0 +1,190 @@
+{
+  "empty_supply": {
+    "actual_demand_verified": false,
+    "additional_consensus_credit": 0,
+    "conditional_base_reservations": 0,
+    "liveness_qualified": false,
+    "native_funding_verified": false,
+    "no_pending_contracts": true,
+    "pending_contracts": 0,
+    "qualification": "HOLD",
+    "schema": "pon-service-work-supply-observation-v1",
+    "supplied_contracts": 0,
+    "synthetic_fill_authorized": false
+  },
+  "fixture": "synthetic-complete-integer-evaluation-not-trained-Hepta",
+  "qualification": "HOLD",
+  "scenarios": {
+    "improved": {
+      "additional_consensus_credit": 0,
+      "conditional_base_fee_units": 7,
+      "conditional_improvement_bonus_units": 11,
+      "contract": "cc2caf172f80b7b72a29477a4befca7aa3551e90775d40f2dc137d6f16544718",
+      "contribution_lane": {
+        "available": 89,
+        "cap": 100,
+        "paid": 11,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "decision": "MeasuredImprovement",
+      "evaluation_lane": {
+        "available": 93,
+        "cap": 100,
+        "paid": 7,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "external_payment_executed": false,
+      "independent_evaluation_certified": false,
+      "model_adoption_authorized": false,
+      "native_funding_verified": false,
+      "original_reservations_retained": false,
+      "production_activation": false,
+      "public_reward_eligible": false,
+      "qualification": "HOLD",
+      "resource_cost_certified": false,
+      "schema": "pon-service-work-settlement-reference-v1",
+      "status": "CONDITIONAL_ACCOUNTING_COMPLETE",
+      "task": "2468d33ad641cf9e7f97c595631d545af40ac5544f0ff99e2d5325a735fee711",
+      "work_profile_qualified": false
+    },
+    "invalid": {
+      "additional_consensus_credit": 0,
+      "conditional_base_fee_units": 0,
+      "conditional_improvement_bonus_units": 0,
+      "contract": "77be101ed4cfe0a3257433e32d92695e82d281d8d3accb03057f89a7d5b2b655",
+      "contribution_lane": {
+        "available": 100,
+        "cap": 100,
+        "paid": 0,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "decision": null,
+      "evaluation_lane": {
+        "available": 100,
+        "cap": 100,
+        "paid": 0,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "external_payment_executed": false,
+      "independent_evaluation_certified": false,
+      "model_adoption_authorized": false,
+      "native_funding_verified": false,
+      "original_reservations_retained": false,
+      "production_activation": false,
+      "public_reward_eligible": false,
+      "qualification": "HOLD",
+      "resource_cost_certified": false,
+      "schema": "pon-service-work-settlement-reference-v1",
+      "status": "SERVICE_INVALID",
+      "task": "2468d33ad641cf9e7f97c595631d545af40ac5544f0ff99e2d5325a735fee711",
+      "work_profile_qualified": false
+    },
+    "no-update": {
+      "additional_consensus_credit": 0,
+      "conditional_base_fee_units": 7,
+      "conditional_improvement_bonus_units": 0,
+      "contract": "77be101ed4cfe0a3257433e32d92695e82d281d8d3accb03057f89a7d5b2b655",
+      "contribution_lane": {
+        "available": 100,
+        "cap": 100,
+        "paid": 0,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "decision": "NoUpdate",
+      "evaluation_lane": {
+        "available": 93,
+        "cap": 100,
+        "paid": 7,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "external_payment_executed": false,
+      "independent_evaluation_certified": false,
+      "model_adoption_authorized": false,
+      "native_funding_verified": false,
+      "original_reservations_retained": false,
+      "production_activation": false,
+      "public_reward_eligible": false,
+      "qualification": "HOLD",
+      "resource_cost_certified": false,
+      "schema": "pon-service-work-settlement-reference-v1",
+      "status": "CONDITIONAL_ACCOUNTING_COMPLETE",
+      "task": "2468d33ad641cf9e7f97c595631d545af40ac5544f0ff99e2d5325a735fee711",
+      "work_profile_qualified": false
+    },
+    "retention-regression": {
+      "additional_consensus_credit": 0,
+      "conditional_base_fee_units": 7,
+      "conditional_improvement_bonus_units": 0,
+      "contract": "c88397dbeee8084469a3048a500a6c70530eda611192c467aec17a8bae7f852c",
+      "contribution_lane": {
+        "available": 100,
+        "cap": 100,
+        "paid": 0,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "decision": "NoUpdate",
+      "evaluation_lane": {
+        "available": 93,
+        "cap": 100,
+        "paid": 7,
+        "refunded": 0,
+        "reserved": 0
+      },
+      "external_payment_executed": false,
+      "independent_evaluation_certified": false,
+      "model_adoption_authorized": false,
+      "native_funding_verified": false,
+      "original_reservations_retained": false,
+      "production_activation": false,
+      "public_reward_eligible": false,
+      "qualification": "HOLD",
+      "resource_cost_certified": false,
+      "schema": "pon-service-work-settlement-reference-v1",
+      "status": "CONDITIONAL_ACCOUNTING_COMPLETE",
+      "task": "2468d33ad641cf9e7f97c595631d545af40ac5544f0ff99e2d5325a735fee711",
+      "work_profile_qualified": false
+    },
+    "unknown": {
+      "additional_consensus_credit": 0,
+      "conditional_base_fee_units": 0,
+      "conditional_improvement_bonus_units": 0,
+      "contract": "77be101ed4cfe0a3257433e32d92695e82d281d8d3accb03057f89a7d5b2b655",
+      "contribution_lane": {
+        "available": 89,
+        "cap": 100,
+        "paid": 0,
+        "refunded": 0,
+        "reserved": 11
+      },
+      "decision": null,
+      "evaluation_lane": {
+        "available": 93,
+        "cap": 100,
+        "paid": 0,
+        "refunded": 0,
+        "reserved": 7
+      },
+      "external_payment_executed": false,
+      "independent_evaluation_certified": false,
+      "model_adoption_authorized": false,
+      "native_funding_verified": false,
+      "original_reservations_retained": true,
+      "production_activation": false,
+      "public_reward_eligible": false,
+      "qualification": "HOLD",
+      "resource_cost_certified": false,
+      "schema": "pon-service-work-settlement-reference-v1",
+      "status": "PENDING_UNKNOWN",
+      "task": "2468d33ad641cf9e7f97c595631d545af40ac5544f0ff99e2d5325a735fee711",
+      "work_profile_qualified": false
+    }
+  },
+  "schema": "pon-service-work-separation-demo-v1"
+}

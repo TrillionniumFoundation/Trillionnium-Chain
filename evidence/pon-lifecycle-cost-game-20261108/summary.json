@@ -1,0 +1,139 @@
+{
+  "actual_W1_all_algorithm_lower_bound": null,
+  "cell_native_passed": 12,
+  "crypto_native_passed": 158,
+  "executable_source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+  "executable_source_tree": "4f0f951023b63bb1a27b63a76cd489da20538db0",
+  "external_payment_executed": false,
+  "full_github_ci_executed_locally": false,
+  "grouped_supplement_methods_passed": 11,
+  "grouped_supplement_skips": 0,
+  "main_command_status": "PASS",
+  "main_commands": 29,
+  "main_unittest_invocations": 518,
+  "main_unittest_skips": 2,
+  "native_chain_security_probability": null,
+  "new_test_methods_passed": 59,
+  "new_unique_test_methods": 59,
+  "pinned_python_ci_runtime_reproduced": false,
+  "production_activation": false,
+  "public_reward_eligible": false,
+  "qualification": "HOLD_NO_GO",
+  "quantum_lifecycle_certificate": null,
+  "schema": "pon-lifecycle-evidence-summary-v1",
+  "unit_suites": [
+    {
+      "exit_code": 0,
+      "invocations": 31,
+      "log": "validation/test_lifecycle_cost_v1.log",
+      "skipped": 0,
+      "suite": "test_lifecycle_cost_v1"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 43,
+      "log": "validation/test_ci_source_integrity.log",
+      "skipped": 0,
+      "suite": "test_ci_source_integrity"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 3,
+      "log": "validation/test_cell_lottery_cost_audit_v1.log",
+      "skipped": 0,
+      "suite": "test_cell_lottery_cost_audit_v1"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 25,
+      "log": "validation/test_service_work_settlement_v1.log",
+      "skipped": 0,
+      "suite": "test_service_work_settlement_v1"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 23,
+      "log": "validation/test_reward_budget_oracle.log",
+      "skipped": 0,
+      "suite": "test_reward_budget_oracle"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 20,
+      "log": "validation/test_useful_cell_numeric_v1.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_numeric_v1"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 11,
+      "log": "validation/test_grouped_cell_operator_v0.log",
+      "skipped": 2,
+      "suite": "test_grouped_cell_operator_v0"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 77,
+      "log": "validation/test_ci_execution.log",
+      "skipped": 0,
+      "suite": "test_ci_execution"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 47,
+      "log": "validation/test_useful_cell_relation_v1.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_relation_v1"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 34,
+      "log": "validation/test_useful_cell_execution_v2.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_execution_v2"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 103,
+      "log": "validation/test_ci_contract.log",
+      "skipped": 0,
+      "suite": "test_ci_contract"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 11,
+      "log": "validation/test_useful_cell_relation_v2.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_relation_v2"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 11,
+      "log": "validation/test_useful_cell_relation_v2_adversarial.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_relation_v2_adversarial"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 20,
+      "log": "validation/test_useful_cell_source_guard_v2.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_source_guard_v2"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 34,
+      "log": "validation/test_useful_cell_multimodal_execution_v3.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_multimodal_execution_v3"
+    },
+    {
+      "exit_code": 0,
+      "invocations": 25,
+      "log": "validation/test_useful_cell_multimodal_relation_v3.log",
+      "skipped": 0,
+      "suite": "test_useful_cell_multimodal_relation_v3"
+    }
+  ],
+  "work_profile_qualified": false
+}
