@@ -1,0 +1,11 @@
+{
+  "invalid_input_public_receipt_hex": "df63a4b6113427b170199843c247c0fdcce31a1a45e8b6f8fc565903c65bf75a",
+  "invalid_input_sha256": "a7c56e2259b84ce74d1cc106d9e3589aaffd016d8fc69a69489192dec0219b44",
+  "invalid_public_receipt_is_well_formed": true,
+  "native_calls_during_public_receipt_recomputation": 0,
+  "real_native_invalid_returncode": 2,
+  "real_native_invalid_stderr": "WORK\n",
+  "receipt_alone_authenticates_execution": false,
+  "valid_native_receipt_hex": "ff255a749199532202135595ee74247a7f1f6cb772558828eb8d5270ac2582a2",
+  "valid_public_recomputation_matches_real_native_stdout": true
+}

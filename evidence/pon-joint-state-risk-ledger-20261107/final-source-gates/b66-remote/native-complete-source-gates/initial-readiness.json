@@ -1,0 +1,62 @@
+{
+  "preflight": {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "output": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pon-joint-state-risk-ledger-20261107\", \"remote_policy_mutated\": false}\n"
+  },
+  "checks": [
+    {
+      "args": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "output": "6615ffa37a0d8f6451bf3e49c2500b4626ffae6c\n"
+    },
+    {
+      "args": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "returncode": 0,
+      "output": "fix/chain-pon-joint-state-risk-ledger-20261107\n"
+    },
+    {
+      "args": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "output": ""
+    },
+    {
+      "args": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-complete.bundle"
+      ],
+      "returncode": 0,
+      "output": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-complete.bundle \u6ca1\u95ee\u9898\n\u8fd9\u4e2a\u6346\u7ed1\u5305\u4e2d\u542b\u6709\u8fd9\u4e2a\u5f15\u7528\uff1a\nb66e66d2465258d808c0f56ff851123306d4bdb4 HEAD\n\u8fd9\u4e2a\u6346\u7ed1\u5305\u9700\u8981\u8fd9\u4e2a\u5f15\u7528\uff1a\n6615ffa37a0d8f6451bf3e49c2500b4626ffae6c \nThe bundle uses this hash algorithm: sha1\n"
+    },
+    {
+      "args": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/native-risk-complete.bundle"
+      ],
+      "returncode": 0,
+      "output": "b66e66d2465258d808c0f56ff851123306d4bdb4 HEAD\n"
+    }
+  ],
+  "bundle_sha256": "1b2bc0b1df987f791d5ce7365efab6bee268717b0e8a06a809c2f875dfab2769",
+  "bundle_bytes": 2062242
+}

@@ -1,0 +1,121 @@
+{
+  "schema": "pon-exact-residual-grover-countermodel-v1",
+  "scope": "Four-address oracle model only; no W1 or physical-resource claim",
+  "grover_cases": [
+    {
+      "marked": 0,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "-1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 1,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "-1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "1",
+        "0",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 2,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "1/2",
+        "-1/2",
+        "1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      "success_on_measurement": "1"
+    },
+    {
+      "marked": 3,
+      "initial_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "1/2"
+      ],
+      "post_query_amplitudes": [
+        "1/2",
+        "1/2",
+        "1/2",
+        "-1/2"
+      ],
+      "post_diffusion_amplitudes": [
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      "success_on_measurement": "1"
+    }
+  ],
+  "cut": {
+    "position": "after one Grover iterate, before measurement",
+    "new_oracle_queries": 0,
+    "measured_winner_records": 0,
+    "winner_probability": "1"
+  },
+  "same_private_marginal": {
+    "diagonal": [
+      "1/4",
+      "1/4",
+      "1/4",
+      "1/4"
+    ],
+    "correlated_success": "1",
+    "independent_success": "1/4",
+    "conclusion": "Private marginal alone omits oracle correlation"
+  },
+  "checks": {
+    "exact_grover_cases": 4,
+    "norm_checks": 4,
+    "joint_state_counterexample": true
+  },
+  "claims": {
+    "actual_W1_attack": false,
+    "quantum_hardware_executed": false,
+    "actual_W1_resource_tail_proved": false
+  }
+}

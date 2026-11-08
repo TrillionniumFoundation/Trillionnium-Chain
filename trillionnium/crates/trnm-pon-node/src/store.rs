@@ -28,6 +28,7 @@ mod legacy_reorg_root_tests;
 pub mod mempool;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
+pub mod native_owner_observation;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
@@ -1302,6 +1303,9 @@ pub struct Node {
     commitment_observation: RefCell<Option<CommitmentObservation>>,
     history_read_counters: Cell<HistoryReadCounters>,
     history_page_read_counters: Cell<HistoryPageReadCounters>,
+    // Opt-in, process-local observation identity/clock. It grants no write,
+    // consensus, remote coverage or physical-clock attestation authority.
+    native_owner_observer: RefCell<Option<native_owner_observation::OwnerObserver>>,
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
@@ -2239,6 +2243,7 @@ impl Node {
             commitment_observation: RefCell::new(None),
             history_read_counters: Cell::new(HistoryReadCounters::default()),
             history_page_read_counters: Cell::new(HistoryPageReadCounters::default()),
+            native_owner_observer: RefCell::new(None),
             owner_policy,
             mining_owner,
             continuous_owner,

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "native_node",
+    "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+    "--",
+    "--exact",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "wall_seconds": 22.537873130990192,
+  "test_threads": 1,
+  "test_source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+  "store_git_blob": "88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b",
+  "service_window_changed": false
+}

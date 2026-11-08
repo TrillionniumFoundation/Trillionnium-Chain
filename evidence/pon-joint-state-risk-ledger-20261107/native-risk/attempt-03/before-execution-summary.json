@@ -1,0 +1,72 @@
+{
+  "actual_native_runs": 2,
+  "all_final_stages_passed": true,
+  "build_qualification_output": "sqlite-build-qualification-output.json",
+  "checkpoint_authenticity_is_not_inferred_from_equality": true,
+  "final_native_tests": {
+    "failed": 0,
+    "helper_run_as_real_child_twice": true,
+    "ignored_helper": 1,
+    "passed": 10
+  },
+  "final_reader_tests": {
+    "failed": 0,
+    "passed": 22
+  },
+  "final_validation_job": "1a1b85b51ee-12894-ea8",
+  "first_attempt_failed_harness_and_environment_warning_preserved": true,
+  "host": "desktop",
+  "local_reader_result_byte_identical_to_remote": true,
+  "local_source_matches_final_native_build_snapshot": {
+    "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": true,
+    "formal/pon-nakamoto-v1/native_risk_ledger.py": true,
+    "formal/pon-nakamoto-v1/test_native_risk_ledger.py": true,
+    "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs": true,
+    "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs": true,
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": true,
+    "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs": true,
+    "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs": true
+  },
+  "observations": {
+    "actual_probability_law_authenticated": false,
+    "all_observed_native_confirmation_intents_registered": true,
+    "all_registered_starts_charged_without_refunds": true,
+    "budget_units": 40,
+    "conditional_allowances_proved": false,
+    "epochs": 5,
+    "global_failure_probability": null,
+    "latest_checkpoint_authenticated": false,
+    "native_conditional_risk_certified": false,
+    "native_confirmation_intents_covered": 7,
+    "outcomes_recorded": 6,
+    "physical_pre_registration_independently_attested": false,
+    "records_checked": 23,
+    "remaining_units": 4,
+    "spent_units": 36,
+    "starts_registered": 8,
+    "trusted_history_anchor": false,
+    "unit_denominator": 1000,
+    "unresolved_starts": [
+      12,
+      18
+    ],
+    "world_confirmation_attempts_covered": false
+  },
+  "original_archives_sha256_verified": true,
+  "owned_source_sha256": {
+    "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": "2215ca3ba62b8c279a6b07928e74ff3af70920df8a9f8c5daa4f1d63d85f2a55",
+    "formal/pon-nakamoto-v1/native_risk_ledger.py": "0ad35c6756d04eeedeb1e12bb6b92f28d1cb6674ce1b6841e8af0d463e211007",
+    "formal/pon-nakamoto-v1/test_native_risk_ledger.py": "6526f3a1c30ee8912d4a8ed7ceeee120b702cdaca6b99db2775c17ddfdbf2a2d",
+    "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs": "f0255574fcb54e8c5c2e2a255a7869289821c3a062d3df13eb0b594013de6007",
+    "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs": "b291ff343fb0d91151513a5007ff834c0999ebde9edb695546e3bfd68d5aaf2e",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "110a36db8e7e2257b4e1c8e606911d69abfde36e172ef1d27801bf0f9ee8f80e",
+    "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs": "55bc3bd73cd386c27186374ea578fb726e531d5b9b88cea0806cbded02b2ab86",
+    "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs": "715495f6db25532e7b12a6a3dbf1973f6c1972cc844689c6ba48f5012add9395"
+  },
+  "pre_dispatch_only_rollback_without_newer_pin_is_explicit_counterexample": true,
+  "retained_source_path_maps_verified": true,
+  "schema": "pon-native-risk-execution-evidence-v1",
+  "source_bytes_stable": true,
+  "status": "PASS_WITH_EXPLICIT_UNQUALIFIED_SECURITY_ASSUMPTIONS",
+  "strict_clippy_exit": 0
+}

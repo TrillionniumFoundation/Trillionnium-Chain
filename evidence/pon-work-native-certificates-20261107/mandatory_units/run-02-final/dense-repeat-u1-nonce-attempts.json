@@ -1,0 +1,90 @@
+{
+  "attempts": [
+    {
+      "aggregate_ticket": "9ae4af9f0bf66772c9ccc41a52f99f5f0d8f2fc4ddb82c620913431f55a8d685",
+      "constructed_complete_units": 1,
+      "context_hash": "d58639eee1e0fc73e0458aec64fc39409362fa56e93d5ef8face218769fcd870",
+      "nonce": 0,
+      "outputs_root": "860c15a05ad5d292c245798e279be3cbbff84311370f8ea06905b8304ca1f762",
+      "packet_sha256": "4e1a26af41a0695604ccef7c184c2bdda858d871062ffcb9f338ce8f1ba86d93",
+      "unit_proof_sha256": [
+        "5892493d4195058697fc6cf0ac693d95b9707c2f86a5666f834f2ee6fee48ffb"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "a9b57897b6d328a05a3b672965952ddf14abf5cd5f930bc5630840c0f877490f",
+      "constructed_complete_units": 1,
+      "context_hash": "e5c4f0fd72aedea6708f7b09cb0234d0750464caa4532fb38fa22578cdf6fce0",
+      "nonce": 1,
+      "outputs_root": "0a09a2fc4c93b0e9119e56ed2b2f86919bdfb209b87e8b081b4cd2682a8d0b31",
+      "packet_sha256": "1464f1b0da0e1b57a8af33d92112aba149e824a9012e5f9e4c0df5dc8f9e8f67",
+      "unit_proof_sha256": [
+        "ada27d684aa6c2a07ec2166007e9ff1aca06103d8ceed39476cde75605850e65"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "ef569532f8a970fd35426d41191ac8fd101bfd38e1d2a75ceeec6cb55ca16bb0",
+      "constructed_complete_units": 1,
+      "context_hash": "9cf1bdc08c5838b60d7456ce9a84e0fc5760654d79bbad2461b04fb31194d65a",
+      "nonce": 2,
+      "outputs_root": "5b64b8631507a861b24cc0cc8a652e107d50853b0088cb57c8f73b91c8e08027",
+      "packet_sha256": "b54f2bc0a843221a3336a195f88a2a9efa2a8ffa8775e44c9253a8d8d1e63965",
+      "unit_proof_sha256": [
+        "40404cb09537e07e2d404641d31355ca6124ffc42e12cd1f565c8e30f440adbc"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "709363df5534f86d5f190dc250bda3f7015b12434698dc01b6543a1165ffacd3",
+      "constructed_complete_units": 1,
+      "context_hash": "75efde0189f8fc25dc5d7bc303bafa5bbcefaed89937fb6957c5a69078f8588f",
+      "nonce": 3,
+      "outputs_root": "ed15e0e3024b60113caaba7d16fed7cb8d2110ec5908aea049154e87db2ff381",
+      "packet_sha256": "28705b46bbcd5634f11722d50b579bc7fbb67290b2657104f990723e54fb09fc",
+      "unit_proof_sha256": [
+        "a7edf6ac867fcf8b8dd49be29f386f9dad04f2c9e72851e4bf7aabb92d1a1eba"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "6f646a6353b5df1ebc6295ebd799d05485917872a6539a60a3b91b7b314f8872",
+      "constructed_complete_units": 1,
+      "context_hash": "f2993f4a318ec2554ec629d76a3c4b423c65647975e5a3a01d108b504a1eba26",
+      "nonce": 4,
+      "outputs_root": "5b53c538e42c6a94b5cb535d373d385773716df7bf8f118a66d3201c6babc408",
+      "packet_sha256": "d73d0042c67d44cfb57337b1868eaebcde4bc9770cdccce1e2c96396e1f50572",
+      "unit_proof_sha256": [
+        "1ef074775e6fabb1e5e902c05128557d2407674e8dd7b6ccfe4150dbae2000a5"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "663bb495fc3ddc8a7a523a2c62260a08e92175e11a14631821ce4b702fe115a1",
+      "constructed_complete_units": 1,
+      "context_hash": "f9c713ac2bfc35afcdd49d398e87e06c51e98e6591c4a046669235e23278853e",
+      "nonce": 5,
+      "outputs_root": "48df91c7e7115deb2515e852c9e4ba081201d1e9f2d4304238da4ca88fdbc67d",
+      "packet_sha256": "33daaf81ecd4f8715f86074f7643ff4cc7911e75e49a71feeaf3b88898d194e8",
+      "unit_proof_sha256": [
+        "205491d2041c08317df01483c22af016062e6d5e70a72bd13ca6d422d795c5b8"
+      ],
+      "winner": false
+    },
+    {
+      "aggregate_ticket": "0a7b4fe827311b7f684d4353122074e1402af72a35e86465f6e2fa47d0cc0745",
+      "constructed_complete_units": 1,
+      "context_hash": "4a872dbc9dddbd7f84bdca233543de5b8fd6a70345bbeaf968768c52e79a986d",
+      "nonce": 6,
+      "outputs_root": "bdb4a7a1a7ee21ce46cdf92243ecebdc1be659c2186f63882f37fb1d31a9f429",
+      "packet_sha256": "3ef1ec9af68deca7d3144ededb83a6b9037a296c454cffa30eef5a01daab2ba8",
+      "unit_proof_sha256": [
+        "3edb4fbe411080b21a117d670d86cb70310733e37b1dc121ccf8110de31ea10d"
+      ],
+      "winner": true
+    }
+  ],
+  "statistical_estimate_of_sha_success_probability": false,
+  "stopping_rule": "first aggregate winner, at most 256 sequential nonces"
+}

@@ -23,6 +23,14 @@ import work_oracle
 NAMES = ('ordinary', 'lower-clamp', 'upper-clamp')
 PACKET_BYTES = 318 + 2 + work_oracle.PROOF_BYTES
 
+HEAD_FIELDS = {
+    'network', 'parameters', 'genesis', 'tip', 'height', 'chainwork_hex',
+    'state_root', 'generation', 'production_activation', 'state_keys',
+    'stored_blocks', 'events', 'authenticated_sessions', 'authenticated_pending',
+    'authenticated_audit_rows', 'authenticated_outbox_sessions', 'authenticated_outbox_pending',
+}
+AUTHENTICATED_FIELDS = {name for name in HEAD_FIELDS if name.startswith('authenticated_')}
+
 
 def require(condition, message):
     if not condition:
@@ -51,6 +59,24 @@ def reject_number(_):
 def load_report(raw):
     return json.loads(raw, object_pairs_hook=wire.unique, parse_float=reject_number,
                       parse_constant=reject_number)
+
+
+def check_head_context(head, report, stored_blocks, events):
+    # A self-consistent cold copy is insufficient: every native observation must
+    # belong to the report's network/parameters/genesis and keep its actual scope.
+    require(type(head) is dict and set(head) == HEAD_FIELDS, 'native head fields')
+    for name in ('network', 'parameters', 'genesis'):
+        require(hexadecimal(head[name], 32) == hexadecimal(report[name], 32),
+                'native head context mismatch: ' + name)
+    require(head['production_activation'] is False, 'native head cannot grant production activation')
+    for name in AUTHENTICATED_FIELDS:
+        require(integer(head[name], name) == 0,
+                'standalone DAA observation cannot claim authenticated state: ' + name)
+    integer(head['state_keys'], 'state key count', 1)
+    require(integer(head['stored_blocks'], 'stored blocks') == stored_blocks,
+            'native head stored-block inventory mismatch')
+    require(integer(head['events'], 'reorg events') == events,
+            'native head reorg-event count mismatch')
 
 
 def analyze_report(report, packet_bytes):
@@ -204,7 +230,12 @@ def analyze_report(report, packet_bytes):
     require(len(report['activations']) == 3, 'complete activation order required')
     last_work = -1
     for ordinal, (name, activation) in enumerate(zip(('upper-clamp', 'ordinary', 'lower-clamp'), report['activations']), 32):
+        require(type(activation) is dict and set(activation) == {'schedule', 'stats'},
+                'native activation fields')
         stats = activation['stats']
+        # The three retained activations have a 31-block common prefix and
+        # 17-block fork suffixes: 48 initial apply events, then 17 undo + 17 apply.
+        check_head_context(stats, report, 83, 48 + 34 * (ordinal - 32))
         require(activation['schedule'] == name and stats['tip'] == grid[(name, 48)]['id'], 'activation does not select its actual branch')
         header = admitted[hexadecimal(stats['tip'], 32)]
         require(int.from_bytes(hexadecimal(stats['chainwork_hex'], 64), 'big') == header['work'] > last_work,
@@ -214,6 +245,8 @@ def analyze_report(report, packet_bytes):
         require(hexadecimal(stats['state_root'], 32) == header['state'], 'active state root differs from the selected header')
         last_work = header['work']
     selected, reopened = report['selected_before_negative_checks'], report['after_authenticated_reopen']
+    check_head_context(selected, report, 83, 116)
+    check_head_context(reopened, report, 84, 116)
     require(selected == report['activations'][-1]['stats'], 'negative checks started from another active branch')
     require(set(selected) == set(reopened) and all(selected[key] == reopened[key] for key in selected if key != 'stored_blocks'),
             'retained reopen changed the selected native state/generation/work')

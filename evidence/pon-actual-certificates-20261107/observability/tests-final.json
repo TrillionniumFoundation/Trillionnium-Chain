@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "formal/pon-nakamoto-v1/certificate_observability_tests.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/certificate_observability_models.py": "deb60afe6cc20155ebb28a89a237410fcbcc525c1ecfde41b6cbd5fde55f9372",
+    "formal/pon-nakamoto-v1/certificate_observability_tests.py": "b71308cc10ce39f07b8697f113777dbf30563cea0f6069fbcc01a402043cf375"
+  },
+  "native_execution_test": false
+}

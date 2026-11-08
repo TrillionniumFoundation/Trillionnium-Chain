@@ -1,0 +1,42 @@
+{
+  "all_non_evidence_hashes_matched_at_recorded_close": true,
+  "all_original_files_byte_identical": true,
+  "copied_original_bytes": 6174209,
+  "copied_original_files": 95,
+  "copied_original_root": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/merged-python-source-gates",
+  "copied_repository_or_git_cache": false,
+  "gates_rerun_during_delivery": false,
+  "native_reviewed_bindings": "original/attempt-01/native-reviewed-commit-binding.json",
+  "non_evidence_files_rehashed_at_recorded_close": 2415,
+  "original_artifact_manifest_sha256": "ca5b12a67bd6f11aceefb43dda33f6e99a371a46a0a4cfc5a8d3f06633348abc",
+  "original_files_rechecked_after_copy": true,
+  "original_logs_modified": false,
+  "parents": [
+    "b66e66d2465258d808c0f56ff851123306d4bdb4",
+    "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+  ],
+  "production_qualified": false,
+  "recorded_source_state_after": {
+    "head": "2d46d8682201bc0619f5b156af50e77fb399322e",
+    "parents": [
+      "b66e66d2465258d808c0f56ff851123306d4bdb4",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+    ],
+    "status_porcelain": "",
+    "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b"
+  },
+  "recorded_source_state_before": {
+    "head": "2d46d8682201bc0619f5b156af50e77fb399322e",
+    "parents": [
+      "b66e66d2465258d808c0f56ff851123306d4bdb4",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+    ],
+    "status_porcelain": "",
+    "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b"
+  },
+  "schema": "merged-python-delivery-source-identity-v1",
+  "source_commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "source_gate_record": "original/attempt-01/summary.json",
+  "source_guard_pass_claimed": false,
+  "source_tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b"
+}

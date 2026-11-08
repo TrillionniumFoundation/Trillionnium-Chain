@@ -1,0 +1,66 @@
+{
+  "all_requested_stages_exit_zero": true,
+  "cc1": {
+    "actual_MLDSA65_signatures_verified": true,
+    "native_raw_journals_checked": 6,
+    "native_raw_packet_artifacts_checked_across_journals": 58,
+    "native_six_successor_failure_probability": null,
+    "production_qualified": false,
+    "source_and_input_samples_stable": true,
+    "status": "PASS"
+  },
+  "first_attempt": {
+    "classification": "validation-harness identity assertion before compilation",
+    "exit_code": 1,
+    "job_id": "1a1b87da53a-12894-fc6",
+    "native_build_or_test_had_started": false,
+    "reason": "The harness unnecessarily required merged AGENTS bytes to equal the first parent. The incoming merge legitimately added the ProfHepta/HeptaRuntime GitHub rule. Those instructions were read; attempt-02 instead binds AGENTS to the exact current merged Git object.",
+    "repository_policy_or_guard_changed": false
+  },
+  "fresh_owner_scenario_exit": 0,
+  "fresh_risk_children_exit_codes": [
+    31,
+    32
+  ],
+  "fresh_risk_scenario_exit": 0,
+  "head": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "ignored_helpers_are_exercised_by_parent_tests": true,
+  "ignored_subprocess_helpers": 2,
+  "python_passed": {
+    "certificate-composition-tests-16": 16,
+    "owner-reader-tests-21": 21,
+    "risk-reader-tests-25": 25
+  },
+  "risk_bookkeeping": {
+    "budget_units": 40,
+    "global_failure_probability": null,
+    "native_confirmation_intents_covered": 7,
+    "outcomes_recorded": 6,
+    "remaining_units": 4,
+    "spent_units": 36,
+    "starts_registered": 8,
+    "unit_denominator": 1000,
+    "unresolved_starts": [
+      12,
+      18
+    ]
+  },
+  "rust_passed": {
+    "cell_native_v1": 12,
+    "native_owner_journal": 10,
+    "native_owner_observation": 10,
+    "native_risk_ledger": 11
+  },
+  "schema": "merged-native-validation-coverage-v1",
+  "scope": {
+    "actual_conditional_probability_law_proved": false,
+    "build_cache_or_rebuildable_executables_copied": false,
+    "physical_clock_or_global_inventory_authenticated": false,
+    "production_host_or_release_qualification": false,
+    "push_or_commit_performed_by_native_validation_agent": false,
+    "whole_workspace_validation": false
+  },
+  "status": "PASS",
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b",
+  "validation_job": "1a1b8800181-12894-fd1"
+}

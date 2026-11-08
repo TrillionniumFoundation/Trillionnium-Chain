@@ -1,0 +1,163 @@
+{
+  "schema": "native-merge-readonly-source-review-v1",
+  "result": "PASS",
+  "commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b",
+  "parents": [
+    "b66e66d2465258d808c0f56ff851123306d4bdb4",
+    "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+  ],
+  "head_before": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "head_after": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "status_before": "",
+  "status_after": "",
+  "reviewed_source_count": 13,
+  "reviewed_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "reviewed_blob": "3ea7345cdd3b579b31a9b107cb833b5247ff293e",
+      "reviewed_sha256": "a888ffc705319895a3e55909376929b6d7d70ef68605982e420dbd4a9f05797d",
+      "committed_blob": "3ea7345cdd3b579b31a9b107cb833b5247ff293e",
+      "committed_sha256": "a888ffc705319895a3e55909376929b6d7d70ef68605982e420dbd4a9f05797d",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "reviewed_blob": "88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b",
+      "reviewed_sha256": "14033df8867d740dffbd814b67fd6df1e71a049284c04b4e24cbf84252f0471e",
+      "committed_blob": "88c3190ba9c0f4b5ec56136ef8ce9a252cbaf16b",
+      "committed_sha256": "14033df8867d740dffbd814b67fd6df1e71a049284c04b4e24cbf84252f0471e",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "reviewed_blob": "13f87f83a1c6ee7f73963beb5f19c19f1236c150",
+      "reviewed_sha256": "c50fc7988f4cc54b6986a4a4847a48677e15011109f36dfbb598b0170ad61403",
+      "committed_blob": "13f87f83a1c6ee7f73963beb5f19c19f1236c150",
+      "committed_sha256": "c50fc7988f4cc54b6986a4a4847a48677e15011109f36dfbb598b0170ad61403",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs",
+      "reviewed_blob": "fc305bdecaabd3a7fc76ff8ebdde79314299b26d",
+      "reviewed_sha256": "ae0f83bbc9c5d76b7ded11272ca31b403b65a68b0a8930eb8ee5a3070f1de5be",
+      "committed_blob": "fc305bdecaabd3a7fc76ff8ebdde79314299b26d",
+      "committed_sha256": "ae0f83bbc9c5d76b7ded11272ca31b403b65a68b0a8930eb8ee5a3070f1de5be",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+      "reviewed_blob": "dc705687c563cc997b71f65dae23aa2100343362",
+      "reviewed_sha256": "f905f87408a11235d086cc50037df02b124a1929f1d04c78b1644eac9ba883cd",
+      "committed_blob": "dc705687c563cc997b71f65dae23aa2100343362",
+      "committed_sha256": "f905f87408a11235d086cc50037df02b124a1929f1d04c78b1644eac9ba883cd",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs",
+      "reviewed_blob": "13f6e5c4914a5e69fb8d6c783ed9255df4746bdf",
+      "reviewed_sha256": "853b519842237bc7b174be2ff5d2dad0a0ab8fb0cdadccc7433823c5dbd1f83d",
+      "committed_blob": "13f6e5c4914a5e69fb8d6c783ed9255df4746bdf",
+      "committed_sha256": "853b519842237bc7b174be2ff5d2dad0a0ab8fb0cdadccc7433823c5dbd1f83d",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_owner_journal.py",
+      "reviewed_blob": "bbf6adb163ad6cb2b8156ecb5f22cc46c1da931a",
+      "reviewed_sha256": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+      "committed_blob": "bbf6adb163ad6cb2b8156ecb5f22cc46c1da931a",
+      "committed_sha256": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_risk_ledger.py",
+      "reviewed_blob": "7441e4c85925eef204435a75ea325fb511c282b2",
+      "reviewed_sha256": "cb18be8a6642b6981c28797928c58a45152ae7b39c11b162a1afea1fc4c3dfce",
+      "committed_blob": "7441e4c85925eef204435a75ea325fb511c282b2",
+      "committed_sha256": "cb18be8a6642b6981c28797928c58a45152ae7b39c11b162a1afea1fc4c3dfce",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_execution_certificate.py",
+      "reviewed_blob": "e8f1717e967ad1686673883ce97cce4fc276850e",
+      "reviewed_sha256": "8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033",
+      "committed_blob": "e8f1717e967ad1686673883ce97cce4fc276850e",
+      "committed_sha256": "8ee16a5e0378ba97a5a1bd45085f5b94aff2005d0a67cae7318342f556183033",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/native_owner_score_bridge.py",
+      "reviewed_blob": "68a98e516a7cd441d66e94d23f7302d04b795e89",
+      "reviewed_sha256": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+      "committed_blob": "68a98e516a7cd441d66e94d23f7302d04b795e89",
+      "committed_sha256": "a249eb26e1d6144e83d20a7fcc93a31af85da66d495102a04c26e251a79b7bb0",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/certificate_composition.py",
+      "reviewed_blob": "6311a312400f9c613812e33e0ff479b914d86545",
+      "reviewed_sha256": "32fa7d9da1326f95d6ef5829d74e748a3fc7f5af110d235d1db179bffe5805de",
+      "committed_blob": "6311a312400f9c613812e33e0ff479b914d86545",
+      "committed_sha256": "32fa7d9da1326f95d6ef5829d74e748a3fc7f5af110d235d1db179bffe5805de",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/certificate_event_coverage.py",
+      "reviewed_blob": "673a189230fb1a368393645684a8cdb622a30705",
+      "reviewed_sha256": "4a0d284840fee65faa64c28262f204e52cf27abad4ab64545f1b0e707e65af06",
+      "committed_blob": "673a189230fb1a368393645684a8cdb622a30705",
+      "committed_sha256": "4a0d284840fee65faa64c28262f204e52cf27abad4ab64545f1b0e707e65af06",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/finite_joint_state_certificate.py",
+      "reviewed_blob": "488d4da377ec9d24d7f4a3e21ca0588518365e33",
+      "reviewed_sha256": "7833258414d64bc3750fb2075056f8d8b526ad35901a4a3e2ae8a5f7b86022b6",
+      "committed_blob": "488d4da377ec9d24d7f4a3e21ca0588518365e33",
+      "committed_sha256": "7833258414d64bc3750fb2075056f8d8b526ad35901a4a3e2ae8a5f7b86022b6",
+      "equal_to_reviewed_blob": true,
+      "equal_to_reviewed_sha256": true,
+      "index_matches_commit": true,
+      "worktree_matches_commit": true
+    }
+  ],
+  "compiled_or_tested_in_this_review": false,
+  "repository_mutated": false,
+  "production_qualified": false
+}

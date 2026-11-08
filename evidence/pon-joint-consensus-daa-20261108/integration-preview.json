@@ -1,0 +1,7 @@
+{
+  "integration_head": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "merge_base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+  "merge_tree_exit_code": 1,
+  "merge_tree_stdout": "dbed16b48b76cac1d789a71cb76a23ca840ad7e0\n100644 3468dab27c330c086ac8b05f59675d7afe88445a 1\t.github/workflows/pon-recent-batch-acceptance.yml\n100644 92d03597f3bcac48daedda52b140f15f6c07f907 2\t.github/workflows/pon-recent-batch-acceptance.yml\n100644 7d426d03f9a56de9c4b745da535e774e552673f2 3\t.github/workflows/pon-recent-batch-acceptance.yml\n100644 e5fe0a2c0f87beb1fa6b182b863c028cc357d038 1\tconfig/pon/pq-cross-branch-corpus-v1.json\n100644 2cf4927dd82da163dd88be77565353d01e6d640d 2\tconfig/pon/pq-cross-branch-corpus-v1.json\n100644 d78e8a523ffa605e444153f5b068d07e5e1f474c 3\tconfig/pon/pq-cross-branch-corpus-v1.json\n\n\u81ea\u52a8\u5408\u5e76 .github/workflows/pon-recent-batch-acceptance.yml\n\u51b2\u7a81\uff08\u5185\u5bb9\uff09\uff1a\u5408\u5e76\u51b2\u7a81\u4e8e .github/workflows/pon-recent-batch-acceptance.yml\n\u81ea\u52a8\u5408\u5e76 config/pon/pq-cross-branch-corpus-v1.json\n\u51b2\u7a81\uff08\u5185\u5bb9\uff09\uff1a\u5408\u5e76\u51b2\u7a81\u4e8e config/pon/pq-cross-branch-corpus-v1.json\n\u81ea\u52a8\u5408\u5e76 trillionnium/crates/trnm-pon-node/src/store.rs\n",
+  "merge_tree_stderr": ""
+}
