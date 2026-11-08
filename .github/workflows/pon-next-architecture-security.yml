@@ -105,6 +105,10 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           bash "$OUT/run-command.sh" source-before python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-before.json"
+          # Preserve the exact receipt path consumed by the original Host launcher.
+          test ! -e "$OUT/source.json"
+          cp "$OUT/source-before.json" "$OUT/source.json"
+          cmp "$OUT/source-before.json" "$OUT/source.json"
       - name: Retain original project preflight
         id: preflight
         shell: bash
@@ -253,6 +257,7 @@ jobs:
           fi
           bash "$OUT/run-command.sh" source-after python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
           cmp "$OUT/source-before.json" "$OUT/source-after.json"
+          cmp "$OUT/source-before.json" "$OUT/source.json"
       - name: Retain stage outcomes and artifact digests
         if: ${{ always() && steps.reserve.outcome == 'success' }}
         shell: bash
