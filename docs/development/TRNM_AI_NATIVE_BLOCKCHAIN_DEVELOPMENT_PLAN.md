@@ -7963,3 +7963,15 @@ All six end-to-end capability qualifications remain **HOLD_NO_GO** pending their
 explicit external/owner evidence. Published plaintext cannot be made secret or
 forgotten by revocation. Preserve the actual failed pre-fix discovery controls,
 intermediate build failures and source-specific final validation separately.
+
+The [source-bound implementation and observation record](../../evidence/cell-six-capabilities-20261108/README.md)
+retains both complete campaigns. Initial source `a7e3ebd7883d6b865c997e8c1cbce7576caa6f4b`
+passed 457 native tests and 11 compile-fail doctests; reviewed source
+`bbe7f6fbed13450922a9bac49c0c5cfafcf3cf1e` passed 462 native tests and 11
+compile-fail doctests. All 51 newly added native tests ran successfully on the
+reviewed source. Each source passed its own 17-command gate, including strict
+whole-workspace all-target/all-feature Clippy, locked dependency graphs,
+negative source/CI-contract controls and repository links. These are default
+feature component runtime tests on shared Linux x86_64, not all-feature runtime,
+independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
+not change those source identities or close the six operational qualifications.
