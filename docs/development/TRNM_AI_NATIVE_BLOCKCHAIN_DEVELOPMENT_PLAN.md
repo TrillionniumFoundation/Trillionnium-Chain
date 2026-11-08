@@ -10159,3 +10159,37 @@ unchanged complete historical report. The 6,156 dynamic-program cases, 324
 binomial comparisons, report digest and all seven original HOLD flags are
 preserved. The additive test command is required once in repository-truth
 alongside the original report, under the existing CI contract.
+
+The native PQ executor now borrows a private complete checked configuration for
+one entry call. Every public preparation, validation, application and decoding
+entry still checks its current configuration; the value is never retained in a
+prepared command or used as account authority. For the actual AccountsV2
+fixture, instrumentation reduces complete configuration digests in N-transaction
+block validation from 2N + 3 to 1, single/dual signature preparation from 4/6 to
+2/3, current-authority validation from 4 to 1, and prepared-command application
+from 3 to 1. These counts are scoped call observations, not a universal profile
+bound or an original-budget throughput result. The existing atomic charge still
+runs before each real signature verification, including invalid signatures.
+Fresh configuration, rotated authority, late invalid input, complete parent
+grammar, canonical errors, state/receipt/root equality for 1/2/4/8 workers and
+cancellation joins remain explicit controls.
+
+The fullpath collector now invokes the existing exact-head raw-byte verifier
+before requesting native context and again only after process ownership is
+settled. Hidden Git index flags and clean filters cannot substitute a clean
+porcelain report for actual tracked bytes. Failed initial audits do not launch
+the context or invent a frozen schedule; failed closing audits preserve all
+frozen attempts, and unresolved ownership leaves closing evidence unavailable.
+Separate trnm-native-fullpath-raw-source-audit-v1 and
+trnm-native-fullpath-raw-source-binding-v1 sidecars retain source snapshots and
+hash their relationship to context, preregistration and process observations.
+Existing context/process v1 schemas remain intact. These receipts are not
+execution attestation, reproducible binary provenance or resource acceptance.
+
+The [continuation evidence](../../qualification/throughput-architecture-20261108-d947/README.md)
+separates component controls, combined exact-source checks and original-host
+readiness. The observed desktop had no /sys/fs/cgroup/trnmponpublic.slice;
+no original-budget native campaign ran under that absence. Keep the original
+0.25 CPU, 2 GiB, zero-swap, 256-PID, four-second and sixteen-hostile contract.
+Refresh only the five changed current corpus blob pins; preserve all historical
+source inputs, upstream heads, required-path membership and false claim flags.

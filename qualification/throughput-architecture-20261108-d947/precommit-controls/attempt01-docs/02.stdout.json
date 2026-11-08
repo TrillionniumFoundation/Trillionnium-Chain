@@ -1,0 +1,8 @@
+{
+  "schema": "trnm-validation-raw-log-v1",
+  "encoding": "base64",
+  "original_filename": "02.stdout",
+  "bytes": 35,
+  "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+  "data": "ZGlzdHJpYnV0ZWQgc291cmNlIGludmVudG9yeTogUEFTUwo="
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-throughput-component-provenance-v1",
+  "base_commit": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "scope": "component validation; not combined-source or original-resource acceptance",
+  "native": {
+    "source_commit": "1ca4c933ebb2f95249285a57c45aa5daa09d4097",
+    "integrated_commit": "3f5230188ea22cfb6d0c33573f88bedd730ea5ea",
+    "passed": 262,
+    "failed": 0,
+    "ignored": 9,
+    "focused_passed": 4,
+    "job": "1a1bc33ee60-138b0-db",
+    "strict_clippy": "PASS",
+    "workspace_format": "PASS"
+  },
+  "collector": {
+    "source_commit": "2878e915d1180bbdbb7a7a65928ed3c30604d7a6",
+    "integrated_commit": "e10803dd337299aca1aaaf8e48e29f98fd15f909",
+    "fullpath_passed": 59,
+    "source_integrity_passed": 43,
+    "independent_review_collector_passed": 16
+  },
+  "model_and_ci": {
+    "integrated_commit": "3cf91894f43a0fc02428992b340ed0be7c10ec5e",
+    "scope": "precommit candidate checks, retained separately",
+    "snapshot_passed": 7,
+    "ci_contract_passed": 151,
+    "source_integrity_passed": 43
+  },
+  "qualification": "HOLD_NO_GO",
+  "original_resource_contract_qualified": false,
+  "execution_attested": false,
+  "production_activation": false
+}
