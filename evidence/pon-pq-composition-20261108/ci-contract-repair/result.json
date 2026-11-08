@@ -1,0 +1,38 @@
+{
+  "scope": "CI integration literal-command inventory repair only; no workflow, source pins, corpus or plan changed",
+  "source_base": "8e636ca74df1eceda7000f8cad69ca1c920f5f25",
+  "source_files_sha256": {
+    "scripts/ci/check_ci_contract.py": "bf72d67012b256a30a09b9e99df97de0b72299e4e100f0191f39c2852d5c3691",
+    "scripts/ci/test_ci_contract.py": "1e234d3afc0baaafa101ac13a9f6c4c4f200fe360cb39a54aa45752a5c8459ac"
+  },
+  "original_real_error": "CI contract: PQ authority trace and negatives must execute once before other repository checks",
+  "original_fixture_error": "CI contract: repository-truth controls must retain a straight-line command sequence",
+  "diagnosis": "The actual trace prefix omitted five already present lifetime/effect/root refusal commands; the independent complete-lane inventory omitted three effect/root commands and the two trace commands.",
+  "checks": {
+    "preflight": "PASS",
+    "actual_check_ci_contract": "PASS",
+    "trace_focused_tests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "other_affected_classes": {
+      "passed": 55,
+      "failed": 0
+    },
+    "git_diff_check": "PASS",
+    "complete_ci_contract_suite": "NOT_RUN_THIS_PHASE; expected 162 tests on final source"
+  },
+  "independent_review": "pq_authority read-only: literal order matches actual ci_job.sh, no sequence/prefix/uniqueness/source-cell/native-step predicate weakened",
+  "log_files": {
+    "affected-classes.stderr.log": "aaaa668bcbd78c560137dd1221b6335c59db979d58dac882bd6f9ecfd0b3129b",
+    "actual-check.stdout.log": "d9caff577f92f314bfaf29d82c720a0d3b31af4f849e6924c80fe31118dbb9e0",
+    "trace-focused.stderr.log": "28d3023c1c9e288352eba7325cf2af759ce0cd26a6d650dde22edc261dabaa0f",
+    "preflight.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "affected-classes.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trace-focused.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "preflight.stdout.log": "3884089f0fab0f6cdda7ec1bcce584e1d7f513780e5c920c97b7f71425311e4b",
+    "actual-check.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "patch_sha256": "509c224da4c16cd828ea3ada07fcfce8e41abacdd44dcc66ce08b98b2411de8a",
+  "commit_push_performed": false
+}

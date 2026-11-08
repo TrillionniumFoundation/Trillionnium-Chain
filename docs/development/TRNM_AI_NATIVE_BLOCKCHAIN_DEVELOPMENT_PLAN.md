@@ -10295,3 +10295,17 @@ green/red controls, locked Cargo graphs, strict Clippy and source/Markdown
 checks on a single clean revision. Preliminary component successes are not
 final combined-source results. Whole-chain PQ, production, quantum extraction
 and final-use qualification remain false throughout this work.
+
+
+### 2026-11-08 composed CI refusal controls and retained first attempt
+
+The first frozen composition source attempt at
+`8e636ca74df1eceda7000f8cad69ca1c920f5f25` preserves matching raw-source receipts
+and its unsuccessful commands in the [evidence packet](../../evidence/pon-pq-composition-20261108/README.md).
+Fix two obsolete literal expectations for the additive lifetime/effect/root and
+trace commands, retaining the exact full-lane and prefix predicates. Add two
+independent omission/duplication/skip/swallow/order regressions. Move the
+repository-copy source controls to the existing desktop environment after their
+cloud ENOSPC observations; do not silently retry or discard those results.
+All native suites will bind a new clean final candidate; all qualification
+flags and outstanding quantum/authority obligations remain unchanged.

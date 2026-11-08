@@ -53,6 +53,17 @@ PQ_MIGRATION_TEST_COMMANDS = (
 )
 
 
+# Keep this control inventory independent of the checker's frozen lane/prefix.
+PQ_LIFETIME_REFUSAL_COMMANDS = (
+    '    python3 scripts/ci/test_pq_lifetime_budget.py\n',
+    '    python3 scripts/ci/pq_lifetime_budget.py\n',
+    '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
+    '    python3 scripts/ci/pq_authority_effect_register.py\n',
+    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 "
+    "-p 'test_pq_root_recovery_policy_v1.py' -v\n",
+)
+
+
 SYNTHETIC_GROWTH_PIPELINE = r'''python3() {
   if test "${1:-}" = -B && test "${2:-}" = formal/pon-nakamoto-v1/check_gsc2_native_readback.py; then
     test "$#" = 8
@@ -889,6 +900,32 @@ class PqAuthorityTraceCiTests(unittest.TestCase):
             for after in ('', '    true # ' + command.lstrip(), command.rstrip() + ' || true\n'):
                 with self.subTest(command=command, after=after):
                     self.reject(path, command, after)
+
+    def test_repository_pq_refusals_cannot_be_skipped_or_swallowed(self):
+        path = 'scripts/ci/ci_job.sh'
+        for command in PQ_LIFETIME_REFUSAL_COMMANDS:
+            changes = {
+                'removed': '',
+                'duplicated': command * 2,
+                'skipped': '    if false; then\n' + command + '    fi\n',
+                'swallowed': command.rstrip() + ' || true\n',
+            }
+            for label, changed in changes.items():
+                with self.subTest(command=command.strip(), change=label):
+                    self.reject(path, command, changed)
+
+    def test_repository_pq_refusals_keep_exact_order_before_trace(self):
+        path = 'scripts/ci/ci_job.sh'
+        for first, second in zip(PQ_LIFETIME_REFUSAL_COMMANDS,
+                                 PQ_LIFETIME_REFUSAL_COMMANDS[1:]):
+            with self.subTest(reordered=first.strip()):
+                self.reject(path, first + second, second + first)
+        original = (self.root / path).read_text()
+        trace = '    python3 scripts/ci/pq_authority_trace.py --summary-only\n'
+        for command in PQ_LIFETIME_REFUSAL_COMMANDS:
+            moved = original.replace(command, '').replace(trace, trace + command)
+            with self.subTest(moved_after_trace=command.strip()):
+                self.reject(path, original, moved)
 
     def test_hosted_trace_cannot_be_removed_or_conditionally_skipped(self):
         step = '      - name: Require retained source and claim controls\n'

@@ -47,3 +47,21 @@ Final command receipts and source-before/source-after records will be attached
 as a separate evidence update. At this source-preparation commit they have not
 been produced. Original 52-control and unchanged-runtime assertions remain
 unchanged; a separate focused run cannot replace their historical campaign.
+
+## First frozen-source attempt and CI composition repair
+
+The [first complete source attempt](source-attempt-8e636ca/summary.json) ran on
+`8e636ca74df1eceda7000f8cad69ca1c920f5f25`; before/after tracked-byte receipts
+match. It remains FAILED_OR_BLOCKED. Its raw command logs are retained in the
+[archive](source-attempt-8e636ca/raw-source-campaign.tar.gz), with an independent
+[archive digest](source-attempt-8e636ca/archive.json).
+
+The corpus mutation and repository-copy tests hit ENOSPC in the cloud worker.
+The actual CI check separately rejected an obsolete trace-prefix expectation;
+mutant fixtures also exposed an obsolete full-lane expectation. The
+[repair record](ci-contract-repair/result.json) adds missing mandatory commands
+to the exact expected sequences and two omission/skip/swallow/order controls.
+It does not change CI jobs or weaken sequence, uniqueness or failure checks.
+The focused 11 and affected-class 55 checks passed after the repair. The whole
+162-test CI suite and repository-copy controls still require final-source
+execution in the desktop environment. No unsuccessful command is relabeled.

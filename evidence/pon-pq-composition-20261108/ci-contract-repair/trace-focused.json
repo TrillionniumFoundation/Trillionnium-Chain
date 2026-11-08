@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_contract.py",
+    "PqAuthorityTraceCiTests",
+    "-v"
+  ],
+  "exit": 0,
+  "stdout": "/workspace/scratch/6635074442e1/content-audit/ci-contract-integration/trace-focused.stdout.log",
+  "stderr": "/workspace/scratch/6635074442e1/content-audit/ci-contract-integration/trace-focused.stderr.log"
+}

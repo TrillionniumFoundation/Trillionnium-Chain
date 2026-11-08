@@ -1,0 +1,8 @@
+{
+  "file": "raw-source-campaign.tar.gz",
+  "bytes": 358273,
+  "sha256": "fa1647155108b75834f51500fac2bf40c5f67dfbd954ebf4e6cbbc83f97ae8a7",
+  "source_commit": "8e636ca74df1eceda7000f8cad69ca1c920f5f25",
+  "result": "FAILED_OR_BLOCKED",
+  "retained_without_rewriting": true
+}
