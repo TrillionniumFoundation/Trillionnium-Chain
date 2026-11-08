@@ -17,6 +17,24 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
+Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
+Complete bounded signer-set checks before release signature mathematics, and
+preflight both old/new root quorums before either mathematical verification.
+Preserve all signed bytes, every supplied signature check, current-authority
+requirements, complete recovery state, source bounds and original acceptance
+flags. Retain the original 43 release controls and the nine new regressions as
+an exact 52-test CI registry with actual execution readback. The old kernel's
+six red failures and repaired nine passes are preserved. Measure 64 fresh
+paired root proposals with ML-DSA-87 component observations and fixed
+ML-DSA-87 2-of-3 AND SLH-DSA-SHA2-256s 2-of-3 candidate observations; keep
+component success incapable of satisfying the AND policy. Keep raw command,
+frame, rejection and staged timing evidence; prior roster distribution, durable
+root effects, independent custody and production resource qualification remain
+unmeasured. See the [authority review](../security/PQ_AUTHORITY_PREFLIGHT_20261108.md)
+and [execution evidence](../../evidence/pq-authority-preflight-20261108-9d315/README.md).
+Retain whole-chain, running-network and production acceptance as false.
+
 **Historical-account migration qualification, 2026-11-08 America/New_York:**
 Continue the existing #723 candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
 Reject SQLite objects that only resemble the reserved `sqlite_` prefix in the
@@ -8413,3 +8431,15 @@ bind 11,064 tracked entries / 1,114,540,546 bytes. The [source receipt and raw l
 remain distinct from e36 native execution and its failed terminal disposition.
 Runtime and formal subtree objects match e36 exactly; this evidence-only update
 does not create a new native run, PQ-128 qualification or production activation.
+
+### 2026-11-08 — distributed source inventory follow-up
+
+Status: **Draft / HOLD**. Hosted checks found that the PQ quorum-preflight change
+omitted its new Rust test file from the embedded distributed source inventory.
+Refresh the existing inventory with its unchanged generator and retain the
+original failed observation. The separate final validation runner adds the
+actual inventory freshness command to the existing 31 gates, for 32 total;
+the execution evidence must bind any pass to the corrected source. See the
+[authority report](../security/PQ_AUTHORITY_PREFLIGHT_20261108.md) for this
+omission and the distinct hosted historical-evidence and business-target
+failures. No whole-chain or production claim is promoted by this follow-up.

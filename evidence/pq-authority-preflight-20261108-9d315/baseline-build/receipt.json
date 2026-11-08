@@ -1,0 +1,44 @@
+{
+  "cargo_lock_sha256_after": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "cargo_lock_sha256_before": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-release-bundle",
+    "--all-targets",
+    "--all-features",
+    "--no-run"
+  ],
+  "elapsed_seconds": 64.21330642700195,
+  "error": null,
+  "exit_code": 0,
+  "head_after": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "head_and_lock_unchanged": true,
+  "head_before": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "logs": {
+    "preflight.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.stdout.log": {
+      "bytes": 178,
+      "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+    },
+    "stderr.log": {
+      "bytes": 2155,
+      "sha256": "81e35ab04f020eefc67e761c4732f5cd2cb9dd9f467103887421eaead7dbdf25"
+    },
+    "stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "test_execution": false,
+  "worktree_status_after": "",
+  "worktree_status_before": ""
+}

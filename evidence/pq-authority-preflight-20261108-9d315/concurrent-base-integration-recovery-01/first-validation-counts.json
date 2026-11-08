@@ -1,0 +1,42 @@
+{
+  "count_order": [
+    "passed",
+    "failed",
+    "ignored",
+    "measured",
+    "filtered"
+  ],
+  "counts": {
+    "five-package-all-targets": [
+      442,
+      0,
+      2,
+      0,
+      0
+    ],
+    "node-release-owner": [
+      40,
+      0,
+      1,
+      0,
+      1244
+    ],
+    "release-all-targets": [
+      52,
+      0,
+      0,
+      0,
+      0
+    ],
+    "six-package-doc-tests": [
+      4,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "result": "PASS",
+  "source_commit": "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+  "summary_sha256": "4069a4223204258abd0aae53df9e2412a33152a1ae4b87b3f8545c343fe03b1a"
+}

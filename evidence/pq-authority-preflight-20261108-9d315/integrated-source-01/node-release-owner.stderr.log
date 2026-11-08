@@ -1,0 +1,4 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 43.62s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-pq-authority-20261108-9d315/target/debug/deps/trnm_pon_node-cff326a2ae822dac)
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

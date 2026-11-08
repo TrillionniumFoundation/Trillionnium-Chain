@@ -1,0 +1,24 @@
+{
+  "cargo_executed": false,
+  "ci_retried": false,
+  "commands": {
+    "bytes": 7531,
+    "sha256": "4945edd0a36988a3ce93668d23fe6ec73a4b6fae191a58e72962fac2de329a2c"
+  },
+  "expected_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "findings": {
+    "bytes": 47942,
+    "sha256": "847b25d4e5dc592aa607f95b47edd03fddd3e57770ff715f7deeb48a477a7dbc"
+  },
+  "out": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/hosted-ci-native-triage-01",
+  "requested_jobs": [
+    128678654780,
+    128678654658,
+    128678654598,
+    128678654586,
+    128678654684
+  ],
+  "result": "OBSERVED",
+  "source_modified": false,
+  "source_unchanged": true
+}

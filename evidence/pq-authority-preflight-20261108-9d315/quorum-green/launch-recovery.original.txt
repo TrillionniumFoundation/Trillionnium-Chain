@@ -1,0 +1,7 @@
+{
+  "original_job": "1a1b9c36aeb-12894-16bc",
+  "original_status": "launch_unknown; remote directory absent",
+  "exact_request_retry": "same identity returned, no launch retry",
+  "unit_observation": "LoadState=not-found\nActiveState=inactive\n",
+  "recovery": "new guarded invocation; create-only output prevents duplicate mutation"
+}\n

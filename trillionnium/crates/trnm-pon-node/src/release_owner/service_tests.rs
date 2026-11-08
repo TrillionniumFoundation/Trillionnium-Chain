@@ -3,7 +3,7 @@
 use super::frontier::{Frontier, Validity};
 use super::frontier_service::Service;
 use super::service_faults::{self as faults, Point};
-use super::service_test_fixture::{write, Fixture, NAMESPACE};
+use super::service_test_fixture::{write, Fixture, Time, NAMESPACE};
 use super::trust_wire as wire;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -19,6 +19,16 @@ fn window(f: &Fixture, seconds: u64) -> Validity {
     Validity {
         not_before: 0,
         expires_at: f.time.now() + seconds,
+    }
+}
+fn wait_until(time: &Time, seconds: u64) {
+    let until = Instant::now() + Duration::from_secs(20);
+    while time.now() < seconds {
+        assert!(
+            Instant::now() < until,
+            "real fixture clock did not reach target"
+        );
+        std::thread::sleep(Duration::from_millis(10));
     }
 }
 fn row_frontier(f: &Fixture) -> Option<Frontier> {
@@ -104,13 +114,27 @@ fn admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redisp
     let mut f = Fixture::new();
     let mut service = f.initialized();
     let next = proposal();
-    let validity = window(&f, 2);
+    // Keep setup time separate from the post-admission expiry being exercised.
+    // The real fixture clock still advances at the declared maximum 2x rate.
+    let created_at = f.time.now();
+    let short_window_end = created_at + 2;
+    let validity = Validity {
+        not_before: 0,
+        expires_at: created_at + 30,
+    };
     let raw = f.request(None, Some(next.clone()), Some(validity));
     let time = f.time.clone();
     f.scope(|| {
+        // Reproduce a pre-send delay that exhausted the former short window.
+        // The service's original two-second request deadline begins below.
+        wait_until(&f.time, short_window_end);
+        assert!(f.time.now() >= short_window_end);
+        assert!(f.time.now() < validity.expires_at);
         faults::once(Point::Admitted, move || {
             // This is deliberately after the real interval check/decision.
-            std::thread::sleep(Duration::from_millis(1100));
+            assert_eq!(faults::admissions(), 1);
+            assert!(time.now() < validity.expires_at);
+            wait_until(&time, validity.expires_at);
             assert!(time.now() >= validity.expires_at);
             faults::once(Point::Published, || {
                 Err(std::io::Error::other("lost after durable completion"))

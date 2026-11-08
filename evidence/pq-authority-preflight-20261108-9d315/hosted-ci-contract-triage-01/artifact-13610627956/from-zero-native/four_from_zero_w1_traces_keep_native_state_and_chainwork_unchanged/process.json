@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-1fc40de749721610",
+    "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 25795805,
+  "user_cpu_ns": 13789000,
+  "system_cpu_ns": 4924000,
+  "cpu_ns": 18713000,
+  "max_rss_kib": 41744,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 492,
+  "major_faults": 0,
+  "voluntary_switches": 31,
+  "involuntary_switches": 0,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "9d5309d64a6fba20380c0339a0c7e3d871b985bf4d658e71b921f0fe5708dc36",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -8,6 +8,10 @@ on:
       - config/pon/pq-native-tls-required-tests-v1.json
       - config/pon/pq-native-tls-witness-required-tests-v1.json
       - config/pon/pq-initial-root-material-required-tests-v1.json
+      - formal/pon-nakamoto-v1/pq_root_quorum_research.py
+      - formal/pon-nakamoto-v1/test_pq_root_quorum_research.py
+      - scripts/ci/check_ci_contract.py
+      - scripts/ci/test_ci_contract.py
       - scripts/ci/record_pq_native_command.py
       - scripts/ci/test_record_pq_native_command.py
       - scripts/ci/verify_ci_source.py
@@ -153,7 +157,7 @@ jobs:
             --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" \
             --wycheproof trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json \
             --build-dir "$out/c-build" --report "$out/differential.json"
-      - name: Require initial-root material controls from the complete release registry
+      - name: Require initial-root and quorum controls from the complete release registry
         shell: bash
         run: |
           set -euo pipefail
@@ -173,19 +177,20 @@ jobs:
           from pathlib import Path
 
           manifest = json.loads(Path(sys.argv[1]).read_text())
-          counts = {"original_release": 37, "initial_root_material": 6, "complete_release": 43}
+          counts = {"original_release": 37, "initial_root_material": 6,
+                    "quorum_preflight": 9, "complete_release": 52}
           if (not isinstance(manifest, dict)
                   or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
                   or manifest.get("package") != "trnm-release-bundle"
                   or manifest.get("harness") != "lib"
-                  or manifest.get("scope") != "immutable-initial-root-public-key-material-only"
+                  or manifest.get("scope") != "immutable-initial-root-public-key-material-and-release-quorum-preflight-only"
                   or not isinstance(manifest.get("expected_controls"), dict)
                   or manifest["expected_controls"] != counts
                   or any(type(value) is not int for value in manifest["expected_controls"].values())
                   or any(manifest.get(key) is not False for key in (
                       "authorization_results_cached", "signature_results_cached", "performance_qualified",
                       "production_activation", "consensus_authority", "whole_chain_quantum_security_qualified"))):
-              raise SystemExit("initial-root required-control manifest invalid")
+              raise SystemExit("release-authority required-control manifest invalid")
           sets = {}
           for key, count in counts.items():
               names = manifest.get(key + "_tests")
@@ -193,21 +198,25 @@ jobs:
                       or any(not isinstance(name, str) or not re.fullmatch(
                           r"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*", name) for name in names)
                       or len(set(names)) != count):
-                  raise SystemExit("initial-root required-control names invalid")
+                  raise SystemExit("release-authority required-control names invalid")
               sets[key] = set(names)
-          if (sets["original_release"] & sets["initial_root_material"]
-                  or sets["complete_release"] != sets["original_release"] | sets["initial_root_material"]):
-              raise SystemExit("initial-root required-control partition invalid")
+          groups = ("original_release", "initial_root_material", "quorum_preflight")
+          if (any(sets[left] & sets[right] for index, left in enumerate(groups)
+                  for right in groups[index + 1:])
+                  or sets["complete_release"] != set().union(*(sets[group] for group in groups))):
+              raise SystemExit("release-authority required-control partition invalid")
           root = Path(sys.argv[2])
           log = (root / "initial-root-release-registry.log").read_text()
           names = re.findall(r"^([A-Za-z0-9_:]+): test$", log, re.M)
           summaries = re.findall(r"^([0-9]+) tests, ([0-9]+) benchmarks$", log, re.M)
-          if (len(names) != 43 or len(set(names)) != 43 or set(names) != sets["complete_release"]
-                  or summaries != [("43", "0")]):
-              raise SystemExit("initial-root actual binary registry differs from the complete required 43")
-          (root / "initial-root-required.tsv").write_text("".join(
-              f"initial-root-{index:02d}\t{name}\n"
-              for index, name in enumerate(manifest["initial_root_material_tests"])))
+          if (len(names) != 52 or len(set(names)) != 52 or set(names) != sets["complete_release"]
+                  or summaries != [("52", "0")]):
+              raise SystemExit("release-authority actual binary registry differs from the complete required 52")
+          prefixes = {"original_release": "original-release", "initial_root_material": "initial-root",
+                      "quorum_preflight": "quorum-preflight"}
+          (root / "release-authority-required.tsv").write_text("".join(
+              f"{prefixes[group]}-{index:02d}\t{name}\n"
+              for group in groups for index, name in enumerate(manifest[group + "_tests"])))
           print(json.dumps({"scope": "registry-presence-only", "required_controls": counts,
                             "production_activation": False}, sort_keys=True))
           PY
@@ -219,8 +228,42 @@ jobs:
             elif ! python3 scripts/ci/check_required_native_test.py "$out/$label.log" --test "$selector" > "$out/$label-execution.json"; then
               failed=1
             fi
-          done < "$out/initial-root-required.tsv"
+          done < "$out/release-authority-required.tsv"
           test "$failed" = 0
+      - name: Run root-quorum codec and policy test doubles without native crypto claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/mldsa-interoperability"
+          test -d "$out"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label root-quorum-harness --output "$out" -- \
+            python3 -B formal/pon-nakamoto-v1/test_pq_root_quorum_research.py -v
+          python3 - "$out/root-quorum-harness.log" > "$out/root-quorum-harness-execution.json" <<'PY'
+          import hashlib
+          import json
+          import re
+          import sys
+          from pathlib import Path
+
+          text = Path(sys.argv[1]).read_text()
+          rows = re.findall(r"^(test_[A-Za-z0-9_]+) \(__main__\.RootQuorumResearchTests\.([A-Za-z0-9_]+)\) \.\.\. (.*)$", text, re.M)
+          names = [row[0] for row in rows]
+          digest = hashlib.sha256(("\n".join(sorted(names)) + "\n").encode()).hexdigest()
+          summaries = re.findall(r"^Ran ([0-9]+) tests? in [0-9]+(?:\.[0-9]+)?s$", text, re.M)
+          outcomes = re.findall(r"^(?:OK(?: \(.*\))?|FAILED(?: \(.*\))?)$", text, re.M)
+          if (len(rows) != 18 or len(set(names)) != 18
+                  or any(name != method or outcome != "ok" for name, method, outcome in rows)
+                  or digest != "17ed290cc8ad7b988f012f4cd9119c4197ff8ac3d82c1f655525eb09ae27cac5"
+                  or summaries != ["18"] or outcomes != ["OK"]):
+              raise SystemExit("root-quorum harness requires all 18 exact codec/policy test doubles")
+          print(json.dumps({"result": "PASS", "executed_tests": 18,
+                            "scope": "python-codec-policy-test-doubles-only",
+                            "native_crypto_observed": False, "production_activation": False}, sort_keys=True))
+          PY
       - name: Retain independent primitive results including failures
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -1,0 +1,7 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+   Doc-tests trnm_checkpoint_store
+   Doc-tests trnm_checkpoint_types
+   Doc-tests trnm_crypto_primitives
+   Doc-tests trnm_protocol
+   Doc-tests trnm_release_bundle
+   Doc-tests trnm_verification_profiles

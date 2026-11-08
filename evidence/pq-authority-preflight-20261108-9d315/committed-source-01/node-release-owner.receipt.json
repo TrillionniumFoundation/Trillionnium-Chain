@@ -1,0 +1,93 @@
+{
+  "argv": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "release_owner::",
+    "--",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 749.5097228889354,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794121791.2535193,
+  "label": "node-release-owner",
+  "logs": {
+    "node-release-owner.stderr.log": {
+      "bytes": 3119,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/node-release-owner.stderr.log",
+      "sha256": "79282084b42c493e37feeb586497671244e283fa9e502019d5f3c3baf12ab27a"
+    },
+    "node-release-owner.stdout.log": {
+      "bytes": 9193,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/node-release-owner.stdout.log",
+      "sha256": "13489ba504c0cfcc38606cb3cdea77f6a7c881c5e3396f4edcff638dcbe8bee4"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "ignored_names": [
+      "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation"
+    ],
+    "passed_names": [
+      "release_owner::clock_contract::tests::boot_namespace_backwards_elapsed_overflow_and_budget_refuse",
+      "release_owner::clock_contract::tests::clock_contract_has_no_default_and_requires_both_direction_and_rate_bounds",
+      "release_owner::clock_contract::tests::quantization_upper_boundary_rate_rounding_and_persisted_lower_are_distinct",
+      "release_owner::files_tests::child_names_are_exact_single_components_before_any_filesystem_mutation",
+      "release_owner::files_tests::exact_size_is_accepted_but_growth_after_the_held_read_is_rejected",
+      "release_owner::files_tests::held_directory_and_lock_replacement_prevent_read_and_write",
+      "release_owner::files_tests::in_place_rewrite_and_private_mode_drift_are_rejected_after_the_read",
+      "release_owner::files_tests::same_bytes_at_a_new_named_inode_do_not_pass_the_held_read",
+      "release_owner::files_tests::symlink_fifo_directory_hardlink_and_nonprivate_modes_are_rejected",
+      "release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role",
+      "release_owner::root_separation_tests::canonical_role_keys_replay_at_every_tagged_proof_boundary",
+      "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+      "release_owner::root_separation_tests::expired_root_recovery_requires_both_real_quorums_and_a_fresh_successor",
+      "release_owner::root_separation_tests::role_decoding_preserves_complete_root_and_canonical_record_requirements",
+      "release_owner::root_separation_tests::root_role_keys_refuse_aliases_unknown_codes_and_duplicates_in_tagged_proofs",
+      "release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key",
+      "release_owner::sealed_tests::denied_mutations_preserve_sealed_bytes_without_claiming_unchanged_metadata",
+      "release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open",
+      "release_owner::sealed_tests::metadata_only_changes_refuse_read_copy_descriptor_and_exec_handoff",
+      "release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine",
+      "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement",
+      "release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication",
+      "release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected",
+      "release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences",
+      "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+      "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+      "release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas",
+      "release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault",
+      "release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission",
+      "release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor",
+      "release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence",
+      "release_owner::transaction_tests::actual_fsync_cuts_preserve_unknown_and_only_cleanup_an_exact_external_winner",
+      "release_owner::transaction_tests::cas_error_and_reply_loss_never_cause_an_automatic_cold_retry",
+      "release_owner::transaction_tests::final_clock_cannot_admit_an_action_after_local_lock_or_index_replacement",
+      "release_owner::transaction_tests::final_external_load_cannot_move_the_lock_before_cas",
+      "release_owner::transaction_tests::first_verification_cannot_overwrite_a_new_pending_record_or_return_idempotent_success",
+      "release_owner::transaction_tests::known_external_winner_cannot_tombstone_a_different_retained_local_record",
+      "release_owner::transaction_tests::rollback_after_index_fsync_keeps_the_attempt_for_completed_only_cold_recovery",
+      "release_owner::transaction_tests::second_verification_cannot_cas_after_lock_proposal_attempt_or_index_replacement",
+      "release_owner::transaction_tests::whole_local_slot_rollback_is_rejected_against_the_retained_external_frontier"
+    ],
+    "summaries": [
+      [
+        40,
+        0,
+        1,
+        0,
+        1244
+      ]
+    ]
+  },
+  "started_unix_seconds": 1794121041.7437966
+}

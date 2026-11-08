@@ -1,0 +1,54 @@
+{
+  "api_digest_matched": true,
+  "archive_binary_executed": false,
+  "artifact_id": 13611596607,
+  "bytes": 235331,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13611596607"
+      ],
+      "exit_code": 0,
+      "label": "artifact-metadata",
+      "logs": {
+        "artifact-metadata.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "artifact-metadata.stdout.log": {
+          "bytes": 789,
+          "sha256": "6e1001d69eafeac50910a9f2584a2696826741b64886de0b6ec2168ba8b901b7"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13611596607/zip"
+      ],
+      "exit_code": 0,
+      "label": "original-artifact",
+      "logs": {
+        "original-artifact.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "original-artifact.stdout.zip": {
+          "bytes": 235331,
+          "sha256": "5e0366f56349cab0d8574a883b918f2e2c947a9266b1f94a5a20695a8ff39807"
+        }
+      }
+    }
+  ],
+  "entries": 200,
+  "finished_unix_seconds": 1794130013.4692786,
+  "native_executed": false,
+  "result": "OBSERVED",
+  "schema": "trnm-codeql-export-original-artifact-readback-v1",
+  "selected_json_paths": [],
+  "sha256": "5e0366f56349cab0d8574a883b918f2e2c947a9266b1f94a5a20695a8ff39807",
+  "source_unchanged": true
+}

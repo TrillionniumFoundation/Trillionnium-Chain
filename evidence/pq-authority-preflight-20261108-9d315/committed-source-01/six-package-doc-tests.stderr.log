@@ -1,0 +1,8 @@
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo/trillionnium/crates/trnm-release-bundle)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.84s
+   Doc-tests trnm_checkpoint_store
+   Doc-tests trnm_checkpoint_types
+   Doc-tests trnm_crypto_primitives
+   Doc-tests trnm_protocol
+   Doc-tests trnm_release_bundle
+   Doc-tests trnm_verification_profiles

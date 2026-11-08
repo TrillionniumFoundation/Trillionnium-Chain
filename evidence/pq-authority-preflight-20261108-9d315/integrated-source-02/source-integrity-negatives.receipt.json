@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 4.778661921154708,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794126345.761659,
+  "label": "source-integrity-negatives",
+  "logs": {
+    "source-integrity-negatives.stderr.log": {
+      "bytes": 6414,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/source-integrity-negatives.stderr.log",
+      "sha256": "9bb63b73cab40b3c6d022d2edecbf385df87f28061023aaa3eb218c367e6b40d"
+    },
+    "source-integrity-negatives.stdout.log": {
+      "bytes": 484,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/source-integrity-negatives.stdout.log",
+      "sha256": "b8b6cfb6dfa3ec50c1d9c47754d957f3370ca1d673d0cbe7a6086d2d58390219"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      43
+    ]
+  },
+  "started_unix_seconds": 1794126340.982997
+}

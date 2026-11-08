@@ -1,0 +1,2020 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.2652011781465262,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120029.3205814,
+      "label": "preflight",
+      "logs": {
+        "preflight.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/preflight.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "preflight.stdout.log": {
+          "bytes": 178,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/preflight.stdout.log",
+          "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+        "mode": "--dev",
+        "packages": 26,
+        "project": "trillionnium-chain",
+        "remote_policy_mutated": false,
+        "result": "PASS"
+      },
+      "started_unix_seconds": 1794120029.0553794
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+        "--output",
+        "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/verified-source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 504.2558147360105,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120533.5771446,
+      "label": "source-guard-before",
+      "logs": {
+        "source-guard-before.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/source-guard-before.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source-guard-before.stdout.log": {
+          "bytes": 423,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/source-guard-before.stdout.log",
+          "sha256": "2a41af080dcd0a2732ebff5d43a183495bdc1471c2ca495bd9f2cf8535ce033c"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794120029.32133
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.016518800985068083,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120533.696098,
+      "label": "rustc-version",
+      "logs": {
+        "rustc-version.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/rustc-version.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "rustc-version.stdout.log": {
+          "bytes": 196,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/rustc-version.stdout.log",
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2"
+      },
+      "started_unix_seconds": 1794120533.679579
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "-V"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.06471366481855512,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120533.7615907,
+      "label": "cargo-version",
+      "logs": {
+        "cargo-version.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/cargo-version.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "cargo-version.stdout.log": {
+          "bytes": 36,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/cargo-version.stdout.log",
+          "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)"
+      },
+      "started_unix_seconds": 1794120533.696876
+    },
+    {
+      "argv": [
+        "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+        "version"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.008366659050807357,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120533.7709918,
+      "label": "openssl-version",
+      "logs": {
+        "openssl-version.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/openssl-version.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "openssl-version.stdout.log": {
+          "bytes": 63,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/openssl-version.stdout.log",
+          "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)"
+      },
+      "started_unix_seconds": 1794120533.7626257
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.3448342371266335,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120534.1359556,
+      "label": "metadata-default",
+      "logs": {
+        "metadata-default.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-default.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "metadata-default.stdout.log": {
+          "bytes": 838110,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-default.stdout.log",
+          "sha256": "a044ead623ae672da61fb6978c7792a4dac911f1782ba6d0657b6e53d47fe3a2"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "packages": 176,
+        "resolved_nodes": 176,
+        "workspace_members": 26
+      },
+      "started_unix_seconds": 1794120533.791121
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.3947004301007837,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120534.5381472,
+      "label": "metadata-all-features",
+      "logs": {
+        "metadata-all-features.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-all-features.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "metadata-all-features.stdout.log": {
+          "bytes": 852909,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-all-features.stdout.log",
+          "sha256": "2dbcbefa7a5054e63b9f489fd5479bac0cada5f7ef30a4d522e93b744f71f7d3"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "packages": 181,
+        "resolved_nodes": 181,
+        "workspace_members": 26
+      },
+      "started_unix_seconds": 1794120534.1434464
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.3893688968382776,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120534.9352407,
+      "label": "metadata-fuzz",
+      "logs": {
+        "metadata-fuzz.stderr.log": {
+          "bytes": 52,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-fuzz.stderr.log",
+          "sha256": "4c9eb667b06d15fae0587960059a48122a7acc60b10acd07c1b3eee2e2167a76"
+        },
+        "metadata-fuzz.stdout.log": {
+          "bytes": 723480,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/metadata-fuzz.stdout.log",
+          "sha256": "ffa63d43b456244e9a7b6cf758f3c556684b5cda558ff2c143ee3dd13aef5ab2"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "packages": 149,
+        "resolved_nodes": 149,
+        "workspace_members": 1
+      },
+      "started_unix_seconds": 1794120534.5458717
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 19.31850886112079,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120554.2608156,
+      "label": "formatting",
+      "logs": {
+        "formatting.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/formatting.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "formatting.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/formatting.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794120534.942308
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "--lib"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.5661653249990195,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120554.8283174,
+      "label": "release-non-test-library",
+      "logs": {
+        "release-non-test-library.stderr.log": {
+          "bytes": 72,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/release-non-test-library.stderr.log",
+          "sha256": "c54bca416b8a09e3c2018b0ada16771065b3b9b5469242539af42bc53077e2cf"
+        },
+        "release-non-test-library.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/release-non-test-library.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794120554.262152
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "--all-targets",
+        "--all-features",
+        "--no-fail-fast",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 92.66653825505637,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794120647.4969058,
+      "label": "release-all-targets",
+      "logs": {
+        "release-all-targets.stderr.log": {
+          "bytes": 217,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/release-all-targets.stderr.log",
+          "sha256": "90e2d14e6c3cf54d9ece2090f88039eed9eedf2e5049e7f78cf4c802dabc5e7c"
+        },
+        "release-all-targets.stdout.log": {
+          "bytes": 11508,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/release-all-targets.stdout.log",
+          "sha256": "0e75f4ac521ab15ba77b14b72f80506adffcbf295117279883915fb3ee144263"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "ignored_names": [],
+        "passed_names": [
+          "pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum",
+          "pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest",
+          "pq_release::tests::activation_requires_live_current_generation_manifest",
+          "pq_release::tests::actual_mldsa_quorum_advances_only_verified_role",
+          "pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys",
+          "pq_release::tests::bundle_quorum_tests::bundle_quorum_failed_or_missing_callback_never_retains_an_observation",
+          "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_public_accept_verification_and_one_checkpoint_advance",
+          "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_signature_failure_before_owner_time_failure",
+          "pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_v0_content_and_exact_signed_message_binding",
+          "pq_release::tests::bundle_quorum_tests::bundle_quorum_observation_is_bound_to_root_role_message_and_signature_bytes",
+          "pq_release::tests::bundle_quorum_tests::bundle_quorum_still_checks_current_owner_state_after_valid_signature",
+          "pq_release::tests::current_tests::current_activation_rechecks_publication_expiry_and_replacement",
+          "pq_release::tests::current_tests::current_bundle_check_requires_exact_role_content_and_independent_checkpoint",
+          "pq_release::tests::current_tests::current_check_after_rotation_and_recovery_requires_current_publisher_quorum",
+          "pq_release::tests::current_tests::current_check_rejects_replaced_content_and_rolled_back_owner_against_future_frontier",
+          "pq_release::tests::current_tests::current_check_uses_live_expiry_and_committed_clock_floor_without_mutating_it",
+          "pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum",
+          "pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks",
+          "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin",
+          "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time",
+          "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use",
+          "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result",
+          "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order",
+          "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement",
+          "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
+          "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
+          "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+          "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+          "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+          "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+          "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+          "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+          "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+          "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+          "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+          "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state",
+          "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
+          "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
+          "pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature",
+          "pq_release::tests::retained_verifier_tests::retained_verifiers_recovery_rechecks_signatures_and_current_generation",
+          "pq_release::tests::retained_verifier_tests::retained_verifiers_require_current_role_membership_and_exact_spki",
+          "pq_release::tests::retained_verifier_tests::retained_verifiers_rotation_replaces_keys_only_after_both_quorums",
+          "pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures",
+          "pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation",
+          "pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority",
+          "pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint",
+          "pq_release::tests::validated_root_tests::validated_root_keeps_public_encoding_and_owner_time_distinct",
+          "pq_release::tests::validated_root_tests::validated_root_rotation_keeps_clock_key_and_sequence_rejection_order",
+          "pq_release::tests::validated_root_tests::validated_root_rotation_retains_both_quorums_and_exact_checkpoint_message",
+          "pq_release::tests::validated_root_tests::validated_root_still_checks_all_keys_roles_and_original_error_precedence",
+          "tests::exact_bundle_and_sbom_are_verified",
+          "tests::independent_build_comparison_uses_outputs_not_builder_identity"
+        ],
+        "summaries": [
+          [
+            52,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "started_unix_seconds": 1794120554.830367
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-protocol",
+        "-p",
+        "trnm-crypto-primitives",
+        "-p",
+        "trnm-checkpoint-types",
+        "-p",
+        "trnm-checkpoint-store",
+        "-p",
+        "trnm-verification-profiles",
+        "--all-targets",
+        "--all-features",
+        "--no-fail-fast",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 391.2126081988681,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794121038.7134554,
+      "label": "five-package-all-targets",
+      "logs": {
+        "five-package-all-targets.stderr.log": {
+          "bytes": 8761,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/five-package-all-targets.stderr.log",
+          "sha256": "713bc711613633a0010f8c9912407cb14c8cf39f6c902de06903a4ad88c3d37b"
+        },
+        "five-package-all-targets.stdout.log": {
+          "bytes": 89738,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/five-package-all-targets.stdout.log",
+          "sha256": "cb495b4c2d975cd4515c4310dc4996221015a8bac7521c4c9c2b2d73aea3ec75"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "ignored_names": [
+          "pon_state::bulk_tests::bulk_complete_construction_cost_observation",
+          "pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation"
+        ],
+        "passed_names": [
+          "socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart",
+          "socket_owner_v1::tests::fresh_lease_never_authorizes_removing_an_unleased_socket",
+          "socket_owner_v1::tests::live_owner_rejects_replaced_lease_path",
+          "socket_owner_v1::tests::live_owner_rejects_replaced_socket_path",
+          "socket_owner_v1::tests::live_owner_rejects_same_inode_lease_record_rewrite",
+          "socket_owner_v1::tests::malformed_lease_is_refused_without_recreating_a_socket",
+          "socket_owner_v1::tests::rejected_socket_parent_preserves_existing_listener",
+          "tests::activation_and_key_boundaries_remain_closed",
+          "tests::authority_exact_cas_rejects_replay_and_reopens",
+          "tests::bound_anchor_replacement_fails_closed_before_load",
+          "tests::bound_lock_replacement_fails_closed_before_load",
+          "tests::bound_log_replacement_fails_closed_before_load",
+          "tests::bound_parent_directory_replacement_fails_closed_before_load",
+          "tests::journal_truncation_and_byte_edit_fail_closed",
+          "tests::oversized_checkpoint_head_read_is_bounded_and_refused",
+          "tests::pinned_recovery_rejects_head_deleted_after_precheck",
+          "tests::replayed_record_fails_closed",
+          "tests::unix_client_round_trip_uses_separate_thread_authority",
+          "node_commit_ledger_v1::tests::abandoned_partial_temp_converges_to_source",
+          "node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+          "node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1",
+          "node_commit_ledger_v1::tests::corrupted_older_record_fences_owner_without_cleanup_v1",
+          "node_commit_ledger_v1::tests::durable_successor_reopens_exactly",
+          "node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1",
+          "node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+          "node_commit_ledger_v1::tests::journal_ahead_of_head_recovers_to_exact_target",
+          "node_commit_ledger_v1::tests::live_coherent_anchor_rewrite_and_head_rollback_are_rejected_v1",
+          "node_commit_ledger_v1::tests::live_root_records_lock_and_anchor_replacements_fail_closed_v1",
+          "node_commit_ledger_v1::tests::missing_record_and_head_ahead_fail_before_repair_v1",
+          "node_commit_ledger_v1::tests::record_and_temp_links_are_rejected_without_deleting_targets_v1",
+          "node_commit_ledger_v1::tests::third_state_is_rejected",
+          "node_commit_ledger_v1::tests::unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1",
+          "node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1",
+          "cold_recovery_rejects_self_consistent_old_complete_image",
+          "export_is_exact_new_domain_and_cannot_overwrite_an_external_pin",
+          "external_mismatch_is_rejected_before_stale_local_head_repair",
+          "extra_record_is_rejected_before_hash_replay",
+          "full_journal_pin_covers_removal_of_another_scope",
+          "healthy_existing_journal_reopens_with_exact_external_checkpoint",
+          "impossible_external_count_is_rejected_without_replay_or_repair",
+          "live_same_inode_head_rollback_is_rejected_without_repair",
+          "live_same_inode_rollback_cannot_export_or_extend_cached_history",
+          "live_same_length_prefix_edit_cannot_export_a_cached_journal_pin",
+          "pinned_reopen_never_reseeds_missing_existing_files",
+          "register_new_rejects_existing_even_empty_namespaces",
+          "same_count_different_root_is_not_a_fresh_recovery",
+          "structural_open_cannot_serve_or_export_a_freshness_claim",
+          "structural_reopen_cannot_bypass_recovery_through_direct_owner_methods",
+          "cli_missing_expected_and_legacy_implicit_start_fail_without_repair",
+          "cli_rejects_complete_old_image_before_attempting_transport",
+          "cli_second_process_cannot_open_while_the_owner_holds_its_lock",
+          "competing_owner_cannot_reopen_or_reregister_a_live_namespace",
+          "daemon_cold_restart_requires_external_pin_and_rejects_complete_snapshot_rollback",
+          "standalone_daemon_is_cross_process_and_rejects_truncated_log",
+          "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint",
+          "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener",
+          "owned_ed25519::tests::public_and_signature_only_match_existing_strict_verifier",
+          "pon_routed_int257_grouped::tests::all_batch_sizes_match_independent_original_coefficient_reference",
+          "pon_routed_int257_grouped::tests::both_producers_have_identical_statements_for_every_batch_size",
+          "pon_routed_int257_grouped::tests::bound_and_bias_violations_refuse_before_execution",
+          "pon_routed_int257_grouped::tests::canonical_binary_domains_have_fixed_cross_language_vectors",
+          "pon_routed_int257_grouped::tests::duplicate_request_identity_and_expired_or_future_requests_refuse",
+          "pon_routed_int257_grouped::tests::every_external_context_and_request_field_binds_verification",
+          "pon_routed_int257_grouped::tests::extreme_signed_values_and_merged_bounds_are_exact",
+          "pon_routed_int257_grouped::tests::false_statement_or_input_commitments_cannot_yield_typed_product",
+          "pon_routed_int257_grouped::tests::model_version_original_matrices_and_prepared_owner_are_bound",
+          "pon_routed_int257_grouped::tests::mutated_router_group_output_and_accounting_are_rejected_even_if_rehashed",
+          "pon_routed_int257_grouped::tests::ties_use_lowest_index_and_empty_groups_do_no_work",
+          "pon_work::arithmetic_facts::churn_controls::sixty_five_rotating_challenges_over_sixty_four_slots_keep_zero_hits_and_bounded_storage",
+          "pon_work::arithmetic_facts::churn_controls::three_rotating_challenges_over_two_slots_repeat_every_actual_transcript",
+          "pon_work::arithmetic_facts::controls::a_late_trace_publication_cannot_downgrade_a_concurrently_completed_product",
+          "pon_work::arithmetic_facts::controls::cancellation_at_each_cold_boundary_publishes_no_new_fact_and_replays_on_retry",
+          "pon_work::arithmetic_facts::controls::capacity_eviction_reopen_and_caller_owned_product_keep_exact_verification",
+          "pon_work::arithmetic_facts::controls::cold_progress_is_original_and_warm_success_still_obeys_each_authorizing_boundary",
+          "pon_work::arithmetic_facts::controls::dense_zero_one_zero_identity_and_rank_one_claims_match_the_raw_oracle",
+          "pon_work::arithmetic_facts::controls::every_warm_call_keeps_current_cheap_checks_and_the_original_error_order",
+          "pon_work::arithmetic_facts::controls::exact_challenge_and_all_current_matrix_bytes_are_required_for_a_hit",
+          "pon_work::arithmetic_facts::controls::holding_the_cache_lock_never_waits_or_reports_reuse_instead_of_real_arithmetic",
+          "pon_work::arithmetic_facts::controls::no_callback_holds_the_cache_lock_and_reentrant_replacement_cannot_change_the_result",
+          "pon_work::arithmetic_facts::controls::poisoned_cache_is_unavailable_but_cannot_override_earlier_current_grammar_errors",
+          "pon_work::arithmetic_facts::controls::task_discriminator_alias_keeps_full_inputs_at_lookup_and_publication",
+          "pon_work::arithmetic_facts::controls::trace_only_fact_must_recompute_product_before_accepting_a_new_matching_trace",
+          "pon_work::arithmetic_facts::controls::warm_product_does_not_override_the_current_bad_trace_or_current_product",
+          "pon_work::arithmetic_facts::full_limb_controls::cancelling_trace_upgrade_keeps_only_the_preexisting_completed_trace",
+          "pon_work::arithmetic_facts::full_limb_controls::full_field_cold_claims_match_transposed_results_and_all_progress_boundaries",
+          "pon_work::arithmetic_facts::full_limb_controls::full_field_trace_upgrade_and_product_reuse_preserve_current_claim_checks",
+          "pon_work::arithmetic_facts::full_limb_controls::legal_arithmetic_reuse_decodes_only_when_full_replay_is_needed",
+          "pon_work::arithmetic_facts::tests::completed_product_arithmetic_survives_bad_current_claim_then_accepts_exact_valid_claim",
+          "pon_work::arithmetic_facts::tests::completed_trace_arithmetic_is_reused_without_caching_a_rejection",
+          "pon_work::artifacts::tests::exact_original_domains_raw_bytes_and_matrix_boundaries",
+          "pon_work::artifacts::tests::shape_rejection_and_raw_noncanonical_bytes_preserve_parent_semantics",
+          "pon_work::blocked_one_zero::tests::complete_certificates_match_original_independent_python_scalar_vectors",
+          "pon_work::blocked_one_zero::tests::complete_proofs_and_tickets_match_scalar_generic_and_product_only_producers",
+          "pon_work::blocked_one_zero::tests::delayed_pivots_extreme_values_and_caller_mutation_preserve_exact_task_binding",
+          "pon_work::blocked_one_zero::tests::only_exactly_one_zero_and_a_complete_nonzero_rank_one_material_are_supported",
+          "pon_work::blocked_one_zero::tests::reassociated_trace_matches_every_scalar_prefix_under_extreme_noise_values",
+          "pon_work::blocked_zero::tests::all_prefix_cells_match_scalar_trace_with_extreme_noise_operands",
+          "pon_work::blocked_zero::tests::complete_proofs_match_old_zero_scalar_and_generic_across_challenges_and_reuse",
+          "pon_work::blocked_zero::tests::complete_zero_certificates_match_independent_python_oracle_vectors",
+          "pon_work::blocked_zero::tests::exact_task_detection_rejects_invalid_and_nonzero_material_without_fallback",
+          "pon_work::blocked_zero_paired::tests::actual_checkpoint_order_cancels_without_retaining_challenge_state",
+          "pon_work::blocked_zero_paired::tests::complete_canonical_zero_detection_never_substitutes_another_material",
+          "pon_work::blocked_zero_paired::tests::every_extreme_prefix_word_matches_the_original_scalar_relation",
+          "pon_work::blocked_zero_paired::tests::full_proof_and_ticket_match_scalar_generic_zero_and_paired_across_reuse",
+          "pon_work::facts::tests::cancelled_leader_wakes_waiter_for_its_own_complete_verification",
+          "pon_work::facts::tests::capacity_eviction_and_new_owner_are_explicit",
+          "pon_work::facts::tests::concurrent_identical_statements_have_one_leader",
+          "pon_work::facts::tests::differential_dense_zero_identity_rank_one_and_mutations",
+          "pon_work::facts::tests::invalid_first_never_poisoned_the_later_valid_statement",
+          "pon_work::facts::tests::legal_fact_reuse_and_cancellation_do_not_decode_input_matrices",
+          "pon_work::facts::tests::no_negative_cache_and_no_cross_challenge_reuse",
+          "pon_work::facts::tests::one_success_avoids_three_full_product_replays",
+          "pon_work::facts::tests::poisoned_local_slot_is_unavailable_not_invalid_work_or_fallback",
+          "pon_work::facts::tests::returned_product_does_not_mutate_retained_fact",
+          "pon_work::facts::tests::unrelated_slot_collision_finishes_before_held_leader_without_publication",
+          "pon_work::facts::tests::unrelated_slot_replay_preserves_native_refusal_and_cancellation_checkpoints",
+          "pon_work::facts::tests::unwind_does_not_leave_a_computing_slot",
+          "pon_work::facts::tests::waiter_cancels_without_cancelling_the_leader",
+          "pon_work::facts::tests::warm_fact_rechecks_current_target_task_and_canonical_fields",
+          "pon_work::facts::tests::warm_final_cancel_does_not_return_authority_or_destroy_math",
+          "pon_work::integer_paired::tests::unreduced_integer_pairs_cover_extremes_and_nonnegative_subtraction",
+          "pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts",
+          "pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders",
+          "pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback",
+          "pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers",
+          "pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task",
+          "pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work",
+          "pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product",
+          "pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry",
+          "pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields",
+          "pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization",
+          "pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes",
+          "pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs",
+          "pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths",
+          "pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry",
+          "pon_work::maintenance_limb::tests::bounded_limb_all_lengths_extremes_and_carries_match_independent_remainder",
+          "pon_work::maintenance_limb::tests::every_prefix_word_matches_independent_scalar_at_maximum_and_mixed_fields",
+          "pon_work::maintenance_limb::tests::exact_material_full_proofs_tickets_and_ordered_rejections_remain_equal",
+          "pon_work::maintenance_limb::tests::original_observation_order_and_cancelled_call_isolation_are_preserved",
+          "pon_work::maintenance_limb::tests::split_limb_extremes_and_field_carries_match_independent_remainder",
+          "pon_work::maintenance_periodic::tests::exact_maintenance_constructor_rejects_other_material_without_fallback",
+          "pon_work::maintenance_periodic::tests::maintenance_setup_preserves_full_proofs_tickets_and_reject_paths",
+          "pon_work::maintenance_periodic::tests::periodic_integer_product_and_all_wrap_prefixes_match_direct_sums",
+          "pon_work::maintenance_periodic::tests::shared_prepared_cancellation_stops_before_proof_and_cache_reuse_is_exact",
+          "pon_work::maintenance_prefix::tests::both_maintenance_prefix_constructors_reject_unsupported_and_malformed_inputs",
+          "pon_work::maintenance_prefix::tests::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state",
+          "pon_work::maintenance_prefix::tests::periodic_and_integer_paired_complete_proofs_match_scalar_and_verifier_errors",
+          "pon_work::maintenance_prefix::tests::periodic_challenge_prefix_bounds_cover_all_intercepts_and_lengths",
+          "pon_work::maintenance_prefix::tests::periodic_factorization_matches_every_prefix_word_with_extreme_noise",
+          "pon_work::paired_product::tests::paired_cancellation_discards_complete_or_partial_work_and_reuse_stays_exact",
+          "pon_work::paired_product::tests::paired_complete_proofs_match_scalar_on_maintenance_and_extreme_materials",
+          "pon_work::paired_product::tests::paired_constructors_validate_complete_material_without_substitution",
+          "pon_work::paired_product::tests::paired_field_identity_covers_canonical_extremes_and_prefixes",
+          "pon_work::rejection_cache::tests::cheap_structural_refusals_never_hash_the_whole_proof_for_optional_reuse",
+          "pon_work::rejection_cache::tests::contended_cache_retains_caller_cancellation_and_cheap_errors",
+          "pon_work::rejection_cache::tests::contended_lookup_and_publication_keep_complete_native_replay",
+          "pon_work::rejection_cache::tests::false_transcript_replay_is_skipped_but_real_proof_still_passes",
+          "pon_work::rejection_cache::tests::four_distinct_from_zero_false_traces_each_owe_first_full_replay",
+          "pon_work::rejection_cache::tests::local_cancellation_cannot_use_a_cached_fact_as_a_verdict",
+          "pon_work::rejection_cache::tests::malformed_width_has_no_cache_key_and_retains_native_length_precedence",
+          "pon_work::rejection_cache::tests::poisoned_cache_keeps_native_math_and_caller_cancellation",
+          "pon_work::structured::tests::invalid_or_nearly_structured_material_cannot_create_a_shortcut",
+          "pon_work::structured::tests::strassen_tiles_equal_exact_integer_products_with_signed_extremes",
+          "pon_work::structured::tests::structure_specific_products_and_transcripts_match_both_verifiers",
+          "pon_work::structured::tests::tiled_complete_proofs_match_scalar_and_independent_python_extreme_vectors",
+          "pon_work::structured::tests::tiled_task_validation_and_reuse_never_depend_on_a_previous_challenge",
+          "pon_work::structured::tests::zero_reassociation_matches_the_retained_python_oracle_bytes",
+          "pon_work::tests::bad_proof_never_gains_a_verified_type",
+          "pon_work::tests::borrowed_product_bytes_keep_rejection_before_cancellation_and_retry",
+          "pon_work::tests::borrowed_product_bytes_reject_first_middle_last_and_noncanonical_cells",
+          "pon_work::tests::cancellation_on_last_transcript_tile_never_starts_product_reconstruction",
+          "pon_work::tests::canonical_task_byte_reuse_preserves_asymmetric_inputs_and_field_precedence",
+          "pon_work::tests::cheap_rejection_precedes_progress_and_noise_cancellation_is_local",
+          "pon_work::tests::column_limb_each_prefix_matches_independent_scalar_with_strided_extremes",
+          "pon_work::tests::column_limb_full_proofs_keep_exact_statement_and_challenge_binding",
+          "pon_work::tests::controlled_verification_preserves_full_success_and_late_relation_errors",
+          "pon_work::tests::decoded_output_is_the_real_matrix_product",
+          "pon_work::tests::exact_length_and_field_are_required",
+          "pon_work::tests::expansion_cannot_exceed_fixed_hash_budget",
+          "pon_work::tests::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
+          "pon_work::tests::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results",
+          "pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof",
+          "pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes",
+          "pon_work::tests::full_limb_matrix_products_match_reference_for_all_w1_shapes",
+          "pon_work::tests::full_limb_preserves_every_cancellation_boundary_and_retry_isolation",
+          "pon_work::tests::in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh",
+          "pon_work::tests::in_place_corrections_match_independent_scalar_for_full_w1_shape",
+          "pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields",
+          "pon_work::tests::owned_square_transpose_preserves_allocation_and_exact_permutation",
+          "pon_work::tests::producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples",
+          "pon_work::tests::product_row_and_final_cancellation_never_yield_verified_work",
+          "pon_work::tests::proof_encoding_precheck_enforces_exact_wire_and_all_matrix_boundaries",
+          "pon_work::tests::proof_encoding_precheck_never_substitutes_for_full_work_or_cancellation",
+          "pon_work::tests::proof_encoding_precheck_preserves_full_verifier_zero_target_precedence",
+          "pon_work::tests::proof_statement_precheck_never_promotes_a_passing_forgery",
+          "pon_work::tests::proof_statement_precheck_rejects_task_and_ticket_without_replay",
+          "pon_work::tests::transcript_mismatch_skips_corrections_but_matching_digest_requires_product",
+          "pon_work::tests::untrusted_trace_ticket_search_needs_no_producer_and_never_gains_verified_work",
+          "pon_work::tests::verifier_error_precedence_is_preserved_before_deferred_product",
+          "pon_work::tests::work_binds_challenge_and_inputs",
+          "pq_auth::tests::canonical_key_algorithm_parameters_lengths_and_independent_pin_are_required",
+          "pq_auth::tests::contexts_and_internal_prehash_are_not_interchangeable_with_application_messages",
+          "pq_auth::tests::default_backend_authenticates_all_six_purposes_and_every_bound_field",
+          "pq_auth::tests::exact_message_limit_is_enforced_on_both_sides",
+          "pq_auth::tests::message_domain_wrong_key_and_signature_malleation_never_fall_back",
+          "pq_auth::tests::pinned_independent_wycheproof_corpus_and_application_context_policy",
+          "pq_candidate::tests::cross_suite_keys_and_signatures_cannot_select_another_algorithm",
+          "pq_candidate::tests::deterministic_candidate_seeds_have_no_implicit_key_or_nonce_source",
+          "pq_candidate::tests::exact_key_and_signature_lengths_reject_truncation_and_trailing_bytes",
+          "pq_candidate::tests::fips_lengths_categories_and_bounded_messages_match_both_candidates",
+          "pq_candidate::tests::mldsa65_rejects_context_prehash_and_raw_internal_modes",
+          "pq_candidate::tests::mldsa87_rejects_context_prehash_and_raw_internal_modes",
+          "pq_candidate::tests::oversized_messages_are_rejected_by_signer_and_verifier",
+          "pq_candidate::tests::wrong_message_wrong_key_and_late_invalid_signatures_fail",
+          "pq_profile_auth::tests::key_parameters_duplicates_foreign_network_and_old_wire_are_refused",
+          "pq_profile_auth::tests::real_complete_multisignatures_verify_in_both_candidates_but_cannot_activate",
+          "tests::domain_hash_is_framed_and_domain_separated",
+          "tests::ed25519_roundtrip_rejects_tamper",
+          "tests::fixed_hash_text_preserves_all_ascii_substitutions_and_error_precedence",
+          "tests::fixed_hash_text_reproduces_every_byte_value_without_normalization",
+          "tests::strict_signatures_reject_small_order_and_noncanonical_points",
+          "adapter_and_direct_evp_interoperate_on_the_same_native_frame",
+          "all_signed_bytes_context_payload_lifetime_and_pin_fail_closed",
+          "all_six_purposes_use_actual_native_sign_and_verify",
+          "canonical_spki_and_classical_downgrade_refuse_without_fallback",
+          "syntactically_valid_fake_signature_never_becomes_verified",
+          "actual_signed_material_and_renewal_revision_are_bound",
+          "cheap_legal_matrices_remain_experimental_without_accepted_cost_claim",
+          "genuine_signature_on_false_material_claim_does_not_verify_availability",
+          "v1_signatures_unsigned_payloads_and_lease_context_tampering_do_not_admit",
+          "real_signed_material_admission_and_recipe_derivation_match_every_field",
+          "rehashed_matrix_claim_cannot_substitute_a_different_contraction_or_noncanonical_field",
+          "repeated_challenges_bind_one_product_meter_and_maintenance_produces_no_learning_credit",
+          "source_demand_scope_withdrawal_and_availability_pinnings_cannot_be_substituted",
+          "unsigned_true_zero_signature_tampering_and_weak_source_never_admit",
+          "altered_role_or_content_cannot_reuse_a_signature",
+          "canonical_integer_domain_and_resource_budgets_are_checked_before_crypto",
+          "context_raw_metadata_digest_and_other_version_have_no_fallback",
+          "independent_sdk_canonicalization_and_openssl_signature_are_accepted",
+          "malformed_signature_and_untrusted_key_pin_are_rejected",
+          "reordered_object_fields_and_integer_extremes_have_unique_canonical_meaning",
+          "rust_signing_uses_exact_independent_presigning_bytes",
+          "trusted_scheme_is_exact_and_never_inferred_from_signature",
+          "tests::actual_cold_and_reused_setup_counts_and_complete_search_outcomes_agree",
+          "tests::exact_maintenance_material_and_observed_ranks_are_bound_to_the_fixed_task",
+          "tests::exhausted_searches_keep_all_attempts_costs_and_full_proof_streams",
+          "tests::options_and_material_rejection_are_explicit_without_substitutions",
+          "tests::all_three_operations_return_identical_complete_proofs_for_both_directions",
+          "tests::exact_extent_and_canonical_bytes_are_required_before_support_decisions",
+          "tests::unsupported_inputs_return_no_proof_and_never_substitute_a_generic_kernel",
+          "tests::actual_constructors_and_exact_winners_match_across_both_directions_and_all_six_paths",
+          "tests::constructors_and_search_reject_malformed_inputs_without_fallback",
+          "tests::exhausted_searches_retain_all_attempt_bytes_and_null_verifier_fields",
+          "tests::new_challenge_and_stream_domains_are_exact_and_separate",
+          "tests::options_are_bounded_unambiguous_and_do_not_accept_other_materials",
+          "tests::exhausted_search_retains_attempts_and_the_same_ticket_stream",
+          "tests::generated_dense_case_is_full_rank_and_periodic_case_is_labelled_exactly",
+          "tests::actual_late_rejection_stage_matches_scalar_and_keeps_cancellation_distinct",
+          "tests::bounded_search_and_fake_ticket_exhaustion_keep_every_attempt",
+          "tests::product_last_cell_mutation_is_canonical_even_at_modulus_boundary",
+          "tests::actual_constructor_calls_and_all_winners_match_in_both_modes",
+          "tests::constructors_and_search_reject_invalid_material_or_proof_lengths",
+          "tests::exhaustion_retains_every_attempt_and_complete_proof_stream",
+          "tests::options_enforce_bounds_pairing_and_unambiguous_flags",
+          "tests::unsupported_structured_retains_real_setup_count_and_outcomes",
+          "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+          "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values",
+          "tests::batch_reuse_and_request_identity_rebinding_refuse_without_another_product",
+          "tests::completion_clock_refuses_boundary_and_overflow",
+          "tests::frame_bound_holds_with_small_reader_chunks",
+          "tests::missing_init_and_unbounded_arrays_refuse",
+          "tests::persistent_replay_keeps_one_model_and_zero_business_credit",
+          "tests::selected_complete_relation_and_three_arm_measurement_are_disclosed",
+          "tests::session_and_benchmark_bounds_fail_closed",
+          "tests::transport_rejects_duplicate_keys_noncanonical_and_truncation",
+          "tests::typed_fields_refuse_bool_overflow_extra_and_bad_hash",
+          "tests::explicit_canonical_controls_are_bounded",
+          "tests::explicit_preparation_or_verifier_count_selects_v2_without_changing_defaults",
+          "tests::forged_same_material_keeps_cold_warm_churn_and_owner_loss_distinct",
+          "tests::malformed_material_has_failed_summary_and_no_winner",
+          "tests::matched_challenges_bind_task_target_seed_cycle_nonce_but_not_arm_or_reuse",
+          "tests::native_and_reference_handoff_reuses_one_setup_and_keeps_all_attempts",
+          "tests::raw_material_is_exact_and_is_never_reduced",
+          "tests::sparse_and_dense_v2_keep_identical_work_and_charge_each_real_full_verifier_once",
+          "tests::v2_invalid_material_retains_failure_without_any_handoff",
+          "tests::all_existing_producers_keep_the_same_complete_legal_proof_and_prefix",
+          "tests::batch_retains_every_post_winner_attempt_and_every_materialized_buffer",
+          "tests::changed_task_and_challenge_are_not_a_cross_challenge_trace_cache",
+          "tests::declaration_is_fixed_and_rejects_resource_or_domain_overrides",
+          "tests::parallel_workers_really_overlap_and_keep_declared_order_after_error_or_panic",
+          "tests::partial_last_batch_obeys_total_attempt_limit_and_never_skips_complete_misses",
+          "tests::rank_materials_have_exact_field_ranks_and_preserve_full_rank_partners",
+          "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+          "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values",
+          "material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+          "material::tests::material_bytes_require_exact_length_and_canonical_field_values",
+          "tests::external_material_refuses_length_and_noncanonical_words",
+          "tests::fixed_attempt_census_keeps_misses_and_actual_cache_recreation",
+          "tests::one_zero_optimized_and_full_limb_keep_identical_complete_streams",
+          "tests::options_reject_ambiguous_unbounded_or_noncanonical_counts",
+          "tests::sparse_dispatch_matches_dense_and_independent_complete_proofs",
+          "tests::sparse_v2_cell_retains_every_hit_miss_and_closed_epoch",
+          "tests::unsupported_optimization_is_not_silently_counted_as_an_executed_cell",
+          "tests::work_identity_binds_only_the_versioned_statement",
+          "tests::all_five_zero_operations_return_the_same_complete_certificate",
+          "tests::exact_input_extent_canonical_values_and_explicit_unsupported_are_checked",
+          "tests::actual_constructors_and_exact_winners_match_across_all_ten_paths",
+          "tests::adjacent_sample_pairs_balance_all_ten_actual_invocation_positions",
+          "tests::constructors_and_search_reject_malformed_inputs_without_fallback",
+          "tests::exhausted_searches_retain_all_attempt_bytes_and_null_verifier_fields",
+          "tests::new_challenge_and_stream_domains_are_exact_and_separate",
+          "tests::options_are_bounded_unambiguous_and_do_not_accept_other_materials",
+          "crypto_profile::tests::all_256_account_kind_slots_bind_original_roles_counts_and_carried_keys",
+          "crypto_profile::tests::binding_rejects_zero_roots_invalid_windows_and_unsupported_scope_versions",
+          "crypto_profile::tests::both_candidates_and_message_chosen_ids_are_refused_for_current_effects",
+          "crypto_profile::tests::bounded_wire_reads_reject_arithmetic_overflow_without_advancing_cursor",
+          "crypto_profile::tests::candidate_commitments_bind_purpose_profile_full_payload_and_length",
+          "crypto_profile::tests::candidate_configuration_commits_actual_envelope_commitment_and_wire_domains",
+          "crypto_profile::tests::candidate_message_refuses_empty_duplicate_zero_unordered_and_excess_signers",
+          "crypto_profile::tests::candidate_message_rejects_zero_authority_fields_and_outside_lifetime",
+          "crypto_profile::tests::candidate_wire_refuses_length_forgery_key_substitution_and_extra_tail",
+          "crypto_profile::tests::candidate_wire_requires_exact_full_key_and_signature_sets",
+          "crypto_profile::tests::candidate_wire_returns_borrowed_syntax_without_claiming_zero_signatures_are_valid",
+          "crypto_profile::tests::candidate_wire_size_cap_and_legacy_namespace_are_fail_closed",
+          "crypto_profile::tests::complete_batch_byte_ceiling_is_preserved_without_subrequest_resets",
+          "crypto_profile::tests::complete_message_binds_each_authority_field_payload_and_signer_set",
+          "crypto_profile::tests::complete_multisignature_wire_accounts_for_payload_metadata_keys_and_signatures",
+          "crypto_profile::tests::counter_overflow_never_wraps_or_restores_verification_credit",
+          "crypto_profile::tests::current_observation_is_rechecked_against_generation_identity_and_height",
+          "crypto_profile::tests::current_selection_enforces_activation_and_exclusive_retirement",
+          "crypto_profile::tests::every_multisignature_attempt_is_cumulative_and_exhaustion_latches",
+          "crypto_profile::tests::every_trusted_binding_dimension_changes_profile_identity",
+          "crypto_profile::tests::failed_wire_validation_does_not_refund_reserved_attempts_or_bytes",
+          "crypto_profile::tests::historical_records_keep_their_own_window_and_cannot_select_current_effects",
+          "crypto_profile::tests::history_preserves_old_parameters_and_protocol_without_current_upgrade_authority",
+          "crypto_profile::tests::history_refuses_duplicate_open_overlapping_and_future_intervals",
+          "crypto_profile::tests::history_refuses_foreign_roots_scopes_candidates_and_excess_entries",
+          "crypto_profile::tests::identifier_text_has_one_exact_lowercase_encoding",
+          "crypto_profile::tests::independent_python_ids_freeze_every_native_account_version",
+          "crypto_profile::tests::independent_python_sha512_vectors_bind_complete_configuration_and_work",
+          "crypto_profile::tests::independent_python_vectors_cover_full_messages_key_ids_and_payload_commitments",
+          "crypto_profile::tests::invalid_reservations_are_charged_and_cannot_revive_the_budget",
+          "crypto_profile::tests::legacy_account_descriptors_contain_actual_shared_domains_and_distinct_limits",
+          "crypto_profile::tests::message_and_wire_do_not_accept_other_parameter_sets_or_caller_context",
+          "crypto_profile::tests::peer_descriptor_uses_live_directions_domains_and_full_wire_budgets",
+          "crypto_profile::tests::signature_profiles_cannot_replace_work_challenge_or_ticket_hashes",
+          "crypto_profile::tests::trusted_retirement_history_keeps_exclusive_ends_and_gaps",
+          "crypto_profile::tests::trusted_retirement_must_narrow_a_nonempty_declared_interval",
+          "crypto_profile::tests::trusted_retirement_policy_never_activates_current_candidates",
+          "crypto_profile::tests::trusted_retirement_policy_preserves_foreign_candidate_and_capacity_refusals",
+          "crypto_profile::tests::trusted_retirement_policy_rechecks_current_generation_identity_and_height",
+          "crypto_profile::tests::trusted_retirement_policy_refuses_duplicate_overlap_and_late_end",
+          "crypto_profile::tests::trusted_retirement_preserves_open_descriptor_and_original_id",
+          "crypto_profile::tests::trusted_retirement_preserves_original_parameters_and_protocol",
+          "pon_growth::tests::native_growth_v2_header_fixed_vector_and_domain_separation",
+          "pon_state::bulk_tests::bulk_collision_in_valid_prefix_keeps_original_error_precedence",
+          "pon_state::bulk_tests::bulk_keeps_original_bounds_and_absent_empty_distinction",
+          "pon_state::bulk_tests::bulk_keeps_updates_inverse_and_failed_batch_snapshot_immutable",
+          "pon_state::bulk_tests::bulk_matches_insertion_shape_and_full_wire_at_size_edges",
+          "pon_state::bulk_tests::bulk_matches_original_every_divergence_depth_and_path_direction",
+          "pon_state::bulk_tests::bulk_nested_all_depths_matches_both_insertion_orders",
+          "pon_state::bulk_tests::bulk_real_65536_keys_preserves_every_leaf_and_original_root",
+          "pon_state::tests::all_deletions_return_empty_and_values_remain_bounded",
+          "pon_state::tests::compressed_roots_equal_independent_full_builder",
+          "pon_state::tests::failing_last_change_leaves_predecessor_and_content_unchanged",
+          "pon_state::tests::mixed_batches_match_full_builder_and_inverse_restores_predecessor",
+          "pon_state::tests::updates_deletes_and_empty_values_preserve_frozen_snapshots",
+          "pon_state::tests::wrong_root_duplicate_key_and_oversize_are_rejected",
+          "pon_wire::state_root_arithmetic::tests::complete_inputs_match_original_across_random_changes_and_reordered_rows",
+          "pon_wire::state_root_arithmetic::tests::equal_value_bytes_in_distinct_allocations_are_never_charged_as_one",
+          "pon_wire::state_root_arithmetic::tests::exact_string_eligibility_excludes_escapes_controls_and_non_ascii_wire_bytes",
+          "pon_wire::state_root_arithmetic::tests::exact_string_hits_cannot_publish_after_failure_collision_or_abandonment",
+          "pon_wire::state_root_arithmetic::tests::exact_strings_require_full_current_keys_values_and_complete_row_sets",
+          "pon_wire::state_root_arithmetic::tests::exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit",
+          "pon_wire::state_root_arithmetic::tests::incomplete_sources_and_original_wire_limits_publish_no_partial_material",
+          "pon_wire::state_root_arithmetic::tests::large_values_reuse_only_identical_complete_leaf_lists",
+          "pon_wire::state_root_arithmetic::tests::pending_shared_values_preserve_old_material_and_release_on_every_failed_finish",
+          "pon_wire::state_root_arithmetic::tests::retention_refusal_and_eviction_preserve_root_and_existing_budget",
+          "pon_wire::state_root_arithmetic::tests::shared_value_index_collisions_and_unique_values_only_limit_optional_retention",
+          "pon_wire::state_root_arithmetic::tests::shared_values_charge_only_selected_allocations_and_migrate_unused_old_values",
+          "pon_wire::state_root_arithmetic::tests::shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool",
+          "pon_wire::state_root_arithmetic::tests::single_partition_forks_collision_checks_and_replacement_use_original_roots",
+          "pon_wire::streamed_state_root_tests::state_empty_constants_match_all_depths_and_parallel_callers",
+          "pon_wire::streamed_state_root_tests::state_node_single_buffer_matches_original_wire",
+          "pon_wire::streamed_state_root_tests::state_root_constants_do_not_cache_values_or_failures",
+          "pon_wire::streamed_state_root_tests::streamed_state_root_drops_each_owned_encoding_before_requesting_the_next",
+          "pon_wire::streamed_state_root_tests::streamed_state_root_preserves_original_sparse_tree_for_all_input_orders",
+          "pon_wire::streamed_state_root_tests::streamed_state_root_refuses_duplicate_limit_and_truncated_producer_errors",
+          "pon_wire::tests::account_archive_reference_root_matches_independent_vectors",
+          "pon_wire::tests::contribution_without_signed_round_is_not_revision3_wire",
+          "pon_wire::tests::every_header_field_binds_its_wire_bytes_challenge_and_block_identity",
+          "pon_wire::tests::every_tx_tag_has_an_exact_payload",
+          "pon_wire::tests::header_exact_and_context_bound",
+          "pon_wire::tests::release_payload_is_bounded_and_sorted",
+          "pon_wire::tests::sparse_root_is_order_independent_and_value_sensitive",
+          "pq_frame::tests::entire_statement_has_one_exact_canonical_preflight_binding",
+          "pq_frame::tests::malformed_spki_or_classical_key_never_binds_pq_identity",
+          "pq_frame::tests::old_devnet_transaction_size_cannot_hold_pq_signature",
+          "pq_frame::tests::pinned_mldsa_spki_identity_matches_independent_sha256_vector",
+          "pq_frame::tests::sha384_payload_commitment_matches_independent_python_oracle",
+          "pq_frame::tests::stale_payload_and_signature_size_refuse",
+          "pq_frame::tests::unverified_signature_change_never_grants_authority",
+          "pq_frame::tests::zero_lifetimes_bad_length_and_classical_downgrade_reject",
+          "pq_native_accounts_v2::tests::closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse",
+          "pq_native_accounts_v2::tests::exact_fresh_frame_sizes_include_every_key_and_both_proofs",
+          "pq_native_accounts_v2::tests::joint_core_binds_context_generation_every_descriptor_and_full_new_key",
+          "pq_native_accounts_v2::tests::new_roles_require_exact_branch_generation_and_anchored_source_identity",
+          "pq_native_accounts_v2::tests::quota_successor_has_fresh_exact_roles_and_full_dual_proof_bytes",
+          "qualified_work_task::pq_lifecycle_v4::tests::native_pq_lease_revocation_domains_lengths_and_exact_branch_identity_are_fresh",
+          "sha2_backend_tests::sha256_known_answers_preserve_single_and_multi_block_streams",
+          "sha2_backend_tests::sha512_known_answers_preserve_single_and_multi_block_streams",
+          "tests::identifiers_and_decimal_values_are_canonical",
+          "tests::object_namespaces_do_not_collide",
+          "tests::result_commitment_binds_every_field",
+          "aliases_empty_graph_overbudget_and_noncanonical_bytes_are_refused",
+          "exact_maximum_payload_and_envelope_roundtrip_preserve_old_codec",
+          "bounded_context_identity_window_padding_and_unaccepted_cost",
+          "exact_lease_vector_and_all_packet_truncations",
+          "new_signature_domain_binds_lease_and_signature_does_not_mint_identity",
+          "renew_does_not_change_output_meter_or_demand_identity",
+          "exact_atomic_codec_rejects_every_cut_and_trailing_and_cross_bound_statement",
+          "fresh_context_changes_both_inner_and_outer_signed_messages",
+          "accepted_hardness_unknown_profile_recipe_and_padding_have_no_encoding",
+          "demand_nonce_cannot_create_another_output_meter_and_every_material_identity_binds",
+          "exact_codec_roundtrip_and_every_truncation_reject",
+          "exact_resource_bounds_and_maintenance_class_do_not_manufacture_learning_credit",
+          "closed_round::tests::author_exclusion_requires_all_remaining_eligible_signers",
+          "closed_round::tests::every_arrival_order_closes_at_the_same_minimum",
+          "closed_round::tests::fixed_roster_and_score_range_are_checked",
+          "closed_round::tests::missing_or_zero_attestation_cannot_unlock_positive_value",
+          "exact_integer_linear_v1::tests::checked_arithmetic_defense_and_permitted_intermediate_bound",
+          "basis_sign_padding_and_full_vector_equality_without_digest_oracle",
+          "full_product_cancellation_checks_i64_before_delta_bound",
+          "malformed_factor_bytes_and_unbounded_work_refuse",
+          "parent_slot_family_numeric_and_adapter_context_are_closed",
+          "perturbation_and_complementary_updates_are_not_collapsed",
+          "disabled_expired_revoked_and_unknown_profiles_do_not_fallback",
+          "duplicate_challenge_is_rejected_and_lifecycle_is_forward_only",
+          "exact_resolution_and_evidence_precede_backend",
+          "subjective_profiles_cannot_escalate_objective_authority",
+          "verified_rejected_and_unavailable_are_distinct_and_non_authoritative",
+          "withdrawal_and_expiry_close_without_economic_or_order_authority"
+        ],
+        "summaries": [
+          [
+            18,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            15,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            15,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            165,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            5,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            5,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            5,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            9,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            9,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            9,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            10,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            102,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            5,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            5,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "started_unix_seconds": 1794120647.5008478
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "-p",
+        "trnm-protocol",
+        "-p",
+        "trnm-crypto-primitives",
+        "-p",
+        "trnm-checkpoint-types",
+        "-p",
+        "trnm-checkpoint-store",
+        "-p",
+        "trnm-verification-profiles",
+        "--doc",
+        "--all-features",
+        "--no-fail-fast",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 3.0235443220008165,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794121041.7397587,
+      "label": "six-package-doc-tests",
+      "logs": {
+        "six-package-doc-tests.stderr.log": {
+          "bytes": 419,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/six-package-doc-tests.stderr.log",
+          "sha256": "33ef0bc37576576efc90d7ecdee4a9572fb7272ba04839cf3b07257d9e751129"
+        },
+        "six-package-doc-tests.stdout.log": {
+          "bytes": 4235,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/six-package-doc-tests.stdout.log",
+          "sha256": "63ec689b8338030cae43bd4dd344f38f1343e7769de7edb2528301a3979a45ad"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "ignored_names": [],
+        "passed_names": [],
+        "summaries": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "started_unix_seconds": 1794121038.7162132
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "release_owner::",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 749.5097228889354,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794121791.2535193,
+      "label": "node-release-owner",
+      "logs": {
+        "node-release-owner.stderr.log": {
+          "bytes": 3119,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/node-release-owner.stderr.log",
+          "sha256": "79282084b42c493e37feeb586497671244e283fa9e502019d5f3c3baf12ab27a"
+        },
+        "node-release-owner.stdout.log": {
+          "bytes": 9193,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/node-release-owner.stdout.log",
+          "sha256": "13489ba504c0cfcc38606cb3cdea77f6a7c881c5e3396f4edcff638dcbe8bee4"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "ignored_names": [
+          "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation"
+        ],
+        "passed_names": [
+          "release_owner::clock_contract::tests::boot_namespace_backwards_elapsed_overflow_and_budget_refuse",
+          "release_owner::clock_contract::tests::clock_contract_has_no_default_and_requires_both_direction_and_rate_bounds",
+          "release_owner::clock_contract::tests::quantization_upper_boundary_rate_rounding_and_persisted_lower_are_distinct",
+          "release_owner::files_tests::child_names_are_exact_single_components_before_any_filesystem_mutation",
+          "release_owner::files_tests::exact_size_is_accepted_but_growth_after_the_held_read_is_rejected",
+          "release_owner::files_tests::held_directory_and_lock_replacement_prevent_read_and_write",
+          "release_owner::files_tests::in_place_rewrite_and_private_mode_drift_are_rejected_after_the_read",
+          "release_owner::files_tests::same_bytes_at_a_new_named_inode_do_not_pass_the_held_read",
+          "release_owner::files_tests::symlink_fifo_directory_hardlink_and_nonprivate_modes_are_rejected",
+          "release_owner::root_separation_tests::all_three_service_keys_are_excluded_from_offline_root_and_every_online_role",
+          "release_owner::root_separation_tests::canonical_role_keys_replay_at_every_tagged_proof_boundary",
+          "release_owner::root_separation_tests::expired_old_root_keeps_dual_quorum_recovery_and_cold_proof_replay",
+          "release_owner::root_separation_tests::expired_root_recovery_requires_both_real_quorums_and_a_fresh_successor",
+          "release_owner::root_separation_tests::role_decoding_preserves_complete_root_and_canonical_record_requirements",
+          "release_owner::root_separation_tests::root_role_keys_refuse_aliases_unknown_codes_and_duplicates_in_tagged_proofs",
+          "release_owner::root_separation_tests::valid_dual_quorum_successor_cannot_reuse_an_independent_service_key",
+          "release_owner::sealed_tests::denied_mutations_preserve_sealed_bytes_without_claiming_unchanged_metadata",
+          "release_owner::sealed_tests::inherited_fifo_without_writer_is_refused_before_any_blocking_open",
+          "release_owner::sealed_tests::metadata_only_changes_refuse_read_copy_descriptor_and_exec_handoff",
+          "release_owner::sealed_tests::native_elf_profile_rejects_interpreter_dependencies_search_paths_and_wrong_machine",
+          "release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement",
+          "release_owner::sealed_tests::source_rewrite_or_path_exchange_during_sealing_refuses_authentication",
+          "release_owner::sealed_tests::unsealed_regular_input_and_a_different_sealed_descriptor_are_rejected",
+          "release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences",
+          "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+          "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+          "release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas",
+          "release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault",
+          "release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission",
+          "release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor",
+          "release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence",
+          "release_owner::transaction_tests::actual_fsync_cuts_preserve_unknown_and_only_cleanup_an_exact_external_winner",
+          "release_owner::transaction_tests::cas_error_and_reply_loss_never_cause_an_automatic_cold_retry",
+          "release_owner::transaction_tests::final_clock_cannot_admit_an_action_after_local_lock_or_index_replacement",
+          "release_owner::transaction_tests::final_external_load_cannot_move_the_lock_before_cas",
+          "release_owner::transaction_tests::first_verification_cannot_overwrite_a_new_pending_record_or_return_idempotent_success",
+          "release_owner::transaction_tests::known_external_winner_cannot_tombstone_a_different_retained_local_record",
+          "release_owner::transaction_tests::rollback_after_index_fsync_keeps_the_attempt_for_completed_only_cold_recovery",
+          "release_owner::transaction_tests::second_verification_cannot_cas_after_lock_proposal_attempt_or_index_replacement",
+          "release_owner::transaction_tests::whole_local_slot_rollback_is_rejected_against_the_retained_external_frontier"
+        ],
+        "summaries": [
+          [
+            40,
+            0,
+            1,
+            0,
+            1244
+          ]
+        ]
+      },
+      "started_unix_seconds": 1794121041.7437966
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 169.89647147781216,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794121961.154063,
+      "label": "workspace-strict-clippy",
+      "logs": {
+        "workspace-strict-clippy.stderr.log": {
+          "bytes": 5499,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/workspace-strict-clippy.stderr.log",
+          "sha256": "7b4092b6c99f8bfe2e5efaf6125acf3a77a3712d8f18ec4a9e2974016bb653ff"
+        },
+        "workspace-strict-clippy.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/workspace-strict-clippy.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794121791.2575917
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.3156217220239341,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794121961.4721105,
+      "label": "ci-contract",
+      "logs": {
+        "ci-contract.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/ci-contract.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ci-contract.stdout.log": {
+          "bytes": 378,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/ci-contract.stdout.log",
+          "sha256": "7b1446921b5f46ba5d957c2a60eedaabfbc802f215cd14ec62c1f6fb099c9795"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "artifact_comparison_jobs": 1,
+        "head_jobs": 5,
+        "inline_source_pins": 26,
+        "merge_lanes": 5,
+        "native_cost_architectures": 2,
+        "pq_release_authority_controls": {
+          "complete_release": 52,
+          "groups": {
+            "initial_root_material": 6,
+            "original_release": 37,
+            "quorum_preflight": 9
+          },
+          "python_test_doubles": 18,
+          "tests_executed": false
+        },
+        "tests_executed": false,
+        "w1_actual_reuse_v3_cells": 4
+      },
+      "started_unix_seconds": 1794121961.1564882
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 38.57571971905418,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122000.0519366,
+      "label": "ci-contract-negatives",
+      "logs": {
+        "ci-contract-negatives.stderr.log": {
+          "bytes": 19035,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/ci-contract-negatives.stderr.log",
+          "sha256": "f9a7710ed4789f4b41c7c1db90efdd4d9bad926a71f96c7572c83e2c5bcaad59"
+        },
+        "ci-contract-negatives.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/ci-contract-negatives.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reported_test_counts": [
+          113
+        ]
+      },
+      "started_unix_seconds": 1794121961.4762168
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_pq_root_quorum_research.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.2661317610181868,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122000.3227596,
+      "label": "pq-root-quorum-research",
+      "logs": {
+        "pq-root-quorum-research.stderr.log": {
+          "bytes": 3347,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-root-quorum-research.stderr.log",
+          "sha256": "411fcee925ab02f8196d4346ce04321df0ded4ed5ad2f275fccf4004da67c25e"
+        },
+        "pq-root-quorum-research.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-root-quorum-research.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reported_test_counts": [
+          18
+        ]
+      },
+      "started_unix_seconds": 1794122000.0566278
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.5168289041612297,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122000.8434153,
+      "label": "pq-integration",
+      "logs": {
+        "pq-integration.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-integration.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pq-integration.stdout.log": {
+          "bytes": 557,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-integration.stdout.log",
+          "sha256": "06182398f168e3f8966e9258d093406b8096cf0f284585fbbf49d6d7040b2f14"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 718,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "started_unix_seconds": 1794122000.326586
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 140.69218673883006,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122141.540041,
+      "label": "pq-integration-negatives",
+      "logs": {
+        "pq-integration-negatives.stderr.log": {
+          "bytes": 8869,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-integration-negatives.stderr.log",
+          "sha256": "41550cbabde897b91c88dcc86af632b88279484ee73fcae92185bfe6957911f5"
+        },
+        "pq-integration-negatives.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-integration-negatives.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reported_test_counts": [
+          55
+        ]
+      },
+      "started_unix_seconds": 1794122000.8478549
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.11564319208264351,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122141.6603663,
+      "label": "pq-claim",
+      "logs": {
+        "pq-claim.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-claim.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pq-claim.stdout.log": {
+          "bytes": 3425,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-claim.stdout.log",
+          "sha256": "df2056982e26923ea65600bbe0e42783ad619221cf965082fa4945ed63097c47"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "gates": {
+          "authorization": {
+            "source_paths": [
+              "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+              "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+              "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+              "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+              "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+              "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+              "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+              "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+              "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+              "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+              "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+              "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+              "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+              "scripts/ci/pq_authority_surface_scan.py",
+              "scripts/ci/test_pq_authority_surface_scan.py",
+              "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+            ],
+            "status": "UNQUALIFIED"
+          },
+          "capacity_and_invalid_input": {
+            "source_paths": [
+              "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+              "config/pon/post-quantum-transition-v1.json"
+            ],
+            "status": "UNQUALIFIED"
+          },
+          "independent_end_to_end": {
+            "source_paths": [
+              "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+              "config/pon/pq-cross-branch-corpus-v1.json",
+              "scripts/ci/pq_source_reader.py"
+            ],
+            "status": "UNQUALIFIED"
+          },
+          "migration_and_rollback": {
+            "source_paths": [
+              "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+              "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+              "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+              "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+              "scripts/ci/pq_external_rollback_oracle.py",
+              "scripts/ci/test_pq_external_rollback_oracle.py",
+              "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+              "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+              "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+              "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+              "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+            ],
+            "status": "UNQUALIFIED"
+          },
+          "proof_pq128": {
+            "source_paths": [
+              "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+              "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+            ],
+            "status": "UNQUALIFIED"
+          },
+          "quantum_mining_fork_choice": {
+            "source_paths": [
+              "config/pon/devnet-v1.json",
+              "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+              "scripts/ci/pq_quantum_daa_scenarios.py",
+              "scripts/ci/test_pq_quantum_daa_scenarios.py",
+              "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+            ],
+            "status": "UNQUALIFIED"
+          }
+        },
+        "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+        "pq_128_qualified": false,
+        "production_activation": false,
+        "schema": "trnm-whole-chain-pq-claim-guard-v1",
+        "status": "HOLD",
+        "whole_chain_pq_qualified": false
+      },
+      "started_unix_seconds": 1794122141.544723
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.5163562069647014,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122142.1817992,
+      "label": "pq-claim-negatives",
+      "logs": {
+        "pq-claim-negatives.stderr.log": {
+          "bytes": 136,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-claim-negatives.stderr.log",
+          "sha256": "b8548ac256b103fc6d2abdaf3788bea871315e969280d3d075563f9760954c6c"
+        },
+        "pq-claim-negatives.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-claim-negatives.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reported_test_counts": [
+          37
+        ]
+      },
+      "started_unix_seconds": 1794122141.6654434
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/pq_authority_surface_scan.py",
+        "--summary-only"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 6.283459407975897,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122148.4715812,
+      "label": "pq-authority",
+      "logs": {
+        "pq-authority.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-authority.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pq-authority.stdout.log": {
+          "bytes": 383,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-authority.stdout.log",
+          "sha256": "27b5943eb7c518b74514951a9a0f1218de17f20227ccb9135bfba37db4d40cef"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reviewed_roles_mapped": 23,
+        "schema": "trnm-pq-rust-source-authority-inventory-v1",
+        "scope": "All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof",
+        "source_files_read": 1286,
+        "status": "HOLD_INCOMPLETE_AUTHORITY_TRACING",
+        "unreviewed_indicator_files": 120,
+        "whole_chain_pq_qualified": false
+      },
+      "started_unix_seconds": 1794122142.188122
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_authority_surface_scan.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 0.5671496710274369,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122149.0438101,
+      "label": "pq-authority-negatives",
+      "logs": {
+        "pq-authority-negatives.stderr.log": {
+          "bytes": 2784,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-authority-negatives.stderr.log",
+          "sha256": "453dee44c98466e11e3d86fffdeaa1e3058d6e4703e4c74de6392c7b40e4b128"
+        },
+        "pq-authority-negatives.stdout.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/pq-authority-negatives.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reported_test_counts": [
+          15
+        ]
+      },
+      "started_unix_seconds": 1794122148.4766603
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 4.928748762002215,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122153.9778194,
+      "label": "source-integrity-negatives",
+      "logs": {
+        "source-integrity-negatives.stderr.log": {
+          "bytes": 6414,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/source-integrity-negatives.stderr.log",
+          "sha256": "86f81a5a507a7981d1990818f41c5f0d22a877e41e78accbaf6805672729e5cb"
+        },
+        "source-integrity-negatives.stdout.log": {
+          "bytes": 484,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/source-integrity-negatives.stdout.log",
+          "sha256": "29482dc3d0b9da3217071e7587e42301afa2570356f219c78afe19b54b94044e"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "reported_test_counts": [
+          43
+        ]
+      },
+      "started_unix_seconds": 1794122149.0490704
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/ci/check_canonical_development_plan.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 382.636477062013,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122536.623399,
+      "label": "canonical-plan",
+      "logs": {
+        "canonical-plan.stderr.log": {
+          "bytes": 8289,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/canonical-plan.stderr.log",
+          "sha256": "9445329df8181b3e64a6f9a4d1d923197774476b2a8786f3147dadb748593a43"
+        },
+        "canonical-plan.stdout.log": {
+          "bytes": 307,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/canonical-plan.stdout.log",
+          "sha256": "2a35f336adb7628eb8ecba5a93628d8b61836969e09d3d5a97b8f59f6080cc42"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794122153.986923
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 109.85839589009993,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122646.5156019,
+      "label": "repository-links",
+      "logs": {
+        "repository-links.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/repository-links.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "repository-links.stdout.log": {
+          "bytes": 307,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/repository-links.stdout.log",
+          "sha256": "2a35f336adb7628eb8ecba5a93628d8b61836969e09d3d5a97b8f59f6080cc42"
+        }
+      },
+      "passed": true,
+      "readback": {
+        "activation": false,
+        "head": "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+        "local_links": 3669,
+        "normal_dependency_edges": 27,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1286,
+        "source_state": "committed-clean",
+        "tree": "38a1d4da1a6dc8c93d49ca181c8e35ecb79ef776",
+        "workspace_packages": 26
+      },
+      "started_unix_seconds": 1794122536.6572077
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+        "--output",
+        "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/verified-source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+      "elapsed_seconds": 21.025437638163567,
+      "exit_code": 0,
+      "finished_unix_seconds": 1794122667.6064126,
+      "label": "source-guard-after",
+      "logs": {
+        "source-guard-after.stderr.log": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/source-guard-after.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source-guard-after.stdout.log": {
+          "bytes": 423,
+          "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/source-guard-after.stdout.log",
+          "sha256": "2a41af080dcd0a2732ebff5d43a183495bdc1471c2ca495bd9f2cf8535ce033c"
+        }
+      },
+      "passed": true,
+      "readback": {},
+      "started_unix_seconds": 1794122646.5809753
+    }
+  ],
+  "expected_head": "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+  "failures": [],
+  "finished_unix_seconds": 1794122668.6170588,
+  "production_activation": false,
+  "provider_unchanged": true,
+  "repo": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "result": "PASS",
+  "runner": {
+    "bytes": 24795,
+    "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/committed-source-01/authority-validation-runner.py",
+    "sha256": "f8651497d18f875bed1e1728d67c7b06d3f7b3efc28a3a5bc97bc0ae596cddfc"
+  },
+  "schema": "trnm-pq-authority-validation-v1",
+  "source_unchanged": true,
+  "target": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/target",
+  "whole_chain_quantum_security_qualified": false
+}

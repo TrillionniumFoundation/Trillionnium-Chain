@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13611221530/zip"
+  ],
+  "ended_unix_ns": 1794128899461021453,
+  "exit_code": 0,
+  "started_unix_ns": 1794128878585550464,
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 8465994,
+    "sha256": "f01470dd7f426ceb130782718ae46f90bb8cea15e24950ac18504622401045e6"
+  }
+}

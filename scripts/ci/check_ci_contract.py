@@ -2,6 +2,7 @@
 """Check the deliberately fixed hosted-CI structure; this does not execute its lanes."""
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import re
@@ -362,6 +363,155 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
 '''
 
 
+PQ_RELEASE_WORKFLOW = '.github/workflows/pon-pq-system-continuation.yml'
+PQ_RELEASE_MANIFEST = 'config/pon/pq-initial-root-material-required-tests-v1.json'
+PQ_RELEASE_SCOPE = 'immutable-initial-root-public-key-material-and-release-quorum-preflight-only'
+# These are non-wire review pins for the complete, ordered names in each group.
+# The original 37 and initial-root 6 remain unchanged; future additions require
+# an explicit manifest, registry, execution and contract review together.
+PQ_RELEASE_GROUPS = {
+    'original_release': (37, '41cdd3c0853db168ed869b10ce7579a48fde01d5053b08b7c658d315adbd0cc1'),
+    'initial_root_material': (6, 'fc24ff07491d3a6a7fe8712e60ea148796e545ac624e3b3612699c6bc96289bb'),
+    'quorum_preflight': (9, '1918b83edb3d238de38bdeac97a0ebc5a313c06a08c11abafcbcc66d233c83d5'),
+}
+PQ_ROOT_HARNESS_FILES = (
+    'formal/pon-nakamoto-v1/pq_root_quorum_research.py',
+    'formal/pon-nakamoto-v1/test_pq_root_quorum_research.py',
+)
+PQ_ROOT_HARNESS_NAMES_SHA256 = '17ed290cc8ad7b988f012f4cd9119c4197ff8ac3d82c1f655525eb09ae27cac5'
+PQ_RELEASE_JOB_HEADER = r'''    name: ML-DSA independent C implementation (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: chain
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+'''
+PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require initial-root and quorum controls from the complete release registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/mldsa-interoperability"
+          test -d "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/mldsa-rust-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label initial-root-release-registry --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib -- --list
+          python3 - config/pon/pq-initial-root-material-required-tests-v1.json "$out" <<'PY'
+          import json
+          import re
+          import sys
+          from pathlib import Path
+
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          counts = {"original_release": 37, "initial_root_material": 6,
+                    "quorum_preflight": 9, "complete_release": 52}
+          if (not isinstance(manifest, dict)
+                  or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
+                  or manifest.get("package") != "trnm-release-bundle"
+                  or manifest.get("harness") != "lib"
+                  or manifest.get("scope") != "immutable-initial-root-public-key-material-and-release-quorum-preflight-only"
+                  or not isinstance(manifest.get("expected_controls"), dict)
+                  or manifest["expected_controls"] != counts
+                  or any(type(value) is not int for value in manifest["expected_controls"].values())
+                  or any(manifest.get(key) is not False for key in (
+                      "authorization_results_cached", "signature_results_cached", "performance_qualified",
+                      "production_activation", "consensus_authority", "whole_chain_quantum_security_qualified"))):
+              raise SystemExit("release-authority required-control manifest invalid")
+          sets = {}
+          for key, count in counts.items():
+              names = manifest.get(key + "_tests")
+              if (not isinstance(names, list) or len(names) != count
+                      or any(not isinstance(name, str) or not re.fullmatch(
+                          r"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*", name) for name in names)
+                      or len(set(names)) != count):
+                  raise SystemExit("release-authority required-control names invalid")
+              sets[key] = set(names)
+          groups = ("original_release", "initial_root_material", "quorum_preflight")
+          if (any(sets[left] & sets[right] for index, left in enumerate(groups)
+                  for right in groups[index + 1:])
+                  or sets["complete_release"] != set().union(*(sets[group] for group in groups))):
+              raise SystemExit("release-authority required-control partition invalid")
+          root = Path(sys.argv[2])
+          log = (root / "initial-root-release-registry.log").read_text()
+          names = re.findall(r"^([A-Za-z0-9_:]+): test$", log, re.M)
+          summaries = re.findall(r"^([0-9]+) tests, ([0-9]+) benchmarks$", log, re.M)
+          if (len(names) != 52 or len(set(names)) != 52 or set(names) != sets["complete_release"]
+                  or summaries != [("52", "0")]):
+              raise SystemExit("release-authority actual binary registry differs from the complete required 52")
+          prefixes = {"original_release": "original-release", "initial_root_material": "initial-root",
+                      "quorum_preflight": "quorum-preflight"}
+          (root / "release-authority-required.tsv").write_text("".join(
+              f"{prefixes[group]}-{index:02d}\t{name}\n"
+              for group in groups for index, name in enumerate(manifest[group + "_tests"])))
+          print(json.dumps({"scope": "registry-presence-only", "required_controls": counts,
+                            "production_activation": False}, sort_keys=True))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$label" --output "$out" -- \
+              cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$out/$label.log" --test "$selector" > "$out/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$out/release-authority-required.tsv"
+          test "$failed" = 0
+'''
+PQ_ROOT_HARNESS_STEP = r'''      - name: Run root-quorum codec and policy test doubles without native crypto claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/mldsa-interoperability"
+          test -d "$out"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label root-quorum-harness --output "$out" -- \
+            python3 -B formal/pon-nakamoto-v1/test_pq_root_quorum_research.py -v
+          python3 - "$out/root-quorum-harness.log" > "$out/root-quorum-harness-execution.json" <<'PY'
+          import hashlib
+          import json
+          import re
+          import sys
+          from pathlib import Path
+
+          text = Path(sys.argv[1]).read_text()
+          rows = re.findall(r"^(test_[A-Za-z0-9_]+) \(__main__\.RootQuorumResearchTests\.([A-Za-z0-9_]+)\) \.\.\. (.*)$", text, re.M)
+          names = [row[0] for row in rows]
+          digest = hashlib.sha256(("\n".join(sorted(names)) + "\n").encode()).hexdigest()
+          summaries = re.findall(r"^Ran ([0-9]+) tests? in [0-9]+(?:\.[0-9]+)?s$", text, re.M)
+          outcomes = re.findall(r"^(?:OK(?: \(.*\))?|FAILED(?: \(.*\))?)$", text, re.M)
+          if (len(rows) != 18 or len(set(names)) != 18
+                  or any(name != method or outcome != "ok" for name, method, outcome in rows)
+                  or digest != "17ed290cc8ad7b988f012f4cd9119c4197ff8ac3d82c1f655525eb09ae27cac5"
+                  or summaries != ["18"] or outcomes != ["OK"]):
+              raise SystemExit("root-quorum harness requires all 18 exact codec/policy test doubles")
+          print(json.dumps({"result": "PASS", "executed_tests": 18,
+                            "scope": "python-codec-policy-test-doubles-only",
+                            "native_crypto_observed": False, "production_activation": False}, sort_keys=True))
+          PY
+'''
+PQ_RELEASE_REGRESSION_COMMAND = '          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label recovery-release-components --output "$out" -- \\\n            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -p trnm-release-bundle --all-targets --no-fail-fast -- --test-threads=1\n'
+
+
 def code_lines(text: str) -> list[str]:
     """The fixed lane permits whole-line comments, not alternate shell control flow."""
     return [line.strip() for line in text.splitlines() if line.strip() and not line.lstrip().startswith('#')]
@@ -560,8 +710,87 @@ def check_inline_source_pins(root: Path) -> int:
     return count
 
 
+def check_pq_release_authority_controls(root: Path) -> dict:
+    """Pin the complete release roster and its actual hosted execution wiring.
+
+    This is a source contract, not a native test observation. The workflow must
+    independently compare the real binary registry and read back each exact run.
+    The separate Python suite is explicitly limited to codec/policy test doubles.
+    """
+    for relative in (PQ_RELEASE_WORKFLOW, PQ_RELEASE_MANIFEST, *PQ_ROOT_HARNESS_FILES):
+        source = root / relative
+        require(source.is_file() and not source.is_symlink(),
+                'PQ release controls require a regular source: ' + relative)
+    manifest = json.loads((root / PQ_RELEASE_MANIFEST).read_text())
+    counts = {group: count for group, (count, _) in PQ_RELEASE_GROUPS.items()}
+    counts['complete_release'] = 52
+    require(isinstance(manifest, dict)
+            and manifest.get('schema') == 'trnm-pq-initial-root-material-required-tests-v1'
+            and manifest.get('package') == 'trnm-release-bundle'
+            and manifest.get('harness') == 'lib'
+            and manifest.get('scope') == PQ_RELEASE_SCOPE
+            and isinstance(manifest.get('expected_controls'), dict)
+            and manifest['expected_controls'] == counts
+            and all(type(value) is int for value in manifest['expected_controls'].values())
+            and all(manifest.get(key) is False for key in (
+                'authorization_results_cached', 'signature_results_cached', 'performance_qualified',
+                'production_activation', 'consensus_authority', 'whole_chain_quantum_security_qualified')),
+            'PQ release manifest must retain the exact 37 + 6 + 9 partition and limited scope')
+    groups = {}
+    for group, (count, expected) in PQ_RELEASE_GROUPS.items():
+        names = manifest.get(group + '_tests')
+        require(isinstance(names, list) and len(names) == count
+                and all(isinstance(name, str) and re.fullmatch(
+                    r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', name) for name in names)
+                and len(set(names)) == count
+                and hashlib.sha256(('\n'.join(names) + '\n').encode()).hexdigest() == expected,
+                'PQ release reviewed test names changed: ' + group)
+        groups[group] = set(names)
+    complete = manifest.get('complete_release_tests')
+    require(sum(len(names) for names in groups.values()) == len(set().union(*groups.values())) == 52
+            and complete == sorted(set().union(*groups.values())),
+            'PQ release complete registry must contain exactly all 52 distinct reviewed tests')
+
+    module = ast.parse((root / PQ_ROOT_HARNESS_FILES[1]).read_text())
+    classes = [node for node in module.body
+               if isinstance(node, ast.ClassDef) and node.name == 'RootQuorumResearchTests']
+    require(len(classes) == 1, 'PQ root harness requires its one explicit test-double class')
+    names = sorted(node.name for node in classes[0].body
+                   if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'))
+    require(len(names) == len(set(names)) == 18
+            and hashlib.sha256(('\n'.join(names) + '\n').encode()).hexdigest()
+            == PQ_ROOT_HARNESS_NAMES_SHA256,
+            'PQ root harness must retain the exact 18 codec/policy test doubles')
+
+    text = (root / PQ_RELEASE_WORKFLOW).read_text()
+    header, separator, body = text.partition('\njobs:\n')
+    require(bool(separator), 'PQ workflow requires an explicit jobs mapping')
+    paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
+    for relative in ('trillionnium/**', PQ_RELEASE_MANIFEST, PQ_RELEASE_WORKFLOW,
+                     *PQ_ROOT_HARNESS_FILES, 'scripts/ci/check_ci_contract.py',
+                     'scripts/ci/test_ci_contract.py', 'scripts/ci/check_required_native_test.py'):
+        require(paths.count(relative) == 1,
+                'PQ workflow must trigger for each release/harness control source: ' + relative)
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs = dict(pairs)
+    job = jobs.get('primitive-interoperability', '')
+    require(len(jobs) == len(pairs) and job.startswith(PQ_RELEASE_JOB_HEADER)
+            and 'continue-on-error' not in job and not re.search(r'^    if:', job, re.M),
+            'PQ release controls retain both native runners and head/merge sources without skipped failures')
+    for step in (PQ_RELEASE_AUTHORITY_STEP, PQ_ROOT_HARNESS_STEP):
+        require(job.count(step) == text.count(step) == 1,
+                'PQ release registry, exact execution and harness readback must remain complete')
+    require(job.count(PQ_RELEASE_REGRESSION_COMMAND) == 1
+            and job.index(PQ_RELEASE_REGRESSION_COMMAND) < job.index(PQ_RELEASE_AUTHORITY_STEP)
+            < job.index(PQ_ROOT_HARNESS_STEP),
+            'PQ complete component regression precedes all 52 exact executions and 18 Python controls')
+    return {'complete_release': 52, 'groups': {group: count for group, (count, _) in PQ_RELEASE_GROUPS.items()},
+            'python_test_doubles': 18, 'tests_executed': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     inline_source_pins = check_inline_source_pins(root)
+    pq_release_authority_controls = check_pq_release_authority_controls(root)
     check_from_zero_host_callsites(root)
     text = (root / WORKFLOW).read_text()
     body = text.split('\njobs:\n', 1)
@@ -825,6 +1054,7 @@ def validate(root: Path = ROOT) -> dict:
     return {'head_jobs': len(required), 'merge_lanes': len(required),
             'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
+            'pq_release_authority_controls': pq_release_authority_controls,
             'tests_executed': False}
 
 

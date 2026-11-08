@@ -1,0 +1,106 @@
+{
+  "annotations": [
+    {
+      "annotation_level": "warning",
+      "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+      "end_column": null,
+      "end_line": 2,
+      "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+      "path": ".github",
+      "raw_details": "",
+      "start_column": null,
+      "start_line": 2,
+      "title": ""
+    },
+    {
+      "annotation_level": "failure",
+      "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/527e2e58db6d7c1fd84ba88c3131289edea86b1d/.github",
+      "end_column": null,
+      "end_line": 20,
+      "message": "Process completed with exit code 1.",
+      "path": ".github",
+      "raw_details": "",
+      "start_column": null,
+      "start_line": 20,
+      "title": ""
+    }
+  ],
+  "conclusion": "failure",
+  "failed_steps": [
+    {
+      "completed_at": "2026-11-08T08:44:34Z",
+      "conclusion": "failure",
+      "name": "Execute original release from-zero controls",
+      "number": 6,
+      "started_at": "2026-11-08T08:40:04Z",
+      "status": "completed"
+    }
+  ],
+  "job": 128678654970,
+  "logs": {
+    "bytes": 1868423,
+    "sha256": "f82c20c8b26bc1190023f2e52cc317bc78046c0b8cd7516b36fef7fe2c5fde94"
+  },
+  "matches": [
+    {
+      "line": 1213,
+      "text": "##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1714,
+      "text": "thread '<unnamed>' (7633) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:332:13:"
+    },
+    {
+      "line": 1720,
+      "text": "thread '<unnamed>' (7636) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:462:13:"
+    },
+    {
+      "line": 1749,
+      "text": "thread 'ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch' (7683) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:225:49:"
+    },
+    {
+      "line": 1754,
+      "text": "thread 'ingress::public_v3::pq_identity::verifier_cache::tests::held_or_poisoned_material_lock_never_waits_or_skips_full_charged_verification' (7698) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:270:9:"
+    },
+    {
+      "line": 1759,
+      "text": "thread '<unnamed>' (7709) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1867:13:"
+    },
+    {
+      "line": 1764,
+      "text": "thread 'ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown' (7737) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1453:13:"
+    },
+    {
+      "line": 1787,
+      "text": "thread 'ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history' (7807) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs:350:17:"
+    },
+    {
+      "line": 1794,
+      "text": "thread '<unnamed>' (7833) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs:83:17:"
+    },
+    {
+      "line": 1807,
+      "text": "thread 'pon-exec-0' (7945) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:6466:41:"
+    },
+    {
+      "line": 1812,
+      "text": "thread '<unnamed>' (7967) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5762:13:"
+    },
+    {
+      "line": 1817,
+      "text": "thread '<unnamed>' (8040) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:6975:13:"
+    },
+    {
+      "line": 1822,
+      "text": "thread '<unnamed>' (8053) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5361:29:"
+    },
+    {
+      "line": 1825,
+      "text": "thread '<unnamed>' (8055) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5354:29:"
+    }
+  ],
+  "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+  "observed_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "run": 42463825143,
+  "status": "completed"
+}
