@@ -1,0 +1,6 @@
+tree 7887047307ca2fd0debcae00d6fa93b4cc17c9ce
+parent 4e007a87ceecbec8d265f6a70cfd71d512a514b5
+author OpenAI Codex <noreply@openai.com> 1794138568 -0500
+committer OpenAI Codex <noreply@openai.com> 1794138568 -0500
+
+Guard M12 effect intents with an independent recovery witness
