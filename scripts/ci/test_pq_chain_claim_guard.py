@@ -449,6 +449,105 @@ class TestClaimGuard(unittest.TestCase):
                     'evaluated_for_network_or_security')
         self.refused()
 
+    # Independent literal probes for the reserved contract. Do not import the
+    # implementation's alias sets: an accidentally deleted alias must go red.
+    CLAIM_DOCUMENTS = (CONFIG, CORPUS, CONSENSUS, DEVNET, BOUNDARY, PROOF_MANIFEST)
+    CLAIM_FLAGS = (
+        'whole_chain_pq128_qualified', 'whole_chain_pq_qualified',
+        'pq128_qualified', 'pq_128_qualified', 'pq_128_security_qualified',
+    )
+    CLAIM_VALUES = (
+        'whole_chain_failure_probability', 'whole_chain_lifetime_failure_probability',
+        'actual_lifetime_failure_bound', 'whole_chain_quantum_security_bits',
+        'whole_chain_pq_bits',
+    )
+
+    def check_added_claims(self, path, additions, error=None):
+        target = self.root / path
+        original = target.read_bytes() if target.exists() else None
+        data = deepcopy(self.configs.get(path, {
+            'pq_128_security_qualified': False,
+            'production_consensus_activation': False,
+        }))
+        data.update(additions)
+        self.put(path, json.dumps(data).encode())
+        try:
+            if error is not None:
+                with self.assertRaisesRegex(UnsafePromotion, error):
+                    inspect(self.root)
+            else:
+                report = inspect(self.root)
+                self.assertEqual(report['status'], 'HOLD')
+                self.assertIs(report['whole_chain_pq_qualified'], False)
+                self.assertIs(report['pq_128_qualified'], False)
+                self.assertIs(report['production_activation'], False)
+                self.assertTrue(all(g['status'] == 'UNQUALIFIED'
+                                    for g in report['gates'].values()))
+        finally:
+            if original is None:
+                target.unlink()
+            else:
+                self.put(path, original)
+
+    def test_reserved_true_claims_refused_in_every_claim_document(self):
+        for path in self.CLAIM_DOCUMENTS:
+            for key in self.CLAIM_FLAGS:
+                with self.subTest(path=path, key=key):
+                    self.check_added_claims(path, {key: True},
+                                           'unsupported PQ promotion')
+
+    def test_reserved_numeric_claims_refused_in_every_claim_document(self):
+        for path in self.CLAIM_DOCUMENTS:
+            for key in self.CLAIM_VALUES:
+                value = (128 if key.endswith('bits') else
+                         {'numerator': 1, 'denominator': 2**128})
+                with self.subTest(path=path, key=key):
+                    self.check_added_claims(path, {key: value},
+                                           'unqualified lifetime bound')
+
+    def test_reserved_promotions_cannot_hide_in_nested_mappings_or_lists(self):
+        probes = (
+            ('whole_chain_pq_qualified', True, 'unsupported PQ promotion'),
+            ('whole_chain_quantum_security_bits', 128, 'unqualified lifetime bound'),
+            ('actual_lifetime_failure_bound', '1/340282366920938463463374607431768211456',
+             'unqualified lifetime bound'),
+        )
+        for path in self.CLAIM_DOCUMENTS:
+            for key, value, error in probes:
+                for shape, nested in (
+                    ('mapping', {'retained': {key: value}}),
+                    ('list_mapping', [{'retained': [{key: value}]}]),
+                    ('nested_lists', [[0, None, [{key: value}]]]),
+                ):
+                    with self.subTest(path=path, key=key, shape=shape):
+                        self.check_added_claims(path, {'review_observations': nested}, error)
+
+    def test_reserved_boolean_alias_requires_exact_false(self):
+        for value in (0, 1, None, 'false', [], {}):
+            with self.subTest(value=value):
+                self.check_added_claims(CONFIG, {'whole_chain_pq_qualified': value},
+                                       'unsupported PQ promotion')
+
+    def test_reserved_numeric_alias_requires_null_even_for_zero(self):
+        for key in ('whole_chain_quantum_security_bits', 'actual_lifetime_failure_bound'):
+            for value in (0, False, '', {}, [], 'unknown'):
+                with self.subTest(key=key, value=value):
+                    self.check_added_claims(CONFIG, {key: value},
+                                           'unqualified lifetime bound')
+
+    def test_explicit_false_null_and_nested_hold_claims_stay_unqualified(self):
+        allowed = {key: False for key in self.CLAIM_FLAGS}
+        allowed.update({key: None for key in self.CLAIM_VALUES})
+        for path in self.CLAIM_DOCUMENTS:
+            with self.subTest(path=path):
+                self.check_added_claims(path, {
+                    **allowed,
+                    'review_observations': [
+                        {'retained': [deepcopy(allowed)]},
+                        [None, {'calculation': {'integer_input': 64}}, deepcopy(allowed)],
+                    ],
+                })
+
 
 if __name__ == '__main__':
     unittest.main()

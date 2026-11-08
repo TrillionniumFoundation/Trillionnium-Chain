@@ -21,6 +21,18 @@ DEVNET = 'config/pon/devnet-v1.json'
 BOUNDARY = 'PROJECT_BOUNDARY.json'
 PROOF_MANIFEST = 'trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json'
 
+# Reserved aliases are checked wherever they occur in the configuration objects
+# read below. This is an explicit source contract, not a natural-language scan.
+LIFETIME_CLAIM_FLAGS = frozenset({
+    'whole_chain_pq128_qualified', 'whole_chain_pq_qualified',
+    'pq128_qualified', 'pq_128_qualified', 'pq_128_security_qualified',
+})
+LIFETIME_CLAIM_VALUES = frozenset({
+    'whole_chain_failure_probability', 'whole_chain_lifetime_failure_probability',
+    'actual_lifetime_failure_bound', 'whole_chain_quantum_security_bits',
+    'whole_chain_pq_bits',
+})
+
 # One failure cannot be compensated by successes in other security domains.
 REQUIRED_ASSERTIONS = frozenset({
     'production_activation', 'independent_accepted', 'native_pq_node_integrated',
@@ -132,6 +144,26 @@ def false_field(data: dict, name: str, context: str) -> None:
     require(data.get(name) is False, 'unsupported PQ promotion: ' + context + '.' + name)
 
 
+def refuse_lifetime_promotion(data: dict, context: str) -> None:
+    """Refuse newly introduced numeric/boolean claims that contradict HOLD."""
+    pending = [(data, context)]
+    while pending:
+        value, path = pending.pop()
+        if type(value) is dict:
+            for key, item in value.items():
+                location = path + '.' + key
+                if key in LIFETIME_CLAIM_FLAGS:
+                    require(item is False, 'unsupported PQ promotion: ' + location)
+                if key in LIFETIME_CLAIM_VALUES:
+                    require(item is None, 'unqualified lifetime bound: ' + location)
+                if type(item) in (dict, list):
+                    pending.append((item, location))
+        elif type(value) is list:
+            pending.extend((item, path + '[' + str(index) + ']')
+                           for index, item in enumerate(value)
+                           if type(item) in (dict, list))
+
+
 def inspect(root: Path) -> dict:
     # Reject an alias of an otherwise plausible research checkout *before*
     # loading any source-controlled claims. Checking only leaf symlinks lets
@@ -148,6 +180,9 @@ def inspect(root: Path) -> dict:
     main = strict_json(root, CONSENSUS)
     dev = strict_json(root, DEVNET)
     boundary = strict_json(root, BOUNDARY)
+    for value, label in ((p, CONFIG), (c, CORPUS), (main, CONSENSUS),
+                         (dev, DEVNET), (boundary, BOUNDARY)):
+        refuse_lifetime_promotion(value, label)
     require(p.get('schema') == 'trnm-pon-post-quantum-transition-v1' and
             p.get('status') == 'research-only-no-activation' and
             p.get('changes_existing_consensus') is False,
@@ -204,6 +239,7 @@ def inspect(root: Path) -> dict:
     # If reintroduced, its own qualification flag cannot override whole-chain HOLD.
     if (root / PROOF_MANIFEST).exists() or (root / PROOF_MANIFEST).is_symlink():
         manifest = strict_json(root, PROOF_MANIFEST)
+        refuse_lifetime_promotion(manifest, PROOF_MANIFEST)
         false_field(manifest, 'pq_128_security_qualified', PROOF_MANIFEST)
         false_field(manifest, 'production_consensus_activation', PROOF_MANIFEST)
     return {
