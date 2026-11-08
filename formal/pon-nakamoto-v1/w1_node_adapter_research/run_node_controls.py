@@ -34,12 +34,25 @@ def main():
     a.fixture = a.fixture.resolve(strict=True)
     a.proof = a.proof.resolve(strict=True)
     a.output.mkdir(parents=True, exist_ok=False)
+    a.output = a.output.resolve(strict=True)
     assert sha(a.binary) == a.expected_binary_sha256
     inputs = [a.fixture / n for n in ('packet.bin', 'statement.bin', 'operator-plan.json')]
     inputs += [a.proof / n for n in ('sha.proof.bin', 'arith.proof.bin')]
+    operator = json.loads((a.fixture / 'operator-plan.json').read_text())
+    policy = {
+        'schema': 'trnm-w1-proof-start-owner-policy-v1',
+        'owner_id': hashlib.sha256(b'trnm-w1-control-owner-v1\0' + str(a.output).encode()).hexdigest(),
+        'profile': operator['profile'],
+        'network': operator['network'], 'parameters': operator['parameters'],
+        'genesis': operator['genesis'], 'maximum_starts': 9,
+    }
+    policy_path = a.output / 'independent-proof-owner-policy.json'
+    owner_path = a.output / 'proof-start-owner'
+    save(policy_path, policy)
+    inputs.append(policy_path)
     pins = {str(path): sha(path) for path in inputs}
     plan = {
-        'schema': 'trnm-w1-node-independent-process-controls-v1',
+        'schema': 'trnm-w1-node-independent-process-controls-v2',
         'cases': ['none', 'BeforeProof', 'BeforeNodeAdmission', 'NodeCommitted', 'BeforeActivation'],
         'cold_reopen_cases': ['none', 'BeforeNodeAdmission', 'NodeCommitted', 'BeforeActivation'],
         'new_complete_proofs': 0, 'production_resource_profile': False,
@@ -48,6 +61,7 @@ def main():
         'binary_sha256': sha(a.binary), 'input_sha256': pins,
         'harness_sha256': sha(Path(__file__)),
         'per_process_timeout_seconds': 60, 'rayon_num_threads': 8,
+        'proof_start_policy': policy, 'shared_owner': str(owner_path),
     }
     save(a.output / 'plan.json', plan)
     env = os.environ.copy()
@@ -73,12 +87,19 @@ def main():
         assert code == 0, row
         return json.loads(out.splitlines()[-1])['result']
 
+    initialized = execute('owner-init', ['owner-init', policy_path, owner_path])
+    assert initialized['owner']['occupied_slots'] == 0
     observations = []
+    spent = 0
     for case in plan['cases']:
         output = a.output / ('case-' + case)
-        record = execute(case, ['exercise', a.fixture, a.proof, output, case])
+        record = execute(case, ['exercise', a.fixture, a.proof, output, case, owner_path, policy_path])
+        spent += 1
         assert record == json.loads((output / 'exercise.json').read_text())
-        assert record['work_starts_spent'] == 1 and record['next_work_start_refused'] is True
+        assert record['schema'] == 'trnm-w1-node-adapter-exercise-v2'
+        assert record['proof_start_owner_snapshot']['occupied_slots'] == spent
+        assert record['proof_start']['slot'] == spent
+        assert record['proof_start']['purpose'] == 'admission'
         assert record['production_activation'] is False and record['qualification'] == 'HOLD_NO_GO'
         if case == 'BeforeProof':
             assert record['outcome'] is None and record['error'] == 'REQUEST_CANCELLED:BeforeProof'
@@ -91,7 +112,8 @@ def main():
         else:
             outcome = record['outcome']
             assert record['error'] is None and outcome['native_admitted'] is True
-            assert outcome['schema'] == 'trnm-w1-node-adapter-admission-v2'
+            assert outcome['schema'] == 'trnm-w1-node-adapter-admission-v3'
+            assert outcome['proof_start'] == record['proof_start']
             assert outcome['native_admission_path_invoked'] is True
             assert 'native_full_replay_required' not in outcome
             assert outcome['both_real_proofs_verified'] is True
@@ -107,7 +129,11 @@ def main():
                 assert outcome['late_cancellation'] is None and outcome['activation_error'] is None
         observed = {'case': case, 'exercise': record}
         if case in plan['cold_reopen_cases']:
-            cold = execute(case + '-cold', ['reopen', a.fixture, output, record['operation_directory']])
+            cold = execute(case + '-cold', ['reopen', a.fixture, output, record['operation_directory'], owner_path, policy_path])
+            spent += 1
+            assert cold['schema'] == 'trnm-w1-node-adapter-reopen-v2'
+            assert cold['proof_start']['slot'] == spent
+            assert cold['proof_start']['purpose'] == 'reopen_observation'
             assert cold['both_real_proofs_reverified'] is True and cold['admission_performed'] is False
             assert cold['production_activation'] is False
             expected_stored = case != 'BeforeNodeAdmission'
@@ -117,11 +143,18 @@ def main():
             observed['cold_reopen'] = cold
         observations.append(observed)
         save(a.output / 'observations.json', observations)
+    status = execute('owner-status', ['owner-status', policy_path, owner_path])
+    assert status['owner']['occupied_slots'] == spent == 9
+    assert status['owner']['exhausted'] is True
+    assert status['owner']['backup_rollback_protection_established'] is False
+    assert status['owner']['lifetime_quantum_query_bound_established'] is False
+    save(a.output / 'owner-final.json', status)
     assert all(sha(Path(path)) == expected for path, expected in pins.items())
     assert sha(a.binary) == plan['binary_sha256']
     assert sha(Path(__file__)) == plan['harness_sha256']
     summary = {'schema': plan['schema'], 'result': 'PASS', 'subprocesses': len(results),
                'exercise_cases': 5, 'cold_reopen_cases': 4, 'new_complete_proofs': 0,
+               'shared_owner_slots_spent': spent, 'shared_owner_exhausted': True,
                'harness_input_binary_unchanged': True, 'production_resource_profile': False,
                'production_activation': False, 'qualification': 'HOLD_NO_GO',
                'plan_sha256': sha(a.output / 'plan.json'),

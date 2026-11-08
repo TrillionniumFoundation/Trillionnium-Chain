@@ -3,6 +3,10 @@
 //! This is a PNH1 development adapter, not PGH2 support or production activation.
 #![forbid(unsafe_code)]
 
+pub mod proof_start_owner;
+
+use proof_start_owner::{ProofStartRecord, ProofStartReservation};
+
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -336,6 +340,7 @@ pub struct Phase {
 pub struct VerifiedBundle<'a> {
     bundle: &'a PreparedBundle,
     phases: Vec<Phase>,
+    proof_start: Option<ProofStartRecord>,
 }
 
 fn decode(bytes: &[u8], component: Component) -> Result<W1Proof> {
@@ -348,7 +353,9 @@ fn decode(bytes: &[u8], component: Component) -> Result<W1Proof> {
         .map_err(err)
 }
 
+/// Unmetered research-library entry point. No lifetime budget is asserted.
 /// No Node reference/lock is needed; callers can verify outside the Node owner.
+/// The exercise/reopen CLI instead requires verify_reserved_bundle.
 pub fn verify_bundle<'a>(
     bundle: &'a PreparedBundle,
     mut progress: impl FnMut(Stage) -> Result<()>,
@@ -410,7 +417,25 @@ pub fn verify_bundle<'a>(
         wall_seconds: start.elapsed().as_secs_f64(),
     });
     progress(Stage::ProofVerified)?;
-    Ok(VerifiedBundle { bundle, phases })
+    Ok(VerifiedBundle {
+        bundle,
+        phases,
+        proof_start: None,
+    })
+}
+
+/// Consume one previously synchronized start. The record is diagnostic; the
+/// non-deserializable reservation, not a caller-supplied receipt, authorizes this
+/// metered call. A mismatch, cancellation, or verifier failure never refunds it.
+pub fn verify_reserved_bundle<'a>(
+    bundle: &'a PreparedBundle,
+    reservation: ProofStartReservation,
+    progress: impl FnMut(Stage) -> Result<()>,
+) -> Result<VerifiedBundle<'a>> {
+    let record = reservation.bind(&bundle.plan)?;
+    let mut verified = verify_bundle(bundle, progress)?;
+    verified.proof_start = Some(record);
+    Ok(verified)
 }
 
 pub fn check_current_node(node: &Node, bundle: &PreparedBundle) -> Result<()> {
@@ -467,7 +492,7 @@ pub fn admit(
         .exact_packet_observation(&verified.bundle.packet)
         .map_err(err);
     Ok(
-        json!({"schema":"trnm-w1-node-adapter-admission-v2","profile":PROFILE,
+        json!({"schema":"trnm-w1-node-adapter-admission-v3","profile":PROFILE,
         "operation":verified.bundle.operation,"block":hex::encode(id),"both_real_proofs_verified":true,
         "native_admission_path_invoked":true,
         "native_work_policy":"fresh packets execute native W1; exact duplicates reuse original admitted state",
@@ -475,7 +500,7 @@ pub fn admit(
         "activation_requested":activate,"late_cancellation":late_cancellation,"activation_error":activation_error,
         "active_before":hex::encode(before.0),"generation_before":before.1,
         "native_observation":observation.as_ref().ok(),"native_observation_error":observation.as_ref().err(),
-        "proof_phases":verified.phases,
+        "proof_phases":verified.phases,"proof_start":verified.proof_start,
         "qualification":"HOLD_NO_GO","production_activation":false}),
     )
 }
@@ -498,13 +523,14 @@ pub fn observe_verified(node: &Node, verified: VerifiedBundle<'_>) -> Result<Val
     let bundle = verified.bundle;
     check_current_node(node, bundle)?;
     Ok(
-        json!({"schema":"trnm-w1-node-adapter-reopen-v1","operation":bundle.operation,
+        json!({"schema":"trnm-w1-node-adapter-reopen-v2","operation":bundle.operation,
         "both_real_proofs_reverified":true,"admission_performed":false,
         "native_observation":node.exact_packet_observation(&bundle.packet).map_err(err)?,
-        "proof_phases":verified.phases,"qualification":"HOLD_NO_GO","production_activation":false}),
+        "proof_phases":verified.phases,"proof_start":verified.proof_start,"qualification":"HOLD_NO_GO","production_activation":false}),
     )
 }
 
+/// Historical in-memory research account, not used by the current CLI.
 /// A finite owner-side work-start account. It is not a kernel CPU or wall-time bound.
 /// No caller-provided success/estimate can replenish it; failed starts remain spent.
 pub struct WorkStartBudget {

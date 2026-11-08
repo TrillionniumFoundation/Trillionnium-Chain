@@ -23,6 +23,16 @@ they are not counted as a fresh FullLimb replay. The P3 certificate is an
 additional admission condition. This conjunction currently adds work and does
 not demonstrate a production benefit over the native path.
 
+## Current durable proof-start contract
+
+The current CLI requires a separately provisioned common owner and independent
+policy for both exercise and cold reopen. Failed starts, cancellations and
+interrupted slot writes remain spent across process restarts; concurrent
+processes share atomic create-once slots. The complete contract, new diagnostic
+namespaces and explicit rollback/QROM limits are in
+[PROOF_START_OWNER.md](PROOF_START_OWNER.md). This replaces the old per-process
+CLI counter, while all historical measurements below keep their original scope.
+
 ## What is bound before Node admission
 
 The caller supplies an independent `OperatorPlan`: exact profile, network,
@@ -76,9 +86,10 @@ untrusted-same-UID filesystem isolation or a bound on whole-system disk use.
 
 The CLI verifies both proofs before `Node::open` in both `exercise` and `reopen`.
 A rejected certificate or `BeforeProof` cancellation leaves no receiver Node
-directory. Failed starts remain spent in the local `WorkStartBudget`. That
-counter only limits starts in one owner instance: it is not persistent global
-accounting, a CPU bound or a service-level rejection guarantee.
+directory. The original campaign kept failed starts spent only in an in-memory
+`WorkStartBudget`; cold processes did not share it. The current explicit owner
+charges both CLI paths durably as described above. Neither mechanism establishes
+a global quantum-query account, a CPU bound or a service-level rejection guarantee.
 
 The commit boundary has different semantics on its two sides:
 
@@ -90,7 +101,7 @@ The commit boundary has different semantics on its two sides:
 | Exact duplicate | Original native admission path is called; active generation and credited chain state do not increase. No fresh FullLimb replay is inferred. |
 | Reorganization to a longer competing branch | A previously admitted packet remains stored but is no longer reported as active. A historical receipt does not reactivate it. |
 
-Admission receipt schema `trnm-w1-node-adapter-admission-v2` reports invocation
+The original admission receipt schema `trnm-w1-node-adapter-admission-v2` reports invocation
 of the native admission path and explicitly distinguishes the fresh-packet
 policy from exact-duplicate semantics. It preserves successful native commit
 if a later cancellation, activation error or observation error occurs. The
@@ -142,7 +153,7 @@ bytes do not become new proving executions or independent input tasks.
 
 ## Checks and independent review
 
-The 12 integration tests exercise full real proofs and the real Node library:
+The original 12 integration tests exercise full real proofs and the real Node library:
 complete admission/activation, duplicate idempotency and cold reopen; false
 public arithmetic; independent artifact mismatch; changed header and profile;
 precommit cancellation; truthful postcommit cancellation and native recovery;
@@ -152,7 +163,7 @@ CLI controls proving that refusal or early cancellation never opens Node.
 The sibling and child in the reorganization control are original native
 packets, not additional newly proved P3 packets.
 
-Nine separately launched CLI processes also passed five exercise cases and four
+The original nine separately launched CLI processes also passed five exercise cases and four
 cold reopens, including native recovery after postcommit cancellation. These
 are retained-proof replays and generate zero new complete proofs.
 
@@ -186,8 +197,11 @@ RUSTFLAGS='-C target-cpu=native' CARGO_BUILD_JOBS=2 \
 cargo +1.95.0 fmt --all -- --check
 ```
 
-The CLI accepts `fixture NEW_DIRECTORY`, `exercise FIXTURE PROOF_DIRECTORY
-NEW_OUTPUT CANCEL_STAGE_OR_none`, `reopen FIXTURE OUTPUT OPERATION_DIRECTORY`
+The current CLI accepts `fixture NEW_DIRECTORY`,
+`owner-init EXPECTED_POLICY NEW_OWNER_DIR`,
+`owner-status EXPECTED_POLICY OWNER_DIR`,
+`exercise FIXTURE PROOF_DIRECTORY NEW_OUTPUT CANCEL_STAGE_OR_none OWNER_DIR EXPECTED_POLICY`,
+`reopen FIXTURE OUTPUT OPERATION_DIRECTORY OWNER_DIR EXPECTED_POLICY`,
 and `native RAW EXPECTED_HEADER REPEATS`. New output and fixture directories
 must not already exist. The last command measures only current native W1
 verification with the independent header and includes computing its challenge;
