@@ -873,3 +873,281 @@ fn migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unboun
         1
     );
 }
+
+// Thread-local observation counts completed attempts to hash the real complete
+// configuration. It is test-only and cannot become a runtime validation cache.
+std::thread_local! {
+    static CONFIG_DIGEST_CALLS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+pub(super) fn record_config_digest() {
+    CONFIG_DIGEST_CALLS.with(|calls| calls.set(calls.get() + 1));
+}
+fn config_digest_work<T>(call: impl FnOnce() -> T) -> (T, usize) {
+    let before = CONFIG_DIGEST_CALLS.with(std::cell::Cell::get);
+    let result = call();
+    let after = CONFIG_DIGEST_CALLS.with(std::cell::Cell::get);
+    (result, after - before)
+}
+
+fn config_batch(cfg: &Config, a: &Key, b: &Key) -> Vec<Vec<u8>> {
+    (0..16)
+        .map(|index| {
+            let (key, recipient) = if index % 2 == 0 { (a, b.id) } else { (b, a.id) };
+            ordinary(
+                cfg,
+                key,
+                key.id,
+                index / 2 + 1,
+                1,
+                1,
+                &transfer_payload(recipient, 1),
+            )
+        })
+        .collect()
+}
+
+#[test]
+fn config_check_batch_reuses_one_complete_check_and_keeps_real_signature_debits() {
+    let (cfg, state, _, a, b) = setup();
+    let raws = config_batch(&cfg, &a, &b);
+    for count in [0, 1, 8, 16] {
+        let (result, work) =
+            config_digest_work(|| validate_block(&state, &raws[..count], a.id, Some(1001), &cfg));
+        result.unwrap();
+        assert_eq!(
+            work, 1,
+            "complete config work must not grow with batch size"
+        );
+    }
+    let attempts = std::sync::atomic::AtomicUsize::new(0);
+    let (prepared, work) =
+        config_digest_work(|| prepare_signature_metered(&state, &raws[0], 1001, &cfg, &attempts));
+    let prepared = prepared.unwrap();
+    // The existing charge owner retains its own complete configuration check.
+    // No signature is aggregated, skipped or credited by this amortization.
+    assert_eq!(work, 2);
+    assert_eq!(prepared.signature_count(), 1);
+    assert_eq!(attempts.load(std::sync::atomic::Ordering::Relaxed), 1);
+    let (patch, work) = config_digest_work(|| apply(&state, &prepared, 1, &cfg, None));
+    let patch = patch.unwrap();
+    assert_eq!(work, 1);
+    assert_eq!(
+        patch.writes[&format!("account:{}", hex::encode(a.id))]["nonce"],
+        1
+    );
+    assert_eq!(
+        config_digest_work(|| validate_current_authority(&state, &raws[0], &cfg)),
+        (Ok(()), 1)
+    );
+    let next = Key::public_test_seed(105);
+    let dual = rotation(&cfg, &state, a.id, 1, 1, &a, &next);
+    let (prepared, work) =
+        config_digest_work(|| prepare_signature_metered(&state, &dual, 1001, &cfg, &attempts));
+    assert_eq!(prepared.unwrap().signature_count(), 2);
+    assert_eq!(
+        work, 3,
+        "both real signature attempts retain their budget checks"
+    );
+    assert_eq!(attempts.load(std::sync::atomic::Ordering::Relaxed), 3);
+}
+
+#[test]
+fn config_check_never_survives_a_changed_config_or_current_authority() {
+    let (cfg, state, _, a, b) = setup();
+    let raw = ordinary(&cfg, &a, a.id, 1, 1, 1, &transfer_payload(b.id, 1));
+    let prepared = prepare_signature(&state, &raw, 1001, &cfg).unwrap();
+    let mut cases = Vec::new();
+    let mut changed = cfg.clone();
+    changed.params["max_transactions"] =
+        json!(cfg.params["max_transactions"].as_u64().unwrap() + 1);
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.fees[1] += 1;
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.model_registry = json!({"changed": true});
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.family[0] ^= 1;
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.plan[0] ^= 1;
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.evaluators.insert("changed".into());
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.network[0] ^= 1;
+    cases.push(changed);
+    let mut changed = cfg.clone();
+    changed.parameters[0] ^= 1;
+    cases.push(changed);
+    for changed in cases {
+        let attempts = std::sync::atomic::AtomicUsize::new(0);
+        assert_eq!(
+            validate_block(
+                &state,
+                std::slice::from_ref(&raw),
+                a.id,
+                Some(1001),
+                &changed
+            ),
+            Err("PQ2_CONFIG_CHANGED")
+        );
+        assert_eq!(
+            prepare_signature_metered(&state, &raw, 1001, &changed, &attempts).err(),
+            Some("PQ2_CONFIG_CHANGED")
+        );
+        assert_eq!(attempts.load(std::sync::atomic::Ordering::Relaxed), 0);
+        assert_eq!(
+            validate_current_authority(&state, &raw, &changed),
+            Err("PQ2_CONFIG_CHANGED")
+        );
+        assert_eq!(
+            apply(&state, &prepared, 1, &changed, None).err(),
+            Some("PQ2_CONFIG_CHANGED")
+        );
+        validate_block(&state, std::slice::from_ref(&raw), a.id, Some(1001), &cfg).unwrap();
+    }
+    let next = Key::public_test_seed(105);
+    let rotated = execute(
+        &state,
+        &cfg,
+        1,
+        a.id,
+        &[rotation(&cfg, &state, a.id, 1, 1, &a, &next)],
+        Some(1001),
+    )
+    .unwrap();
+    assert_eq!(
+        apply(&rotated.state, &prepared, 2, &cfg, None).err(),
+        Some("PQ2_STALE_AUTHORITY")
+    );
+    assert_eq!(
+        validate_current_authority(&rotated.state, &raw, &cfg),
+        Err("PQ2_STALE_AUTHORITY")
+    );
+    let mut bad_signature = raw.clone();
+    *bad_signature.last_mut().unwrap() ^= 1;
+    let attempts = std::sync::atomic::AtomicUsize::new(0);
+    for expected in [1, 2] {
+        assert_eq!(
+            prepare_signature_metered(&state, &bad_signature, 1001, &cfg, &attempts).err(),
+            Some("PQ2_SIGNATURE")
+        );
+        assert_eq!(
+            attempts.load(std::sync::atomic::Ordering::Relaxed),
+            expected
+        );
+    }
+}
+
+#[test]
+fn config_check_keeps_late_input_errors_and_complete_parent_validation_order() {
+    let (cfg, state, _, a, b) = setup();
+    let valid = config_batch(&cfg, &a, &b);
+    let mut malformed = valid.clone();
+    malformed.last_mut().unwrap()[0] ^= 1;
+    let mut orphaned = state.clone();
+    orphaned.insert(
+        auth_key(&hex::encode([77; 32])),
+        authority(1, [77; 32], false),
+    );
+    let preserved = orphaned.clone();
+    assert_eq!(
+        validate_block(&orphaned, &malformed, a.id, Some(1001), &cfg),
+        Err("PQ2_ENCODING")
+    );
+    assert_eq!(
+        validate_block(&orphaned, &valid, a.id, Some(1001), &cfg),
+        Err("PQ2_ORPHAN_AUTHORITY")
+    );
+    assert_eq!(
+        validate_block(&orphaned, &malformed, a.id, None, &cfg),
+        Err("PQ2_BLOCK_CONTEXT")
+    );
+    assert_eq!(
+        validate_current_authority(&orphaned, malformed.last().unwrap(), &cfg),
+        Err("PQ2_ORPHAN_AUTHORITY")
+    );
+    assert_eq!(orphaned, preserved);
+    let next = Key::public_test_seed(105);
+    let dual = rotation(&cfg, &state, a.id, 1, 1, &a, &next);
+    for raws in [
+        vec![dual.clone(), valid[0].clone()],
+        vec![valid[0].clone(), dual],
+    ] {
+        assert_eq!(
+            validate_block(&state, &raws, a.id, Some(1001), &cfg),
+            Err("PQ2_AUTHORITY_BLOCK_MUTEX")
+        );
+    }
+}
+
+#[test]
+fn config_check_parallel_pq_execution_keeps_roots_receipts_and_joins_cancellation() {
+    use crate::pon_executor::{ExecutionError, ExecutionProgress};
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    let (cfg, state, _, a, b) = setup();
+    let raws = config_batch(&cfg, &a, &b);
+    let preserved = state.clone();
+    let serial = execute(&state, &cfg, 1, a.id, &raws, Some(1001)).unwrap();
+    let request = |workers| BlockExecution {
+        timestamp: Some(1001),
+        transactions: &raws,
+        height: 1,
+        miner: a.id,
+        parent_id: [1; 32],
+        workers,
+    };
+    for workers in [1, 2, 4, 8] {
+        let output = pon_executor::relation_only(pon_executor::execute_with_control(
+            &state,
+            request(workers),
+            &cfg,
+            &ExecutionControl::new(&pon_executor::no_cancellation, &()),
+        ))
+        .unwrap();
+        assert_eq!(output.state, serial.state);
+        assert_eq!(output.receipts, serial.receipts);
+        assert_eq!(output.root, serial.root);
+        assert_eq!(output.metrics.signature_verifications, raws.len());
+        assert_eq!(state, preserved);
+    }
+    for workers in [2, 4, 8] {
+        let entered = AtomicUsize::new(0);
+        let left = AtomicUsize::new(0);
+        let progress = |point| {
+            match point {
+                ExecutionProgress::BeforePrepare { .. } => {
+                    entered.fetch_add(1, Ordering::AcqRel);
+                }
+                ExecutionProgress::AfterPrepare { index } => {
+                    left.fetch_add(1, Ordering::AcqRel);
+                    if index == workers - 1 {
+                        return Err("cancel-pq-config-call");
+                    }
+                }
+                _ => {}
+            }
+            Ok(())
+        };
+        let result = pon_executor::execute_with_control(
+            &state,
+            request(workers),
+            &cfg,
+            &ExecutionControl::new(&progress, &()),
+        );
+        assert!(matches!(
+            result,
+            Err(ExecutionError::Cancelled("cancel-pq-config-call"))
+        ));
+        assert!(entered.load(Ordering::Acquire) >= workers);
+        assert_eq!(
+            entered.load(Ordering::Acquire),
+            left.load(Ordering::Acquire)
+        );
+        assert_eq!(state, preserved);
+    }
+}
