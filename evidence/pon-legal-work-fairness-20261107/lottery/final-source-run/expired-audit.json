@@ -1,0 +1,369 @@
+{
+  "attempt_callback_scope": "included in whole audit time; excluded from per-attempt phase times",
+  "attempts": [
+    {
+      "attempt_cpu_ns": 270223,
+      "chainwork_awarded": 0,
+      "challenge": "c8121a37397a91f30c697d7831f37f6b356a797429bcdabaa0f3a994cd82219f",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 0,
+      "nonce": 0,
+      "producer_cpu_ns": 194330,
+      "producer_new_matrix_contractions": 0,
+      "statement": "b70b021e3724d4f05e822afc39cf21069b36efac79e3361a948ba6c01e1f90c4",
+      "status": "rejected",
+      "ticket": "85c906dfedb7ddaf6c9f5391d3e35d468713f7abad453ebeacfab2ce404b8fc3",
+      "verifier_cpu_ns": 70224
+    },
+    {
+      "attempt_cpu_ns": 284203,
+      "chainwork_awarded": 0,
+      "challenge": "d8a37e78068252f917a12de4f5bff9fe5357b5847fddab02c27edc949d328545",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 1,
+      "nonce": 1,
+      "producer_cpu_ns": 186077,
+      "producer_new_matrix_contractions": 0,
+      "statement": "1634df40a24e146804e310bddce89de9f264048f63e7b1ccbb61726ae39b44e0",
+      "status": "rejected",
+      "ticket": "e3f4b1426c1996bb00f56bd3f89e575d5f890230300f913217262611d3c07063",
+      "verifier_cpu_ns": 94371
+    },
+    {
+      "attempt_cpu_ns": 246367,
+      "chainwork_awarded": 0,
+      "challenge": "c57468e65cc3c0cb029e87aa960ac8a2a63dbd1218eb3e08c1bac0e504a8a199",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 2,
+      "nonce": 2,
+      "producer_cpu_ns": 177445,
+      "producer_new_matrix_contractions": 0,
+      "statement": "b328e0d4616ce2ecc5f22db397c430180b75744d7922659b4a1b9ff7fbb6f32d",
+      "status": "rejected",
+      "ticket": "66df97945f060b7859a494b34348e6eccde52fb8d51d85b5b6db08df421da497",
+      "verifier_cpu_ns": 65788
+    },
+    {
+      "attempt_cpu_ns": 246387,
+      "chainwork_awarded": 0,
+      "challenge": "33c944c03fb29aa08b73def38466b533940388dafe5ebe710d84536e36cc921e",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 3,
+      "nonce": 3,
+      "producer_cpu_ns": 173849,
+      "producer_new_matrix_contractions": 0,
+      "statement": "b3f74a0b458ba126eba49fbaaf1e1a273359ace95e55a082f6da598997de788f",
+      "status": "rejected",
+      "ticket": "b5a92905a1bc7eaf93305070ff6c123b62e88bdd06ee80f21633089d188911b7",
+      "verifier_cpu_ns": 69894
+    },
+    {
+      "attempt_cpu_ns": 285094,
+      "chainwork_awarded": 0,
+      "challenge": "e99b48d9782ce4a0b12a247ee769167df295db009bcfa8858288a606f768a037",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 4,
+      "nonce": 4,
+      "producer_cpu_ns": 194610,
+      "producer_new_matrix_contractions": 0,
+      "statement": "d73bc97827631a5b2e02b8b395c7f9a0dfbf890da501bd99182ff008662bb441",
+      "status": "rejected",
+      "ticket": "739c5240a40a701db831855c43cc883c7abc0fec9688d4cfb940a6958fc1f4e1",
+      "verifier_cpu_ns": 87010
+    },
+    {
+      "attempt_cpu_ns": 243943,
+      "chainwork_awarded": 0,
+      "challenge": "9a3ba99f681c4c4cf21ea97b4e839a64c5e69d1f2087ef76f4b99ed0b0b6bcc5",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 5,
+      "nonce": 5,
+      "producer_cpu_ns": 176373,
+      "producer_new_matrix_contractions": 0,
+      "statement": "18236600e992de474ad5aac53af48e7c1174152ea4ccbc5b811b81e4e7f95920",
+      "status": "rejected",
+      "ticket": "03d7fee26b1838a803fb236e1c3a01608dde55bf695205ec751f4b19ea9d99e3",
+      "verifier_cpu_ns": 65117
+    },
+    {
+      "attempt_cpu_ns": 243693,
+      "chainwork_awarded": 0,
+      "challenge": "0829e8d6ec117f8eb56a01a1b52966727adc7a5da1b7cc7c6ed30f399b629ecd",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 6,
+      "nonce": 6,
+      "producer_cpu_ns": 173338,
+      "producer_new_matrix_contractions": 0,
+      "statement": "a74c248f944538ed46b1462b09c02ab1076ed1914024c8354abf89248bf20460",
+      "status": "rejected",
+      "ticket": "993a3d8def92abbe0f25d1700a23fa44a416efc905653caad0facee8022b3650",
+      "verifier_cpu_ns": 67660
+    },
+    {
+      "attempt_cpu_ns": 265906,
+      "chainwork_awarded": 0,
+      "challenge": "67a0cf02f5f03a47b246ee1815af2ad47354fdf6fda44f371e489383fad2ad66",
+      "error": "REQUEST_NOT_CURRENT",
+      "first_ticket_input": true,
+      "index": 7,
+      "nonce": 7,
+      "producer_cpu_ns": 191776,
+      "producer_new_matrix_contractions": 0,
+      "statement": "cfa04ca7a641f09a10643465233212bea7eefba10aab203bee0ddf7c931a5fe7",
+      "status": "rejected",
+      "ticket": "82b604e1e017946dd862b28b47544fc3d7616004ef35090185e8766abedc3337",
+      "verifier_cpu_ns": 70285
+    }
+  ],
+  "chainwork_awarded": 0,
+  "distinct_ticket_inputs": 8,
+  "fresh_matrix_work_per_ticket_required": false,
+  "model_commitment": "e365293070b00d2c3600ff38324b5e730c94bb4b8b07f61b7eac4e451cce64a4",
+  "one_prepared_arithmetic_product": {
+    "groups": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        11,
+        12,
+        14,
+        15
+      ],
+      [
+        9
+      ],
+      [
+        7,
+        13
+      ]
+    ],
+    "logits": [
+      [
+        5559,
+        107,
+        -5710
+      ],
+      [
+        1787,
+        -2620,
+        824
+      ],
+      [
+        3850,
+        -2924,
+        -938
+      ],
+      [
+        2405,
+        -1610,
+        -805
+      ],
+      [
+        809,
+        -1035,
+        218
+      ],
+      [
+        -1585,
+        68,
+        1508
+      ],
+      [
+        -1417,
+        -802,
+        2210
+      ],
+      [
+        -4116,
+        884,
+        3229
+      ],
+      [
+        -840,
+        -991,
+        1823
+      ],
+      [
+        432,
+        -4734,
+        4294
+      ],
+      [
+        -370,
+        -1178,
+        1541
+      ],
+      [
+        -958,
+        -1317,
+        2269
+      ],
+      [
+        -643,
+        -19,
+        659
+      ],
+      [
+        -1939,
+        -863,
+        2795
+      ],
+      [
+        171,
+        -819,
+        643
+      ],
+      [
+        -393,
+        -352,
+        739
+      ]
+    ],
+    "nonempty_expert_groups": 3,
+    "padded_macs": 0,
+    "predictions": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "router_outputs": [
+      [
+        3516,
+        -6417,
+        2917
+      ],
+      [
+        3271,
+        -4550,
+        1270
+      ],
+      [
+        4399,
+        -5947,
+        1536
+      ],
+      [
+        4654,
+        -6222,
+        1562
+      ],
+      [
+        2237,
+        -2948,
+        707
+      ],
+      [
+        2355,
+        -3679,
+        1319
+      ],
+      [
+        2552,
+        -4251,
+        1692
+      ],
+      [
+        1376,
+        -3351,
+        1968
+      ],
+      [
+        1861,
+        -3499,
+        1631
+      ],
+      [
+        -2409,
+        1939,
+        468
+      ],
+      [
+        2440,
+        -3751,
+        1308
+      ],
+      [
+        1956,
+        -3571,
+        1612
+      ],
+      [
+        2613,
+        -3232,
+        615
+      ],
+      [
+        103,
+        -1307,
+        1207
+      ],
+      [
+        1221,
+        -2144,
+        918
+      ],
+      [
+        2968,
+        -3487,
+        512
+      ]
+    ],
+    "routes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      1,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0
+    ],
+    "useful_dense_macs": 24672
+  },
+  "planned_attempts": 8,
+  "pow_qualified": false,
+  "preparation_cpu_ns": 9912830,
+  "producer_binding_scope": "immutable_encoded_material_and_product_cache; fresh hashes; no fresh neural contractions",
+  "production_activation": false,
+  "profile": "pon-grouped-int257-lottery-audit-v0",
+  "request_precommitment": "bb88a820b3536ffae959f1518467f66de98d6231cc6d333effdee000e84bbf7b",
+  "schema": "pon-grouped-cached-reticket-audit-v0",
+  "scope": "finite_python_cpu_counterexample_not_W1_not_real_demand_not_hardware_lower_bound",
+  "total_cpu_ns": 18095658,
+  "total_wall_ns": 18154097
+}

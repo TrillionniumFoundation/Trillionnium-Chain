@@ -1,0 +1,284 @@
+{
+  "build_outputs": [
+    {
+      "artifacts": [
+        {
+          "bytes": 5387,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/output",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/output",
+          "sha256": "dc49f10de97cff98ee47ff2ddf817d3a7990bdce8ca0552bf3cc9f3c743f98ba"
+        },
+        {
+          "bytes": 0,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/stderr",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 5984,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/db3b6bfb95261072-unix_layout_witness.o",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/out/db3b6bfb95261072-unix_layout_witness.o",
+          "sha256": "69d1c6f620bb09b8f0805e74d013b1199f832036a65f6529b7cb63a8ec1d0421"
+        },
+        {
+          "bytes": 6336,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/libtrnm_sqlite_layout_witness.a",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/out/libtrnm_sqlite_layout_witness.a",
+          "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843"
+        },
+        {
+          "bytes": 0,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/trnm-witness-symbols.stderr",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/out/trnm-witness-symbols.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 220,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/release/trnm-sqlite-io-boundary-d0d961e6a3e112d9/trnm-witness-symbols.stdout",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/out/trnm-witness-symbols.stdout",
+          "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+        }
+      ],
+      "output": {
+        "bytes": 5387,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/build/trnm-sqlite-io-boundary-d0d961e6a3e112d9/output",
+        "sha256": "dc49f10de97cff98ee47ff2ddf817d3a7990bdce8ca0552bf3cc9f3c743f98ba"
+      },
+      "profile": "release",
+      "qualification_lines": [
+        "cargo:rustc-cfg=trnm_sqlite_layout_witness",
+        "cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE=sqlite-3.51.3-normal-native-linux-layout-v3",
+        "cargo:rustc-env=TRNM_SQLITE3_AMALGAMATION_SHA256=9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5"
+      ]
+    },
+    {
+      "artifacts": [
+        {
+          "bytes": 5385,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/output",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/output",
+          "sha256": "2f372cc5d5b24bb08f5e0214c19f3d94a5194d66fa479aad255b873594806f25"
+        },
+        {
+          "bytes": 0,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/stderr",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 5984,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/db3b6bfb95261072-unix_layout_witness.o",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/out/db3b6bfb95261072-unix_layout_witness.o",
+          "sha256": "69d1c6f620bb09b8f0805e74d013b1199f832036a65f6529b7cb63a8ec1d0421"
+        },
+        {
+          "bytes": 6336,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/libtrnm_sqlite_layout_witness.a",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/out/libtrnm_sqlite_layout_witness.a",
+          "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843"
+        },
+        {
+          "bytes": 0,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/trnm-witness-symbols.stderr",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/out/trnm-witness-symbols.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 220,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/trnm-witness-symbols.stdout",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/out/trnm-witness-symbols.stdout",
+          "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+        }
+      ],
+      "output": {
+        "bytes": 5385,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-46adc7e2a3cc5f5a/output",
+        "sha256": "2f372cc5d5b24bb08f5e0214c19f3d94a5194d66fa479aad255b873594806f25"
+      },
+      "profile": "debug",
+      "qualification_lines": [
+        "cargo:rustc-cfg=trnm_sqlite_layout_witness",
+        "cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE=sqlite-3.51.3-normal-native-linux-layout-v3",
+        "cargo:rustc-env=TRNM_SQLITE3_AMALGAMATION_SHA256=9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5"
+      ]
+    },
+    {
+      "artifacts": [
+        {
+          "bytes": 5385,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/output",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/output",
+          "sha256": "4e0fd1c9c944e8f6883d56a813306fbb81792f50d65a04fd6be19bd7580ec3b6"
+        },
+        {
+          "bytes": 0,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/stderr",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 5984,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/db3b6bfb95261072-unix_layout_witness.o",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/out/db3b6bfb95261072-unix_layout_witness.o",
+          "sha256": "69d1c6f620bb09b8f0805e74d013b1199f832036a65f6529b7cb63a8ec1d0421"
+        },
+        {
+          "bytes": 6336,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/libtrnm_sqlite_layout_witness.a",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/out/libtrnm_sqlite_layout_witness.a",
+          "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843"
+        },
+        {
+          "bytes": 0,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/trnm-witness-symbols.stderr",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/out/trnm-witness-symbols.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 220,
+          "captured": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/sqlite-qualification-evidence-v1/debug/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/trnm-witness-symbols.stdout",
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/out/trnm-witness-symbols.stdout",
+          "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+        }
+      ],
+      "output": {
+        "bytes": 5385,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/debug/build/trnm-sqlite-io-boundary-cc8d71fbc38bc82e/output",
+        "sha256": "4e0fd1c9c944e8f6883d56a813306fbb81792f50d65a04fd6be19bd7580ec3b6"
+      },
+      "profile": "debug",
+      "qualification_lines": [
+        "cargo:rustc-cfg=trnm_sqlite_layout_witness",
+        "cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE=sqlite-3.51.3-normal-native-linux-layout-v3",
+        "cargo:rustc-env=TRNM_SQLITE3_AMALGAMATION_SHA256=9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5"
+      ]
+    }
+  ],
+  "created_utc": "2026-11-07T15:08:30.509362+00:00",
+  "expected_source_sha": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "failures": [],
+  "limitations": [
+    "Qualification is the repository's observed build fence for these exact native build outputs, not a global filesystem or distributed rollback proof.",
+    "First direct-cargo 24/24 validation remains preserved separately with UNQUALIFIED warnings; it is not overwritten."
+  ],
+  "loader_environment": {
+    "CARGO_HOME": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/cargo-workspace",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+    "LD_LIBRARY_PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTUP_HOME": "/home/qian-qi/.rustup",
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu"
+  },
+  "runner_recheck": [
+    {
+      "bytes": 8147856,
+      "name": "authority",
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+      "sha256": "895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec"
+    },
+    {
+      "bytes": 7807888,
+      "name": "fresh",
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+      "sha256": "d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef"
+    },
+    {
+      "bytes": 771136,
+      "name": "grouped",
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+      "sha256": "2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2"
+    }
+  ],
+  "schema": "rog-canonical-sqlite-qualification-v1",
+  "status": "PASS",
+  "summary": {
+    "authority_native_runner_sha256": "895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec",
+    "chainwork_awarded": 0,
+    "commands_failed": 0,
+    "commands_not_started": 0,
+    "commands_passed": 24,
+    "commands_planned": 24,
+    "commands_recorded": 24,
+    "commands_timed_out": 0,
+    "driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+    "expected_source_sha": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+    "fresh_native_runner_sha256": "d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef",
+    "full_workspace_unit_tests_executed": false,
+    "minimum_legal_cost_proved": false,
+    "native_runner_sha256": "2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2",
+    "original_service_campaign_executed": false,
+    "physical_resource_lower_bound_proved": false,
+    "pow_qualified": false,
+    "production_activation": false,
+    "runner_bindings": {
+      "artifacts": {
+        "authority": {
+          "bytes": 8147856,
+          "executable": true,
+          "exists": true,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+          "sha256": "895c08811f5ddfc99470915d4d6cd236dfea29afa4064daabe044fb9f58963ec"
+        },
+        "fresh": {
+          "bytes": 7807888,
+          "executable": true,
+          "exists": true,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+          "sha256": "d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef"
+        },
+        "grouped": {
+          "bytes": 771136,
+          "executable": true,
+          "exists": true,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1/release/examples/pon_routed_int257_grouped",
+          "sha256": "2e976435d71e921925f1a1bab08311e050045693ee9a704307168e20baec3cc2"
+        }
+      },
+      "cargo_target_directory": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+      "status": "PASS"
+    },
+    "schema": "pon-grouped-fresh-local-validation-v1",
+    "source": {
+      "base": null,
+      "candidate": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+      "tested_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1038667372,
+      "tracked_entries": 10856,
+      "tracked_worktree_verified": true
+    },
+    "source_failures": [],
+    "status": "PASS"
+  },
+  "target": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/target-canonical-v1",
+  "true_sqlite_warnings": [],
+  "validation_control_files": [
+    {
+      "bytes": 2622,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1/summary.json",
+      "sha256": "5c655dbbcdfa8bcbbe3726329be934d363526a1a2ed5e6ba699207a553c5203c"
+    },
+    {
+      "bytes": 1108,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1/runner-bindings.json",
+      "sha256": "2710471212a9572bb66fb79783ac229bfb1201d5c91c1e0f9f447d2620fc6bba"
+    },
+    {
+      "bytes": 570,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1/source-before.json",
+      "sha256": "c76b9ef7b99eb5cec9c2850fec860ebc9954ca206f8f5d49cf3a419c189af686"
+    },
+    {
+      "bytes": 570,
+      "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1/source-after.json",
+      "sha256": "c76b9ef7b99eb5cec9c2850fec860ebc9954ca206f8f5d49cf3a419c189af686"
+    }
+  ],
+  "validation_directory": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/validation-canonical-v1",
+  "validation_job": "1a1b687b49a-12894-4da"
+}

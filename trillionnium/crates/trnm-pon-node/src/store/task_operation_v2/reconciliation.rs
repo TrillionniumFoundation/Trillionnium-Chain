@@ -1,9 +1,12 @@
 //! Node-retained V2 journal prefix floors. No monetary ledger is added.
 use super::*;
+use trnm_protocol::funded_service_task_v1::FundedServiceContractV1;
 use trnm_service_settlement::native_budget::task_operation_v2::{
     NativeTaskOperationCheckpointV2, NativeTaskOperationSnapshotV2, NativeTaskOperationStoreV2,
 };
-use trnm_service_settlement::native_budget::{NativeBudgetConfigV1, NativePaymentQueryV1};
+use trnm_service_settlement::native_budget::{
+    NativeBudgetConfigV1, NativePaymentObservationV1, NativePaymentQueryV1,
+};
 
 const PREFIX: &str = "pon-native-task-operation-reconciliation-v2:event:";
 const HEAD: &str = "pon-native-task-operation-reconciliation-v2:head";
@@ -92,6 +95,194 @@ fn record_report(record: &Record) -> Value {
 }
 
 impl Node {
+    /// Read the original paid Task, provider receipt and monetary transition on
+    /// one currently selected native branch. Full expected terms select the
+    /// intended work; neither those terms nor this report grant target access.
+    ///
+    /// This read-only V3 observation requires an already reconciled V2 journal
+    /// head and its exact latest declared consumer epoch. It cannot advance a
+    /// journal floor, begin gate or epoch. This complete current Task view needs
+    /// the original row to remain present. Native mandatory cleanup removes a
+    /// zero-remaining Task strictly after its dispute deadline. Its historical
+    /// payment can still be a current-branch fact, but an absent, refunded or
+    /// expired Task cannot satisfy this deliberately narrower paid-Task view.
+    ///
+    /// Node and M12 are separate owners. The final checks establish a bounded
+    /// observation, not atomic external FinalUse, future freshness, independent
+    /// demand, physical metering or consensus weight. Exported JSON has no
+    /// authenticated import path and is never an execution/payment capability.
+    pub fn observe_current_native_task_operation_v3(
+        &self,
+        store: &NativeTaskOperationStoreV2,
+        expected_binding: &NativeTaskOperationBindingV2,
+        expected_contract: &FundedServiceContractV1,
+        consumer_epoch: u64,
+    ) -> Result<Value> {
+        self.ready()?;
+        expected_binding.id().map_err(budget_error)?;
+        expected_contract
+            .validate()
+            .map_err(|_| "TASK_OPERATION_CURRENT_EXPECTATION_V3")?;
+        let selected = self.active()?;
+        let pins = self.task_operation_pins_v1()?;
+        self.validate_task_operation_history_v1(&pins)?;
+        let records = self
+            .read_task_operation_reconciliations_v2(&pins)
+            .map_err(Error::local_integrity)?;
+        let last = records
+            .last()
+            .ok_or("TASK_OPERATION_CURRENT_RECONCILIATION_REQUIRED_V3")?;
+        ensure(
+            consumer_epoch == last.observation.consumer_epoch,
+            "TASK_OPERATION_CURRENT_EPOCH_V3",
+        )?;
+        let binding_id = expected_binding.id().map_err(budget_error)?;
+        ensure(
+            records.iter().any(|record| {
+                record.observation.claim == expected_binding.claim
+                    && record.observation.task == expected_binding.task
+                    && record.observation.binding == binding_id
+            }),
+            "TASK_OPERATION_CURRENT_RECONCILIATION_REQUIRED_V3",
+        )?;
+        let expected_checkpoint = last.observation.checkpoint.native(&last.observation.anchor);
+        let (snapshot, checkpoint) = store
+            .snapshot_after_checkpoint(expected_binding.claim, Some(&expected_checkpoint))
+            .map_err(budget_error)?;
+        ensure(
+            checkpoint == expected_checkpoint,
+            "TASK_OPERATION_CURRENT_UNRECONCILED_HEAD_V3",
+        )?;
+        ensure(
+            snapshot.binding == *expected_binding,
+            "TASK_OPERATION_CURRENT_EXPECTATION_V3",
+        )?;
+        self.verify_operation_snapshot_v2(&snapshot, &pins)?;
+
+        let source =
+            self.native_funding_observation(NativeFundingSourceV1::Task(expected_binding.task))?;
+        ensure(
+            (source.anchor.block, source.anchor.generation) == selected,
+            "STALE_VIEW",
+        )?;
+        let row = source
+            .row
+            .as_ref()
+            .ok_or("TASK_OPERATION_CURRENT_SOURCE_ABSENT_V3")?;
+        let contract =
+            funded_service_v1::read_contract(expected_binding.task, row, &self.settings.app)?
+                .ok_or("TASK_OPERATION_CONTRACT_REQUIRED")?;
+        ensure(
+            contract.terms == *expected_contract
+                && contract.contract_digest == expected_binding.contract_digest,
+            "TASK_OPERATION_CURRENT_EXPECTATION_V3",
+        )?;
+        let current = self.contract_operation_from_native_v2(expected_binding, source)?;
+        ensure(
+            current.status == NativeTaskStatusV2::Settled && current.remaining == 0,
+            "TASK_OPERATION_CURRENT_NOT_PAID_V3",
+        )?;
+        let completion = snapshot
+            .completion
+            .as_ref()
+            .ok_or("TASK_OPERATION_CURRENT_COMPLETION_REQUIRED_V3")?;
+        let historical_delivery = snapshot
+            .delivery
+            .as_ref()
+            .ok_or("TASK_OPERATION_CURRENT_DELIVERY_REQUIRED_V3")?;
+        let delivery = self.read_delivery_for_contract_v2(expected_binding, current)?;
+        ensure(
+            delivery.contract.output == Some(completion.output)
+                && delivery.receipt_operation == historical_delivery.receipt_operation,
+            "TASK_OPERATION_CURRENT_DELIVERY_IDENTITY_V3",
+        )?;
+        let historical_payment = snapshot
+            .payment
+            .as_ref()
+            .ok_or("TASK_OPERATION_CURRENT_PAYMENT_REQUIRED_V3")?;
+        let payment = self.native_payment_observation_at_anchor_v1(
+            &NativePaymentQueryV1 {
+                source: NativeFundingSourceV1::Task(expected_binding.task),
+                subject: completion.output,
+                beneficiary: expected_binding.beneficiary,
+                operation: historical_payment.operation,
+                maximum_gross_units: snapshot.reserved.amount,
+            },
+            delivery.contract.anchor,
+        )?;
+        ensure(
+            payment.anchor == delivery.contract.anchor
+                && payment.source == historical_payment.source
+                && payment.subject == historical_payment.subject
+                && payment.beneficiary == historical_payment.beneficiary
+                && payment.operation == historical_payment.operation
+                && payment.gross_escrow_debit == historical_payment.gross_escrow_debit
+                && payment.beneficiary_credit == historical_payment.beneficiary_credit,
+            "TASK_OPERATION_CURRENT_PAYMENT_IDENTITY_V3",
+        )?;
+
+        let report = json!({
+            "schema":"pon-native-task-operation-current-v3",
+            "scope":"CURRENT_PAID_NATIVE_TASK_OBSERVATION",
+            "claim":hex::encode(expected_binding.claim),
+            "task":hex::encode(expected_binding.task),
+            "binding":hex::encode(binding_id),
+            "operation":hex::encode(expected_binding.operation),
+            "target_scope_commitment":hex::encode(expected_binding.target_scope),
+            "target_receipt_commitment":hex::encode(completion.target_receipt),
+            "declared_reconciliation_epoch":consumer_epoch,
+            "retained_reconciliation_sequence":last.sequence,
+            "retained_reconciliation_root":hex::encode(last.root),
+            "m12_checkpoint":last.observation.checkpoint,
+            "observed_anchor":Anchor::from(delivery.contract.anchor),
+            "original_full_contract":contract,
+            "native_status":"settled",
+            "remaining_native_escrow":delivery.contract.remaining,
+            "output":hex::encode(completion.output),
+            "original_delivery_operation":hex::encode(historical_delivery.receipt_operation),
+            "historical_delivery_anchor":Anchor::from(historical_delivery.receipt_anchor),
+            "current_delivery_anchor":Anchor::from(delivery.receipt_anchor),
+            "historical_payment":current_payment_report_v3(historical_payment),
+            "current_payment":current_payment_report_v3(&payment),
+            "current_branch_delivery_membership":true,
+            "current_branch_payment_membership":true,
+            "current_branch_payment_finality":false,
+            "declared_costs":reconciliation_report(last, &snapshot)["declared_costs"],
+            "physical_costs_verified":false,
+            "independent_customer_verified":false,
+            "external_budget_origin_verified":false,
+            "authenticated_target_authorization":false,
+            "authenticated_target_receipt":false,
+            "current_consumer_authorization_verified":false,
+            "actual_consumer_use_verified":false,
+            "atomic_external_final_use":false,
+            "learning_improvement_bonus":false,
+            "execution_authority":false,
+            "authorizes_native_payment":false,
+            "consensus_weight_eligible":false,
+            "chainwork_awarded":0,
+            "production_activation":false,
+        });
+        ensure(
+            canonical(&report)?.len() <= 32_768,
+            "TASK_OPERATION_CURRENT_REPORT_BYTES_V3",
+        )?;
+        // verify_checkpoint accepts retained prefixes. Its returned *current*
+        // head must still equal this snapshot, not merely contain it.
+        ensure(
+            store.verify_checkpoint(&checkpoint).map_err(budget_error)? == checkpoint,
+            "TASK_OPERATION_CURRENT_JOURNAL_CHANGED_V3",
+        )?;
+        self.ready()?;
+        ensure(
+            self.task_operation_pins_v1()? == pins
+                && self.read_task_operation_reconciliations_v2(&pins)? == records,
+            "TASK_OPERATION_CURRENT_OWNER_CHANGED_V3",
+        )?;
+        ensure(self.active()? == selected, "STALE_VIEW")?;
+        Ok(report)
+    }
+
     fn read_task_operation_reconciliations_v2(
         &self,
         pins: &BTreeMap<Hash, Pin>,
@@ -394,6 +585,17 @@ impl Node {
         })?;
         Ok(reconciliation_report(&record, &snapshot))
     }
+}
+fn current_payment_report_v3(payment: &NativePaymentObservationV1) -> Value {
+    json!({
+        "anchor":Anchor::from(payment.anchor),
+        "source":payment.source.key(),
+        "subject":hex::encode(payment.subject),
+        "beneficiary":hex::encode(payment.beneficiary),
+        "operation":hex::encode(payment.operation),
+        "gross_escrow_debit":payment.gross_escrow_debit,
+        "beneficiary_credit":payment.beneficiary_credit,
+    })
 }
 fn reconciliation_report(record: &Record, snapshot: &NativeTaskOperationSnapshotV2) -> Value {
     let mut report = record_report(record);

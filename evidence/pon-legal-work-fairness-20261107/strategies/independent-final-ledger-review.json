@@ -1,0 +1,85 @@
+{
+  "chainwork_awarded": 0,
+  "gpu": {
+    "cases": [
+      {
+        "fresh_reference_attempts": 5,
+        "name": "retained_consumer16",
+        "phase_counts": {
+          "first_call": 5,
+          "warm": 150,
+          "warmup": 10
+        },
+        "retained_attempts": 165,
+        "warm_planned": 150
+      },
+      {
+        "fresh_reference_attempts": 7,
+        "name": "controlled_rank1_same_shape",
+        "phase_counts": {
+          "first_call": 7,
+          "warm": 294,
+          "warmup": 14
+        },
+        "retained_attempts": 315,
+        "warm_planned": 294
+      }
+    ],
+    "earlier_cloud_attempt_count": 1,
+    "earlier_cloud_exit_code": 2,
+    "fresh_reference_attempts": 12,
+    "harness_source_sha256": "83c0e3162b8cdfe4936a6316560c9ea749af76b03c83fc5866c55e63ad81afdd",
+    "payload_sha256": "475c1583a1059ddd1acc5d58c81390f4fb3ebfe7045f5cf73f5ea0692c334142",
+    "report_sha256": "b037da2e62f9d758beaeb977a710fcc01bdb93e761ac693658b45b993f4d8b37",
+    "retained_timed_attempts": 480,
+    "submitted_script_sha256": "c00765a255c021cb2e59b9670736acbcbcfcd36aa4773ef5befc60921de6fdc4",
+    "tie_control_verified": true
+  },
+  "issues": [],
+  "pow_qualified": false,
+  "production_activation": false,
+  "qualification_limits": [
+    "Arithmetic ratios are implemented multiply-accumulate position counts; not measured speedups, full lottery costs, or lower bounds.",
+    "GPU warm whole_sample_ns includes comparison against one retained scalar reference, not new scalar-reference recomputation per warm sample; fresh-input measurements recompute it.",
+    "GPU result source_sha256 names the expanded submitted script; frozen-request02 binds the repository harness and the exact embedded payload.",
+    "The failed initial cloud job is retained separately from successful successor sample denominators."
+  ],
+  "review_scope": "Read retained files and committed bytes only; no experiments, tests, GPU calls, or source edits.",
+  "schema": "pon-legal-work-read-only-ledger-review-v0",
+  "source_commit": "a4302cbf401d59391bcd38978ce3e2c68f60e49e",
+  "strategy": {
+    "attempt_statuses": {
+      "rejected": 6,
+      "verified": 447
+    },
+    "attempts_sha256": "bf437183b49ccc7fd723babc177396dbc88f3729cd8c0bb2bb71c00fb2143cb4",
+    "classified_attempts": {
+      "controlled_verified": 432,
+      "negative_rejected": 6,
+      "real_verified": 15
+    },
+    "key_arithmetic_ratios": {
+      "bias_only_merged_to_sparse": "257",
+      "rank1_factor_to_cached_merged": "901/771",
+      "real_merged_to_sparse": "514/45",
+      "real_merged_to_sparse_decimal": 11.422222222222222,
+      "repeated_input_cold_merged_to_memo": "16"
+    },
+    "observations": 151,
+    "plan_sha256": "003eb59ffb7c5d25abfe2f509b95bcdd5bc29d96160308db5be6bd1542d322e6",
+    "planned_rounds": 453,
+    "report_sha256": "3ecb07410057f7d81c1b4cfddfbfa479a62faef8da9e012ace9fae85600a6d1a",
+    "source_checks": [
+      {
+        "exact_source_files": 19,
+        "phase": "source_before"
+      },
+      {
+        "exact_source_files": 19,
+        "phase": "source_after"
+      }
+    ],
+    "successful_reference_cost_checks": 447,
+    "unknown_cost_attempts": 6
+  }
+}

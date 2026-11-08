@@ -1,0 +1,63 @@
+{
+  "evidence_kind": "CONTROLLED_OBSERVATION",
+  "observation": {
+    "account_identity_sha256": "73e2555a13ef0c08791b37180c1675c440782648c53a8ec07a431d5ac4f7cea6",
+    "assignment": {
+      "accelerator": "NONE",
+      "endpoint": "m-s-ase1a9-20dxgsojl5rhi",
+      "shape": "STANDARD",
+      "variant": "DEFAULT"
+    },
+    "consumption": {
+      "assignments_count": 1,
+      "consumption_rate_hourly": 0.08,
+      "paid_compute_units_balance": 0.0
+    },
+    "evidence_kind": "CONTROLLED_PROVIDER_OBSERVATION",
+    "job_id": "0d953d8a-81fa-40d8-ab90-8f4e23f5c909",
+    "kernels": [
+      {
+        "connections": 1,
+        "execution_state": "idle",
+        "id": "e5b396bb-f180-4fe1-97bc-4e639259415c",
+        "name": "python3"
+      },
+      {
+        "connections": 1,
+        "execution_state": "idle",
+        "id": "a2ec9817-d269-4a37-a134-dad4a584ba9e",
+        "name": "python3"
+      }
+    ],
+    "mutations_requested": false,
+    "observed_at": 1794096375.6260488,
+    "outcome": "OBSERVED",
+    "schema": "pon-profile-colab-postrun-readonly-v1",
+    "sessions": [
+      {
+        "id": "01a780f7-f71c-4eb1-9482-7677a3bca567",
+        "kernel_id": "e5b396bb-f180-4fe1-97bc-4e639259415c"
+      },
+      {
+        "id": "7e252d8c-b119-4528-85bf-a87f42da51b6",
+        "kernel_id": "a2ec9817-d269-4a37-a134-dad4a584ba9e"
+      }
+    ]
+  },
+  "original": {
+    "file_label": "postrun-readonly-private-original-v1.json",
+    "sha256": "4467d5daac28b7c977b79a693573de8dc630305192f405b35a29ad589ffa54da",
+    "size_bytes": 1865
+  },
+  "projection": {
+    "not_original_bytes": true,
+    "omitted_fields": [
+      "sdk_cleanup_source: private installed SDK implementation and source paths"
+    ],
+    "replacements": [
+      "Host home paths replaced by <HOST_HOME>",
+      "Task private state root replaced by <TASK_PRIVATE_STATE_ROOT>"
+    ]
+  },
+  "schema": "pon-cloud-public-projection-v1"
+}

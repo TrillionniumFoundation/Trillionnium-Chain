@@ -1,0 +1,46 @@
+{
+  "authority_controls": [
+    "outside_authorized_nonce",
+    "expired_authority"
+  ],
+  "cancel_after_17_nonce": 18,
+  "carrier_encodings": 64,
+  "carrier_nonce": 1,
+  "chainwork_awarded": 0,
+  "exhaust_remaining_budget": true,
+  "negative_packets": [
+    "forged_zero_endpoint",
+    "wrong_output",
+    "wrong_context",
+    "wrong_capsule",
+    "trailing_non_json"
+  ],
+  "no_stop_on_hit": true,
+  "nonce_count": 19,
+  "primary_nonces": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "profile": "pon-grouped-int257-sealed-research-v0",
+  "remaining_verification_reservations": 171,
+  "reserved_unknown_nonce": 19,
+  "same_process_reopen_controls": true,
+  "schema": "pon-grouped-fresh-work-plan-v0",
+  "source_replay_required_for_final": true,
+  "untrusted_nonce": 17,
+  "verification_budget": 256
+}

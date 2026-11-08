@@ -1,0 +1,15 @@
+{
+  "actual_required_regular_file": "owner/native-node.sqlite/native.sqlite",
+  "corrected_collector_sha256": "b040668f385e0f35d8c67df6870399f151a4938ab1736273e072598334bc3743",
+  "first_collector_archive_readback_verified": true,
+  "first_collector_archive_sha256": "02404d1ed7694752b7381a1aa84e12259e17c667f30fed01cc4d82bc0a13e300",
+  "first_collector_archive_status": "INCOMPLETE",
+  "native_commands_reexecuted_for_this_correction": false,
+  "old_archive_preserved": true,
+  "original_collector_sha256": "2bb1be21235c496dae6c40307bf1a45f5b7e919f01e2fdfe242fde00e61c0d8a",
+  "original_node_path_is_container_directory": true,
+  "original_required_regular_file": "owner/native-node.sqlite",
+  "original_retention_manifest_sha256": "9afe36b958f394ff6101013d2fa13e8e96498cb07a09edca7edeedfbf8820354",
+  "schema": "pon-collector-node-layout-correction-v1",
+  "source_validation_results_changed": false
+}

@@ -1,0 +1,12 @@
+{
+  "bytes": 581820,
+  "file_bytes": 5474568,
+  "member_count": 69,
+  "original_journal_bytes_retained": true,
+  "original_native_failure_retained": true,
+  "path": "preliminary-history-v1.tar.gz",
+  "qualification_run": false,
+  "readback_verified": true,
+  "schema": "pon-native-profile-preliminary-archive-receipt-v1",
+  "sha256": "9f27a49c5ea0410c5731b76a43434d64059c0ee061e2aea340e72bc9afc38126"
+}

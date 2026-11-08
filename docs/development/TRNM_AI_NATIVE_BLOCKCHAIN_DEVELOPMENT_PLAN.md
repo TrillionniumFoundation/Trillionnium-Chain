@@ -17,6 +17,97 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Multi-owner and current-native evidence continuation, 2026-11-07 America/New_York:**
+Compose research head `0a0ac0cc9d33f4ddea01c72938a131ad2a946105` with the
+original native funded-demand owner at `4a7e07e970d5bdb79626dda6bc98ae7906a02f18`.
+The [bounded composition and current-readback contract](specs/pon/GROUPED_MULTI_OWNER_NATIVE_EVIDENCE_V1.md)
+retains original policy/evidence inputs, owner operation identities and full
+native query preimages across the declared participant set. Detect conflicting
+shared challenges, duplicated executions, cost overlap and transfer identities
+through unknown intermediate costs without asserting public-network completeness.
+Add a fresh read-only V3 observation to the original Node/M12 owners: exact
+expected full contract and binding, already reconciled journal head/epoch,
+original provider delivery and payment on one checked active generation.
+Historical replay and current membership remain distinct after reorganization;
+the read neither issues a target grant nor claims actual consumer FinalUse.
+Preserve every inherited failure and original gate, use the existing integration
+lineage, and keep actual chainwork, production eligibility and activation zero.
+Real independent issuers/customers, current consumer use, external funds,
+authenticated complete meters and cheapest physical-cost transfer remain open.
+
+Execution is retained in the [native profile evidence record](../../evidence/pon-native-profile-closure-20261107/README.md). The original native post-hash observer now records seed and step originals, including cancellation and a synced interrupted prefix whose original operation reopens UNKNOWN. Corrected committed source `732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6` passes all 33 selected commands on an exact complete checkout; the first 32/33 run and the earlier GC expectation failure remain retained. The core crates retain ten explicitly ignored observations. An actual isolated Colab CPU kernel separately passes the same pinned 45 profile and 37 composition tests. These controlled observations leave independent demand, public coverage, complete cost transfer and native profile registration unestablished.
+
+The first hosted PQ continuation rejected eight stale source pins in this integrated candidate. The [review and complete failed-job originals](../../evidence/pon-native-profile-closure-20261107/ci-source-pin-repair-v1/README.md) retain all four refusals and the separate inherited unavailable historical pressure artifact. Review covers every one of the 580 pins; synchronization changes eight source identities only, preserving all acceptance flags and old evidence. The corrected committed candidate is revalidated against the frozen 33-command plan plus the original nine PQ source/claim controls. This source repair grants no network, demand, cost or consensus qualification.
+
+**Security-work metering continuation, 2026-11-07 America/New_York:** Continue
+`4699b4079fca323f8db7b9d3644fbb159aa687c0` under the
+[explicit metering contract](specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md).
+Count classical seal step-oracle queries and preserve lawful cached Cell
+outputs; a new ticket does not imply fresh producer neural contractions.
+Inspect separately pinned task/target policies, exact observed query identities,
+declared consumer operations and typed resource scopes without promoting pins
+or fixture signatures into public authority. Preserve unknown/private queries,
+missing costs and all planned attempts. Reject missing work identities, missing
+or negative byte counts, overflowed CPU totals, impossible child subsets and
+unknown attempt states in the existing fanout cost reader. Reanalyze original
+bytes without overwriting prior reports. Current external authorization, actual
+demand/FinalUse/settlement, complete public query coverage and physical-cost
+transfer remain explicit obligations. Keep native W1 and the existing research
+owner intact, retain all CI gates, and award zero actual chainwork.
+
+**Verifier resource transfer, 2026-11-07 America/New_York:** Continue the sealed
+grouped research from evidence checkpoint `37c1f3fe24c88476f39b0bd6e9ed32453bfc4551`
+under the [resource-transfer contract](specs/pon/GROUPED_RESOURCE_TRANSFER_V0.md).
+Replace a per-receiver cap with one explicitly trusted, immutable owner for the
+closed deployment: reserve and persist started work before full native replay,
+retain unknown work without refunds, return exact cached retries and close a
+candidate after successful equality even on a target miss. Do not export a
+reusable verification permit or expose an unmetered producer service. Measure
+the contrasting one/two/four independent-receiver fanout with all planned
+attempts, process costs and raw TCP bytes. Keep verifier queries explicit in
+the conservative classical bound; test copied-cap, extra-feedback and coherent
+search counterexamples. The current legal cache constructively refutes a
+positive fresh producer neural-contraction floor. Existing task/escrow/consumer
+owners still require an actual grouped-output join and real independent demand.
+Public-network admission, physical/quantum hardness and production qualification
+remain open; all 21 previous validation gates remain and three are added.
+Publish through the user's authorized HeptaRuntime local GitHub channel,
+preserving existing integration history and leaving chainwork/activation zero.
+
+**Fresh-query cost continuation, 2026-11-07 UTC:** Continue the prior legal-work
+source `9602cb704f97fb9c87d6fd379809bef468c3c1e8` with the
+[fresh-work floor research](specs/pon/GROUPED_FRESH_WORK_FLOOR_V0.md).
+Implement exact cached rank-one/mixing/dropout counterexamples before claiming
+that a new challenge forces new useful arithmetic. Keep lawful sparse-merged
+business reuse, and explicitly add a fixed 64-step security seal whose endpoint
+is the only ticket. Separate the conditional classical aggregate oracle-query
+bound from attacker-owned physical resources and neural cost. Bind one frozen
+model/request/target policy through a new strict native signed capsule, actual
+Node parent/target checks, full independent Cell replay and canonical proof.
+Reserve verification permits durably before expensive replay, retaining failed,
+abandoned and duplicate charges under a local 256-submission cap. Measure full
+local signatures, production, verification, persistence and actual TCP alongside
+all misses and controls; retain real historical input provenance and explicitly
+controlled demand/keys. Global quotas, hidden-verifier assumptions, real demand,
+quantum security and intrinsic useful-work hardness remain open. Actual
+chainwork and production activation remain zero; existing integration candidate
+and original required gates remain the delivery path.
+
+**Legal work, input choice and grouped lottery audit, 2026-11-07 America/New_York:**
+Continue the existing #688 integration candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66`
+with the [fixed int257 audit](specs/pon/GROUPED_WORK_FAIRNESS_AUDIT_V0.md).
+Freeze 16 ordered requests, one model/numeric relation and a non-self-referential
+candidate/challenge/statement/ticket sequence. Independently test every bound
+field, canonical encoding, fresh caller clock and precommitted target; count a
+ticket query even when subsequent verification refuses the request. Compare
+lawful direct-selected, cached-merged, grouped, sparse, repeated-input and exact
+factor execution while retaining preparation, failures and full reference cost.
+The original grouped arithmetic is challenge invariant: cached correct outputs
+can produce new hash-only audit tickets. Keep actual chainwork and all rewards
+zero, preserve W1, and leave minimum fresh-work, hardware/quantum security, real
+demand and original service qualification open. The new tests join the existing
+`test_grouped*.py` CI collection without changing the required gate or budgets.
+
 **Exact-source native acceptance observation, 2026-11-07 America/New_York:**
 The native funded-contract/evidence/prospective-operation implementation is
 `690f710c1b6808787996e86aa4c36bd53e1f3939`, tree

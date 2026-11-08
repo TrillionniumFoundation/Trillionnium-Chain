@@ -402,6 +402,10 @@ fn scenario(backend: Backend) {
         store.report().unwrap()["physical_costs_verified_by_this_journal"],
         false
     );
+    let expected_contract = contract(1).0;
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &bind, &expected_contract, 7)
+        .is_err());
     let reconciled = node
         .reconcile_native_task_operation_v2(&store, CLAIM, 7)
         .unwrap();
@@ -414,6 +418,77 @@ fn scenario(backend: Backend) {
             .unwrap(),
         reconciled
     );
+    let before_read = (
+        node.native_task_operation_reconciliation_history_v2()
+            .unwrap(),
+        store.checkpoint().unwrap(),
+        node.native_task_operation_pins_v1().unwrap(),
+    );
+    let current = node
+        .observe_current_native_task_operation_v3(&store, &bind, &expected_contract, 7)
+        .unwrap();
+    assert_eq!(current["schema"], "pon-native-task-operation-current-v3");
+    assert_eq!(current["current_branch_delivery_membership"], true);
+    assert_eq!(current["current_branch_payment_membership"], true);
+    assert_eq!(current["current_payment"]["gross_escrow_debit"], AMOUNT);
+    assert_eq!(current["current_payment"]["beneficiary_credit"], AMOUNT);
+    assert_eq!(current["declared_costs"]["outcome"], "NoGain");
+    assert_eq!(current["learning_improvement_bonus"], false);
+    assert_eq!(current["authenticated_target_authorization"], false);
+    assert_eq!(current["actual_consumer_use_verified"], false);
+    assert_eq!(current["consensus_weight_eligible"], false);
+    assert_eq!(current["chainwork_awarded"], 0);
+    assert_eq!(
+        (
+            node.native_task_operation_reconciliation_history_v2()
+                .unwrap(),
+            store.checkpoint().unwrap(),
+            node.native_task_operation_pins_v1().unwrap(),
+        ),
+        before_read
+    );
+    // Full original terms are compared, including fields omitted from the V2
+    // contract observation. Caller expectations never replace native state.
+    for changed in [
+        FundedServiceContractV1 {
+            qualified_work: [91; 32],
+            ..expected_contract.clone()
+        },
+        FundedServiceContractV1 {
+            evaluation_protocol: [92; 32],
+            ..expected_contract.clone()
+        },
+        FundedServiceContractV1 {
+            fee_schedule: [93; 32],
+            ..expected_contract.clone()
+        },
+        FundedServiceContractV1 {
+            dispute_policy: [94; 32],
+            ..expected_contract.clone()
+        },
+        FundedServiceContractV1 {
+            input: [95; 32],
+            ..expected_contract.clone()
+        },
+    ] {
+        assert!(node
+            .observe_current_native_task_operation_v3(&store, &bind, &changed, 7)
+            .unwrap_err()
+            .to_string()
+            .contains("TASK_OPERATION_CURRENT_EXPECTATION_V3"));
+    }
+    let mut changed_binding = bind.clone();
+    changed_binding.target_scope = [96; 32];
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &changed_binding, &expected_contract, 7)
+        .is_err());
+    for epoch in [6, 8] {
+        assert!(node
+            .observe_current_native_task_operation_v3(&store, &bind, &expected_contract, epoch)
+            .unwrap_err()
+            .to_string()
+            .contains("TASK_OPERATION_CURRENT_EPOCH_V3"));
+    }
     drop(store);
     drop(node);
 
@@ -429,6 +504,9 @@ fn scenario(backend: Backend) {
         let mut old = NativeTaskOperationStoreV2::open(old_path, configuration(&cfg)).unwrap();
         assert!(node
             .reconcile_native_task_operation_v2(&old, CLAIM, 99)
+            .is_err());
+        assert!(node
+            .observe_current_native_task_operation_v3(&old, &bind, &expected_contract, 7)
             .is_err());
         assert_eq!(
             old.begin(&mut node, CLAIM).unwrap(),
@@ -464,6 +542,9 @@ fn scenario(backend: Backend) {
     assert!(node
         .reconcile_native_task_operation_v2(&fork, CLAIM, 99)
         .is_err());
+    assert!(node
+        .observe_current_native_task_operation_v3(&fork, &bind, &expected_contract, 7)
+        .is_err());
     assert_eq!(
         node.native_task_operation_reconciliation_history_v2()
             .unwrap(),
@@ -477,6 +558,14 @@ fn scenario(backend: Backend) {
     assert!(node
         .reconcile_native_task_operation_v2(&store, CLAIM, 7)
         .is_err());
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &bind, &expected_contract, 7)
+        .is_err());
+    assert_eq!(
+        node.observe_current_native_task_operation_v3(&store, &bind, &expected_contract, 8)
+            .unwrap()["current_branch_payment_membership"],
+        true
+    );
     assert_eq!(
         store
             .reobserve_native_payment(&mut node, CLAIM)
@@ -489,6 +578,9 @@ fn scenario(backend: Backend) {
     let branch4 = mine(&mut node, branch3, vec![]);
     assert_eq!(node.active().unwrap().0, branch4);
     assert!(store.reobserve_native_payment(&mut node, CLAIM).is_err());
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &bind, &expected_contract, 8)
+        .is_err());
     assert_eq!(store.snapshot(CLAIM).unwrap(), paid);
     assert_eq!(
         store.begin(&mut node, CLAIM).unwrap(),
@@ -806,4 +898,312 @@ fn real_old_funding_rows_cannot_backfill_a_later_native_begin_or_reservation() {
             .unwrap()["records"],
         serde_json::json!([])
     );
+}
+
+fn ordered_fixture_json(value: serde_json::Value) -> serde_json::Value {
+    match value {
+        serde_json::Value::Object(fields) => {
+            let ordered: std::collections::BTreeMap<_, _> = fields.into_iter().collect();
+            serde_json::Value::Object(
+                ordered
+                    .into_iter()
+                    .map(|(key, value)| (key, ordered_fixture_json(value)))
+                    .collect(),
+            )
+        }
+        serde_json::Value::Array(values) => {
+            serde_json::Value::Array(values.into_iter().map(ordered_fixture_json).collect())
+        }
+        value => value,
+    }
+}
+
+fn capture_current_fixture(
+    backend: Backend,
+    branch_case: &str,
+    phase: &str,
+    report: &serde_json::Value,
+) {
+    if std::env::var_os("TRNM_CAPTURE_NATIVE_TASK_CURRENT_V3").as_deref()
+        != Some(std::ffi::OsStr::new("1"))
+    {
+        return;
+    }
+    let backend = match backend {
+        Backend::Legacy => "legacy",
+        Backend::Authenticated => "authenticated-v1",
+    };
+    let observation = ordered_fixture_json(serde_json::json!({
+        "schema":"pon-native-task-current-fixture-observation-v1",
+        "evidence_kind":"CONTROLLED_FIXTURE",
+        "backend":backend,"branch_case":branch_case,"phase":phase,"report":report,
+    }));
+    eprintln!(
+        "\nNATIVE_TASK_CURRENT_V3_OBSERVATION {}",
+        serde_json::to_string(&observation).unwrap()
+    );
+}
+
+fn current_paid_branch_scenario(backend: Backend, branch_case: &str) {
+    let directory = tempfile::tempdir().unwrap();
+    let mut node = open(&directory.path().join("node"), backend).unwrap();
+    let cfg = node.settings().clone();
+    let mut terms = contract(1).0;
+    terms.delivery_deadline = 4;
+    terms.dispute_deadline = 6;
+    let task = terms.task_id(cfg.network(), cfg.parameters(), public(0), 1);
+    let digest = terms.digest(cfg.network(), cfg.parameters(), public(0));
+    let other_task = terms.task_id(cfg.network(), cfg.parameters(), public(0), 2);
+    let reservations = (1..=2)
+        .map(|nonce| {
+            signed(
+                &cfg,
+                0,
+                nonce,
+                2,
+                FundedServiceReservationV1 {
+                    task: terms.task_id(cfg.network(), cfg.parameters(), public(0), nonce),
+                    contract: terms.clone(),
+                }
+                .encode()
+                .unwrap(),
+            )
+        })
+        .collect();
+    let reserved = mine(&mut node, cfg.genesis(), reservations);
+    let bind = binding(task, digest, CLAIM, OPERATION);
+    let mut store = NativeTaskOperationStoreV2::open(
+        &directory.path().join("operation.sqlite"),
+        configuration(&cfg),
+    )
+    .unwrap();
+    store.reserve(&mut node, bind.clone()).unwrap();
+    assert_eq!(
+        store.begin(&mut node, CLAIM).unwrap(),
+        NativeBudgetReplayV1::New
+    );
+    let output = hash(
+        b"actual-current-readback-fixture-output-v3",
+        &[&[1, 2, 3, 4]],
+    );
+    store
+        .record_costs(
+            CLAIM,
+            NativeResourceOutcomeV1::NoGain,
+            resources(3),
+            NativeTaskCostBreakdownV2 {
+                training_units: 1,
+                evaluation_units: 1,
+                storage_units: 1,
+                serving_units: 1,
+                unit: [71; 32],
+                measurement_receipt: [72; 32],
+            },
+        )
+        .unwrap();
+    store.complete(CLAIM, OPERATION, output, [73; 32]).unwrap();
+    let mut receipt_payload = task.to_vec();
+    receipt_payload.extend(output);
+    let original_receipt = signed(&cfg, 1, 1, 4, receipt_payload);
+    let receipted = mine(&mut node, reserved, vec![original_receipt.clone()]);
+    store.bind_delivery(&mut node, CLAIM).unwrap();
+    let decision = FundedServiceDecisionV1 {
+        task,
+        contract_digest: digest,
+        output,
+        evidence: [74; 32],
+        verdict: FundedServiceVerdictV1::PayProvider,
+    };
+    let original_payment = signed(&cfg, 2, 1, 5, decision.encode().unwrap());
+    let payment_operation = Envelope::decode(&original_payment).unwrap().id().unwrap();
+    mine(&mut node, receipted, vec![original_payment.clone()]);
+    store
+        .record_native_payment(&mut node, CLAIM, payment_operation)
+        .unwrap();
+    node.reconcile_native_task_operation_v2(&store, CLAIM, 23)
+        .unwrap();
+    let historical = store.snapshot(CLAIM).unwrap();
+    let original = node
+        .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+        .unwrap();
+    assert_eq!(original["native_status"], "settled");
+    capture_current_fixture(backend, branch_case, "original-paid", &original);
+
+    if branch_case == "same_operations" {
+        // An unreconciled append is a real newer M12 head, even when this
+        // particular claim's completed result did not change.
+        store
+            .reserve(&mut node, binding(other_task, digest, [75; 32], [76; 32]))
+            .unwrap();
+        assert!(node
+            .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+            .unwrap_err()
+            .to_string()
+            .contains("TASK_OPERATION_CURRENT_UNRECONCILED_HEAD_V3"));
+        node.reconcile_native_task_operation_v2(&store, CLAIM, 23)
+            .unwrap();
+        node.observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+            .unwrap();
+        // The exact original signed receipt and payment can reappear on a new
+        // branch at different heights. New anchors are not new operations.
+        let empty = mine(&mut node, reserved, vec![]);
+        let receipt = mine(&mut node, empty, vec![original_receipt]);
+        let mut branch = mine(&mut node, receipt, vec![original_payment]);
+        while node.parent_height(branch).unwrap() < terms.dispute_deadline {
+            branch = mine(&mut node, branch, vec![]);
+        }
+        assert_eq!(node.parent_height(branch).unwrap(), terms.dispute_deadline);
+        assert_eq!(node.active().unwrap().0, branch);
+        let current = node
+            .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+            .unwrap();
+        assert_eq!(current["current_branch_payment_membership"], true);
+        assert_eq!(current["current_branch_payment_finality"], false);
+        assert_eq!(current["learning_improvement_bonus"], false);
+        assert_eq!(current["physical_costs_verified"], false);
+        assert_eq!(current["atomic_external_final_use"], false);
+        assert_eq!(
+            current["historical_payment"],
+            original["historical_payment"]
+        );
+        assert_ne!(current["observed_anchor"], original["observed_anchor"]);
+        assert_ne!(
+            current["current_delivery_anchor"],
+            original["current_delivery_anchor"]
+        );
+        assert_eq!(store.snapshot(CLAIM).unwrap(), historical);
+        capture_current_fixture(
+            backend,
+            branch_case,
+            "same-operations-reappeared-paid-at-dispute-boundary",
+            &current,
+        );
+        // The original mandatory owner removes zero-remaining Task rows
+        // strictly after their deadline. Do not resurrect a current full Task
+        // from its retained historical receipt or still-confirmed payment.
+        branch = mine(&mut node, branch, vec![]);
+        assert_eq!(
+            node.parent_height(branch).unwrap(),
+            terms.dispute_deadline + 1
+        );
+        assert_eq!(node.active().unwrap().0, branch);
+        assert!(node
+            .native_funding_observation(NativeFundingSourceV1::Task(task))
+            .unwrap()
+            .row
+            .is_none());
+        assert!(node
+            .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+            .unwrap_err()
+            .to_string()
+            .contains("TASK_OPERATION_CURRENT_SOURCE_ABSENT_V3"));
+        assert_eq!(store.snapshot(CLAIM).unwrap(), historical);
+        let payment = store.reobserve_native_payment(&mut node, CLAIM).unwrap();
+        assert_eq!(
+            payment.historical,
+            historical.payment.as_ref().unwrap().clone()
+        );
+        assert_eq!(payment.observed.anchor.block, branch);
+        assert_eq!(payment.observed.operation, payment_operation);
+        assert_eq!(payment.observed.gross_escrow_debit, AMOUNT);
+        assert_eq!(payment.observed.beneficiary_credit, AMOUNT);
+        assert_eq!(
+            node.reconcile_native_task_operation_v2(&store, CLAIM, 23)
+                .unwrap()["historical_native_payment_verified"],
+            true
+        );
+        assert!(node
+            .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+            .unwrap_err()
+            .to_string()
+            .contains("TASK_OPERATION_CURRENT_SOURCE_ABSENT_V3"));
+        return;
+    }
+
+    let mut branch = match branch_case {
+        "alternate_payment" => {
+            let alternate = FundedServiceDecisionV1 {
+                evidence: [77; 32],
+                ..decision
+            };
+            let payment = signed(&cfg, 2, 1, 5, alternate.encode().unwrap());
+            assert_ne!(
+                Envelope::decode(&payment).unwrap().id().unwrap(),
+                payment_operation
+            );
+            mine(&mut node, receipted, vec![payment])
+        }
+        "alternate_receipt" => {
+            let mut receipt = Envelope::decode(&original_receipt).unwrap();
+            receipt.expiry -= 1;
+            let key =
+                signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&1_u64.to_le_bytes()])))
+                    .unwrap();
+            receipt.signature = hex::decode(sign_hex(&key, &receipt.signing_digest().unwrap()))
+                .unwrap()
+                .try_into()
+                .unwrap();
+            let delivered = mine(&mut node, reserved, vec![receipt.encode().unwrap()]);
+            mine(&mut node, delivered, vec![original_payment])
+        }
+        "refund" => {
+            let refund = FundedServiceDecisionV1 {
+                verdict: FundedServiceVerdictV1::RefundPayer,
+                ..decision
+            };
+            mine(
+                &mut node,
+                receipted,
+                vec![signed(&cfg, 2, 1, 5, refund.encode().unwrap())],
+            )
+        }
+        "expiry" => receipted,
+        _ => panic!("unknown controlled branch case"),
+    };
+    let required_height = if branch_case == "expiry" { 6 } else { 4 };
+    while node.parent_height(branch).unwrap() < required_height {
+        branch = mine(&mut node, branch, vec![]);
+    }
+    assert_eq!(node.active().unwrap().0, branch);
+    let current = node
+        .native_funding_observation(NativeFundingSourceV1::Task(task))
+        .unwrap()
+        .row
+        .unwrap();
+    let expected_status = match branch_case {
+        "refund" => "refunded",
+        "expiry" => "expired",
+        _ => "settled",
+    };
+    assert_eq!(current["status"], expected_status);
+    assert_eq!(current["output"], hex::encode(output));
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+        .is_err());
+    assert_eq!(store.snapshot(CLAIM).unwrap(), historical);
+    // Historical reconciliation remains true; current membership must never
+    // be inferred from that preserved evidence after the real branch change.
+    assert_eq!(
+        node.reconcile_native_task_operation_v2(&store, CLAIM, 23)
+            .unwrap()["historical_native_payment_verified"],
+        true
+    );
+    assert!(node
+        .observe_current_native_task_operation_v3(&store, &bind, &terms, 23)
+        .is_err());
+}
+
+#[test]
+fn current_paid_observation_rechecks_original_receipts_and_settlement_on_both_backends() {
+    for backend in [Backend::Legacy, Backend::Authenticated] {
+        for branch_case in [
+            "same_operations",
+            "alternate_payment",
+            "alternate_receipt",
+            "refund",
+            "expiry",
+        ] {
+            current_paid_branch_scenario(backend, branch_case);
+        }
+    }
 }

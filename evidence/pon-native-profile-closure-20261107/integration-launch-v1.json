@@ -1,0 +1,61 @@
+{
+  "combined_validator_started": false,
+  "output": {
+    "audit_recorded": true,
+    "job_id": "1a1b8762501-12894-f92",
+    "stderr": {
+      "eof": true,
+      "next_offset": 512,
+      "offset": 0,
+      "size": 512,
+      "text": "Traceback (most recent call last):\n  File \"<string>\", line 55, in <module>\n    subprocess.run(['git','diff','--cached','--check'],cwd=repo,check=True)\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.14/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['git', 'diff', '--cached', '--check']' returned non-zero exit status 2.\n"
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 1150,
+      "offset": 0,
+      "size": 1150,
+      "text": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-native-profile-closure-20261107\", \"remote_policy_mutated\": false}\n{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-native-profile-closure-20261107\", \"remote_policy_mutated\": false}\n{\"schema\": \"pon-native-profile-preliminary-archive-receipt-v1\", \"path\": \"preliminary-history-v1.tar.gz\", \"bytes\": 581820, \"sha256\": \"9f27a49c5ea0410c5731b76a43434d64059c0ee061e2aea340e72bc9afc38126\", \"member_count\": 69, \"file_bytes\": 5474568, \"readback_verified\": true, \"original_native_failure_retained\": true, \"original_journal_bytes_retained\": true, \"qualification_run\": false}\ndistributed source inventory: PASS\n{\"result\": \"PASS\", \"mode\": \"--staged\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-native-profile-closure-20261107\", \"remote_policy_mutated\": false}\nevidence/pon-native-profile-closure-20261107/native-pruning-correction-v1.patch:81: trailing whitespace.\n+ \nevidence/pon-native-profile-closure-20261107/native-pruning-correction-v1.patch:81: new blank line at EOF.\n"
+    }
+  },
+  "reason": "Uncompressed original diff context is trailing whitespace to repository lint; retain exact patch bytes in gzip.",
+  "schema": "pon-native-profile-precommit-launch-failure-v1",
+  "source_committed": false,
+  "status": {
+    "at_unix_ms": 1794096123181,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b8762501-12894-f92",
+    "launch_nonce": "4ba5123aff5dcb9be2bb56f4489ad156",
+    "log_bytes": {
+      "stderr": {
+        "seen": 512,
+        "stored": 512
+      },
+      "stdout": {
+        "seen": 1150,
+        "stored": 1150
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

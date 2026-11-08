@@ -1,0 +1,164 @@
+{
+  "chainwork_awarded": 0,
+  "correctness_checks": [
+    "original-coefficient scalar all product fields",
+    "existing model-contract prediction",
+    "ordinary cached selected-expert NumPy",
+    "all native model/input/statement commitments",
+    "direct/packed statements equal",
+    "native statement equals nonce-zero lottery audit statement"
+  ],
+  "full_native_verifier_dense_positions": 37008,
+  "input_commitment": "f5404d87ea052b1b3ed13d953ec01cf2ffcdddd801dd9e53abc6b5b853817d51",
+  "ipc_only_ns": null,
+  "kernel_comparison": {
+    "grouped_over_ordinary_hot_kernel_median": 1.7902681530581501,
+    "hot_comparison_scope": "same prepared model and batch; A ordinary returns routes/logits/predictions; B selected direct and C packed grouped return the same complete Product; packed retains three internal router/gather/expert phase-clock probes absent from ordinary/direct, so differences include that instrumentation as well as gather/contraction; no commitments, verification or transport inside hot kernels",
+    "hot_sampling_order": {
+      "arms": {
+        "ordinary": "ordinary",
+        "packed": "packed_grouped",
+        "selected": "selected_direct"
+      },
+      "complete_cycles": 2,
+      "cycle": [
+        [
+          "ordinary",
+          "selected",
+          "packed"
+        ],
+        [
+          "packed",
+          "selected",
+          "ordinary"
+        ],
+        [
+          "selected",
+          "packed",
+          "ordinary"
+        ],
+        [
+          "ordinary",
+          "packed",
+          "selected"
+        ],
+        [
+          "packed",
+          "ordinary",
+          "selected"
+        ],
+        [
+          "selected",
+          "ordinary",
+          "packed"
+        ]
+      ],
+      "partial_cycle_samples": 0,
+      "remaining_orders": []
+    },
+    "kernel_candidate_for_this_fixture": {
+      "basis": "lower observed hot median between the two complete-Product kernels",
+      "candidate": "selected_direct",
+      "ordinary_control_retained": true,
+      "performance_qualified": false,
+      "runtime_policy_changed": false,
+      "scope": "this frozen corpus, batch shape and host observation only"
+    },
+    "native_hot_grouped": {
+      "median_ns": 29709.5,
+      "minimum_ns": 28974,
+      "p95_ns": 31408,
+      "samples_ns": [
+        31347,
+        31408,
+        29635,
+        31307,
+        31167,
+        28974,
+        29414,
+        29384,
+        29784,
+        29355,
+        29274,
+        30996
+      ]
+    },
+    "native_hot_ordinary": {
+      "median_ns": 16595.0,
+      "minimum_ns": 16094,
+      "p95_ns": 17776,
+      "samples_ns": [
+        17006,
+        16776,
+        16425,
+        16625,
+        17776,
+        16094,
+        16215,
+        16405,
+        16565,
+        16174,
+        17256,
+        17667
+      ]
+    },
+    "native_hot_selected": {
+      "median_ns": 17852.0,
+      "minimum_ns": 16535,
+      "p95_ns": 38088,
+      "samples_ns": [
+        18167,
+        18167,
+        16595,
+        18207,
+        17707,
+        38088,
+        16815,
+        16915,
+        16535,
+        16945,
+        18087,
+        17997
+      ]
+    },
+    "packed_over_selected_hot_kernel_median": 1.6642112928523414,
+    "selected_over_ordinary_hot_kernel_median": 1.075745706538114
+  },
+  "model_commitment": "e365293070b00d2c3600ff38324b5e730c94bb4b8b07f61b7eac4e451cce64a4",
+  "model_preparation_wall_ns": 95164,
+  "native_handler_cpu_ns": 1223013,
+  "native_handler_wall_ns": 1241781,
+  "native_phases_wall_ns": {
+    "expert": 15233,
+    "gather": 7191,
+    "input_commitment": 36775,
+    "router": 8473,
+    "statement_commitment": 2824,
+    "validation": 4217,
+    "verify": 55904
+  },
+  "native_selected_phases_wall_ns": {
+    "execution": 16915,
+    "input_commitment": 23806,
+    "statement_commitment": 1703,
+    "validation": 2554,
+    "verify": 51197
+  },
+  "native_selected_producer_with_verify_cpu_ns": 97946,
+  "native_selected_producer_with_verify_wall_ns": 98629,
+  "native_selected_scope": "prepared_model_fresh_batch_input_commit_selected_statement_full_verify",
+  "native_statement_matches_nonce_zero": true,
+  "per_phase_cpu_ns": null,
+  "pow_qualified": false,
+  "production_activation": false,
+  "python_reticket_and_native_kernel_speedup_comparison": null,
+  "startup_only_ns": null,
+  "statement_commitment": "b70b021e3724d4f05e822afc39cf21069b36efac79e3361a948ba6c01e1f90c4",
+  "whole_process": {
+    "child_cpu_ns": 3795000,
+    "parent_cpu_ns": 704509,
+    "status": "completed",
+    "wall_ns": 4910859
+  },
+  "whole_process_scope": "one process startup, model init, single batch with all disclosed warmups and three-arm repetitions, full verifiers, input/output pipes, exit and process-group cleanup"
+}

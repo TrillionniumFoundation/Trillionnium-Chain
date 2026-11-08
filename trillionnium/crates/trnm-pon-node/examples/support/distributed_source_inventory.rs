@@ -64,6 +64,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/grouped-security-work-metering-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/grouped-security-work-metering-v1.json"
+        )),
+    ),
+    (
         "config/pon/growth-reference-v2.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -600,6 +607,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs"
         )),
     ),
     (
@@ -3270,6 +3284,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3858,6 +3886,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/grouped_verification_authority_v0.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/hepta_task_fixture.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4205,6 +4247,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/error.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/grouped_verification_authority_v0.rs"
         )),
     ),
     (
@@ -4915,6 +4971,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/demand_evidence.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/demand_evidence.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5461,6 +5524,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/task_operation_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/task_operation_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/accepted_task_observation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5643,6 +5720,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/grouped_verification_authority_v0.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5692,10 +5790,24 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/native_demand_evidence.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_demand_evidence.rs"
         )),
     ),
     (
@@ -5717,6 +5829,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/native_node.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs"
         )),
     ),
     (
@@ -6011,6 +6137,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/examples/pon_wire.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs"
         )),
     ),
     (
@@ -6375,6 +6508,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-service-settlement/src/native_budget.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-service-settlement/src/native_budget/evidence.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-service-settlement/src/native_budget/evidence.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs"
         )),
     ),
     (

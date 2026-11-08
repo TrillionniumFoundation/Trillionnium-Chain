@@ -6,6 +6,7 @@ use sha2::{Digest, Sha256};
 
 pub type Hash32 = [u8; 32];
 pub mod owned_ed25519;
+pub mod pon_grouped_fresh_seal_v0;
 pub mod pon_routed_int257_grouped;
 
 pub fn hash_domain(domain: &str, parts: &[&[u8]]) -> Hash32 {

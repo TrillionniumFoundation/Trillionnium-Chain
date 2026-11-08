@@ -1,0 +1,669 @@
+{
+  "additional_owner_relation_commands": 9,
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "command_sha256": "95b3e503315c692ad8430a97c1f54191248ed54f3f49dc88072d994977f2b8a7",
+      "environment_overrides": {},
+      "label": "preflight",
+      "ordinal": 1,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "--version"
+      ],
+      "command_sha256": "d8d19f039becbaebb7c8d26c1de4c2453a4030d9bdc4226eb6a7d94ec5cb03f9",
+      "environment_overrides": {},
+      "label": "cargo-version",
+      "ordinal": 2,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "rustc",
+        "--version"
+      ],
+      "command_sha256": "10aae9243cd6c57a6a10a1181f43f6ac26741a85dfcaa1e3556a159d52d7e3a5",
+      "environment_overrides": {},
+      "label": "rustc-version",
+      "ordinal": 3,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+        "version"
+      ],
+      "command_sha256": "7c10157132d4c4377f5e65e847b40ded00400ce578bee00d510a906f89a41839",
+      "environment_overrides": {},
+      "label": "openssl-version",
+      "ordinal": 4,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "command_sha256": "d3c75a55cdc0d233af45f68e00093e479ded8ca52d2811cf2eecdd029f43d7c3",
+      "environment_overrides": {},
+      "label": "locked-workspace-graph",
+      "ordinal": 5,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "command_sha256": "9f006793ca4e49931ef086a9fe48a2ec67d7a9039edab0a52340f8b468e332e2",
+      "environment_overrides": {
+        "CARGO_HOME": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/cargo-fuzz"
+      },
+      "label": "locked-fuzz-graph",
+      "ordinal": 6,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "command_sha256": "791f7c1a16e8caca1d92e6e9ecb5757379ab653c30ba23397bbfe7b4c2de0de9",
+      "environment_overrides": {},
+      "label": "format",
+      "ordinal": 7,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_routed_int257_grouped"
+      ],
+      "command_sha256": "4695eb04465271de097f6ded282f6f682456f324c2f0fc8b86f1c227728ec919",
+      "environment_overrides": {},
+      "label": "native-build",
+      "ordinal": 8,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "grouped_fresh_admission_v0"
+      ],
+      "command_sha256": "e620dddfb6c65b75997a1850e9898b9f21c07d5ebd968ca36c4eb0f9ec9d9e2f",
+      "environment_overrides": {},
+      "label": "fresh-native-build",
+      "ordinal": 9,
+      "original_gate": false,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "grouped_verification_authority_v0"
+      ],
+      "command_sha256": "be9079d79c6aa4d63b7386b1e4c99a9ad0bc87e19712a8182e327293cf27075d",
+      "environment_overrides": {},
+      "label": "authority-native-build",
+      "ordinal": 10,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped*.py",
+        "-v"
+      ],
+      "command_sha256": "80a2181ffab4e6c15573fa2ccc118737873b0ba599e5cce641ed2618ffa86baa",
+      "environment_overrides": {},
+      "label": "grouped-python-and-native",
+      "ordinal": 11,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_work_query_bound.py",
+        "-v"
+      ],
+      "command_sha256": "a3bd66bc93fbd0684f5ea8ded6d7e803c975857b383fd58a03eef2987f9a4313",
+      "environment_overrides": {},
+      "label": "conditional-query-bound",
+      "ordinal": 12,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_query_floor_v0.py",
+        "-v"
+      ],
+      "command_sha256": "3ca96aaa95a2901f11f59437c45ca6a6e62cfb402b6bc0dcc66babeec369a2b4",
+      "environment_overrides": {},
+      "label": "fresh-query-floor",
+      "ordinal": 13,
+      "original_gate": false,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_resource_transfer_v0.py",
+        "-v"
+      ],
+      "command_sha256": "893e87761f3f6dcf8dd1985ebd00f967783bce4603845cd22aeabb7d16508e48",
+      "environment_overrides": {},
+      "label": "fresh-resource-transfer",
+      "ordinal": 14,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--all-features"
+      ],
+      "command_sha256": "873fa450af6058cde559f5a4650defd7f7a16e4f86b956d32993e452ca57dc75",
+      "environment_overrides": {},
+      "label": "native-crypto-all-targets",
+      "ordinal": 15,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "work_header_binding"
+      ],
+      "command_sha256": "60b109435e559943ba966dddcf6d2f1d0217600a89a4c7b6a8cec708c94eb2d9",
+      "environment_overrides": {},
+      "label": "native-header-binding",
+      "ordinal": 16,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "grouped_fresh_admission_v0"
+      ],
+      "command_sha256": "4a9e48a6d282173d2c865efa7f3301835834a1bd53a587e6926b6c0d7c280f86",
+      "environment_overrides": {},
+      "label": "native-fresh-admission",
+      "ordinal": 17,
+      "original_gate": false,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "grouped_verification_authority_v0"
+      ],
+      "command_sha256": "8247f98a672dbfb24246362372b1455a026265a7ec14f7f50511429ce03a0299",
+      "environment_overrides": {},
+      "label": "native-verification-authority",
+      "ordinal": 18,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "command_sha256": "b6b59015b5824eca91eadbe55cc42633fd38871a7567d9763b58554454613d6c",
+      "environment_overrides": {},
+      "label": "source-integrity-controls",
+      "ordinal": 19,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "command_sha256": "970bdbf7351e4ad7dedb3c67aff88817dabf48a758fc0d9c1a5625bcdc3fd473",
+      "environment_overrides": {},
+      "label": "ci-contract-controls",
+      "ordinal": 20,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "command_sha256": "ed0a5a9d3d547062b26d2936e42e78e164a39f99694a005380f0d065b29d391a",
+      "environment_overrides": {},
+      "label": "source-inventory",
+      "ordinal": 21,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "command_sha256": "223ac7625c5e2517afa3b1f7e6c26c04a77c60d9bc5f3430c3dcb9bfa2a85079",
+      "environment_overrides": {},
+      "label": "repository-and-links",
+      "ordinal": 22,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "command_sha256": "4fc108273cfbc0b25456bbf5c9b60c4acfdc249d36f62810151c3c8d3a8442e8",
+      "environment_overrides": {},
+      "label": "strict-workspace-clippy",
+      "ordinal": 23,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "command_sha256": "05aefb213dfe1bd0f276509a9446150ef72f5b6fb829f8894cb1f38be8add42d",
+      "environment_overrides": {},
+      "label": "whitespace",
+      "ordinal": 24,
+      "original_gate": true,
+      "prior_fresh_floor_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-service-settlement",
+        "-p",
+        "trnm-protocol",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--no-fail-fast"
+      ],
+      "command_sha256": "ac8437f993e92b4bb7ad22846be2de159395c8331cebf3df5b040c3ea36bc53c",
+      "environment_overrides": {},
+      "label": "native-task-core-all-targets",
+      "ordinal": 25,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "funded_service_contract"
+      ],
+      "command_sha256": "0d0af781dd3a971ee9e2ef17634f74eb65211cbcb31a22f4da52fed55c548814",
+      "environment_overrides": {},
+      "label": "native-funded-service-contract",
+      "ordinal": 26,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "native_active_anchor"
+      ],
+      "command_sha256": "accec4b2a9544c9669c4f15638bad43aabb8b4070fc09899110f08ddeff2adda",
+      "environment_overrides": {},
+      "label": "native-active-anchor",
+      "ordinal": 27,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "native_demand_evidence"
+      ],
+      "command_sha256": "f12463e78c209210a8ccb33e71ddf6663062c4b77fb271b7b10832e2c0bccbc3",
+      "environment_overrides": {},
+      "label": "native-demand-evidence",
+      "ordinal": 28,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "native_task_operation_v2",
+        "--",
+        "--nocapture"
+      ],
+      "command_sha256": "3bff8e4458f9b03956a35a78d9ae996322ccb4e42677454785d5868445693010",
+      "environment_overrides": {
+        "TRNM_CAPTURE_NATIVE_TASK_CURRENT_V3": "1"
+      },
+      "label": "native-task-operation-v2",
+      "ordinal": 29,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "no_gain_fees"
+      ],
+      "command_sha256": "4be811d272d333d7624e806c9d1d6f21a55db5dfeb1252c955049b1a83da3bcf",
+      "environment_overrides": {},
+      "label": "native-no-gain-fees",
+      "ordinal": 30,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_demand_evidence.py",
+        "-v"
+      ],
+      "command_sha256": "821333d11d2901ef80337fd51b0e030d1fc5f3d04c970f5fb7c12a21f2690abd",
+      "environment_overrides": {},
+      "label": "demand-evidence-python",
+      "ordinal": 31,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_upgrade_policy.py",
+        "-v"
+      ],
+      "command_sha256": "33942cd548bc16ccbbebed35dfbd2917b29f320f4d26accd4413e2a23f5504af",
+      "environment_overrides": {},
+      "label": "upgrade-policy-python",
+      "ordinal": 32,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    },
+    {
+      "command": [
+        "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "command_sha256": "65aec11607ac53fb2bc0479b9958c9ce2bc1672f007c4b8f02fa34c637a60e8c",
+      "environment_overrides": {},
+      "label": "pq-research-integration-controls",
+      "ordinal": 33,
+      "original_gate": false,
+      "prior_fresh_floor_gate": false,
+      "profile_closure_gate": true,
+      "timeout_seconds": 1800
+    }
+  ],
+  "created_utc": "2026-11-08T00:13:35.858867+00:00",
+  "driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_profile_closure_v1.py",
+  "driver_sha256": "84d7264a9e1572cc3f53a4ef1d0400787bc88fa98b76cfe4dfc84dbc408716f3",
+  "expected_source_sha": "732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6",
+  "frozen_original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "full_node_target_inventory_executed": false,
+  "fuzz_cargo_home_override": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/cargo-fuzz",
+  "loaded_driver_sha256": "84d7264a9e1572cc3f53a4ef1d0400787bc88fa98b76cfe4dfc84dbc408716f3",
+  "loaded_original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "original_driver_relative_path": "formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+  "original_driver_sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64",
+  "original_fairness_gates": 18,
+  "original_service_campaign_executed": false,
+  "planned_commands": 33,
+  "prior_failed_campaigns_superseded": false,
+  "prior_fresh_floor_gates": 21,
+  "prior_resource_transfer_gates": 24,
+  "production_activation": false,
+  "repository": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/repo",
+  "runners": {
+    "authority": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/grouped_verification_authority_v0",
+    "fresh": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/grouped_fresh_admission_v0",
+    "grouped": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/target-canonical-v1/release/examples/pon_routed_int257_grouped"
+  },
+  "schema": "pon-grouped-profile-closure-validation-plan-v1",
+  "source_validation_is_not_qualification": true,
+  "timeout_seconds_per_command": 1800,
+  "unchanged_prefix_commands": 24
+}

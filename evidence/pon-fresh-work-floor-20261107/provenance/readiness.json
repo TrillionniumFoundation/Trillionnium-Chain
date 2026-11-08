@@ -1,0 +1,28 @@
+{
+  "schema": "pon-fresh-work-continuation-readiness-v0",
+  "baseline_commit": "9602cb704f97fb9c87d6fd379809bef468c3c1e8",
+  "github_readback": {
+    "status": "blocked",
+    "http_status": 403,
+    "message": "Sorry. Your account was suspended",
+    "attempted_resources": [
+      "PR688",
+      "PR776"
+    ],
+    "alternative_credentials_or_access_paths_attempted": false
+  },
+  "checkout": {
+    "attempted_new_worktree": "/workspace/scratch/10a9f8f2cba0/chain-fresh-work",
+    "outcome": "git checkout failed with no space left on device; git removed failed worktree",
+    "replacement": "new local branch in existing clean task-owned checkout",
+    "current_branch": "fix/chain-fresh-work-floor-20261107",
+    "base_source_preserved": true
+  },
+  "resource_cleanup": {
+    "removed": "own isolated reproducible fuzz-cache-followup-cargo vendor cache",
+    "original_dependency_archives_and_evidence_preserved": true,
+    "other_workspaces_modified": false
+  },
+  "new_gpu_jobs_submitted": 0,
+  "reason_no_gpu_required_yet": "oracle-query theorem, native authorization and complete-cost protocol need direct code/verification; GPU timing cannot establish a hardness lower bound"
+}
