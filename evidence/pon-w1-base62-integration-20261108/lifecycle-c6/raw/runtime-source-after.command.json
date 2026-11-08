@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/bin/python3.12",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "--output",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runtime-source-after.json"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+  "exit": 0,
+  "finished_monotonic_ns": 1199776110959002,
+  "started_monotonic_ns": 1199696000069596,
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runtime-source-after.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 423,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runtime-source-after.stdout",
+    "sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4"
+  },
+  "tests_executed": false
+}

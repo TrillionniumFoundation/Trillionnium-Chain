@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/w1_owner_cancellation_v1.py",
+    "start",
+    "--config",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/config.json",
+    "--request",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/target-request.json",
+    "--out",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-cancel-start"
+  ],
+  "observation_or_cleanup_deadline_ns": 1199353004629858,
+  "original_proof_deadline_ns": 1199343004629858,
+  "proof_deadline_renewed": false,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "started_monotonic_ns": 1199229986912975
+}

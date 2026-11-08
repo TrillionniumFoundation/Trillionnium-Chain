@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "--no-optional-locks",
+    "grep",
+    "-n",
+    "-E",
+    "ci.context|source.context|event.context|source_context|EXPECTED_BASE",
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "--",
+    ".github/workflows/codeql.yml",
+    ".github/workflows/codeql-local-sarif.yml",
+    ".github/workflows/pon-native-priorities.yml",
+    ".github/workflows/pon-w1-work-security.yml"
+  ],
+  "exit": 0
+}

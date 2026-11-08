@@ -1,0 +1,1272 @@
+{
+  "external_directory": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01",
+  "file_count_excluding_manifest": 140,
+  "files": [
+    {
+      "bytes": 7228,
+      "origin": {
+        "kind": "new_analysis",
+        "source": null
+      },
+      "path": "README.md",
+      "sha256": "cf410f8fb7e81c8d153fde141bb2df5da4a807fcd786f63da5ad61b6073787d2"
+    },
+    {
+      "bytes": 23753,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/all-failed-job-steps.compact.json"
+      },
+      "path": "all-failed-job-steps.compact.json",
+      "sha256": "ba88d7a5e3f52c766aa371eb8315c0b6f5d34020e62e0c8b9bd22b634ace89df"
+    },
+    {
+      "bytes": 83438,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/all-failed-job-steps.json"
+      },
+      "path": "all-failed-job-steps.json",
+      "sha256": "39cfa4e3cab8482b973d9be56d0aee0ce6e88a29a2c88d56b6372c9b6fcef079"
+    },
+    {
+      "bytes": 282,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/bounded-read-failure-01.json"
+      },
+      "path": "bounded-read-failure-01.json",
+      "sha256": "7154d80ad3f1ca590122d90cd712cced90a073de37e0f23725678ccd3aa59689"
+    },
+    {
+      "bytes": 9591,
+      "origin": {
+        "kind": "new_analysis",
+        "source": null
+      },
+      "path": "collectors/group-metadata-fetch.py",
+      "sha256": "c7d2610cd60afb1a7851ea2b68d1b885bdd1b4a578f7e0f6b320c7a072fe3eff"
+    },
+    {
+      "bytes": 10506,
+      "origin": {
+        "kind": "new_analysis",
+        "source": null
+      },
+      "path": "collectors/representative-fetch.py",
+      "sha256": "bc11d47359d46d1ccc57c8634f79a552a3145ef6ac6a65f9773cbe662bb47961"
+    },
+    {
+      "bytes": 6138,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/failed-check-groups.json"
+      },
+      "path": "failed-check-groups.json",
+      "sha256": "df9e81ad5e3b3886152117ce53fd1168e9959c1542c57a7ea89a5524d8c183bc"
+    },
+    {
+      "bytes": 13190,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/fetch-manifest.json"
+      },
+      "path": "fetch-manifest.json",
+      "sha256": "d85f3fcdea530d70267cd4bfd8ee7a3d3c9bc1a57c3f942596863aae787e0044"
+    },
+    {
+      "bytes": 798,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/annotations.fetch.json"
+      },
+      "path": "jobs/128660701001/annotations.fetch.json",
+      "sha256": "cfb5a3a15fa8cf15f96519a20d951d3e6d003b5b3060764a8d4c2f7081b10a05"
+    },
+    {
+      "bytes": 1449,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/annotations.raw"
+      },
+      "path": "jobs/128660701001/annotations.raw",
+      "sha256": "cc4ea4acc1ef75947454cb6ec8d4f6433438547951c2afc2e9dda0a4c6a1003b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/annotations.stderr"
+      },
+      "path": "jobs/128660701001/annotations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 728,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/job.fetch.json"
+      },
+      "path": "jobs/128660701001/job.fetch.json",
+      "sha256": "b707aa93a61b1718330f05ab0fb40f3e84eb5ea4ee5b13bdaf07a9a08d0407a1"
+    },
+    {
+      "bytes": 3017,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/job.raw"
+      },
+      "path": "jobs/128660701001/job.raw",
+      "sha256": "f86f077ef3d28cd1fe9b9738f79441c588ee458c4949d27d64a7d29e226da396"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/job.stderr"
+      },
+      "path": "jobs/128660701001/job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 740,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/log.fetch.json"
+      },
+      "path": "jobs/128660701001/log.fetch.json",
+      "sha256": "e246664eb5cd6ce1ad1f1e21d4d6ccdfb802cb607bc4fe937b26e5ffd5aa4199"
+    },
+    {
+      "bytes": 139176,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/log.raw"
+      },
+      "path": "jobs/128660701001/log.raw",
+      "sha256": "ae03c9529b3d392361b1b709981c28bfa75883150f13a1d967ad1b9c9ad0ef60"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701001/log.stderr"
+      },
+      "path": "jobs/128660701001/log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 797,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/annotations.fetch.json"
+      },
+      "path": "jobs/128660701162/annotations.fetch.json",
+      "sha256": "69026f7cd4dc07f6dd84105b6cc628b1a8afeecc42f74631fbc407ba3c802be5"
+    },
+    {
+      "bytes": 956,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/annotations.raw"
+      },
+      "path": "jobs/128660701162/annotations.raw",
+      "sha256": "7fd7d982fac0b05143f52d131fdfccf1065bea7964b6942a7be8cbf7f6d6ef49"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/annotations.stderr"
+      },
+      "path": "jobs/128660701162/annotations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 728,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/job.fetch.json"
+      },
+      "path": "jobs/128660701162/job.fetch.json",
+      "sha256": "d364f4a30ab98c436f5ef0b72a48755a47f75af2cb89966952fa408ddfc03f2b"
+    },
+    {
+      "bytes": 2827,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/job.raw"
+      },
+      "path": "jobs/128660701162/job.raw",
+      "sha256": "7d083dbf632adf6779d2deb11a4f7d4d6db839cfb2912a22a6c8a2111a17a3e5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/job.stderr"
+      },
+      "path": "jobs/128660701162/job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 740,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/log.fetch.json"
+      },
+      "path": "jobs/128660701162/log.fetch.json",
+      "sha256": "eaffa6064428cbea8074659095bf07c86779068fe6f521e068984d171ab9f577"
+    },
+    {
+      "bytes": 146784,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/log.raw"
+      },
+      "path": "jobs/128660701162/log.raw",
+      "sha256": "bda67c44bfcd0bac33d92bd5265ea15dc8667bd8419d24317c51ca72aa406a3a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701162/log.stderr"
+      },
+      "path": "jobs/128660701162/log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 798,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/annotations.fetch.json"
+      },
+      "path": "jobs/128660701243/annotations.fetch.json",
+      "sha256": "59335645681727e3adfd71c216e3180f97bedf922402cb74ba41d1b010039316"
+    },
+    {
+      "bytes": 1356,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/annotations.raw"
+      },
+      "path": "jobs/128660701243/annotations.raw",
+      "sha256": "efdf4bec48b08433c1a4d347cf660d06dad4c79876f51c45dada313f028a5fb7"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/annotations.stderr"
+      },
+      "path": "jobs/128660701243/annotations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 728,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/job.fetch.json"
+      },
+      "path": "jobs/128660701243/job.fetch.json",
+      "sha256": "bf8013ebe386c08c3070c87bd31e05380f07397b0024c3e0b35469ec4f86d157"
+    },
+    {
+      "bytes": 2727,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/job.raw"
+      },
+      "path": "jobs/128660701243/job.raw",
+      "sha256": "5a648541d2663ba3d570573fe39fe49ba584d1e13f22e8f641fc1d984226be53"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/job.stderr"
+      },
+      "path": "jobs/128660701243/job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 740,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/log.fetch.json"
+      },
+      "path": "jobs/128660701243/log.fetch.json",
+      "sha256": "fad2178f24296ebb24c0b60a9d0bb001a9fb1b536eb3de344445385b2dce3b89"
+    },
+    {
+      "bytes": 137176,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/log.raw"
+      },
+      "path": "jobs/128660701243/log.raw",
+      "sha256": "fe07092b58ad727faf27767e16f00f7b3c8aff2d8c8fcc047b19b5b7270713e5"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701243/log.stderr"
+      },
+      "path": "jobs/128660701243/log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 797,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/annotations.fetch.json"
+      },
+      "path": "jobs/128660701244/annotations.fetch.json",
+      "sha256": "33267b84ad5d5d0b046bf5acb6d93c5bdcdadc007da5e40ee8aa4b85f84fece2"
+    },
+    {
+      "bytes": 897,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/annotations.raw"
+      },
+      "path": "jobs/128660701244/annotations.raw",
+      "sha256": "2b4ba8a68666e38639af8f29806f18821a55aa70a8a9c95942a8c10203bb3e6f"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/annotations.stderr"
+      },
+      "path": "jobs/128660701244/annotations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 728,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/job.fetch.json"
+      },
+      "path": "jobs/128660701244/job.fetch.json",
+      "sha256": "6f7628562710997d1d2208ea4a0bab6b17e580af45493750fa71480625c3f049"
+    },
+    {
+      "bytes": 4267,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/job.raw"
+      },
+      "path": "jobs/128660701244/job.raw",
+      "sha256": "ed48ba9df5739db80a13ff821ba92e7e8ae43372e3eea4d56055110b25d2c55d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/job.stderr"
+      },
+      "path": "jobs/128660701244/job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 740,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/log.fetch.json"
+      },
+      "path": "jobs/128660701244/log.fetch.json",
+      "sha256": "3627f811473172dee9b72dc03db5184a2fa50e61484861379806190b46301458"
+    },
+    {
+      "bytes": 146662,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/log.raw"
+      },
+      "path": "jobs/128660701244/log.raw",
+      "sha256": "b345b37c76e5b2e84d6ea1f8375f2ec68078a0b70c8209a23e50cbb8820a668b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701244/log.stderr"
+      },
+      "path": "jobs/128660701244/log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 797,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/annotations.fetch.json"
+      },
+      "path": "jobs/128660701340/annotations.fetch.json",
+      "sha256": "4bd48e1864e8b7cc665a0bf2efd8b03830e5634600a0a9c51cf4b920dfc0e934"
+    },
+    {
+      "bytes": 940,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/annotations.raw"
+      },
+      "path": "jobs/128660701340/annotations.raw",
+      "sha256": "ab40aaf348ac0226ed99e5b6376322023aad4e390a82fa4a31bbe613fb58ba07"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/annotations.stderr"
+      },
+      "path": "jobs/128660701340/annotations.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 728,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/job.fetch.json"
+      },
+      "path": "jobs/128660701340/job.fetch.json",
+      "sha256": "a93f6c727f1ac2f2e1a02c53a12243cff7ed26297cae672da9a99ae74b96f35e"
+    },
+    {
+      "bytes": 1747,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/job.raw"
+      },
+      "path": "jobs/128660701340/job.raw",
+      "sha256": "7088ab7d711de501286efb525f7012af7d47ba188caa1632ef6deeae665cdf85"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/job.stderr"
+      },
+      "path": "jobs/128660701340/job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 738,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/log.fetch.json"
+      },
+      "path": "jobs/128660701340/log.fetch.json",
+      "sha256": "6ca54869efad60d6607baf2a36bd61e050ad5ecf20a774d8f8a9c15e73408e77"
+    },
+    {
+      "bytes": 4117,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/log.raw"
+      },
+      "path": "jobs/128660701340/log.raw",
+      "sha256": "50165921674ef9585183e96d8bb197b93072d21bb18fcde74ab50cfc1578660d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/jobs/128660701340/log.stderr"
+      },
+      "path": "jobs/128660701340/log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 105,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/operator-login-command.json"
+      },
+      "path": "operator-login-command.json",
+      "sha256": "d5e28979c87b946bbe8f914587b5343338598591b5834d967c81eba1ae4b02fb"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/operator-login.stderr"
+      },
+      "path": "operator-login.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 10,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/operator-login.stdout"
+      },
+      "path": "operator-login.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "bytes": 21818,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/diagnosis.json"
+      },
+      "path": "related-native/diagnosis.json",
+      "sha256": "54850ca7606c5e59001bec0308ec152feee10aab4b7b745ce05b4bc2da9440b6"
+    },
+    {
+      "bytes": 76472,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/manifest.json"
+      },
+      "path": "related-native/raw-manifest.json",
+      "sha256": "860836afc5ffd830f1c317dd02eff1df6be8a314d9632743d159972cbaa73a26"
+    },
+    {
+      "bytes": 142280,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-log.stdout"
+      },
+      "path": "related-native/raw/native-boundary-x64-prospective-log.stdout",
+      "sha256": "2266f4a61e38f8edfb0234f7443fa2787f078ebef44f911a1e8ff647479bf23a"
+    },
+    {
+      "bytes": 3296,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-metadata.stdout"
+      },
+      "path": "related-native/raw/native-boundary-x64-prospective-metadata.stdout",
+      "sha256": "df1d5d4483078c685ed501b4fab9e2e23aa121bda4c3f176bcb450d01471dfa6"
+    },
+    {
+      "bytes": 14052,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-observation.json"
+      },
+      "path": "related-native/raw/native-boundary-x64-prospective-observation.json",
+      "sha256": "d7aaa2ef414f6d51c4ecb003e0d9b90eaebc9882999de0a366a24a76cabe4633"
+    },
+    {
+      "bytes": 142707,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-log.stdout"
+      },
+      "path": "related-native/raw/native-history-x64-prospective-log.stdout",
+      "sha256": "0434c22303a1675427d769dae132dac02eecca6242f4d964a5a12849c674a8c4"
+    },
+    {
+      "bytes": 6101,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-metadata.stdout"
+      },
+      "path": "related-native/raw/native-history-x64-prospective-metadata.stdout",
+      "sha256": "ce450535b9ef6f5da019007204c69052cefdfcc04477a7b4fde35bd3758d5091"
+    },
+    {
+      "bytes": 17162,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-observation.json"
+      },
+      "path": "related-native/raw/native-history-x64-prospective-observation.json",
+      "sha256": "923c1aaa6ce0791d073785d92216f970a5f9402b61b671143cc23c1644e1babf"
+    },
+    {
+      "bytes": 143346,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-service-x64-prospective-log.stdout"
+      },
+      "path": "related-native/raw/native-service-x64-prospective-log.stdout",
+      "sha256": "3176f49204c6f212956488624d47c767c01546930891840f4c87861f23399940"
+    },
+    {
+      "bytes": 6107,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-service-x64-prospective-metadata.stdout"
+      },
+      "path": "related-native/raw/native-service-x64-prospective-metadata.stdout",
+      "sha256": "2564e06e4f22d74a7daf60ec6e8ae3f4b26875f805c3825c925a9776ab90f357"
+    },
+    {
+      "bytes": 17174,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-service-x64-prospective-observation.json"
+      },
+      "path": "related-native/raw/native-service-x64-prospective-observation.json",
+      "sha256": "0bb477a0a5c374dfcd8a69e4df2b911fd91d3253e110e08ce0b30d8137a8a962"
+    },
+    {
+      "bytes": 141288,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-log.stdout"
+      },
+      "path": "related-native/raw/w1-fresh-prospective-log.stdout",
+      "sha256": "572094ad6449426fe06385d6ddb27335a00dc4d66ed2a638a548d76a9769f202"
+    },
+    {
+      "bytes": 3246,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-metadata.stdout"
+      },
+      "path": "related-native/raw/w1-fresh-prospective-metadata.stdout",
+      "sha256": "0a80da446f353c06675625e4e3193a354a89e5becc361b2ad5782e11fbdaa1f7"
+    },
+    {
+      "bytes": 12468,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-observation.json"
+      },
+      "path": "related-native/raw/w1-fresh-prospective-observation.json",
+      "sha256": "3e38e84eb1bc0336d03c1a027959ef3201870724c6e22ef6fb166405e6e008e9"
+    },
+    {
+      "bytes": 31523,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/representative-readback.json"
+      },
+      "path": "representative-readback.json",
+      "sha256": "4569d941856853bbf1b4d452b33f5c5e8f347d743d6ee03530ff85dc7ff4a7c2"
+    },
+    {
+      "bytes": 164,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/00-fetch-pr-merge.stderr"
+      },
+      "path": "root-observation/00-fetch-pr-merge.stderr",
+      "sha256": "11c734e21030a8cd3c9941c814bd19118acd8dea6af7b0e434e6b499995d34df"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/00-fetch-pr-merge.stdout"
+      },
+      "path": "root-observation/00-fetch-pr-merge.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/01-actual-merge.stderr"
+      },
+      "path": "root-observation/01-actual-merge.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 164,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/01-actual-merge.stdout"
+      },
+      "path": "root-observation/01-actual-merge.stdout",
+      "sha256": "55dc319078d4e0aceec9980a2dd4cde5da15c12e562620038087723076226400"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/02-live-refs.stderr"
+      },
+      "path": "root-observation/02-live-refs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 185,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/02-live-refs.stdout"
+      },
+      "path": "root-observation/02-live-refs.stdout",
+      "sha256": "178a1ff171ffb63c3e4e455e23da75d36af6a7df7e999cdf004b3b0ae4807d8b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/03-pr.stderr"
+      },
+      "path": "root-observation/03-pr.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 28230,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/03-pr.stdout"
+      },
+      "path": "root-observation/03-pr.stdout",
+      "sha256": "86b5f79b6497a4311924a40633052080d7830d40283b5e75212d44fe38bb5ee9"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/04-checks-page-1.stderr"
+      },
+      "path": "root-observation/04-checks-page-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 320346,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/04-checks-page-1.stdout"
+      },
+      "path": "root-observation/04-checks-page-1.stdout",
+      "sha256": "bb114be2742c7b19141ae344aaafdbd174f80be52ae93d8d9bfc476df09d80ea"
+    },
+    {
+      "bytes": 1999,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/commands.json"
+      },
+      "path": "root-observation/commands.json",
+      "sha256": "e412b821ee5d68938aeae949e884168e1bf7e5910ea516c7b4097a4d640a9196"
+    },
+    {
+      "bytes": 48517,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/pr-ci-observation-01/snapshot.json"
+      },
+      "path": "root-observation/snapshot.json",
+      "sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886506.fetch.json"
+      },
+      "path": "run-jobs/42457886506.fetch.json",
+      "sha256": "2bb8f0657e01a203dfcdf7abad91fb4a34998b03b0252260ee069fec934d8f85"
+    },
+    {
+      "bytes": 19236,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886506.raw.json"
+      },
+      "path": "run-jobs/42457886506.raw.json",
+      "sha256": "3b2dfaf850d3b9397cdde54be17584f8d03666727a88ebb92c60d4afbd6dc699"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886506.stderr"
+      },
+      "path": "run-jobs/42457886506.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886518.fetch.json"
+      },
+      "path": "run-jobs/42457886518.fetch.json",
+      "sha256": "fb138a6010fa59c960b2c97858cf906cae3775592aaf4fd10a579ff6ef78f02d"
+    },
+    {
+      "bytes": 77893,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886518.raw.json"
+      },
+      "path": "run-jobs/42457886518.raw.json",
+      "sha256": "a20468495fb99bb26485836671f014e4087fefd545aaff6a1ee196b247a5b9b6"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886518.stderr"
+      },
+      "path": "run-jobs/42457886518.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886519.fetch.json"
+      },
+      "path": "run-jobs/42457886519.fetch.json",
+      "sha256": "9be2ef9593c48beea8b7072c41c55198b4ac1e3cde903cc0e2e953b63b8c1b29"
+    },
+    {
+      "bytes": 16180,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886519.raw.json"
+      },
+      "path": "run-jobs/42457886519.raw.json",
+      "sha256": "46f85dcb0a1c1993a7279c7f21fa5893f07f6b6703af48202c7443a56aa7d524"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886519.stderr"
+      },
+      "path": "run-jobs/42457886519.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886520.fetch.json"
+      },
+      "path": "run-jobs/42457886520.fetch.json",
+      "sha256": "ed33887efc1c81cf85b1e550e51844b4e215a29e8bd0aab55a5437bb4b6ea82e"
+    },
+    {
+      "bytes": 14752,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886520.raw.json"
+      },
+      "path": "run-jobs/42457886520.raw.json",
+      "sha256": "6fcb50d85ea55f5dcdccd343f7abe4ee47ea9f92e57ff037de69cfceb825b44d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886520.stderr"
+      },
+      "path": "run-jobs/42457886520.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886523.fetch.json"
+      },
+      "path": "run-jobs/42457886523.fetch.json",
+      "sha256": "1908942c66c738e6b18d1bddeb0ab5a621c718332c0171124711355b916c9ebb"
+    },
+    {
+      "bytes": 23556,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886523.raw.json"
+      },
+      "path": "run-jobs/42457886523.raw.json",
+      "sha256": "c2036f57e116e94221344b22fc1a5c817334b47dca1389003f7fb8f3521ab7bd"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886523.stderr"
+      },
+      "path": "run-jobs/42457886523.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886526.fetch.json"
+      },
+      "path": "run-jobs/42457886526.fetch.json",
+      "sha256": "ddf1b793eaee6e999b7cb8eb304856c2839b2d932ece5d20a7a14ffb58ebfcc3"
+    },
+    {
+      "bytes": 30364,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886526.raw.json"
+      },
+      "path": "run-jobs/42457886526.raw.json",
+      "sha256": "76f044f878930dff4446bdf41530efe8d690969160f6b7c70c3bb10ebd15834a"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886526.stderr"
+      },
+      "path": "run-jobs/42457886526.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886532.fetch.json"
+      },
+      "path": "run-jobs/42457886532.fetch.json",
+      "sha256": "fa6cbf3c8990923a3dfdef761ea80ff4c9df27d07d5bc393baf03ee061fef1dc"
+    },
+    {
+      "bytes": 11039,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886532.raw.json"
+      },
+      "path": "run-jobs/42457886532.raw.json",
+      "sha256": "3ce1e1d61e52538e30d4592119956c6f8a5e12be253b7997f4f82f68dd11571b"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886532.stderr"
+      },
+      "path": "run-jobs/42457886532.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886533.fetch.json"
+      },
+      "path": "run-jobs/42457886533.fetch.json",
+      "sha256": "1ad97f52b393300023f28543c8dcc790e2119ea43067ac11a5b1d2de5745cd15"
+    },
+    {
+      "bytes": 11040,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886533.raw.json"
+      },
+      "path": "run-jobs/42457886533.raw.json",
+      "sha256": "d6ab67afac4425ae024422fdc045ac08b2897779be7df45b9094293c2c798955"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886533.stderr"
+      },
+      "path": "run-jobs/42457886533.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 595,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886542.fetch.json"
+      },
+      "path": "run-jobs/42457886542.fetch.json",
+      "sha256": "e8de880cb7254b66cc0215552876dcd637880cd858d4339a04c99f363be1efaf"
+    },
+    {
+      "bytes": 2854,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886542.raw.json"
+      },
+      "path": "run-jobs/42457886542.raw.json",
+      "sha256": "7de7d247f2e5282e6cfb188fb4e44334981da6ed8376012ea4d9748afd192d8d"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886542.stderr"
+      },
+      "path": "run-jobs/42457886542.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886547.fetch.json"
+      },
+      "path": "run-jobs/42457886547.fetch.json",
+      "sha256": "e59042378843424189ab5e0a9ba3c32f068fbc6c5f952757b0789dd5acfe2b5b"
+    },
+    {
+      "bytes": 15970,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886547.raw.json"
+      },
+      "path": "run-jobs/42457886547.raw.json",
+      "sha256": "9f52679ef079fc8ff677b0bd35bcdfa8d4d6021c085a4911b1576c01d7ed5d94"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886547.stderr"
+      },
+      "path": "run-jobs/42457886547.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886555.fetch.json"
+      },
+      "path": "run-jobs/42457886555.fetch.json",
+      "sha256": "ea87503f2e36c300ab5d12eba7dab766485227db6111ecb098243f052c9c4a09"
+    },
+    {
+      "bytes": 72499,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886555.raw.json"
+      },
+      "path": "run-jobs/42457886555.raw.json",
+      "sha256": "b7829fdf9df473c5c8e527196129220602c729f1f9f055f5812faa45ccf10aa1"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886555.stderr"
+      },
+      "path": "run-jobs/42457886555.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886583.fetch.json"
+      },
+      "path": "run-jobs/42457886583.fetch.json",
+      "sha256": "b0704d388f3eef009c14a12616c3245c7db8cfe0d4e0f4951d270cdafa341a3e"
+    },
+    {
+      "bytes": 11656,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886583.raw.json"
+      },
+      "path": "run-jobs/42457886583.raw.json",
+      "sha256": "8363a35488dcef8ab688ef10023e14f35d4ddb86bd7a34b21bb9015082b4a5fa"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886583.stderr"
+      },
+      "path": "run-jobs/42457886583.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886584.fetch.json"
+      },
+      "path": "run-jobs/42457886584.fetch.json",
+      "sha256": "d461dcf9af0aa841c35ffc037c9b350fa00ca2194ab4271f6a7039c043dcf9e3"
+    },
+    {
+      "bytes": 15256,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886584.raw.json"
+      },
+      "path": "run-jobs/42457886584.raw.json",
+      "sha256": "77c3bfc1aa11716c24016c0c33dba0833ebb447ed47bac0708bd9c5b6e9e07d6"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/run-jobs/42457886584.stderr"
+      },
+      "path": "run-jobs/42457886584.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 503,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba0c9312-12894-182c/exit.json"
+      },
+      "path": "runtime/1a1ba0c9312-12894-182c/exit.json",
+      "sha256": "f8c8d6432261a0ccada832735a82f28048c70948c74b706505806bdc910bbd24"
+    },
+    {
+      "bytes": 208,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba0c9312-12894-182c/exit.witness.json"
+      },
+      "path": "runtime/1a1ba0c9312-12894-182c/exit.witness.json",
+      "sha256": "5ee8039d12cab51ae8e05a269fcae44866ad24f4446cd361ed8f1a37a052ce82"
+    },
+    {
+      "bytes": 503,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba0d0127-12894-182e/exit.json"
+      },
+      "path": "runtime/1a1ba0d0127-12894-182e/exit.json",
+      "sha256": "1f04aa545e8cecd544905a411d89a8fb3a4e01d25284750fbd7b9cc57cd5aec6"
+    },
+    {
+      "bytes": 208,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba0d0127-12894-182e/exit.witness.json"
+      },
+      "path": "runtime/1a1ba0d0127-12894-182e/exit.witness.json",
+      "sha256": "92bb81e331a2f802e4d686138a1e57faccd87ce611e0201763c1467b067ab797"
+    },
+    {
+      "bytes": 503,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba0ed922-12894-1836/exit.json"
+      },
+      "path": "runtime/1a1ba0ed922-12894-1836/exit.json",
+      "sha256": "8bf9c95d5686c1350e86606a4a4994967cd5a5a06de73d6d11e50b3c0bf34e9a"
+    },
+    {
+      "bytes": 208,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba0ed922-12894-1836/exit.witness.json"
+      },
+      "path": "runtime/1a1ba0ed922-12894-1836/exit.witness.json",
+      "sha256": "a54c68887460ec7ea0edd4a913452b8988570a7ac07351a357737123e17832cb"
+    },
+    {
+      "bytes": 503,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba113dee-12894-183c/exit.json"
+      },
+      "path": "runtime/1a1ba113dee-12894-183c/exit.json",
+      "sha256": "a3f7854e2a0db9805b6bd4191352c2f88782a86b18148a94890f78a60478ce48"
+    },
+    {
+      "bytes": 208,
+      "origin": {
+        "kind": "byte_copy",
+        "source": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba113dee-12894-183c/exit.witness.json"
+      },
+      "path": "runtime/1a1ba113dee-12894-183c/exit.witness.json",
+      "sha256": "1a5323c23b85b328d1ab563fc19a4c6ee18c33b517d5b8d5559918dfa6fdda7b"
+    },
+    {
+      "bytes": 48517,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/snapshot.json"
+      },
+      "path": "snapshot.json",
+      "sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307"
+    },
+    {
+      "bytes": 2053,
+      "origin": {
+        "kind": "new_analysis",
+        "source": null
+      },
+      "path": "source-context/PROPOSAL.md",
+      "sha256": "f200c246aa58648e97e9facdb82568e44c63713ef151e6c5fc224cdf89d3a576"
+    },
+    {
+      "bytes": 7893,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/export-failure-context.json"
+      },
+      "path": "source-context/export-failure-context.json",
+      "sha256": "307028dc5c26c4d9cc8b558377feb4e5ca033c470592f19433438d4c5f8532f4"
+    },
+    {
+      "bytes": 268,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/git-search-0.command.json"
+      },
+      "path": "source-context/git-search-0.command.json",
+      "sha256": "3f4ea1fcbcbb9aaa51d05c41d6b8948ec49d28dd65882b1cf4651c9353434f96"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/git-search-0.stderr"
+      },
+      "path": "source-context/git-search-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15889,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/git-search-0.stdout"
+      },
+      "path": "source-context/git-search-0.stdout",
+      "sha256": "b52b4438f4a1c5dbf1b95bdd7a687d54193957f1d560557ee76823fea1099b12"
+    },
+    {
+      "bytes": 421,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/git-search-1.command.json"
+      },
+      "path": "source-context/git-search-1.command.json",
+      "sha256": "60335b223bbdc2ed5fe3110e3d449ca5db1fb0f57f7eda6841969d5e53254502"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/git-search-1.stderr"
+      },
+      "path": "source-context/git-search-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14910,
+      "origin": {
+        "kind": "retained_collector_original",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-failure-diagnostic-20261108-ec265b-01/source-context/git-search-1.stdout"
+      },
+      "path": "source-context/git-search-1.stdout",
+      "sha256": "560ff6ce115daca9c8da6daa65fbb152e61bdc5627e7f6ed78f5e047c97f7e3e"
+    },
+    {
+      "bytes": 16191,
+      "origin": {
+        "kind": "new_analysis",
+        "source": null
+      },
+      "path": "summary.json",
+      "sha256": "35139a841c060c2fd3d9e0b25ce1125351a86d5ccb90462d572dd66f2208511d"
+    }
+  ],
+  "manifest_excludes_itself": true,
+  "maximum_file_bytes": 320346,
+  "no_binary_database_private_environment_or_unrelated_task_files": true,
+  "publication_directory": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-base62-integration-20261108/ci-c6",
+  "schema": "TRNM-W1-C6-CI-DIAGNOSIS-PUBLICATION-MANIFEST1",
+  "total_bytes_excluding_manifest": 2377337
+}

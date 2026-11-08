@@ -1,0 +1,650 @@
+{
+  "all_found_heads_match_C6": true,
+  "all_original_failed_jobs_found": true,
+  "fetch_exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "first_failure_counts": {
+    "Bind actual source and retain original preflight": 2,
+    "Export exact PR analyses with the existing read-only token": 1,
+    "Prepare exact-source command records": 2,
+    "Refuse any other source identity": 3,
+    "Reserve observations and verify ordered source identity": 9,
+    "Reserve records and verify ordered source identity": 2,
+    "Retrieve exact historical failed artifact without reclassifying it": 1,
+    "Verify actual immutable source and unchanged original preflight": 2,
+    "Verify actual source and ordered main merge": 3,
+    "Verify actual source and original native ABI": 1,
+    "Verify exact source, ordered actual main merge and full repository boundary": 2,
+    "Verify source and original project boundary": 8,
+    "Verify unchanged source and original project boundary": 4
+  },
+  "raw_bytes": 83438,
+  "raw_sha256": "39cfa4e3cab8482b973d9be56d0aee0ce6e88a29a2c88d56b6372c9b6fcef079",
+  "rows": [
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify actual immutable source and unchanged original preflight",
+        "Recompute existing native counters without claiming saturation",
+        "Recheck source even after failures",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Verify actual immutable source and unchanged original preflight",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701788,
+      "name": "reference (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886584",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify actual immutable source and unchanged original preflight",
+        "Recompute existing native counters without claiming saturation",
+        "Recheck source even after failures",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Verify actual immutable source and unchanged original preflight",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701752,
+      "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886584",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660702000,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 9
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701997,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701995,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve records and verify ordered source identity",
+        "Retain every cost, binary and failed attempt"
+      ],
+      "first_failed": "Reserve records and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701957,
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 8
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701943,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain both service outcomes and original Host evidence"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701933,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701927,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701909,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 10
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve records and verify ordered source identity",
+        "Retain every cost, binary and failed attempt"
+      ],
+      "first_failed": "Reserve records and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701885,
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 8
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity",
+        "Retain costs, binaries and all failures"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701856,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_count": 9
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify unchanged source and original project boundary",
+        "Reverify exact source after every outcome",
+        "Retain actual successes and failures"
+      ],
+      "first_failed": "Verify unchanged source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701601,
+      "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886583",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify unchanged source and original project boundary",
+        "Reverify exact source after every outcome",
+        "Retain actual successes and failures"
+      ],
+      "first_failed": "Verify unchanged source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701409,
+      "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886583",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify exact unchanged source",
+        "Retain successes, failures and unqualified external boundaries"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701632,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_count": 19
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify exact unchanged source",
+        "Retain successes, failures and unqualified external boundaries"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701606,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_count": 19
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify exact unchanged source",
+        "Retain successes, failures and unqualified external boundaries"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701603,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_count": 19
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify exact unchanged source",
+        "Retain successes, failures and unqualified external boundaries"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701599,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_count": 19
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify exact unchanged source",
+        "Retain successes, failures and unqualified external boundaries"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701592,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_count": 19
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify exact unchanged source",
+        "Retain successes, failures and unqualified external boundaries"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701543,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_count": 19
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Retrieve exact historical failed artifact without reclassifying it"
+      ],
+      "first_failed": "Retrieve exact historical failed artifact without reclassifying it",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701340,
+      "name": "retained-pressure-failure",
+      "role": "unlabelled",
+      "run_id": "42457886555",
+      "skipped_count": 1
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Bind actual source and retain original preflight",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Bind actual source and retain original preflight",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701306,
+      "name": "parent evidence (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886533",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Bind actual source and retain original preflight",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Bind actual source and retain original preflight",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701271,
+      "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886533",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify unchanged tested source",
+        "Retain current native results including every failure"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701441,
+      "name": "native boundary (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886547",
+      "skipped_count": 5
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify source and original project boundary",
+        "Reverify unchanged tested source",
+        "Retain current native results including every failure"
+      ],
+      "first_failed": "Verify source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701420,
+      "name": "native boundary (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886547",
+      "skipped_count": 5
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify exact source, ordered actual main merge and full repository boundary",
+        "Recheck unchanged exact source and hash all native logs"
+      ],
+      "first_failed": "Verify exact source, ordered actual main merge and full repository boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701319,
+      "name": "recent batch (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886526",
+      "skipped_count": 25
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify exact source, ordered actual main merge and full repository boundary",
+        "Recheck unchanged exact source and hash all native logs"
+      ],
+      "first_failed": "Verify exact source, ordered actual main merge and full repository boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701166,
+      "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886526",
+      "skipped_count": 25
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify unchanged source and original project boundary",
+        "Reverify exact source after every outcome",
+        "Retain actual successes and failures"
+      ],
+      "first_failed": "Verify unchanged source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701347,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886520",
+      "skipped_count": 8
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify unchanged source and original project boundary",
+        "Reverify exact source after every outcome",
+        "Retain actual successes and failures"
+      ],
+      "first_failed": "Verify unchanged source and original project boundary",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701285,
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886520",
+      "skipped_count": 8
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify actual source and ordered main merge",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Verify actual source and ordered main merge",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701243,
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify actual source and original native ABI",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Verify actual source and original native ABI",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701236,
+      "name": "aggregate-owner-controls (prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_count": 6
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify actual source and ordered main merge",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Verify actual source and ordered main merge",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701207,
+      "name": "cleanup (macos-15, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Verify actual source and ordered main merge",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+      ],
+      "first_failed": "Verify actual source and ordered main merge",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701190,
+      "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_count": 3
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Prepare exact-source command records"
+      ],
+      "first_failed": "Prepare exact-source command records",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701244,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886519",
+      "skipped_count": 11
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Prepare exact-source command records"
+      ],
+      "first_failed": "Prepare exact-source command records",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701090,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886519",
+      "skipped_count": 11
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Export exact PR analyses with the existing read-only token"
+      ],
+      "first_failed": "Export exact PR analyses with the existing read-only token",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701162,
+      "name": "export",
+      "role": "unlabelled",
+      "run_id": "42457886542",
+      "skipped_count": 0
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Refuse any other source identity",
+        "Retain exact-source local SARIF for independent review"
+      ],
+      "first_failed": "Refuse any other source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701119,
+      "name": "CodeQL local SARIF (rust, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886506",
+      "skipped_count": 5
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Refuse any other source identity",
+        "Retain exact-source local SARIF for independent review"
+      ],
+      "first_failed": "Refuse any other source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701102,
+      "name": "CodeQL local SARIF (actions, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886506",
+      "skipped_count": 5
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Refuse any other source identity",
+        "Retain exact-source local SARIF for independent review"
+      ],
+      "first_failed": "Refuse any other source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701001,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886506",
+      "skipped_count": 5
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        "Reserve observations and verify ordered source identity"
+      ],
+      "first_failed": "Reserve observations and verify ordered source identity",
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701100,
+      "name": "W1 transparent candidate (prospective-merge, x64)",
+      "role": "prospective-merge",
+      "run_id": "42457886532",
+      "skipped_count": 16
+    }
+  ],
+  "schema": "TRNM-W1-C6-FIRST-FAILED-STEPS-COMPACT1"
+}

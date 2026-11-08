@@ -1,0 +1,256 @@
+{
+  "M12_source_paths_changed": [],
+  "W1_generation_or_collector_source_paths_changed": [],
+  "activity_bounds": {
+    "Cargo_commands": 0,
+    "commits": 0,
+    "fetches": 0,
+    "operations_created": 0,
+    "pushes": 0,
+    "signals_sent": 0,
+    "source_or_branch_edits": 0,
+    "tests_run": 0,
+    "worktrees_created": 0
+  },
+  "archive_resume_scope": "Only prior byte-identical archive files are reused; no original evidence was overwritten, no publication destination previously existed; raw exit records do not supply the API-derived state field.",
+  "archive_started_utc": "2026-11-08T07:21:29.475715+00:00",
+  "changed_paths": [
+    {
+      "path": ".github/workflows/pon-history-stage-diagnostic.yml",
+      "status": "A"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "status": "M"
+    },
+    {
+      "path": "scripts/ci/run_history_diagnostic.py",
+      "status": "A"
+    },
+    {
+      "path": "scripts/ci/test_history_stage_diagnostic.py",
+      "status": "A"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+      "status": "A"
+    }
+  ],
+  "contains_executable_diagnostics_and_shared_Host_extension": true,
+  "copy_method": "create-only regular files; no hard links; full byte/hash comparison",
+  "deletions": 0,
+  "freeze_note": "Manifest pins allowlisted bytes; no further writes by this audit after publication copy.",
+  "frozen_C6": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "frozen_C6_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+  "historical_remote_ref_observation": {
+    "file": "references/mid-qualification-remote-refs.json",
+    "historical_observation_not_current_ref_claim": true,
+    "later_push_or_ref_change_outside_this_bundle": true,
+    "observed_unix_ns": 1794120822555997595,
+    "original_job_id": "1a1b9eefb2c-12894-17b0",
+    "original_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/mid-qualification-remote-refs.json",
+    "refs": [
+      {
+        "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+        "sha": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      },
+      {
+        "ref": "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+        "sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+      }
+    ],
+    "remote_refs_refetched_in_this_review": false,
+    "sha256": "884b1891f8885a289bea5f26ab9e476ff49a49e7081e13f338a5a30414d953e0"
+  },
+  "hypothetical_merged_tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+  "insertions": 1120,
+  "local_finalizer_assembly_failure_retained": "read-observations/finalizer-assembly-failure-01.json",
+  "merge_scope": {
+    "C6_existing_pins_changed": {},
+    "C6_required_paths_removed": [],
+    "merged_minus_C6_path_set_equals_NEW_minus_OLD": true,
+    "non_manifest_new_base_blobs_exactly_present_in_merged_tree": [
+      ".github/workflows/pon-history-stage-diagnostic.yml",
+      "scripts/ci/run_from_zero_host.py",
+      "scripts/ci/run_history_diagnostic.py",
+      "scripts/ci/test_history_stage_diagnostic.py",
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ],
+    "other_corpus_fields_changed": [],
+    "overlapping_changed_paths_between_OLD_to_C6_and_OLD_to_NEW": [
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "pins_added": {
+      ".github/workflows/pon-history-stage-diagnostic.yml": "b9243ba119d506a02f4eda42dbf27e3939316f64",
+      "scripts/ci/run_from_zero_host.py": "7ec378d2eb26914441f1b15b1d4267c967986e76",
+      "scripts/ci/run_history_diagnostic.py": "cc24abee495f22641dfa6e4770ab45cbf9f88183",
+      "scripts/ci/test_history_stage_diagnostic.py": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2",
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": "d6650671ccc93462623351d05fdf434d52669ce1"
+    },
+    "qualification_or_full_sourceguard_on_new_base_or_merged_tree": false,
+    "required_paths_added": [
+      ".github/workflows/pon-history-stage-diagnostic.yml",
+      "scripts/ci/run_from_zero_host.py",
+      "scripts/ci/run_history_diagnostic.py",
+      "scripts/ci/test_history_stage_diagnostic.py",
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ],
+    "selected_object_blob_ids": {
+      "C6": {
+        "config/pon/pq-cross-branch-corpus-v1.json": {
+          "git_blob_sha1": "8ddd5db168cbf97f2b715da6fe727bc6e69ef644",
+          "mode": "100644"
+        },
+        "scripts/ci/run_from_zero_host.py": {
+          "git_blob_sha1": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+          "mode": "100644"
+        }
+      },
+      "base96": {
+        ".github/workflows/pon-history-stage-diagnostic.yml": {
+          "git_blob_sha1": "b9243ba119d506a02f4eda42dbf27e3939316f64",
+          "mode": "100644"
+        },
+        "config/pon/pq-cross-branch-corpus-v1.json": {
+          "git_blob_sha1": "0b16b7e2da1af7b20c848a4e695a01987805a80c",
+          "mode": "100644"
+        },
+        "scripts/ci/run_from_zero_host.py": {
+          "git_blob_sha1": "7ec378d2eb26914441f1b15b1d4267c967986e76",
+          "mode": "100644"
+        },
+        "scripts/ci/run_history_diagnostic.py": {
+          "git_blob_sha1": "cc24abee495f22641dfa6e4770ab45cbf9f88183",
+          "mode": "100644"
+        },
+        "scripts/ci/test_history_stage_diagnostic.py": {
+          "git_blob_sha1": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2",
+          "mode": "100644"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": {
+          "git_blob_sha1": "d6650671ccc93462623351d05fdf434d52669ce1",
+          "mode": "100644"
+        }
+      },
+      "merged": {
+        ".github/workflows/pon-history-stage-diagnostic.yml": {
+          "git_blob_sha1": "b9243ba119d506a02f4eda42dbf27e3939316f64",
+          "mode": "100644"
+        },
+        "config/pon/pq-cross-branch-corpus-v1.json": {
+          "git_blob_sha1": "e5400933b710dffc7c9619d694300708b195190b",
+          "mode": "100644"
+        },
+        "scripts/ci/run_from_zero_host.py": {
+          "git_blob_sha1": "7ec378d2eb26914441f1b15b1d4267c967986e76",
+          "mode": "100644"
+        },
+        "scripts/ci/run_history_diagnostic.py": {
+          "git_blob_sha1": "cc24abee495f22641dfa6e4770ab45cbf9f88183",
+          "mode": "100644"
+        },
+        "scripts/ci/test_history_stage_diagnostic.py": {
+          "git_blob_sha1": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2",
+          "mode": "100644"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": {
+          "git_blob_sha1": "d6650671ccc93462623351d05fdf434d52669ce1",
+          "mode": "100644"
+        }
+      }
+    }
+  },
+  "new_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "new_base_commit_utc": "2026-11-08T06:49:32+00:00",
+  "new_base_parent": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "new_base_title": "ci(history): retain independent stage diagnostics under original limits",
+  "new_diagnostic_source_scope": {
+    "blocks": 4105,
+    "import_call_budget_seconds": 30,
+    "independent_output": "history-diagnostic",
+    "independent_target": "history_stage_diagnostic",
+    "instrumentation_overhead_included": true,
+    "instrumented_history_rpc_and_import_attempts_retained": true,
+    "native_service_lifetime_seconds": 1800,
+    "nested_phase_and_Host_CPU_are_not_additive": true,
+    "new_diagnostic_controls_or_native_test_run_in_this_review": false,
+    "new_python_control_method_count_from_source": 6,
+    "qualification_flags_false_in_source": true,
+    "workflow_cancel_in_progress": false,
+    "workflow_continue_on_error_present": false,
+    "workflow_fail_fast": false,
+    "workflow_replicas": [
+      1,
+      2
+    ],
+    "workflow_timeout_minutes": 180,
+    "workflow_trigger": "push to fix/chain-six-axis-performance-20261103 with four diagnostic path filters",
+    "workflow_upload_condition": "always()"
+  },
+  "old_base": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "production_rust_src_paths_changed": [],
+  "read_failure_retained": "read-observations/first-multifile-read-failure.json",
+  "read_failure_scope": "Initial multi-file request returned INVALID_ARGUMENT; a selected 66 KiB diff exceeded its 64 KiB per-file ceiling. Later bounded reads succeeded. This is a retrieval failure, not a business experiment.",
+  "remote_archive_failures_retained": [
+    "read-observations/archive-attempt-01-terminal.json",
+    "read-observations/archive-attempt-02-terminal.json"
+  ],
+  "retained_runtime_terminals": [
+    {
+      "exit_code": 0,
+      "job_id": "1a1b9f41ba0-12894-17c5",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_state_field": null,
+      "terminal_path": "runtime/1a1b9f41ba0-12894-17c5/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1b9f57db0-12894-17cc",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_state_field": null,
+      "terminal_path": "runtime/1a1b9f57db0-12894-17cc/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1b9f692eb-12894-17d3",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_state_field": null,
+      "terminal_path": "runtime/1a1b9f692eb-12894-17d3/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1ba0109b7-12894-17f8",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_state_field": null,
+      "terminal_path": "runtime/1a1ba0109b7-12894-17f8/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1b9eefb2c-12894-17b0",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_state_field": null,
+      "terminal_path": "runtime/1a1b9eefb2c-12894-17b0/exit.json"
+    }
+  ],
+  "schema": "TRNM-W1-BASE96-READONLY-IMPACT1",
+  "scope": "static Git-object inspection and retained historical ref readback; no base96 or merged-tree execution qualification",
+  "shared_Host_six_added_lines": {
+    "effect": "Accepts only the new diagnostic script four-argument form, with diagnostic preparation/final binding. Existing branches remain textually unchanged. The module import is a new dependency; its main guard does not launch on import.",
+    "exact_four_argument_command_allowlist": 1,
+    "execution_binding_dispatch": 2,
+    "existing_resource_or_deadline_implementation_changed": false,
+    "module_import": 1,
+    "preparation_dispatch": 2
+  },
+  "static_merge_conflicts": [],
+  "static_merge_exit_code": 0
+}

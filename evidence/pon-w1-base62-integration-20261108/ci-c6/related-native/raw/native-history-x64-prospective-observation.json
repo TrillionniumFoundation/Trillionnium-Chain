@@ -1,0 +1,525 @@
+{
+  "bounded_error_excerpts": [
+    {
+      "line": 58,
+      "text": "2026-11-08T07:15:56.1751905Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 59,
+      "text": "2026-11-08T07:15:56.1752501Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 60,
+      "text": "2026-11-08T07:15:56.1753022Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 61,
+      "text": "2026-11-08T07:15:56.1753572Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 62,
+      "text": "2026-11-08T07:15:56.1753949Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 63,
+      "text": "2026-11-08T07:15:56.3922120Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain",
+      "truncated_line": false
+    },
+    {
+      "line": 64,
+      "text": "2026-11-08T07:15:56.3923576Z ##[group]Getting Git version info",
+      "truncated_line": false
+    },
+    {
+      "line": 1005,
+      "text": "2026-11-08T07:16:28.5507781Z \u001b[36;1mprintf 'CARGO_HOME=%s/cargo-priority\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1006,
+      "text": "2026-11-08T07:16:28.5508062Z \u001b[36;1mprintf 'CARGO_TARGET_DIR=%s/target-priority\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1007,
+      "text": "2026-11-08T07:16:28.5508327Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1008,
+      "text": "2026-11-08T07:16:28.5508547Z \u001b[36;1mif [ \"$SOURCE_KIND\" = prospective-merge ]; then\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1009,
+      "text": "2026-11-08T07:16:28.5508788Z \u001b[36;1m  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1010,
+      "text": "2026-11-08T07:16:28.5508995Z \u001b[36;1mfi\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1011,
+      "text": "2026-11-08T07:16:28.5509240Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$TRNM_CI_RECEIPT_DIR/source.json\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1021,
+      "text": "2026-11-08T07:16:28.5529340Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1022,
+      "text": "2026-11-08T07:16:28.5529531Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1023,
+      "text": "2026-11-08T07:16:28.5529703Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1024,
+      "text": "2026-11-08T07:16:28.5529878Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1025,
+      "text": "2026-11-08T07:16:28.5530062Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 1026,
+      "text": "2026-11-08T07:16:28.6944902Z Traceback (most recent call last):",
+      "truncated_line": false
+    },
+    {
+      "line": 1027,
+      "text": "2026-11-08T07:16:28.6945506Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 219, in <module>",
+      "truncated_line": false
+    },
+    {
+      "line": 1028,
+      "text": "2026-11-08T07:16:28.6945971Z     main()",
+      "truncated_line": false
+    },
+    {
+      "line": 1029,
+      "text": "2026-11-08T07:16:28.6946367Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 210, in main",
+      "truncated_line": false
+    },
+    {
+      "line": 1031,
+      "text": "2026-11-08T07:16:28.6947705Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "truncated_line": false
+    },
+    {
+      "line": 1032,
+      "text": "2026-11-08T07:16:28.6948212Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 153, in verify",
+      "truncated_line": false
+    },
+    {
+      "line": 1033,
+      "text": "2026-11-08T07:16:28.6948725Z     raise ValueError('merge parents differ from the event base and candidate')",
+      "truncated_line": false
+    },
+    {
+      "line": 1034,
+      "text": "2026-11-08T07:16:28.6948987Z ValueError: merge parents differ from the event base and candidate",
+      "truncated_line": false
+    },
+    {
+      "line": 1035,
+      "text": "2026-11-08T07:16:28.7079074Z ##[error]Process completed with exit code 1.",
+      "truncated_line": false
+    },
+    {
+      "line": 1036,
+      "text": "2026-11-08T07:16:28.7332363Z ##[group]Run set -euo pipefail",
+      "truncated_line": false
+    },
+    {
+      "line": 1037,
+      "text": "2026-11-08T07:16:28.7332554Z \u001b[36;1mset -euo pipefail\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1038,
+      "text": "2026-11-08T07:16:28.7332743Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1039,
+      "text": "2026-11-08T07:16:28.7332970Z \u001b[36;1mif [ \"$SOURCE_KIND\" = prospective-merge ]; then\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1040,
+      "text": "2026-11-08T07:16:28.7333227Z \u001b[36;1m  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1041,
+      "text": "2026-11-08T07:16:28.7333439Z \u001b[36;1mfi\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1042,
+      "text": "2026-11-08T07:16:28.7333585Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py \"${args[@]}\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1051,
+      "text": "2026-11-08T07:16:28.7350584Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1052,
+      "text": "2026-11-08T07:16:28.7350779Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1053,
+      "text": "2026-11-08T07:16:28.7350954Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1054,
+      "text": "2026-11-08T07:16:28.7351328Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1055,
+      "text": "2026-11-08T07:16:28.7351562Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/priority-observations",
+      "truncated_line": false
+    },
+    {
+      "line": 1056,
+      "text": "2026-11-08T07:16:28.7351774Z   CARGO_HOME: /home/runner/work/_temp/cargo-priority",
+      "truncated_line": false
+    },
+    {
+      "line": 1057,
+      "text": "2026-11-08T07:16:28.7351969Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-priority",
+      "truncated_line": false
+    },
+    {
+      "line": 1058,
+      "text": "2026-11-08T07:16:28.7352142Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 1059,
+      "text": "2026-11-08T07:16:28.8624076Z Traceback (most recent call last):",
+      "truncated_line": false
+    },
+    {
+      "line": 1060,
+      "text": "2026-11-08T07:16:28.8624623Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 219, in <module>",
+      "truncated_line": false
+    },
+    {
+      "line": 1061,
+      "text": "2026-11-08T07:16:28.8625054Z     main()",
+      "truncated_line": false
+    },
+    {
+      "line": 1062,
+      "text": "2026-11-08T07:16:28.8625455Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 210, in main",
+      "truncated_line": false
+    },
+    {
+      "line": 1064,
+      "text": "2026-11-08T07:16:28.8626363Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "truncated_line": false
+    },
+    {
+      "line": 1065,
+      "text": "2026-11-08T07:16:28.8626834Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 153, in verify",
+      "truncated_line": false
+    },
+    {
+      "line": 1066,
+      "text": "2026-11-08T07:16:28.8627361Z     raise ValueError('merge parents differ from the event base and candidate')",
+      "truncated_line": false
+    },
+    {
+      "line": 1067,
+      "text": "2026-11-08T07:16:28.8627745Z ValueError: merge parents differ from the event base and candidate",
+      "truncated_line": false
+    },
+    {
+      "line": 1068,
+      "text": "2026-11-08T07:16:28.8754866Z ##[error]Process completed with exit code 1.",
+      "truncated_line": false
+    },
+    {
+      "line": 1069,
+      "text": "2026-11-08T07:16:28.9156313Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "truncated_line": false
+    },
+    {
+      "line": 1070,
+      "text": "2026-11-08T07:16:28.9156543Z with:",
+      "truncated_line": false
+    },
+    {
+      "line": 1071,
+      "text": "2026-11-08T07:16:28.9156791Z   name: priority-ubuntu-24.04-prospective-merge-history-2bdd252aa6c300b7431b9ee897b254b7953cf562-1",
+      "truncated_line": false
+    },
+    {
+      "line": 1085,
+      "text": "2026-11-08T07:16:28.9159027Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1086,
+      "text": "2026-11-08T07:16:28.9159219Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1087,
+      "text": "2026-11-08T07:16:28.9159394Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1088,
+      "text": "2026-11-08T07:16:28.9159573Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1089,
+      "text": "2026-11-08T07:16:28.9159804Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/priority-observations",
+      "truncated_line": false
+    },
+    {
+      "line": 1090,
+      "text": "2026-11-08T07:16:28.9160012Z   CARGO_HOME: /home/runner/work/_temp/cargo-priority",
+      "truncated_line": false
+    },
+    {
+      "line": 1091,
+      "text": "2026-11-08T07:16:28.9160203Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-priority",
+      "truncated_line": false
+    },
+    {
+      "line": 1093,
+      "text": "2026-11-08T07:16:29.0338665Z (node:2231) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "truncated_line": false
+    },
+    {
+      "line": 1094,
+      "text": "2026-11-08T07:16:29.0339069Z (Use `node --trace-deprecation ...` to show where the warning was created)",
+      "truncated_line": false
+    },
+    {
+      "line": 1095,
+      "text": "2026-11-08T07:16:29.0410720Z ##[error]No files were found with the provided path: /home/runner/work/_temp/priority-observations/. No artifacts will be uploaded.",
+      "truncated_line": false
+    },
+    {
+      "line": 1096,
+      "text": "2026-11-08T07:16:29.0981234Z Post job cleanup.",
+      "truncated_line": false
+    },
+    {
+      "line": 1097,
+      "text": "2026-11-08T07:16:29.1573218Z [command]/usr/bin/git version",
+      "truncated_line": false
+    },
+    {
+      "line": 1098,
+      "text": "2026-11-08T07:16:29.1606459Z git version 2.56.0",
+      "truncated_line": false
+    }
+  ],
+  "completed_at": "2026-11-08T07:16:31Z",
+  "conclusion": "failure",
+  "error_marker_count": 21,
+  "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701592",
+  "job_id": 128660701592,
+  "log": {
+    "bytes": 142707,
+    "path": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-log.stdout",
+    "sha256": "0434c22303a1675427d769dae132dac02eecca6242f4d964a5a12849c674a8c4"
+  },
+  "log_line_count": 1109,
+  "metadata": {
+    "bytes": 6101,
+    "path": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-metadata.stdout",
+    "sha256": "ce450535b9ef6f5da019007204c69052cefdfcc04477a7b4fde35bd3758d5091"
+  },
+  "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+  "role": "native-history-x64-prospective",
+  "run_id": 42457886555,
+  "scope": "completed original job only; no inference about unobserved sibling jobs or head-lane business targets",
+  "started_at": "2026-11-08T07:15:54Z",
+  "status": "completed",
+  "steps": [
+    {
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Checkout the exact candidate or the actual PR target merge",
+      "number": 2,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Reproduce the frozen integration-push source",
+      "number": 3,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Verify source and original project boundary",
+      "number": 4,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Install the source-pinned native toolchain",
+      "number": 5,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original window owner and context-bound consumer controls",
+      "number": 6,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original release from-zero controls",
+      "number": 7,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute actual CLI observation boundaries and retain every child result",
+      "number": 8,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute isolated original debug pressure regression",
+      "number": 9,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original public service cancellation and actual CPU accounting controls",
+      "number": 10,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Reject valid W1 state-root replay without durable admission",
+      "number": 11,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Require actual shared CPU depletion and native public recovery",
+      "number": 12,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute real native model lifecycle and adverse decisions",
+      "number": 13,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Require native replay, packet encoding and admissible DAA controls",
+      "number": 14,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Observe complete native history and packet response cost",
+      "number": 15,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original large-state CPU-budget tests",
+      "number": 16,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original native full-capacity test",
+      "number": 17,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original source-preserving migration tests",
+      "number": 18,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute actual obligation ranges and native reorganization regressions",
+      "number": 19,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Build the original long-history test separately from measurement",
+      "number": 20,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute 4105 real work blocks and paid public full sync",
+      "number": 21,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Reverify exact unchanged source",
+      "number": 22,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Preserve this lane's actual push source context",
+      "number": 23,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Retain successes, failures and unqualified external boundaries",
+      "number": 24,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Post Checkout the exact candidate or the actual PR target merge",
+      "number": 48,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 49,
+      "status": "completed"
+    }
+  ]
+}

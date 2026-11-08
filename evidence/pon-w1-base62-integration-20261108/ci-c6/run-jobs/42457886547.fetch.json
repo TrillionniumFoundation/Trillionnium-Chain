@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/jobs?per_page=100"
+  ],
+  "exit_code": 0,
+  "finished_utc": "2026-11-08T07:28:31.120942+00:00",
+  "started_utc": "2026-11-08T07:28:24.153739+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "run-jobs/42457886547.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 15970,
+    "path": "run-jobs/42457886547.raw.json",
+    "sha256": "9f52679ef079fc8ff677b0bd35bcdfa8d4d6021c085a4911b1576c01d7ed5d94"
+  }
+}

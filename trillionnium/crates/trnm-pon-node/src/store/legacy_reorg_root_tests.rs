@@ -159,6 +159,18 @@ fn legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors() {
         assert_eq!(original.kind(), reused.kind());
         assert_eq!(original.requires_owner_stop(), reused.requires_owner_stop());
         assert!(reused.requires_owner_stop());
+        // Initial-history reorg preserves the staging arithmetic instead of
+        // feeding genesis into it. This still reads every current active row
+        // and must retain the original malformed-state/root failure exactly.
+        let isolated = node
+            .check_active_before_commit_with_root_role(&mut || Ok(()), None, Some(arithmetic), true)
+            .unwrap_err();
+        assert_eq!(original.to_string(), isolated.to_string());
+        assert_eq!(original.kind(), isolated.kind());
+        assert_eq!(
+            original.requires_owner_stop(),
+            isolated.requires_owner_stop()
+        );
         reused.to_string()
     };
     // A key that no planned command touches still enters the full SQL read and

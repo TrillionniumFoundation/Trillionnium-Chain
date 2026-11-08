@@ -1,0 +1,148 @@
+{
+  "at": "2026-11-08T06:07:43.768916+00:00",
+  "classification_note": "name-prefix size estimate only; not a proven minimal Cargo dependency closure",
+  "processes": [
+    {
+      "argv0": "/usr/bin/python3",
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service\n",
+      "io": {
+        "cancelled_write_bytes": 0,
+        "rchar": 1162923,
+        "read_bytes": 0,
+        "syscr": 176,
+        "syscw": 6,
+        "wchar": 816,
+        "write_bytes": 12288
+      },
+      "pid": 3368828,
+      "ppid": 2069,
+      "rsync_command": null,
+      "start_ticks": 119520557,
+      "state": "S"
+    },
+    {
+      "argv0": "/usr/bin/python3",
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service\n",
+      "io": {
+        "cancelled_write_bytes": 0,
+        "rchar": 469215976,
+        "read_bytes": 864256,
+        "syscr": 567,
+        "syscw": 3,
+        "wchar": 3478,
+        "write_bytes": 12288
+      },
+      "pid": 3368967,
+      "ppid": 3368828,
+      "rsync_command": null,
+      "start_ticks": 119520667,
+      "state": "S"
+    },
+    {
+      "argv0": "/usr/bin/rsync",
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service\n",
+      "io": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2580796329,
+        "read_bytes": 2483302400,
+        "syscr": 12113,
+        "syscw": 78704,
+        "wchar": 2581570537,
+        "write_bytes": 0
+      },
+      "pid": 3370070,
+      "ppid": 3368967,
+      "rsync_command": [
+        "/usr/bin/rsync",
+        "-a",
+        "--exclude=incremental/",
+        "--stats",
+        "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/",
+        "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b/"
+      ],
+      "start_ticks": 119522257,
+      "state": "D"
+    },
+    {
+      "argv0": "/usr/bin/rsync",
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service\n",
+      "io": {
+        "cancelled_write_bytes": 0,
+        "rchar": 246073,
+        "read_bytes": 425984,
+        "syscr": 142,
+        "syscw": 86,
+        "wchar": 64076,
+        "write_bytes": 0
+      },
+      "pid": 3370074,
+      "ppid": 3370070,
+      "rsync_command": [
+        "/usr/bin/rsync",
+        "-a",
+        "--exclude=incremental/",
+        "--stats",
+        "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/",
+        "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b/"
+      ],
+      "start_ticks": 119522278,
+      "state": "S"
+    },
+    {
+      "argv0": "/usr/bin/rsync",
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service\n",
+      "io": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2581570355,
+        "read_bytes": 569344,
+        "syscr": 181285,
+        "syscw": 12159,
+        "wchar": 2580667946,
+        "write_bytes": 2588585984
+      },
+      "pid": 3370075,
+      "ppid": 3370074,
+      "rsync_command": [
+        "/usr/bin/rsync",
+        "-a",
+        "--exclude=incremental/",
+        "--stats",
+        "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/",
+        "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b/"
+      ],
+      "start_ticks": 119522278,
+      "state": "S"
+    }
+  ],
+  "source_cache_categories": {
+    "build_outputs": {
+      "bytes": 255327897,
+      "files": 199
+    },
+    "other_cache_files": {
+      "bytes": 218742715,
+      "files": 2015
+    },
+    "other_dependency_files": {
+      "bytes": 299484782,
+      "files": 774
+    },
+    "other_extensionless_deps_executable": {
+      "bytes": 10816977384,
+      "files": 59
+    },
+    "shared_object_proc_macros_and_dynamic_libs": {
+      "bytes": 36084264,
+      "files": 4
+    },
+    "workspace_or_known_test_prefix": {
+      "bytes": 3461402890,
+      "files": 178
+    }
+  }
+}

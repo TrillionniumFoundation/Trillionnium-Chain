@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b",
+  "exit": 0,
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/publication-preflight-c6-01.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 181,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/publication-preflight-c6-01.stdout",
+    "sha256": "1a6648a1694ecdfb1047f814a24abc3f223e8a80374fb6b053255b3ca79b3a4b"
+  }
+}

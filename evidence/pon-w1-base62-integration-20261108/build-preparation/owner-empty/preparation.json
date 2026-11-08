@@ -1,0 +1,200 @@
+{
+  "all_original_observed_process_births_gone": true,
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "cargo_invoked": false,
+  "cgroup_observations_after_cancel": [
+    {
+      "exists": false,
+      "live_member_pids": [],
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service"
+    },
+    {
+      "exists": false,
+      "live_member_pids": [],
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bd043d-12894-167b.service"
+    }
+  ],
+  "cleanroom_build": false,
+  "completed_utc": "2026-11-08T06:11:43.540982+00:00",
+  "independent_reproducible_build_established": false,
+  "new_source_qualified": false,
+  "no_live_owned_copy_processes_observed": true,
+  "old_copy_cancelled_before_timeout": true,
+  "old_copy_completed": false,
+  "old_copy_inner_rsync_timeout_seconds": 1800,
+  "old_copy_outer_runtime_timeout_seconds": 2100,
+  "old_copy_runtime_job": "1a1b9bd043d-12894-167b",
+  "old_copy_terminal": {
+    "at_unix_ms": 1794118124216,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": true,
+    "exit_code": -15,
+    "job_id": "1a1b9bd043d-12894-167b",
+    "launch_nonce": "70630b41b3f2ff803442e7d1b9550b53",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 0,
+        "stored": 0
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "cancelled",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "old_partial_retained": true,
+  "old_partial_reused": false,
+  "old_partial_target": "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b",
+  "origin": "empty",
+  "original_owner_operations_changed": false,
+  "owned_process_observations_after_cancel": [
+    [
+      {
+        "expected_start_ticks": 119520557,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3368828,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119520667,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3368967,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119522257,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3370070,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119522278,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3370074,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119522278,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3370075,
+        "present": false
+      }
+    ],
+    [
+      {
+        "expected_start_ticks": 119520557,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3368828,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119520667,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3368967,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119522257,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3370070,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119522278,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3370074,
+        "present": false
+      },
+      {
+        "expected_start_ticks": 119522278,
+        "original_live": false,
+        "original_reaped_or_identity_reused": true,
+        "pid": 3370075,
+        "present": false
+      }
+    ]
+  ],
+  "partial_metadata_observations": [
+    {
+      "allocated_file_bytes": 4025950208,
+      "files": 2320,
+      "logical_bytes": 4017461806,
+      "metadata_sha256": "3bd79f52a442e92415bb99f2fafebde697892344810e9382da0fdfa097691d41",
+      "observed_utc": "2026-11-08T06:11:38.295968+00:00"
+    },
+    {
+      "allocated_file_bytes": 4025950208,
+      "files": 2320,
+      "logical_bytes": 4017461806,
+      "metadata_sha256": "3bd79f52a442e92415bb99f2fafebde697892344810e9382da0fdfa097691d41",
+      "observed_utc": "2026-11-08T06:11:40.537629+00:00"
+    }
+  ],
+  "partial_metadata_stable_over_bounded_observation": true,
+  "proof_deadlines_changed": false,
+  "proof_generation_started": false,
+  "published_D3_written": false,
+  "registry_and_toolchain_reused": true,
+  "registry_exists": true,
+  "registry_path": "/home/qian-qi/.cargo/registry",
+  "schema": "TRNM-W1-OWNER-EMPTY-TARGET-PREPARATION1",
+  "scope_limit": "Known original Python/rsync births and original job cgroup were checked twice; metadata stability is an observation over this bounded interval, not an eternal no-write or historical wait/reap claim.",
+  "source_C5_owner_after": {
+    "bytes": 468126952,
+    "device": 2050,
+    "inode": 415622,
+    "mtime_ns": 1794113748434594589,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24"
+  },
+  "source_C5_owner_before": {
+    "bytes": 468126952,
+    "device": 2050,
+    "inode": 415622,
+    "mtime_ns": 1794113748434594589,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24"
+  },
+  "source_C5_owner_matches_required_sha256": true,
+  "source_C5_owner_unchanged_across_empty_preparation": true,
+  "source_worktree_written": false,
+  "target": "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b",
+  "target_device": 2050,
+  "target_entries": 0,
+  "target_files": 0,
+  "target_inode": 56126602,
+  "target_preexisted": false,
+  "tests_run": false,
+  "toolchain_exists": true,
+  "toolchain_path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu"
+}

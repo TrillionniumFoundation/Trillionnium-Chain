@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "--no-optional-locks",
+    "grep",
+    "-n",
+    "-E",
+    "pull_request\\.base\\.sha|expected-base|EXPECTED_BASE_SHA",
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "--",
+    ".github/workflows",
+    "scripts/ci"
+  ],
+  "exit": 0
+}

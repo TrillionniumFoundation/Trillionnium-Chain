@@ -1,0 +1,299 @@
+{
+  "actual_command_count": 10,
+  "actual_nonzero_commands": [],
+  "all_bound_outputs_match": true,
+  "audit_reran_tests": false,
+  "audit_reran_whole_source_guard": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c6-native-qualification-20261108-ec265b-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "metadata-native",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "metadata-verifier",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "compiler-version",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_w1_native_winner_v2",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "tests-native",
+      "outcomes": {
+        "named_rust": [
+          {
+            "name": "tests::full_material_rejects_noncanonical_and_incomplete_inputs",
+            "outcome": "ok"
+          },
+          {
+            "name": "tests::original_deadline_cannot_move_to_another_boot_or_gain_more_time",
+            "outcome": "ok"
+          }
+        ],
+        "python": [],
+        "rust": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "reported_duration": "0.00s",
+            "terminal": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--bin",
+        "w1-verify-v2",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "tests-verifier",
+      "outcomes": {
+        "named_rust": [
+          {
+            "name": "tests::expected_artifacts_are_exact_and_never_derived_from_receipt",
+            "outcome": "ok"
+          },
+          {
+            "name": "tests::historical_full_receipt_cannot_satisfy_v2_statement",
+            "outcome": "ok"
+          }
+        ],
+        "python": [],
+        "rust": [
+          {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2,
+            "reported_duration": "0.07s",
+            "terminal": "ok"
+          }
+        ]
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_w1_native_winner_v2",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "build-native",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--bin",
+        "w1-verify-v2",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "build-verifier",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c6-native-qualification-20261108-ec265b-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "native",
+  "durable_exit": 0,
+  "durable_job_id": "1a1b9d1f3a4-12894-1714",
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "1a7bec56da77f9d0fc0fc647adb618f705c42f03e7e40c2728773cc55844e352",
+  "overall_c6_qualification_complete": false,
+  "provenance": {
+    "binary_bindings": {
+      "native_winner": {
+        "bytes": 752472,
+        "cargo_fresh": false,
+        "copied": false,
+        "independently_rehashed": true,
+        "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/examples/pon_w1_native_winner_v2",
+        "sha256": "753c8c3610dcf0687e2d54f19e5c5b307dd54683bedabc7fe3d39eed57ee4b03"
+      },
+      "verifier": {
+        "bytes": 19353192,
+        "cargo_fresh": false,
+        "copied": false,
+        "independently_rehashed": true,
+        "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/w1-verify-v2",
+        "sha256": "f9de534d894e4d0e012d31055fdc4a626addd5efd12ad19d61ff9d7d9867e7a1"
+      }
+    },
+    "commands": 10,
+    "declared_empty_target_assertion_in_executed_driver": true,
+    "fresh_target_receipt_matches": true,
+    "independent_cleanroom_build": false,
+    "native_historical_243_not_rerun": true,
+    "preparation_receipt_not_counted_as_command": true,
+    "registry_cache_and_toolchain_reused": true
+  },
+  "python": {},
+  "qualifier_claimed_complete": true,
+  "rust": {
+    "failed": 0,
+    "ignored": 0,
+    "passed": 4
+  },
+  "schema": "TRNM-W1-C6-INDEPENDENT-COMPONENT-REVIEW1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_guards_before_after_exact_equal": true
+}

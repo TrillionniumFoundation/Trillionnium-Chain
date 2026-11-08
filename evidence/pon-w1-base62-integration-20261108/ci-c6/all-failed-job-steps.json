@@ -1,0 +1,2192 @@
+{
+  "all_found_heads_match_C6": true,
+  "all_original_failed_jobs_found": true,
+  "fetches": [
+    {
+      "api_total_count": 4,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886584/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:24.152640+00:00",
+      "returned_job_count": 4,
+      "started_utc": "2026-11-08T07:28:22.391033+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886584.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15256,
+        "path": "run-jobs/42457886584.raw.json",
+        "sha256": "77c3bfc1aa11716c24016c0c33dba0833ebb447ed47bac0708bd9c5b6e9e07d6"
+      }
+    },
+    {
+      "api_total_count": 23,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:25.021791+00:00",
+      "returned_job_count": 23,
+      "started_utc": "2026-11-08T07:28:22.390748+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886518.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 77893,
+        "path": "run-jobs/42457886518.raw.json",
+        "sha256": "a20468495fb99bb26485836671f014e4087fefd545aaff6a1ee196b247a5b9b6"
+      }
+    },
+    {
+      "api_total_count": 4,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886583/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:25.836188+00:00",
+      "returned_job_count": 4,
+      "started_utc": "2026-11-08T07:28:22.391664+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886583.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11656,
+        "path": "run-jobs/42457886583.raw.json",
+        "sha256": "8363a35488dcef8ab688ef10023e14f35d4ddb86bd7a34b21bb9015082b4a5fa"
+      }
+    },
+    {
+      "api_total_count": 14,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:27.127567+00:00",
+      "returned_job_count": 14,
+      "started_utc": "2026-11-08T07:28:22.391401+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886555.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 72499,
+        "path": "run-jobs/42457886555.raw.json",
+        "sha256": "b7829fdf9df473c5c8e527196129220602c729f1f9f055f5812faa45ccf10aa1"
+      }
+    },
+    {
+      "api_total_count": 4,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886533/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:30.969082+00:00",
+      "returned_job_count": 4,
+      "started_utc": "2026-11-08T07:28:27.129987+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886533.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11040,
+        "path": "run-jobs/42457886533.raw.json",
+        "sha256": "d6ab67afac4425ae024422fdc045ac08b2897779be7df45b9094293c2c798955"
+      }
+    },
+    {
+      "api_total_count": 6,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:31.120942+00:00",
+      "returned_job_count": 6,
+      "started_utc": "2026-11-08T07:28:24.153739+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886547.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15970,
+        "path": "run-jobs/42457886547.raw.json",
+        "sha256": "9f52679ef079fc8ff677b0bd35bcdfa8d4d6021c085a4911b1576c01d7ed5d94"
+      }
+    },
+    {
+      "api_total_count": 4,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886526/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:31.661875+00:00",
+      "returned_job_count": 4,
+      "started_utc": "2026-11-08T07:28:25.837832+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886526.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 30364,
+        "path": "run-jobs/42457886526.raw.json",
+        "sha256": "76f044f878930dff4446bdf41530efe8d690969160f6b7c70c3bb10ebd15834a"
+      }
+    },
+    {
+      "api_total_count": 4,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886520/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:33.047745+00:00",
+      "returned_job_count": 4,
+      "started_utc": "2026-11-08T07:28:25.190282+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886520.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 14752,
+        "path": "run-jobs/42457886520.raw.json",
+        "sha256": "6fcb50d85ea55f5dcdccd343f7abe4ee47ea9f92e57ff037de69cfceb825b44d"
+      }
+    },
+    {
+      "api_total_count": 8,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:33.772418+00:00",
+      "returned_job_count": 8,
+      "started_utc": "2026-11-08T07:28:31.121908+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886523.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 23556,
+        "path": "run-jobs/42457886523.raw.json",
+        "sha256": "c2036f57e116e94221344b22fc1a5c817334b47dca1389003f7fb8f3521ab7bd"
+      }
+    },
+    {
+      "api_total_count": 4,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886519/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:34.156455+00:00",
+      "returned_job_count": 4,
+      "started_utc": "2026-11-08T07:28:30.970583+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886519.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 16180,
+        "path": "run-jobs/42457886519.raw.json",
+        "sha256": "46f85dcb0a1c1993a7279c7f21fa5893f07f6b6703af48202c7443a56aa7d524"
+      }
+    },
+    {
+      "api_total_count": 1,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886542/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:34.991422+00:00",
+      "returned_job_count": 1,
+      "started_utc": "2026-11-08T07:28:31.663111+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886542.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2854,
+        "path": "run-jobs/42457886542.raw.json",
+        "sha256": "7de7d247f2e5282e6cfb188fb4e44334981da6ed8376012ea4d9748afd192d8d"
+      }
+    },
+    {
+      "api_total_count": 6,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:35.001159+00:00",
+      "returned_job_count": 6,
+      "started_utc": "2026-11-08T07:28:33.048418+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886506.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 19236,
+        "path": "run-jobs/42457886506.raw.json",
+        "sha256": "3b2dfaf850d3b9397cdde54be17584f8d03666727a88ebb92c60d4afbd6dc699"
+      }
+    },
+    {
+      "api_total_count": 2,
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886532/jobs?per_page=100"
+      ],
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:28:35.529425+00:00",
+      "returned_job_count": 2,
+      "started_utc": "2026-11-08T07:28:33.773060+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "run-jobs/42457886532.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 11039,
+        "path": "run-jobs/42457886532.raw.json",
+        "sha256": "3ce1e1d61e52538e30d4592119956c6f8a5e12be253b7997f4f82f68dd11571b"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:46Z",
+          "conclusion": "failure",
+          "name": "Verify actual immutable source and unchanged original preflight",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:46Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:46Z",
+          "conclusion": "failure",
+          "name": "Recompute existing native counters without claiming saturation",
+          "number": 10,
+          "started_at": "2026-11-08T07:16:46Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:46Z",
+          "conclusion": "failure",
+          "name": "Recheck source even after failures",
+          "number": 11,
+          "started_at": "2026-11-08T07:16:46Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:47Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 12,
+          "started_at": "2026-11-08T07:16:46Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701788,
+      "name": "reference (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886584",
+      "skipped_steps": [
+        "Install existing frozen conformance environment",
+        "Execute all reference, recovery and separate-reader controls",
+        "Preserve original signed learning suites and execute actual V3 join",
+        "Build original native pipeline without changing runtime",
+        "Require each native certificate and separate-reference selector to execute",
+        "Observe every original hot disjoint and growth baseline; preserve failures"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:40Z",
+          "conclusion": "failure",
+          "name": "Verify actual immutable source and unchanged original preflight",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:40Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:40Z",
+          "conclusion": "failure",
+          "name": "Recompute existing native counters without claiming saturation",
+          "number": 10,
+          "started_at": "2026-11-08T07:16:40Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:40Z",
+          "conclusion": "failure",
+          "name": "Recheck source even after failures",
+          "number": 11,
+          "started_at": "2026-11-08T07:16:40Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:40Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 12,
+          "started_at": "2026-11-08T07:16:40Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701752,
+      "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886584",
+      "skipped_steps": [
+        "Install existing frozen conformance environment",
+        "Execute all reference, recovery and separate-reader controls",
+        "Preserve original signed learning suites and execute actual V3 join",
+        "Build original native pipeline without changing runtime",
+        "Require each native certificate and separate-reference selector to execute",
+        "Observe every original hot disjoint and growth baseline; preserve failures"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:27Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:27Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:28Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 13,
+          "started_at": "2026-11-08T07:16:27Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660702000,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Execute reader rejection controls",
+        "Verify actual locked graph and formatting",
+        "Run complete W1 module tests and strict primitive lint",
+        "Execute complete false trace reuse campaign",
+        "Execute additional complete full-limb comparison",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:19:34Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:19:33Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:19:34Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 10,
+          "started_at": "2026-11-08T07:19:34Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701997,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Verify complete legal-cost readers and native controls",
+        "Execute all thirty original-budget legal strategy shards",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:18:07Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:18:07Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:18:07Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 10,
+          "started_at": "2026-11-08T07:18:07Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701995,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Verify complete legal-cost readers and native controls",
+        "Execute all thirty original-budget legal strategy shards",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:18:53Z",
+          "conclusion": "failure",
+          "name": "Reserve records and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:18:53Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:18:53Z",
+          "conclusion": "failure",
+          "name": "Retain every cost, binary and failed attempt",
+          "number": 12,
+          "started_at": "2026-11-08T07:18:53Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701957,
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Require reader and real process-owner failure controls",
+        "Verify actual locked graph and formatting",
+        "Execute complete kernel and actual batch controls",
+        "Execute all sixty-six shards with the original command budgets",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:19:20Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:19:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:19:20Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 10,
+          "started_at": "2026-11-08T07:19:20Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701943,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Verify complete legal-cost readers and native controls",
+        "Execute all thirty original-budget legal strategy shards",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:17:14Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:17:14Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:15Z",
+          "conclusion": "failure",
+          "name": "Retain both service outcomes and original Host evidence",
+          "number": 10,
+          "started_at": "2026-11-08T07:17:14Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701933,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install original pinned compiler",
+        "Run refusal controls for original Host and fresh successor",
+        "Execute original and fresh service with original Host resources",
+        "Verify observed source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact observed source",
+        "Post Checkout exact observed source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:19:43Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:19:42Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:19:43Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 10,
+          "started_at": "2026-11-08T07:19:43Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701927,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Verify complete legal-cost readers and native controls",
+        "Execute all thirty original-budget legal strategy shards",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:31Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:31Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:31Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 14,
+          "started_at": "2026-11-08T07:16:31Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701909,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Verify retained and factorial readers and command-owner failures",
+        "Verify actual locked graph and original formatting",
+        "Execute native producer, header, History and CPU cancellation controls",
+        "Prepare pinned provider required by native all-feature controls",
+        "Run strict native lint for all affected owners",
+        "Execute all thirty separate v3 shards under the original per-shard budget",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:18:09Z",
+          "conclusion": "failure",
+          "name": "Reserve records and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:18:09Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:18:09Z",
+          "conclusion": "failure",
+          "name": "Retain every cost, binary and failed attempt",
+          "number": 12,
+          "started_at": "2026-11-08T07:18:09Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701885,
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Require reader and real process-owner failure controls",
+        "Verify actual locked graph and formatting",
+        "Execute complete kernel and actual batch controls",
+        "Execute all sixty-six shards with the original command budgets",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:23Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:23Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:23Z",
+          "conclusion": "failure",
+          "name": "Retain costs, binaries and all failures",
+          "number": 13,
+          "started_at": "2026-11-08T07:16:23Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701856,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886518",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Execute reader rejection controls",
+        "Verify actual locked graph and formatting",
+        "Run complete W1 module tests and strict primitive lint",
+        "Execute complete false trace reuse campaign",
+        "Execute additional complete full-limb comparison",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact measured source",
+        "Post Checkout exact measured source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:17:34Z",
+          "conclusion": "failure",
+          "name": "Verify unchanged source and original project boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:17:34Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:34Z",
+          "conclusion": "failure",
+          "name": "Reverify exact source after every outcome",
+          "number": 7,
+          "started_at": "2026-11-08T07:17:34Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:35Z",
+          "conclusion": "failure",
+          "name": "Retain actual successes and failures",
+          "number": 8,
+          "started_at": "2026-11-08T07:17:34Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701601,
+      "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886583",
+      "skipped_steps": [
+        "Install the source-pinned native toolchain",
+        "Build the unchanged default release test binary",
+        "Run both original CPU budgets and actual reactor-exit regressions"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or actual target merge",
+        "Post Checkout the exact candidate or actual target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:17:21Z",
+          "conclusion": "failure",
+          "name": "Verify unchanged source and original project boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:17:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:21Z",
+          "conclusion": "failure",
+          "name": "Reverify exact source after every outcome",
+          "number": 7,
+          "started_at": "2026-11-08T07:17:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:21Z",
+          "conclusion": "failure",
+          "name": "Retain actual successes and failures",
+          "number": 8,
+          "started_at": "2026-11-08T07:17:21Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701409,
+      "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886583",
+      "skipped_steps": [
+        "Install the source-pinned native toolchain",
+        "Build the unchanged default release test binary",
+        "Run both original CPU budgets and actual reactor-exit regressions"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or actual target merge",
+        "Post Checkout the exact candidate or actual target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:17:26Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 4,
+          "started_at": "2026-11-08T07:17:26Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:27Z",
+          "conclusion": "failure",
+          "name": "Reverify exact unchanged source",
+          "number": 22,
+          "started_at": "2026-11-08T07:17:26Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:27Z",
+          "conclusion": "failure",
+          "name": "Retain successes, failures and unqualified external boundaries",
+          "number": 24,
+          "started_at": "2026-11-08T07:17:27Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701632,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install the source-pinned native toolchain",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or the actual PR target merge",
+        "Post Checkout the exact candidate or the actual PR target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:25Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:25Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:25Z",
+          "conclusion": "failure",
+          "name": "Reverify exact unchanged source",
+          "number": 22,
+          "started_at": "2026-11-08T07:16:25Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:26Z",
+          "conclusion": "failure",
+          "name": "Retain successes, failures and unqualified external boundaries",
+          "number": 24,
+          "started_at": "2026-11-08T07:16:25Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701606,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install the source-pinned native toolchain",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or the actual PR target merge",
+        "Post Checkout the exact candidate or the actual PR target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:17:20Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 4,
+          "started_at": "2026-11-08T07:17:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:20Z",
+          "conclusion": "failure",
+          "name": "Reverify exact unchanged source",
+          "number": 22,
+          "started_at": "2026-11-08T07:17:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:17:20Z",
+          "conclusion": "failure",
+          "name": "Retain successes, failures and unqualified external boundaries",
+          "number": 24,
+          "started_at": "2026-11-08T07:17:20Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701603,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install the source-pinned native toolchain",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or the actual PR target merge",
+        "Post Checkout the exact candidate or the actual PR target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:33Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:33Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:33Z",
+          "conclusion": "failure",
+          "name": "Reverify exact unchanged source",
+          "number": 22,
+          "started_at": "2026-11-08T07:16:33Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:33Z",
+          "conclusion": "failure",
+          "name": "Retain successes, failures and unqualified external boundaries",
+          "number": 24,
+          "started_at": "2026-11-08T07:16:33Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701599,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install the source-pinned native toolchain",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or the actual PR target merge",
+        "Post Checkout the exact candidate or the actual PR target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:28Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:28Z",
+          "conclusion": "failure",
+          "name": "Reverify exact unchanged source",
+          "number": 22,
+          "started_at": "2026-11-08T07:16:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:29Z",
+          "conclusion": "failure",
+          "name": "Retain successes, failures and unqualified external boundaries",
+          "number": 24,
+          "started_at": "2026-11-08T07:16:28Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701592,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install the source-pinned native toolchain",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or the actual PR target merge",
+        "Post Checkout the exact candidate or the actual PR target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:43Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 4,
+          "started_at": "2026-11-08T07:16:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:44Z",
+          "conclusion": "failure",
+          "name": "Reverify exact unchanged source",
+          "number": 22,
+          "started_at": "2026-11-08T07:16:43Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:44Z",
+          "conclusion": "failure",
+          "name": "Retain successes, failures and unqualified external boundaries",
+          "number": 24,
+          "started_at": "2026-11-08T07:16:44Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701543,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "role": "prospective-merge",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install the source-pinned native toolchain",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or the actual PR target merge",
+        "Post Checkout the exact candidate or the actual PR target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:49Z",
+          "conclusion": "failure",
+          "name": "Retrieve exact historical failed artifact without reclassifying it",
+          "number": 2,
+          "started_at": "2026-11-08T07:15:48Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701340,
+      "name": "retained-pressure-failure",
+      "role": "unlabelled",
+      "run_id": "42457886555",
+      "skipped_steps": [
+        "Expose bounded original honest-submit and state diagnostics"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:13Z",
+          "conclusion": "failure",
+          "name": "Bind actual source and retain original preflight",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:13Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:13Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 7,
+          "started_at": "2026-11-08T07:16:13Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701306,
+      "name": "parent evidence (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886533",
+      "skipped_steps": [
+        "Prepare existing model verifier dependencies",
+        "Execute original and strict parent-bound owners",
+        "Recheck source and retain replayable exact reference sources"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:21Z",
+          "conclusion": "failure",
+          "name": "Bind actual source and retain original preflight",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:21Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 7,
+          "started_at": "2026-11-08T07:15:21Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701271,
+      "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886533",
+      "skipped_steps": [
+        "Prepare existing model verifier dependencies",
+        "Execute original and strict parent-bound owners",
+        "Recheck source and retain replayable exact reference sources"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:03Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:03Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:03Z",
+          "conclusion": "failure",
+          "name": "Reverify unchanged tested source",
+          "number": 9,
+          "started_at": "2026-11-08T07:16:03Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:04Z",
+          "conclusion": "failure",
+          "name": "Retain current native results including every failure",
+          "number": 10,
+          "started_at": "2026-11-08T07:16:03Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701441,
+      "name": "native boundary (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886547",
+      "skipped_steps": [
+        "Install source-pinned compiler and lint tools",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Preserve exact formatter diagnostics without changing source",
+        "Execute strict native all-target Clippy before long campaigns",
+        "Execute original accounting and new cooffered depletion regressions"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact current source or actual target merge",
+        "Post Checkout exact current source or actual target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:18:14Z",
+          "conclusion": "failure",
+          "name": "Verify source and original project boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:18:13Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:18:14Z",
+          "conclusion": "failure",
+          "name": "Reverify unchanged tested source",
+          "number": 9,
+          "started_at": "2026-11-08T07:18:14Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:18:14Z",
+          "conclusion": "failure",
+          "name": "Retain current native results including every failure",
+          "number": 10,
+          "started_at": "2026-11-08T07:18:14Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701420,
+      "name": "native boundary (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886547",
+      "skipped_steps": [
+        "Install source-pinned compiler and lint tools",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Preserve exact formatter diagnostics without changing source",
+        "Execute strict native all-target Clippy before long campaigns",
+        "Execute original accounting and new cooffered depletion regressions"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact current source or actual target merge",
+        "Post Checkout exact current source or actual target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:22Z",
+          "conclusion": "failure",
+          "name": "Verify exact source, ordered actual main merge and full repository boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:14:21Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:14:22Z",
+          "conclusion": "failure",
+          "name": "Recheck unchanged exact source and hash all native logs",
+          "number": 28,
+          "started_at": "2026-11-08T07:14:22Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701319,
+      "name": "recent batch (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886526",
+      "skipped_steps": [
+        "Execute conditional query accounting and anytime-bound counterexamples",
+        "Reject incomplete, ambiguous or incorrectly bound cache observations",
+        "Install original pinned native compiler and lint tools",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Check committed formatting without rewriting source",
+        "Require bounded ordinary record copies and complete history controls",
+        "Execute complete original error-boundary suite and all new controls",
+        "Execute all original authenticated owner controls and five snapshot regressions",
+        "Retain authenticated record, ancestry and cold recovery coverage",
+        "Require all five statement-reuse controls and complete-call observations separately",
+        "Require every cached block, parent, commitment and snapshot owner control",
+        "Require live public owner mutation, admission rollback and cold reopen controls",
+        "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+        "Reject empty nullable BLOB corruption through original native owners",
+        "Keep settings-selected task observations and original legacy readback",
+        "Preserve operator packet authorization and complete stored digests",
+        "Bound initialization intent reads and reject path substitutions",
+        "Preserve original source-preserving migration coverage",
+        "Preserve pending confirmation ownership and joined shutdown on failures",
+        "Execute real pipeline boundaries without claiming saturation throughput",
+        "Require non-committing proof reads and actual nonce snapshot callers",
+        "Execute public TCP business confirmation under rotating false work",
+        "Check complete native target lint",
+        "Retain reproducible source and native replay executable",
+        "Bind complete native cache observations to the unchanged tested source"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:20Z",
+          "conclusion": "failure",
+          "name": "Verify exact source, ordered actual main merge and full repository boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:14:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:14:20Z",
+          "conclusion": "failure",
+          "name": "Recheck unchanged exact source and hash all native logs",
+          "number": 28,
+          "started_at": "2026-11-08T07:14:20Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701166,
+      "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886526",
+      "skipped_steps": [
+        "Execute conditional query accounting and anytime-bound counterexamples",
+        "Reject incomplete, ambiguous or incorrectly bound cache observations",
+        "Install original pinned native compiler and lint tools",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Check committed formatting without rewriting source",
+        "Require bounded ordinary record copies and complete history controls",
+        "Execute complete original error-boundary suite and all new controls",
+        "Execute all original authenticated owner controls and five snapshot regressions",
+        "Retain authenticated record, ancestry and cold recovery coverage",
+        "Require all five statement-reuse controls and complete-call observations separately",
+        "Require every cached block, parent, commitment and snapshot owner control",
+        "Require live public owner mutation, admission rollback and cold reopen controls",
+        "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+        "Reject empty nullable BLOB corruption through original native owners",
+        "Keep settings-selected task observations and original legacy readback",
+        "Preserve operator packet authorization and complete stored digests",
+        "Bound initialization intent reads and reject path substitutions",
+        "Preserve original source-preserving migration coverage",
+        "Preserve pending confirmation ownership and joined shutdown on failures",
+        "Execute real pipeline boundaries without claiming saturation throughput",
+        "Require non-committing proof reads and actual nonce snapshot callers",
+        "Execute public TCP business confirmation under rotating false work",
+        "Check complete native target lint",
+        "Retain reproducible source and native replay executable",
+        "Bind complete native cache observations to the unchanged tested source"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:17Z",
+          "conclusion": "failure",
+          "name": "Verify unchanged source and original project boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:17Z",
+          "conclusion": "failure",
+          "name": "Reverify exact source after every outcome",
+          "number": 12,
+          "started_at": "2026-11-08T07:15:17Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:17Z",
+          "conclusion": "failure",
+          "name": "Retain actual successes and failures",
+          "number": 13,
+          "started_at": "2026-11-08T07:15:17Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701347,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886520",
+      "skipped_steps": [
+        "Install the source-pinned native toolchain",
+        "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+        "Build the original complete workspace in the unchanged test profile",
+        "Execute both original test-profile CPU selectors and reactor-exit controls",
+        "Execute selected arithmetic canonical and reorg semantic controls",
+        "Observe fixed touched owners across actual account and history growth",
+        "Recheck the same test ELF after success or failure",
+        "Recheck the same M06 test ELF after success or failure"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or actual target merge",
+        "Post Checkout the exact candidate or actual target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:12Z",
+          "conclusion": "failure",
+          "name": "Verify unchanged source and original project boundary",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:12Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:12Z",
+          "conclusion": "failure",
+          "name": "Reverify exact source after every outcome",
+          "number": 12,
+          "started_at": "2026-11-08T07:15:12Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:12Z",
+          "conclusion": "failure",
+          "name": "Retain actual successes and failures",
+          "number": 13,
+          "started_at": "2026-11-08T07:15:12Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701285,
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886520",
+      "skipped_steps": [
+        "Install the source-pinned native toolchain",
+        "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+        "Build the original complete workspace in the unchanged test profile",
+        "Execute both original test-profile CPU selectors and reactor-exit controls",
+        "Execute selected arithmetic canonical and reorg semantic controls",
+        "Observe fixed touched owners across actual account and history growth",
+        "Recheck the same test ELF after success or failure",
+        "Recheck the same M06 test ELF after success or failure"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout the exact candidate or actual target merge",
+        "Post Checkout the exact candidate or actual target merge",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:27Z",
+          "conclusion": "failure",
+          "name": "Verify actual source and ordered main merge",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:27Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:27Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 7,
+          "started_at": "2026-11-08T07:15:27Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701243,
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_steps": [
+        "Select the real GNU time observer on macOS",
+        "Run complete original owners and every cleanup regression",
+        "Preserve unchanged source and precise scope"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:39Z",
+          "conclusion": "failure",
+          "name": "Verify actual source and original native ABI",
+          "number": 4,
+          "started_at": "2026-11-08T07:15:39Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:39Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 10,
+          "started_at": "2026-11-08T07:15:39Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701236,
+      "name": "aggregate-owner-controls (prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_steps": [
+        "Execute every original aggregate owner control and charge-wait regression",
+        "Exercise fresh host namespace contract without creating a native scope",
+        "Exercise same-owner child preparation without native cgroup effects",
+        "Exercise original native handoff and private host controller mechanics",
+        "Preserve exact source after controls",
+        "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+        "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:21Z",
+          "conclusion": "failure",
+          "name": "Verify actual source and ordered main merge",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:20Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:21Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 7,
+          "started_at": "2026-11-08T07:15:21Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701207,
+      "name": "cleanup (macos-15, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_steps": [
+        "Select the real GNU time observer on macOS",
+        "Run complete original owners and every cleanup regression",
+        "Preserve unchanged source and precise scope"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:56Z",
+          "conclusion": "failure",
+          "name": "Verify actual source and ordered main merge",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:55Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:56Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 7,
+          "started_at": "2026-11-08T07:15:56Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701190,
+      "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886523",
+      "skipped_steps": [
+        "Select the real GNU time observer on macOS",
+        "Run complete original owners and every cleanup regression",
+        "Preserve unchanged source and precise scope"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:55Z",
+          "conclusion": "failure",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:54Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701244,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886519",
+      "skipped_steps": [
+        "Require retained source and claim controls",
+        "Install the original pinned compiler",
+        "Prepare the independently pinned OpenSSL provider",
+        "Record compiler, exact locked graph and formatting",
+        "Execute every required native effect and rejection control",
+        "Require original transaction scope controls",
+        "Require actual build-fence cache requalification",
+        "Preserve native control records before the complete regression",
+        "Preserve the complete original Node library regression suite",
+        "Check strict Clippy without rewriting source",
+        "Observe complete component costs with unchanged native budgets"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Preserve complete records including failures",
+        "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:23Z",
+          "conclusion": "failure",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:23Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701090,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886519",
+      "skipped_steps": [
+        "Require retained source and claim controls",
+        "Install the original pinned compiler",
+        "Prepare the independently pinned OpenSSL provider",
+        "Record compiler, exact locked graph and formatting",
+        "Execute every required native effect and rejection control",
+        "Require original transaction scope controls",
+        "Require actual build-fence cache requalification",
+        "Preserve native control records before the complete regression",
+        "Preserve the complete original Node library regression suite",
+        "Check strict Clippy without rewriting source",
+        "Observe complete component costs with unchanged native budgets"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Preserve complete records including failures",
+        "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:22Z",
+          "conclusion": "failure",
+          "name": "Export exact PR analyses with the existing read-only token",
+          "number": 5,
+          "started_at": "2026-11-08T07:14:21Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701162,
+      "name": "export",
+      "role": "unlabelled",
+      "run_id": "42457886542",
+      "skipped_steps": [],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Reserve a fresh evidence directory",
+        "Checkout the immutable exporter source",
+        "Verify exporter source before reading existing analyses",
+        "Verify unchanged exporter source",
+        "Hash all available evidence, including failures",
+        "Preserve metadata, API SARIF subsets and partial failures",
+        "Post Checkout the immutable exporter source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:20Z",
+          "conclusion": "failure",
+          "name": "Refuse any other source identity",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:19Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:16:20Z",
+          "conclusion": "failure",
+          "name": "Retain exact-source local SARIF for independent review",
+          "number": 9,
+          "started_at": "2026-11-08T07:16:20Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701119,
+      "name": "CodeQL local SARIF (rust, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886506",
+      "skipped_steps": [
+        "Initialize pinned official CodeQL",
+        "Generate local exact-source SARIF for exact source SHA",
+        "Verify generated SARIF is present and parseable",
+        "Retain post-analysis worktree observations",
+        "Verify analyzed source stayed unchanged"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact event source",
+        "Post Checkout exact event source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:30Z",
+          "conclusion": "failure",
+          "name": "Refuse any other source identity",
+          "number": 3,
+          "started_at": "2026-11-08T07:14:29Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:14:30Z",
+          "conclusion": "failure",
+          "name": "Retain exact-source local SARIF for independent review",
+          "number": 9,
+          "started_at": "2026-11-08T07:14:30Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701102,
+      "name": "CodeQL local SARIF (actions, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886506",
+      "skipped_steps": [
+        "Initialize pinned official CodeQL",
+        "Generate local exact-source SARIF for exact source SHA",
+        "Verify generated SARIF is present and parseable",
+        "Retain post-analysis worktree observations",
+        "Verify analyzed source stayed unchanged"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact event source",
+        "Post Checkout exact event source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:27Z",
+          "conclusion": "failure",
+          "name": "Refuse any other source identity",
+          "number": 3,
+          "started_at": "2026-11-08T07:14:27Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:14:27Z",
+          "conclusion": "failure",
+          "name": "Retain exact-source local SARIF for independent review",
+          "number": 9,
+          "started_at": "2026-11-08T07:14:27Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701001,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "role": "prospective-merge",
+      "run_id": "42457886506",
+      "skipped_steps": [
+        "Initialize pinned official CodeQL",
+        "Generate local exact-source SARIF for exact source SHA",
+        "Verify generated SARIF is present and parseable",
+        "Retain post-analysis worktree observations",
+        "Verify analyzed source stayed unchanged"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact event source",
+        "Post Checkout exact event source",
+        "Complete job"
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:26Z",
+          "conclusion": "failure",
+          "name": "Reserve observations and verify ordered source identity",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:26Z",
+          "status": "completed"
+        }
+      ],
+      "found": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701100,
+      "name": "W1 transparent candidate (prospective-merge, x64)",
+      "role": "prospective-merge",
+      "run_id": "42457886532",
+      "skipped_steps": [
+        "Install pinned compiler and retain tool identities",
+        "Execute source identity rejection controls",
+        "Execute all 24 saved-proof observer controls",
+        "Execute all seven offline source-map controls",
+        "Execute staged lifecycle and complete-observation rejection controls",
+        "Execute exact-source component-budget rejection controls",
+        "Verify and build the independent native crate",
+        "Verify and build the independent hardened verifier crate",
+        "Verify and build the independent v2 verifier without a guest build",
+        "Execute eleven actual full-v2 receiver and cancellation controls",
+        "Reproduce the component-budget report with its unqualified boundary",
+        "Reproduce the bounded source map without network access",
+        "Observe the compiled profile and its unqualified boundary",
+        "Retain all 42 actual saved-proof acceptance and rejection controls",
+        "Compare the saved proof under one shared 120-second deadline",
+        "Verify measured source after execution"
+      ],
+      "status": "completed",
+      "successful_steps": [
+        "Set up job",
+        "Checkout exact candidate without persistent credentials",
+        "Record completed, failed and skipped observations",
+        "Retain source identities, binaries, logs and all failures",
+        "Post Checkout exact candidate without persistent credentials",
+        "Complete job"
+      ]
+    }
+  ],
+  "no_workflow_reruns_or_changes": true,
+  "role_labels_come_from_snapshot_check_names": true,
+  "schema": "TRNM-W1-C6-SNAPSHOT-FAILED-JOB-STEPS1",
+  "snapshot_failures": 40
+}

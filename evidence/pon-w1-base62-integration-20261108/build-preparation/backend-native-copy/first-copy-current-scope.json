@@ -1,0 +1,21 @@
+{
+  "all_historical_child_births_captured": false,
+  "all_historical_wait_reaped": null,
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "current_matching_native_copy_processes": [],
+  "known_pids": [
+    {
+      "pid": 3365781,
+      "present": false
+    },
+    {
+      "pid": 3365799,
+      "present": false
+    }
+  ],
+  "original_cgroup_exists": false,
+  "original_cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bc6a15-12894-1677.service",
+  "original_job_id": "1a1b9bc6a15-12894-1677",
+  "schema": "TRNM-W1-C6-COPY-CURRENT-SCOPE1",
+  "signals_sent": 0
+}

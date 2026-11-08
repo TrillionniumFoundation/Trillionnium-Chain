@@ -1,0 +1,12 @@
+{
+  "first_response": "MCP request timed out",
+  "same_idempotency_readback": {
+    "job_id": "1a1b9ba3814-12894-1665",
+    "reused": true,
+    "retried_launch": false,
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true
+  },
+  "duplicate_job_started": false
+}

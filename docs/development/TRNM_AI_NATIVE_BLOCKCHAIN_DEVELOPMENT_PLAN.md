@@ -7835,3 +7835,22 @@ Done 仅是派发终态，consumed=null、全资源 cap 保留、provider 未付
 四门证据收口到 [C5 事后 attestation](../../evidence/pon-w1-four-gates-20261108/README.md) 与其机器总表。80 行仍为旧 receipt 的 verification-only；完整生成 ABBA 只有参数草案，冻结 source/ELF pins 为 null、未绑定 C5，也没有执行。原 winner 的保留原件未提供匹配的合法 Node 父状态及事务上下文，且 PNH1/PGH2 challenge 域不同，须先建立同候选 admission/proving 接口。原业务预算、正向结算付款、部署收益和完整密码学/协议安全资格均 HOLD；本事后文档提交不改写被测 C5 源码身份。
 
 同一 C5 head 的远端 CI 另行保留本轮新失败：05:20 UTC 快照的 8 个已完成失败 job 均已只读取得原日志。一个因历史 artifact 不存在而未运行诊断；3 次实际 native campaign 的 9 个原 30 秒阶段均 finite=false；fresh-service head/merge 的 original/fresh 4 个 baseline 各及时确认1笔，而4个16-worker压力阶段均0笔；4个protocol/cost job唯一失败为CONFIRMATION_TARGET。三处protocol压力报告PUBLIC_REQUEST_DEADLINE，merge错误数组为空；fresh压力最后replay虽accepted仍无及时六层确认。所有类别与C3旧结果、570项本地普通测试分开，不推断全部CI终态或因果回归；详细原件见[当前C5 CI](../../evidence/pon-w1-four-gates-20261108/ci-c5/README.md)。
+
+### 2026-11-08：保持 C5 原件，整合并发推进的 base62
+
+C5 034aa74358e0a5fa33f33e83cb63669e9738da4b 已完成精确本地资格及新的真实昂贵 original-deadline→Failure Unknown→owner取消/本金退款→原Cancel重组恢复→独立cold；[冻结C5事后证据](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/05d8bb25dacab1d6589fa86061e6c23220b96b1d/evidence/pon-w1-four-gates-20261108/README.md) 保留570普通测试通过、4个ignored另列及全部原操作/deadline。Done只闭合派发，资源未知且全cap保留，无provider付款；本轮完整生成样本仍未增加。
+
+发布读回发现integration base从cb314bb4656e5da4844325cd83994ab4764fe8e9并发推进至62d2d90c9e1f4c8450c89843f1e08360a24283ce。新的隔离候选整合genesis ReorgStep的staging arithmetic缓存保护及既有legacy reorg负控加强，保留完整SQL/root/ancestry校验。两份精确pin文件的三处冲突必须绑定合并后的实际store/workflow/test bytes，并保留C5全部645pins及新增profile路径；不通过选取旧一侧pin来冒充合并身份。
+
+C5 checkout、原目标缓存、两个已发布证据分支身份和所有旧操作均保持原事实。当前旧PR merge ref991168a783c3bf82e04f978091adbdc740998c47仍基于旧base，不能作为本新候选资格。新合并须在冻结提交后独立核对source、构建、严格控制和新的120秒研究操作，所有新clock/operation/二进制另行记录。此处不预先声称新候选资格、原业务预算或部署安全门通过；四门继续HOLD。
+
+
+### 2026-11-08：C6 精确复核、原期限昂贵超时重组与新事件源绑定边界
+
+实际运行源码为 C6 2bdd252aa6c300b7431b9ee897b254b7953cf562（tree ac3cb7171c429fa5e12e29ee16839fa6f49f1b81），父提交依次为 C5 与 base62。owner 空 target 构建、37 Rust PASS/4 ignored；native/verifier 4 PASS；真实receiver 11 PASS。core 首轮518方法中516 PASS/2 FAIL，保持整个core exit1；两条短fixture在spawn前耗尽原0.15/0.20秒预算。所有已知构建结束后仅一次不改source/argv/参数的完整32套隔离复核通过，30为重复通过、2补足；不改写原失败。backend原900秒124保留，第二次新1800秒资格预算、同失败cache复用后7命令符合预声明；源码探针在真实C6核验后预期unknown-stage exit1。五组件普通队列568 PASS/2 FAIL，隔离另32 PASS，累计600 PASS/2 FAIL是602次执行，不是600个新方法。
+
+全新generation operation 8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc 在原8CPU/8GiB、120秒预算下实际观察固定r0vm进入prove-batch-0000。原deadline1199343004629858未续期；target在1199343395352233以original-deadline/-9/stickyfalse终止。其后parent观察1199345345919711、Failure Unknown1199345481705597、owner请求1199345486900409顺序成立。研究本金1000退款、有效fork移除→Reserved1000、恢复同原Cancel以及独立cold均实际完成；主heavy1 PASS/123.43秒（含收尾），cold1 PASS/.35秒、0dispatch/0targetcancel/0nativetx。新statement/operation/Node目录与旧操作分开；固定NativeTask fixture的Cancel wire/packet与C5相同，不累计跨fixture本金为链上新收益。Done仅为派发终态，consumed=null/fullcap、无provider付款，历史全部wait/reap/GPU/memorypeak/资源计费未知。
+
+[C6事后证据](../../evidence/pon-w1-base62-integration-20261108/README.md) 保留完整原件、失败、构建来源与独立严格摘要核验。原[C5四门证据](../../evidence/pon-w1-four-gates-20261108/README.md)421个成员及清单自身422文件逐字节保留；新增完整proof0、完整生成ABBA未执行，原业务与全部部署/安全门仍HOLD。
+
+期间base又推进96a241bf43f6a46d35dfb3d4ced9594ed8ceca75；新增可执行历史诊断/Host辅助及pins5条，无production Rust src/M12/W1 generation改变。静态与实际GitHub merge tree均d73e57c9e7a5764a1ab33540c97af587bb6e4a69；实际merge7b4a63b6f08687e93270407772951aa71087ca3d parents=[96a241,C6]。07:19:50的85项CI快照40fail/10success/3skip/32running；38prospective在source绑定前置步骤失败，export另因ordered-parent guard失败（16离线tests通过），一项缺历史artifact。原事件base62与actual96不一致被严格拒绝，不改guard、不倒填事件，也不将skipped业务算成实测失败或通过。新候选正常整合base96后须另核新事件与源码资格；本事后文档不冒充被执行source。

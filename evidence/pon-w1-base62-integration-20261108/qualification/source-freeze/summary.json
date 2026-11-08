@@ -1,0 +1,188 @@
+{
+  "schema": "TRNM-W1-C6-FROZEN-SOURCE-READONLY-REVIEW1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+    "ordered_parents": [
+      "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+    ],
+    "clean_worktree_observed": true,
+    "changed_paths_from_c5": [
+      "M\t.github/workflows/pon-recent-batch-acceptance.yml",
+      "M\tconfig/pon/pq-cross-branch-corpus-v1.json",
+      "M\tdocs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "M\ttrillionnium/crates/trnm-pon-node/src/store.rs",
+      "M\ttrillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs"
+    ],
+    "store_and_legacy_test_match_previous_auto_merge": true,
+    "guards_unchanged_from_c5": [
+      {
+        "label": "guard_identity",
+        "path": "scripts/ci/verify_ci_source.py",
+        "bytes": 11231,
+        "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/ci/check_ci_contract.py",
+        "bytes": 95642,
+        "sha256": "4b3a83c39585c860486e21ab3cf7bee7439331680d3d53a47589749f18556131",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/ci/test_ci_contract.py",
+        "bytes": 107053,
+        "sha256": "4467bd4d6badc77143613a7d32ef2aab74ce6bfaeef07fecb559d0b14a30c417",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/ci/ci_job.sh",
+        "bytes": 28846,
+        "sha256": "02c9c9827d7478f9439c80ea0a45db75f530b9c946d7b140a64804e839da561d",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "bytes": 46910,
+        "sha256": "6702b23bc2e2b44984dc3fce339cf660c212555bfc3573c76bcbc95e5366abea",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/ci/test_pq_research_integration.py",
+        "bytes": 37829,
+        "sha256": "ef2771d261eee9e3fda73c0cf10edca20e47575b85ff10fe9e10de792af46335",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": ".github/workflows/pon-w1-transparent-profile.yml",
+        "bytes": 27935,
+        "sha256": "18cd9e2b710e79ffcfd86d5075fd57d35fd55ee76522dcbcebcf2e72aed4aeb8",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/run_w1_deployment_comparison.py",
+        "bytes": 18264,
+        "sha256": "9fa6b04517c392e77da4766dfd422a1df961b8a0d082206f0122e9b03ccf1e63",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/run_w1_receiver.py",
+        "bytes": 8315,
+        "sha256": "3dc98a97ea6de256c8cc567d9afc1650a22e2f54bc774fd45cb59460db3e0a46",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/audit_w1_deployment_comparison.py",
+        "bytes": 20938,
+        "sha256": "b881f25f78e2cafabcb1453f8e27645dc34dfe046134dfd76d508963f91b3de0",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/w1_generation_target_v2.py",
+        "bytes": 26876,
+        "sha256": "b82961b18d5ea15b05a8763008456e818766d24304442cb7a93ba3be527335ee",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/w1_owner_cancellation_v1.py",
+        "bytes": 22462,
+        "sha256": "7e238102fdc7cc7a0af3b9a53dcfc418049d09f24653294ef31199cbd5f210ec",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "scripts/w1_owned_process_collector_v1.py",
+        "bytes": 47663,
+        "sha256": "e250f1a75794c35d9583e55e56f159366b5d15fa13118d7a142d10a38fd6394f",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "bytes": 356303,
+        "sha256": "0f81413fb5938e9e304689ad908cf626d22e7a38f9b0364cdbfd87aac17626a2",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+        "bytes": 11742,
+        "sha256": "48fa0ec456a8090b1d471c2520a9b433baaf1cd4198f2451cab332153ba56859",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/task_owner.rs",
+        "bytes": 8314,
+        "sha256": "7434cc692edf2f6886e9fcd315d03000e06790672e34859334dc7f6fd0adce89",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/terminal.rs",
+        "bytes": 6405,
+        "sha256": "da8921eb63e0e6dc655c7d1ececcfd7fc897b61a650c5b9164094ad813601a79",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation.rs",
+        "bytes": 33626,
+        "sha256": "41c585a9fa7a2b71e601e0bf83b916609509925a94ee5194389496c0f3084601",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/timeout.rs",
+        "bytes": 17950,
+        "sha256": "7a0dd8ae3521630b79b64a0f0dfd7e9ab2e89cff2815895bf139d49918c9ed29",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      },
+      {
+        "label": "guard_identity",
+        "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "bytes": 41600,
+        "sha256": "7e5a13313da6c6e1ed69ce6f7f4b2a4a426a91d93f50817e555bed63db97a3e5",
+        "unchanged_from_c5": true,
+        "working_bytes_equal_c6": true
+      }
+    ]
+  },
+  "observed_job_id": "1a1b9d3837b-12894-171f",
+  "source_identity_scope": "Actual frozen commit/tree and working bytes read independently. Identity checks do not execute tests and do not confer runtime or deployment qualification.",
+  "checks_executed_no_tests": true,
+  "fresh_proofs_generated": 0,
+  "source_worktree_writes": false,
+  "old_c5_and_old_merge_qualification_reused_as_c6": false
+}

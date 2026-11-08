@@ -1,0 +1,95 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "--r0vm",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+    "source-binding-probe",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/source-binding-probe-does-not-create-checkpoint"
+  ],
+  "cargo_artifact": {
+    "executable": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "features": [
+      "default",
+      "retained-v2-guest",
+      "statement-v2"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/formal/pon-nakamoto-v1/w1_zkvm/host-v2/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/formal/pon-nakamoto-v1/w1_zkvm/host-v2#trnm-w1-zk-host-v2@0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 1,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": false
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "w1-staged-prover-v2",
+      "required-features": [
+        "statement-v2"
+      ],
+      "src_path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/formal/pon-nakamoto-v1/w1_zkvm/host-v2/../host/src/bin/w1-staged-prover.rs",
+      "test": true
+    }
+  },
+  "cargo_artifact_log": {
+    "bytes": 330479,
+    "path": "/home/qian-qi/work/chain-w1-c6-backend-qualification-20261108-ec265b-02/build.stdout",
+    "sha256": "06a7bad64040afbfdbb4683c4c70a0e17557e43e406573bd31b11b3831f16a84"
+  },
+  "checkpoint_path_created": false,
+  "exit": 1,
+  "proof_launched": false,
+  "raw_source_identity_records": [
+    {
+      "identity": {
+        "base": null,
+        "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683087594,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "stage": "RAW_COMMITTED_SOURCE_VERIFIED"
+    }
+  ],
+  "runner": {
+    "bytes": 47812232,
+    "path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "sha256": "9ff491a702f6833a73c10129d688ad77a905fc7ebaedfbc8784c7f8c485b77ac"
+  },
+  "schema": "TRNM-W1-RUNNER-SOURCE-PROBE1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_probe_stage_intentionally_unknown": true,
+  "stderr": {
+    "bytes": 21,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runner-source-probe.stderr",
+    "sha256": "3f3f0f1e2ceea949f6c2329349c6e89854042da7956a58ff2744bcd409b608ae"
+  },
+  "stdout": {
+    "bytes": 888,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runner-source-probe.stdout",
+    "sha256": "a0bdfb0529dbad06d2d81c94b00fba70e1250a66a39326a6e193d72ba50c6b99"
+  }
+}

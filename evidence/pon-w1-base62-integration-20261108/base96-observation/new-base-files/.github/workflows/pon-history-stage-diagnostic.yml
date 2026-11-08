@@ -1,0 +1,74 @@
+name: PoN independent History stage diagnostic
+on:
+  push:
+    branches: [fix/chain-six-axis-performance-20261103]
+    paths:
+      - .github/workflows/pon-history-stage-diagnostic.yml
+      - scripts/ci/run_history_diagnostic.py
+      - scripts/ci/test_history_stage_diagnostic.py
+      - trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs
+permissions:
+  contents: read
+concurrency:
+  group: pon-history-stage-diagnostic-${{ github.sha }}
+  cancel-in-progress: false
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  diagnostic:
+    name: Instrumented History x64 replica ${{ matrix.replica }} (not qualification)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2]
+    env:
+      SOURCE_KIND: head
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind exact diagnostic source
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$RUNNER_TEMP/history-stage-diagnostic"
+          mkdir -p "$TRNM_CI_RECEIPT_DIR"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$TRNM_CI_RECEIPT_DIR" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-history-diagnostic\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-history-diagnostic\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$TRNM_CI_RECEIPT_DIR/source.json"
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/test_history_stage_diagnostic.py
+          python3 scripts/ci/test_from_zero_host_ci.py
+      - name: Retain non-authoritative host hardware context
+        shell: bash
+        run: |
+          set -euo pipefail
+          lscpu --json > "$TRNM_CI_RECEIPT_DIR/lscpu.json"
+          uname -srmo > "$TRNM_CI_RECEIPT_DIR/kernel.txt"
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Prepare instrumented binary outside measurement
+        id: build
+        run: python3 scripts/ci/run_history_diagnostic.py --prepare --out "$TRNM_CI_RECEIPT_DIR/history-diagnostic"
+      - name: Execute original resource limits with every diagnostic failure retained
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_diagnostic.py --out "$TRNM_CI_RECEIPT_DIR/history-diagnostic"
+      - name: Retain every replica, including failed or partial observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: history-stage-diagnostic-x64-${{ matrix.replica }}-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/history-stage-diagnostic
+          if-no-files-found: error
+          retention-days: 30

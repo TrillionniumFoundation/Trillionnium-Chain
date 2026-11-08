@@ -1,0 +1,22 @@
+{
+  "component": "native",
+  "files": [
+    {
+      "bytes": 159447,
+      "path": "raw-logs.tar.gz",
+      "sha256": "9b5a31120845147769c2aa9ae539c3cf3fabf31f38ea47142fe0824a49aeb26f"
+    },
+    {
+      "bytes": 7281,
+      "path": "raw-output-index.json",
+      "sha256": "25a7e9595c0f08c0f55ee8fbe93b8970ec18dc4d22a921f15cd6890b0f2e2eb8"
+    },
+    {
+      "bytes": 8400,
+      "path": "summary.json",
+      "sha256": "2bf621a21222188d1b0797eac80bbecc6f39312cee7a1147ca5bef267138f78a"
+    }
+  ],
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1",
+  "scope": "explicit raw logs, manifests and safe provenance; no ELF, SQLite, environment dump, state tree or credentials"
+}

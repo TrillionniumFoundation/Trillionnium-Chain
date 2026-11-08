@@ -1,0 +1,25 @@
+{
+  "schema": "TRNM-W1-C6-OWNER-ARTIFACT1",
+  "source_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "source_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+  "qualification_manifest": {
+    "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/manifest.json",
+    "sha256": "5a5b7d7ef41a5cf4f5429ef420326777706aae54e4bd88eabf83658530b85b3f"
+  },
+  "compiler_artifact_stdout": {
+    "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/13-owner-no-run-json.stdout",
+    "bytes": 107329,
+    "sha256": "f1bf1b68c6ad21c93c06b1179078ce9ba835651bc59b82b465d0e2918fec4acd"
+  },
+  "owner_executable": {
+    "path": "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "66190e5b704edc538b42d18ef12750d134f85ae6da4eb42122681f814cd4efa6",
+    "bytes": 467878704,
+    "device": 2050,
+    "inode": 56409764,
+    "mtime_ns": 1794119292745689250,
+    "nlink": 1
+  },
+  "fresh_cargo_target": true,
+  "cache_basis": "new empty Cargo target; existing registry sources and toolchain retained; not an isolated cleanroom build"
+}

@@ -1,0 +1,412 @@
+{
+  "critical_counterevidence_found": false,
+  "distinct_scope": {
+    "cumulative_2000_units_claimed": false,
+    "executed_driver_requires_new_absent_out_target_and_node": true,
+    "globally_new_chain_funds_claimed": false,
+    "new_generation_operation_and_statement": true,
+    "new_research_node_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/research-node",
+    "same_deterministic_native_cancel_bytes_as_c5": true,
+    "same_native_cancel_id_as_c5": true,
+    "same_new_node_or_operation_as_c5": false
+  },
+  "findings": {
+    "cancel_removed_reserved_units": 1000,
+    "cold_target_readback_exact": true,
+    "full_original_resource_cap_retained": {
+      "cpu_ns": 960000000000,
+      "gpu_ns": 240000000000,
+      "memory_peak_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "gross_research_principal_refund_units": 1000,
+    "m12_cancel_accepted_observed": true,
+    "m12_cancel_journal_event_new": null,
+    "m12_cancel_new_event_proven": false,
+    "m12_dispatch_done_is_not_cap_release_or_settlement": true,
+    "native_cancel_inclusion": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+    "native_cancel_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "native_cancel_packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+    "native_cancel_wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d",
+    "natural_deadline_precedes_unknown_failure_and_explicit_owner_veto": true,
+    "net_account_delta_claimed": false,
+    "new_dispatches_or_target_cancel_or_native_transactions_in_reorg_and_cold": 0,
+    "node_positive": false,
+    "owner_balance_after_cancel": 9999290,
+    "owner_balance_while_cancel_removed": 9998581,
+    "provider_balance_unchanged_asserted_by_pinned_successful_owner": true,
+    "provider_payment_observed": false,
+    "real_segment_proving_started_indices": [
+      1,
+      0
+    ],
+    "restored_cancel_remaining": 0,
+    "same_original_cancel_observation_restored_and_cold_exact": true,
+    "target_cancel_request_sent": false,
+    "unknown_resources_consumed": null
+  },
+  "independent_digest_recomputation": {
+    "full_canonical_request_sha256": "5c4ccea91866b42480652e5a62faa4473f26758c2da07a1d55fe5d26d3253dfc",
+    "normalized_request_sha256": "3a71e443ae0ebe6d2c8310bf2b974bd0518f62c256541af4e9ecad7130591350",
+    "runtime_evidence_digest": "545bfc5d2537aee23a885d24373a121913d8c841a14001e508a0c2e6a0bdbf24",
+    "typed_terminal_evidence_digest": "f38a93aeecc62d5d46944fe9d44dc48bda90dd368086fadb368da6529b81e880"
+  },
+  "input_artifact_pins": [
+    {
+      "bytes": 50070,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/plan.json",
+      "sha256": "c38c7d6105d8658e5eb2403c9e990b902902a0073d19e9d499b33f28ccee044d"
+    },
+    {
+      "bytes": 49117,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/config.json",
+      "sha256": "20750c225e152c99ac19e05bb891b87bca01b8e451a752f405340be03128a7ea"
+    },
+    {
+      "bytes": 2681,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/launch-declaration.json",
+      "sha256": "57192475017bb86fee54d4dc53b4a0705f76ee1a2d67c7e2999940e665f8484a"
+    },
+    {
+      "bytes": 590,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/m12-terminal-failure-observed.json",
+      "sha256": "03d6c1ec7ebd4352f1c326eecac8093addd81c729cfa34fb27b778f635e54517"
+    },
+    {
+      "bytes": 1329,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-cancel-requested.json",
+      "sha256": "5d0b41acf4874b71f9577103cccd942f6f76a81efa2fb0eee582c1c16d7e9513"
+    },
+    {
+      "bytes": 293,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-cancel-m12-outcome.json",
+      "sha256": "cb5b9b1e8aac05a344cb38a5918a7160651750f19b5c2e84707cb28a9f543573"
+    },
+    {
+      "bytes": 4630,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-timeout-reorg-result.json",
+      "sha256": "061cf17ce68db066205e8776cc67f93b0e983c556251ec4c485a4a1c40b696f9"
+    },
+    {
+      "bytes": 7592,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/independent-cold-reconcile/result.json",
+      "sha256": "93d94e99e5ee81bcdd1fa1393a1310a9b142da57f4808847a460a9d6e3983c6e"
+    },
+    {
+      "bytes": 1377,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-cancel-reconcile-command/result.json",
+      "sha256": "b4fe12928e845737106c0d066cb64b9c696a2f45bd7aecafca85262e5ad14c63"
+    },
+    {
+      "bytes": 253,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-timeout-deadline-observed.json",
+      "sha256": "9aaad79b144f9703bbe2a30296c549a0e1e0dd1ae3855f15762c9e62873d7572"
+    },
+    {
+      "bytes": 441,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-timeout-wait-intent.json",
+      "sha256": "637e6411474875577aff130bbe2bbc6686eae204afb332e7faac1adb3969271d"
+    },
+    {
+      "bytes": 43824,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-cancel-start/result.json",
+      "sha256": "5d450db324782c52e7a55645be93f1ae1c379432f7e94a98f9897a27f76b3fca"
+    },
+    {
+      "bytes": 46455,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-cancel-reconcile/result.json",
+      "sha256": "e83db18adebc1ffc7bb77516d22477a82b238e80285afbd8154c26db80f87464"
+    },
+    {
+      "bytes": 65046,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/target-request.json",
+      "sha256": "2d57eeca8dc2e9749b1e432066cde836c596e0e22eb020b8e4b91849ba8064cc"
+    },
+    {
+      "bytes": 59770,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/funded-owner-cancellation-result.json",
+      "sha256": "929c953f4a1be2e60240226b4b348b82413a9394533745884cc0374edfa5689b"
+    },
+    {
+      "bytes": 3221,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/proof/intent.json",
+      "sha256": "35a25bf4936a51b9d1c49d9ea7108339074224e8ebaf840d449752ed9c7b2386"
+    },
+    {
+      "bytes": 5385,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/proof/controller/prepare-full-execution/result.json",
+      "sha256": "6d81e7b1a741a98eeb9540990096f4cf76ab97d17176c45bb427e767a657454d"
+    },
+    {
+      "bytes": 1498,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/proof/controller/prove-batch-0000/declaration.json",
+      "sha256": "872397cfb34f42516577dcc8a8154b1ea488f2300b1dd159eebd6cb57ee71e09"
+    },
+    {
+      "bytes": 2581,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/proof/controller/prove-batch-0000/stdout.log",
+      "sha256": "0f95bbb17553395b0d815608e1d9ef2badcfb97f4eb7a18a150605709bda2cf1"
+    },
+    {
+      "bytes": 966,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-cancel-dispatch-intent.json",
+      "sha256": "53e17870d6bde87c15bed84c97fd3cbf413f5fbe372598eae84916ea61de9e4b"
+    },
+    {
+      "bytes": 265,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-cancel-submission-observed.json",
+      "sha256": "bea0b20c4feb3d825a124814826fdf94e30ff8c36569c49fc431790c7dd79254"
+    },
+    {
+      "bytes": 1183,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-declaration.json",
+      "sha256": "e4fb615627ff505ce7ecc23baa9cb23884b6742d54fda3cca903a687b41977cd"
+    },
+    {
+      "bytes": 1227,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-funded-intent.json",
+      "sha256": "4eb480f783bf5cb4c2fa2fa4979c5ca50b18a18a79e139aa1a3b277ac2a9be22"
+    },
+    {
+      "bytes": 20830,
+      "original_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/driver-v4.py",
+      "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+    },
+    {
+      "bytes": 1415,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/cold-launch-intent.json",
+      "sha256": "7f200b58dc89130d23a9f2a470b7745401b1dbb1884540c34e6b35d6474fa15f"
+    },
+    {
+      "bytes": 668,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/independent-cold-reconcile/target-reconcile/intent.json",
+      "sha256": "4397d681c2f600752c8d1b4bf6524928d1e7d37ea633bff80a7125621449a982"
+    },
+    {
+      "bytes": 1174,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/independent-cold-reconcile/target-reconcile/result.json",
+      "sha256": "c9b3931a4fbd4becd70d0908b7ca2add77fb8741906695c8a1a3a6c9c5aa52ac"
+    },
+    {
+      "bytes": 3564,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/independent-cold-reconcile/target-reconcile/stdout.log",
+      "sha256": "edcdc6251539ccf060ed62ebfc94ae4e6efdc85c8e13fb0256e81cdf195d624b"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/independent-cold-reconcile/target-reconcile/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 191,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-cancel-wire.bin",
+      "read_via": "independent file_info full SHA256",
+      "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+    },
+    {
+      "bytes": 49953,
+      "original_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-cancel-packet.bin",
+      "read_via": "independent file_info full SHA256",
+      "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+    }
+  ],
+  "limits": [
+    "Read-only consistency review; no new experiments, Node opens, submissions, source edits or reexecution of balances.",
+    "One bounded C6 research operation. It does not settle the original two full-proof operations.",
+    "Unknown GPU time, memory peak and all historical descendants wait/reap; empty cgroup is not complete historical accounting.",
+    "Original proof deadline remains fixed. Target/cleanup/refund/reorg/cold terminal observations occur after it and are not an in-budget successful proof.",
+    "Balance equality and restoration rely on successful assertions in exact pinned source; reviewer did not independently reopen/replay Node.",
+    "Separate deterministic research nodes can produce the same NativeTask Cancel ID/wire/packet and balances. They are not globally new funds and refunds are not cumulative across C5/C6.",
+    "Actual expensive generation and NativeTask maintenance/Cancel admission do not constitute winning W1 admission; native winner records parent_eligibility_checked=false and node_admission=false.",
+    "External driver SHA is bound in plan/launch; the external driver is not itself a member of the C6 Git tree.",
+    "M12 cancellation is accepted-observed, with journal_event_new=null and new_event_proven=false; no stronger event-newness claim is made."
+  ],
+  "new_complete_proofs": 0,
+  "one_fresh_generation_attempt": true,
+  "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+  "original_budget_ns": 120000000000,
+  "original_deadline_ns": 1199343004629858,
+  "original_jobs": [
+    {
+      "status": {
+        "at_unix_ms": 1794121680519,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b9fa4d54-12894-17e1",
+        "launch_nonce": "9400c6365a3834f0e73a09895160e1eb",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 510,
+            "stored": 510
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"launch_intent_recorded\": true, \"operation\": \"8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc\", \"original_deadline_ns\": 1199343004629858, \"source\": {\"commit\": \"2bdd252aa6c300b7431b9ee897b254b7953cf562\", \"tree\": \"ac3cb7171c429fa5e12e29ee16839fa6f49f1b81\"}}\n\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 123.43s\n\n",
+      "stdout_sha256": "c464f869775d9476fc429c4f18df6b3a9bed16a832d9a86c2297e350d7f61342"
+    },
+    {
+      "status": {
+        "at_unix_ms": 1794121781210,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b9fdb57b-12894-17ef",
+        "launch_nonce": "e42093572033beeccdec61038f5c1d2e",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 216,
+            "stored": 216
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.35s\n\n",
+      "stdout_sha256": "4b4083323285dfb40004579e9f128fb441ac804aa6ebf98d3cc6279f48b210bc"
+    }
+  ],
+  "original_root": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01",
+  "provider_job": {
+    "identity": {
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "pid": 3666955,
+      "start_ticks": 119923218
+    },
+    "job_id": "142e5b9c67fd1078cc1ecc29ac16152451829f41c22bcbae80cba6dd79a52ff1",
+    "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+    "provider_namespace": "1b05d4586e26ca25a26482764e3787754743958b5ff5abf8dc9d5835dbcc2169",
+    "request_sha256": "5c4ccea91866b42480652e5a62faa4473f26758c2da07a1d55fe5d26d3253dfc"
+  },
+  "qualification": {
+    "bounded_lifecycle_observed": true,
+    "crypto_protocol_security_qualified": false,
+    "positive_provider_payment_qualified": false,
+    "production_qualified": false,
+    "resource_settlement_complete": false,
+    "winning_node_admission_qualified": false
+  },
+  "review_complete": true,
+  "schema": "TRNM-W1-C6-LIFECYCLE-INDEPENDENT-READONLY-REVIEW1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_adapter_readback": [
+    {
+      "matches_prior_audited_source_and_actual_c6_config": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/terminal.rs",
+      "sha256": "da8921eb63e0e6dc655c7d1ececcfd7fc897b61a650c5b9164094ad813601a79"
+    },
+    {
+      "matches_prior_audited_source_and_actual_c6_config": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/timeout.rs",
+      "sha256": "7a0dd8ae3521630b79b64a0f0dfd7e9ab2e89cff2815895bf139d49918c9ed29"
+    }
+  ],
+  "statement": "52a53b4c6264f99141cda3d84ee5793dbd9a21778693848435809fbcd3fd4ca6",
+  "terminal_snapshot_seconds_after_original_deadline": 0.390722375,
+  "timeline": [
+    {
+      "event": "deadline selected",
+      "monotonic_ns": 1199223004629858,
+      "seconds_after_selection": 0.0
+    },
+    {
+      "event": "native winner",
+      "monotonic_ns": 1199226825193081,
+      "seconds_after_selection": 3.820563223
+    },
+    {
+      "event": "live r0vm observed",
+      "monotonic_ns": 1199255881430349,
+      "seconds_after_selection": 32.876800491
+    },
+    {
+      "event": "original deadline",
+      "monotonic_ns": 1199343004629858,
+      "seconds_after_selection": 120.0
+    },
+    {
+      "event": "original deadline observed",
+      "monotonic_ns": 1199343005140254,
+      "seconds_after_selection": 120.000510396
+    },
+    {
+      "event": "target terminal",
+      "monotonic_ns": 1199343395352233,
+      "seconds_after_selection": 120.390722375
+    },
+    {
+      "event": "reconcile helper completed",
+      "monotonic_ns": 1199345287888685,
+      "seconds_after_selection": 122.283258827
+    },
+    {
+      "event": "parent observed helper exit",
+      "monotonic_ns": 1199345345919711,
+      "seconds_after_selection": 122.341289853
+    },
+    {
+      "event": "M12 Unknown Failure",
+      "monotonic_ns": 1199345481705597,
+      "seconds_after_selection": 122.477075739
+    },
+    {
+      "event": "explicit owner request",
+      "monotonic_ns": 1199345486900409,
+      "seconds_after_selection": 122.482270551
+    },
+    {
+      "event": "independent cold parent exit",
+      "monotonic_ns": 1199447116029157,
+      "seconds_after_selection": 224.111399299
+    }
+  ]
+}

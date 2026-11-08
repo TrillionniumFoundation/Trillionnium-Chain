@@ -1,0 +1,621 @@
+{
+  "schema": "TRNM-W1-EXACT-SOURCE-QUALIFICATION5",
+  "source_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "repo": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+  "plan_sha256": "0105e3d4ef57bb49ae5d9b86ec38e549de5173af710e8ec8a0ff1cd39f714c1b",
+  "driver_sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f",
+  "commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1196199937260292,
+      "exit": 0,
+      "finished_monotonic_ns": 1196200152874224,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/00-preflight.stdout",
+        "bytes": 178,
+        "sha256": "dfe7ed4bf1a2fa120ab384a40149f30a0e1c5c6d6c17ad1bd0ee1a3e0185db83"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/00-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "01-source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--output",
+        "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1196200154661421,
+      "exit": 0,
+      "finished_monotonic_ns": 1196483635151142,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/01-source-before.stdout",
+        "bytes": 423,
+        "sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/01-source-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "02-cargo-version",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196483730129189,
+      "exit": 0,
+      "finished_monotonic_ns": 1196483945369264,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/02-cargo-version.stdout",
+        "bytes": 336,
+        "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/02-cargo-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "03-rustc-version",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustc",
+        "-vV"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196484013247572,
+      "exit": 0,
+      "finished_monotonic_ns": 1196484046131769,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/03-rustc-version.stdout",
+        "bytes": 196,
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/03-rustc-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "04-owned-fmt",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/terminal.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/timeout.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/terminal.rs",
+        "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1196484345375599,
+      "exit": 0,
+      "finished_monotonic_ns": 1196484861691630,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/04-owned-fmt.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/04-owned-fmt.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "05-locked-graph-default",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196484989513893,
+      "exit": 0,
+      "finished_monotonic_ns": 1196490960867368,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/05-locked-graph-default.stdout",
+        "bytes": 829493,
+        "sha256": "f920ae3b930d6f4f9df3b5b50e037ef3dd82bb5fc3ae4d2f3fa0d77a93accaf6"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/05-locked-graph-default.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "06-locked-graph-all-features",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196491231509333,
+      "exit": 0,
+      "finished_monotonic_ns": 1196492780628523,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/06-locked-graph-all-features.stdout",
+        "bytes": 844292,
+        "sha256": "bf573218790c90da4fba076e8ddeb505804b0e0332d67c0a05cbd56b9ba2939c"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/06-locked-graph-all-features.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "07-m12-strict-clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196492867305867,
+      "exit": 0,
+      "finished_monotonic_ns": 1196526274456054,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/07-m12-strict-clippy.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/07-m12-strict-clippy.stderr",
+        "bytes": 2205,
+        "sha256": "e5e3d7250c5308da8a4cb1e8fcca91d8eeb27b020f84114f4d263a090068c03d"
+      }
+    },
+    {
+      "label": "08-node-strict-clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196526351124948,
+      "exit": 0,
+      "finished_monotonic_ns": 1196599660311360,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/08-node-strict-clippy.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/08-node-strict-clippy.stderr",
+        "bytes": 2858,
+        "sha256": "b7bd7098311fda26b2612d0333870188341e12770127ec1419340669b2cd9414"
+      }
+    },
+    {
+      "label": "09-m12-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "native_generation_budget_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196599717369575,
+      "exit": 0,
+      "finished_monotonic_ns": 1196679648636058,
+      "python_test_counts": [],
+      "rust_test_outcomes": [
+        {
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/09-m12-tests.stdout",
+        "bytes": 1429,
+        "sha256": "c1575ecaf5c9a168d50d68ede388db9a5ba4f82fc982d74cd3714c98397bb164"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/09-m12-tests.stderr",
+        "bytes": 1636,
+        "sha256": "3e91c5e1740f21a5c0dbd4254d1d8ec93c96827d75696c9e7170dfc90e73cdad"
+      }
+    },
+    {
+      "label": "10-node-short-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "async_w1_generation_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1196679674979118,
+      "exit": 0,
+      "finished_monotonic_ns": 1197413565324990,
+      "python_test_counts": [],
+      "rust_test_outcomes": [
+        {
+          "passed": 20,
+          "failed": 0,
+          "ignored": 4
+        }
+      ],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/10-node-short-tests.stdout",
+        "bytes": 3698,
+        "sha256": "116444ce72cebe27e0b9cbd4fb7db9bfb982e6893ea55600c7affb4330e2f487"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/10-node-short-tests.stderr",
+        "bytes": 2848,
+        "sha256": "a794bcb54d6d9c3e97043aa069e1eb3b97d363938e19798c78ef76d49a7c64fe"
+      }
+    },
+    {
+      "label": "11-legacy-admission-root-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "store::legacy_admission_root_tests::",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1197413659034931,
+      "exit": 0,
+      "finished_monotonic_ns": 1197435081542469,
+      "python_test_counts": [],
+      "rust_test_outcomes": [
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/11-legacy-admission-root-tests.stdout",
+        "bytes": 231,
+        "sha256": "4e3250dac633ea4e82f5b80c5bb830f2fbbd7705760a7003f4e8e1a5ae090916"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/11-legacy-admission-root-tests.stderr",
+        "bytes": 273,
+        "sha256": "987d336348c5fb82877efdb6e6c4476223f5328635a45fb59b297a2b5e147f52"
+      }
+    },
+    {
+      "label": "12-legacy-reorg-root-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "store::legacy_reorg_root_tests::",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1197435106589607,
+      "exit": 0,
+      "finished_monotonic_ns": 1197466907150944,
+      "python_test_counts": [],
+      "rust_test_outcomes": [
+        {
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/12-legacy-reorg-root-tests.stdout",
+        "bytes": 675,
+        "sha256": "45d3049afe89df4cb19e93a4016e5680efdbaf32c362cc2ab2b7d4817e164b5a"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/12-legacy-reorg-root-tests.stderr",
+        "bytes": 221,
+        "sha256": "951836dd2ea37fcdd586830aa702e7e981919546989959f67b0506ae7bdd6d9b"
+      }
+    },
+    {
+      "label": "13-owner-no-run-json",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/trillionnium",
+      "started_monotonic_ns": 1197466925281365,
+      "exit": 0,
+      "finished_monotonic_ns": 1197467090635289,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/13-owner-no-run-json.stdout",
+        "bytes": 107329,
+        "sha256": "f1bf1b68c6ad21c93c06b1179078ce9ba835651bc59b82b465d0e2918fec4acd"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/13-owner-no-run-json.stderr",
+        "bytes": 73,
+        "sha256": "aef8a17b266e1fb64abc458aacc0e245ff0d20fb652ebe99f40e4368df3bc98b"
+      }
+    },
+    {
+      "label": "14-backend-metadata-default",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1197467178715226,
+      "exit": 0,
+      "finished_monotonic_ns": 1197468246397577,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/14-backend-metadata-default.stdout",
+        "bytes": 1429396,
+        "sha256": "4492527262ddb729b8b0fadeaba2890702e9a25abed5295f51dbee03cde15615"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/14-backend-metadata-default.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "15-backend-metadata-all",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1197468318361015,
+      "exit": 0,
+      "finished_monotonic_ns": 1197468584183042,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/15-backend-metadata-all.stdout",
+        "bytes": 1429435,
+        "sha256": "cd015af5182c297f85b71991ddbf279fb225c2c489d9f53af4b29cf8520814af"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/15-backend-metadata-all.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "16-verifier-metadata-default",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1197468683083318,
+      "exit": 0,
+      "finished_monotonic_ns": 1197469650501932,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/16-verifier-metadata-default.stdout",
+        "bytes": 899767,
+        "sha256": "73c6761eb00c3d4a8ff01c0238e80740ebbb052807b33e579b1ff6918c93425d"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/16-verifier-metadata-default.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "17-verifier-metadata-all",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1197469786253434,
+      "exit": 0,
+      "finished_monotonic_ns": 1197470001792882,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/17-verifier-metadata-all.stdout",
+        "bytes": 899767,
+        "sha256": "73c6761eb00c3d4a8ff01c0238e80740ebbb052807b33e579b1ff6918c93425d"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/17-verifier-metadata-all.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "99-source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--output",
+        "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "started_monotonic_ns": 1197470106090741,
+      "exit": 0,
+      "finished_monotonic_ns": 1197541812807366,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/99-source-after.stdout",
+        "bytes": 423,
+        "sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/99-source-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "fresh_proof_generations": 0,
+  "production_qualified": false,
+  "security_qualified": false,
+  "original_business_budget_qualified": false,
+  "resource_billing_complete": false,
+  "payment_qualified": false,
+  "cargo_target": "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b",
+  "build_env": {
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "fresh_cargo_target": true,
+  "independent_reproducible_build_established": false,
+  "cache_basis": "new empty Cargo target; existing registry sources and toolchain retained; not an isolated cleanroom build",
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "source_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+  "qualification_complete": true,
+  "actual_command_count": 19,
+  "python_test_methods_reported": 0,
+  "rust_test_outcomes": {
+    "passed": 37,
+    "failed": 0,
+    "ignored": 4
+  }
+}

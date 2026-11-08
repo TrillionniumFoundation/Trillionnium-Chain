@@ -1,0 +1,30 @@
+{
+  "actual_exit": 124,
+  "actual_terminal": "timed_out",
+  "all_allowlisted_snapshot_files_match_original_bytes": true,
+  "all_historical_wait_reaped": null,
+  "cargo_build_started_but_terminal_record_missing": true,
+  "complete_qualification_manifest_missing": true,
+  "completed_command_labels": [
+    "compiler-version",
+    "metadata",
+    "preflight",
+    "source-before"
+  ],
+  "completed_command_rows": 4,
+  "current_known_scope_gone_is_not_historical_wait_reap": true,
+  "existing_c5_runner_not_c6_qualified": true,
+  "existing_elf_not_copied_or_rehashed_in_this_audit": true,
+  "job_id": "1a1b9cfa141-12894-1706",
+  "new_complete_proofs": 0,
+  "original_attempt_remains_failed": true,
+  "original_outer_budget_seconds": 900,
+  "qualified_runner_artifact_missing": true,
+  "schema": "TRNM-W1-C6-BACKEND-FAILED-ATTEMPT-REVIEW1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_after_missing": true,
+  "tests_run_by_audit": 0
+}

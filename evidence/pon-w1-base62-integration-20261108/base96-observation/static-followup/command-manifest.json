@@ -1,0 +1,103 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "show",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562:config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:21:29.499551+00:00",
+      "started_utc": "2026-11-08T07:21:29.493504+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a867332797d6a91d5623c724b5d98c4b1e09e04721003a84f4f1eb7106e2042f"
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "show",
+        "d73e57c9e7a5764a1ab33540c97af587bb6e4a69:config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:21:29.505823+00:00",
+      "started_utc": "2026-11-08T07:21:29.500589+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e415a8c7806ff884eee1b33a1e303f13c41c1c76ae3e2b32309fe136d93b36aa"
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "ls-tree",
+        "-r",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--",
+        ".github/workflows/pon-history-stage-diagnostic.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "scripts/ci/run_from_zero_host.py",
+        "scripts/ci/run_history_diagnostic.py",
+        "scripts/ci/test_history_stage_diagnostic.py",
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:21:29.510398+00:00",
+      "started_utc": "2026-11-08T07:21:29.506944+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7d623aba0e948bd9c44ef54cfd6b72abf6f967d1511148b3fcd56e403b6eccdb"
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "ls-tree",
+        "-r",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+        "--",
+        ".github/workflows/pon-history-stage-diagnostic.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "scripts/ci/run_from_zero_host.py",
+        "scripts/ci/run_history_diagnostic.py",
+        "scripts/ci/test_history_stage_diagnostic.py",
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:21:29.514594+00:00",
+      "started_utc": "2026-11-08T07:21:29.510432+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "13f29b78a4c6a4f5dcf9c84b785ffe49619ad8eccbf0d2214c3519f9a6817a7a"
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "ls-tree",
+        "-r",
+        "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+        "--",
+        ".github/workflows/pon-history-stage-diagnostic.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "scripts/ci/run_from_zero_host.py",
+        "scripts/ci/run_history_diagnostic.py",
+        "scripts/ci/test_history_stage_diagnostic.py",
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T07:21:29.517752+00:00",
+      "started_utc": "2026-11-08T07:21:29.514633+00:00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1fb27d2b5e42260e0a23afc1d26dbaab6266b52b58c08836b5e5b0d9c2cffa76"
+    }
+  ],
+  "fetches": 0,
+  "frozen_git_objects_only": true,
+  "schema": "TRNM-W1-BASE96-STATIC-FOLLOWUP1",
+  "source_edits": 0,
+  "tests": 0
+}

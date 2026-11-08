@@ -1,0 +1,63 @@
+[
+  {
+    "label": "00-fetch-pr-merge",
+    "argv": [
+      "git",
+      "fetch",
+      "--no-tags",
+      "origin",
+      "refs/pull/782/merge:refs/remotes/origin/pr-782-c6-observation-20261108-ec265b"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "11c734e21030a8cd3c9941c814bd19118acd8dea6af7b0e434e6b499995d34df"
+  },
+  {
+    "label": "01-actual-merge",
+    "argv": [
+      "git",
+      "show",
+      "--no-patch",
+      "--format=%H%n%T%n%P",
+      "refs/remotes/origin/pr-782-c6-observation-20261108-ec265b"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "55dc319078d4e0aceec9980a2dd4cde5da15c12e562620038087723076226400",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-live-refs",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "178a1ff171ffb63c3e4e455e23da75d36af6a7df7e999cdf004b3b0ae4807d8b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-pr",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "86b5f79b6497a4311924a40633052080d7830d40283b5e75212d44fe38bb5ee9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-checks-page-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/2bdd252aa6c300b7431b9ee897b254b7953cf562/check-runs?per_page=100&page=1"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "bb114be2742c7b19141ae344aaafdbd174f80be52ae93d8d9bfc476df09d80ea",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,132 @@
+{
+  "schema": "w1-c6-staged-observer-first-failure-adversarial-review-v1",
+  "source_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "source_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+  "review_scope": "Read-only interpretation of completed staged-observer command stderr and exact fixture/production source; no rerun or source change.",
+  "raw_failure": {
+    "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-ci-core-01/14-w1-retained-staged-tests.stderr",
+    "bytes": 7159,
+    "sha256": "cf18d6d687a704370b76ed5fbf14e869c7215fac73256b46c1ea4863ae5b162b",
+    "method_count": 32,
+    "passed_methods": 30,
+    "failed_methods": 2,
+    "skipped_methods": 0,
+    "seconds": 33.258,
+    "core_outer_job_terminal_observed_by_this_review": false
+  },
+  "source_files": [
+    {
+      "path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/ci/test_w1_staged_observer.py",
+      "bytes": 34560,
+      "sha256": "826b4348d8af00f03c5c3ec1fa1e15ebd30067b9e0fe0fb73f0179d78db5e25d"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+      "bytes": 35951,
+      "sha256": "a3c80e25ec202749225ddd1a4fc45f3f22ab753f5e9e6941e694a3aa4a547df9"
+    }
+  ],
+  "failures": [
+    {
+      "method": "test_timeout_preserves_failed_trial_and_settles_session",
+      "fixture_wall_seconds": 0.15,
+      "child_program": "import time;time.sleep(60)",
+      "actual_termination_reasons": [
+        "DEADLINE_EXHAUSTED_BEFORE_SPAWN"
+      ],
+      "failed_assertion": "TIMEOUT in termination_reasons",
+      "traceback_line": 56,
+      "spawned_timeout_branch_observed": false
+    },
+    {
+      "method": "test_ignored_sigterm_escalates_and_output_overflow_remains_failure",
+      "fixture_wall_seconds": 0.2,
+      "child_program": "import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(60)",
+      "actual_termination_reasons": [
+        "DEADLINE_EXHAUSTED_BEFORE_SPAWN"
+      ],
+      "failed_assertion": "SIGKILL_DURING_SETTLEMENT in termination_reasons",
+      "traceback_line": 156,
+      "sigterm_sigkill_branch_observed": false,
+      "following_output_limit_subcase_executed": false,
+      "output_limit_subcase_source_lines": [
+        158,
+        162
+      ]
+    }
+  ],
+  "independent_findings": [
+    {
+      "finding": "The original effective deadline is fixed at stage.measure lines 450-451 before declaration fsync and opening three logs. At line 531 the observer checks it before Popen; the observed reason is emitted only in the no-spawn branch.",
+      "scope": "Source-correlated diagnosis; no missing per-trial result/timestamps are fabricated."
+    },
+    {
+      "finding": "Declaration writing flushes and fsyncs at lines 313-318. Cgroup reads, declaration serialization/durability, log creation and scheduling consume the 150/200 ms budget. local_boot_id and out.mkdir occur before the timer starts.",
+      "scope": "Specific timed prefix, not a claim that measure itself scans the whole repository."
+    },
+    {
+      "finding": "Both controls failed to reach their intended post-spawn primitive. This is not evidence that an actually launched ignored-SIGTERM child escaped SIGKILL or that timeout settlement failed.",
+      "scope": "The first failure samples remain failures; reaching a different fail-closed branch does not satisfy their test intent."
+    },
+    {
+      "finding": "Concurrent Cargo/whole-source I/O is a plausible explanation for delayed timed prefix work. No retained per-prefix timing or controlled comparison proves that cause.",
+      "scope": "Hypothesis, not established causal attribution."
+    },
+    {
+      "finding": "The ignored-SIGTERM fixture patches the module global TERMINATION_GRACE_SECONDS to .15, but measure's default parameter was captured as 5 seconds when defined and run_control does not pass an override.",
+      "scope": "Actual existing cleanup grace is 5 seconds; do not silently change it for the isolated follow-up. This is separate from the observed pre-spawn expiry."
+    },
+    {
+      "finding": "The ignored-SIGTERM child has no readiness handshake confirming SIG_IGN installation. Even a spawned child must complete interpreter startup and handler installation before the original 200 ms deadline for this intended branch.",
+      "scope": "Fixture reachability assumption; does not authorize a deadline reset."
+    },
+    {
+      "finding": "The existing five-second late-observed-exit-zero control passed in this original 32-method command.",
+      "scope": "Its result neither repairs these failed controls nor grants the unexecuted OUTPUT_LIMIT subcase coverage."
+    }
+  ],
+  "recommendation": {
+    "decision": "A single predeclared isolated full 32-method follow-up on unchanged C6 is reasonable.",
+    "accepted_by_root": true,
+    "attempt_limit_after_this_first_failure": 1,
+    "wait_until": "All known parallel Cargo/whole-source I/O original jobs, the separately declared backend follow-up and receiver have reached terminal before the isolated suite.",
+    "reuse": "Same original recorded argv, cwd, interpreter/environment, C6 bytes and fixture parameters; preserve actual default cleanup grace. Fresh output directory only; do not alter TMPDIR/storage class or process constraints silently.",
+    "no_changes": [
+      "No production deadline change",
+      "No fixture source edit",
+      "No widening the 0.15/0.20-second fixture wall budgets",
+      "No skipped or selected tests",
+      "No clock substitution or added mocked success",
+      "No repeated reruns until green"
+    ],
+    "success_rule": "Exactly all 32 methods execute with zero failures/errors/skips; retain raw logs, independent source-before/after and authoritative terminal. Report isolated follow-up success separately from the failed original attempt.",
+    "on_failure": "Retain the failed follow-up and leave the intended controls unresolved; diagnose or propose a separately identified fixture revision before further qualification.",
+    "counting": "Do not sum repeated methods into a larger unique-control denominator, or rewrite the first 30-pass/2-fail command or eventual original core terminal as PASS."
+  },
+  "source_change_judgment": {
+    "production_change_required_by_current_evidence": false,
+    "immediate_fixture_edit_recommended": false,
+    "future_narrow_fixture_issue": "Any later test revision should make the intended post-spawn/readiness and cleanup-grace parameters explicit while retaining separate genuine no-spawn deadline coverage; new bytes require a new source identity and controls. Do not implement this as acceptance of either reason or merely reset the original deadline."
+  },
+  "additional_root_report_not_yet_independently_bound": {
+    "backend_job_suffix": "1706",
+    "original_outer_timeout_seconds": 900,
+    "reported_outer_exit_code": 124,
+    "reported_complete_manifest_present": false,
+    "root_planned_followup": {
+      "fresh_output": true,
+      "source_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "cached_target": true,
+      "new_outer_budget_seconds": 1800,
+      "new_attempt_not_old_job_extension": true
+    },
+    "operation_deadline_seconds_separate": 120,
+    "independent_raw_readback_pending": true
+  },
+  "actions_by_reviewer": {
+    "new_tests_run": 0,
+    "operations_started": 0,
+    "source_edits": 0
+  },
+  "qualification_status": "FIRST_STAGED_COMMAND_FAILED_ISOLATED_FOLLOWUP_PENDING"
+}

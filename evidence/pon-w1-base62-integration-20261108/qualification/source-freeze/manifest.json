@@ -1,0 +1,25 @@
+{
+  "schema": "TRNM-W1-READONLY-REVIEW-ARCHIVE1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 604,
+      "sha256": "b7e637ed922a3e129287c7d31cd1cc2116e98a365abc6b0eef523c89922d9073"
+    },
+    {
+      "path": "raw-logs.tar.gz",
+      "bytes": 5423,
+      "sha256": "b8901ab58d6af66987e409cc6a497e63a437a1bbb00ee6628fda3237a075df98"
+    },
+    {
+      "path": "raw-output-index.json",
+      "bytes": 795,
+      "sha256": "dba160bd3ac9066c29ae4fc0d870718ce7bd752b0b1ac3085e69597010c33ded"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 7387,
+      "sha256": "a154d84b5a79e52cb82b6777378ba28e2389bc3e2a61b0f2105a6d3496809307"
+    }
+  ]
+}

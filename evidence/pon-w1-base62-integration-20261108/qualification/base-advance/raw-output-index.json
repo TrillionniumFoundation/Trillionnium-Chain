@@ -1,0 +1,21 @@
+{
+  "schema": "w1-independent-review-raw-output-index-v1",
+  "scope": "Positive allowlist of unmodified UTF-8 command outputs and provenance receipts; no runtime state, binaries or environment dump.",
+  "files": [
+    {
+      "archive_member": "job-statuses.json",
+      "bytes": 1623,
+      "sha256": "afb6c6a7b211beda2656ca0cd16dcc2aedd4b1f1d70a0f9bcf9261e0a5ca6a4e"
+    },
+    {
+      "archive_member": "original-commands.stdout.jsonl",
+      "bytes": 14177,
+      "sha256": "db6ab6bb6e4e6d046c60ba8cb750bf2d3518bc035926a118946ff462b214d4f6"
+    },
+    {
+      "archive_member": "original-patch-readback.stdout.jsonl",
+      "bytes": 38977,
+      "sha256": "f6fdf4e885073fce4a693c5092971d4b38b70259264b70671b7702eea47427c1"
+    }
+  ]
+}

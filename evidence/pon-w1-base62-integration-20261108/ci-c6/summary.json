@@ -1,0 +1,444 @@
+{
+  "C6_business_regression_count_claimed": null,
+  "actual_git_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+  },
+  "actual_pr_merge_ref": {
+    "commit": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "parents": [
+      "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    ],
+    "tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69"
+  },
+  "all_40_head_sha_match_C6": true,
+  "all_40_original_failed_jobs_found": true,
+  "all_CI_passed_claimed": false,
+  "all_CI_terminal": false,
+  "all_failed_steps_bytes": 83438,
+  "all_failed_steps_compact_sha256": "ba88d7a5e3f52c766aa371eb8315c0b6f5d34020e62e0c8b9bd22b634ace89df",
+  "all_failed_steps_sha256": "39cfa4e3cab8482b973d9be56d0aee0ce6e88a29a2c88d56b6372c9b6fcef079",
+  "api_base_sha_preserved": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "check_count": 85,
+  "classification_scope": "All 40 first failed steps checked via original metadata; exact ordered-parent cause checked in seven prospective full logs plus the exporter log. Exact exceptions in the other prospective logs were not downloaded.",
+  "collector_activity": {
+    "Cargo_commands": 0,
+    "artifacts_downloaded": 0,
+    "configured_operator": "ProfHepta",
+    "operations_created": 0,
+    "own_GET_failures": 0,
+    "own_identity_GETs": 1,
+    "own_representative_GETs": 15,
+    "own_run_metadata_GETs": 13,
+    "related_native_new_GETs_in_this_finalization": 0,
+    "source_or_workflow_mutations": 0,
+    "tests_run_by_this_collector": 0,
+    "workflow_reruns": 0
+  },
+  "export_helper_tests": {
+    "added_to_local_C6_qualification": false,
+    "business_tests": false,
+    "passed": 16
+  },
+  "failed_check_classification": {
+    "export_ordered_parent_refusal": 1,
+    "historical_artifact_missing": 1,
+    "prospective_source_identity_step_failures": 38,
+    "source_bound_preexecution_blockers": 39
+  },
+  "first_failed_step_counts": {
+    "Bind actual source and retain original preflight": 2,
+    "Export exact PR analyses with the existing read-only token": 1,
+    "Prepare exact-source command records": 2,
+    "Refuse any other source identity": 3,
+    "Reserve observations and verify ordered source identity": 9,
+    "Reserve records and verify ordered source identity": 2,
+    "Retrieve exact historical failed artifact without reclassifying it": 1,
+    "Verify actual immutable source and unchanged original preflight": 2,
+    "Verify actual source and ordered main merge": 3,
+    "Verify actual source and original native ABI": 1,
+    "Verify exact source, ordered actual main merge and full repository boundary": 2,
+    "Verify source and original project boundary": 8,
+    "Verify unchanged source and original project boundary": 4
+  },
+  "freeze_scope": "Only this unique ci-c6 publication subtree; original evidence and source bytes retained",
+  "frozen_utc": "2026-11-08T07:36:57.246043+00:00",
+  "full_log_samples": {
+    "own_job_ids": [
+      128660701001,
+      128660701243,
+      128660701244,
+      128660701162,
+      128660701340
+    ],
+    "related_copies": [
+      {
+        "bytes": 3246,
+        "path": "related-native/raw/w1-fresh-prospective-metadata.stdout",
+        "sha256": "0a80da446f353c06675625e4e3193a354a89e5becc361b2ad5782e11fbdaa1f7",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-metadata.stdout"
+      },
+      {
+        "bytes": 141288,
+        "path": "related-native/raw/w1-fresh-prospective-log.stdout",
+        "sha256": "572094ad6449426fe06385d6ddb27335a00dc4d66ed2a638a548d76a9769f202",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-log.stdout"
+      },
+      {
+        "bytes": 12468,
+        "path": "related-native/raw/w1-fresh-prospective-observation.json",
+        "sha256": "3e38e84eb1bc0336d03c1a027959ef3201870724c6e22ef6fb166405e6e008e9",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-observation.json"
+      },
+      {
+        "bytes": 6101,
+        "path": "related-native/raw/native-history-x64-prospective-metadata.stdout",
+        "sha256": "ce450535b9ef6f5da019007204c69052cefdfcc04477a7b4fde35bd3758d5091",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-metadata.stdout"
+      },
+      {
+        "bytes": 142707,
+        "path": "related-native/raw/native-history-x64-prospective-log.stdout",
+        "sha256": "0434c22303a1675427d769dae132dac02eecca6242f4d964a5a12849c674a8c4",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-log.stdout"
+      },
+      {
+        "bytes": 17162,
+        "path": "related-native/raw/native-history-x64-prospective-observation.json",
+        "sha256": "923c1aaa6ce0791d073785d92216f970a5f9402b61b671143cc23c1644e1babf",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-history-x64-prospective-observation.json"
+      },
+      {
+        "bytes": 6107,
+        "path": "related-native/raw/native-service-x64-prospective-metadata.stdout",
+        "sha256": "2564e06e4f22d74a7daf60ec6e8ae3f4b26875f805c3825c925a9776ab90f357",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-service-x64-prospective-metadata.stdout"
+      },
+      {
+        "bytes": 143346,
+        "path": "related-native/raw/native-service-x64-prospective-log.stdout",
+        "sha256": "3176f49204c6f212956488624d47c767c01546930891840f4c87861f23399940",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-service-x64-prospective-log.stdout"
+      },
+      {
+        "bytes": 17174,
+        "path": "related-native/raw/native-service-x64-prospective-observation.json",
+        "sha256": "0bb477a0a5c374dfcd8a69e4df2b911fd91d3253e110e08ce0b30d8137a8a962",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-service-x64-prospective-observation.json"
+      },
+      {
+        "bytes": 3296,
+        "path": "related-native/raw/native-boundary-x64-prospective-metadata.stdout",
+        "sha256": "df1d5d4483078c685ed501b4fab9e2e23aa121bda4c3f176bcb450d01471dfa6",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-metadata.stdout"
+      },
+      {
+        "bytes": 142280,
+        "path": "related-native/raw/native-boundary-x64-prospective-log.stdout",
+        "sha256": "2266f4a61e38f8edfb0234f7443fa2787f078ebef44f911a1e8ff647479bf23a",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-log.stdout"
+      },
+      {
+        "bytes": 14052,
+        "path": "related-native/raw/native-boundary-x64-prospective-observation.json",
+        "sha256": "d7aaa2ef414f6d51c4ecb003e0d9b90eaebc9882999de0a366a24a76cabe4633",
+        "source": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-observation.json"
+      }
+    ],
+    "related_native_diagnosis_sha256": "54850ca7606c5e59001bec0308ec152feee10aab4b7b745ce05b4bc2da9440b6",
+    "related_native_job_ids": [
+      128660701933,
+      128660701592,
+      128660701543,
+      128660701420
+    ],
+    "related_native_manifest_sha256": "860836afc5ffd830f1c317dd02eff1df6be8a314d9632743d159972cbaa73a26",
+    "total_full_original_logs": 9
+  },
+  "historical_artifact": {
+    "diagnostic_execution": "skipped",
+    "new_budget_result": null,
+    "observed_artifacts": 0,
+    "requested_run": 37730166589
+  },
+  "new_merge_qualified_by_local_C6_claimed": false,
+  "run_groups": {
+    "42457886506": [
+      {
+        "job_id": 128660701119,
+        "name": "CodeQL local SARIF (rust, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701102,
+        "name": "CodeQL local SARIF (actions, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701001,
+        "name": "CodeQL local SARIF (python, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886518": [
+      {
+        "job_id": 128660702000,
+        "name": "W1 false trace reuse (arm64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701997,
+        "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701995,
+        "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701957,
+        "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701943,
+        "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701933,
+        "name": "W1 fresh challenge service (x64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701927,
+        "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701909,
+        "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701885,
+        "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701856,
+        "name": "W1 false trace reuse (x64, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886519": [
+      {
+        "job_id": 128660701244,
+        "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701090,
+        "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886520": [
+      {
+        "job_id": 128660701347,
+        "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701285,
+        "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886523": [
+      {
+        "job_id": 128660701243,
+        "name": "cleanup (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701236,
+        "name": "aggregate-owner-controls (prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701207,
+        "name": "cleanup (macos-15, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701190,
+        "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886526": [
+      {
+        "job_id": 128660701319,
+        "name": "recent batch (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701166,
+        "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886532": [
+      {
+        "job_id": 128660701100,
+        "name": "W1 transparent candidate (prospective-merge, x64)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886533": [
+      {
+        "job_id": 128660701306,
+        "name": "parent evidence (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701271,
+        "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886542": [
+      {
+        "job_id": 128660701162,
+        "name": "export",
+        "role": "unlabelled"
+      }
+    ],
+    "42457886547": [
+      {
+        "job_id": 128660701441,
+        "name": "native boundary (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701420,
+        "name": "native boundary (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886555": [
+      {
+        "job_id": 128660701632,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701606,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701603,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701599,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701592,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701543,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701340,
+        "name": "retained-pressure-failure",
+        "role": "unlabelled"
+      }
+    ],
+    "42457886583": [
+      {
+        "job_id": 128660701601,
+        "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701409,
+        "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ],
+    "42457886584": [
+      {
+        "job_id": 128660701788,
+        "name": "reference (ubuntu-24.04, prospective-merge)",
+        "role": "prospective-merge"
+      },
+      {
+        "job_id": 128660701752,
+        "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+        "role": "prospective-merge"
+      }
+    ]
+  },
+  "runtime_terminals": [
+    {
+      "exit_code": 0,
+      "job_id": "1a1ba0c9312-12894-182c",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_terminal": "runtime/1a1ba0c9312-12894-182c/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1ba0ed922-12894-1836",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_terminal": "runtime/1a1ba0ed922-12894-1836/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1ba113dee-12894-183c",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_terminal": "runtime/1a1ba113dee-12894-183c/exit.json"
+    },
+    {
+      "exit_code": 0,
+      "job_id": "1a1ba0d0127-12894-182e",
+      "output_complete": true,
+      "output_durable": true,
+      "raw_terminal": "runtime/1a1ba0d0127-12894-182e/exit.json"
+    }
+  ],
+  "schema": "TRNM-W1-C6-FROZEN-FIRST-CI-DIAGNOSIS1",
+  "snapshot_observed_unix_ns": 1794122390975428297,
+  "snapshot_sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307",
+  "source_boundary": {
+    "CI_code_patch_count": 0,
+    "actual_merge_first_parent": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "event_or_API_base": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "guard_weakened": false,
+    "later_C7_integration_is_separate_attempt": true,
+    "old_event_declaration_changed": false,
+    "strict_guard_rejection_correct": true,
+    "underlying_GitHub_state_update_mechanism_not_inferred": true
+  },
+  "source_head": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "status_counts": {
+    "completed:failure": 40,
+    "completed:skipped": 3,
+    "completed:success": 10,
+    "in_progress:None": 32
+  }
+}

@@ -1,0 +1,51 @@
+diff --git a/scripts/ci/run_from_zero_host.py b/scripts/ci/run_from_zero_host.py
+index b7d6c49f3..7ec378d2e 100644
+--- a/scripts/ci/run_from_zero_host.py
++++ b/scripts/ci/run_from_zero_host.py
+@@ -22,10 +22,11 @@ from pathlib import Path
+ 
+ from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
+                                         capture, validate, write_new)
+ import run_from_zero_native as native
+ import run_history_native as history
++import run_history_diagnostic as diagnostic
+ import run_public_fixture_native as architecture
+ import public_fixture_host_lease as lease
+ 
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+@@ -78,10 +79,11 @@ def validate_unprovisioned_parent(raw: str) -> dict[str, str]:
+ def validate_command(command: list[str]) -> Path:
+     require(len(command) == 4 and command[:3] in ([
+         'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
+         'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
+         'python3', history.SCRIPT, '--out'], [
++        'python3', diagnostic.SCRIPT, '--out'], [
+         'python3', architecture.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
+     out = Path(command[3])
+     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
+             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
+     return out
+@@ -230,18 +232,22 @@ def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
+ def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
+     if command[1] == architecture.SCRIPT:
+         return architecture.validate_preparation(output)
+     if command[1] == history.SCRIPT:
+         return history.validate_preparation(output)
++    if command[1] == diagnostic.SCRIPT:
++        return diagnostic.validate_preparation(output)
+     return prepare_native_build(receipts)
+ 
+ 
+ def bind_command(command: list[str], prepared: dict, output: Path) -> dict:
+     if command[1] == architecture.SCRIPT:
+         return architecture.bind_execution(prepared, output)
+     if command[1] == history.SCRIPT:
+         return history.bind_execution(prepared, output)
++    if command[1] == diagnostic.SCRIPT:
++        return diagnostic.bind_execution(prepared, output)
+     binder = (bind_prepared_fresh_execution if command[1]
+               == 'scripts/ci/run_w1_fresh_service_v1.py' else bind_prepared_execution)
+     return binder(prepared, output)
+ 
+ 

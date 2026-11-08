@@ -1,0 +1,29 @@
+{
+  "all_descendants_reaped": null,
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/w1_generation_target_v2.py",
+    "reconcile",
+    "--root",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/target-state",
+    "--target",
+    "w1-timeout-chain-w1-c6-timeout-reorg-20261108-ec265b-01",
+    "--operation",
+    "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc"
+  ],
+  "can_authorize_payment": false,
+  "completed_monotonic_ns": 1199447116029157,
+  "completion_clock_scope": "actual Rust caller observed helper exit; not helper pre-handoff timestamp",
+  "completion_observed_before_original_proof_deadline": false,
+  "direct_child_waited": true,
+  "original_proof_deadline_ns": 1199343004629858,
+  "pid": 3680727,
+  "proof_deadline_renewed": false,
+  "returncode": 0,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "signal": null,
+  "started_monotonic_ns": 1199447002556368,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "edcdc6251539ccf060ed62ebfc94ae4e6efdc85c8e13fb0256e81cdf195d624b",
+  "timed_out": false
+}

@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "bytes": 252,
+      "path": "cancel-tool-result.json",
+      "sha256": "f1de54b443226469f219aae13f9149990dc68d53ce69de73bc5d5c7ea7300985"
+    },
+    {
+      "bytes": 4341,
+      "path": "copy-processes-before-cancel.json",
+      "sha256": "5fb8706bae13ac3e59cc22fe9f6f804d40a410e37c902f8d918c269384a5f640"
+    },
+    {
+      "bytes": 728,
+      "path": "copy-runtime-terminal.json",
+      "sha256": "3d0058076961ae72b188c3f08196740ad7109599b9e6f3b87c7d259f1fc21b12"
+    },
+    {
+      "bytes": 1745,
+      "path": "original-copy-declaration.json",
+      "sha256": "23db5f4209760b6bee51fd10d5d183d6a9ccef4aa4edd44deb4a913b8c262d9f"
+    },
+    {
+      "bytes": 8327,
+      "path": "original-copy-helper.py",
+      "sha256": "120a57838a6f0a8ebd893f14fadcfad2d1aa4ebed750edddd811c9a82e882161"
+    },
+    {
+      "bytes": 6404,
+      "path": "preparation.json",
+      "sha256": "55f18f4e02646b013dd87e47d7e86291068edc59f85036fe87433c3a831d8fe7"
+    }
+  ],
+  "self_excluded": true
+}

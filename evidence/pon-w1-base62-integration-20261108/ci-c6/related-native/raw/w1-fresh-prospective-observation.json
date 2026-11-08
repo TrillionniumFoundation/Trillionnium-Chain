@@ -1,0 +1,381 @@
+{
+  "bounded_error_excerpts": [
+    {
+      "line": 56,
+      "text": "2026-11-08T07:16:32.6059826Z   CARGO_TERM_COLOR: never",
+      "truncated_line": false
+    },
+    {
+      "line": 57,
+      "text": "2026-11-08T07:16:32.6060374Z   PYTHONDONTWRITEBYTECODE: 1",
+      "truncated_line": false
+    },
+    {
+      "line": 58,
+      "text": "2026-11-08T07:16:32.6060952Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 59,
+      "text": "2026-11-08T07:16:32.6061631Z   EXPECTED_SOURCE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 60,
+      "text": "2026-11-08T07:16:32.6062560Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 61,
+      "text": "2026-11-08T07:16:32.6063447Z   EXPECTED_HEAD: 2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "truncated_line": false
+    },
+    {
+      "line": 62,
+      "text": "2026-11-08T07:16:32.6064294Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 63,
+      "text": "2026-11-08T07:16:32.6065102Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1012,
+      "text": "2026-11-08T07:17:14.7218248Z ##[group]Run set -euo pipefail",
+      "truncated_line": false
+    },
+    {
+      "line": 1013,
+      "text": "2026-11-08T07:17:14.7218623Z \u001b[36;1mset -euo pipefail\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1014,
+      "text": "2026-11-08T07:17:14.7219089Z \u001b[36;1mout=\"$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1015,
+      "text": "2026-11-08T07:17:14.7219562Z \u001b[36;1mmkdir \"$out\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1016,
+      "text": "2026-11-08T07:17:14.7219824Z \u001b[36;1mprintf 'OUT=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1017,
+      "text": "2026-11-08T07:17:14.7220203Z \u001b[36;1mprintf 'TRNM_CI_RECEIPT_DIR=%s\\n' \"$out\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1018,
+      "text": "2026-11-08T07:17:14.7220676Z \u001b[36;1mprintf 'CARGO_HOME=%s/cargo-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1019,
+      "text": "2026-11-08T07:17:14.7221235Z \u001b[36;1mprintf 'CARGO_TARGET_DIR=%s/target-w1-fresh\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1020,
+      "text": "2026-11-08T07:17:14.7221742Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1021,
+      "text": "2026-11-08T07:17:14.7222169Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1022,
+      "text": "2026-11-08T07:17:14.7222644Z \u001b[36;1m  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_SOURCE\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1023,
+      "text": "2026-11-08T07:17:14.7223100Z \u001b[36;1mfi\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1024,
+      "text": "2026-11-08T07:17:14.7223456Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$out/source.json\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1032,
+      "text": "2026-11-08T07:17:14.7250578Z   CARGO_TERM_COLOR: never",
+      "truncated_line": false
+    },
+    {
+      "line": 1033,
+      "text": "2026-11-08T07:17:14.7250816Z   PYTHONDONTWRITEBYTECODE: 1",
+      "truncated_line": false
+    },
+    {
+      "line": 1034,
+      "text": "2026-11-08T07:17:14.7251072Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1035,
+      "text": "2026-11-08T07:17:14.7251395Z   EXPECTED_SOURCE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1036,
+      "text": "2026-11-08T07:17:14.7251800Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1037,
+      "text": "2026-11-08T07:17:14.7252211Z   EXPECTED_HEAD: 2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "truncated_line": false
+    },
+    {
+      "line": 1038,
+      "text": "2026-11-08T07:17:14.7252577Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1039,
+      "text": "2026-11-08T07:17:14.7252929Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1040,
+      "text": "2026-11-08T07:17:14.7253224Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 1041,
+      "text": "2026-11-08T07:17:14.8427426Z Traceback (most recent call last):",
+      "truncated_line": false
+    },
+    {
+      "line": 1042,
+      "text": "2026-11-08T07:17:14.8428781Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 219, in <module>",
+      "truncated_line": false
+    },
+    {
+      "line": 1043,
+      "text": "2026-11-08T07:17:14.8429866Z     main()",
+      "truncated_line": false
+    },
+    {
+      "line": 1044,
+      "text": "2026-11-08T07:17:14.8430766Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 210, in main",
+      "truncated_line": false
+    },
+    {
+      "line": 1046,
+      "text": "2026-11-08T07:17:14.8432884Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "truncated_line": false
+    },
+    {
+      "line": 1047,
+      "text": "2026-11-08T07:17:14.8433862Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 153, in verify",
+      "truncated_line": false
+    },
+    {
+      "line": 1048,
+      "text": "2026-11-08T07:17:14.8434989Z     raise ValueError('merge parents differ from the event base and candidate')",
+      "truncated_line": false
+    },
+    {
+      "line": 1049,
+      "text": "2026-11-08T07:17:14.8435825Z ValueError: merge parents differ from the event base and candidate",
+      "truncated_line": false
+    },
+    {
+      "line": 1050,
+      "text": "2026-11-08T07:17:14.8584989Z ##[error]Process completed with exit code 1.",
+      "truncated_line": false
+    },
+    {
+      "line": 1051,
+      "text": "2026-11-08T07:17:14.8716330Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "truncated_line": false
+    },
+    {
+      "line": 1052,
+      "text": "2026-11-08T07:17:14.8716761Z with:",
+      "truncated_line": false
+    },
+    {
+      "line": 1053,
+      "text": "2026-11-08T07:17:14.8717156Z   name: w1-fresh-service-prospective-merge-7b4a63b6f08687e93270407772951aa71087ca3d-1",
+      "truncated_line": false
+    },
+    {
+      "line": 1065,
+      "text": "2026-11-08T07:17:14.8720652Z   CARGO_TERM_COLOR: never",
+      "truncated_line": false
+    },
+    {
+      "line": 1066,
+      "text": "2026-11-08T07:17:14.8720882Z   PYTHONDONTWRITEBYTECODE: 1",
+      "truncated_line": false
+    },
+    {
+      "line": 1067,
+      "text": "2026-11-08T07:17:14.8721167Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1068,
+      "text": "2026-11-08T07:17:14.8721471Z   EXPECTED_SOURCE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1069,
+      "text": "2026-11-08T07:17:14.8721874Z   TRNM_EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1070,
+      "text": "2026-11-08T07:17:14.8722291Z   EXPECTED_HEAD: 2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "truncated_line": false
+    },
+    {
+      "line": 1071,
+      "text": "2026-11-08T07:17:14.8722650Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1072,
+      "text": "2026-11-08T07:17:14.8723007Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1078,
+      "text": "2026-11-08T07:17:15.0710786Z (node:2451) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "truncated_line": false
+    },
+    {
+      "line": 1079,
+      "text": "2026-11-08T07:17:15.0712451Z (Use `node --trace-deprecation ...` to show where the warning was created)",
+      "truncated_line": false
+    },
+    {
+      "line": 1080,
+      "text": "2026-11-08T07:17:15.0766874Z ##[error]No files were found with the provided path: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42457886518-1/. No artifacts will be uploaded.",
+      "truncated_line": false
+    },
+    {
+      "line": 1081,
+      "text": "2026-11-08T07:17:15.1065572Z Post job cleanup.",
+      "truncated_line": false
+    },
+    {
+      "line": 1082,
+      "text": "2026-11-08T07:17:15.1990569Z [command]/usr/bin/git version",
+      "truncated_line": false
+    },
+    {
+      "line": 1083,
+      "text": "2026-11-08T07:17:15.2035049Z git version 2.56.0",
+      "truncated_line": false
+    }
+  ],
+  "completed_at": "2026-11-08T07:17:16Z",
+  "conclusion": "failure",
+  "error_marker_count": 14,
+  "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701933",
+  "job_id": 128660701933,
+  "log": {
+    "bytes": 141288,
+    "path": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-log.stdout",
+    "sha256": "572094ad6449426fe06385d6ddb27335a00dc4d66ed2a638a548d76a9769f202"
+  },
+  "log_line_count": 1094,
+  "metadata": {
+    "bytes": 3246,
+    "path": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/w1-fresh-prospective-metadata.stdout",
+    "sha256": "0a80da446f353c06675625e4e3193a354a89e5becc361b2ad5782e11fbdaa1f7"
+  },
+  "name": "W1 fresh challenge service (x64, prospective-merge)",
+  "role": "w1-fresh-prospective",
+  "run_id": 42457886518,
+  "scope": "completed original job only; no inference about unobserved sibling jobs or head-lane business targets",
+  "started_at": "2026-11-08T07:16:30Z",
+  "status": "completed",
+  "steps": [
+    {
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Checkout exact observed source",
+      "number": 2,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Reproduce the frozen integration-push source",
+      "number": 3,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Reserve observations and verify ordered source identity",
+      "number": 4,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Install original pinned compiler",
+      "number": 5,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Run refusal controls for original Host and fresh successor",
+      "number": 6,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original and fresh service with original Host resources",
+      "number": 7,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Verify observed source after execution",
+      "number": 8,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Preserve this lane's actual push source context",
+      "number": 9,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Retain both service outcomes and original Host evidence",
+      "number": 10,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Post Checkout exact observed source",
+      "number": 20,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 21,
+      "status": "completed"
+    }
+  ]
+}

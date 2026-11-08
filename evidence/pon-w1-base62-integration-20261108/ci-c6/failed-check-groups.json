@@ -1,0 +1,228 @@
+{
+  "42457886506": [
+    {
+      "job_id": 128660701119,
+      "name": "CodeQL local SARIF (rust, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701102,
+      "name": "CodeQL local SARIF (actions, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701001,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886518": [
+    {
+      "job_id": 128660702000,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701997,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701995,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701957,
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701943,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701933,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701927,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701909,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701885,
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701856,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886519": [
+    {
+      "job_id": 128660701244,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701090,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886520": [
+    {
+      "job_id": 128660701347,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701285,
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886523": [
+    {
+      "job_id": 128660701243,
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701236,
+      "name": "aggregate-owner-controls (prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701207,
+      "name": "cleanup (macos-15, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701190,
+      "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886526": [
+    {
+      "job_id": 128660701319,
+      "name": "recent batch (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701166,
+      "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886532": [
+    {
+      "job_id": 128660701100,
+      "name": "W1 transparent candidate (prospective-merge, x64)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886533": [
+    {
+      "job_id": 128660701306,
+      "name": "parent evidence (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701271,
+      "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886542": [
+    {
+      "job_id": 128660701162,
+      "name": "export",
+      "role": "unlabelled"
+    }
+  ],
+  "42457886547": [
+    {
+      "job_id": 128660701441,
+      "name": "native boundary (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701420,
+      "name": "native boundary (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886555": [
+    {
+      "job_id": 128660701632,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701606,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701603,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701599,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701592,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701543,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701340,
+      "name": "retained-pressure-failure",
+      "role": "unlabelled"
+    }
+  ],
+  "42457886583": [
+    {
+      "job_id": 128660701601,
+      "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701409,
+      "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ],
+  "42457886584": [
+    {
+      "job_id": 128660701788,
+      "name": "reference (ubuntu-24.04, prospective-merge)",
+      "role": "prospective-merge"
+    },
+    {
+      "job_id": 128660701752,
+      "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+      "role": "prospective-merge"
+    }
+  ]
+}

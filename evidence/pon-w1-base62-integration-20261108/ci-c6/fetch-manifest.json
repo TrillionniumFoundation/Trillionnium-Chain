@@ -1,0 +1,377 @@
+{
+  "expected_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "mutations": 0,
+  "operator": "ProfHepta",
+  "requests": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701001/annotations?per_page=100"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701001/annotations?per_page=100",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:25:58.419162+00:00",
+      "job_id": 128660701001,
+      "kind": "annotations",
+      "started_utc": "2026-11-08T07:25:56.197252+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701001/annotations.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1449,
+        "path": "jobs/128660701001/annotations.raw",
+        "sha256": "cc4ea4acc1ef75947454cb6ec8d4f6433438547951c2afc2e9dda0a4c6a1003b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701001"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701001",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:25:58.770271+00:00",
+      "job_id": 128660701001,
+      "kind": "job",
+      "started_utc": "2026-11-08T07:25:56.197447+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701001/job.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3017,
+        "path": "jobs/128660701001/job.raw",
+        "sha256": "f86f077ef3d28cd1fe9b9738f79441c588ee458c4949d27d64a7d29e226da396"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701243"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701243",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:25:59.121333+00:00",
+      "job_id": 128660701243,
+      "kind": "job",
+      "started_utc": "2026-11-08T07:25:56.197489+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701243/job.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2727,
+        "path": "jobs/128660701243/job.raw",
+        "sha256": "5a648541d2663ba3d570573fe39fe49ba584d1e13f22e8f641fc1d984226be53"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701244"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701244",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:00.842071+00:00",
+      "job_id": 128660701244,
+      "kind": "job",
+      "started_utc": "2026-11-08T07:25:58.771438+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701244/job.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4267,
+        "path": "jobs/128660701244/job.raw",
+        "sha256": "ed48ba9df5739db80a13ff821ba92e7e8ae43372e3eea4d56055110b25d2c55d"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701243/annotations?per_page=100"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701243/annotations?per_page=100",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:01.894756+00:00",
+      "job_id": 128660701243,
+      "kind": "annotations",
+      "started_utc": "2026-11-08T07:25:58.420255+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701243/annotations.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1356,
+        "path": "jobs/128660701243/annotations.raw",
+        "sha256": "efdf4bec48b08433c1a4d347cf660d06dad4c79876f51c45dada313f028a5fb7"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701244/annotations?per_page=100"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701244/annotations?per_page=100",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:02.412114+00:00",
+      "job_id": 128660701244,
+      "kind": "annotations",
+      "started_utc": "2026-11-08T07:26:00.843385+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701244/annotations.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 897,
+        "path": "jobs/128660701244/annotations.raw",
+        "sha256": "2b4ba8a68666e38639af8f29806f18821a55aa70a8a9c95942a8c10203bb3e6f"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701243/logs"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701243/logs",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:02.781059+00:00",
+      "job_id": 128660701243,
+      "kind": "log",
+      "started_utc": "2026-11-08T07:25:56.198227+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701243/log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 137176,
+        "path": "jobs/128660701243/log.raw",
+        "sha256": "fe07092b58ad727faf27767e16f00f7b3c8aff2d8c8fcc047b19b5b7270713e5"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701162"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701162",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:03.564228+00:00",
+      "job_id": 128660701162,
+      "kind": "job",
+      "started_utc": "2026-11-08T07:26:01.895667+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701162/job.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2827,
+        "path": "jobs/128660701162/job.raw",
+        "sha256": "7d083dbf632adf6779d2deb11a4f7d4d6db839cfb2912a22a6c8a2111a17a3e5"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701001/logs"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701001/logs",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:04.284838+00:00",
+      "job_id": 128660701001,
+      "kind": "log",
+      "started_utc": "2026-11-08T07:25:56.196933+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701001/log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 139176,
+        "path": "jobs/128660701001/log.raw",
+        "sha256": "ae03c9529b3d392361b1b709981c28bfa75883150f13a1d967ad1b9c9ad0ef60"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701244/logs"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701244/logs",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:05.607175+00:00",
+      "job_id": 128660701244,
+      "kind": "log",
+      "started_utc": "2026-11-08T07:25:59.122373+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701244/log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 146662,
+        "path": "jobs/128660701244/log.raw",
+        "sha256": "b345b37c76e5b2e84d6ea1f8375f2ec68078a0b70c8209a23e50cbb8820a668b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701162/annotations?per_page=100"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701162/annotations?per_page=100",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:09.634807+00:00",
+      "job_id": 128660701162,
+      "kind": "annotations",
+      "started_utc": "2026-11-08T07:26:02.799571+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701162/annotations.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 956,
+        "path": "jobs/128660701162/annotations.raw",
+        "sha256": "7fd7d982fac0b05143f52d131fdfccf1065bea7964b6942a7be8cbf7f6d6ef49"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701340/annotations?per_page=100"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701340/annotations?per_page=100",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:10.901058+00:00",
+      "job_id": 128660701340,
+      "kind": "annotations",
+      "started_utc": "2026-11-08T07:26:05.622589+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701340/annotations.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 940,
+        "path": "jobs/128660701340/annotations.raw",
+        "sha256": "ab40aaf348ac0226ed99e5b6376322023aad4e390a82fa4a31bbe613fb58ba07"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701340"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701340",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:11.501855+00:00",
+      "job_id": 128660701340,
+      "kind": "job",
+      "started_utc": "2026-11-08T07:26:03.565249+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701340/job.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1747,
+        "path": "jobs/128660701340/job.raw",
+        "sha256": "7088ab7d711de501286efb525f7012af7d47ba188caa1632ef6deeae665cdf85"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701340/logs"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701340/logs",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:13.108968+00:00",
+      "job_id": 128660701340,
+      "kind": "log",
+      "started_utc": "2026-11-08T07:26:04.299386+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701340/log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4117,
+        "path": "jobs/128660701340/log.raw",
+        "sha256": "50165921674ef9585183e96d8bb197b93072d21bb18fcde74ab50cfc1578660d"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701162/logs"
+      ],
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701162/logs",
+      "exit_code": 0,
+      "failure": null,
+      "finished_utc": "2026-11-08T07:26:14.811466+00:00",
+      "job_id": 128660701162,
+      "kind": "log",
+      "started_utc": "2026-11-08T07:26:02.413101+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "jobs/128660701162/log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 146784,
+        "path": "jobs/128660701162/log.raw",
+        "sha256": "bda67c44bfcd0bac33d92bd5265ea15dc8667bd8419d24317c51ca72aa406a3a"
+      }
+    }
+  ],
+  "reruns": 0,
+  "schema": "TRNM-W1-C6-FAILED-CHECK-READBACK-FETCH1",
+  "selected_job_ids": [
+    128660701001,
+    128660701243,
+    128660701244,
+    128660701162,
+    128660701340
+  ],
+  "snapshot_sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307"
+}

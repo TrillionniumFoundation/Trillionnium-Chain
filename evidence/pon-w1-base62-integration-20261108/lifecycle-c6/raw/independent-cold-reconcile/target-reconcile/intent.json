@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b/scripts/w1_generation_target_v2.py",
+    "reconcile",
+    "--root",
+    "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/target-state",
+    "--target",
+    "w1-timeout-chain-w1-c6-timeout-reorg-20261108-ec265b-01",
+    "--operation",
+    "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc"
+  ],
+  "observation_or_cleanup_deadline_ns": 1199457002556368,
+  "original_proof_deadline_ns": 1199343004629858,
+  "proof_deadline_renewed": false,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "started_monotonic_ns": 1199447002556368
+}

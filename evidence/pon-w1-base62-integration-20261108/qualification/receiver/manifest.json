@@ -1,0 +1,22 @@
+{
+  "component": "receiver",
+  "files": [
+    {
+      "bytes": 5024,
+      "path": "raw-logs.tar.gz",
+      "sha256": "64781261f4d74549f59509d4230e2d0e741c105e8f5886aafdd2844efd199f98"
+    },
+    {
+      "bytes": 3892,
+      "path": "raw-output-index.json",
+      "sha256": "653005d460de63fabea749eabba502c6c37380074b828c29d59174909328c66e"
+    },
+    {
+      "bytes": 4156,
+      "path": "summary.json",
+      "sha256": "d6c4ef939f823c01a766dd2ff301f13f38c426b487db6eb91a157f2fc9200d41"
+    }
+  ],
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1",
+  "scope": "explicit raw logs, manifests and safe provenance; no ELF, SQLite, environment dump, state tree or credentials"
+}

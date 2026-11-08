@@ -1,0 +1,155 @@
+{
+  "all_original_component_commands_passed": false,
+  "archive_policy": "Explicit raw log/JSON/driver/plan allowlists, no ELF, SQLite, whole state tree, process environment dump, or credentials.",
+  "audit_actions": {
+    "cargo_runs": 0,
+    "operation_starts": 0,
+    "pushes": 0,
+    "source_commits": 0,
+    "source_edits": 0,
+    "test_runs": 0
+  },
+  "backend_attempt_02": {
+    "failed_c6_target_cache_reused": true,
+    "fresh_cargo_target": false,
+    "operation_original_deadline_budget_changed": false,
+    "original_attempt_extended": false,
+    "predeclared_outer_budget_seconds": 1800,
+    "separate_new_attempt": true
+  },
+  "c5_original59_crosscheck_correct_no_erratum": true,
+  "components": {
+    "backend-attempt-01": {
+      "archive_manifest": "backend-attempt-01/manifest.json",
+      "archive_manifest_sha256": "11992d65e9e587234df5087120ec6034a44585b3d060b86c8d8698645bd67e62",
+      "review_summary": "backend-attempt-01/summary.json",
+      "summary_sha256": "9e2759f496de3fd3368064eec565664703542c43d84524cf3dbfbc786f4b8812"
+    },
+    "backend-attempt-02": {
+      "archive_manifest": "backend-attempt-02/manifest.json",
+      "archive_manifest_sha256": "a3a82772800532c3591be693fa17c3eb884d4c0657935cdfe0589ec4b5c70a54",
+      "review_summary": "backend-attempt-02/summary.json",
+      "summary_sha256": "4009a760425b3da2b72c2c533996b8bc7e0ff52d357b2424eb773eb666753f0b"
+    },
+    "core-attempt-01": {
+      "archive_manifest": "core-attempt-01/manifest.json",
+      "archive_manifest_sha256": "23ae4d6e8feba23b362dc8b31ab3b78723130e5363707a458e28d3105ddf7688",
+      "review_summary": "core-attempt-01/summary.json",
+      "summary_sha256": "4506b97ce75fe274302acddc665bb8897921d02d7da39263ba18691d1de3c3ca"
+    },
+    "native": {
+      "archive_manifest": "native/manifest.json",
+      "archive_manifest_sha256": "e72e46ce16a5417b0a12bf061979ef1340c1266a9f416d388aadf4c1386fab65",
+      "review_summary": "native/summary.json",
+      "summary_sha256": "2bf621a21222188d1b0797eac80bbecc6f39312cee7a1147ca5bef267138f78a"
+    },
+    "owner": {
+      "archive_manifest": "owner/manifest.json",
+      "archive_manifest_sha256": "efd3963ec1278febb0b0ba0e5bd1968063d25a92b3a3d649795ddc396ab2b98e",
+      "review_summary": "owner/summary.json",
+      "summary_sha256": "99f93686b21baf526f1f0d66b351bc89cc143bc0b69e826a8c331cfdb29a018f"
+    },
+    "receiver": {
+      "archive_manifest": "receiver/manifest.json",
+      "archive_manifest_sha256": "7a8b4303a78d6d9b35c13a0b381db788783699e9a79c63f847b3ce90692787f5",
+      "review_summary": "receiver/summary.json",
+      "summary_sha256": "d6c4ef939f823c01a766dd2ff301f13f38c426b487db6eb91a157f2fc9200d41"
+    },
+    "staged-isolated-01": {
+      "archive_manifest": "staged-isolated-01/manifest.json",
+      "archive_manifest_sha256": "0e1ea2c37348f754cc08d7349386ac9c6c68e2de801d320fc6138d74b8bb42a5",
+      "review_summary": "staged-isolated-01/summary.json",
+      "summary_sha256": "4e7ad9fa727056a7cc15325823a2f1311f3f25b802e9445299c52f68ee145248"
+    }
+  },
+  "cumulative_ordinary_method_executions": {
+    "distinct_new_methods_claimed": false,
+    "executions": 602,
+    "failed": 2,
+    "heavy_ignored": 4,
+    "passed": 600
+  },
+  "first_ordinary_cohort": {
+    "errors": 0,
+    "failed": 2,
+    "heavy_ignored": 4,
+    "method_executions": 570,
+    "passed": 568,
+    "skipped": 0
+  },
+  "full_proof_generations_in_this_qualification": 0,
+  "historical_precommit_pin_control_methods": 52,
+  "independent_lifecycle_review": {
+    "cumulative_2000_units_claimed": false,
+    "included_in_ordinary_cohort": false,
+    "independent_cold_exact_heavy_tests_passed": 1,
+    "main_exact_heavy_tests_passed": 1,
+    "new_complete_proofs": 0,
+    "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+    "review_summary": "lifecycle-independent-review/summary.json",
+    "same_deterministic_native_cancel_as_c5": true,
+    "summary_sha256": "ad5b616ba305a1ebed807d526eb610503ad5eac76ae4420e3b34beb0422674ec"
+  },
+  "lifecycle_scope": "The separately completed C6 natural-timeout/refund/reorg and independent cold operation is outside this ordinary qualification cohort.",
+  "original_backend_attempt_01": {
+    "complete_qualification_manifest_missing": true,
+    "completed_command_rows": 4,
+    "excluded_from_primary59": true,
+    "exit": 124,
+    "original_outer_budget_seconds": 900,
+    "partial_build_without_completed_row": true,
+    "still_failed": true
+  },
+  "original_core_qualification_complete": false,
+  "precommit_pin_methods_counted_as_postcommit_c6": false,
+  "primary_component_command_arrays": {
+    "actual_commands": 59,
+    "exit0": 57,
+    "expected_source_probe_exit1": 1,
+    "unexpected_staged_exit1": 1
+  },
+  "provenance_limits": {
+    "entire_inherited_environment_independently_snapshotted": false,
+    "guest_recompiled": false,
+    "native_and_verifier_and_runner_rehashed_by_this_reviewer": true,
+    "new_target_is_not_cleanroom": true,
+    "owner_elf_reread_by_this_reviewer": false,
+    "owner_receipt_cargo_binding_and_stat_checked": true,
+    "registry_toolchain_reused": true
+  },
+  "qualification_limits": {
+    "actual_positive_full_proof_provider_payment_qualified": false,
+    "all_four_engineering_gates_closed": false,
+    "business_budget_qualified": false,
+    "causal_generation_speedup_established": false,
+    "complete_historical_process_tree_reaping_qualified": false,
+    "complete_resource_billing_qualified": false,
+    "crypto_protocol_security_qualified": false,
+    "historical_abba80_rebound_to_c6": false,
+    "population_tail_latency_established": false,
+    "production_qualified": false,
+    "wan_qualified": false,
+    "winning_w1_node_admission_qualified": false
+  },
+  "raw_output_recomputation": {
+    "additional_original_failed_backend_stream_files": 10,
+    "completed_component_command_stream_files": 126,
+    "source_guards_and_other_receipts_not_counted_as_extra_tests": true,
+    "total_distinct_command_stdout_stderr_paths": 136
+  },
+  "review_complete": true,
+  "schema": "TRNM-W1-C6-QUALIFICATION-ATTEMPT-AGGREGATE1",
+  "sole_isolated_staged_followup": {
+    "actual_commands": 4,
+    "failed": 0,
+    "method_executions": 32,
+    "original_failed_attempt_replaced": false,
+    "original_failed_methods_later_passed": 2,
+    "passed": 32,
+    "repeated_pass_methods": 30,
+    "skipped": 0
+  },
+  "status": "FIRST_CORE_FAILURE_RETAINED_WITH_SOLE_UNCHANGED_ISOLATED_FOLLOWUP_PASS",
+  "tested_source_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "tested_source_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+}

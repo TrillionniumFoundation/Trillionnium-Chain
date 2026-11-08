@@ -1,0 +1,679 @@
+{
+  "all_failure_causes_inferred_from_samples": false,
+  "prospective_named_failure_count": 38,
+  "results": [
+    {
+      "annotations": [
+        {
+          "annotation_level": "warning",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 2,
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 2,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 17,
+          "message": "No files were found with the provided path: /home/runner/work/_temp/codeql-results/python/prospective-merge/\n/home/runner/work/_temp/codeql-identity/python/prospective-merge/. No artifacts will be uploaded.",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 17,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 29,
+          "message": "Process completed with exit code 1.",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 29,
+          "title": ""
+        }
+      ],
+      "bytes": 1449,
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701001,
+      "kind": "annotations",
+      "name": "CodeQL local SARIF (python, prospective-merge)"
+    },
+    {
+      "bytes": 3017,
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701001",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:27Z",
+          "conclusion": "failure",
+          "name": "Refuse any other source identity",
+          "number": 3,
+          "started_at": "2026-11-08T07:14:27Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:14:27Z",
+          "conclusion": "failure",
+          "name": "Retain exact-source local SARIF for independent review",
+          "number": 9,
+          "started_at": "2026-11-08T07:14:27Z",
+          "status": "completed"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701001,
+      "kind": "job",
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "run_id": 42457886506,
+      "skipped_steps": [
+        "Initialize pinned official CodeQL",
+        "Generate local exact-source SARIF for exact source SHA",
+        "Verify generated SARIF is present and parseable",
+        "Retain post-analysis worktree observations",
+        "Verify analyzed source stayed unchanged"
+      ],
+      "status": "completed"
+    },
+    {
+      "bytes": 2727,
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701243",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:27Z",
+          "conclusion": "failure",
+          "name": "Verify actual source and ordered main merge",
+          "number": 3,
+          "started_at": "2026-11-08T07:15:27Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T07:15:27Z",
+          "conclusion": "failure",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "number": 7,
+          "started_at": "2026-11-08T07:15:27Z",
+          "status": "completed"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701243,
+      "kind": "job",
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "run_id": 42457886523,
+      "skipped_steps": [
+        "Select the real GNU time observer on macOS",
+        "Run complete original owners and every cleanup regression",
+        "Preserve unchanged source and precise scope"
+      ],
+      "status": "completed"
+    },
+    {
+      "bytes": 4267,
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701244",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:16:55Z",
+          "conclusion": "failure",
+          "name": "Prepare exact-source command records",
+          "number": 3,
+          "started_at": "2026-11-08T07:16:54Z",
+          "status": "completed"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701244,
+      "kind": "job",
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "run_id": 42457886519,
+      "skipped_steps": [
+        "Require retained source and claim controls",
+        "Install the original pinned compiler",
+        "Prepare the independently pinned OpenSSL provider",
+        "Record compiler, exact locked graph and formatting",
+        "Execute every required native effect and rejection control",
+        "Require original transaction scope controls",
+        "Require actual build-fence cache requalification",
+        "Preserve native control records before the complete regression",
+        "Preserve the complete original Node library regression suite",
+        "Check strict Clippy without rewriting source",
+        "Observe complete component costs with unchanged native budgets"
+      ],
+      "status": "completed"
+    },
+    {
+      "annotations": [
+        {
+          "annotation_level": "warning",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 2,
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 2,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 19,
+          "message": "No files were found with the provided path: /home/runner/work/_temp/owned-cleanup/. No artifacts will be uploaded.",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 19,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 21,
+          "message": "Process completed with exit code 1.",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 21,
+          "title": ""
+        }
+      ],
+      "bytes": 1356,
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701243,
+      "kind": "annotations",
+      "name": "cleanup (ubuntu-24.04, prospective-merge)"
+    },
+    {
+      "annotations": [
+        {
+          "annotation_level": "warning",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 2,
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 2,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 55,
+          "message": "Process completed with exit code 1.",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 55,
+          "title": ""
+        }
+      ],
+      "bytes": 897,
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701244,
+      "kind": "annotations",
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)"
+    },
+    {
+      "bytes": 137176,
+      "error_line_count": 11,
+      "error_lines": [
+        {
+          "line": 51,
+          "text": "2026-11-08T07:14:49.3490515Z   SOURCE_SHA: 2bdd252aa6c300b7431b9ee897b254b7953cf562"
+        },
+        {
+          "line": 52,
+          "text": "2026-11-08T07:14:49.3491118Z   BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        },
+        {
+          "line": 1004,
+          "text": "2026-11-08T07:15:27.1191869Z \u001b[36;1m  test \"$TESTED_SHA\" = \"$SOURCE_SHA\"\u001b[0m"
+        },
+        {
+          "line": 1006,
+          "text": "2026-11-08T07:15:27.1192325Z \u001b[36;1m  test \"$(git show -s --format=%P HEAD)\" = \"$BASE_SHA $SOURCE_SHA\"\u001b[0m"
+        },
+        {
+          "line": 1007,
+          "text": "2026-11-08T07:15:27.1192784Z \u001b[36;1m  test \"$(git rev-parse HEAD^{tree})\" = \"$(git merge-tree --write-tree \"$BASE_SHA\" \"$SOURCE_SHA\")\"\u001b[0m"
+        },
+        {
+          "line": 1013,
+          "text": "2026-11-08T07:15:27.1216154Z   SOURCE_SHA: 2bdd252aa6c300b7431b9ee897b254b7953cf562"
+        },
+        {
+          "line": 1014,
+          "text": "2026-11-08T07:15:27.1216426Z   BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        },
+        {
+          "line": 1019,
+          "text": "2026-11-08T07:15:27.1862994Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1006,
+          "text": "2026-11-08T07:15:27.1192325Z \u001b[36;1m  test \"$(git show -s --format=%P HEAD)\" = \"$BASE_SHA $SOURCE_SHA\"\u001b[0m"
+        },
+        {
+          "line": 1007,
+          "text": "2026-11-08T07:15:27.1192784Z \u001b[36;1m  test \"$(git rev-parse HEAD^{tree})\" = \"$(git merge-tree --write-tree \"$BASE_SHA\" \"$SOURCE_SHA\")\"\u001b[0m"
+        },
+        {
+          "line": 1013,
+          "text": "2026-11-08T07:15:27.1216154Z   SOURCE_SHA: 2bdd252aa6c300b7431b9ee897b254b7953cf562"
+        },
+        {
+          "line": 1014,
+          "text": "2026-11-08T07:15:27.1216426Z   BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        },
+        {
+          "line": 1019,
+          "text": "2026-11-08T07:15:27.1862994Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1030,
+          "text": "2026-11-08T07:15:27.2995052Z   SOURCE_SHA: 2bdd252aa6c300b7431b9ee897b254b7953cf562"
+        },
+        {
+          "line": 1031,
+          "text": "2026-11-08T07:15:27.2995321Z   BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        },
+        {
+          "line": 1038,
+          "text": "2026-11-08T07:15:27.4869935Z ##[error]No files were found with the provided path: /home/runner/work/_temp/owned-cleanup/. No artifacts will be uploaded."
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701243,
+      "kind": "log",
+      "last_lines": [
+        "2026-11-08T07:15:27.6123199Z Adding repository directory to the temporary git global config as a safe directory",
+        "2026-11-08T07:15:27.6126437Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "2026-11-08T07:15:27.6165358Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand",
+        "2026-11-08T07:15:27.6227272Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"",
+        "2026-11-08T07:15:27.6468596Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader",
+        "2026-11-08T07:15:27.6511311Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"",
+        "2026-11-08T07:15:27.6928016Z Cleaning up orphan processes",
+        "2026-11-08T07:15:27.7232630Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+      ],
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "secret_pattern_seen": false
+    },
+    {
+      "bytes": 2827,
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701162",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:14:22Z",
+          "conclusion": "failure",
+          "name": "Export exact PR analyses with the existing read-only token",
+          "number": 5,
+          "started_at": "2026-11-08T07:14:21Z",
+          "status": "completed"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701162,
+      "kind": "job",
+      "name": "export",
+      "run_id": 42457886542,
+      "skipped_steps": [],
+      "status": "completed"
+    },
+    {
+      "bytes": 139176,
+      "error_line_count": 12,
+      "error_lines": [
+        {
+          "line": 1004,
+          "text": "2026-11-08T07:14:27.4069120Z \u001b[36;1mtest \"$(git rev-parse HEAD)\" = \"$EXPECTED_SOURCE_SHA\"\u001b[0m"
+        },
+        {
+          "line": 1008,
+          "text": "2026-11-08T07:14:27.4070748Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_CANDIDATE_SHA\")\u001b[0m"
+        },
+        {
+          "line": 1009,
+          "text": "2026-11-08T07:14:27.4071205Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m"
+        },
+        {
+          "line": 1010,
+          "text": "2026-11-08T07:14:27.4071705Z \u001b[36;1m  args+=(--expected-base \"$EXPECTED_BASE_SHA\" --expected-merge \"$EXPECTED_SOURCE_SHA\")\u001b[0m"
+        },
+        {
+          "line": 1013,
+          "text": "2026-11-08T07:14:27.4073922Z \u001b[36;1mprintf 'CODEQL_EVENT_SHA=%s CODEQL_SOURCE_SHA=%s CODEQL_SOURCE_KIND=%s CODEQL_LANGUAGE=%s\\n' \"$GITHUB_SHA\" \"$(git rev-parse HEAD)\" \"$SOURCE_KIND\" 'python'\u001b[0m"
+        },
+        {
+          "line": 1016,
+          "text": "2026-11-08T07:14:27.4099793Z   EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d"
+        },
+        {
+          "line": 1018,
+          "text": "2026-11-08T07:14:27.4100650Z   EXPECTED_BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        },
+        {
+          "line": 1019,
+          "text": "2026-11-08T07:14:27.4100999Z   SOURCE_KIND: prospective-merge"
+        },
+        {
+          "line": 1013,
+          "text": "2026-11-08T07:14:27.4073922Z \u001b[36;1mprintf 'CODEQL_EVENT_SHA=%s CODEQL_SOURCE_SHA=%s CODEQL_SOURCE_KIND=%s CODEQL_LANGUAGE=%s\\n' \"$GITHUB_SHA\" \"$(git rev-parse HEAD)\" \"$SOURCE_KIND\" 'python'\u001b[0m"
+        },
+        {
+          "line": 1016,
+          "text": "2026-11-08T07:14:27.4099793Z   EXPECTED_SOURCE_SHA: 7b4a63b6f08687e93270407772951aa71087ca3d"
+        },
+        {
+          "line": 1018,
+          "text": "2026-11-08T07:14:27.4100650Z   EXPECTED_BASE_SHA: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        },
+        {
+          "line": 1019,
+          "text": "2026-11-08T07:14:27.4100999Z   SOURCE_KIND: prospective-merge"
+        },
+        {
+          "line": 1021,
+          "text": "2026-11-08T07:14:27.6987943Z Traceback (most recent call last):"
+        },
+        {
+          "line": 1029,
+          "text": "2026-11-08T07:14:27.6996956Z ValueError: merge parents differ from the event base and candidate"
+        },
+        {
+          "line": 1030,
+          "text": "2026-11-08T07:14:27.7174735Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1047,
+          "text": "2026-11-08T07:14:27.9230518Z ##[error]No files were found with the provided path: /home/runner/work/_temp/codeql-results/python/prospective-merge/"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701001,
+      "kind": "log",
+      "last_lines": [
+        "2026-11-08T07:14:28.0659730Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand",
+        "2026-11-08T07:14:28.0715035Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"",
+        "2026-11-08T07:14:28.1040680Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader",
+        "2026-11-08T07:14:28.1110057Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"",
+        "2026-11-08T07:14:28.1438323Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:",
+        "2026-11-08T07:14:28.1505830Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url",
+        "2026-11-08T07:14:28.1959383Z Cleaning up orphan processes",
+        "2026-11-08T07:14:28.2393844Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+      ],
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "secret_pattern_seen": false
+    },
+    {
+      "bytes": 146662,
+      "error_line_count": 10,
+      "error_lines": [
+        {
+          "line": 55,
+          "text": "2026-11-08T07:16:12.5180532Z   SOURCE_KIND: prospective-merge"
+        },
+        {
+          "line": 1043,
+          "text": "2026-11-08T07:16:54.8358425Z \u001b[36;1msource_args=(--kind \"$SOURCE_KIND\" --candidate \"$EXPECTED_HEAD\" --tested \"$EXPECTED_TESTED\")\u001b[0m"
+        },
+        {
+          "line": 1044,
+          "text": "2026-11-08T07:16:54.8358817Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m"
+        },
+        {
+          "line": 1061,
+          "text": "2026-11-08T07:16:54.8363506Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m"
+        },
+        {
+          "line": 1062,
+          "text": "2026-11-08T07:16:54.8363839Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m"
+        },
+        {
+          "line": 1073,
+          "text": "2026-11-08T07:16:54.8388108Z   SOURCE_KIND: prospective-merge"
+        },
+        {
+          "line": 1078,
+          "text": "2026-11-08T07:16:55.0323551Z Traceback (most recent call last):"
+        },
+        {
+          "line": 1086,
+          "text": "2026-11-08T07:16:55.0329303Z ValueError: merge parents differ from the event base and candidate"
+        },
+        {
+          "line": 1044,
+          "text": "2026-11-08T07:16:54.8358817Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m"
+        },
+        {
+          "line": 1061,
+          "text": "2026-11-08T07:16:54.8363506Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m"
+        },
+        {
+          "line": 1062,
+          "text": "2026-11-08T07:16:54.8363839Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m"
+        },
+        {
+          "line": 1073,
+          "text": "2026-11-08T07:16:54.8388108Z   SOURCE_KIND: prospective-merge"
+        },
+        {
+          "line": 1078,
+          "text": "2026-11-08T07:16:55.0323551Z Traceback (most recent call last):"
+        },
+        {
+          "line": 1086,
+          "text": "2026-11-08T07:16:55.0329303Z ValueError: merge parents differ from the event base and candidate"
+        },
+        {
+          "line": 1087,
+          "text": "2026-11-08T07:16:55.0467421Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1102,
+          "text": "2026-11-08T07:16:55.1892800Z   SOURCE_KIND: prospective-merge"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701244,
+      "kind": "log",
+      "last_lines": [
+        "2026-11-08T07:16:56.5124820Z Removing HTTP extra header",
+        "2026-11-08T07:16:56.5131405Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader",
+        "2026-11-08T07:16:56.5177552Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"",
+        "2026-11-08T07:16:56.5414379Z Removing includeIf entries pointing to credentials config files",
+        "2026-11-08T07:16:56.5422214Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:",
+        "2026-11-08T07:16:56.5467030Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url",
+        "2026-11-08T07:16:56.5860641Z Cleaning up orphan processes",
+        "2026-11-08T07:16:56.6173417Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+      ],
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "secret_pattern_seen": false
+    },
+    {
+      "annotations": [
+        {
+          "annotation_level": "warning",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 2,
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 2,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 13,
+          "message": "Process completed with exit code 1.",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 13,
+          "title": ""
+        }
+      ],
+      "bytes": 956,
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701162,
+      "kind": "annotations",
+      "name": "export"
+    },
+    {
+      "annotations": [
+        {
+          "annotation_level": "warning",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 2,
+          "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 2,
+          "title": ""
+        },
+        {
+          "annotation_level": "failure",
+          "blob_href": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2bdd252aa6c300b7431b9ee897b254b7953cf562/.github",
+          "end_column": null,
+          "end_line": 22,
+          "message": "Unable to download artifact(s): None of the provided artifact IDs were found",
+          "path": ".github",
+          "raw_details": "",
+          "start_column": null,
+          "start_line": 22,
+          "title": ""
+        }
+      ],
+      "bytes": 940,
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701340,
+      "kind": "annotations",
+      "name": "retained-pressure-failure"
+    },
+    {
+      "bytes": 1747,
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701340",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T07:15:49Z",
+          "conclusion": "failure",
+          "name": "Retrieve exact historical failed artifact without reclassifying it",
+          "number": 2,
+          "started_at": "2026-11-08T07:15:48Z",
+          "status": "completed"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701340,
+      "kind": "job",
+      "name": "retained-pressure-failure",
+      "run_id": 42457886555,
+      "skipped_steps": [
+        "Expose bounded original honest-submit and state diagnostics"
+      ],
+      "status": "completed"
+    },
+    {
+      "bytes": 4117,
+      "error_line_count": 1,
+      "error_lines": [
+        {
+          "line": 55,
+          "text": "2026-11-08T07:15:49.3680108Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found"
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701340,
+      "kind": "log",
+      "last_lines": [
+        "2026-11-08T07:15:49.1278055Z Fetching artifact list for workflow run 37730166589 in repository TrillionniumFoundation/Trillionnium-Chain",
+        "2026-11-08T07:15:49.1323479Z (node:2013) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+        "2026-11-08T07:15:49.1324215Z (Use `node --trace-deprecation ...` to show where the warning was created)",
+        "2026-11-08T07:15:49.1490557Z (node:2013) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.",
+        "2026-11-08T07:15:49.3667344Z Found 0 artifact(s)",
+        "2026-11-08T07:15:49.3680108Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found",
+        "2026-11-08T07:15:49.3861571Z Cleaning up orphan processes",
+        "2026-11-08T07:15:49.4114850Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+      ],
+      "name": "retained-pressure-failure",
+      "secret_pattern_seen": false
+    },
+    {
+      "bytes": 146784,
+      "error_line_count": 1,
+      "error_lines": [
+        {
+          "line": 1075,
+          "text": "2026-11-08T07:14:22.1997133Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "fetch_exit": 0,
+      "fetch_failure": null,
+      "job_id": 128660701162,
+      "kind": "log",
+      "last_lines": [
+        "2026-11-08T07:14:26.6866249Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand",
+        "2026-11-08T07:14:26.6905460Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"",
+        "2026-11-08T07:14:26.7203291Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader",
+        "2026-11-08T07:14:26.7243808Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"",
+        "2026-11-08T07:14:26.7578314Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:",
+        "2026-11-08T07:14:26.7626509Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url",
+        "2026-11-08T07:14:26.8099822Z Cleaning up orphan processes",
+        "2026-11-08T07:14:26.8507366Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+      ],
+      "name": "export",
+      "secret_pattern_seen": false
+    }
+  ],
+  "sampled_jobs": [
+    128660701001,
+    128660701243,
+    128660701244,
+    128660701162,
+    128660701340
+  ],
+  "schema": "TRNM-W1-C6-FAILED-CHECK-REPRESENTATIVES1",
+  "snapshot_failure_count": 40
+}

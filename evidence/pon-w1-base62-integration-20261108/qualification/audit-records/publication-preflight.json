@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--dev"
+  ],
+  "counted_as_qualification_test": false,
+  "cwd": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b",
+  "exit_code": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "1a6648a1694ecdfb1047f814a24abc3f223e8a80374fb6b053255b3ca79b3a4b"
+}

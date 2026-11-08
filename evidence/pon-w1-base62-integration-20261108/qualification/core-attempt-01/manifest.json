@@ -1,0 +1,22 @@
+{
+  "component": "core-attempt-01",
+  "files": [
+    {
+      "bytes": 27300,
+      "path": "raw-logs.tar.gz",
+      "sha256": "7b42c447cf76f6c5fff89fc6518bc02fc48a44a40ee2af664df16114c7a02e40"
+    },
+    {
+      "bytes": 17311,
+      "path": "raw-output-index.json",
+      "sha256": "2645838e67b220209c01312ba8bf47dff2c9134b8d61f008be7cd6cc583c6865"
+    },
+    {
+      "bytes": 13994,
+      "path": "summary.json",
+      "sha256": "4506b97ce75fe274302acddc665bb8897921d02d7da39263ba18691d1de3c3ca"
+    }
+  ],
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1",
+  "scope": "explicit raw logs, manifests and safe provenance; no ELF, SQLite, environment dump, state tree or credentials"
+}

@@ -1,0 +1,21 @@
+{
+  "files": [
+    {
+      "bytes": 10617,
+      "path": "raw-logs.tar.gz",
+      "sha256": "25852493ecdf406e967275a8cdc5a715494093fe126e05512ef9af29895b68ca"
+    },
+    {
+      "bytes": 4867,
+      "path": "raw-output-index.json",
+      "sha256": "833f7d44ea5c15a74b8661e6cc0e15706972f8ecadc98c79599dcbd0e27adb1b"
+    },
+    {
+      "bytes": 7363,
+      "path": "summary.json",
+      "sha256": "4e7ad9fa727056a7cc15325823a2f1311f3f25b802e9445299c52f68ee145248"
+    }
+  ],
+  "schema": "TRNM-W1-INDEPENDENT-ATTEMPT-REVIEW-ARCHIVE1",
+  "scope": "explicit logs/JSON/source drivers only; no ELF, SQLite, state tree, environment dump or credentials"
+}

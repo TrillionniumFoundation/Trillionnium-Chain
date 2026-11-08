@@ -1,0 +1,83 @@
+{
+  "deadline_selected_before_launch": false,
+  "driver": {
+    "bytes": 20830,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/driver-v4.py",
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "gate_manifests": [
+    {
+      "actual_command_count": 7,
+      "manifest": {
+        "bytes": 11652,
+        "path": "/home/qian-qi/work/chain-w1-c6-backend-qualification-20261108-ec265b-02/manifest.json",
+        "sha256": "f7c538e360541f15ebea2f8aea7e2fc50bde53ee1cdcd1354b3624b042c2979c"
+      },
+      "role": "backend"
+    },
+    {
+      "actual_command_count": 10,
+      "manifest": {
+        "bytes": 15260,
+        "path": "/home/qian-qi/work/chain-w1-c6-native-qualification-20261108-ec265b-01/manifest.json",
+        "sha256": "1a7bec56da77f9d0fc0fc647adb618f705c42f03e7e40c2728773cc55844e352"
+      },
+      "role": "native"
+    },
+    {
+      "actual_command_count": 19,
+      "manifest": {
+        "bytes": 23228,
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/manifest.json",
+        "sha256": "5a5b7d7ef41a5cf4f5429ef420326777706aae54e4bd88eabf83658530b85b3f"
+      },
+      "role": "owner"
+    },
+    {
+      "actual_command_count": 4,
+      "manifest": {
+        "bytes": 6868,
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-receiver-01/manifest.json",
+        "sha256": "e0109e80fbc0eb48f44fd5d91197d1b68c5476622a1408e8f9c9da8b9b820cdc"
+      },
+      "role": "receiver"
+    },
+    {
+      "actual_command_count": 4,
+      "manifest": {
+        "bytes": 5724,
+        "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-staged-isolated-01/manifest.json",
+        "sha256": "930ca954936e198dfa3fdab2df0b2d4ca8438111f4e20042ae178c790b095103"
+      },
+      "role": "staged-isolated"
+    }
+  ],
+  "operation_created_before_prepare": false,
+  "original_backend_failed_attempt_preserved": true,
+  "original_core_failed_attempt_preserved": true,
+  "owner_schema_import_copy": {
+    "bytes": 29067,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/qualification/manifest.json",
+    "sha256": "f49f20c8fd511bfad1c27e77c7d680b3002feff860fad9b344f8a0ca0a01d6c8"
+  },
+  "owner_schema_import_original": {
+    "bytes": 29067,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/owner-import-c6-01/manifest.json",
+    "sha256": "f49f20c8fd511bfad1c27e77c7d680b3002feff860fad9b344f8a0ca0a01d6c8"
+  },
+  "preparer": {
+    "bytes": 4624,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/prepare-lifecycle-c6-v1.py",
+    "sha256": "74f4eb2435328178f84963009642d61fda79cbbdb0258d00528db2b32320e036"
+  },
+  "schema": "TRNM-W1-C6-TIMEOUT-PREPARATION-PROVENANCE1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "target_cache_origins": {
+    "backend": "copied C5 cache then failed C6 attempt01, reused by C6 attempt02",
+    "native": "empty03 target at original qualification start, reused registry/toolchain",
+    "owner": "empty target at original qualification start, reused registry/toolchain"
+  }
+}
