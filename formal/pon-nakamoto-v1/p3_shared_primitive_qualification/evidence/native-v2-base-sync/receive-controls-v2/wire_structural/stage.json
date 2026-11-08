@@ -1,0 +1,588 @@
+{
+  "argv": [
+    "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_wire_controls",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/proof/sha.proof.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/proof/arith.proof.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/00-retained-A/proof/sha.proof.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/00-retained-A/proof/arith.proof.bin"
+  ],
+  "exit_code": 0,
+  "timeout": false,
+  "outer_wall_s": 0.46717533,
+  "peak_rss_kib": 46156,
+  "report": {
+    "control_count": 71,
+    "controls": [
+      {
+        "component": 1,
+        "error": "wire admission at 0: component envelope magic",
+        "name": "new_rejects_legacy_envelope",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "name": "legacy_rejects_new_envelope",
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 16: fixed vector length",
+        "name": "huge_length_at_8",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 88: fixed vector length",
+        "name": "huge_length_at_80",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 161: fixed vector length",
+        "name": "huge_length_at_153",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 152: unexpected option tag",
+        "name": "random_option_1",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 152: unexpected option tag",
+        "name": "random_option_2",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 152: unexpected option tag",
+        "name": "random_option_255",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 169: noncanonical Goldilocks element",
+        "name": "noncanonical_field",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467421: truncated u64",
+        "name": "truncate_1",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467421: truncated u64",
+        "name": "truncate_8",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467365: truncated u64",
+        "name": "truncate_64",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 0: component envelope length",
+        "name": "truncate_4467421",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467429: trailing bytes",
+        "name": "trailing_byte",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 0: component envelope magic",
+        "name": "magic_bit",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 0: component envelope length",
+        "name": "oversize_envelope",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "cryptographic_verification_not_performed_by_scanner": true,
+        "name": "raw_all_ff_digest_structurally_admitted",
+        "observed_scanner_allocations": 0,
+        "structural_admission": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 161: fixed vector length",
+        "name": "short_trace_opening",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 247907: unexpected option tag",
+        "name": "unexpected_preprocessed_next",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 247924: fixed vector length",
+        "name": "short_quotient_opening",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 247996: unexpected option tag",
+        "name": "unexpected_random_opening",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 248013: fixed vector length",
+        "name": "short_fri_commitments",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 248957: fixed vector length",
+        "name": "short_fri_commit_pow",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 249069: fixed vector length",
+        "name": "short_input_batch_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 249077: fixed vector length",
+        "name": "short_query_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 249085: fixed vector length",
+        "name": "short_matrix_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 249093: fixed vector length",
+        "name": "short_row_width",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4206845: Merkle frontier exceeds full-path bound",
+        "name": "oversize_input_frontier",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4323813: fixed vector length",
+        "name": "short_fold_round_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4323821: fixed vector length",
+        "name": "short_fold_query_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4323829: fixed vector length",
+        "name": "oversize_fold_sibling_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467381: Merkle frontier exceeds full-path bound",
+        "name": "oversize_final_fold_frontier",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467389: fixed vector length",
+        "name": "oversize_final_polynomial",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 4467421: fixed trace degree",
+        "name": "wrong_degree",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 0: component envelope magic",
+        "name": "new_rejects_legacy_envelope",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "name": "legacy_rejects_new_envelope",
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 16: fixed vector length",
+        "name": "huge_length_at_8",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 88: fixed vector length",
+        "name": "huge_length_at_80",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 161: fixed vector length",
+        "name": "huge_length_at_153",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 152: unexpected option tag",
+        "name": "random_option_1",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 152: unexpected option tag",
+        "name": "random_option_2",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 152: unexpected option tag",
+        "name": "random_option_255",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 169: noncanonical Goldilocks element",
+        "name": "noncanonical_field",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590525: truncated u64",
+        "name": "truncate_1",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590525: truncated u64",
+        "name": "truncate_8",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590469: truncated u64",
+        "name": "truncate_64",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 0: component envelope length",
+        "name": "truncate_590525",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590533: trailing bytes",
+        "name": "trailing_byte",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 0: component envelope magic",
+        "name": "magic_bit",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 0: component envelope length",
+        "name": "oversize_envelope",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "cryptographic_verification_not_performed_by_scanner": true,
+        "name": "raw_all_ff_digest_structurally_admitted",
+        "observed_scanner_allocations": 0,
+        "structural_admission": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 161: fixed vector length",
+        "name": "short_trace_opening",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 8971: unexpected option tag",
+        "name": "unexpected_preprocessed_next",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 8988: fixed vector length",
+        "name": "short_quotient_opening",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 9020: unexpected option tag",
+        "name": "unexpected_random_opening",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 9037: fixed vector length",
+        "name": "short_fri_commitments",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 10053: fixed vector length",
+        "name": "short_fri_commit_pow",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 10173: fixed vector length",
+        "name": "short_input_batch_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 10181: fixed vector length",
+        "name": "short_query_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 10189: fixed vector length",
+        "name": "short_matrix_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 10197: fixed vector length",
+        "name": "short_row_width",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 200653: Merkle frontier exceeds full-path bound",
+        "name": "oversize_input_frontier",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 408629: fixed vector length",
+        "name": "short_fold_round_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 408637: fixed vector length",
+        "name": "short_fold_query_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 408645: fixed vector length",
+        "name": "oversize_fold_sibling_count",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590485: Merkle frontier exceeds full-path bound",
+        "name": "oversize_final_fold_frontier",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590493: fixed vector length",
+        "name": "oversize_final_polynomial",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 590525: fixed trace degree",
+        "name": "wrong_degree",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 0: component envelope length",
+        "name": "new_component_confusion",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 1,
+        "error": "wire admission at 123809: unexpected option tag",
+        "name": "missing_sha_next",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      },
+      {
+        "component": 4,
+        "error": "wire admission at 6081: unexpected option tag",
+        "name": "unexpected_carry_next",
+        "observed_scanner_allocations": 0,
+        "rejected": true
+      }
+    ],
+    "cryptographic_verification_performed_by_this_harness": false,
+    "global_rejection_cost_bound": false,
+    "inputs": [
+      {
+        "bytes": 4467429,
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/proof/sha.proof.bin",
+        "sha256": "220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712"
+      },
+      {
+        "bytes": 590533,
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/proof/arith.proof.bin",
+        "sha256": "dcb0365d8727fbbf123dbd6a34e9bb6e939ae5b48c7ce69ea49b2a53bf824fbc"
+      },
+      {
+        "bytes": 4356101,
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/00-retained-A/proof/sha.proof.bin",
+        "sha256": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c"
+      },
+      {
+        "bytes": 453861,
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/00-retained-A/proof/arith.proof.bin",
+        "sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988"
+      }
+    ],
+    "positive": [
+      {
+        "bytes": 4467429,
+        "component": 1,
+        "field_elements": 529232,
+        "merkle_siblings": 3467,
+        "observed_scanner_allocations": 0,
+        "vector_headers": 1338
+      },
+      {
+        "bytes": 590533,
+        "component": 4,
+        "field_elements": 38243,
+        "merkle_siblings": 4263,
+        "observed_scanner_allocations": 0,
+        "vector_headers": 1339
+      }
+    ],
+    "qualification": "HOLD_NO_GO",
+    "result": "PASS",
+    "schema": "w1-tagged-sha3-wire-controls-v1"
+  },
+  "before": {
+    "monotonic_ns": 1199563769712431,
+    "utc_unix_ns": 1794121897777401795,
+    "loadavg": "17.80 16.63 17.42 6/4412 3686847",
+    "cpu_pressure": "some avg10=0.00 avg60=0.24 avg300=0.78 total=9283739365\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.08 total=1694009455\nfull avg10=0.00 avg60=0.00 avg300=0.07 total=1625776817",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9fbc99d-12894-17e6.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 1454537314\nuser_usec 1419946380\nsystem_usec 34590933\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "221552640",
+      "memory.peak": "2515861504",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  },
+  "after": {
+    "monotonic_ns": 1199564237919595,
+    "utc_unix_ns": 1794121898245609486,
+    "loadavg": "17.80 16.63 17.42 6/4412 3686857",
+    "cpu_pressure": "some avg10=0.00 avg60=0.24 avg300=0.78 total=9283740674\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.08 total=1694009455\nfull avg10=0.00 avg60=0.00 avg300=0.07 total=1625776817",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9fbc99d-12894-17e6.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 1454988733\nuser_usec 1420360764\nsystem_usec 34627969\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "221560832",
+      "memory.peak": "2515861504",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  }
+}

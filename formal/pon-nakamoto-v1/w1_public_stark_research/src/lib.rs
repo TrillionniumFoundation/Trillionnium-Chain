@@ -10,3 +10,6 @@ pub mod sha_air;
 pub mod sha_plan;
 
 pub mod sha_schedule_air;
+
+pub mod tagged_sha3;
+pub mod tagged_sha3_wire;

@@ -1,0 +1,8 @@
+{
+  "Cargo.toml": "082425d937d0be1ea67f5c1f1c1df280ad803398b35199772123f680c22a82e7",
+  "src/lib.rs": "120b056b00d3be748c52cff23232b2ea871ce97d88b67b783bc999e7662dddc8",
+  "src/tagged_sha3.rs": "e2068fa6d1cacb508bd3953761a88204b718b2cb842ecc16f078a081283cbac8",
+  "src/tagged_sha3_wire.rs": "e7dfd01addef0f996165d19241849822eb6f2a68caa4a832449151a7314b41fa",
+  "examples/tagged_sha3_backend.rs": "9271bde2a3f1f6c496eaa9e113f52adfce32fdab6f50022ebf3c412594a24c37",
+  "tests/tagged_sha3_profile.rs": "94cda1050e481e32bfc3fc29e6a320cb58fc4d8d7eae6f7cd7c533ddfeb003ae"
+}

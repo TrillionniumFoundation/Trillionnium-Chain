@@ -1,0 +1,4 @@
+{"elapsed_ms":0.223184,"phase":"fixture_and_expected_read"}
+{"elapsed_ms":3.965448,"phase":"honest_public_witness_and_encoding"}
+{"elapsed_ms":6.909497,"phase":"canonical_relation_planning"}
+{"arith_real_rows":81920,"hash_messages":519,"process_wall_ms":49.814732,"public_bytes":377290,"qualification":"HOLD_NO_GO","schema":"trnm-w1-complete-public-tagged-sha3-stark-run-v1","sha_real_compressions":4114,"statement_sha256":"d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c","status":"PUBLIC_WITNESS_PREPARED_NOT_PROVED","timings":[{"elapsed_ms":0.223184,"phase":"fixture_and_expected_read"},{"elapsed_ms":3.965448,"phase":"honest_public_witness_and_encoding"},{"elapsed_ms":6.909497,"phase":"canonical_relation_planning"}]}
