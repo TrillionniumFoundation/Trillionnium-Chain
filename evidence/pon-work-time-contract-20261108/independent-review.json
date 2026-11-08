@@ -1,0 +1,40 @@
+{
+  "schema": "pon-work-time-independent-review-v1",
+  "kind": "agent-review-record",
+  "source_commit": "2141962ea7b9a1498acbd99acfdfe123335f613c",
+  "scope": "independent source inspection plus specifically listed separately executed controls; no human approval or whole native validation",
+  "reviews": [
+    {
+      "reviewer": "time_daa_refactor",
+      "subject": "root work profile and runner fail-closed behavior",
+      "executed_tests": 19,
+      "probe_results": [
+        "ordinary small suite passes",
+        "all-skip refuses",
+        "expected-failure refuses",
+        "declared input mutation refuses"
+      ],
+      "note": "Earlier runner revision; final workflow and runner separately inspected below."
+    },
+    {
+      "reviewer": "time_daa_refactor",
+      "subject": "cost envelope exact success criterion, interval directions, least monotone vector and nonnegative joint caps",
+      "executed_tests": 29,
+      "result": "PASS in declared finite-model scope"
+    },
+    {
+      "reviewer": "legal_optimizations",
+      "subject": "temporal anchor, branch/cache/schedule/cold replay and current clock boundary",
+      "kind": "read-only inspection",
+      "result": "PASS with documented O(n^2) recovery and unintegrated native owner hook"
+    },
+    {
+      "reviewer": "time_daa_refactor",
+      "subject": "final CI source identity, runner profile-byte join and artifact retention",
+      "kind": "read-only inspection",
+      "workflow_sha256": "5f2fc1eb5272da1869c76dae36363491314e44bb0887b5a744b02edfd8840aa9",
+      "runner_sha256": "81bf574a822160736d5f1d5cc4ca8d719be20dd2d8984476f4c79bafeed7ffaa",
+      "result": "PASS source inspection; hosted execution requires its own results"
+    }
+  ]
+}
