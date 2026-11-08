@@ -229,3 +229,31 @@ The following are not supplied by the public-input implementation:
 
 The [compact reproduction record](../../evidence/pq-historical-migration-20261104/README.md)
 separates executed native/parser controls from these remaining obligations.
+
+
+## 2026-11-08 qualification continuation
+
+The [original local journal](PQ_MIGRATION_OWNED_JOURNAL_V1.md) now refuses
+user-created `sqliteX...` objects that the earlier SQL LIKE predicate hid.
+Its one-use regression and separate real-signature conformance are recorded;
+neither is a source-retirement or pre-compromise ownership receipt.
+
+The [seed relation review](PQ_SEED_RELATION_REVIEW_V1.md) adds executable public
+RFC8032/synthetic vectors, exact scalar/seed/expanded-secret distinctions,
+the 251-free-bit derivation analysis, and separate deterministic-relation and
+upstream verifier obligations. The V1 public-input encoding is unchanged.
+The finite cleartext relation checker does not execute a ZK circuit or qualify
+its proof system. A proof of an accepted seed preimage also does not prove that
+the witness was the unique original historical wallet seed.
+
+Route A remains unestablished without the complete operational and external
+obligations inventory. Route B still requires authentic prior-registration
+custody and a source write-retirement/cutover owner; the importer accepts at most
+64 configured accounts and refuses unsupported source rights. Its positive
+Node handoff fixture has a deliberately restricted source state, not an ordinary
+running-network migration. The Rust registry may bind a PQ key to more than one
+stable source account, with each CLAIM separately bound; the offline Python
+journal's one-key-per-network policy is a distinct research contract.
+Route C remains isolated and unqualified. These scope distinctions cannot be
+closed by changing a report Boolean, erasing a source row or importing old test
+results from another branch.

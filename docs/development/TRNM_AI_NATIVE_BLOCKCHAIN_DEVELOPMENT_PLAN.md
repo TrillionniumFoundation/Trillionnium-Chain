@@ -17,6 +17,24 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Historical-account migration qualification, 2026-11-08 America/New_York:**
+Continue the existing #723 candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
+Reject SQLite objects that only resemble the reserved `sqlite_` prefix in the
+original offline migration journal; retain exact schema, original records and
+PQ-key uniqueness before any new write. Reproduce the unchanged Ed25519 seed
+relation with published and deterministic public fixtures, an independent integer
+reference and a real cryptography backend. Keep seed format compatibility,
+251-bit clamped-scalar search exposure, the deterministic/randomized relation
+mapping and the fixed upstream verifier audit as separate qualification gates.
+The [seed relation review](../security/PQ_SEED_RELATION_REVIEW_V1.md) and
+[execution record](../../evidence/pq-migration-qualification-20261108/README.md)
+separate executed SQLite/crypto/arithmetic checks from unexecuted native and
+proof-backend acceptance. No source ledger or external-debt inventory was
+supplied; prior-binding custody, source retirement, full application preservation,
+cross-activation reorganization and whole-effect rollback safety remain open.
+No default profile, signed V1 encoding, genesis, production authority or activation
+flag changes.
+
 **PQ migration and recovery continuation, 2026-11-07 UTC:**
 Continue the existing #723 candidate from `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`,
 preserving the concurrent `f943c23b` migration/schema-reader work and `0ca272d0`
