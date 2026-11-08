@@ -14,6 +14,7 @@ use w1_full_public_stark_research::arith_carry_air::Dot8PackedCarryAir as Dot8Ca
 use w1_full_public_stark_research::proof_config::{
     PACKED_CARRY_COMPONENT, W1Proof, config, packed_carry_security_metadata as security_metadata,
 };
+use w1_full_public_stark_research::proof_wire::{Component, limits, scan_proof};
 use w1_full_public_stark_research::public::{Expected, PUBLIC_BYTES, PublicStatement};
 use w1_full_public_stark_research::sha_air::W1ShaAir;
 use w1_full_public_stark_research::sha_plan::{HEADER_BYTES, INPUT_BYTES, PREFIX_BYTES};
@@ -87,7 +88,11 @@ fn encode_proof(proof: &W1Proof, magic: &[u8; 8]) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-fn decode_proof(bytes: &[u8], magic: &[u8; 8], degree_bits: usize) -> Result<W1Proof, String> {
+fn decode_admitted_proof(
+    bytes: &[u8],
+    magic: &[u8; 8],
+    degree_bits: usize,
+) -> Result<W1Proof, String> {
     if bytes.len() < 8 || bytes.len() > MAX_PROOF_BYTES || &bytes[..8] != magic {
         return Err("proof envelope".into());
     }
@@ -215,17 +220,21 @@ fn verify(args: &[String]) -> Result<Value, String> {
     let expected = expected(&args[1], &args[2])?;
     let sha_bytes = read_bounded(
         &Path::new(&args[3]).join("sha.proof.bin"),
-        MAX_PROOF_BYTES,
+        limits(Component::Sha).maximum_bytes,
         None,
     )?;
     let arith_bytes = read_bounded(
         &Path::new(&args[3]).join("arith.proof.bin"),
-        MAX_PROOF_BYTES,
+        limits(Component::PackedCarry).maximum_bytes,
         None,
     )?;
-    // Reject malformed envelopes and wrong fixed degrees before costly setup.
-    let sha_proof = decode_proof(&sha_bytes, SHA_MAGIC, 13)?;
-    let arith_proof = decode_proof(&arith_bytes, ARITH_MAGIC, 14)?;
+    // Both immutable buffers must pass before either allocation-owning decode.
+    let sha_wire =
+        scan_proof(&sha_bytes, Component::Sha).map_err(|e| format!("proof decoding: {e}"))?;
+    let arith_wire = scan_proof(&arith_bytes, Component::PackedCarry)
+        .map_err(|e| format!("proof decoding: {e}"))?;
+    let sha_proof = decode_admitted_proof(&sha_bytes, SHA_MAGIC, 13)?;
+    let arith_proof = decode_admitted_proof(&arith_bytes, ARITH_MAGIC, 14)?;
     elapsed("bounded_read_decode_and_proof_shape", start, &mut timings);
     let start = Instant::now();
     let (sha_plan, original_arith) = statement.plans(&expected)?;
@@ -280,6 +289,13 @@ fn verify(args: &[String]) -> Result<Value, String> {
         "public_bytes":public_bytes.len(), "sha_proof_bytes":sha_bytes.len(),"sha_proof_sha256":digest(&sha_bytes),
         "arith_proof_bytes":arith_bytes.len(),"arith_proof_sha256":digest(&arith_bytes),"timings":timings,
         "preprocessing_source":"canonical public statement plus independent expected inputs; rebuilt in this process",
+        "wire_admission":{
+            "schema":"w1-fixed-p3-wire-admission-v2",
+            "structural_admission_only":true,"global_rejection_cost_bound":false,
+            "sha":{"field_elements":sha_wire.field_elements,"vector_headers":sha_wire.vector_headers,
+                "merkle_siblings":sha_wire.merkle_siblings,"maximum_bytes":limits(Component::Sha).maximum_bytes},
+            "arithmetic":{"field_elements":arith_wire.field_elements,"vector_headers":arith_wire.vector_headers,
+                "merkle_siblings":arith_wire.merkle_siblings,"maximum_bytes":limits(Component::PackedCarry).maximum_bytes}},
         "security_claim":"research execution only; no concrete noninteractive security qualification"}),
     )
 }

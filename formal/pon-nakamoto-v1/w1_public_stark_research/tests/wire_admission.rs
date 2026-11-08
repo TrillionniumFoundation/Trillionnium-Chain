@@ -48,6 +48,12 @@ fn fixture(component: Component) -> &'static [u8] {
     match component {
         Component::Sha => include_bytes!("../results/retained-native-02/sha.proof.bin"),
         Component::Arithmetic => include_bytes!("../results/retained-native-02/arith.proof.bin"),
+        Component::Carry => {
+            include_bytes!("../results/round3-carry-wire-fixtures/carry.arith.proof.bin")
+        }
+        Component::PackedCarry => {
+            include_bytes!("../results/round3-carry-wire-fixtures/packed.arith.proof.bin")
+        }
     }
 }
 
@@ -77,7 +83,12 @@ fn typed_mutation(component: Component, mutate: impl FnOnce(&mut W1Proof)) {
 
 #[test]
 fn actual_complete_proofs_match_the_frozen_codec_and_scan_without_allocations() {
-    for component in [Component::Sha, Component::Arithmetic] {
+    for component in [
+        Component::Sha,
+        Component::Arithmetic,
+        Component::Carry,
+        Component::PackedCarry,
+    ] {
         let bytes = fixture(component);
         assert!(zero_allocation_scan(bytes, component));
         let proof: W1Proof = codec().deserialize(&bytes[8..]).unwrap();
@@ -93,7 +104,12 @@ fn actual_complete_proofs_match_the_frozen_codec_and_scan_without_allocations() 
 
 #[test]
 fn huge_cap_and_trace_length_words_reject_before_any_allocation() {
-    for component in [Component::Sha, Component::Arithmetic] {
+    for component in [
+        Component::Sha,
+        Component::Arithmetic,
+        Component::Carry,
+        Component::PackedCarry,
+    ] {
         for offset in [8, 48, 89] {
             let mut bytes = fixture(component).to_vec();
             bytes[offset..offset + 8].copy_from_slice(&u64::MAX.to_le_bytes());
@@ -104,7 +120,12 @@ fn huge_cap_and_trace_length_words_reject_before_any_allocation() {
 
 #[test]
 fn noncanonical_field_and_option_tags_are_rejected() {
-    for component in [Component::Sha, Component::Arithmetic] {
+    for component in [
+        Component::Sha,
+        Component::Arithmetic,
+        Component::Carry,
+        Component::PackedCarry,
+    ] {
         let mut bytes = fixture(component).to_vec();
         bytes[16..24].copy_from_slice(&u64::MAX.to_le_bytes());
         assert!(!zero_allocation_scan(&bytes, component));
@@ -118,7 +139,12 @@ fn noncanonical_field_and_option_tags_are_rejected() {
 
 #[test]
 fn component_confusion_truncation_and_trailing_data_are_rejected() {
-    for component in [Component::Sha, Component::Arithmetic] {
+    for component in [
+        Component::Sha,
+        Component::Arithmetic,
+        Component::Carry,
+        Component::PackedCarry,
+    ] {
         let original = fixture(component);
         let mut bytes = original.to_vec();
         bytes[0] ^= 1;
@@ -243,4 +269,79 @@ fn valid_shape_with_changed_canonical_value_is_not_misclassified_as_a_proof() {
     let mut bytes = fixture(component).to_vec();
     bytes[16..24].copy_from_slice(&0u64.to_le_bytes());
     assert!(zero_allocation_scan(&bytes, component));
+}
+
+#[test]
+fn carry_profiles_have_separate_envelopes_and_fixed_bounds() {
+    let profiles = [
+        Component::Sha,
+        Component::Arithmetic,
+        Component::Carry,
+        Component::PackedCarry,
+    ];
+    for source in profiles {
+        for target in profiles {
+            assert_eq!(
+                zero_allocation_scan(fixture(source), target),
+                source == target
+            );
+        }
+    }
+    let a = limits(Component::Carry);
+    assert_eq!(
+        (
+            a.minimum_bytes,
+            a.maximum_bytes,
+            a.maximum_field_elements,
+            a.vector_headers,
+            a.maximum_merkle_siblings
+        ),
+        (89669, 554565, 67778, 1540, 14528)
+    );
+    let b = limits(Component::PackedCarry);
+    assert_eq!(
+        (
+            b.minimum_bytes,
+            b.maximum_bytes,
+            b.maximum_field_elements,
+            b.vector_headers,
+            b.maximum_merkle_siblings
+        ),
+        (317189, 659205, 81059, 1339, 10688)
+    );
+}
+
+#[test]
+fn carry_profile_opening_shapes_are_checked_before_decode() {
+    for component in [Component::Carry, Component::PackedCarry] {
+        typed_mutation(component, |p| {
+            p.opened_values.trace_local.pop();
+        });
+        typed_mutation(component, |p| {
+            p.opened_values.preprocessed.as_mut().unwrap().local.pop();
+        });
+        typed_mutation(component, |p| {
+            p.opened_values.trace_next = Some(vec![]);
+        });
+        typed_mutation(component, |p| {
+            p.opening_proof.input_openings[0].opened_values[63][0].pop();
+        });
+        typed_mutation(component, |p| {
+            p.opening_proof
+                .commit_phase_openings
+                .last_mut()
+                .unwrap()
+                .sibling_values
+                .pop();
+        });
+        typed_mutation(component, |p| {
+            p.opening_proof.final_poly.push(Challenge::ZERO);
+        });
+        typed_mutation(component, |p| {
+            p.degree_bits = 13;
+        });
+        let mut canonical_wrong_value = fixture(component).to_vec();
+        canonical_wrong_value[16..24].copy_from_slice(&0u64.to_le_bytes());
+        assert!(zero_allocation_scan(&canonical_wrong_value, component));
+    }
 }

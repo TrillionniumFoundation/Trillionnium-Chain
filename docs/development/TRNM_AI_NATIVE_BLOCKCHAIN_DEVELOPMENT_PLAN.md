@@ -7357,3 +7357,63 @@ universal cheapest-legal-strategy physical work; production Node admission
 and qualification. Approximately 63.95 conditional RBR bits are not NI or
 PQ128 qualification. Status remains **HOLD_NO_GO**; no production dispatch,
 chainwork activation or main-branch merge is introduced here.
+
+
+## 2026-11-08 W1 carry backend and remaining five-gate audit
+
+The bounded-wire continuation now includes actual component-3/4 carry AIRs,
+with fresh transcript/envelope namespaces and independent reconstruction of
+all public preprocessing. The five-lane AIR retains all 81,920 logical Dot8
+relations in 16,384 rows, 370/180 main/preprocessed columns and 385 quadratic
+constraints. Separate integer-bound and lane-mapping review found no blocking
+AIR-relation defect; it does not certify PCS/hash/Fiat--Shamir security.
+
+The final guarded four-execution ABBA comparison observed full pipeline
+medians 23.961509 -> 13.764899 seconds and independent verifier medians
+0.943004 -> 0.887252 seconds, with source/binary hashes unchanged. Payload is
+5,187,252 bytes versus 5,264,276 for the old STARK, still 104.780269 times the
+49,506-byte native candidate. The public statement alone is 377,290 bytes.
+This is a positive research-STARK comparison on one input, not native or
+production benefit. The first unpacked candidate's verifier regression,
+all earlier samples and the pre-guard one-sample 2 GiB cap result remain
+retained without selection or relabeling. There are 21 fresh complete proving
+executions across these campaigns, all on the same retained input task.
+
+The integrated native graph/format/strict-Clippy/build and 45 Rust tests passed.
+Two new-profile positives, 22 ordinary negatives, four typed late negatives
+and eight shape negatives also passed as 36 independent verifier processes;
+these are historical-proof replays and generate no new proofs. Exact encoded
+caps and scanner operation counts now cover all four fixed profiles.
+
+The shared-Poseidon2 audit supplies exact inverse witnesses and native P3
+confirmation: arbitrary-input raw-compressor collision resistance and an
+independent-role oracle substitution are invalid models for this primitive.
+This is not a Merkle or W1 forgery. Ten Python checks, actual native forward
+evaluation, eleven registry source matches and six Cargo-lock archive pins
+passed. Approximately 63.95 conditional RBR bits remain conditional; concrete
+restricted-tree binding, NI, quantum and lifecycle security bits remain null.
+
+Two isolated user-cgroup batches enforced 0.25 CPU, 2 GiB, swap0 and 256 tasks
+for sixteen correct-shape hostile verifier processes over four seconds.
+Both batches had zero completed cryptographic rejections and sixteen killed
+incomplete requests; all exits and cleanup were observed after approximately
+4.36 seconds. The source/input combinations differ and are not performance
+A/B evidence. Observer/setup costs are outside that quota, the units are not
+the root-owned production slice, and no Node queue or seven-benign-submission
+service gate is exercised. No global rejection bound follows.
+
+The new selected-event physical-strategy namespace recognizes the exact
+affine input family and implements useful products with 5M+71A after charged
+setup. Twenty-four new tests, 3,072 full witness byte comparisons and 42
+complete reference acceptance replays pass; all 37 upstream files match actual
+baseline Git objects. Exact Bellman/finite-success lower bounds cover an
+explicit closed auxiliary cache-policy class. A cheaper legal affine producer
+falls below the dense-class optimum, so it is not a universal physical bound.
+
+Runtime, configuration and qualification directories remain unchanged from
+the published baseline. The fixed Node source still uses native PNW1 dispatch;
+research example verification supplies no production admission evidence.
+Complete details, scripts, reviews and immutable evidence are linked from
+`formal/pon-nakamoto-v1/w1_public_stark_research/ROUND3_REPORT.md` and
+`formal/pon-nakamoto-v1/physical_strategy_frontier_research/README.md`.
+All five substantive production gates remain **HOLD_NO_GO**.

@@ -57,6 +57,10 @@ fn decode(bytes: &[u8]) -> Result<(W1Proof, &'static str, usize), String> {
         ("sha", 13)
     } else if bytes.starts_with(ARITH_MAGIC) {
         ("arithmetic", 17)
+    } else if bytes.starts_with(b"W1P3ACR2") {
+        ("carry", 17)
+    } else if bytes.starts_with(b"W1P3APC3") {
+        ("packed", 14)
     } else {
         return Err("unknown proof envelope".into());
     };

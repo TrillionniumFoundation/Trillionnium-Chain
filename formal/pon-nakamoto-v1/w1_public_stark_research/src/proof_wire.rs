@@ -8,17 +8,22 @@
 //! to P3. This bounds syntax, not wall time, total process memory or security.
 
 use crate::arith_air::{DOT8_PREPROCESSED_WIDTH, DOT8_WIDTH};
+use crate::arith_carry_air::{CARRY_PREPROCESSED_WIDTH, CARRY_WIDTH};
 use crate::proof_config::{GOLDILOCKS_ORDER, LOG_BLOWUP, NUM_QUERIES};
 use crate::sha_air::PREPROCESSED_WIDTH;
 use p3_sha256_air::NUM_SHA256_COLS;
 
 pub const SHA_MAGIC: &[u8; 8] = b"W1P3SHA1";
 pub const ARITH_MAGIC: &[u8; 8] = b"W1P3ARI1";
+pub const CARRY_MAGIC: &[u8; 8] = b"W1P3ACR2";
+pub const PACKED_CARRY_MAGIC: &[u8; 8] = b"W1P3APC3";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Component {
     Sha,
     Arithmetic,
+    Carry,
+    PackedCarry,
 }
 
 impl Component {
@@ -26,13 +31,16 @@ impl Component {
         match self {
             Self::Sha => SHA_MAGIC,
             Self::Arithmetic => ARITH_MAGIC,
+            Self::Carry => CARRY_MAGIC,
+            Self::PackedCarry => PACKED_CARRY_MAGIC,
         }
     }
 
     pub const fn degree_bits(self) -> usize {
         match self {
             Self::Sha => 13,
-            Self::Arithmetic => 17,
+            Self::Arithmetic | Self::Carry => 17,
+            Self::PackedCarry => 14,
         }
     }
 
@@ -40,6 +48,8 @@ impl Component {
         match self {
             Self::Sha => NUM_SHA256_COLS,
             Self::Arithmetic => DOT8_WIDTH,
+            Self::Carry => CARRY_WIDTH,
+            Self::PackedCarry => 5 * CARRY_WIDTH,
         }
     }
 
@@ -47,13 +57,15 @@ impl Component {
         match self {
             Self::Sha => PREPROCESSED_WIDTH,
             Self::Arithmetic => DOT8_PREPROCESSED_WIDTH,
+            Self::Carry => CARRY_PREPROCESSED_WIDTH,
+            Self::PackedCarry => 5 * CARRY_PREPROCESSED_WIDTH,
         }
     }
 
     const fn quotient_chunks(self) -> usize {
         match self {
             Self::Sha => 2,
-            Self::Arithmetic => 1,
+            Self::Arithmetic | Self::Carry | Self::PackedCarry => 1,
         }
     }
 

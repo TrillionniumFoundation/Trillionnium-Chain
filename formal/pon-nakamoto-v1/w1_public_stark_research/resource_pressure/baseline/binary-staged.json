@@ -1,0 +1,7 @@
+{
+  "original": "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+  "copy": "/home/qian-qi/work/w1-pressure-f16ac5-20261108/guarded-baseline-verifier",
+  "sha256": "44c0d3b88a1d8198c4db0ba3b27ed1072faf69377773fa97e835c8ccb8e2bd94",
+  "bytes": 2212368,
+  "source_commit_from_root": "cae1e3657b0913991d9465995e709a544218a27c"
+}

@@ -19,7 +19,9 @@ fn run(args: &[String]) -> Result<serde_json::Value, String> {
     let component = match args[0].as_str() {
         "sha" => Component::Sha,
         "arithmetic" => Component::Arithmetic,
-        _ => return Err("component must be sha or arithmetic".into()),
+        "carry" => Component::Carry,
+        "packed" => Component::PackedCarry,
+        _ => return Err("component must be sha, arithmetic, carry or packed".into()),
     };
     let file = File::open(&args[2]).map_err(|e| e.to_string())?;
     let mut input = Vec::new();

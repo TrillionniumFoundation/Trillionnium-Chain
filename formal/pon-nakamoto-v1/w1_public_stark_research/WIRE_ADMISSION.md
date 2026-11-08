@@ -151,3 +151,33 @@ over all valid-shape malicious proofs, all schedules or all storage behavior.
 This change neither establishes the complete noninteractive/quantum proof
 nor a cheapest-legal-strategy physical-work bound. It adds no production
 proof dispatch, chainwork, deployment, merge approval or activation.
+
+
+## Integrated carry profiles
+
+The later integration registers two additional caller-selected fixed profiles.
+It retains the earlier component-1/2 campaign and its exact source identity.
+Both new example verifiers now scan both immutable buffers before either
+decode, with the same zero-allocation scanner and original cryptographic checks.
+
+| Field | Carry component 3 | Packed component 4 |
+|---|---:|---:|
+| Magic | W1P3ACR2 | W1P3APC3 |
+| Degree bits | 17 | 14 |
+| Main / preprocessed width | 74 / 36 | 370 / 180 |
+| Quotient chunks | 1 | 1 |
+| Next-row openings | none | none |
+| Fixed vector headers | 1,540 | 1,339 |
+| Maximum frontier digests | 14,528 | 10,688 |
+| Maximum field words | 67,778 | 81,059 |
+| Minimum syntactic bytes | 89,669 | 317,189 |
+| Maximum envelope bytes | 554,565 | 659,205 |
+
+The paired SHA limit is unchanged. Pair plus public statement caps are
+5,482,068 / 5,586,708 bytes. The fifteen native wire tests include real full
+proof fixtures for all four profiles and all pairwise profile confusion.
+[Carry controls](run_carry_controls.py) passed two complete positives, 22
+ordinary negatives, four typed late negatives and eight shape negatives.
+These 36 fresh verifier processes reused pinned historical proofs; no proof
+generation is implied. Four separately generated full guarded ABBA samples
+also verified. See [the complete round report](ROUND3_REPORT.md).

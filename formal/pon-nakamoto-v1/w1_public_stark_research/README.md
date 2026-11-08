@@ -177,3 +177,10 @@ before decoding or verifier setup, with exact per-component envelope bounds,
 an explicit successor replay of the 11 ordinary and four late controls.
 The original proof/security results above remain historical. This is not
 a global resource, noninteractive-security, physical-work or Node qualification.
+
+## Complete 2026-11-08 continuation
+
+The [round report](ROUND3_REPORT.md) covers the five-lane carry backend,
+four-profile structural admission, actual shared-primitive audit, resource
+pressure observations, legal-strategy cost increment and Node source status.
+All five production qualification gates remain **HOLD_NO_GO**.

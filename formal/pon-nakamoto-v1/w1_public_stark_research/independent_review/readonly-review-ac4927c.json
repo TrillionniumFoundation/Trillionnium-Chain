@@ -1,0 +1,2936 @@
+{
+  "schema": "trnm-readonly-carry-and-node-review-evidence-v1",
+  "carry_revision": "ac4927c52266e7bd1fae547f92a1d0753f4f96d6",
+  "baseline_revision": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+  "method": "Committed Git object reads; exact integer arithmetic. No worktree edits, native builds, performance reruns or production admission changes.",
+  "carry_sources": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs",
+      "blob": "b4c3938fc9827b8c2c781d6e251cd4958a9b403a",
+      "body": "//! Exact eight-term arithmetic with base-2^16 carries.\n//!\n//! This research AIR preserves `Dot8Row` semantics while replacing eight\n//! quotient/remainder decompositions with one 35-bit whole-row quotient and\n//! two bounded carries. Products themselves are evaluated in 16-bit limbs:\n//! no whole 8-product sum is ever evaluated as one Goldilocks expression.\n//! See CARRY_BACKEND.md for the integer lifting and completeness bounds.\n\nuse p3_air::utils::pack_bits_le;\nuse p3_air::{Air, AirBuilder, BaseAir, WindowAccess};\nuse p3_field::PrimeCharacteristicRing;\nuse p3_goldilocks::Goldilocks;\nuse p3_matrix::dense::RowMajorMatrix;\n\nuse crate::arith_air::{Dot8Row, FULL_REAL_ROWS, Q};\n\npub const LIMB_BASE: u64 = 1 << 16;\npub const QUOTIENT_BITS: usize = 35;\npub const LOW_CARRY_BITS: usize = 19;\npub const HIGH_CARRY_BITS: usize = 20;\npub const CARRY_WIDTH: usize = QUOTIENT_BITS + LOW_CARRY_BITS + HIGH_CARRY_BITS;\npub const CARRY_PREPROCESSED_WIDTH: usize = 36;\nconst LOW_CARRY_OFFSET: usize = QUOTIENT_BITS;\nconst HIGH_CARRY_OFFSET: usize = QUOTIENT_BITS + LOW_CARRY_BITS;\n\n#[derive(Clone, Debug)]\npub struct Dot8CarryAir {\n    rows: Vec<Dot8Row>,\n    height: usize,\n}\n\nfn limbs(value: u32) -> (u64, u64) {\n    (u64::from(value) & (LIMB_BASE - 1), u64::from(value) >> 16)\n}\n\nimpl Dot8CarryAir {\n    pub fn new(rows: Vec<Dot8Row>) -> Result<Self, &'static str> {\n        if rows.is_empty() || rows.len() > FULL_REAL_ROWS {\n            return Err(\"arithmetic row count\");\n        }\n        if rows.iter().any(|row| !row.canonical()) {\n            return Err(\"noncanonical public arithmetic word\");\n        }\n        let height = rows.len().next_power_of_two().max(4);\n        Ok(Self { rows, height })\n    }\n\n    pub fn real_rows(&self) -> usize {\n        self.rows.len()\n    }\n    pub fn trace_height(&self) -> usize {\n        self.height\n    }\n    pub fn rows(&self) -> &[Dot8Row] {\n        &self.rows\n    }\n\n    pub fn generate_trace(&self) -> RowMajorMatrix<Goldilocks> {\n        let mut values = vec![Goldilocks::ZERO; self.height * CARRY_WIDTH];\n        for (row_index, row) in self.rows.iter().enumerate() {\n            let total = row\n                .left\n                .iter()\n                .zip(row.right)\n                .fold(u128::from(row.start), |sum, (&a, b)| {\n                    sum + u128::from(a) * u128::from(b)\n                });\n            let quotient = (total / u128::from(Q)) as u64;\n            let (start_low, start_high) = limbs(row.start);\n            let (goal_low, goal_high) = limbs(row.goal);\n            let mut low = start_low + 5 * (quotient & (LIMB_BASE - 1));\n            let mut middle = start_high + 5 * ((quotient >> 16) & (LIMB_BASE - 1));\n            for (&a, b) in row.left.iter().zip(row.right) {\n                let (al, ah) = limbs(a);\n                let (bl, bh) = limbs(b);\n                low += al * bl;\n                middle += al * bh + ah * bl;\n            }\n            // Saturation permits generating a rejecting trace for a false\n            // canonical row instead of panicking on a malicious goal.\n            let low_carry = low.saturating_sub(goal_low) / LIMB_BASE;\n            let high_carry = (middle + low_carry).saturating_sub(goal_high) / LIMB_BASE;\n            debug_assert!(quotient < 1 << QUOTIENT_BITS);\n            debug_assert!(low_carry < 1 << LOW_CARRY_BITS);\n            debug_assert!(high_carry < 1 << HIGH_CARRY_BITS);\n            let out = &mut values[row_index * CARRY_WIDTH..(row_index + 1) * CARRY_WIDTH];\n            for (value, start, bits) in [\n                (quotient, 0, QUOTIENT_BITS),\n                (low_carry, LOW_CARRY_OFFSET, LOW_CARRY_BITS),\n                (high_carry, HIGH_CARRY_OFFSET, HIGH_CARRY_BITS),\n            ] {\n                for bit in 0..bits {\n                    out[start + bit] = Goldilocks::from_bool((value >> bit) & 1 == 1);\n                }\n            }\n        }\n        RowMajorMatrix::new(values, CARRY_WIDTH)\n    }\n}\n\nimpl BaseAir<Goldilocks> for Dot8CarryAir {\n    fn width(&self) -> usize {\n        CARRY_WIDTH\n    }\n    fn preprocessed_width(&self) -> usize {\n        CARRY_PREPROCESSED_WIDTH\n    }\n    fn preprocessed_trace(&self) -> Option<RowMajorMatrix<Goldilocks>> {\n        let mut values = vec![Goldilocks::ZERO; self.height * CARRY_PREPROCESSED_WIDTH];\n        for (i, row) in self.rows.iter().enumerate() {\n            let out = &mut values[i * CARRY_PREPROCESSED_WIDTH..(i + 1) * CARRY_PREPROCESSED_WIDTH];\n            for j in 0..8 {\n                let (al, ah) = limbs(row.left[j]);\n                let (bl, bh) = limbs(row.right[j]);\n                for (offset, value) in [al, ah, bl, bh].into_iter().enumerate() {\n                    out[4 * j + offset] = Goldilocks::from_u64(value);\n                }\n            }\n            let (sl, sh) = limbs(row.start);\n            let (gl, gh) = limbs(row.goal);\n            for (offset, value) in [sl, sh, gl, gh].into_iter().enumerate() {\n                out[32 + offset] = Goldilocks::from_u64(value);\n            }\n        }\n        Some(RowMajorMatrix::new(values, CARRY_PREPROCESSED_WIDTH))\n    }\n    fn main_next_row_columns(&self) -> Vec<usize> {\n        Vec::new()\n    }\n    fn preprocessed_next_row_columns(&self) -> Vec<usize> {\n        Vec::new()\n    }\n    fn max_constraint_degree(&self) -> Option<usize> {\n        Some(2)\n    }\n    fn num_public_values(&self) -> usize {\n        0\n    }\n}\n\nimpl<AB: AirBuilder<F = Goldilocks>> Air<AB> for Dot8CarryAir {\n    fn eval(&self, builder: &mut AB) {\n        let main = builder.main();\n        let bits = main.current_slice();\n        let public = builder.preprocessed().current_slice().to_vec();\n        for &bit in bits {\n            builder.assert_bool(bit);\n        }\n        let q0 = pack_bits_le::<AB::Expr, _, _>(bits[..16].iter().copied());\n        let q1 = pack_bits_le::<AB::Expr, _, _>(bits[16..32].iter().copied());\n        let q2 = pack_bits_le::<AB::Expr, _, _>(bits[32..QUOTIENT_BITS].iter().copied());\n        let c0 = pack_bits_le::<AB::Expr, _, _>(\n            bits[LOW_CARRY_OFFSET..HIGH_CARRY_OFFSET].iter().copied(),\n        );\n        let c1 = pack_bits_le::<AB::Expr, _, _>(bits[HIGH_CARRY_OFFSET..].iter().copied());\n        let base = Goldilocks::from_u64(LIMB_BASE);\n        let five = Goldilocks::from_u8(5);\n        let mut low = AB::Expr::from(public[32]) + q0.clone() * five;\n        let mut middle = AB::Expr::from(public[33]) + q1.clone() * five + c0.clone();\n        let mut high = q2.clone() * five + c1.clone();\n        for j in 0..8 {\n            let al = AB::Expr::from(public[4 * j]);\n            let ah = AB::Expr::from(public[4 * j + 1]);\n            let bl = AB::Expr::from(public[4 * j + 2]);\n            let bh = AB::Expr::from(public[4 * j + 3]);\n            low += al.clone() * bl.clone();\n            middle += al * bh.clone() + ah.clone() * bl;\n            high += ah * bh;\n        }\n        builder.assert_eq(low, AB::Expr::from(public[34]) + c0 * base);\n        builder.assert_eq(middle, AB::Expr::from(public[35]) + c1 * base);\n        builder.assert_eq(\n            high,\n            q0 + q1 * base + q2 * Goldilocks::from_u64(LIMB_BASE * LIMB_BASE),\n        );\n    }\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n    use p3_air::check_constraints;\n\n    fn rejects(air: &Dot8CarryAir, trace: &RowMajorMatrix<Goldilocks>) {\n        assert!(std::panic::catch_unwind(|| check_constraints(air, trace, &[])).is_err());\n    }\n\n    #[test]\n    fn maximum_canonical_inputs_and_boundary_additions_are_exact() {\n        let rows = vec![\n            Dot8Row {\n                left: [Q as u32 - 1; 8],\n                right: [Q as u32 - 1; 8],\n                start: Q as u32 - 1,\n                goal: 7,\n            },\n            Dot8Row::addition(Q as u32 - 1, Q as u32 - 1, Q as u32 - 2),\n            Dot8Row::addition(65_535, 1, 65_536),\n            Dot8Row::addition(0, 0, 0),\n            Dot8Row::addition(Q as u32 - 1, 1, 0),\n        ];\n        assert!(rows.iter().all(Dot8Row::integer_holds));\n        let air = Dot8CarryAir::new(rows).unwrap();\n        check_constraints(&air, &air.generate_trace(), &[]);\n    }\n\n    #[test]\n    fn prior_whole_dot_goldilocks_alias_is_rejected() {\n        let air = Dot8CarryAir::new(vec![Dot8Row {\n            left: [Q as u32 - 1; 8],\n            right: [Q as u32 - 1; 8],\n            start: 0,\n            goal: 4_294_967_278,\n        }])\n        .unwrap();\n        assert!(!air.rows()[0].integer_holds());\n        rejects(&air, &air.generate_trace());\n    }\n\n    #[test]\n    fn each_witness_bit_and_nonboolean_value_are_checked() {\n        let air = Dot8CarryAir::new(vec![Dot8Row {\n            left: [Q as u32 - 1; 8],\n            right: [Q as u32 - 1; 8],\n            start: Q as u32 - 1,\n            goal: 7,\n        }])\n        .unwrap();\n        for bit in 0..CARRY_WIDTH {\n            let mut trace = air.generate_trace();\n            trace.values[bit] = Goldilocks::ONE - trace.values[bit];\n            rejects(&air, &trace);\n        }\n        let mut trace = air.generate_trace();\n        trace.values[HIGH_CARRY_OFFSET] = Goldilocks::TWO;\n        rejects(&air, &trace);\n    }\n\n    #[test]\n    fn canonical_false_goals_and_noncanonical_public_words_are_rejected() {\n        let air = Dot8CarryAir::new(vec![Dot8Row::addition(0, 0, Q as u32 - 1)]).unwrap();\n        rejects(&air, &air.generate_trace());\n        assert!(Dot8CarryAir::new(vec![Dot8Row::addition(Q as u32, 0, 0)]).is_err());\n        assert!(Dot8CarryAir::new(vec![Dot8Row::addition(0, 0, Q as u32)]).is_err());\n    }\n\n    #[test]\n    fn deterministic_rows_match_independent_u128_relation() {\n        let mut state = 0x66e7_0de8_0000_0061u64;\n        let mut next = || {\n            state ^= state << 13;\n            state ^= state >> 7;\n            state ^= state << 17;\n            (state % Q) as u32\n        };\n        let mut rows = Vec::new();\n        for _ in 0..2_048 {\n            let left = std::array::from_fn(|_| next());\n            let right = std::array::from_fn(|_| next());\n            let start = next();\n            let total = left\n                .iter()\n                .zip(right)\n                .fold(u128::from(start), |s, (&a, b)| {\n                    s + u128::from(a) * u128::from(b)\n                });\n            rows.push(Dot8Row {\n                left,\n                right,\n                start,\n                goal: (total % u128::from(Q)) as u32,\n            });\n        }\n        let air = Dot8CarryAir::new(rows).unwrap();\n        check_constraints(&air, &air.generate_trace(), &[]);\n    }\n}\n"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/CARRY_BACKEND.md",
+      "blob": "41b923ab0d7180e032ab86ccc7c3191f3ec8c490",
+      "body": "# Carry arithmetic backend research\n\nThis candidate replaces only the arithmetic AIR. It retains every original\n`Dot8Row` produced by `PublicStatement::plans`: the same 81,920 arithmetic rows,\nthe same complete native SHA-256 plan, the same independently supplied header\nand artifact expectations, and the same canonical public statement. Verification\nreconstructs the public preprocessing from that statement in a fresh process.\nThere is no proof-provided verification key and no preprocessing cache.\n\nThe arithmetic transcript component is 3 and its wire magic is `W1P3ACR2`.\nThe original arithmetic component 2 / `W1P3ARI1` remains available as the\ncomparison baseline. This is a research-only example executable; it does not\nactivate a production verifier or change the node's acceptance policy.\n\n## Integer relation and constraints\n\nLet B = 65,536 and q = B² - 5 = 4,294,967,291. The public relation is\n\n    start + sum(i=0..7, a_i * b_i) = goal + q * k.\n\nEvery public word is canonical in [0,q). Deterministically split each public\nword into two base-B limbs. Preprocessed columns are the 32 input limbs,\n`start_low,start_high,goal_low,goal_high`: 36 columns total. These are literal\nlimb decompositions of the public statement, not an external multiplication\noracle. The AIR evaluates every limb product itself.\n\nThe main trace has 35 quotient bits, 19 low-carry bits and 20 high-carry bits.\nWrite k = k0 + B*k1 + B²*k2, where k0,k1 have 16 bits and k2 has 3 bits. The\n74 Boolean constraints and the following three equations make 77 constraints:\n\n    sum(a_low*b_low) + start_low + 5*k0 = goal_low + B*c0\n    sum(a_low*b_high + a_high*b_low) + start_high + 5*k1 + c0\n        = goal_high + B*c1\n    sum(a_high*b_high) + 5*k2 + c1 = k0 + B*k1 + B²*k2\n\nMultiply the second equality by B and the third by B², and add all three.\nBoth carries cancel. The result is the exact public relation above.\n\n### Soundness of integer lifting\n\nAfter Boolean constraints, k < 2^35, c0 < 2^19 and c1 < 2^20. Every public limb\nis less than B. Both nonnegative sides of each displayed equality are below\n2^36. Goldilocks has modulus 18,446,744,069,414,584,321 > 2^63, so equality in\nthat field implies equality of these bounded integers. In particular, the\nunreduced sum of eight 64-bit products is never evaluated in a single field\nequation. This avoids the known whole-dot Goldilocks alias.\n\n### Completeness and exact widths\n\nFor canonical public words, total <= 8(q-1)² + (q-1) = 8q² - 15q + 7. Therefore\nk <= 8q - 15 < 8B² = 2^35. For a valid row, the first numerator is divisible by\nB and is greater than -B, so c0 is nonnegative. Its upper bound is\n\n    c0 <= floor((8(B-1)² + 6(B-1))/B) = 8B - 10 < 2^19.\n\nThe middle numerator is likewise divisible by B and greater than -B. Its\nupper bound is\n\n    c1 <= floor((16(B-1)² + 6(B-1) + (8B-10))/B)\n        = 16B - 18 < 2^20.\n\nThus every true canonical row has a witness in the specified columns. Padding\nrows are all zero and satisfy the same equations. The constructor rejects\nempty, oversized and noncanonical tables. False canonical goals may produce\na rejecting witness; witness generation is not an acceptance test.\n\nThis is an algebraic equivalence argument for the AIR relation. It does not\nsupply the still-open concrete noninteractive PCS/hash/Fiat–Shamir theorem or\nits lifecycle budget. Conditional RBR metadata is recomputed from the actual\nnew AIR, and remains explicitly conditional and non-quantum.\n\n## Reproducible comparison\n\nBuild in the standalone crate with the exact Cargo.lock, Rust 1.95.0 and\n`RUSTFLAGS='-C target-cpu=native'`, retaining the original runner as baseline:\n\n```sh\ncargo build --offline --locked --release --bin w1-full-public-stark-research --example carry_backend\n```\n\n`carry_backend prepare`, `prove`, and `verify` use the same argument layout as\nthe baseline runner. Every `prove` invocation generates both a fresh SHA proof\nand a fresh arithmetic proof. The unchanged public statement is transmitted\nwith both proofs. Tests exercise the full retained row set, extreme inputs,\nall witness-bit mutations, non-Boolean witnesses, the known Goldilocks alias,\nand actual PCS proofs under changed goals, verification keys, openings and\nold transcript domains. Benchmarks must include full proof generation and\nindependent preprocessing at verification; a faster arithmetic subphase alone\ndoes not establish a positive end-to-end result against the native verifier.\n\nMeasurement evidence will be recorded separately after execution. The\nproduction qualification remains HOLD_NO_GO.\n"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/tests/carry_proof.rs",
+      "sha256": "0a62231cd23c94d9ba20068f30e90afa117b7cec50e3dca3f70b41257e570889",
+      "body": "//! Real PCS/FRI tests for the new carry transcript component.\n\nuse bincode::Options;\nuse p3_field::PrimeCharacteristicRing;\nuse p3_uni_stark::{prove_with_preprocessed, setup_preprocessed, verify_with_preprocessed};\nuse w1_full_public_stark_research::arith_air::Dot8Row;\nuse w1_full_public_stark_research::arith_carry_air::Dot8CarryAir;\nuse w1_full_public_stark_research::proof_config::{\n    ARITH_COMPONENT, CARRY_COMPONENT, Challenge, W1Proof, carry_security_metadata, config,\n};\nuse w1_full_public_stark_research::public::{Expected, PublicStatement};\nuse w1_full_public_stark_research::sha_air::W1ShaAir;\n\nfn encode(proof: &W1Proof) -> Vec<u8> {\n    bincode::DefaultOptions::new()\n        .with_fixint_encoding()\n        .reject_trailing_bytes()\n        .serialize(proof)\n        .unwrap()\n}\nfn decode(bytes: &[u8]) -> W1Proof {\n    bincode::DefaultOptions::new()\n        .with_fixint_encoding()\n        .with_limit(1 << 20)\n        .reject_trailing_bytes()\n        .deserialize(bytes)\n        .unwrap()\n}\n\n#[test]\nfn carry_proof_rejects_changed_goal_vk_opening_and_old_domain() {\n    let cfg = config(CARRY_COMPONENT);\n    let prover_air = Dot8CarryAir::new(vec![Dot8Row::addition(7, 9, 16)]).unwrap();\n    let (pp, _) = setup_preprocessed(&cfg, &prover_air, 2).unwrap().unwrap();\n    let proof = prove_with_preprocessed(\n        &cfg,\n        &prover_air,\n        prover_air.generate_trace(),\n        &[],\n        Some(&pp),\n    )\n    .unwrap();\n    let wire = encode(&proof);\n    drop(pp);\n\n    let verifier_air = Dot8CarryAir::new(vec![Dot8Row::addition(7, 9, 16)]).unwrap();\n    let (verifier_pp, vk) = setup_preprocessed(&cfg, &verifier_air, 2).unwrap().unwrap();\n    drop(verifier_pp);\n    assert!(verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], Some(&vk)).is_ok());\n\n    let changed_air = Dot8CarryAir::new(vec![Dot8Row::addition(7, 9, 17)]).unwrap();\n    let (other_pp, other_vk) = setup_preprocessed(&cfg, &changed_air, 2).unwrap().unwrap();\n    drop(other_pp);\n    assert!(\n        verify_with_preprocessed(&cfg, &changed_air, &decode(&wire), &[], Some(&other_vk)).is_err()\n    );\n    assert!(\n        verify_with_preprocessed(&cfg, &verifier_air, &decode(&wire), &[], Some(&other_vk))\n            .is_err()\n    );\n\n    let mut changed = decode(&wire);\n    changed.opened_values.trace_local[0] += Challenge::ONE;\n    assert!(verify_with_preprocessed(&cfg, &verifier_air, &changed, &[], Some(&vk)).is_err());\n    let mut changed = decode(&wire);\n    changed.degree_bits += 1;\n    assert!(verify_with_preprocessed(&cfg, &verifier_air, &changed, &[], Some(&vk)).is_err());\n    assert!(\n        verify_with_preprocessed(\n            &config(ARITH_COMPONENT),\n            &verifier_air,\n            &decode(&wire),\n            &[],\n            Some(&vk)\n        )\n        .is_err()\n    );\n}\n\n#[test]\nfn complete_retained_statement_preserves_every_original_arithmetic_row() {\n    let expected = Expected::from_bytes(\n        include_bytes!(\"../fixtures/retained.expected-header.bin\"),\n        include_bytes!(\"../fixtures/retained.artifacts.bin\"),\n    )\n    .unwrap();\n    let statement = PublicStatement::honest(\n        include_bytes!(\"../fixtures/retained.input.bin\").to_vec(),\n        include_bytes!(\"../fixtures/retained.prefix.bin\").to_vec(),\n    )\n    .unwrap();\n    let (sha_plan, original) = statement.plans(&expected).unwrap();\n    let carry = Dot8CarryAir::new(original.rows().to_vec()).unwrap();\n    assert_eq!(carry.rows(), original.rows());\n    assert_eq!(carry.real_rows(), 81_920);\n    assert_eq!(carry.trace_height(), 131_072);\n    let sha = W1ShaAir::public_only(&sha_plan);\n    let report = carry_security_metadata(&sha, &carry);\n    assert_eq!(report[\"component_domains\"][\"arithmetic\"], CARRY_COMPONENT);\n    assert_eq!(report[\"arithmetic\"][\"main_width\"], 74);\n    assert_eq!(report[\"arithmetic\"][\"preprocessed_width\"], 36);\n    assert_eq!(report[\"arithmetic\"][\"num_constraints\"], 77);\n    assert_eq!(\n        report[\"arithmetic\"][\"is_complete_noninteractive_bound\"],\n        false\n    );\n    assert_eq!(report[\"arithmetic\"][\"is_quantum_security_bound\"], false);\n}\n"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs",
+      "sha256": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+      "total_lines": 256,
+      "selected_lines": [
+        [
+          1,
+          "//! Exact eight-term arithmetic over q inside the Goldilocks proof field."
+        ],
+        [
+          2,
+          "//!"
+        ],
+        [
+          3,
+          "//! Each product has 32-bit quotient and remainder witnesses. Intermediates"
+        ],
+        [
+          4,
+          "//! need not be canonical modulo q: their bounded integer equations imply the"
+        ],
+        [
+          5,
+          "//! correct congruence, and the public start/goal are canonical. The eight-term"
+        ],
+        [
+          6,
+          "//! sum is formed only AFTER reducing each individual product, avoiding a"
+        ],
+        [
+          7,
+          "//! whole-dot Goldilocks wraparound."
+        ],
+        [
+          8,
+          ""
+        ],
+        [
+          9,
+          "use p3_air::utils::pack_bits_le;"
+        ],
+        [
+          10,
+          "use p3_air::{Air, AirBuilder, BaseAir, WindowAccess};"
+        ],
+        [
+          11,
+          "use p3_field::PrimeCharacteristicRing;"
+        ],
+        [
+          12,
+          "use p3_goldilocks::Goldilocks;"
+        ],
+        [
+          13,
+          "use p3_matrix::dense::RowMajorMatrix;"
+        ],
+        [
+          14,
+          ""
+        ],
+        [
+          15,
+          "pub const Q: u64 = 4_294_967_291;"
+        ],
+        [
+          16,
+          "pub const DOT8_WIDTH: usize = 8 * 64 + 4;"
+        ],
+        [
+          17,
+          "pub const DOT8_PREPROCESSED_WIDTH: usize = 18;"
+        ],
+        [
+          18,
+          "pub const FULL_REAL_ROWS: usize = 81_920;"
+        ],
+        [
+          19,
+          "pub const FULL_PADDED_ROWS: usize = 131_072;"
+        ],
+        [
+          20,
+          ""
+        ],
+        [
+          21,
+          "#[derive(Clone, Copy, Debug, PartialEq, Eq)]"
+        ],
+        [
+          22,
+          "pub struct Dot8Row {"
+        ],
+        [
+          23,
+          "    pub left: [u32; 8],"
+        ],
+        [
+          24,
+          "    pub right: [u32; 8],"
+        ],
+        [
+          25,
+          "    pub start: u32,"
+        ],
+        [
+          26,
+          "    pub goal: u32,"
+        ],
+        [
+          27,
+          "}"
+        ],
+        [
+          28,
+          ""
+        ],
+        [
+          29,
+          "impl Dot8Row {"
+        ],
+        [
+          30,
+          "    pub fn addition(a: u32, b: u32, goal: u32) -> Self {"
+        ],
+        [
+          31,
+          "        let mut left = [0; 8];"
+        ],
+        [
+          32,
+          "        let mut right = [0; 8];"
+        ],
+        [
+          33,
+          "        left[0] = 1;"
+        ],
+        [
+          34,
+          "        left[1] = 1;"
+        ],
+        [
+          35,
+          "        right[0] = a;"
+        ],
+        [
+          36,
+          "        right[1] = b;"
+        ],
+        [
+          37,
+          "        Self {"
+        ],
+        [
+          38,
+          "            left,"
+        ],
+        [
+          39,
+          "            right,"
+        ],
+        [
+          40,
+          "            start: 0,"
+        ],
+        [
+          41,
+          "            goal,"
+        ],
+        [
+          42,
+          "        }"
+        ],
+        [
+          43,
+          "    }"
+        ],
+        [
+          44,
+          ""
+        ],
+        [
+          45,
+          "    pub fn canonical(&self) -> bool {"
+        ],
+        [
+          46,
+          "        self.left"
+        ],
+        [
+          47,
+          "            .iter()"
+        ],
+        [
+          48,
+          "            .chain(self.right.iter())"
+        ],
+        [
+          49,
+          "            .chain([&self.start, &self.goal])"
+        ],
+        [
+          50,
+          "            .all(|&word| u64::from(word) < Q)"
+        ],
+        [
+          51,
+          "    }"
+        ],
+        [
+          52,
+          ""
+        ],
+        [
+          53,
+          "    /// Independent integer diagnostic, never called by STARK verification."
+        ],
+        [
+          54,
+          "    pub fn integer_holds(&self) -> bool {"
+        ],
+        [
+          55,
+          "        let total = self"
+        ],
+        [
+          56,
+          "            .left"
+        ],
+        [
+          57,
+          "            .iter()"
+        ],
+        [
+          58,
+          "            .zip(self.right)"
+        ],
+        [
+          59,
+          "            .fold(u128::from(self.start), |sum, (&a, b)| {"
+        ],
+        [
+          60,
+          "                sum + u128::from(a) * u128::from(b)"
+        ],
+        [
+          61,
+          "            });"
+        ],
+        [
+          62,
+          "        self.canonical() && total % u128::from(Q) == u128::from(self.goal)"
+        ],
+        [
+          63,
+          "    }"
+        ],
+        [
+          64,
+          "}"
+        ],
+        [
+          65,
+          ""
+        ],
+        [
+          66,
+          "#[derive(Clone, Debug)]"
+        ],
+        [
+          67,
+          "pub struct Dot8Air {"
+        ],
+        [
+          68,
+          "    rows: Vec<Dot8Row>,"
+        ],
+        [
+          69,
+          "    height: usize,"
+        ],
+        [
+          70,
+          "}"
+        ],
+        [
+          71,
+          ""
+        ],
+        [
+          72,
+          "impl Dot8Air {"
+        ],
+        [
+          73,
+          "    pub fn new(rows: Vec<Dot8Row>) -> Result<Self, &'static str> {"
+        ],
+        [
+          74,
+          "        if rows.is_empty() || rows.len() > FULL_REAL_ROWS {"
+        ],
+        [
+          75,
+          "            return Err(\"arithmetic row count\");"
+        ],
+        [
+          76,
+          "        }"
+        ],
+        [
+          77,
+          "        if rows.iter().any(|row| !row.canonical()) {"
+        ],
+        [
+          78,
+          "            return Err(\"noncanonical public arithmetic word\");"
+        ],
+        [
+          79,
+          "        }"
+        ],
+        [
+          80,
+          "        let height = rows.len().next_power_of_two().max(4);"
+        ],
+        [
+          81,
+          "        Ok(Self { rows, height })"
+        ],
+        [
+          82,
+          "    }"
+        ],
+        [
+          83,
+          ""
+        ],
+        [
+          84,
+          "    pub fn real_rows(&self) -> usize {"
+        ],
+        [
+          85,
+          "        self.rows.len()"
+        ],
+        [
+          86,
+          "    }"
+        ],
+        [
+          87,
+          "    pub fn trace_height(&self) -> usize {"
+        ],
+        [
+          88,
+          "        self.height"
+        ],
+        [
+          89,
+          "    }"
+        ],
+        [
+          90,
+          "    pub fn rows(&self) -> &[Dot8Row] {"
+        ],
+        [
+          91,
+          "        &self.rows"
+        ],
+        [
+          92,
+          "    }"
+        ],
+        [
+          93,
+          ""
+        ],
+        [
+          94,
+          "    pub fn generate_trace(&self) -> RowMajorMatrix<Goldilocks> {"
+        ],
+        [
+          95,
+          "        let mut values = vec![Goldilocks::ZERO; self.height * DOT8_WIDTH];"
+        ],
+        [
+          96,
+          "        for (row_index, row) in self.rows.iter().enumerate() {"
+        ],
+        [
+          97,
+          "            let out = &mut values[row_index * DOT8_WIDTH..(row_index + 1) * DOT8_WIDTH];"
+        ],
+        [
+          98,
+          "            let mut sum = u64::from(row.start);"
+        ],
+        [
+          99,
+          "            for i in 0..8 {"
+        ],
+        [
+          100,
+          "                let product = u64::from(row.left[i]) * u64::from(row.right[i]);"
+        ],
+        [
+          101,
+          "                let quotient = product / Q;"
+        ],
+        [
+          102,
+          "                let remainder = product % Q;"
+        ],
+        [
+          103,
+          "                sum += remainder;"
+        ],
+        [
+          104,
+          "                for bit in 0..32 {"
+        ],
+        [
+          105,
+          "                    out[i * 64 + bit] = Goldilocks::from_bool((quotient >> bit) & 1 == 1);"
+        ],
+        [
+          106,
+          "                    out[i * 64 + 32 + bit] = Goldilocks::from_bool((remainder >> bit) & 1 == 1);"
+        ],
+        [
+          107,
+          "                }"
+        ],
+        [
+          108,
+          "            }"
+        ],
+        [
+          109,
+          "            let carry = sum / Q;"
+        ],
+        [
+          110,
+          "            debug_assert!(carry <= 8);"
+        ],
+        [
+          111,
+          "            for bit in 0..4 {"
+        ],
+        [
+          112,
+          "                out[512 + bit] = Goldilocks::from_bool((carry >> bit) & 1 == 1);"
+        ],
+        [
+          113,
+          "            }"
+        ],
+        [
+          114,
+          "        }"
+        ],
+        [
+          115,
+          "        RowMajorMatrix::new(values, DOT8_WIDTH)"
+        ],
+        [
+          116,
+          "    }"
+        ],
+        [
+          117,
+          "}"
+        ],
+        [
+          118,
+          ""
+        ],
+        [
+          119,
+          "impl BaseAir<Goldilocks> for Dot8Air {"
+        ],
+        [
+          120,
+          "    fn width(&self) -> usize {"
+        ],
+        [
+          121,
+          "        DOT8_WIDTH"
+        ],
+        [
+          122,
+          "    }"
+        ],
+        [
+          123,
+          "    fn preprocessed_width(&self) -> usize {"
+        ],
+        [
+          124,
+          "        DOT8_PREPROCESSED_WIDTH"
+        ],
+        [
+          125,
+          "    }"
+        ],
+        [
+          126,
+          "    fn preprocessed_trace(&self) -> Option<RowMajorMatrix<Goldilocks>> {"
+        ],
+        [
+          127,
+          "        let mut values = vec![Goldilocks::ZERO; self.height * DOT8_PREPROCESSED_WIDTH];"
+        ],
+        [
+          128,
+          "        for (i, row) in self.rows.iter().enumerate() {"
+        ],
+        [
+          129,
+          "            let out = &mut values[i * DOT8_PREPROCESSED_WIDTH..(i + 1) * DOT8_PREPROCESSED_WIDTH];"
+        ],
+        [
+          130,
+          "            for j in 0..8 {"
+        ]
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+      "sha256": "3e5dad9185e4218e375d465e3ea0a0d90407c85a000aa9a60474b7cbfb78d3d8",
+      "total_lines": 232,
+      "selected_lines": [
+        [
+          1,
+          "//! Fixed research-only PCS/FRI configuration and conditional RBR metadata."
+        ],
+        [
+          2,
+          "//!"
+        ],
+        [
+          3,
+          "//! The native W1 relation still uses fully constrained SHA-256. Poseidon2 is"
+        ],
+        [
+          4,
+          "//! the separate commitment/transcript primitive of this research proof system."
+        ],
+        [
+          5,
+          "//! No untrusted proof field selects or weakens these parameters."
+        ],
+        [
+          6,
+          ""
+        ],
+        [
+          7,
+          "use p3_air::symbolic::{AirLayout, SymbolicAirBuilder};"
+        ],
+        [
+          8,
+          "use p3_air::{Air, BaseAir};"
+        ],
+        [
+          9,
+          "use p3_challenger::{CanObserve, DuplexChallenger};"
+        ],
+        [
+          10,
+          "use p3_commit::{ExtensionMmcs, Pcs as PcsTrait};"
+        ],
+        [
+          11,
+          "use p3_dft::Radix2DitParallel;"
+        ],
+        [
+          12,
+          "use p3_field::extension::BinomialExtensionField;"
+        ],
+        [
+          13,
+          "use p3_field::{Field, PrimeCharacteristicRing};"
+        ],
+        [
+          14,
+          "use p3_fri::{FriParameters, TwoAdicFriPcs};"
+        ],
+        [
+          15,
+          "use p3_goldilocks::{Goldilocks, Poseidon2Goldilocks, default_goldilocks_poseidon2_8};"
+        ],
+        [
+          16,
+          "use p3_merkle_tree::MerkleTreeMmcs;"
+        ],
+        [
+          17,
+          "use p3_security::fri::FriRegime;"
+        ],
+        [
+          18,
+          "use p3_security::shape::{InstanceShape, StarkAirParams};"
+        ],
+        [
+          19,
+          "use p3_security::stark::proven_security_report;"
+        ],
+        [
+          20,
+          "use p3_symmetric::{PaddingFreeSponge, TruncatedPermutation};"
+        ],
+        [
+          21,
+          "use p3_uni_stark::{"
+        ],
+        [
+          22,
+          "    ConjecturedSecurity, GrindingSites, OpeningShape, Proof, StarkConfig, StarkGenericConfig,"
+        ],
+        [
+          23,
+          "    StarkSecurityParams,"
+        ],
+        [
+          24,
+          "};"
+        ],
+        [
+          25,
+          "use serde_json::{Value, json};"
+        ],
+        [
+          26,
+          ""
+        ],
+        [
+          27,
+          "use crate::arith_air::Dot8Air;"
+        ],
+        [
+          28,
+          "use crate::arith_carry_air::Dot8CarryAir;"
+        ],
+        [
+          29,
+          "use crate::sha_air::W1ShaAir;"
+        ],
+        [
+          30,
+          ""
+        ],
+        [
+          31,
+          "pub type Val = Goldilocks;"
+        ],
+        [
+          32,
+          "pub type Challenge = BinomialExtensionField<Val, 2>;"
+        ],
+        [
+          33,
+          "pub type Perm = Poseidon2Goldilocks<8>;"
+        ],
+        [
+          34,
+          "pub type Hasher = PaddingFreeSponge<Perm, 8, 4, 4>;"
+        ],
+        [
+          35,
+          "pub type Compressor = TruncatedPermutation<Perm, 2, 4, 8>;"
+        ],
+        [
+          36,
+          "pub type ValMmcs ="
+        ],
+        [
+          37,
+          "    MerkleTreeMmcs<<Val as Field>::Packing, <Val as Field>::Packing, Hasher, Compressor, 2, 4>;"
+        ],
+        [
+          38,
+          "pub type ChallengeMmcs = ExtensionMmcs<Val, Challenge, ValMmcs>;"
+        ],
+        [
+          39,
+          "pub type Challenger = DuplexChallenger<Val, Perm, 8, 4>;"
+        ],
+        [
+          40,
+          "pub type Dft = Radix2DitParallel<Val>;"
+        ],
+        [
+          41,
+          "pub type Pcs = TwoAdicFriPcs<Val, Dft, ValMmcs, ChallengeMmcs>;"
+        ],
+        [
+          42,
+          "pub type Config = StarkConfig<Pcs, Challenge, Challenger>;"
+        ],
+        [
+          43,
+          "pub type W1Proof = Proof<Config>;"
+        ],
+        [
+          44,
+          ""
+        ],
+        [
+          45,
+          "pub const SHA_COMPONENT: u32 = 1;"
+        ],
+        [
+          46,
+          "pub const ARITH_COMPONENT: u32 = 2;"
+        ],
+        [
+          47,
+          "/// New transcript component for the carry AIR; original proofs retain domain 2."
+        ],
+        [
+          48,
+          "pub const CARRY_COMPONENT: u32 = 3;"
+        ],
+        [
+          49,
+          "pub const RESEARCH_DOMAIN: &[u8] = b\"TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1\\0\";"
+        ],
+        [
+          50,
+          "pub const LOG_BLOWUP: usize = 2;"
+        ],
+        [
+          51,
+          "pub const LOG_FINAL_POLY_LEN: usize = 0;"
+        ],
+        [
+          52,
+          "pub const MAX_LOG_ARITY: usize = 1;"
+        ],
+        [
+          53,
+          "pub const NUM_QUERIES: usize = 64;"
+        ],
+        [
+          54,
+          "pub const GOLDILOCKS_ORDER: u64 = 18_446_744_069_414_584_321;"
+        ],
+        [
+          55,
+          ""
+        ],
+        [
+          56,
+          "// These are assumptions/rounding conventions for the estimator, not evidence"
+        ],
+        [
+          57,
+          "// of a concrete Poseidon2 reduction or a complete noninteractive theorem."
+        ],
+        [
+          58,
+          "const CONSERVATIVE_MODULUS_BITS: usize = 127;"
+        ],
+        [
+          59,
+          "const ASSUMED_HASH_COLLISION_BITS: usize = 128;"
+        ],
+        [
+          60,
+          ""
+        ],
+        [
+          61,
+          "fn fri_regime() -> FriRegime {"
+        ],
+        [
+          62,
+          "    FriRegime {"
+        ],
+        [
+          63,
+          "        log_blowup: LOG_BLOWUP,"
+        ],
+        [
+          64,
+          "        num_queries: NUM_QUERIES,"
+        ],
+        [
+          65,
+          "        log_final_poly_len: LOG_FINAL_POLY_LEN,"
+        ],
+        [
+          66,
+          "        max_log_arity: MAX_LOG_ARITY,"
+        ],
+        [
+          67,
+          "        commit_pow_bits: 0,"
+        ],
+        [
+          68,
+          "        query_pow_bits: 0,"
+        ],
+        [
+          69,
+          "    }"
+        ],
+        [
+          70,
+          "}"
+        ],
+        [
+          71,
+          ""
+        ],
+        [
+          72,
+          "/// Construct the sole research parameter profile. Only the three fixed"
+        ],
+        [
+          73,
+          "/// components are admitted; component selection changes domain separation,"
+        ],
+        [
+          74,
+          "/// never the field, hash, query count, blowup, or grinding settings."
+        ],
+        [
+          75,
+          "pub fn config(component: u32) -> Config {"
+        ],
+        [
+          76,
+          "    assert!(matches!("
+        ],
+        [
+          77,
+          "        component,"
+        ],
+        [
+          78,
+          "        SHA_COMPONENT | ARITH_COMPONENT | CARRY_COMPONENT"
+        ],
+        [
+          79,
+          "    ));"
+        ],
+        [
+          80,
+          "    let perm = default_goldilocks_poseidon2_8();"
+        ],
+        [
+          81,
+          "    let hash = Hasher::new(perm.clone());"
+        ],
+        [
+          82,
+          "    let compress = Compressor::new(perm.clone());"
+        ],
+        [
+          83,
+          "    let val_mmcs = ValMmcs::new(hash, compress, 0);"
+        ],
+        [
+          84,
+          "    let challenge_mmcs = ChallengeMmcs::new(val_mmcs.clone());"
+        ],
+        [
+          85,
+          "    let fri_params = FriParameters {"
+        ],
+        [
+          86,
+          "        log_blowup: LOG_BLOWUP,"
+        ],
+        [
+          87,
+          "        log_final_poly_len: LOG_FINAL_POLY_LEN,"
+        ],
+        [
+          88,
+          "        max_log_arity: MAX_LOG_ARITY,"
+        ],
+        [
+          89,
+          "        num_queries: NUM_QUERIES,"
+        ],
+        [
+          90,
+          "        batch_proof_of_work_bits: 0,"
+        ],
+        [
+          91,
+          "        commit_proof_of_work_bits: 0,"
+        ],
+        [
+          92,
+          "        query_proof_of_work_bits: 0,"
+        ],
+        [
+          93,
+          "        mmcs: challenge_mmcs,"
+        ],
+        [
+          94,
+          "    };"
+        ],
+        [
+          95,
+          "    let pcs = Pcs::new(Dft::default(), val_mmcs, fri_params);"
+        ],
+        [
+          96,
+          "    let mut challenger = Challenger::new(perm);"
+        ],
+        [
+          97,
+          "    // One canonical base-field element per byte; fixed length prefix and"
+        ],
+        [
+          98,
+          "    // fixed-width component prevent ambiguity at this application boundary."
+        ],
+        [
+          99,
+          "    challenger.observe(Val::from_u32(RESEARCH_DOMAIN.len() as u32));"
+        ],
+        [
+          100,
+          "    for &byte in RESEARCH_DOMAIN {"
+        ],
+        [
+          101,
+          "        challenger.observe(Val::from_u8(byte));"
+        ],
+        [
+          102,
+          "    }"
+        ],
+        [
+          103,
+          "    challenger.observe(Val::from_u32(component));"
+        ],
+        [
+          104,
+          "    Config::new(pcs, challenger)"
+        ],
+        [
+          105,
+          "        .with_ood_proof_of_work_bits(0)"
+        ],
+        [
+          106,
+          "        .with_lookup_proof_of_work_bits(0)"
+        ],
+        [
+          107,
+          "}"
+        ],
+        [
+          108,
+          ""
+        ],
+        [
+          109,
+          "fn component_security<A>(air: &A, height: usize, component: u32, max_combo: usize) -> Value"
+        ],
+        [
+          110,
+          "where"
+        ],
+        [
+          111,
+          "    A: BaseAir<Val> + Air<SymbolicAirBuilder<Val, Challenge>>,"
+        ],
+        [
+          112,
+          "{"
+        ],
+        [
+          113,
+          "    assert!(height.is_power_of_two());"
+        ],
+        [
+          114,
+          "    let cfg = config(component);"
+        ],
+        [
+          115,
+          "    assert_eq!(cfg.is_zk(), 0);"
+        ],
+        [
+          116,
+          "    assert_eq!(cfg.ood_proof_of_work_bits(), 0);"
+        ],
+        [
+          117,
+          "    assert_eq!(cfg.lookup_proof_of_work_bits(), 0);"
+        ],
+        [
+          118,
+          "    // Be explicit about preprocessing widths. These AIRs have no lookups or"
+        ],
+        [
+          119,
+          "    // permutation columns, and their public tables must not disappear from"
+        ],
+        [
+          120,
+          "    // symbolic constraint counting or PCS opening-batch accounting."
+        ],
+        [
+          121,
+          "    let layout = AirLayout {"
+        ],
+        [
+          122,
+          "        main_width: air.width(),"
+        ],
+        [
+          123,
+          "        preprocessed_width: air.preprocessed_width(),"
+        ],
+        [
+          124,
+          "        num_public_values: air.num_public_values(),"
+        ],
+        [
+          125,
+          "        num_periodic_columns: air.num_periodic_columns(),"
+        ],
+        [
+          126,
+          "        ..Default::default()"
+        ],
+        [
+          127,
+          "    };"
+        ],
+        [
+          128,
+          "    let domain ="
+        ],
+        [
+          129,
+          "        <Pcs as PcsTrait<Challenge, Challenger>>::natural_domain_for_degree(cfg.pcs(), height);"
+        ],
+        [
+          130,
+          "    let params = StarkSecurityParams::from_air::<Val, Challenge, A>("
+        ],
+        [
+          131,
+          "        fri_regime(),"
+        ],
+        [
+          132,
+          "        air,"
+        ],
+        [
+          133,
+          "        layout,"
+        ],
+        [
+          134,
+          "        domain,"
+        ],
+        [
+          135,
+          "        CONSERVATIVE_MODULUS_BITS,"
+        ],
+        [
+          136,
+          "        ASSUMED_HASH_COLLISION_BITS,"
+        ],
+        [
+          137,
+          "        max_combo,"
+        ],
+        [
+          138,
+          "        OpeningShape::new(),"
+        ],
+        [
+          139,
+          "        GrindingSites::NONE,"
+        ],
+        [
+          140,
+          "    );"
+        ],
+        [
+          141,
+          "    let degree_bits = height.ilog2() as usize;"
+        ],
+        [
+          142,
+          "    let air_shape = StarkAirParams {"
+        ],
+        [
+          143,
+          "        num_constraints: params.num_constraints,"
+        ],
+        [
+          144,
+          "        max_constraint_degree: params.air_max_constraint_degree,"
+        ],
+        [
+          145,
+          "        num_quotient_chunks: params.num_quotient_chunks,"
+        ],
+        [
+          186,
+          "/// conditional round-by-round estimate, not an end-to-end ROM/QROM bound."
+        ],
+        [
+          187,
+          "fn metadata<A>(sha: &W1ShaAir, arith: &A, arith_height: usize, arithmetic_component: u32) -> Value"
+        ],
+        [
+          188,
+          "where"
+        ],
+        [
+          189,
+          "    A: BaseAir<Val> + Air<SymbolicAirBuilder<Val, Challenge>>,"
+        ],
+        [
+          190,
+          "{"
+        ],
+        [
+          191,
+          "    let cardinality = u128::from(GOLDILOCKS_ORDER) * u128::from(GOLDILOCKS_ORDER);"
+        ],
+        [
+          192,
+          "    json!({"
+        ],
+        [
+          193,
+          "        \"schema\": \"w1-p3-0.8.0-conditional-rbr-metadata-v1\","
+        ],
+        [
+          194,
+          "        \"qualification\": \"HOLD_NO_GO\","
+        ],
+        [
+          195,
+          "        \"p3_version\": \"0.8.0\","
+        ],
+        [
+          196,
+          "        \"native_relation_hash\": \"SHA-256, fully constrained by the SHA AIR\","
+        ],
+        [
+          197,
+          "        \"commitment_and_challenger\": \"default Goldilocks Poseidon2 width 8\","
+        ],
+        [
+          198,
+          "        \"sponge\": {\"width\": 8, \"rate\": 4, \"output\": 4, \"padding\": \"PaddingFreeSponge, fixed-shape MMCS inputs only\"},"
+        ],
+        [
+          199,
+          "        \"compression\": {\"inputs\": 2, \"digest_elements\": 4, \"width\": 8},"
+        ],
+        [
+          200,
+          "        \"mmcs\": {\"arity\": 2, \"digest_elements\": 4, \"cap_height\": 0},"
+        ],
+        [
+          201,
+          "        \"field_modulus\": GOLDILOCKS_ORDER.to_string(),"
+        ],
+        [
+          202,
+          "        \"challenge_extension\": \"X^2 - 7\","
+        ],
+        [
+          203,
+          "        \"challenge_field_cardinality\": cardinality.to_string(),"
+        ],
+        [
+          204,
+          "        \"estimator_modulus_bits\": CONSERVATIVE_MODULUS_BITS,"
+        ],
+        [
+          205,
+          "        \"estimator_modulus_bits_reason\": \"P^2 >= 2^127; using 128 as an exact denominator would round the field cardinality upward\","
+        ],
+        [
+          206,
+          "        \"research_domain_hex\": hex::encode(RESEARCH_DOMAIN),"
+        ],
+        [
+          207,
+          "        \"component_domains\": {\"sha\": SHA_COMPONENT, \"arithmetic\": arithmetic_component},"
+        ],
+        [
+          208,
+          "        \"fri\": {\"log_blowup\": LOG_BLOWUP, \"log_final_poly_len\": LOG_FINAL_POLY_LEN,"
+        ],
+        [
+          209,
+          "            \"max_log_arity\": MAX_LOG_ARITY, \"num_queries\": NUM_QUERIES,"
+        ],
+        [
+          210,
+          "            \"batch_pow_bits\": 0, \"commit_pow_bits\": 0, \"query_pow_bits\": 0,"
+        ],
+        [
+          211,
+          "            \"ood_pow_bits\": 0, \"lookup_pow_bits\": 0},"
+        ],
+        [
+          212,
+          "        \"zero_knowledge\": false,"
+        ],
+        [
+          213,
+          "        \"public_statement_is_succinct\": false,"
+        ],
+        [
+          214,
+          "        \"complete_noninteractive_bound\": \"UNRESOLVED: requires concrete transcript/sampling, PCS binding and ROM compilation analysis\","
+        ],
+        [
+          215,
+          "        \"hash_strength_status\": \"128-bit collision resistance is an explicit model assumption, not independently certified here\","
+        ],
+        [
+          216,
+          "        \"sha\": component_security(sha, sha.trace_height(), SHA_COMPONENT, 2),"
+        ],
+        [
+          217,
+          "        \"arithmetic\": component_security(arith, arith_height, arithmetic_component, 1)"
+        ],
+        [
+          218,
+          "    })"
+        ],
+        [
+          219,
+          "}"
+        ],
+        [
+          220,
+          ""
+        ],
+        [
+          221,
+          "/// Original quotient/remainder AIR metadata, preserving its transcript domain."
+        ],
+        [
+          222,
+          "pub fn security_metadata(sha: &W1ShaAir, arith: &Dot8Air) -> Value {"
+        ],
+        [
+          223,
+          "    metadata(sha, arith, arith.trace_height(), ARITH_COMPONENT)"
+        ],
+        [
+          224,
+          "}"
+        ],
+        [
+          225,
+          ""
+        ],
+        [
+          226,
+          "/// Carry-AIR metadata from its actual symbolic constraints and fixed PCS shape."
+        ],
+        [
+          227,
+          "/// The complete noninteractive and quantum security qualifications remain open."
+        ],
+        [
+          228,
+          "pub fn carry_security_metadata(sha: &W1ShaAir, arith: &Dot8CarryAir) -> Value {"
+        ],
+        [
+          229,
+          "    let mut report = metadata(sha, arith, arith.trace_height(), CARRY_COMPONENT);"
+        ],
+        [
+          230,
+          "    report[\"schema\"] = \"w1-p3-0.8.0-conditional-rbr-carry-metadata-v2\".into();"
+        ],
+        [
+          231,
+          "    report"
+        ],
+        [
+          232,
+          "}"
+        ]
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/carry_backend.rs",
+      "sha256": "7d2e5bd4df088c76b8ede3cad18bd1e2669c2dd7b52296285703a0dd586c2cb2",
+      "total_lines": 305,
+      "selected_lines": [
+        [
+          4,
+          "use std::fs::{self, File, OpenOptions};"
+        ],
+        [
+          5,
+          "use std::io::{Read, Write};"
+        ],
+        [
+          6,
+          "use std::path::Path;"
+        ],
+        [
+          7,
+          "use std::time::Instant;"
+        ],
+        [
+          8,
+          ""
+        ],
+        [
+          9,
+          "use bincode::Options;"
+        ],
+        [
+          10,
+          "use p3_uni_stark::{prove_with_preprocessed, setup_preprocessed, verify_with_preprocessed};"
+        ],
+        [
+          11,
+          "use serde_json::{Value, json};"
+        ],
+        [
+          12,
+          "use sha2::{Digest, Sha256};"
+        ],
+        [
+          13,
+          "use w1_full_public_stark_research::arith_carry_air::Dot8CarryAir;"
+        ],
+        [
+          14,
+          "use w1_full_public_stark_research::proof_config::{"
+        ],
+        [
+          15,
+          "    CARRY_COMPONENT, W1Proof, carry_security_metadata as security_metadata, config,"
+        ],
+        [
+          16,
+          "};"
+        ],
+        [
+          17,
+          "use w1_full_public_stark_research::public::{Expected, PUBLIC_BYTES, PublicStatement};"
+        ],
+        [
+          18,
+          "use w1_full_public_stark_research::sha_air::W1ShaAir;"
+        ],
+        [
+          19,
+          "use w1_full_public_stark_research::sha_plan::{HEADER_BYTES, INPUT_BYTES, PREFIX_BYTES};"
+        ],
+        [
+          20,
+          ""
+        ],
+        [
+          21,
+          "const SCHEMA: &str = \"trnm-w1-complete-public-carry-stark-run-v2\";"
+        ],
+        [
+          22,
+          "const MAX_PROOF_BYTES: usize = 64 * 1024 * 1024;"
+        ],
+        [
+          50,
+          "        .open(path)"
+        ],
+        [
+          51,
+          "        .map_err(|e| format!(\"create {}: {e}\", path.display()))?;"
+        ],
+        [
+          52,
+          "    out.write_all(bytes).map_err(|e| e.to_string())?;"
+        ],
+        [
+          53,
+          "    out.sync_all().map_err(|e| e.to_string())"
+        ],
+        [
+          54,
+          "}"
+        ],
+        [
+          55,
+          ""
+        ],
+        [
+          56,
+          "fn expected(header: &str, artifacts: &str) -> Result<Expected, String> {"
+        ],
+        [
+          57,
+          "    let header = read_bounded(Path::new(header), HEADER_BYTES, Some(HEADER_BYTES))?;"
+        ],
+        [
+          58,
+          "    let artifacts = read_bounded(Path::new(artifacts), 64, Some(64))?;"
+        ],
+        [
+          59,
+          "    Expected::from_bytes(&header, &artifacts).map_err(str::to_owned)"
+        ],
+        [
+          60,
+          "}"
+        ],
+        [
+          61,
+          ""
+        ],
+        [
+          62,
+          "fn load_statement(path: &str) -> Result<(Vec<u8>, PublicStatement), String> {"
+        ],
+        [
+          63,
+          "    let bytes = read_bounded(Path::new(path), PUBLIC_BYTES, Some(PUBLIC_BYTES))?;"
+        ],
+        [
+          84,
+          "    let mut bytes = Vec::with_capacity(8 + encoded.len());"
+        ],
+        [
+          85,
+          "    bytes.extend_from_slice(magic);"
+        ],
+        [
+          86,
+          "    bytes.extend_from_slice(&encoded);"
+        ],
+        [
+          87,
+          "    Ok(bytes)"
+        ],
+        [
+          88,
+          "}"
+        ],
+        [
+          89,
+          ""
+        ],
+        [
+          90,
+          "fn decode_proof(bytes: &[u8], magic: &[u8; 8], degree_bits: usize) -> Result<W1Proof, String> {"
+        ],
+        [
+          91,
+          "    if bytes.len() < 8 || bytes.len() > MAX_PROOF_BYTES || &bytes[..8] != magic {"
+        ],
+        [
+          92,
+          "        return Err(\"proof envelope\".into());"
+        ],
+        [
+          93,
+          "    }"
+        ],
+        [
+          94,
+          "    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {"
+        ],
+        [
+          95,
+          "        bincode::DefaultOptions::new()"
+        ],
+        [
+          96,
+          "            .with_fixint_encoding()"
+        ],
+        [
+          97,
+          "            .with_limit((MAX_PROOF_BYTES - 8) as u64)"
+        ],
+        [
+          98,
+          "            .reject_trailing_bytes()"
+        ],
+        [
+          99,
+          "            .deserialize::<W1Proof>(&bytes[8..])"
+        ],
+        [
+          100,
+          "    }))"
+        ],
+        [
+          101,
+          "    .map_err(|_| \"proof decode panic contained\".to_owned())?;"
+        ],
+        [
+          102,
+          "    let proof = result.map_err(|e| format!(\"proof decoding: {e}\"))?;"
+        ],
+        [
+          103,
+          "    if proof.degree_bits != degree_bits {"
+        ],
+        [
+          104,
+          "        return Err(\"proof trace degree\".into());"
+        ],
+        [
+          105,
+          "    }"
+        ],
+        [
+          106,
+          "    Ok(proof)"
+        ],
+        [
+          107,
+          "}"
+        ],
+        [
+          108,
+          ""
+        ],
+        [
+          109,
+          "fn prepare(args: &[String]) -> Result<Value, String> {"
+        ],
+        [
+          110,
+          "    if args.len() != 5 {"
+        ],
+        [
+          111,
+          "        return Err(\"prepare RAW PREFIX EXPECTED_HEADER EXPECTED_ARTIFACTS OUT_DIR\".into());"
+        ],
+        [
+          112,
+          "    }"
+        ],
+        [
+          113,
+          "    let mut timings = Vec::new();"
+        ],
+        [
+          114,
+          "    let start = Instant::now();"
+        ],
+        [
+          115,
+          "    let raw = read_bounded(Path::new(&args[0]), INPUT_BYTES, Some(INPUT_BYTES))?;"
+        ],
+        [
+          116,
+          "    let prefix = read_bounded(Path::new(&args[1]), PREFIX_BYTES, Some(PREFIX_BYTES))?;"
+        ],
+        [
+          117,
+          "    let expected = expected(&args[2], &args[3])?;"
+        ],
+        [
+          118,
+          "    elapsed(\"fixture_and_expected_read\", start, &mut timings);"
+        ],
+        [
+          119,
+          "    let start = Instant::now();"
+        ],
+        [
+          120,
+          "    let statement = PublicStatement::honest(raw, prefix)?;"
+        ],
+        [
+          121,
+          "    let bytes = statement.encode()?;"
+        ],
+        [
+          122,
+          "    elapsed(\"honest_public_witness_and_encoding\", start, &mut timings);"
+        ],
+        [
+          123,
+          "    let start = Instant::now();"
+        ],
+        [
+          124,
+          "    let (sha, arith) = statement.plans(&expected)?;"
+        ],
+        [
+          125,
+          "    elapsed(\"canonical_relation_planning\", start, &mut timings);"
+        ],
+        [
+          126,
+          "    let out = Path::new(&args[4]);"
+        ],
+        [
+          127,
+          "    fs::create_dir_all(out).map_err(|e| e.to_string())?;"
+        ],
+        [
+          128,
+          "    write_new(&out.join(\"statement.bin\"), &bytes)?;"
+        ],
+        [
+          129,
+          "    Ok("
+        ],
+        [
+          130,
+          "        json!({\"status\":\"PUBLIC_WITNESS_PREPARED_NOT_PROVED\", \"statement_sha256\":digest(&bytes),"
+        ],
+        [
+          131,
+          "        \"public_bytes\":bytes.len(), \"hash_messages\":sha.messages().len(),"
+        ],
+        [
+          132,
+          "        \"sha_real_compressions\":sha.real_compressions(),\"arith_real_rows\":arith.real_rows(),\"timings\":timings}),"
+        ],
+        [
+          133,
+          "    )"
+        ],
+        [
+          134,
+          "}"
+        ],
+        [
+          135,
+          ""
+        ],
+        [
+          136,
+          "fn prove(args: &[String]) -> Result<Value, String> {"
+        ],
+        [
+          137,
+          "    if args.len() != 4 {"
+        ],
+        [
+          138,
+          "        return Err(\"prove PUBLIC EXPECTED_HEADER EXPECTED_ARTIFACTS OUT_DIR\".into());"
+        ],
+        [
+          139,
+          "    }"
+        ],
+        [
+          140,
+          "    let mut timings = Vec::new();"
+        ],
+        [
+          141,
+          "    let start = Instant::now();"
+        ],
+        [
+          142,
+          "    let (public_bytes, statement) = load_statement(&args[0])?;"
+        ],
+        [
+          143,
+          "    let expected = expected(&args[1], &args[2])?;"
+        ],
+        [
+          144,
+          "    let (sha_plan, original_arith) = statement.plans(&expected)?;"
+        ],
+        [
+          145,
+          "    let arith = Dot8CarryAir::new(original_arith.rows().to_vec()).map_err(str::to_owned)?;"
+        ],
+        [
+          146,
+          "    drop(original_arith);"
+        ],
+        [
+          147,
+          "    elapsed(\"read_decode_and_canonical_plans\", start, &mut timings);"
+        ],
+        [
+          148,
+          "    let out = Path::new(&args[3]);"
+        ],
+        [
+          149,
+          "    fs::create_dir_all(out).map_err(|e| e.to_string())?;"
+        ],
+        [
+          150,
+          "    let start = Instant::now();"
+        ],
+        [
+          151,
+          "    let sha = W1ShaAir::new(&sha_plan);"
+        ],
+        [
+          152,
+          "    elapsed(\"sha_air_and_chaining_witness\", start, &mut timings);"
+        ],
+        [
+          153,
+          "    let start = Instant::now();"
+        ],
+        [
+          154,
+          "    let security = security_metadata(&sha, &arith);"
+        ],
+        [
+          155,
+          "    elapsed(\"actual_air_security_metadata\", start, &mut timings);"
+        ],
+        [
+          156,
+          "    let sha_height = sha.trace_height();"
+        ],
+        [
+          157,
+          "    let arith_height = arith.trace_height();"
+        ],
+        [
+          158,
+          "    let sha_config = config(1);"
+        ],
+        [
+          159,
+          "    let start = Instant::now();"
+        ],
+        [
+          160,
+          "    let (sha_pp, _) = setup_preprocessed(&sha_config, &sha, sha_height.ilog2() as usize)"
+        ],
+        [
+          161,
+          "        .map_err(|e| format!(\"sha setup: {e:?}\"))?"
+        ],
+        [
+          162,
+          "        .ok_or(\"missing sha preprocessing\")?;"
+        ],
+        [
+          163,
+          "    elapsed(\"sha_prover_preprocessing_setup\", start, &mut timings);"
+        ],
+        [
+          164,
+          "    let start = Instant::now();"
+        ],
+        [
+          165,
+          "    let trace = sha.generate_trace();"
+        ],
+        [
+          166,
+          "    elapsed(\"sha_trace_generation\", start, &mut timings);"
+        ],
+        [
+          167,
+          "    let start = Instant::now();"
+        ],
+        [
+          172,
+          "    let sha_bytes = encode_proof(&proof, SHA_MAGIC)?;"
+        ],
+        [
+          173,
+          "    write_new(&out.join(\"sha.proof.bin\"), &sha_bytes)?;"
+        ],
+        [
+          174,
+          "    elapsed(\"sha_proof_serialize_and_persist\", start, &mut timings);"
+        ],
+        [
+          175,
+          "    drop(proof);"
+        ],
+        [
+          176,
+          "    drop(sha_pp);"
+        ],
+        [
+          177,
+          "    drop(sha);"
+        ],
+        [
+          178,
+          "    let arith_config = config(CARRY_COMPONENT);"
+        ],
+        [
+          179,
+          "    let start = Instant::now();"
+        ],
+        [
+          180,
+          "    let (arith_pp, _) = setup_preprocessed(&arith_config, &arith, arith_height.ilog2() as usize)"
+        ],
+        [
+          181,
+          "        .map_err(|e| format!(\"arith setup: {e:?}\"))?"
+        ],
+        [
+          182,
+          "        .ok_or(\"missing arithmetic preprocessing\")?;"
+        ],
+        [
+          183,
+          "    elapsed(\"arith_prover_preprocessing_setup\", start, &mut timings);"
+        ],
+        [
+          184,
+          "    let start = Instant::now();"
+        ],
+        [
+          185,
+          "    let trace = arith.generate_trace();"
+        ],
+        [
+          186,
+          "    elapsed(\"arith_trace_generation\", start, &mut timings);"
+        ],
+        [
+          187,
+          "    let start = Instant::now();"
+        ],
+        [
+          209,
+          "    if args.len() != 4 {"
+        ],
+        [
+          210,
+          "        return Err(\"verify PUBLIC EXPECTED_HEADER EXPECTED_ARTIFACTS PROOF_DIR\".into());"
+        ],
+        [
+          211,
+          "    }"
+        ],
+        [
+          212,
+          "    let mut timings = Vec::new();"
+        ],
+        [
+          213,
+          "    let start = Instant::now();"
+        ],
+        [
+          214,
+          "    let (public_bytes, statement) = load_statement(&args[0])?;"
+        ],
+        [
+          215,
+          "    let expected = expected(&args[1], &args[2])?;"
+        ],
+        [
+          216,
+          "    let sha_bytes = read_bounded("
+        ],
+        [
+          217,
+          "        &Path::new(&args[3]).join(\"sha.proof.bin\"),"
+        ],
+        [
+          218,
+          "        MAX_PROOF_BYTES,"
+        ],
+        [
+          219,
+          "        None,"
+        ],
+        [
+          220,
+          "    )?;"
+        ],
+        [
+          221,
+          "    let arith_bytes = read_bounded("
+        ],
+        [
+          222,
+          "        &Path::new(&args[3]).join(\"arith.proof.bin\"),"
+        ],
+        [
+          223,
+          "        MAX_PROOF_BYTES,"
+        ],
+        [
+          224,
+          "        None,"
+        ],
+        [
+          225,
+          "    )?;"
+        ],
+        [
+          226,
+          "    // Reject malformed envelopes and wrong fixed degrees before costly setup."
+        ],
+        [
+          227,
+          "    let sha_proof = decode_proof(&sha_bytes, SHA_MAGIC, 13)?;"
+        ],
+        [
+          228,
+          "    let arith_proof = decode_proof(&arith_bytes, ARITH_MAGIC, 17)?;"
+        ],
+        [
+          229,
+          "    elapsed(\"bounded_read_decode_and_proof_shape\", start, &mut timings);"
+        ],
+        [
+          230,
+          "    let start = Instant::now();"
+        ],
+        [
+          231,
+          "    let (sha_plan, original_arith) = statement.plans(&expected)?;"
+        ],
+        [
+          232,
+          "    let arith = Dot8CarryAir::new(original_arith.rows().to_vec()).map_err(str::to_owned)?;"
+        ],
+        [
+          233,
+          "    drop(original_arith);"
+        ],
+        [
+          234,
+          "    let sha = W1ShaAir::public_only(&sha_plan);"
+        ],
+        [
+          235,
+          "    elapsed("
+        ],
+        [
+          236,
+          "        \"canonical_plans_and_public_only_sha_air\","
+        ],
+        [
+          237,
+          "        start,"
+        ],
+        [
+          238,
+          "        &mut timings,"
+        ],
+        [
+          239,
+          "    );"
+        ],
+        [
+          240,
+          "    let sha_config = config(1);"
+        ],
+        [
+          241,
+          "    let start = Instant::now();"
+        ],
+        [
+          242,
+          "    let (pp, vk) = setup_preprocessed(&sha_config, &sha, sha.trace_height().ilog2() as usize)"
+        ],
+        [
+          243,
+          "        .map_err(|e| format!(\"sha verifier setup: {e:?}\"))?"
+        ],
+        [
+          244,
+          "        .ok_or(\"missing sha verifier key\")?;"
+        ],
+        [
+          245,
+          "    drop(pp);"
+        ],
+        [
+          246,
+          "    elapsed("
+        ],
+        [
+          247,
+          "        \"sha_verifier_independent_preprocessing_setup\","
+        ],
+        [
+          248,
+          "        start,"
+        ],
+        [
+          249,
+          "        &mut timings,"
+        ],
+        [
+          250,
+          "    );"
+        ],
+        [
+          251,
+          "    let start = Instant::now();"
+        ],
+        [
+          252,
+          "    let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {"
+        ],
+        [
+          253,
+          "        verify_with_preprocessed(&sha_config, &sha, &sha_proof, &[], Some(&vk))"
+        ],
+        [
+          254,
+          "    }))"
+        ],
+        [
+          255,
+          "    .map_err(|_| \"sha verifier panic contained\".to_owned())"
+        ],
+        [
+          256,
+          "    .and_then(|r| r.map_err(|e| format!(\"sha proof rejected: {e:?}\")));"
+        ],
+        [
+          257,
+          "    elapsed(\"sha_stark_verify\", start, &mut timings);"
+        ],
+        [
+          258,
+          "    outcome?;"
+        ],
+        [
+          259,
+          "    let arith_config = config(CARRY_COMPONENT);"
+        ],
+        [
+          260,
+          "    let start = Instant::now();"
+        ],
+        [
+          261,
+          "    let (pp, vk) = setup_preprocessed(&arith_config, &arith, arith.trace_height().ilog2() as usize)"
+        ],
+        [
+          262,
+          "        .map_err(|e| format!(\"arithmetic verifier setup: {e:?}\"))?"
+        ],
+        [
+          263,
+          "        .ok_or(\"missing arithmetic verifier key\")?;"
+        ],
+        [
+          264,
+          "    drop(pp);"
+        ],
+        [
+          265,
+          "    elapsed("
+        ],
+        [
+          266,
+          "        \"arith_verifier_independent_preprocessing_setup\","
+        ],
+        [
+          267,
+          "        start,"
+        ],
+        [
+          268,
+          "        &mut timings,"
+        ],
+        [
+          269,
+          "    );"
+        ],
+        [
+          270,
+          "    let start = Instant::now();"
+        ],
+        [
+          271,
+          "    let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {"
+        ],
+        [
+          272,
+          "        verify_with_preprocessed(&arith_config, &arith, &arith_proof, &[], Some(&vk))"
+        ],
+        [
+          273,
+          "    }))"
+        ],
+        [
+          274,
+          "    .map_err(|_| \"arithmetic verifier panic contained\".to_owned())"
+        ],
+        [
+          275,
+          "    .and_then(|r| r.map_err(|e| format!(\"arithmetic proof rejected: {e:?}\")));"
+        ],
+        [
+          276,
+          "    elapsed(\"arith_stark_verify\", start, &mut timings);"
+        ],
+        [
+          277,
+          "    outcome?;"
+        ],
+        [
+          278,
+          "    Ok("
+        ],
+        [
+          279,
+          "        json!({\"status\":\"VERIFIED_COMPLETE_W1_RESEARCH_ONLY\", \"statement_sha256\":digest(&public_bytes),"
+        ],
+        [
+          280,
+          "        \"public_bytes\":public_bytes.len(), \"sha_proof_bytes\":sha_bytes.len(),\"sha_proof_sha256\":digest(&sha_bytes),"
+        ],
+        [
+          281,
+          "        \"arith_proof_bytes\":arith_bytes.len(),\"arith_proof_sha256\":digest(&arith_bytes),\"timings\":timings,"
+        ],
+        [
+          282,
+          "        \"preprocessing_source\":\"canonical public statement plus independent expected inputs; rebuilt in this process\","
+        ],
+        [
+          283,
+          "        \"security_claim\":\"research execution only; no concrete noninteractive security qualification\"}),"
+        ],
+        [
+          284,
+          "    )"
+        ],
+        [
+          285,
+          "}"
+        ],
+        [
+          286,
+          ""
+        ],
+        [
+          287,
+          "fn main() {"
+        ],
+        [
+          288,
+          "    let process_start = Instant::now();"
+        ],
+        [
+          289,
+          "    let args: Vec<String> = std::env::args().skip(1).collect();"
+        ]
+      ]
+    }
+  ],
+  "carry_bounds": {
+    "B": "65536",
+    "q": "4294967291",
+    "P": "18446744069414584321",
+    "equations": [
+      {
+        "name": "low",
+        "max_left": "34359083010",
+        "max_right": "34359738367"
+      },
+      {
+        "name": "middle",
+        "max_left": "68718297097",
+        "max_right": "68719476735"
+      },
+      {
+        "name": "high",
+        "max_left": "34359738410",
+        "max_right": "34359738367"
+      }
+    ],
+    "legal_max_total": "147573952181654520090",
+    "legal_max_k": "34359738313",
+    "legal_c0_upper": "524278",
+    "legal_c1_upper": "1048558",
+    "bit_capacity_gaps": {
+      "k": 55,
+      "c0": 10,
+      "c1": 18
+    },
+    "algebraic_weighted_sum_identity_checked": true,
+    "padding_uniquely_zero_after_integer_lifting": true,
+    "static_constraints": 77,
+    "static_max_degree": 2,
+    "derived_num_quotient_chunks": 1,
+    "derived_num_batched_functions": 112,
+    "native_symbolic_test_reexecuted_here": false,
+    "complete_noninteractive_security_proven": false
+  },
+  "node_scoped_searches": [
+    {
+      "revision": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+      "scope": [
+        "trillionnium",
+        "config",
+        "qualification"
+      ],
+      "terms": [
+        "W1P3SHA1",
+        "W1P3ARI1",
+        "W1P3ACR",
+        "w1_public_stark_research",
+        "w1-full-public-stark-research",
+        "carry_backend",
+        "Dot8CarryAir",
+        "CARRY_COMPONENT",
+        "p3-uni-stark",
+        "p3-fri",
+        "plonky3"
+      ],
+      "exit": 1,
+      "match_count": 0,
+      "matches": [],
+      "truncated": false,
+      "stderr": ""
+    },
+    {
+      "revision": "ac4927c52266e7bd1fae547f92a1d0753f4f96d6",
+      "scope": [
+        "trillionnium",
+        "config",
+        "qualification"
+      ],
+      "terms": [
+        "W1P3SHA1",
+        "W1P3ARI1",
+        "W1P3ACR",
+        "w1_public_stark_research",
+        "w1-full-public-stark-research",
+        "carry_backend",
+        "Dot8CarryAir",
+        "CARRY_COMPONENT",
+        "p3-uni-stark",
+        "p3-fri",
+        "plonky3"
+      ],
+      "exit": 1,
+      "match_count": 0,
+      "matches": [],
+      "truncated": false,
+      "stderr": ""
+    }
+  ],
+  "node_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "same_in_both_revisions": true,
+      "blob": "eb44e7bc91a36b54ae025e5c1f1629e548af204f",
+      "body": "[package]\nname = \"trnm-pon-node\"\nversion = \"0.1.0\"\nedition.workspace = true\nlicense.workspace = true\nauthors.workspace = true\npublish = false\n\n[package.metadata.trnm]\nmodule = \"M15\"\nrole = \"experimental-native-composition\"\nproduction_activation = false\nconsensus_authority = false\n\n[features]\ndefault = []\n# Explicit fresh native network-owner namespace and separately selected\n# PQG1/QTX1 transfer-only account import. This is not whole-chain PQ activation.\npq-native-openssl = [\"trnm-crypto-primitives/pq-native-openssl\", \"trnm-mvcc-fee/pq-native-openssl\", \"dep:openssl\"]\n\n[dependencies]\ntrnm-sqlite-io-boundary = { version = \"=0.1.0\", path = \"../trnm-sqlite-io-boundary\" }\ntrnm-data-availability = { version = \"=0.1.0\", path = \"../trnm-data-availability\" }\ntrnm-service-settlement = { version = \"=0.1.0\", path = \"../trnm-service-settlement\" }\ntrnm-protocol = { version = \"=0.1.0\", path = \"../trnm-protocol\" }\ntrnm-crypto-primitives = { version = \"=0.1.0\", path = \"../trnm-crypto-primitives\" }\ntrnm-mvcc-fee = { version = \"=0.1.0\", path = \"../trnm-mvcc-fee\" }\ntrnm-transport = { version = \"=0.1.0\", path = \"../trnm-transport\" }\ntrnm-mempool = { version = \"=0.1.0\", path = \"../trnm-mempool\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nhex = \"0.4\"\nfs2 = \"0.4\"\nlibc = \"0.2\"\nrustix = { version = \"1.1.4\", features = [\"fs\", \"net\", \"process\", \"time\"] }\nsha2 = \"0.10\"\nrusqlite = { version = \"=0.39.0\", features = [\"bundled\", \"fallible_uint\", \"hooks\"] }\nopenssl = { version = \"=0.10.81\", optional = true }\nzeroize = \"=1.8.2\"\n\ntempfile = \"3\"\n"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs",
+      "same_in_both_revisions": true,
+      "blob": "f247b152dfdbddfb29fcf95c97fdaeb0742d25b4",
+      "body": "//! An immutable, fully verified PGH2 work relation. This capability has no\n//! parent-state, local-clock, admission, activation or task authority.\nuse super::{GrowthPacket, GrowthProgress};\nuse crate::{Error, Result};\nuse trnm_crypto_primitives::pon_work;\n\n/// Private fields prevent replacing any packet byte after complete W1 replay.\n/// Verification needs no Node reference and can run outside its owner mutex.\npub(crate) struct GrowthWorkCheckedPacket {\n    packet: GrowthPacket,\n    work: pon_work::VerifiedWork,\n}\n\nimpl GrowthWorkCheckedPacket {\n    pub(crate) fn verify_with_progress(\n        packet: GrowthPacket,\n        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),\n    ) -> Result<Self> {\n        // Bound and canonicalize the exact PNP2 body before expensive work.\n        // These bytes retain PGH2's witness-bound challenge, never PNH1's.\n        packet.encode()?;\n        progress(GrowthProgress::BeforeWork)?;\n        let work = pon_work::verify_with_progress(\n            packet.header.challenge(),\n            packet.header.ledger.work_task,\n            packet.header.ledger.target,\n            &packet.proof,\n            &mut |point| progress(GrowthProgress::Work(point)),\n        )\n        .map_err(|error| match error {\n            pon_work::VerificationError::Relation(error) => Error::from(format!(\"WORK:{error:?}\")),\n            pon_work::VerificationError::Cancelled(error) => error,\n        })?;\n        Ok(Self { packet, work })\n    }\n\n    /// Domain-separated exact complete packet identity for the original shared\n    /// scheduling set. Neither block ID alone nor caller text can claim it.\n    pub(crate) fn completion_identity(&self) -> Result<trnm_protocol::pon_wire::Hash> {\n        Ok(trnm_protocol::pon_wire::hash(\n            b\"public-growth-complete-work-identity-v1\",\n            &[&self.packet.encode()?],\n        ))\n    }\n\n    pub(super) fn into_parts(self) -> (GrowthPacket, pon_work::VerifiedWork) {\n        (self.packet, self.work)\n    }\n}\n"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+      "same_in_both_revisions": true,
+      "blob": "b1471a6c56e64fb1b7b150cecea9c55806c6d560",
+      "body": "[package]\nname = \"w1-full-public-stark-research\"\nversion = \"0.1.0\"\nedition = \"2024\"\npublish = false\n\n[dependencies]\np3-air = \"=0.8.0\"\np3-field = \"=0.8.0\"\np3-goldilocks = \"=0.8.0\"\np3-sha256-air = { version = \"=0.8.0\", features = [\"parallel\"] }\np3-matrix = \"=0.8.0\"\np3-uni-stark = \"=0.8.0\"\np3-challenger = \"=0.8.0\"\np3-commit = \"=0.8.0\"\np3-dft = { version = \"=0.8.0\", features = [\"parallel\"] }\np3-fri = \"=0.8.0\"\np3-merkle-tree = \"=0.8.0\"\np3-symmetric = \"=0.8.0\"\np3-security = \"=0.8.0\"\np3-maybe-rayon = { version = \"=0.8.0\", features = [\"parallel\"] }\nsha2 = { version = \"=0.10.9\", features = [\"compress\"] }\nserde = { version = \"=1.0.228\", features = [\"derive\"] }\nserde_json = \"=1.0.149\"\nbincode = \"=1.3.3\"\nhex = \"=0.4.3\"\n\n[profile.release]\ncodegen-units = 1\nlto = \"thin\"\n\n[workspace]\n"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "same_in_base_and_review": true,
+      "blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "selected_lines": [
+        [
+          20,
+          "pub const PROFILE: &str = \"pon-matmul-transcript-64-v1\";"
+        ],
+        [
+          21,
+          "pub const N: usize = 64;"
+        ],
+        [
+          22,
+          "pub const R: usize = 8;"
+        ],
+        [
+          23,
+          "pub const Q: u128 = 4_294_967_291;"
+        ],
+        [
+          24,
+          "pub const CELLS: usize = N * N;"
+        ],
+        [
+          25,
+          "pub const PROOF_BYTES: usize = 4 + 3 * CELLS * 4 + 32;"
+        ],
+        [
+          26,
+          "pub type Hash = [u8; 32];"
+        ],
+        [
+          27,
+          ""
+        ],
+        [
+          28,
+          "#[derive(Debug, Clone, Copy, PartialEq, Eq)]"
+        ],
+        [
+          29,
+          "pub enum WorkError {"
+        ],
+        [
+          30,
+          "    Length,"
+        ],
+        [
+          31,
+          "    Version,"
+        ],
+        [
+          32,
+          "    Field,"
+        ],
+        [
+          33,
+          "    Task,"
+        ],
+        [
+          34,
+          "    Transcript,"
+        ],
+        [
+          35,
+          "    Product,"
+        ],
+        [
+          36,
+          "    Target,"
+        ],
+        [
+          37,
+          "    NoiseBudget,"
+        ],
+        [
+          38,
+          "}"
+        ],
+        [
+          39,
+          ""
+        ],
+        [
+          40,
+          "/// Allocation-free rejection of malformed PNW1 bytes before task or State lookup."
+        ],
+        [
+          41,
+          "/// Success checks only the fixed encoding, never the task, target or relation."
+        ],
+        [
+          42,
+          "/// The original full verifier still performs its checks in their original order"
+        ],
+        [
+          43,
+          "/// and is the only path here that can construct VerifiedWork."
+        ],
+        [
+          44,
+          "pub fn precheck_proof_encoding(bytes: &[u8]) -> Result<(), WorkError> {"
+        ],
+        [
+          45,
+          "    if bytes.len() != PROOF_BYTES {"
+        ],
+        [
+          46,
+          "        return Err(WorkError::Length);"
+        ],
+        [
+          47,
+          "    }"
+        ],
+        [
+          48,
+          "    if &bytes[..4] != b\"PNW1\" {"
+        ],
+        [
+          49,
+          "        return Err(WorkError::Version);"
+        ],
+        [
+          50,
+          "    }"
+        ],
+        [
+          51,
+          "    // Every A/B/C word must already be canonical; never reduce caller bytes."
+        ],
+        [
+          52,
+          "    // The final transcript digest is opaque bytes, not another field element."
+        ],
+        [
+          53,
+          "    if bytes[4..4 + 3 * CELLS * 4]"
+        ],
+        [
+          54,
+          "        .chunks_exact(4)"
+        ],
+        [
+          55,
+          "        .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)"
+        ],
+        [
+          420,
+          "}"
+        ],
+        [
+          421,
+          "/// Draft native default using exact bounded limb sums for the complete relation."
+        ],
+        [
+          422,
+          "/// This implementation selection does not qualify work hardness or public service."
+        ],
+        [
+          423,
+          "pub fn verify("
+        ],
+        [
+          424,
+          "    challenge: Hash,"
+        ],
+        [
+          425,
+          "    expected_task: Hash,"
+        ],
+        [
+          426,
+          "    target: Hash,"
+        ],
+        [
+          427,
+          "    bytes: &[u8],"
+        ],
+        [
+          428,
+          ") -> Result<VerifiedWork, WorkError> {"
+        ],
+        [
+          429,
+          "    relation_only(verify_with_progress("
+        ],
+        [
+          430,
+          "        challenge,"
+        ],
+        [
+          431,
+          "        expected_task,"
+        ],
+        [
+          432,
+          "        target,"
+        ],
+        [
+          433,
+          "        bytes,"
+        ],
+        [
+          434,
+          "        &mut no_cancellation,"
+        ],
+        [
+          435,
+          "    ))"
+        ],
+        [
+          436,
+          "}"
+        ],
+        [
+          437,
+          "/// Full PNW1 replay with bounded limb arithmetic and caller-local cancellation."
+        ],
+        [
+          438,
+          "/// A callback error drops all intermediates; only complete success creates VerifiedWork."
+        ],
+        [
+          439,
+          "/// Checkpoints bound arithmetic between observations, not physical CPU time or preemption."
+        ],
+        [
+          440,
+          "pub fn verify_with_progress<E>("
+        ],
+        [
+          441,
+          "    challenge: Hash,"
+        ],
+        [
+          442,
+          "    expected_task: Hash,"
+        ],
+        [
+          443,
+          "    target: Hash,"
+        ],
+        [
+          444,
+          "    bytes: &[u8],"
+        ],
+        [
+          445,
+          "    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,"
+        ],
+        [
+          446,
+          ") -> Result<VerifiedWork, VerificationError<E>> {"
+        ],
+        [
+          447,
+          "    verify_with_kernel("
+        ],
+        [
+          448,
+          "        challenge,"
+        ],
+        [
+          449,
+          "        expected_task,"
+        ],
+        [
+          450,
+          "        target,"
+        ],
+        [
+          451,
+          "        bytes,"
+        ],
+        [
+          452,
+          "        progress,"
+        ],
+        [
+          453,
+          "        VerificationKernel::FullLimb,"
+        ],
+        [
+          454,
+          "    )"
+        ],
+        [
+          455,
+          "}"
+        ],
+        [
+          630,
+          "}"
+        ],
+        [
+          631,
+          ""
+        ],
+        [
+          632,
+          "#[derive(Clone, Copy)]"
+        ],
+        [
+          633,
+          "enum VerificationKernel {"
+        ],
+        [
+          634,
+          "    ScalarReference,"
+        ],
+        [
+          635,
+          "    Transposed,"
+        ],
+        [
+          636,
+          "    LimbTranscript,"
+        ],
+        [
+          637,
+          "    ColumnLimbTranscript,"
+        ],
+        [
+          638,
+          "    FullLimb,"
+        ],
+        [
+          639,
+          "}"
+        ],
+        [
+          668,
+          "fn checked_proof_statement("
+        ],
+        [
+          669,
+          "    challenge: Hash,"
+        ],
+        [
+          670,
+          "    expected_task: Hash,"
+        ],
+        [
+          671,
+          "    target: Hash,"
+        ],
+        [
+          672,
+          "    bytes: &[u8],"
+        ],
+        [
+          673,
+          ") -> Result<CheckedProofStatement<'_>, WorkError> {"
+        ],
+        [
+          674,
+          "    if bytes.len() != PROOF_BYTES {"
+        ],
+        [
+          675,
+          "        return Err(WorkError::Length);"
+        ],
+        [
+          676,
+          "    }"
+        ],
+        [
+          677,
+          "    if &bytes[..4] != b\"PNW1\" {"
+        ],
+        [
+          678,
+          "        return Err(WorkError::Version);"
+        ],
+        [
+          679,
+          "    }"
+        ],
+        [
+          680,
+          "    if target == [0; 32] {"
+        ],
+        [
+          681,
+          "        return Err(WorkError::Target);"
+        ],
+        [
+          682,
+          "    }"
+        ],
+        [
+          683,
+          "    // Preserve C, A, B field-error precedence before task, ticket and"
+        ],
+        [
+          684,
+          "    // callbacks. Exact fixed slices need no allocation, unaligned cast,"
+        ],
+        [
+          685,
+          "    // host-endian assumption or reduction of noncanonical input words."
+        ],
+        [
+          686,
+          "    for matrix in [2, 0, 1] {"
+        ],
+        [
+          687,
+          "        let start = 4 + matrix * CELLS * 4;"
+        ],
+        [
+          688,
+          "        if bytes[start..start + CELLS * 4]"
+        ],
+        [
+          689,
+          "            .chunks_exact(4)"
+        ],
+        [
+          690,
+          "            .any(|p| u128::from(u32::from_le_bytes([p[0], p[1], p[2], p[3]])) >= Q)"
+        ],
+        [
+          691,
+          "        {"
+        ],
+        [
+          692,
+          "            return Err(WorkError::Field);"
+        ],
+        [
+          693,
+          "        }"
+        ],
+        [
+          694,
+          "    }"
+        ],
+        [
+          695,
+          "    // These are the current canonical bytes, not a cached task verdict."
+        ],
+        [
+          696,
+          "    let actual_task = hash("
+        ],
+        [
+          697,
+          "        b\"task\","
+        ],
+        [
+          698,
+          "        &["
+        ],
+        [
+          699,
+          "            &bytes[4..4 + CELLS * 4],"
+        ],
+        [
+          700,
+          "            &bytes[4 + CELLS * 4..4 + CELLS * 8],"
+        ],
+        [
+          701,
+          "        ],"
+        ],
+        [
+          702,
+          "    );"
+        ],
+        [
+          703,
+          "    if actual_task != expected_task {"
+        ],
+        [
+          704,
+          "        return Err(WorkError::Task);"
+        ],
+        [
+          705,
+          "    }"
+        ],
+        [
+          706,
+          "    let trace_claim: &[u8] = &bytes[4 + 3 * CELLS * 4..];"
+        ],
+        [
+          707,
+          "    // Cheap ticket rejection before expensive transcript verification is only an admission filter."
+        ],
+        [
+          708,
+          "    // A passing filter alone never constructs VerifiedWork."
+        ],
+        [
+          709,
+          "    let ticket = hash(b\"ticket\", &[&challenge, trace_claim]);"
+        ],
+        [
+          710,
+          "    if ticket > target {"
+        ],
+        [
+          711,
+          "        return Err(WorkError::Target);"
+        ],
+        [
+          712,
+          "    }"
+        ],
+        [
+          713,
+          "    Ok(CheckedProofStatement {"
+        ],
+        [
+          714,
+          "        inputs: &bytes[4..4 + 2 * CELLS * 4],"
+        ],
+        [
+          715,
+          "        actual_task,"
+        ],
+        [
+          716,
+          "        ticket,"
+        ],
+        [
+          717,
+          "    })"
+        ]
+      ]
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "selected_lines": [
+        [
+          7247,
+          "180-second native and five-second cleanup limits. The retained independent"
+        ],
+        [
+          7248,
+          "campaign minimum of three administrators/failure domains and 72 hours is"
+        ],
+        [
+          7249,
+          "unchanged. No source-control, local component, model-quality, economic,"
+        ],
+        [
+          7250,
+          "public-service or activation claim is promoted by this entry."
+        ],
+        [
+          7251,
+          ""
+        ],
+        [
+          7252,
+          ""
+        ],
+        [
+          7253,
+          "### 2026-11-08 complete W1 AIR/STARK research and selected-event composition"
+        ],
+        [
+          7254,
+          ""
+        ],
+        [
+          7255,
+          "The isolated [complete-W1 research report](../../formal/pon-nakamoto-v1/w1_public_stark_research/ROUND_REPORT.md)"
+        ],
+        [
+          7256,
+          "extends the C4 source at `8df4b21d893906570d48f5beafabb3b31e0aefbc`."
+        ],
+        [
+          7257,
+          "Its final native run generated and independently verified both real"
+        ],
+        [
+          7258,
+          "Plonky3 0.8.0 PCS/FRI proof components for one complete retained W1 statement."
+        ],
+        [
+          7259,
+          "The SHA component covers 519 original messages and 4,114 compression"
+        ],
+        [
+          7260,
+          "operations, including the original full-prefix trace. The arithmetic"
+        ],
+        [
+          7261,
+          "component covers every E/F factor, Ahat/Bhat addition, all eight complete"
+        ],
+        [
+          7262,
+          "noisy prefixes and full `AB=C`. Expected header/artifacts remain independent"
+        ],
+        [
+          7263,
+          "inputs, and the verifier rebuilds both public preprocessing keys. No native"
+        ],
+        [
+          7264,
+          "acceptance fallback, production Node wiring or task-admission change is added."
+        ]
+      ]
+    }
+  ],
+  "node_read_metadata": [
+    {
+      "observed_worktree_head": "ac4927c52266e7bd1fae547f92a1d0753f4f96d6",
+      "runtime_config_qualification_changed_since_base": []
+    },
+    {
+      "inventory_scope": "tracked-tree-only; no deployed database/key/state or Git history changed",
+      "inventory_runtime_implemented": false,
+      "node_packages": [
+        {
+          "package": "trnm-pon-node",
+          "module": "M15",
+          "path": "trillionnium/crates/trnm-pon-node",
+          "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections, explicit revision16 model/task-window CLI context binding, and optional fresh PQ transport-only ownership; account/task/install authorization is not PQ-migrated and no publicly qualified deployment is claimed.",
+          "consensus_authority": false,
+          "production_activation": false
+        }
+      ]
+    }
+  ],
+  "node_conclusion": "No P3 or carry dispatch/qualification reference was found in the complete tracked runtime workspace, config and qualification search; actual checked work entry still invokes the PNW1 full-limb verifier. Production integration/qualification remains open.",
+  "native_node_ingress_exercised_here": false,
+  "metadata_suggestion_applied": false
+}

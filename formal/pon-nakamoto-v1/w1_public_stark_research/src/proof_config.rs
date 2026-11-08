@@ -176,6 +176,8 @@ where
         "num_batched_functions": params.num_batched_functions,
         "modulus_bits_conservative_lower_bound": params.num_modulus_bits,
         "hash_collision_bits_assumption": params.collision_resistance,
+        "hash_collision_bits_assumption_scope": "conditional_estimator_input_only_not_raw_compressor_security",
+        "concrete_shared_permutation_restricted_tree_binding_bits": Value::Null,
         "conditional_rbr_estimate_bits": report.security_bits(),
         "conditional_rbr_report": report,
         "conjectured_estimate_bits_separate": conjectured.security_bits,
@@ -192,7 +194,7 @@ where
 {
     let cardinality = u128::from(GOLDILOCKS_ORDER) * u128::from(GOLDILOCKS_ORDER);
     json!({
-        "schema": "w1-p3-0.8.0-conditional-rbr-metadata-v1",
+        "schema": "w1-p3-0.8.0-conditional-rbr-metadata-v2",
         "qualification": "HOLD_NO_GO",
         "p3_version": "0.8.0",
         "native_relation_hash": "SHA-256, fully constrained by the SHA AIR",
@@ -214,7 +216,10 @@ where
         "zero_knowledge": false,
         "public_statement_is_succinct": false,
         "complete_noninteractive_bound": "UNRESOLVED: requires concrete transcript/sampling, PCS binding and ROM compilation analysis",
-        "hash_strength_status": "128-bit collision resistance is an explicit model assumption, not independently certified here",
+        "hash_strength_status": "UNRESOLVED: 128 is a conditional estimator input. No concrete restricted-tree binding bound is established for the actual shared public invertible Poseidon2 construction. This is not an arbitrary-input collision-resistance claim for the raw compressor or an independent-role-oracle claim.",
+        "complete_noninteractive_security_bits": Value::Null,
+        "quantum_security_bits": Value::Null,
+        "lifecycle_security_bits": Value::Null,
         "sha": component_security(sha, sha.trace_height(), SHA_COMPONENT, 2),
         "arithmetic": component_security(arith, arith_height, arithmetic_component, 1)
     })
@@ -229,14 +234,14 @@ pub fn security_metadata(sha: &W1ShaAir, arith: &Dot8Air) -> Value {
 /// The complete noninteractive and quantum security qualifications remain open.
 pub fn carry_security_metadata(sha: &W1ShaAir, arith: &Dot8CarryAir) -> Value {
     let mut report = metadata(sha, arith, arith.trace_height(), CARRY_COMPONENT);
-    report["schema"] = "w1-p3-0.8.0-conditional-rbr-carry-metadata-v2".into();
+    report["schema"] = "w1-p3-0.8.0-conditional-rbr-carry-metadata-v3".into();
     report
 }
 
 /// Five-lane packing retains every relation row and changes the fixed PCS shape.
 pub fn packed_carry_security_metadata(sha: &W1ShaAir, arith: &Dot8PackedCarryAir) -> Value {
     let mut report = metadata(sha, arith, arith.trace_height(), PACKED_CARRY_COMPONENT);
-    report["schema"] = "w1-p3-0.8.0-conditional-rbr-packed-carry-metadata-v3".into();
+    report["schema"] = "w1-p3-0.8.0-conditional-rbr-packed-carry-metadata-v4".into();
     report["arithmetic"]["lanes_per_row"] = 5.into();
     report["arithmetic"]["real_dot8_rows"] = arith.real_rows().into();
     report
