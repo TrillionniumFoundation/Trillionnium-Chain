@@ -6639,6 +6639,9 @@ impl Node {
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<()> {
         progress()?;
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_check_observed_history_with_progress(tip, observed_now, progress);
+        }
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
@@ -6700,6 +6703,9 @@ impl Node {
         queries: &[(Hash, Hash)],
         observed_now: u64,
     ) -> Result<ConfirmationBatch> {
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_confirmations_with_progress(queries, observed_now, &|_| Ok(()));
+        }
         self.confirmations_with_progress(queries, observed_now, &mut |_| Ok(()))
     }
     /// Cancellation produces no partial batch and never stores a reusable clock verdict.
@@ -6714,6 +6720,12 @@ impl Node {
         let unique: BTreeSet<_> = queries.iter().copied().collect();
         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
         progress(0)?;
+        // The growth W1/M06 callback is Sync. Never discard it or silently
+        // substitute this legacy non-Sync FnMut callback for its checkpoints.
+        ensure(
+            self.state_backend != StateBackend::PermanentAccountGrowthV2,
+            "GROWTH_USE_CONFIRMATION_PROGRESS",
+        )?;
         self.ready()?;
         let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
