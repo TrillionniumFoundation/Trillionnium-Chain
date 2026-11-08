@@ -1,4 +1,4 @@
-//! CPQ1 mathematical signatures joined to a fresh full-content observation.
+//! CPQ1 mathematical signatures joined to a complete full-content observation.
 //! The expected claim and envelope are owner-pinned inputs. No returned value
 //! is a live authorization, trusted migration source, CURRENT, or FinalUse.
 
