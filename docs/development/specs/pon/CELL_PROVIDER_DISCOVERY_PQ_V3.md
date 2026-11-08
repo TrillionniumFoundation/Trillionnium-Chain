@@ -125,6 +125,17 @@ continues the bounded multi-source query and existing round-robin admission /
 source-and-prefix selection; it does not turn source-count heuristics into a
 Sybil-resistance or operator-independence claim.
 
+The rendezvous reads the complete bounded current-epoch replay snapshot, then
+filters records whose provider statement or current pinned authority is no
+longer live. An expired or revoked key's retained high water cannot turn an
+otherwise valid lookup into a signed denial. Among eligible records, active
+providers precede withdrawn high water in the eight-record reply. Withdrawals
+use remaining slots; none of these choices deletes durable replay history or
+adds a verification, connection or byte allowance. A bounded reply does not
+guarantee that all withdrawals reach every querying client, especially when
+active providers consume the reply. The local replay-protection directory
+cannot by itself create a candidate that no authenticated reply supplied.
+
 ## Original operation and resource accounting
 
 The original caller's absolute deadline, connection counter and actual response
@@ -191,6 +202,13 @@ an expected counted refusal after the cache has been populated. The same
 original absolute deadline applies throughout; announce and fetch remain
 separate, explicitly counted operations. It stops and joins both services.
 
+The withdrawal control requires a clean authenticated response carrying a
+verified provider record and the retained withdrawal high water in the client
+directory. Authentication, record-validation or capacity failures cannot count
+as the expected refusal. The original advertisement must still be unexpired
+in the same signed epoch when the control finishes, so ordinary lease expiry
+cannot substitute for observing withdrawal.
+
 ```bash
 bash scripts/project-preflight.sh
 cargo run --locked --manifest-path trillionnium/Cargo.toml \
@@ -214,6 +232,8 @@ quota reuse while old sequences remain refused; current-epoch replay exhaustion;
 restart and clock rollback; epoch rollover with bounded physical database pages;
 old schema/namespace refusal; complete signed-query mutation/replay tests;
 real TCP bootstrap-only acquisition and unavailable/unauthenticated sources;
+real rendezvous replies that skip expired/revoked provider keys while their
+records remain live and prioritize active providers over withdrawn high water;
 shared deadlines/bytes/validation counters; and complete model/environment
 resident-byte admission plus cancellation and current-pin refusal.
 

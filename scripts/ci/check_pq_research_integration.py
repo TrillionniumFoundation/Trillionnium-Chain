@@ -429,6 +429,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport_tests.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/multisource_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/server_tests.rs",
     "trillionnium/crates/trnm-data-availability/examples/cell_discovery_pq_v3.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs",

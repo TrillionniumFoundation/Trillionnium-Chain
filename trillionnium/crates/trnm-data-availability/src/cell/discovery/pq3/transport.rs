@@ -803,13 +803,24 @@ fn serve_body(
         Ok(record.digest().to_vec())
     } else {
         let request = CellDiscoveryRequestV1::decode(&query.body)?;
-        let records = directory.records(request, now, deadline)?;
+        let mut records = directory.records(request, now, deadline)?;
+        // Replay high water includes inactive leases. Give active providers
+        // priority in the finite reply, then use remaining slots for live
+        // withdrawals. This neither evicts history nor guarantees that every
+        // withdrawal is propagated when eight active providers fill the reply.
+        // Stable sorting preserves the directory's order within each class.
+        records.sort_by_key(|record| record.statement.withdrawn);
         let mut body = vec![0];
         for record in records {
             if body[0] as usize == MAX_DISCOVERED_PROVIDERS {
                 break;
             }
-            if record.statement.request != request || record.live_at(now).is_err() {
+            // A retained statement can outlive its pinned key. Filter that
+            // inactive high water before spending a native verification slot;
+            // it must not turn other valid records into an all-or-nothing denial.
+            if record.statement.request != request
+                || require_current_authority(&record, now, directory.keys()).is_err()
+            {
                 continue;
             }
             require(

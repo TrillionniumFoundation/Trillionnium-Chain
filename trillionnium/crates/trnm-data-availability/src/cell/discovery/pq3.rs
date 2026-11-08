@@ -229,4 +229,6 @@ pub use transport::{
 #[cfg(all(test, unix))]
 mod multisource_tests;
 #[cfg(all(test, unix))]
+mod server_tests;
+#[cfg(all(test, unix))]
 mod transport_tests;

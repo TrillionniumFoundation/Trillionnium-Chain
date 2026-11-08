@@ -420,6 +420,11 @@ mod native {
                 "example actual output byte verification",
             )?;
             let withdrawal = advertisement(request, data_endpoint, &provider_key, 2, true)?;
+            require(
+                withdrawal.statement().lease_epoch == advert.statement().lease_epoch
+                    && now()? < advert.statement().expires_unix_seconds,
+                "example withdrawal must precede the original advertisement's expiry",
+            )?;
             write_new(&root.join("withdrawal.cdp3"), &withdrawal.encode())?;
             announce(
                 "withdraw",
@@ -439,10 +444,28 @@ mod native {
                 &forbidden_output,
             ) {
                 Err(failure) => {
+                    // A generic absence error also covers failed authentication,
+                    // truncated responses and signed denials. Only a clean,
+                    // authenticated withdrawal in the original still-live epoch
+                    // qualifies as this example's negative control.
+                    let authenticated_withdrawal =
+                        failure.discovery.authenticated_bootstrap_responses > 0
+                            && failure.discovery.record_validation_attempts > 0
+                            && failure.discovery.rejected_bootstraps == 0
+                            && failure.discovery.rejected_records == 0
+                            && failure.discovery.capacity_rejections == 0;
+                    let original_lease_live = now().is_ok_and(|clock| {
+                        clock / CELL_DISCOVERY_LEASE_EPOCH_SECONDS_V3
+                            == advert.statement().lease_epoch
+                            && clock < advert.statement().expires_unix_seconds
+                    });
                     let expected = matches!(
                         failure.cause,
                         CellErrorV1::Invalid("discovery has no admissible provider")
-                    );
+                    ) && authenticated_withdrawal
+                        && original_lease_live;
+                    // Record the operation before any further diagnostic can
+                    // fail, so a failed control cannot erase its denominator.
                     journal.push(refused(
                         "fetch_after_withdrawal",
                         &failure,
@@ -478,6 +501,21 @@ mod native {
                 !forbidden_output.exists(),
                 "example withdrawal output must not exist",
             )?;
+            let usage = client_directory.usage_at(now()?, original_deadline)?;
+            require(
+                usage.lease_epoch == advert.statement().lease_epoch
+                    && usage.active_identities == 0
+                    && usage.tombstone_identities == 1
+                    && usage.retained_identities == 1,
+                "example client must retain the authenticated withdrawal high water",
+            )?;
+            let completed_at = now()?;
+            require(
+                completed_at / CELL_DISCOVERY_LEASE_EPOCH_SECONDS_V3
+                    == advert.statement().lease_epoch
+                    && completed_at < advert.statement().expires_unix_seconds,
+                "example original advertisement expired during the withdrawal control",
+            )?;
             require(
                 Instant::now() < original_deadline,
                 "example original deadline expired",
@@ -490,6 +528,12 @@ mod native {
                 "bootstrap_key_id": digest_hex(bootstrap.key_id),
                 "payload_endpoint": data_endpoint,
                 "withdrawn_fetch_created_output": false,
+                "withdrawal_authenticated_in_original_epoch": true,
+                "original_advertisement_epoch": advert.statement().lease_epoch,
+                "original_advertisement_expires_unix_seconds": advert.statement().expires_unix_seconds,
+                "withdrawal_control_completed_unix_seconds": completed_at,
+                "client_active_identities": usage.active_identities,
+                "client_tombstone_identities": usage.tombstone_identities,
             }))
         })();
         // Finish both finite servers even when a counted client operation fails.
@@ -560,7 +604,8 @@ mod native {
             "fixed_fixture_keys_are_public_test_material": true,
             "independent_operators_demonstrated": false,
             "public_wan_or_hepta_loader_exercised": false,
-            "output_directory": root,
+            "output_directory": root.to_string_lossy(),
+            "output_directory_display_is_lossy": root.to_str().is_none(),
             "original_operation_window_milliseconds": OPERATION_WINDOW.as_millis(),
             "per_operation_connection_limit": limits().max_connections,
             "per_operation_response_byte_limit": limits().max_response_bytes,
