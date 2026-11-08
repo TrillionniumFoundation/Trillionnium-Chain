@@ -12,6 +12,10 @@ on:
       - docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md
       - docs/development/specs/pon/CELL_BEP52_BINDING_V1.md
       - docs/development/specs/pon/CELL_RS46_CHUNK_V1.md
+      - docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md
+      - docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md
+      - scripts/cell_complete_version_vector.py
+      - formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json
       - trillionnium/crates/trnm-data-availability/**
       - trillionnium/crates/trnm-pon-node/**
       - trillionnium/crates/trnm-crypto-primitives/**
@@ -142,6 +146,7 @@ jobs:
           status=0
           bash "$OUT/run-command.sh" next-python python3 -B -m unittest discover -s formal/next-architecture-security -p 'test_*.py' -v || status=1
           bash "$OUT/run-command.sh" counterexample-fixture python3 -B formal/next-architecture-security/counterexamples.py --check-fixture || status=1
+          bash "$OUT/run-command.sh" complete-version-vector python3 -B scripts/cell_complete_version_vector.py --check || status=1
           exit "$status"
       - name: Verify locked graph and unchanged all-source formatting
         id: graph_format
