@@ -7711,3 +7711,11 @@ instance-specific cryptographic security and end-to-end performance/availability
 qualification; neither can be inferred from an isolated verifier benchmark.
 
 Actual exact-source evidence is now retained in [the 2026-11-08 native complete-path observation](../../evidence/pon-native-fullpath-20261108-a1a69c624/README.md). All 290 selected tests passed. The one new development block required 7.322108454 seconds through independent readback, remained at depth 0, and produced zero progress under the original four-second/six-successor condition. All four starts, native rejection/cancellation outcomes and resource costs remain recorded; security and performance qualification stay HOLD.
+
+The initial publication's native full-path CI passed, while the retained PQ
+network CI refused its generated source inventory. The follow-up integrates
+the current history-diagnostic candidate, regenerates the native inventory
+with the official script and updates its exact PQ blob pin. No guard is
+relaxed. The measured native implementation and complete-path tools remain
+byte-identical to the measured source; the original failed CI observation
+and the original component HOLD remain separate from this metadata repair.
