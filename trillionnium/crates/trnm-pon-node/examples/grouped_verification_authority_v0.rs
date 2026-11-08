@@ -622,7 +622,7 @@ fn execute_observed_v1(
         || fixture_now(f.now_ns, f.clock_anchor_unix_ns),
         |_| true,
         |event| {
-            if observations.len() >= usize::from(seal::STEPS) + 1 {
+            if observations.len() > usize::from(seal::STEPS) {
                 capture_error = Some("OBSERVED_QUERY_LIMIT".to_owned());
                 return false;
             }
