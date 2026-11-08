@@ -10191,3 +10191,28 @@ negative source/CI-contract controls and repository links. These are default
 feature component runtime tests on shared Linux x86_64, not all-feature runtime,
 independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
 not change those source identities or close the six operational qualifications.
+
+### 2026-11-08 seven-gate integration follow-up
+
+Continue the same integration lineage from `7e044b65454f4c9ea505591727332acffb33e7e5`.
+The [follow-up source and evidence index](../../evidence/seven-gates-followup-20261108/README.md)
+adds the complete #807 and #809 candidates and freezes Hepta
+`36d5eff44f4071bb1f250b1c7706dc690cf0a875`, whose initial HEPLCP02 request
+binds the original owner's evaluation profile. Preserve all original source
+ancestry, failed attempts, unexecuted cases and deadlines. Re-run actual native
+commands on the final fixed source; side-branch passes are not final results.
+
+The same workstream also fixes two concrete refusal boundaries. Native generation
+checks journal capacity, task reuse and current anchor before permanently claiming
+a new task under the same journal write lock. A subsequent storage failure still
+retains the original owner claim and its recovery obligation. Qualification
+accounting rejects original `record_failed` and incomplete command receipts even
+when a child exited zero, and binds both raw source observations to the actual
+head or prospective merge. This remains a consistency check, not receipt
+authentication or a native result adapter. The reviewed W1 lifetime source pin
+restores its original 19 tests without closing any cryptographic uncertainty.
+
+P0 integration, consensus, authority/effects and the real Hepta iteration; P1
+independent Cell/WAN recovery; P2 matched goodput/tail latency; and P3 eight-domain
+PQ composition and independent review all remain HOLD / NO-GO. No resource,
+confirmation, custody or production authorization requirement is reduced.

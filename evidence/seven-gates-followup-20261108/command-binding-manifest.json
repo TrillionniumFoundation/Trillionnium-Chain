@@ -1,0 +1,95 @@
+{
+  "corrected_tests": {
+    "failed": 0,
+    "methods": 13,
+    "passed": 13
+  },
+  "files": {
+    "command-binding/baseline.stderr.log": {
+      "bytes": 7332,
+      "sha256": "a13535484a49ea78a1c5ce7f38f7dd95fec53e4ca538df6bfafb57d421f40940"
+    },
+    "command-binding/baseline.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/ci-contract.stderr.log": {
+      "bytes": 25717,
+      "sha256": "77bd8ed8150e4ff163da35a8f96ac712ee8f5d3f0532823520fc230f8647a5e6"
+    },
+    "command-binding/ci-contract.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/fixed.stderr.log": {
+      "bytes": 1613,
+      "sha256": "82600ae05f6c33be4a4fc9134b35c4389af6420c47f7beafb55489d96b935039"
+    },
+    "command-binding/fixed.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/original-recorder.stderr.log": {
+      "bytes": 692,
+      "sha256": "0059173f7e9eed8c9d573df28ca0a9fc958451410fa69ee3d1922cbe58e2dcba"
+    },
+    "command-binding/original-recorder.stdout.log": {
+      "bytes": 474,
+      "sha256": "f16fe1fa9d52ba5be001959cb5612494abdee3965e56e7e086ff238bbf082648"
+    },
+    "command-binding/original-roster.stderr.log": {
+      "bytes": 7495,
+      "sha256": "828e04243ac23f4d6ef2d6e8745bf1a4114dbb462fa0ded49f06b0f856946054"
+    },
+    "command-binding/original-roster.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/review-baseline.stderr.log": {
+      "bytes": 7630,
+      "sha256": "3005e973b694694c21f4f0ba26382dc620802c967b596f579756b7a20f105859"
+    },
+    "command-binding/review-baseline.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/review-fixed.stderr.log": {
+      "bytes": 2095,
+      "sha256": "397a30414ae32f6d2c2addbbd57a91add8ea820c97e852bda8b4cb959fd8d7fe"
+    },
+    "command-binding/review-fixed.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/review-original-roster.stderr.log": {
+      "bytes": 147,
+      "sha256": "4087e33bc605432a99898a61eb115a1688af08d79bde3a9c349939702c1a3298"
+    },
+    "command-binding/review-original-roster.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "command-binding/source-moved-before-execution.json": {
+      "bytes": 1118,
+      "sha256": "f7db24a4f49a86592946ed03de8ab1833da810b03b531c5e260d968845531894"
+    }
+  },
+  "initial_tests": {
+    "failed": 9,
+    "methods": 10,
+    "passed": 1,
+    "scope": "Original 7e reader bytes with newly added adversarial tests in a development worktree; not a clean-source native campaign"
+  },
+  "qualification": "HOLD_NO_GO",
+  "retained_source_capture_failure": {
+    "file": "command-binding/source-moved-before-execution.json",
+    "native_exit": null,
+    "native_tests_executed": 0,
+    "reason": "Root integrated lifetime changes while the f601 source observer was still running. The refusal is retained; it is not a test result."
+  },
+  "review_counterexamples": {
+    "failed_subtests": 8,
+    "methods": 2
+  },
+  "schema": "trnm-retained-command-binding-controls-v1"
+}

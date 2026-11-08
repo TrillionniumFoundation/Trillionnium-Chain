@@ -1,0 +1,27 @@
+{
+  "candidate_head": "cbb5d7b63754628d418e860cea194d4beb084c66",
+  "command": [
+    "python",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "complete_raw_log_retained": false,
+  "exit_code": 1,
+  "observation_kind": "tool-output-summary-not-complete-raw-log",
+  "qualification": "NOT_PASSED",
+  "schema": "trnm-local-check-observation-v1",
+  "self_tests": {
+    "errors": 1,
+    "exception": "shutil.Error: Errno 28 No space left on device while copying the source fixture in RepositoryMutants.setUpClass",
+    "reported_tests": 12,
+    "status": "FAILED"
+  },
+  "source_state": "dirty-candidate",
+  "structural_report": {
+    "local_links": 5526,
+    "result": "PASS",
+    "rust_files": 1381,
+    "workspace_packages": 26
+  },
+  "temporary_fixture_cleanup": "Temporary source fixture was absent when checked after process exit"
+}

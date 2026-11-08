@@ -1,0 +1,31 @@
+{
+  "chain_inputs": {
+    "807": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+    "809": "5f7eccf86e252cce67bf5dd6f614c1c7a1824e53"
+  },
+  "hepta_comparison": {
+    "ahead_by": 4,
+    "behind_by": 0,
+    "merge_base": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e"
+  },
+  "hepta_repository": "TrillionniumFoundation/hepta-private-ci",
+  "hepta_source": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+  "independent_wan_qualified": false,
+  "integration_base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "local_input_commits": {
+    "cell_integration": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+    "command_reader": "f601d9230284820d9223a012666926ecf3f61d80",
+    "generation_prepare": "95786fa7e88f5ef613aa73085bcc07aea41c73da",
+    "generation_prepare_evidence": "8c47e3a2f6c9293f70cfd4e9fb29fcfe6dcf2f2a",
+    "lifetime_evidence": "14189a19365f993ca4a7e807b55f07852962f095",
+    "lifetime_implementation": "954f4ab44e53fb8961b5a7693084df252017ee25"
+  },
+  "matched_throughput_qualified": false,
+  "previous_hepta_source": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "real_learning_iteration_qualified": false,
+  "schema": "trnm-seven-gates-followup-inputs-v1",
+  "source_rule": "Use each original receipt tested_commit/tree. Local-input results and historical branch results never become results for the final integration commit.",
+  "whole_chain_pq_qualified": false
+}
