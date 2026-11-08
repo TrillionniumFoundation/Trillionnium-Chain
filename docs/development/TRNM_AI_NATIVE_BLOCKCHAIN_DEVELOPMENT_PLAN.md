@@ -7719,3 +7719,5 @@ with the official script and updates its exact PQ blob pin. No guard is
 relaxed. The measured native implementation and complete-path tools remain
 byte-identical to the measured source; the original failed CI observation
 and the original component HOLD remain separate from this metadata repair.
+
+The post-integration inventory repair passed 333 selected tests and all 17 recorded validation commands. Its [exact-source validation and retained CI distinctions](../../evidence/pon-native-fullpath-20261108-inventory-reconciliation/README.md) preserve the original measurement and HOLD.
