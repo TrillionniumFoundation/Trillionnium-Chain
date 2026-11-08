@@ -73,8 +73,10 @@ pub trait OwnedGenerationRuntimeV2 {
         evidence: &GenerationEvidenceV2<'_>,
     ) -> Result<OwnedVerifierRunV2>;
 }
+mod recovery_v3;
 mod task_owner;
 mod terminal;
+pub use recovery_v3::{NodeGenerationOwnerV3, RECOVERY_PROFILE_V3};
 pub use terminal::{OwnedTerminalExecutionV3, OwnedTerminalGenerationRuntimeV3, TerminalReasonV3};
 pub struct NodeGenerationOwnerV2<'a, R> {
     node: &'a mut Node,
