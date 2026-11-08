@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "show",
+    "--format=",
+    "--check",
+    "HEAD"
+  ],
+  "exit_code": 2,
+  "observed_commit": "a1c8c71f8591a3a1cf05f224783b3698b60ee5fa",
+  "reason": "The preserved raw whitespace-refusal log repeated the exact original whitespace. Both originals are now preserved as lossless gzip.",
+  "schema": "trnm-retained-staging-observation-v1",
+  "uncompressed_log_sha256": "329cfac5a655fd980145701444f0e4b1df026f738ff49132f945d1758bd01a7d"
+}

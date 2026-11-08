@@ -1,0 +1,19 @@
+setUpClass (test_w1_lifetime_ledger.LifetimeLedgerTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (test_w1_lifetime_ledger.LifetimeLedgerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_lifetime_ledger.py", line 49, in setUpClass
+    cls.survey = ledger.source_survey(cls.sources)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_lifetime_ledger.py", line 500, in source_survey
+    require(hashlib.sha256(value).hexdigest() == expected, "source identity mismatch: " + path)
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_lifetime_ledger.py", line 142, in require
+    raise LedgerError(message)
+tested_w1_lifetime_ledger.LedgerError: source identity mismatch: trillionnium/crates/trnm-pon-node/src/store.rs
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.002s
+
+FAILED (errors=1)

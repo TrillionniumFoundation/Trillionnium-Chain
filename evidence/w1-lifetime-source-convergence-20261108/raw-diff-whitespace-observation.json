@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "log_sha256": "45e2a9603f5777b904817304cfff0cbf88af1a6e48b452b09924e80681d8182e",
+  "reason": "Raw unified-diff blank context lines carry one space. The original diff is preserved losslessly in gzip, not edited.",
+  "schema": "trnm-retained-staging-observation-v1"
+}
