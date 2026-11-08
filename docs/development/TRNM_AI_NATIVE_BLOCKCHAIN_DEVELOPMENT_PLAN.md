@@ -8402,3 +8402,32 @@ original theoretical/deployment obligations, the three independent PQ
 authorization/proof/quantum-work acceptance lines, and production activation
 remain HOLD. Original failures and the reviewed time and identity guards are
 retained without weakening.
+
+
+### 2026-11-08 W1 STARK/recursive QROM proof-chain continuation
+
+Continue the exact #778 head `0c830e0be8939ce80c8443c9ad68021b87343a00` and
+retain external P3 #783 at `cc836dfc13ef0006eb0878abd8cb5eca9a76bec0` as a
+separate candidate. The [proof-chain review](../security/W1_QROM_PROOF_CHAIN_20261108.md)
+keeps all eight interfaces and the earlier fifteen obligation identities.
+
+The [full manuscript comparison](../security/W1_QROM_MANUSCRIPT_REVIEW_20261108.md)
+now closes the January-to-March correspondence for two official byte-pinned
+102-page PDFs. It does not certify every theorem or the implementation.
+A semantic online-VC interpretation and conservatively charged verifier-query
+mass feed a new exact affine-mass BCS expression adapter; project envelopes,
+QROM and lifetime bounds remain uninstantiated.
+
+The [RISC Zero replay](../security/W1_FRI_QUERY_REPLAY_20261108.md) computes
+actual Poseidon2 transcript states, 50 query draws, seven cap roots and all
+350 openings for the fixed historical outer join seal. It preserves repeated
+FRI positions and omits the AIR/DEEP/folding/terminal algebraic checks explicitly.
+The [P3 query-expression analysis](../security/W1_P3_QUERY_EXPRESSION_20261108.md)
+reproduces `(2001/4000)^64`, proves exact query-count minimality for stated
+hypothetical multipliers, and retains the composite batching/other-term limits.
+Neither change raises production admission or any quantum-security flag.
+
+Fresh named controls, exact input identities, negative observations and the
+remaining obligations are recorded in the
+[new evidence packet](../../evidence/pon-w1-qrom-proof-chain-20261108/README.md).
+No historical failed run or original evidence is relabeled as a success.
