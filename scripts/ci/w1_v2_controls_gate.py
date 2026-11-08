@@ -4,13 +4,15 @@
 This gate never executes a verifier or creates a proof. It checks consistency
 of the runner's saved evidence, including the actual positive report. The CLI
 binds paths and the verifier hash to the current CI run. Explicit recorded paths
-in validate() also permit offline review of relocated historical evidence; that
-review does not authenticate its execution or attest compilation.
+and an explicit historical process schema in validate() also permit offline
+review of relocated version-2 evidence. The CLI only accepts version 3. This
+review does not authenticate execution, a caller handoff, or compilation.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -25,6 +27,8 @@ OBSERVATION_FIELDS = {'passed', 'returncode', 'timed_out', 'panic_or_abort_detec
                       'observed_rejection_layers', 'report_error', 'process', 'case_directory'}
 MAX_JSON_BYTES = 2 * 1024 * 1024
 MAX_LOG_BYTES = 4 * 1024 * 1024
+CURRENT_PROCESS_SCHEMA = 'TRNM-W1-STAGE-MEASUREMENT3'
+HISTORICAL_PROCESS_SCHEMA = 'TRNM-W1-STAGE-MEASUREMENT2'
 
 
 def read_json(path):
@@ -34,12 +38,59 @@ def read_json(path):
 def require_fields(row, expected, context):
     controls.require(type(row) is dict, f'{context} must be an object')
     for key, value in expected.items():
-        controls.require(type(row.get(key)) is type(value) and row[key] == value,
+        controls.require(key in row and type(row[key]) is type(value) and row[key] == value,
                          f'{context} differs: {key}')
 
 
-def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None):
+def validate_process(process, code, *, process_schema=CURRENT_PROCESS_SCHEMA):
+    """Check one observation; a pre-handoff snapshot is not a caller receipt."""
+    controls.require(process_schema in (CURRENT_PROCESS_SCHEMA, HISTORICAL_PROCESS_SCHEMA),
+                     'unsupported process observation schema')
+    require_fields(process, {
+        'schema': process_schema, 'returncode': code, 'timed_out': False,
+        'completion_observed_before_deadline': True, 'termination_reasons': [], 'error': None,
+        'owned_session_observation_complete': True, 'proc_scan_errors': [],
+        'group_probe_errors': [], 'cleanup_errors': [], 'members_after_child_exit': [],
+        'final_owned_session_members': [], 'process_group_remaining_after_child_exit': False,
+        # A clean expected rejection is a nonzero stage exit, not a failed control.
+        'stage_process_complete': code == 0, 'wall_limit_seconds': 120,
+        'prover_resource_completeness_established': False, 'complete_proof_claim': False,
+    }, 'process observation')
+    if process_schema == CURRENT_PROCESS_SCHEMA:
+        require_fields(process, {
+            'cancellation_schema': 'TRNM-W1-CANCELLATION-HANDOFF1',
+            'result_is_pre_handoff_snapshot': True, 'canceled_signal': None,
+            'cancellation_event': None, 'deadline_exhausted_at_snapshot': False,
+        }, 'current process observation')
+        for name in ('started_monotonic', 'wall_seconds', 'effective_deadline_monotonic',
+                     'effective_remaining_seconds'):
+            value = process.get(name)
+            controls.require(type(value) in (int, float) and math.isfinite(value)
+                             and value > 0, f'current process clock differs: {name}')
+        started, wall, deadline, remaining = (process[name] for name in (
+            'started_monotonic', 'wall_seconds', 'effective_deadline_monotonic',
+            'effective_remaining_seconds'))
+        controls.require(0 < remaining <= 120 and remaining == deadline - started
+                         and started + wall < deadline,
+                         'current process exceeds its original deadline')
+    groups, pid = process['known_owned_groups'], process.get('pid')
+    controls.require(type(groups) is list and groups
+                     and all(type(group) is int and group > 0 for group in groups)
+                     and groups == sorted(set(groups))
+                     and type(pid) is int and pid > 0 and pid in groups
+                     and process['final_known_group_probes'] ==
+                     [{'group': group, 'state': 'ABSENT'} for group in groups]
+                     and all(type(probe['group']) is int for probe in process['final_known_group_probes']),
+                     'owned process groups were not all observed absent')
+
+
+def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None,
+             process_schema=CURRENT_PROCESS_SCHEMA):
     """Validate retained observations; recorded paths are identities, never read or run."""
+    controls.require(process_schema in (CURRENT_PROCESS_SCHEMA, HISTORICAL_PROCESS_SCHEMA),
+                     'unsupported process observation schema')
+    controls.require(process_schema != HISTORICAL_PROCESS_SCHEMA or recorded_out is not None,
+                     'historical process schema requires explicit recorded-path replay')
     out, proof = Path(out), Path(proof)
     recorded_out = out.resolve() if recorded_out is None else Path(recorded_out)
     verifier_path = Path(verifier_path)
@@ -70,6 +121,13 @@ def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None):
     elapsed = report['elapsed_wall_seconds']
     controls.require(type(elapsed) in (int, float) and 0 < elapsed < 120,
                      'common 120-second deadline exceeded')
+    if process_schema == CURRENT_PROCESS_SCHEMA:
+        for name in ('started_monotonic', 'deadline_monotonic'):
+            value = report.get(name)
+            controls.require(type(value) in (int, float) and math.isfinite(value)
+                             and value > 0, f'current common clock differs: {name}')
+        controls.require(report['deadline_monotonic'] == report['started_monotonic'] + 120,
+                         'current common deadline was extended')
     require_fields(read_json(out / 'identity.json'), {
         'verifier_path': str(verifier_path), 'verifier_sha256': verifier_sha256,
         'assets': {key: {'bytes': len(data), 'sha256': controls.digest(data)}
@@ -92,24 +150,14 @@ def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None):
         code, process = case['returncode'], case['process']
         controls.require(type(code) is int and (code == 0 if plan['expect'] == 'accept' else code > 0),
                          'control exit differs from expectation')
-        require_fields(process, {
-            'schema': 'TRNM-W1-STAGE-MEASUREMENT2', 'returncode': code, 'timed_out': False,
-            'completion_observed_before_deadline': True, 'termination_reasons': [], 'error': None,
-            'owned_session_observation_complete': True, 'proc_scan_errors': [],
-            'group_probe_errors': [], 'cleanup_errors': [], 'members_after_child_exit': [],
-            'final_owned_session_members': [], 'process_group_remaining_after_child_exit': False,
-            # A clean expected rejection is a nonzero stage exit, not a failed control.
-            'stage_process_complete': code == 0, 'wall_limit_seconds': 120,
-        }, 'process observation')
-        groups, pid = process['known_owned_groups'], process.get('pid')
-        controls.require(type(groups) is list and groups
-                         and all(type(group) is int and group > 0 for group in groups)
-                         and groups == sorted(set(groups))
-                         and type(pid) is int and pid > 0 and pid in groups
-                         and process['final_known_group_probes'] ==
-                         [{'group': group, 'state': 'ABSENT'} for group in groups]
-                         and all(type(probe['group']) is int for probe in process['final_known_group_probes']),
-                         'owned process groups were not all observed absent')
+        validate_process(process, code, process_schema=process_schema)
+        if process_schema == CURRENT_PROCESS_SCHEMA:
+            controls.require(process['effective_deadline_monotonic'] == report['deadline_monotonic']
+                             and process['started_monotonic'] >= report['started_monotonic'],
+                             'current process is outside the original common deadline')
+            controls.require(process['started_monotonic'] + process['wall_seconds']
+                             <= report['started_monotonic'] + elapsed,
+                             'current summary does not cover process completion')
         case_dir = out / case_name
         controls.require(read_json(case_dir / 'result.json') == case,
                          'case result differs from aggregate observation')

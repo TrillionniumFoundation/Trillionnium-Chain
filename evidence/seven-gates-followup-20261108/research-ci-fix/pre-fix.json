@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_v2_controls_gate.py",
+    "-v"
+  ],
+  "started_unix_ns": 1794163843682174322,
+  "finished_unix_ns": 1794163845081124611,
+  "exit_code": 1,
+  "qualification": "PARSER_LIFECYCLE_ONLY",
+  "source_state": "dirty-candidate",
+  "note": "Reproduction of missing-null-field KeyError found by new controls; native CI schema mismatch retained separately."
+}

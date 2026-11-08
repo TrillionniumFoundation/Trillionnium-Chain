@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "test_ci_contract.W1PostwinLaneTests",
+    "-v"
+  ],
+  "cwd": "scripts/ci",
+  "exit_code": 0,
+  "started_unix_ns": 1794164318809805953,
+  "finished_unix_ns": 1794164321025479666,
+  "source_state": "dirty-candidate"
+}

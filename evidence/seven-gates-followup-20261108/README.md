@@ -136,6 +136,16 @@ This readback does not alter the original runner or 52-item manifest and does
 not relabel the original 32-command result PASS. Native test outcomes, the old
 collector refusal and complete campaign outcomes are separate facts.
 
+## Current research receipt reader
+
+The [current process gate repair](research-ci-fix/README.md) preserves three
+actual research CI failures at `bb026697`. It makes the transparent receipt
+reader require the producer's version-3 cancellation/deadline semantics and
+keeps version-2 records behind an explicit historical replay interface. The
+original 23 report controls remain, with eight additive controls and all 58
+original native cases retained. This later code change does not inherit a
+native pass from `bb026697`; the original failed workflows remain failed.
+
 ## Acceptance boundaries
 
 | Gate | What this source contributes | Evidence still required |

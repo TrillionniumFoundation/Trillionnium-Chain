@@ -1,0 +1,13 @@
+{
+  "run_id": 42508015793,
+  "attempt": 1,
+  "source_head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "artifact_id": 13628437867,
+  "archive_sha256": "0bf4c2a808666f4d4667343206de08b8d30a9c9bcf523b972d1663e8519fd9e1",
+  "archive_bytes": 31113318,
+  "selected_count": 474,
+  "selected_archive_sha256": "e5f2e58908889961a0198a273ea2c5aab0a70c679ea46c5b06d92a0012fab028",
+  "selected_archive_bytes": 264080,
+  "download_returncode": 0,
+  "scope": "Original failed workflow artifact; selection is not a fresh execution or new-source pass"
+}

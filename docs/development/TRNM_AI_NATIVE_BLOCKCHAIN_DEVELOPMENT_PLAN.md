@@ -10216,3 +10216,12 @@ P0 integration, consensus, authority/effects and the real Hepta iteration; P1
 independent Cell/WAN recovery; P2 matched goodput/tail latency; and P3 eight-domain
 PQ composition and independent review all remain HOLD / NO-GO. No resource,
 confirmation, custody or production authorization requirement is reduced.
+
+The same follow-up preserves the actual research CI failures at `bb026697`.
+The current transparent receipt gate requires version-3 cancellation and
+deadline fields; version 2 remains an explicit historical replay only. All
+original 23 report controls and 58 native receipt controls remain, with eight
+additive report/lifecycle controls. A real signal after stage-result fsync
+retains the exit-zero snapshot but cancels the actual call, so the incomplete
+aggregate cannot complete the gate. Later source repairs receive their own
+source identities and cannot inherit the original frozen pair's native passes.

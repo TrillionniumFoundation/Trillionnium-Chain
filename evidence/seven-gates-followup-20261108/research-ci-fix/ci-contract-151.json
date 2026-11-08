@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_contract.py",
+    "-v"
+  ],
+  "started_unix_ns": 1794164159665623458,
+  "finished_unix_ns": 1794164190754529053,
+  "exit_code": 0,
+  "source_state": "dirty-candidate"
+}
