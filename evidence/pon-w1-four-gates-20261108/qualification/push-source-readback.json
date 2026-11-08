@@ -1,0 +1,79 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit": 0,
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-four-gates-20261108-ec265b\", \"remote_policy_mutated\": false}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "034aa74358e0a5fa33f33e83cb63669e9738da4b\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103"
+    ],
+    "exit": 0,
+    "stdout": "cb314bb4656e5da4844325cd83994ab4764fe8e9\trefs/heads/fix/chain-six-axis-performance-20261103\nabab79dac0cb89eb2753d3f579119ac135650eb5\trefs/heads/fix/chain-w1-runtime-integrated-20261107\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "abab79dac0cb89eb2753d3f579119ac135650eb5",
+      "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "034aa74358e0a5fa33f33e83cb63669e9738da4b:refs/heads/fix/chain-w1-runtime-integrated-20261107"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "remote: \nremote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        \nremote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        \nremote: \nTo https://github.com/TrillionniumFoundation/Trillionnium-Chain.git\n   abab79dac..034aa7435  034aa74358e0a5fa33f33e83cb63669e9738da4b -> fix/chain-w1-runtime-integrated-20261107\n"
+  },
+  {
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103"
+    ],
+    "exit": 0,
+    "stdout": "cb314bb4656e5da4844325cd83994ab4764fe8e9\trefs/heads/fix/chain-six-axis-performance-20261103\n034aa74358e0a5fa33f33e83cb63669e9738da4b\trefs/heads/fix/chain-w1-runtime-integrated-20261107\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "config_sha256": "e02653e72d102696d1a08d99671b9c76884faf338e9d3835d5714bc41dafcac3",
+  "original_deadline_ns": 1191795668407846,
+  "phase": "winner",
+  "pid": 3171099,
+  "python": {
+    "bytes": 8020928,
+    "path": "/usr/bin/python3.12",
+    "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+  },
+  "renewed_deadline": false,
+  "runtime": {
+    "bytes": 38944,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/scripts/w1_owned_generation_runtime_v2.py",
+    "sha256": "f2bc49081a0bc08d88e7c1337c2c8bc512f9b968f0334cd6c5d68f9e2e052297"
+  },
+  "schema": "TRNM-W1-FUNDED-OWNER-PROCESS2",
+  "started_monotonic_ns": 1191678395692058
+}

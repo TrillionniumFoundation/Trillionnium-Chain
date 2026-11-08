@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py",
+    "start",
+    "--config",
+    "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/config.json",
+    "--request",
+    "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/target-request.json",
+    "--out",
+    "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start"
+  ],
+  "observation_or_cleanup_deadline_ns": 1189058740638185,
+  "original_proof_deadline_ns": 1189048740638185,
+  "proof_deadline_renewed": false,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "started_monotonic_ns": 1188938696934831
+}

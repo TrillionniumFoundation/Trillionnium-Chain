@@ -1,0 +1,198 @@
+[
+  {
+    "job_directory": "protocol-contract",
+    "artifact_id": 13605620747,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605620747"
+    ],
+    "started_unix_ns": 1794115683884635791,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115685403440055,
+    "stdout": {
+      "path": "protocol-contract/artifact-metadata.raw",
+      "bytes": 812,
+      "sha256": "9fd6610444e5d62336f688a0202349c9a0cd1f9a65209469b147628d70f8f91b"
+    },
+    "stderr": {
+      "path": "protocol-contract/artifact-metadata.raw.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "job_directory": "protocol-contract",
+    "artifact_id": 13605620747,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605620747/zip"
+    ],
+    "started_unix_ns": 1794115685404787618,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115694744998283,
+    "stdout": {
+      "path": "protocol-contract/artifact.zip",
+      "bytes": 5982059,
+      "sha256": "bc14d7e9820214e379ccbc5a0a546bdb19f524643439a14f70ce55700e176d5e"
+    },
+    "stderr": {
+      "path": "protocol-contract/artifact.zip.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "job_log_uploaded_digest": "bc14d7e9820214e379ccbc5a0a546bdb19f524643439a14f70ce55700e176d5e",
+    "uploaded_digest_matches": true,
+    "archive_entries": 78
+  },
+  {
+    "job_directory": "prospective-merge-protocol-contract",
+    "artifact_id": 13605765208,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605765208"
+    ],
+    "started_unix_ns": 1794115694798281392,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115706293210481,
+    "stdout": {
+      "path": "prospective-merge-protocol-contract/artifact-metadata.raw",
+      "bytes": 813,
+      "sha256": "60d04d38d7faa9f2ee23311581d999f8560ede95272c2f1ad5b7770fb14fdb2c"
+    },
+    "stderr": {
+      "path": "prospective-merge-protocol-contract/artifact-metadata.raw.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "job_directory": "prospective-merge-protocol-contract",
+    "artifact_id": 13605765208,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605765208/zip"
+    ],
+    "started_unix_ns": 1794115706294467311,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115722451301796,
+    "stdout": {
+      "path": "prospective-merge-protocol-contract/artifact.zip",
+      "bytes": 6075424,
+      "sha256": "120f3f2855da6e49fe36ca6677a441fc53f20be2d4d96efaaf75820e899c15a7"
+    },
+    "stderr": {
+      "path": "prospective-merge-protocol-contract/artifact.zip.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "job_log_uploaded_digest": "120f3f2855da6e49fe36ca6677a441fc53f20be2d4d96efaaf75820e899c15a7",
+    "uploaded_digest_matches": true,
+    "archive_entries": 78
+  },
+  {
+    "job_directory": "cross-arch-cost-x64",
+    "artifact_id": 13605277513,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605277513"
+    ],
+    "started_unix_ns": 1794115722504837316,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115724725681515,
+    "stdout": {
+      "path": "cross-arch-cost-x64/artifact-metadata.raw",
+      "bytes": 798,
+      "sha256": "4722f950219d21f52e6d815bb4a61ef69dae04ee16e3d913f28f877e87ad1ee1"
+    },
+    "stderr": {
+      "path": "cross-arch-cost-x64/artifact-metadata.raw.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "job_directory": "cross-arch-cost-x64",
+    "artifact_id": 13605277513,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605277513/zip"
+    ],
+    "started_unix_ns": 1794115724727211785,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115734968551753,
+    "stdout": {
+      "path": "cross-arch-cost-x64/artifact.zip",
+      "bytes": 8739310,
+      "sha256": "119ddc0bb1d0cda8669e59596d0acf94e7f5542afc55e64dd74b30dfe20fffd9"
+    },
+    "stderr": {
+      "path": "cross-arch-cost-x64/artifact.zip.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "job_log_uploaded_digest": "119ddc0bb1d0cda8669e59596d0acf94e7f5542afc55e64dd74b30dfe20fffd9",
+    "uploaded_digest_matches": true,
+    "archive_entries": 154
+  },
+  {
+    "job_directory": "cross-arch-cost-arm64",
+    "artifact_id": 13605012553,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605012553"
+    ],
+    "started_unix_ns": 1794115735035214515,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115737405845856,
+    "stdout": {
+      "path": "cross-arch-cost-arm64/artifact-metadata.raw",
+      "bytes": 800,
+      "sha256": "27ab386d981525d2adffd05219b4a6c7021cf7dd95638333d128e95bd587880e"
+    },
+    "stderr": {
+      "path": "cross-arch-cost-arm64/artifact-metadata.raw.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "job_directory": "cross-arch-cost-arm64",
+    "artifact_id": 13605012553,
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605012553/zip"
+    ],
+    "started_unix_ns": 1794115737406923566,
+    "exit_code": 0,
+    "error": null,
+    "finished_unix_ns": 1794115746796860807,
+    "stdout": {
+      "path": "cross-arch-cost-arm64/artifact.zip",
+      "bytes": 8750553,
+      "sha256": "b2f58e247b79889c5222180ae00472d9894d63990a8324e17c280b159077086e"
+    },
+    "stderr": {
+      "path": "cross-arch-cost-arm64/artifact.zip.fetch.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "job_log_uploaded_digest": "b2f58e247b79889c5222180ae00472d9894d63990a8324e17c280b159077086e",
+    "uploaded_digest_matches": true,
+    "archive_entries": 154
+  }
+]

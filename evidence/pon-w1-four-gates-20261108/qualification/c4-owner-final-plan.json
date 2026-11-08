@@ -1,0 +1,236 @@
+{
+  "commands": [
+    {
+      "label": "cargo-version",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "rustc-version",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustc",
+        "-vV"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "owned-fmt",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/terminal.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/timeout.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/terminal.rs",
+        "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs"
+      ]
+    },
+    {
+      "label": "locked-graph-default",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "locked-graph-all-features",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "m12-strict-clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "node-strict-clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "m12-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "native_generation_budget_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "node-short-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "async_w1_generation_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "legacy-admission-root-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "store::legacy_admission_root_tests::",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "legacy-reorg-root-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "store::legacy_reorg_root_tests::",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "owner-no-run-json",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "trillionnium"
+    },
+    {
+      "label": "backend-metadata-default",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ]
+    },
+    {
+      "label": "backend-metadata-all",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ]
+    },
+    {
+      "label": "verifier-metadata-default",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ]
+    },
+    {
+      "label": "verifier-metadata-all",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features"
+      ]
+    }
+  ]
+}

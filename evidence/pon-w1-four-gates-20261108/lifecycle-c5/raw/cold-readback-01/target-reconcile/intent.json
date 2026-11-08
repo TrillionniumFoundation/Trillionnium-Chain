@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/scripts/w1_generation_target_v2.py",
+    "reconcile",
+    "--root",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/target-state",
+    "--target",
+    "w1-timeout-chain-w1-c5-timeout-reorg-20261108-ec265b-01",
+    "--operation",
+    "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77"
+  ],
+  "observation_or_cleanup_deadline_ns": 1191886359714941,
+  "original_proof_deadline_ns": 1191795668407846,
+  "proof_deadline_renewed": false,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "started_monotonic_ns": 1191876359714941
+}

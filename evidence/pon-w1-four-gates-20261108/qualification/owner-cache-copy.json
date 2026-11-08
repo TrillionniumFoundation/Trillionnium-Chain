@@ -1,0 +1,23 @@
+{
+  "schema": "TRNM-W1-CACHE-COPY1",
+  "source": "/home/qian-qi/work/chain-w1-m12-terminal-target-20261108-ec265b",
+  "destination": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b",
+  "source_owner_elf_sha256_before": "d75d92ff804ce4a62bdddec2ef35823b21c294c7f97a96e5be55eb85341fde3f",
+  "source_owner_elf_sha256_after": "d75d92ff804ce4a62bdddec2ef35823b21c294c7f97a96e5be55eb85341fde3f",
+  "wall_ns": 5624321967,
+  "argv": [
+    "rsync",
+    "-a",
+    "--exclude=incremental/",
+    "/home/qian-qi/work/chain-w1-m12-terminal-target-20261108-ec265b/",
+    "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/"
+  ],
+  "exit": 0,
+  "fresh_cache": false,
+  "independent_build": false,
+  "previous_copy_job": "1a1b95e4dd0-12894-13c0",
+  "previous_copy_exit": 124,
+  "previous_copy_timeout_seconds": 240,
+  "previous_attempt_retained": true,
+  "excluded_incremental_cache": true
+}

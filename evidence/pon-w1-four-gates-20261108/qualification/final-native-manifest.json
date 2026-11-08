@@ -1,0 +1,407 @@
+{
+  "binaries": {
+    "native_winner": {
+      "build_log": {
+        "bytes": 63640,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/build-native.stdout",
+        "sha256": "fbc924bec127321aaa41aad67cfafd792ed4a5c2ed483d10b6ccc7021ba5a9c4"
+      },
+      "cargo_artifact": {
+        "executable": "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/examples/pon_w1_native_winner_v2",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/examples/pon_w1_native_winner_v2"
+        ],
+        "fresh": false,
+        "manifest_path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "package_id": "path+file:///home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": false,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "example"
+          ],
+          "name": "pon_w1_native_winner_v2",
+          "src_path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+          "test": false
+        }
+      },
+      "file": {
+        "bytes": 752472,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/examples/pon_w1_native_winner_v2",
+        "sha256": "753c8c3610dcf0687e2d54f19e5c5b307dd54683bedabc7fe3d39eed57ee4b03"
+      }
+    },
+    "verifier": {
+      "build_log": {
+        "bytes": 162125,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/build-verifier.stdout",
+        "sha256": "f2a9ba92d51f2a48e1009eacbc4c491159dcc7ebf2a3e0a0e6ba5a70597b8432"
+      },
+      "cargo_artifact": {
+        "executable": "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/w1-verify-v2",
+        "features": [],
+        "filenames": [
+          "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/w1-verify-v2"
+        ],
+        "fresh": false,
+        "manifest_path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "package_id": "path+file:///home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/formal/pon-nakamoto-v1/w1_v2_verifier#trnm-w1-v2-verifier@0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 1,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": true,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "bin"
+          ],
+          "name": "w1-verify-v2",
+          "src_path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+          "test": true
+        }
+      },
+      "file": {
+        "bytes": 19332368,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/w1-verify-v2",
+        "sha256": "91bbf96300d9b6d34cbf36415febae33908b8589de3004801e2a9e136153b7bd"
+      }
+    }
+  },
+  "build_environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RAYON_NUM_THREADS": "2",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTFMT": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "RUSTUP_TOOLCHAIN": "1.95.0"
+  },
+  "cache_copy": {
+    "bytes": 1821,
+    "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/native-cache-copy.json",
+    "sha256": "70bd4b5d6c4d9b426d8df23c6fc4250189c17159687c9e579d7206b8c8bba63a"
+  },
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "preflight",
+      "passed": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 170,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/preflight.stdout",
+        "sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "source-before",
+      "passed": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/source-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/source-before.stdout",
+        "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "metadata-native",
+      "passed": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/metadata-native.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 824683,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/metadata-native.stdout",
+        "sha256": "f4e3c9f22aebdd75a2f59e89f428c9e097ba88fefa70783ee5cfb63fd540d3a7"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "metadata-verifier",
+      "passed": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/metadata-verifier.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 899205,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/metadata-verifier.stdout",
+        "sha256": "fac9dfd29284b70d2c2a24b90daaf2bb9946131bbc928028dace751e25caa382"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "compiler-version",
+      "passed": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/compiler-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 196,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/compiler-version.stdout",
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_w1_native_winner_v2",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "tests-native",
+      "passed": true,
+      "stderr": {
+        "bytes": 2134,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/tests-native.stderr",
+        "sha256": "00691378a8f5f12e850377de6af9381dc88587935d41a59740e8544fc8f4df38"
+      },
+      "stdout": {
+        "bytes": 272,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/tests-native.stdout",
+        "sha256": "964930078bffe087d40324f9c903742d19348202592fc007ed101afbf1f222e8"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--bin",
+        "w1-verify-v2",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "tests-verifier",
+      "passed": true,
+      "stderr": {
+        "bytes": 2676,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/tests-verifier.stderr",
+        "sha256": "d12b27ceb7e400b648de8e9683862721336f5a198f140cfd3f4df87ab0bb00cd"
+      },
+      "stdout": {
+        "bytes": 263,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/tests-verifier.stdout",
+        "sha256": "1eaf44d1ba7a39588355febc521868a4cf755778585df59a9ab7fbc488bbfe2d"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_w1_native_winner_v2",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "build-native",
+      "passed": true,
+      "stderr": {
+        "bytes": 205,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/build-native.stderr",
+        "sha256": "5711bc02ad9149e8b82153baf199d08ff7802d63d71f49c974fa9c5d6702c22d"
+      },
+      "stdout": {
+        "bytes": 63640,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/build-native.stdout",
+        "sha256": "fbc924bec127321aaa41aad67cfafd792ed4a5c2ed483d10b6ccc7021ba5a9c4"
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--bin",
+        "w1-verify-v2",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "build-verifier",
+      "passed": true,
+      "stderr": {
+        "bytes": 209,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/build-verifier.stderr",
+        "sha256": "e041c8d8b3221fbe7a0531b01430390416b6e2a50fc98d2a063c985b9a82caab"
+      },
+      "stdout": {
+        "bytes": 162125,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/build-verifier.stdout",
+        "sha256": "f2a9ba92d51f2a48e1009eacbc4c491159dcc7ebf2a3e0a0e6ba5a70597b8432"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "exit": 0,
+      "expected_exit": 0,
+      "label": "source-after",
+      "passed": true,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/source-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/source-after.stdout",
+        "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+      }
+    }
+  ],
+  "expensive_proof_started": false,
+  "fresh_cargo_target": false,
+  "guest_compilation_performed": false,
+  "independent_cleanroom_build": false,
+  "qualification_complete": true,
+  "repo": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+  "schema": "TRNM-W1-EXACT-NATIVE-QUALIFICATION1",
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+  },
+  "source_clean_after": true,
+  "source_clean_before": true,
+  "target": "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b",
+  "test_counts": {
+    "native_example": 2,
+    "native_historical_suite_reexecuted": false,
+    "verifier": 2
+  }
+}

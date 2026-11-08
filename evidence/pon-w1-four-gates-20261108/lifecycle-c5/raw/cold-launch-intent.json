@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile",
+    "--exact",
+    "--ignored",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "config": {
+    "bytes": 49077,
+    "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/config.json",
+    "sha256": "e02653e72d102696d1a08d99671b9c76884faf338e9d3835d5714bc41dafcac3"
+  },
+  "deadline_renewed": false,
+  "env": {
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TRNM_W1_CANCEL_RECONCILE_OUT": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/cold-readback-01",
+    "TRNM_W1_FUNDED_CONFIG": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/config.json"
+  },
+  "native_transaction_submissions": 0,
+  "new_generation_dispatches": 0,
+  "owner_binary": {
+    "bytes": 468126952,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24"
+  },
+  "schema": "TRNM-W1-OWNER-TIMEOUT-COLD-LAUNCH1",
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "scope": "archive formatting only; not an experiment or source execution failure",
+  "failure": "cross-language boolean literal NameError before summary/README/manifest publication",
+  "correction": "parse retained runtime JSON with json.loads; preserve original failure",
+  "business_or_source_results_changed": false
+}

@@ -1,0 +1,158 @@
+{
+  "schema": "TRNM-W1-EXACT-SOURCE-QUALIFICATION4",
+  "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "repo": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+  "plan_sha256": "7c7a64701bb7c324e55305a95e39e96f941ebf44681e3b47478dfff21748561e",
+  "driver_sha256": "c0da0e3c11d8376e320f1cf2e88b6038371d8f71d0c07028d32593d513095e01",
+  "commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "started_monotonic_ns": 1191452220314128,
+      "exit": 0,
+      "finished_monotonic_ns": 1191452385581061,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/00-preflight.stdout",
+        "bytes": 170,
+        "sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/00-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "01-source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "--output",
+        "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "started_monotonic_ns": 1191452387286389,
+      "exit": 0,
+      "finished_monotonic_ns": 1191465536817612,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/01-source-before.stdout",
+        "bytes": 423,
+        "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/01-source-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "02-real-receiver-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_w1_receiver_real.py",
+        "--verifier",
+        "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/w1-verify-v2",
+        "--verifier-sha256",
+        "91bbf96300d9b6d34cbf36415febae33908b8589de3004801e2a9e136153b7bd",
+        "--receipt",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "--input",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/input.bin",
+        "--header",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/header.bin",
+        "--expected-artifacts",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+        "--out",
+        "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/real-receiver-controls"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "started_monotonic_ns": 1191465542277038,
+      "exit": 0,
+      "finished_monotonic_ns": 1191476434191393,
+      "python_test_counts": [
+        11
+      ],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/02-real-receiver-controls.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/02-real-receiver-controls.stderr",
+        "bytes": 1769,
+        "sha256": "d170b47b1a6fa075ed25849ba8d9889c516b20870fd0acfa381d58574c5ef03c"
+      }
+    },
+    {
+      "label": "99-source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "--output",
+        "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+      "started_monotonic_ns": 1191476435595364,
+      "exit": 0,
+      "finished_monotonic_ns": 1191480310804283,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/99-source-after.stdout",
+        "bytes": 423,
+        "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01/99-source-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "fresh_proof_generations": 0,
+  "production_qualified": false,
+  "security_qualified": false,
+  "original_business_budget_qualified": false,
+  "resource_billing_complete": false,
+  "payment_qualified": false,
+  "cargo_target": null,
+  "build_env": {
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "verifier_source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "fresh_cargo_target": false,
+  "independent_reproducible_build_established": false,
+  "cache_basis": "separate copied development cache, when Cargo runs",
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+  "qualification_complete": true,
+  "actual_command_count": 4,
+  "python_test_methods_reported": 11,
+  "rust_test_outcomes": {
+    "passed": 0,
+    "failed": 0,
+    "ignored": 0
+  }
+}

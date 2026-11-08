@@ -1,0 +1,1233 @@
+{
+  "all_artifact_zip_hashes_match_job_upload_logs": true,
+  "all_github_gets_complete": true,
+  "artifact_fetch_runtime_terminal": {
+    "at_unix_ms": 1794115740779,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b9a115ca-12894-15a0",
+    "launch_nonce": "085d44a1acc0abafd2c90ee1712aa768",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 24449,
+        "stored": 24449
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "candidate_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "candidate_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+  "fetch_runtime_terminal": {
+    "at_unix_ms": 1794115570041,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b99e9635-12894-1591",
+    "launch_nonce": "a46ea6fbc2125e921689bbb669e5b886",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 10790,
+        "stored": 10790
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "github_artifact_get_count": 6,
+  "github_job_run_log_get_count": 11,
+  "interpretation_limits": [
+    "These failures do not invalidate or replace the separately recorded ordinary 570 pass / 4 ignored qualification count; they are distinct real business measurements and a missing historical-evidence control.",
+    "A native exit-zero invariant test is not a passed business deadline.",
+    "The historical artifact missing in Actions is not a new measured pressure result.",
+    "The fresh control's last replay succeeded; do not substitute the original control's replay deadline failure.",
+    "All four workflow heads are C5, but the prospective-merge lane actually tested its separate merge commit.",
+    "Only the four requested completed jobs are classified; unrelated in-progress jobs were not awaited.",
+    "Build/source success and the retained failure diagnostics do not establish causal regression, WAN/security qualification, provider payment, or a new complete zkVM proof."
+  ],
+  "jobs": [
+    {
+      "actual_tested_source": {
+        "base": null,
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "all_three_campaigns_completed_but_business_failed": true,
+      "attempts": [
+        {
+          "finite_experiment_criteria_met": false,
+          "hash_checks": {
+            "report_matches_run_result": true,
+            "stderr_matches_step": true,
+            "stdout_matches_step": true
+          },
+          "native_returncode": 101,
+          "number": 1,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 0,
+              "attacker_processes_requested": 0,
+              "confirmation_records": 2,
+              "confirmed_inside_count": 1,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 24,
+              "attacker_processes_requested": 24,
+              "confirmation_records": 1,
+              "confirmed_inside_count": 0,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2680,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 24,
+              "attacker_processes_requested": 24,
+              "confirmation_records": 1,
+              "confirmed_inside_count": 0,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2606,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "raw_report_sha256": "bbdd7edd552300f95786b6ae9c422c4f1ed31b876389614c6f6b522858d1a481",
+          "report_validation_failure": null
+        },
+        {
+          "finite_experiment_criteria_met": false,
+          "hash_checks": {
+            "report_matches_run_result": true,
+            "stderr_matches_step": true,
+            "stdout_matches_step": true
+          },
+          "native_returncode": 101,
+          "number": 2,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 0,
+              "attacker_processes_requested": 0,
+              "confirmation_records": 2,
+              "confirmed_inside_count": 1,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 24,
+              "attacker_processes_requested": 24,
+              "confirmation_records": 1,
+              "confirmed_inside_count": 0,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2697,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 24,
+              "attacker_processes_requested": 24,
+              "confirmation_records": 1,
+              "confirmed_inside_count": 0,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2627,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "raw_report_sha256": "c76312ecde0202f2082530b947772c2a37fa0a009dfb16d629715421e215fe6e",
+          "report_validation_failure": null
+        },
+        {
+          "finite_experiment_criteria_met": false,
+          "hash_checks": {
+            "report_matches_run_result": true,
+            "stderr_matches_step": true,
+            "stdout_matches_step": true
+          },
+          "native_returncode": 101,
+          "number": 3,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 0,
+              "attacker_processes_requested": 0,
+              "confirmation_records": 2,
+              "confirmed_inside_count": 1,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 24,
+              "attacker_processes_requested": 24,
+              "confirmation_records": 1,
+              "confirmed_inside_count": 0,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2639,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "attacker_processes_ready": 24,
+              "attacker_processes_requested": 24,
+              "confirmation_records": 1,
+              "confirmed_inside_count": 0,
+              "duration_seconds": 30,
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2632,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "raw_report_sha256": "52cbae4628b8f55970281c5577af81f413bad3b56c2e40df30315cbd324cffc3",
+          "report_validation_failure": null
+        }
+      ],
+      "build_complete_success": true,
+      "business_budget_passed": false,
+      "causal_regression_attribution": "undetermined without a matched source comparison; no C3 cause substituted",
+      "ci_error_lines": [
+        {
+          "line": 1570,
+          "path": "raw/original-native-campaign-log.log",
+          "text": "2026-11-08T05:20:09.4127054Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "classification": "executed_finite_business_criteria_failure",
+      "expected_controller_resources": {
+        "cpu_max": "400000 100000",
+        "memory_max": "17179869184",
+        "nice": 10
+      },
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T05:20:09Z",
+          "conclusion": "failure",
+          "name": "Run three original campaigns under verified actual limits",
+          "number": 7,
+          "started_at": "2026-11-08T05:11:43Z",
+          "status": "completed"
+        }
+      ],
+      "first_specific_error": "finite experiment criteria failed; full counterexample retained (run 1)",
+      "job_completed_at": "2026-11-08T05:20:23Z",
+      "job_conclusion": "failure",
+      "job_id": 128636161917,
+      "job_log": {
+        "bytes": 201090,
+        "path": "raw/original-native-campaign-log.log",
+        "sha256": "efa4622ac40e7532aba12154fab809ac06eeb19aac094c0006cb5457a8396a36"
+      },
+      "job_name": "original native campaign (x64, head, release)",
+      "job_started_at": "2026-11-08T05:10:46Z",
+      "job_status": "completed",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729525/job/128636161917",
+      "key": "original-native-campaign",
+      "last_specific_error": "campaign failed; retained counterexample (run 3); native test exited 101",
+      "native_error_lines": {
+        "run-1": [
+          {
+            "line": 16,
+            "path": "artifacts/original-native-campaign/run-1.stderr.log",
+            "text": "thread 'separate_process_work_and_signed_confirmation_campaign' (4921) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:"
+          },
+          {
+            "line": 17,
+            "path": "artifacts/original-native-campaign/run-1.stderr.log",
+            "text": "finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42449729525-1/run-1-raw"
+          },
+          {
+            "line": 20,
+            "path": "artifacts/original-native-campaign/run-1.stderr.log",
+            "text": "thread 'separate_process_work_and_signed_confirmation_campaign' (4921) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:"
+          },
+          {
+            "line": 21,
+            "path": "artifacts/original-native-campaign/run-1.stderr.log",
+            "text": "campaign failed; retained /home/runner/work/_temp/pon-native-campaign-42449729525-1/run-1-raw"
+          },
+          {
+            "line": 22,
+            "path": "artifacts/original-native-campaign/run-1.stderr.log",
+            "text": "error: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`"
+          }
+        ],
+        "run-2": [
+          {
+            "line": 16,
+            "path": "artifacts/original-native-campaign/run-2.stderr.log",
+            "text": "thread 'separate_process_work_and_signed_confirmation_campaign' (5231) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:"
+          },
+          {
+            "line": 17,
+            "path": "artifacts/original-native-campaign/run-2.stderr.log",
+            "text": "finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42449729525-1/run-2-raw"
+          },
+          {
+            "line": 20,
+            "path": "artifacts/original-native-campaign/run-2.stderr.log",
+            "text": "thread 'separate_process_work_and_signed_confirmation_campaign' (5231) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:"
+          },
+          {
+            "line": 21,
+            "path": "artifacts/original-native-campaign/run-2.stderr.log",
+            "text": "campaign failed; retained /home/runner/work/_temp/pon-native-campaign-42449729525-1/run-2-raw"
+          },
+          {
+            "line": 22,
+            "path": "artifacts/original-native-campaign/run-2.stderr.log",
+            "text": "error: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`"
+          }
+        ],
+        "run-3": [
+          {
+            "line": 16,
+            "path": "artifacts/original-native-campaign/run-3.stderr.log",
+            "text": "thread 'separate_process_work_and_signed_confirmation_campaign' (5475) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:"
+          },
+          {
+            "line": 17,
+            "path": "artifacts/original-native-campaign/run-3.stderr.log",
+            "text": "finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42449729525-1/run-3-raw"
+          },
+          {
+            "line": 20,
+            "path": "artifacts/original-native-campaign/run-3.stderr.log",
+            "text": "thread 'separate_process_work_and_signed_confirmation_campaign' (5475) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:"
+          },
+          {
+            "line": 21,
+            "path": "artifacts/original-native-campaign/run-3.stderr.log",
+            "text": "campaign failed; retained /home/runner/work/_temp/pon-native-campaign-42449729525-1/run-3-raw"
+          },
+          {
+            "line": 22,
+            "path": "artifacts/original-native-campaign/run-3.stderr.log",
+            "text": "error: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`"
+          }
+        ]
+      },
+      "new_code_regression_established": false,
+      "original_inputs": {
+        "attacker_processes": [
+          0,
+          24,
+          24
+        ],
+        "business_blocks": 21,
+        "modes": [
+          "baseline",
+          "from-zero",
+          "late-product"
+        ],
+        "phase_seconds": 30,
+        "seed_blocks": 4,
+        "seed_transfers": 1024
+      },
+      "outer_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "public_phase_placement": {
+        "attacker_processes_remain_in_original_controller_domain": true,
+        "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+        "original_3x3_workload_and_depletion_predicates_changed": false,
+        "profile": "fixed-public-phase-external-actors-v1",
+        "receiver_and_verifier_cpu_max": "25000 100000",
+        "receiver_and_verifier_memory_max": "2147483648"
+      },
+      "run_id": 42449729525,
+      "skipped_steps": [],
+      "workflow_conclusion_at_fetch": "failure",
+      "workflow_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "workflow_status_at_fetch": "completed"
+    },
+    {
+      "actual_tested_source": null,
+      "business_result_from_this_job": null,
+      "causal_regression_attribution": "undetermined without a matched source comparison; no C3 cause substituted",
+      "ci_error_lines": [
+        {
+          "line": 55,
+          "path": "raw/retained-pressure-failure-log.log",
+          "text": "2026-11-08T05:10:47.7309970Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found"
+        }
+      ],
+      "classification": "historical_artifact_unavailable_control_not_executed",
+      "diagnostic_control_executed": false,
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T05:10:47Z",
+          "conclusion": "failure",
+          "name": "Retrieve exact historical failed artifact without reclassifying it",
+          "number": 2,
+          "started_at": "2026-11-08T05:10:47Z",
+          "status": "completed"
+        }
+      ],
+      "first_specific_error": "Unable to download artifact(s): None of the provided artifact IDs were found",
+      "historical_artifact_found": false,
+      "historical_artifact_id": 11531476198,
+      "historical_run_id": 37730166589,
+      "job_completed_at": "2026-11-08T05:10:49Z",
+      "job_conclusion": "failure",
+      "job_id": 128636161686,
+      "job_log": {
+        "bytes": 4109,
+        "path": "raw/retained-pressure-failure-log.log",
+        "sha256": "62b5260f647e221aa9559c9625f9dd7705233c9b7e1fac1856c9fcc3a4b9d14b"
+      },
+      "job_name": "retained-pressure-failure",
+      "job_started_at": "2026-11-08T05:10:45Z",
+      "job_status": "completed",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729558/job/128636161686",
+      "key": "retained-pressure-failure",
+      "last_specific_error": "Unable to download artifact(s): None of the provided artifact IDs were found",
+      "new_code_regression_established": false,
+      "run_id": 42449729558,
+      "skipped_steps": [
+        {
+          "completed_at": "2026-11-08T05:10:47Z",
+          "conclusion": "skipped",
+          "name": "Expose bounded original honest-submit and state diagnostics",
+          "number": 3,
+          "started_at": "2026-11-08T05:10:47Z",
+          "status": "completed"
+        }
+      ],
+      "source_limit": "workflow head does not establish execution of the missing historical payload",
+      "workflow_conclusion_at_fetch": null,
+      "workflow_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "workflow_status_at_fetch": "in_progress"
+    },
+    {
+      "actual_tested_source": {
+        "base": null,
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "attack_workers": 16,
+      "build_exit_code": 0,
+      "business_budget_passed": false,
+      "causal_regression_attribution": "undetermined without a matched source comparison; no C3 cause substituted",
+      "ci_error_lines": [
+        {
+          "line": 1281,
+          "path": "raw/w1-fresh-head-log.log",
+          "text": "2026-11-08T05:16:45.9321462Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "classification": "executed_original_and_fresh_business_target_failure",
+      "detailed_reports": [
+        {
+          "construction_coverage": null,
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "matches_execution_manifest": true,
+          "mode": "original",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": 3103267911,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "honest_head_successes_in_window": 55,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": true,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "honest_head_successes_in_window": 23,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 2,
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": false,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "workers": 16
+            }
+          ],
+          "raw_report_sha256": "7fefe2c17d33606c835cbc21af12201d445724e9b165335ecaa5e3c8ce94f392"
+        },
+        {
+          "construction_coverage": {
+            "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+            "all_context_bindings_and_challenges_unique": true,
+            "all_nested_cpu_measurements_known": true,
+            "constructed": 213,
+            "exhausted": 0,
+            "full_transcript_rejections": 197,
+            "nested_from_zero_construction_cpu_ns": 99999041,
+            "submitted": 213,
+            "unique_challenges": 213,
+            "unique_packet_indices": 213
+          },
+          "finite_target_met": false,
+          "invariant_target_met": null,
+          "matches_execution_manifest": true,
+          "mode": "fresh",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": 3099050510,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "honest_head_successes_in_window": 55,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": true,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "honest_head_successes_in_window": 18,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": false,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 16
+            }
+          ],
+          "raw_report_sha256": "6540cd9d7c743352d67b30baf20584a246b08bb31615b83d31565a60a8f8ba26"
+        }
+      ],
+      "execution_finished": true,
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T05:16:45Z",
+          "conclusion": "failure",
+          "name": "Execute original and fresh service with original Host resources",
+          "number": 7,
+          "started_at": "2026-11-08T05:12:03Z",
+          "status": "completed"
+        }
+      ],
+      "first_specific_error": "original control: finite_target_met=false; CONFIRMATION_TARGET; last pressure replay PUBLIC_REQUEST_DEADLINE",
+      "fresh_assertion": "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+      "fresh_replay_deadline_error_established": false,
+      "job_completed_at": "2026-11-08T05:16:52Z",
+      "job_conclusion": "failure",
+      "job_id": 128636161803,
+      "job_log": {
+        "bytes": 184869,
+        "path": "raw/w1-fresh-head-log.log",
+        "sha256": "237cba003a26ea394cf802b75812ab6350e0cfa4d605739ec66b25eac8d19722"
+      },
+      "job_name": "W1 fresh challenge service (x64, head)",
+      "job_started_at": "2026-11-08T05:10:46Z",
+      "job_status": "completed",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729523/job/128636161803",
+      "key": "w1-fresh-head",
+      "last_specific_error": "fresh native test exited 101 at fresh_challenge.rs:244; wrapper FRESH_NATIVE_PROCESS_REQUIRED; outer CI exit 1",
+      "native_error_lines": [
+        {
+          "line": 5,
+          "path": "artifacts/w1-fresh-head/fresh-service/fresh.log",
+          "text": "thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5421) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:"
+        },
+        {
+          "line": 6,
+          "path": "artifacts/w1-fresh-head/fresh-service/fresh.log",
+          "text": "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit"
+        },
+        {
+          "line": 8,
+          "path": "artifacts/w1-fresh-head/fresh-service/fresh.log",
+          "text": "FAILED"
+        },
+        {
+          "line": 15,
+          "path": "artifacts/w1-fresh-head/fresh-service/fresh.log",
+          "text": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.79s"
+        }
+      ],
+      "new_code_regression_established": false,
+      "requested_window_ns": 4000000000,
+      "run_id": 42449729523,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 2,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "2a677c7c5b1819911d535fd9ee53b99dd98f471b5eedc93895a13207a737359d",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 24805960158,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": true,
+              "replay_error": null
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "6928f39657c0d24f24e6b4bf092b2be74de7bf8f3b12581202ae454fd913d043",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 24800793213,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "skipped_steps": [
+        {
+          "completed_at": "2026-11-08T05:11:28Z",
+          "conclusion": "skipped",
+          "name": "Reproduce the frozen integration-push source",
+          "number": 3,
+          "started_at": "2026-11-08T05:11:28Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T05:16:47Z",
+          "conclusion": "skipped",
+          "name": "Preserve this lane's actual push source context",
+          "number": 9,
+          "started_at": "2026-11-08T05:16:47Z",
+          "status": "completed"
+        }
+      ],
+      "source_after": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683084400,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "source_before": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683084400,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "workflow_conclusion_at_fetch": null,
+      "workflow_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "workflow_status_at_fetch": "in_progress"
+    },
+    {
+      "actual_tested_source": {
+        "base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "prospective-merge",
+        "prospective_merge": "991168a783c3bf82e04f978091adbdc740998c47",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "attack_workers": 16,
+      "build_exit_code": 0,
+      "business_budget_passed": false,
+      "causal_regression_attribution": "undetermined without a matched source comparison; no C3 cause substituted",
+      "ci_error_lines": [
+        {
+          "line": 1283,
+          "path": "raw/w1-fresh-prospective-merge-log.log",
+          "text": "2026-11-08T05:16:53.2896120Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "classification": "executed_original_and_fresh_business_target_failure",
+      "detailed_reports": [
+        {
+          "construction_coverage": null,
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "matches_execution_manifest": true,
+          "mode": "original",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": 3020058751,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "honest_head_successes_in_window": 55,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": true,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "honest_head_successes_in_window": 24,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 2,
+                "replay_accepted": false,
+                "replay_error": "PUBLIC_REQUEST_DEADLINE"
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": false,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ],
+              "workers": 16
+            }
+          ],
+          "raw_report_sha256": "0ada00953c1475a7f8c5ee95fe9327b6cae34561fcb36856f5bc34876bc31b6b"
+        },
+        {
+          "construction_coverage": {
+            "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+            "all_context_bindings_and_challenges_unique": true,
+            "all_nested_cpu_measurements_known": true,
+            "constructed": 210,
+            "exhausted": 0,
+            "full_transcript_rejections": 194,
+            "nested_from_zero_construction_cpu_ns": 104998657,
+            "submitted": 210,
+            "unique_challenges": 210,
+            "unique_packet_indices": 210
+          },
+          "finite_target_met": false,
+          "invariant_target_met": null,
+          "matches_execution_manifest": true,
+          "mode": "fresh",
+          "phases": [
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": 3086103020,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "honest_head_successes_in_window": 54,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 6,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "attack-free-baseline",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": true,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 0
+            },
+            {
+              "accounting_closed": true,
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "honest_head_successes_in_window": 18,
+              "invariant_target_met": true,
+              "last_history_replay": {
+                "history_call_index": 0,
+                "replay_accepted": true,
+                "replay_error": null
+              },
+              "mode": "from-zero-pressure",
+              "no_attack_accepted": true,
+              "overlap_demonstrated": false,
+              "requested_window_ns": 4000000000,
+              "verification_errors": [],
+              "workers": 16
+            }
+          ],
+          "raw_report_sha256": "fdfa3b81671e630651a7aaa65dd54799b5faf8103a4ef2eee7e20190a561fc68"
+        }
+      ],
+      "execution_finished": true,
+      "failed_steps": [
+        {
+          "completed_at": "2026-11-08T05:16:53Z",
+          "conclusion": "failure",
+          "name": "Execute original and fresh service with original Host resources",
+          "number": 7,
+          "started_at": "2026-11-08T05:12:15Z",
+          "status": "completed"
+        }
+      ],
+      "first_specific_error": "original control: finite_target_met=false; CONFIRMATION_TARGET; last pressure replay PUBLIC_REQUEST_DEADLINE",
+      "fresh_assertion": "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+      "fresh_replay_deadline_error_established": false,
+      "job_completed_at": "2026-11-08T05:17:00Z",
+      "job_conclusion": "failure",
+      "job_id": 128636161664,
+      "job_log": {
+        "bytes": 185669,
+        "path": "raw/w1-fresh-prospective-merge-log.log",
+        "sha256": "5492f8c4723498a5eca508c66029251387fb022e36f51b954f5b8d301d9d117e"
+      },
+      "job_name": "W1 fresh challenge service (x64, prospective-merge)",
+      "job_started_at": "2026-11-08T05:10:45Z",
+      "job_status": "completed",
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729523/job/128636161664",
+      "key": "w1-fresh-prospective-merge",
+      "last_specific_error": "fresh native test exited 101 at fresh_challenge.rs:244; wrapper FRESH_NATIVE_PROCESS_REQUIRED; outer CI exit 1",
+      "native_error_lines": [
+        {
+          "line": 5,
+          "path": "artifacts/w1-fresh-prospective-merge/fresh-service/fresh.log",
+          "text": "thread 'fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget' (5459) panicked at crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs:244:5:"
+        },
+        {
+          "line": 6,
+          "path": "artifacts/w1-fresh-prospective-merge/fresh-service/fresh.log",
+          "text": "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit"
+        },
+        {
+          "line": 8,
+          "path": "artifacts/w1-fresh-prospective-merge/fresh-service/fresh.log",
+          "text": "FAILED"
+        },
+        {
+          "line": 15,
+          "path": "artifacts/w1-fresh-prospective-merge/fresh-service/fresh.log",
+          "text": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.62s"
+        }
+      ],
+      "new_code_regression_established": false,
+      "requested_window_ns": 4000000000,
+      "run_id": 42449729523,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 2,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "cd7d811d92287d9ea4dfb25c19139c4259ad0fde4645f84cc0daa835333db6c2",
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 24720085964,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "991168a783c3bf82e04f978091adbdc740998c47",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "original/report.json"
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 0,
+              "phase": "from-zero-pressure",
+              "replay_accepted": true,
+              "replay_error": null
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "log_sha256": "fcac5d46aca151223687c2ef7941ad38a663051e43780f13e221f8b3b68b13ff",
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 24603535415,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "991168a783c3bf82e04f978091adbdc740998c47",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_path": "fresh/report.json"
+        }
+      ],
+      "skipped_steps": [
+        {
+          "completed_at": "2026-11-08T05:11:42Z",
+          "conclusion": "skipped",
+          "name": "Reproduce the frozen integration-push source",
+          "number": 3,
+          "started_at": "2026-11-08T05:11:42Z",
+          "status": "completed"
+        },
+        {
+          "completed_at": "2026-11-08T05:16:55Z",
+          "conclusion": "skipped",
+          "name": "Preserve this lane's actual push source context",
+          "number": 9,
+          "started_at": "2026-11-08T05:16:55Z",
+          "status": "completed"
+        }
+      ],
+      "source_after": {
+        "commit": "991168a783c3bf82e04f978091adbdc740998c47",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "991168a783c3bf82e04f978091adbdc740998c47",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683084400,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "source_before": {
+        "commit": "991168a783c3bf82e04f978091adbdc740998c47",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "991168a783c3bf82e04f978091adbdc740998c47",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1683084400,
+          "tracked_entries": 15386,
+          "tracked_worktree_verified": true
+        },
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "workflow_conclusion_at_fetch": null,
+      "workflow_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "workflow_status_at_fetch": "in_progress"
+    }
+  ],
+  "new_code_regression_established": false,
+  "new_experiments_started": false,
+  "new_full_proof_generations_started": 0,
+  "old_C3_root_cause_assumed": false,
+  "original_business_budget_passed": false,
+  "payment_qualified": false,
+  "production_qualified": false,
+  "prospective_merge_tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+  "qualification_modified": false,
+  "raw_log_and_extracted_file_hash_mismatches": [],
+  "reruns_requested": false,
+  "schema": "TRNM-W1-C5-BUSINESS-CI-FAILURE-READBACK1",
+  "scope": "four completed failed GitHub jobs; actual C5 raw logs/artifacts; not a complete PR-check verdict",
+  "security_qualified": false,
+  "selected_artifact_members": 128,
+  "source_modified": false
+}

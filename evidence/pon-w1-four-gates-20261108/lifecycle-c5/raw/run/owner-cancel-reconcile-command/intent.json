@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/scripts/w1_owner_cancellation_v1.py",
+    "reconcile",
+    "--config",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/config.json",
+    "--request",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/target-request.json",
+    "--out",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/owner-cancel-reconcile",
+    "--start",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/owner-cancel-start/result.json",
+    "--seconds",
+    "10"
+  ],
+  "observation_or_cleanup_deadline_ns": 1191810737500211,
+  "original_proof_deadline_ns": 1191795668407846,
+  "proof_deadline_renewed": false,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "started_monotonic_ns": 1191795737500211
+}

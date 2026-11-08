@@ -1,0 +1,35 @@
+{
+  "cancellation_schema": "TRNM-W1-CANCELLATION-HANDOFF1",
+  "command": [
+    "/home/qian-qi/work/chain-w1-four-gates-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "--r0vm",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+    "prove-parallel",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/proof/checkpoint",
+    "2",
+    "2"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+  "effective_deadline_monotonic": 1191795.668407846,
+  "effective_remaining_seconds": 87.88749353890307,
+  "environment": {
+    "RAYON_NUM_THREADS": "4",
+    "RISC0_HOME": null,
+    "RUST_LOG": null
+  },
+  "explicit_environment_override_names": [
+    "RAYON_NUM_THREADS"
+  ],
+  "max_bytes_per_output_log": 4194304,
+  "observer_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "proc_clock_ticks_per_second": 100,
+  "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+  "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+  "result_is_pre_handoff_snapshot": true,
+  "schema": "TRNM-W1-STAGE-MEASUREMENT3",
+  "shared_cgroup": {},
+  "started_monotonic": 1191707.780914307,
+  "started_unix_ns": 1794114041788634582,
+  "termination_grace_seconds": 5,
+  "wall_limit_seconds": 600
+}

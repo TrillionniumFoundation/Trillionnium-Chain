@@ -1,0 +1,56 @@
+{
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+  },
+  "owner_binary": {
+    "path": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "bytes": 468126952,
+    "sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24"
+  },
+  "artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8"
+    ],
+    "executable": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "fresh": true
+  },
+  "qualification_manifest_sha256": "182b317b9d90962a2595be2421d7813fda627b5654404305edf9f4124833a466",
+  "qualification_complete": true,
+  "build_env": {
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "cache_copy_record": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/cache-copy.json",
+  "sqlite_io_runtime_domain_qualified": false
+}

@@ -7822,3 +7822,16 @@ M12 新 typed terminal 接口仅在原 job/source/clock/deadline 绑定满足时
 
 
 C4 精确候选 `5c489cc2064c3edfc6641f21fea4b46cb0c8e24e` 的原始资格发现旧 PQ source pins 拒绝新 workflow/M12/source bytes，以及既有 200ms late-observation 控制在启动前耗尽预算。后续最小修正将 8 个新源加入 required 与独立负控镜像，更新 21 个既有 pin，维持 645 个精确 blob 校验及所有 HOLD/false 资格字段；不删除或放松 reader 校验。该既有 observer 方法改为真实启动、WNOWAIT 保留原退出0，再于预声明原 deadline 之后交给真实 wait4 观察，method 仍为32，生产计时源码不变。全部 C4 失败原件保留。
+
+
+### 2026-11-08：C5 原 deadline 超时、同取消包重组与独立 cold 实测
+
+冻结运行源码为 C5 034aa74358e0a5fa33f33e83cb63669e9738da4b（tree 8dd452c376452224602fb202940ae84fc1f84d2e）。最终本地资格为 59 条满足预声明结果的命令、570 项普通测试通过、4 个 heavy 入口在普通套件 ignored；其中 source-only 探针在真实源码验证后预期 exit 1，其余 58 条 exit 0。实际 heavy 与独立 cold 各 1 通过另列。复制缓存、retained guest、原 r0vm 与非 cleanroom 来源分别保留，没有取得完整 I/O owner-domain 或部署资格。
+
+新 operation 3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77 在 8 CPU／8 GiB、120 秒原研究期限内观察到真实昂贵 r0vm 启动。唯一原 deadline 1191795668407846 未改写；target 自然 original-deadline、sticky_cancel=false、exit=-9，终态观察 1191796086929474。随后先记录 Failure Unknown，再显式 owner veto、原 NativeCancel 本金 1000 退款。实际更长 fork 移除该 Cancel 后回到 Reserved/1000；延长原 ancestry 恢复同一原 wire/packet/inclusion，不新签退款。全新进程 cold 沿同一 operation/statement/deadline 返回 M12 Done，0 dispatch／0 target cancel／0 native transaction。
+
+Done 仅是派发终态，consumed=null、全资源 cap 保留、provider 未付款；当前递归空 cgroup 不升级为完整历史 wait/reap 或 GPU/全量计费资格。主入口 123.23 秒含收尾，cold 0.45 秒，新增完整 proof 为 0。先前因旧 runner 编译时 checkout 身份不符而失败的新 operation 保留 Pending/full cap，旧两个相关操作也未被迁移或改写。
+
+四门证据收口到 [C5 事后 attestation](../../evidence/pon-w1-four-gates-20261108/README.md) 与其机器总表。80 行仍为旧 receipt 的 verification-only；完整生成 ABBA 只有参数草案，冻结 source/ELF pins 为 null、未绑定 C5，也没有执行。原 winner 的保留原件未提供匹配的合法 Node 父状态及事务上下文，且 PNH1/PGH2 challenge 域不同，须先建立同候选 admission/proving 接口。原业务预算、正向结算付款、部署收益和完整密码学/协议安全资格均 HOLD；本事后文档提交不改写被测 C5 源码身份。
+
+同一 C5 head 的远端 CI 另行保留本轮新失败：05:20 UTC 快照的 8 个已完成失败 job 均已只读取得原日志。一个因历史 artifact 不存在而未运行诊断；3 次实际 native campaign 的 9 个原 30 秒阶段均 finite=false；fresh-service head/merge 的 original/fresh 4 个 baseline 各及时确认1笔，而4个16-worker压力阶段均0笔；4个protocol/cost job唯一失败为CONFIRMATION_TARGET。三处protocol压力报告PUBLIC_REQUEST_DEADLINE，merge错误数组为空；fresh压力最后replay虽accepted仍无及时六层确认。所有类别与C3旧结果、570项本地普通测试分开，不推断全部CI终态或因果回归；详细原件见[当前C5 CI](../../evidence/pon-w1-four-gates-20261108/ci-c5/README.md)。

@@ -1,0 +1,279 @@
+{
+  "archive": {
+    "bytes": 106924,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/failed-operation/raw-artifacts.tar.gz",
+    "sha256": "4fbcd80715a689a2eda37eb33232024ab9ffda976a57328854b241cb96aa086a"
+  },
+  "branch": "failed-operation",
+  "facts": {
+    "actual_prepared_source": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+    "all_historical_descendants_wait_reaped": null,
+    "expected_source": "a5ec1ba30916400c345cb47679602cfb1b30a65f",
+    "full_original_cap_held_under_original_source": true,
+    "gpu_ns": null,
+    "m12_dispatch_state_under_original_source": "Pending",
+    "m12_event_tags": [
+      0,
+      1
+    ],
+    "m12_raw_sequence": 2,
+    "native_principal_reserved": 1000,
+    "native_refund_observed": false,
+    "native_transactions_by_process_reader": 0,
+    "new_complete_proofs": 0,
+    "new_dispatches_by_reader": 0,
+    "operation": "f57598b2be2ed23e839bffbd2d2ea9c8f4b339a5e0a5e52923b207a6c6a3e5bc",
+    "original_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "original_cap": {
+      "cpu_ns": 960000000000,
+      "gpu_ns": 240000000000,
+      "memory_peak_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "original_deadline_ns": 1189048740638185,
+    "original_helper_error": "ValueError: actual prepared full execution changed",
+    "original_job_exit": 101,
+    "production_qualified": false,
+    "resource_settlement": "Unknown",
+    "signals_sent_by_process_reader": 0,
+    "state_basis": "source-derived from actual Prepare+Intent journal tags; reader did not invoke new begin",
+    "successful_heavy_tests": 0,
+    "target_cancel_requests_by_process_reader": 0,
+    "target_result": null,
+    "target_state": "child-intent",
+    "typed_terminal_failure_recorded": false
+  },
+  "origin": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b",
+  "original_files_modified": false,
+  "proc_environments_included": false,
+  "public_chain_transactions_sent": false,
+  "publication_driver": {
+    "bytes": 15078,
+    "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/publish-lifecycle-v1.py",
+    "sha256": "0aeb94546a8f12e658cd082833c0445099222bd6c80610381a253df4d478f7e7"
+  },
+  "publication_input": {
+    "bytes": 19341,
+    "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/publication-input-01.json",
+    "sha256": "946474327734d69a641694de9cb4030a801d13bdb18906149ea380e455e1aad1"
+  },
+  "publication_readmes": {
+    "bytes": 10984,
+    "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/publication-readmes-01.json",
+    "sha256": "61539b79a01b8527ca9c3b1981802c6b996fb64667235d49b1356f040035ac00"
+  },
+  "raw_file_count": 25,
+  "raw_files": [
+    {
+      "file": "raw/plan.json",
+      "source": {
+        "bytes": 48240,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/plan.json",
+        "sha256": "a1e798039c2a21e278dd08e20b26d3dd57c61269da9a774e29a65105b6014cea"
+      }
+    },
+    {
+      "file": "raw/config.json",
+      "source": {
+        "bytes": 47355,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/config.json",
+        "sha256": "d57a4e160d40a3e8c83cdbcee80e8e4f2ef7bf3a8abcfb4f4eec64cc07aef991"
+      }
+    },
+    {
+      "file": "raw/launch-declaration.json",
+      "source": {
+        "bytes": 2637,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/launch-declaration.json",
+        "sha256": "64090cd23c44692baf900b37a2f0eda6645c52c19e1d3244921484d4c03daf00"
+      }
+    },
+    {
+      "file": "raw/driver.py",
+      "source": {
+        "bytes": 15287,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/driver.py",
+        "sha256": "7c99f217508ecff0e4f99860f591283633a043b7d39b4e51f6e14b9a3dd2aa59"
+      }
+    },
+    {
+      "file": "raw/qualification/manifest.json",
+      "source": {
+        "bytes": 7342,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/manifest.json",
+        "sha256": "f14603812d13101c9791a1b88d84511af9ae865c550722fb357383ba3aa41f31"
+      }
+    },
+    {
+      "file": "raw/failure-readback.json",
+      "source": {
+        "bytes": 4221,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/failure-readback.json",
+        "sha256": "9e8daae00326b7f7e00ce2adc3bd5048a63129da3938c3a32736ea0d30e3b09e"
+      }
+    },
+    {
+      "file": "raw/failure-process-readback.json",
+      "source": {
+        "bytes": 1284,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/failure-process-readback.json",
+        "sha256": "abacbeffb6ef3667d0410cc538d970e4bb333bf18689cfbfd11d9d9f758acf1d"
+      }
+    },
+    {
+      "file": "raw/run/owner-declaration.json",
+      "source": {
+        "bytes": 1169,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-declaration.json",
+        "sha256": "ea5bfa3ffd4c4c8e64540a19172c0118978370a05e0846c74d7706f1b038662f"
+      }
+    },
+    {
+      "file": "raw/run/native-funded-intent.json",
+      "source": {
+        "bytes": 1219,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/native-funded-intent.json",
+        "sha256": "41b9043335cf080bd56448f149deba7001a094673435d06d136c2410cb58a111"
+      }
+    },
+    {
+      "file": "raw/run/target-request.json",
+      "source": {
+        "bytes": 62183,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/target-request.json",
+        "sha256": "2bed70b3c7bd8dec28347bfacbd04cc6fcec5832e792ed0dd9b1fcc1c5a0b413"
+      }
+    },
+    {
+      "file": "raw/run/native-winner/intent.json",
+      "source": {
+        "bytes": 859,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/native-winner/intent.json",
+        "sha256": "14af7dd2081b1711fb8db3c1b3bcf4849af83f8d80b32ae6a556589171c2cccb"
+      }
+    },
+    {
+      "file": "raw/run/native-winner/result.json",
+      "source": {
+        "bytes": 1067,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/native-winner/result.json",
+        "sha256": "a27b6040765a0869e1d72c09522b6fec7f83c0efbe3007fdbfb029117bfbabe9"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start/intent.json",
+      "source": {
+        "bytes": 38027,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start/intent.json",
+        "sha256": "0eb1c34d25227e2311ab0bf0453ce4959df7624676235e46ce96a5c7221e9c65"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start/failure.json",
+      "source": {
+        "bytes": 38252,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start/failure.json",
+        "sha256": "877449572af40641e2810aef8ea4f75abcdf8249777b50334e1938976213c94f"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start/target-dispatch.json",
+      "source": {
+        "bytes": 655,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start/target-dispatch.json",
+        "sha256": "707ce2f23971c705cd4d118e1138d1635ff1ef2b061c0052184927cf0b6c4502"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start-command/intent.json",
+      "source": {
+        "bytes": 685,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start-command/intent.json",
+        "sha256": "50c0a5bae76646741e5d26c74619bd64066ef275d86959fcac3da37b678cd668"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start-command/result.json",
+      "source": {
+        "bytes": 1190,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start-command/result.json",
+        "sha256": "838eaf394523c61a2206de52c76918e6caf6aef2fa354cbb33e03e19fdadb80e"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start-command/stdout.log",
+      "source": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start-command/stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "file": "raw/run/owner-cancel-start-command/stderr.log",
+      "source": {
+        "bytes": 1074,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start-command/stderr.log",
+        "sha256": "7411bd99264dcce201d2714b9c984dcf6830bbeede15d8916aeb24fb7f73abd4"
+      }
+    },
+    {
+      "file": "raw/run/proof/checkpoint/manifest.json",
+      "source": {
+        "bytes": 8463,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/proof/checkpoint/manifest.json",
+        "sha256": "07285cc244eef034e27423071484fcbd601e48b386f941a2bce572ebfa9cd2e8"
+      }
+    },
+    {
+      "file": "raw/run/proof/checkpoint/prepare-identity.json",
+      "source": {
+        "bytes": 814,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/proof/checkpoint/prepare-identity.json",
+        "sha256": "0002883df25f4592ba9bb8e2ba86e4982a815212c0aef073febc6c6252f715b8"
+      }
+    },
+    {
+      "file": "raw/jobs/failed/status.json",
+      "source": {
+        "bytes": 733,
+        "job_id": "1a1b95d1b63-12894-13b7",
+        "kind": "original Hepta tool response",
+        "sha256": "c411188a770a59471fc11f803286a8784f8616337d86b4418f0c9c97b46c5027"
+      }
+    },
+    {
+      "file": "raw/jobs/failed/read.json",
+      "source": {
+        "bytes": 3581,
+        "job_id": "1a1b95d1b63-12894-13b7",
+        "kind": "original Hepta tool response",
+        "sha256": "819e1d09e5a50315d1740bbc02902c615ee4c2f6c6acb8db896117b817b7c7d5"
+      }
+    },
+    {
+      "file": "raw/jobs/failed/stdout.log",
+      "source": {
+        "bytes": 650,
+        "job_id": "1a1b95d1b63-12894-13b7",
+        "kind": "exact decoded Hepta retained log bytes",
+        "sha256": "6d9f5b4d716fd04f7d8f7f7ab2267880d6fcfefc68ed972c014d104956a91318"
+      }
+    },
+    {
+      "file": "raw/jobs/failed/stderr.log",
+      "source": {
+        "bytes": 423,
+        "job_id": "1a1b95d1b63-12894-13b7",
+        "kind": "exact decoded Hepta retained log bytes",
+        "sha256": "7fa5c2791684e93f9c9808f8112a10c0b6fd19de124a0bdb4915817506633cc6"
+      }
+    }
+  ],
+  "readme": {
+    "bytes": 3642,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/failed-operation/README.md",
+    "sha256": "c4edc02a80ea91708f76df7b941c288b81d4ddceb709812a34981eb90929a6a8"
+  },
+  "schema": "TRNM-W1-RESEARCH-LIFECYCLE-PUBLICATION1",
+  "sqlite_databases_included": false
+}

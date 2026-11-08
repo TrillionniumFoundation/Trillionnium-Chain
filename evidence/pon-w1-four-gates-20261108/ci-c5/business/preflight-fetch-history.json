@@ -1,0 +1,6 @@
+{
+  "first_mcp_launch_result": "MCP request timed out; execution state unknown at transport return",
+  "same_idempotency_key_readback": "reused:true; retried_launch:false; succeeded exit0",
+  "preflight_runtime_job": "1a1b99c2921-12894-157c",
+  "preflight_passed": true
+}

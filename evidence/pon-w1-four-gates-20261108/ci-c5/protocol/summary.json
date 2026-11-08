@@ -1,0 +1,1250 @@
+{
+  "schema": "w1-c5-four-completed-protocol-job-readback-v1",
+  "scope": "Read-only post-hoc review of four completed jobs and their original retained artifacts. No CI rerun, test invocation, source mutation, or new proof generation.",
+  "generated_at_utc": "2026-11-08T05:35:24.241553+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 42449729551,
+  "run_attempt": 1,
+  "workflow": "trnm-required-baseline",
+  "workflow_path": ".github/workflows/trnm-required-baseline.yml",
+  "event": "pull_request",
+  "github_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "run_snapshot_status": "in_progress",
+  "run_snapshot_conclusion": null,
+  "run_metadata": {
+    "path": "run-metadata.raw",
+    "bytes": 15147,
+    "sha256": "34cd3d2ab5209826333f5646008cc3dd889a0243a68c43fb628df6d28b1b89d8"
+  },
+  "tested_c5_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+  "prospective_merge_tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+  "conclusion": "All four jobs failed the current original 4 s pressure-phase confirmation target. Each baseline confirmed 1/1 and each pressure phase confirmed 0/1. All five named native processes in each job returned exit 0 without timeout. Service and sustained report gates passed; the confirmation gate failed with CONFIRMATION_TARGET.",
+  "precise_error_difference": "Pressure verification_errors is [PUBLIC_REQUEST_DEADLINE] for head protocol, x64 and arm64; it is [] for prospective merge. No deadline error code is inferred for the latter.",
+  "qualification": "HOLD_NO_GO",
+  "jobs": [
+    {
+      "directory": "protocol-contract",
+      "job_id": 128636161832,
+      "name": "protocol-contract",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729551/job/128636161832",
+      "status": "completed",
+      "conclusion": "failure",
+      "github_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "started_at": "2026-11-08T05:10:45Z",
+      "completed_at": "2026-11-08T05:18:23Z",
+      "failed_steps": [
+        {
+          "name": "Run actual protocol-contract checks",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-11-08T05:13:30Z",
+          "completed_at": "2026-11-08T05:18:17Z"
+        }
+      ],
+      "successful_source_identity_steps": [
+        "Verify immutable source identity",
+        "Verify source remained unchanged",
+        "Retain source and execution observations"
+      ],
+      "successful_prior_native_cost_steps": [],
+      "source_identity_artifact": {
+        "base": null,
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "native_source_before": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_after": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_unchanged": true,
+      "outer_controller": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "passed": false,
+        "systemd_run_exit": 1,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "parent_reused": false
+      },
+      "source_recompiled": true,
+      "format_passed": true,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        }
+      ],
+      "native_execution_completed": true,
+      "legacy_execution_finished": false,
+      "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "acceptance_stages": {
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 3474017,
+            "sha256": "919c1b01dd0b79dd10b2d265b5e6ae60dcc581f9c228aa7d17ba72eae1585c10"
+          },
+          "retained_matches_before_validation": true
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 18681463,
+            "sha256": "630e2d10194716c26ebb2a76aaee8793a35a8841d530e9b7ac2828d298b8ad4c"
+          },
+          "retained_matches_before_validation": true
+        },
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "retained_report": {
+            "state": "present",
+            "bytes": 9909003,
+            "sha256": "c84c87169194b0c7de7f3d6da60daf8657eba0bdcd6013696850066836664605"
+          },
+          "retained_matches_before_validation": true
+        }
+      },
+      "confirmation_report": {
+        "archive_member": "from-zero-native/confirmation/report.json",
+        "bytes": 9909003,
+        "sha256": "c84c87169194b0c7de7f3d6da60daf8657eba0bdcd6013696850066836664605",
+        "original_top_level_fields": {
+          "schema": "public-v3-signed-confirmation-pressure-v1",
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "same_packet_sequence_in_both_runs": true
+        },
+        "phases": [
+          {
+            "index": 0,
+            "role": "baseline",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 146452,
+              "confirmation_ended_ns": 3104402424,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "invariant_target_met": true,
+              "verification_errors": []
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 146452,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3999853548,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 1,
+              "unconfirmed": 0,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "observed_success_latency_ns": 3104255972,
+              "successful_latency": {
+                "samples": 1,
+                "missing_samples": 0,
+                "min_ns": 3104255972,
+                "max_ns": 3104255972,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": null,
+              "lower_bound_reaches_original_window_end": null,
+              "reported_finite_business_target_met": true
+            },
+            "verification_errors": []
+          },
+          {
+            "index": 1,
+            "role": "pressure",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 17305319,
+              "confirmation_ended_ns": null,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "invariant_target_met": true,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 17305319,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3982694681,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 0,
+              "unconfirmed": 1,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "observed_success_latency_ns": null,
+              "successful_latency": {
+                "samples": 0,
+                "missing_samples": 0,
+                "min_ns": null,
+                "max_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": 3982694681,
+              "lower_bound_reaches_original_window_end": true,
+              "reported_finite_business_target_met": false
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ]
+      },
+      "classification": "original_business_confirmation_target_failure",
+      "new_code_regression_demonstrated_by_these_records": false,
+      "all_possible_regressions_excluded": false,
+      "artifact": {
+        "id": 13605620747,
+        "name": "head-protocol-contract-034aa74358e0a5fa33f33e83cb63669e9738da4b-1",
+        "original_zip_historical_download": {
+          "path": "protocol-contract/artifact.zip",
+          "bytes": 5982059,
+          "sha256": "bc14d7e9820214e379ccbc5a0a546bdb19f524643439a14f70ce55700e176d5e"
+        },
+        "original_zip_published": false,
+        "original_zip_retained_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/protocol-contract/artifact.zip",
+        "uploaded_zip_sha256_matches": true,
+        "allowlisted_archive": {
+          "path": "protocol-contract/retained-evidence.tar.gz",
+          "bytes": 1116515,
+          "sha256": "c9326e0f8e1d4c78c17b87f253135492cd56c81725507e43c1420f91023e0d78"
+        },
+        "allowlisted_member_manifest": {
+          "path": "protocol-contract/retained-member-manifest.json",
+          "bytes": 7955,
+          "sha256": "3a84fd53ab563f282223279079b9212d7ab3d4148ba452a6faf36c9a67890059"
+        }
+      },
+      "job_metadata": {
+        "path": "protocol-contract/job-metadata.raw",
+        "bytes": 3135,
+        "sha256": "019c5bc62b7633d8049f19611c20005a2a193612012a627b36b90972e4665a40"
+      },
+      "job_log": {
+        "path": "protocol-contract/job-log.raw",
+        "bytes": 157374,
+        "sha256": "5c7027776e711995eb0209c2702a661858f9bc5c875c452cf04f3466ed667cce"
+      }
+    },
+    {
+      "directory": "prospective-merge-protocol-contract",
+      "job_id": 128636161885,
+      "name": "prospective-merge (protocol-contract)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729551/job/128636161885",
+      "status": "completed",
+      "conclusion": "failure",
+      "github_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "started_at": "2026-11-08T05:10:45Z",
+      "completed_at": "2026-11-08T05:17:26Z",
+      "failed_steps": [
+        {
+          "name": "Execute the same lane on the prospective merge",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 11,
+          "started_at": "2026-11-08T05:13:21Z",
+          "completed_at": "2026-11-08T05:17:20Z"
+        }
+      ],
+      "successful_source_identity_steps": [
+        "Verify merge identity and exact ordered parents",
+        "Verify merge source remained unchanged",
+        "Retain source and execution observations"
+      ],
+      "successful_prior_native_cost_steps": [],
+      "source_identity_artifact": {
+        "base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "prospective-merge",
+        "prospective_merge": "991168a783c3bf82e04f978091adbdc740998c47",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "native_source_before": {
+        "commit": "991168a783c3bf82e04f978091adbdc740998c47",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "991168a783c3bf82e04f978091adbdc740998c47",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_after": {
+        "commit": "991168a783c3bf82e04f978091adbdc740998c47",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "991168a783c3bf82e04f978091adbdc740998c47",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "991168a783c3bf82e04f978091adbdc740998c47",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_unchanged": true,
+      "outer_controller": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "passed": false,
+        "systemd_run_exit": 1,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "parent_reused": false
+      },
+      "source_recompiled": true,
+      "format_passed": true,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        }
+      ],
+      "native_execution_completed": true,
+      "legacy_execution_finished": false,
+      "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "acceptance_stages": {
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 3475712,
+            "sha256": "13133b5a80eedee3e91a6e29d033260439fa2a543feddb0e5e7a3c815e825f74"
+          },
+          "retained_matches_before_validation": true
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 19754141,
+            "sha256": "4ec33ff935781e7610c8d8a0c311eea67e701d3cba53831359ede7e24e6d8e17"
+          },
+          "retained_matches_before_validation": true
+        },
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "retained_report": {
+            "state": "present",
+            "bytes": 10970503,
+            "sha256": "6ba1970fae689cdc1c17d9c86a89061ef2349ee96a5f6a70c5bc4510b5e2127f"
+          },
+          "retained_matches_before_validation": true
+        }
+      },
+      "confirmation_report": {
+        "archive_member": "from-zero-native/confirmation/report.json",
+        "bytes": 10970503,
+        "sha256": "6ba1970fae689cdc1c17d9c86a89061ef2349ee96a5f6a70c5bc4510b5e2127f",
+        "original_top_level_fields": {
+          "schema": "public-v3-signed-confirmation-pressure-v1",
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "same_packet_sequence_in_both_runs": true
+        },
+        "phases": [
+          {
+            "index": 0,
+            "role": "baseline",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 126956,
+              "confirmation_ended_ns": 2705711211,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "invariant_target_met": true,
+              "verification_errors": []
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 126956,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3999873044,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 1,
+              "unconfirmed": 0,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "observed_success_latency_ns": 2705584255,
+              "successful_latency": {
+                "samples": 1,
+                "missing_samples": 0,
+                "min_ns": 2705584255,
+                "max_ns": 2705584255,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": null,
+              "lower_bound_reaches_original_window_end": null,
+              "reported_finite_business_target_met": true
+            },
+            "verification_errors": []
+          },
+          {
+            "index": 1,
+            "role": "pressure",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 78064301,
+              "confirmation_ended_ns": null,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "invariant_target_met": true,
+              "verification_errors": []
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 78064301,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3921935699,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 0,
+              "unconfirmed": 1,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "observed_success_latency_ns": null,
+              "successful_latency": {
+                "samples": 0,
+                "missing_samples": 0,
+                "min_ns": null,
+                "max_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": 3921935699,
+              "lower_bound_reaches_original_window_end": true,
+              "reported_finite_business_target_met": false
+            },
+            "verification_errors": []
+          }
+        ]
+      },
+      "classification": "original_business_confirmation_target_failure",
+      "new_code_regression_demonstrated_by_these_records": false,
+      "all_possible_regressions_excluded": false,
+      "artifact": {
+        "id": 13605765208,
+        "name": "merge-protocol-contract-991168a783c3bf82e04f978091adbdc740998c47-1",
+        "original_zip_historical_download": {
+          "path": "prospective-merge-protocol-contract/artifact.zip",
+          "bytes": 6075424,
+          "sha256": "120f3f2855da6e49fe36ca6677a441fc53f20be2d4d96efaaf75820e899c15a7"
+        },
+        "original_zip_published": false,
+        "original_zip_retained_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/prospective-merge-protocol-contract/artifact.zip",
+        "uploaded_zip_sha256_matches": true,
+        "allowlisted_archive": {
+          "path": "prospective-merge-protocol-contract/retained-evidence.tar.gz",
+          "bytes": 1195327,
+          "sha256": "3f47d3048f212a4e16b2c61fa0886d92d5e3f5315160ace662b924c621f6f09e"
+        },
+        "allowlisted_member_manifest": {
+          "path": "prospective-merge-protocol-contract/retained-member-manifest.json",
+          "bytes": 7956,
+          "sha256": "a91b4e81fa222e5390000c3e47265d8aebd1e59d2d74b4499b46696fc8f5b6f1"
+        }
+      },
+      "job_metadata": {
+        "path": "prospective-merge-protocol-contract/job-metadata.raw",
+        "bytes": 3759,
+        "sha256": "1b9458543c74c6cd567d796d880fed96b7d562ea5c42ee47ce71e943dbd56980"
+      },
+      "job_log": {
+        "path": "prospective-merge-protocol-contract/job-log.raw",
+        "bytes": 160084,
+        "sha256": "13c88f4e3137e7dcc34e6c6839e3ea7c6ece49b7c19b95503469e635a3a4ee10"
+      }
+    },
+    {
+      "directory": "cross-arch-cost-x64",
+      "job_id": 128636161945,
+      "name": "cross-arch-cost (x64)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729551/job/128636161945",
+      "status": "completed",
+      "conclusion": "failure",
+      "github_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "started_at": "2026-11-08T05:10:45Z",
+      "completed_at": "2026-11-08T05:17:56Z",
+      "failed_steps": [
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-08T05:13:09Z",
+          "completed_at": "2026-11-08T05:17:50Z"
+        }
+      ],
+      "successful_source_identity_steps": [
+        "Verify immutable source identity",
+        "Verify source remained unchanged"
+      ],
+      "successful_prior_native_cost_steps": [
+        "Execute native release setup and repeated-search costs",
+        "Execute native zero-matrix locality costs",
+        "Execute native one-zero rank-one locality costs",
+        "Execute native fixed maintenance producer and preparation costs",
+        "Execute native legal and late-rejection verifier costs"
+      ],
+      "source_identity_artifact": {
+        "base": null,
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "native_source_before": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_after": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_unchanged": true,
+      "outer_controller": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "passed": false,
+        "systemd_run_exit": 1,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "parent_reused": false
+      },
+      "source_recompiled": true,
+      "format_passed": true,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        }
+      ],
+      "native_execution_completed": true,
+      "legacy_execution_finished": false,
+      "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "acceptance_stages": {
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 3474891,
+            "sha256": "02668a570eb1f1881b0255841eda159e00e19f72036d7e46d4c440b6af5d5c08"
+          },
+          "retained_matches_before_validation": true
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 16190073,
+            "sha256": "046a25f65557b8b0397375c7df0ac2b315b5cc49ca196e4c5836c4d1ad6e38af"
+          },
+          "retained_matches_before_validation": true
+        },
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "retained_report": {
+            "state": "present",
+            "bytes": 9695961,
+            "sha256": "978d8ff1bb16afd2d976630b78efac8a66f801ce7357d944d7ee5e994829bced"
+          },
+          "retained_matches_before_validation": true
+        }
+      },
+      "confirmation_report": {
+        "archive_member": "from-zero-native/confirmation/report.json",
+        "bytes": 9695961,
+        "sha256": "978d8ff1bb16afd2d976630b78efac8a66f801ce7357d944d7ee5e994829bced",
+        "original_top_level_fields": {
+          "schema": "public-v3-signed-confirmation-pressure-v1",
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "same_packet_sequence_in_both_runs": true
+        },
+        "phases": [
+          {
+            "index": 0,
+            "role": "baseline",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 135077,
+              "confirmation_ended_ns": 1891829306,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "invariant_target_met": true,
+              "verification_errors": []
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 135077,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3999864923,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 1,
+              "unconfirmed": 0,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "observed_success_latency_ns": 1891694229,
+              "successful_latency": {
+                "samples": 1,
+                "missing_samples": 0,
+                "min_ns": 1891694229,
+                "max_ns": 1891694229,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": null,
+              "lower_bound_reaches_original_window_end": null,
+              "reported_finite_business_target_met": true
+            },
+            "verification_errors": []
+          },
+          {
+            "index": 1,
+            "role": "pressure",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 98250102,
+              "confirmation_ended_ns": null,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "invariant_target_met": true,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 98250102,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3901749898,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 0,
+              "unconfirmed": 1,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "observed_success_latency_ns": null,
+              "successful_latency": {
+                "samples": 0,
+                "missing_samples": 0,
+                "min_ns": null,
+                "max_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": 3901749898,
+              "lower_bound_reaches_original_window_end": true,
+              "reported_finite_business_target_met": false
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ]
+      },
+      "classification": "original_business_confirmation_target_failure",
+      "new_code_regression_demonstrated_by_these_records": false,
+      "all_possible_regressions_excluded": false,
+      "artifact": {
+        "id": 13605277513,
+        "name": "cost-x64-034aa74358e0a5fa33f33e83cb63669e9738da4b-1",
+        "original_zip_historical_download": {
+          "path": "cross-arch-cost-x64/artifact.zip",
+          "bytes": 8739310,
+          "sha256": "119ddc0bb1d0cda8669e59596d0acf94e7f5542afc55e64dd74b30dfe20fffd9"
+        },
+        "original_zip_published": false,
+        "original_zip_retained_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/cross-arch-cost-x64/artifact.zip",
+        "uploaded_zip_sha256_matches": true,
+        "allowlisted_archive": {
+          "path": "cross-arch-cost-x64/retained-evidence.tar.gz",
+          "bytes": 1016980,
+          "sha256": "5e7feb0c9fd457293ff84fbdd8f1d42035799a4f5961b413db35be817d91153b"
+        },
+        "allowlisted_member_manifest": {
+          "path": "cross-arch-cost-x64/retained-member-manifest.json",
+          "bytes": 7955,
+          "sha256": "8c08933047e0b0336ff48c705ad23df7f6f2ab91ccfa2aab3579e454efa03002"
+        }
+      },
+      "job_metadata": {
+        "path": "cross-arch-cost-x64/job-metadata.raw",
+        "bytes": 3899,
+        "sha256": "61acaef5d801c2a50206d6449c89e8260c0bc655aa0a2068e4443d5b444de43f"
+      },
+      "job_log": {
+        "path": "cross-arch-cost-x64/job-log.raw",
+        "bytes": 159161,
+        "sha256": "d4bbd8bf893ad3645130295dbaca19a63e4282b53a1f417d3f959fb67b1c4523"
+      }
+    },
+    {
+      "directory": "cross-arch-cost-arm64",
+      "job_id": 128636161957,
+      "name": "cross-arch-cost (arm64)",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729551/job/128636161957",
+      "status": "completed",
+      "conclusion": "failure",
+      "github_head_sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "started_at": "2026-11-08T05:10:48Z",
+      "completed_at": "2026-11-08T05:17:34Z",
+      "failed_steps": [
+        {
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 12,
+          "started_at": "2026-11-08T05:13:01Z",
+          "completed_at": "2026-11-08T05:17:27Z"
+        }
+      ],
+      "successful_source_identity_steps": [
+        "Verify immutable source identity",
+        "Verify source remained unchanged"
+      ],
+      "successful_prior_native_cost_steps": [
+        "Execute native release setup and repeated-search costs",
+        "Execute native zero-matrix locality costs",
+        "Execute native one-zero rank-one locality costs",
+        "Execute native fixed maintenance producer and preparation costs",
+        "Execute native legal and late-rejection verifier costs"
+      ],
+      "source_identity_artifact": {
+        "base": null,
+        "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683084400,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "native_source_before": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_after": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+        "tracked_source_identity": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "tested_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+          "candidate": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 15386,
+          "tracked_bytes": 1683084400,
+          "tests_executed_by_identity_check": false
+        },
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a"
+      },
+      "native_source_unchanged": true,
+      "outer_controller": {
+        "schema": "trnm-ci-original-public-host-controller-v2",
+        "passed": false,
+        "systemd_run_exit": 1,
+        "failure": null,
+        "final_host_errors": [],
+        "cleanup": "already-collected",
+        "parent_reused": false
+      },
+      "source_recompiled": true,
+      "format_passed": true,
+      "native_named_tests": [
+        {
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        },
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "exit_code": 0,
+          "timed_out": false
+        }
+      ],
+      "native_execution_completed": true,
+      "legacy_execution_finished": false,
+      "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+      "original_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "original_passed": false,
+      "acceptance_stages": {
+        "service_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 3476867,
+            "sha256": "0a36dbbf9c3176d9c2dd0e0603eb4e2350dc836fc5ae833ad99ea2f31ac3f841"
+          },
+          "retained_matches_before_validation": true
+        },
+        "sustained_report": {
+          "status": "passed",
+          "error": null,
+          "retained_report": {
+            "state": "present",
+            "bytes": 19730181,
+            "sha256": "9688600fbda27537f8a75e3a71a9768c53d2ffba03224cdaeeabe875bf2ac0d6"
+          },
+          "retained_matches_before_validation": true
+        },
+        "confirmation_report": {
+          "status": "failed",
+          "error": "CONFIRMATION_TARGET",
+          "retained_report": {
+            "state": "present",
+            "bytes": 12358149,
+            "sha256": "8eb6952952fd0d0acac4601d20649541806724df506c3c48fc1bbe3739815d15"
+          },
+          "retained_matches_before_validation": true
+        }
+      },
+      "confirmation_report": {
+        "archive_member": "from-zero-native/confirmation/report.json",
+        "bytes": 12358149,
+        "sha256": "8eb6952952fd0d0acac4601d20649541806724df506c3c48fc1bbe3739815d15",
+        "original_top_level_fields": {
+          "schema": "public-v3-signed-confirmation-pressure-v1",
+          "finite_target_met": false,
+          "invariant_target_met": true,
+          "same_packet_sequence_in_both_runs": true
+        },
+        "phases": [
+          {
+            "index": 0,
+            "role": "baseline",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 165549,
+              "confirmation_ended_ns": 1865766542,
+              "client_confirmed_transactions": 1,
+              "finite_business_target_met": true,
+              "invariant_target_met": true,
+              "verification_errors": []
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 165549,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3999834451,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 1,
+              "unconfirmed": 0,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.25,
+              "observed_success_latency_ns": 1865600993,
+              "successful_latency": {
+                "samples": 1,
+                "missing_samples": 0,
+                "min_ns": 1865600993,
+                "max_ns": 1865600993,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": null,
+              "lower_bound_reaches_original_window_end": null,
+              "reported_finite_business_target_met": true
+            },
+            "verification_errors": []
+          },
+          {
+            "index": 1,
+            "role": "pressure",
+            "original_report_fields": {
+              "requested_window_ns": 4000000000,
+              "business_started_ns": 36545523,
+              "confirmation_ended_ns": null,
+              "client_confirmed_transactions": 0,
+              "finite_business_target_met": false,
+              "invariant_target_met": true,
+              "verification_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            "observation_business": {
+              "required_signed_transactions": 1,
+              "business_start_delay_ns": 36545523,
+              "business_started_before_original_window_end": true,
+              "original_window_remaining_at_business_start_ns": 3963454477,
+              "pre_business_window_overrun_ns": 0,
+              "reported_independently_confirmed_in_window": 0,
+              "unconfirmed": 1,
+              "unknown": 0,
+              "independent_confirmed_transactions_per_window_second": 0.0,
+              "observed_success_latency_ns": null,
+              "successful_latency": {
+                "samples": 0,
+                "missing_samples": 0,
+                "min_ns": null,
+                "max_ns": null,
+                "minimum_samples": {
+                  "p50": 2,
+                  "p95": 20,
+                  "p99": 100
+                },
+                "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+                "p50_ns": null,
+                "p95_ns": null,
+                "p99_ns": null
+              },
+              "unconfirmed_latency_lower_bound_ns": 3963454477,
+              "lower_bound_reaches_original_window_end": true,
+              "reported_finite_business_target_met": false
+            },
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          }
+        ]
+      },
+      "classification": "original_business_confirmation_target_failure",
+      "new_code_regression_demonstrated_by_these_records": false,
+      "all_possible_regressions_excluded": false,
+      "artifact": {
+        "id": 13605012553,
+        "name": "cost-arm64-034aa74358e0a5fa33f33e83cb63669e9738da4b-1",
+        "original_zip_historical_download": {
+          "path": "cross-arch-cost-arm64/artifact.zip",
+          "bytes": 8750553,
+          "sha256": "b2f58e247b79889c5222180ae00472d9894d63990a8324e17c280b159077086e"
+        },
+        "original_zip_published": false,
+        "original_zip_retained_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/cross-arch-cost-arm64/artifact.zip",
+        "uploaded_zip_sha256_matches": true,
+        "allowlisted_archive": {
+          "path": "cross-arch-cost-arm64/retained-evidence.tar.gz",
+          "bytes": 1249936,
+          "sha256": "1ef524b85182654f3d832c3b7e55eb7a6117463435702b0283b5951456d3f515"
+        },
+        "allowlisted_member_manifest": {
+          "path": "cross-arch-cost-arm64/retained-member-manifest.json",
+          "bytes": 7956,
+          "sha256": "88f5f634879cedc542d59c369e260847b499c4102116b2cc9264f8ef01db8712"
+        }
+      },
+      "job_metadata": {
+        "path": "cross-arch-cost-arm64/job-metadata.raw",
+        "bytes": 3905,
+        "sha256": "dc48600c73228fb61f6cca1dec250e0a0c3cde56c49fa6a72bda642c6d9b4344"
+      },
+      "job_log": {
+        "path": "cross-arch-cost-arm64/job-log.raw",
+        "bytes": 159201,
+        "sha256": "8fa67d91a85114a8a7eb0757a4090a5a3ef19d99a06ff5e1d0c9f0a8f99a07a9"
+      }
+    }
+  ],
+  "retrieval": {
+    "job_metadata_and_logs": "retrieval.json",
+    "artifact_metadata_and_archives": "artifact-retrieval.json",
+    "artifact_requests": 8,
+    "artifact_requests_successful": 8,
+    "uploaded_archive_digests_matched": 4
+  },
+  "publication": {
+    "original_zips_published": false,
+    "originals_external_root": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b",
+    "allowlist_only": true,
+    "disposition": "publication-disposition.json"
+  },
+  "limits": [
+    "The four jobs are a subset of this workflow run; the retained run snapshot was still in_progress. This review does not claim a final outcome for other jobs.",
+    "The current C5 retained records establish this failure classification; no C3 root cause was substituted.",
+    "A passing Rust process does not grant business-report acceptance or execution of subsequent CI commands.",
+    "No code-regression cause is demonstrated by these records; this is not proof that every possible regression is absent.",
+    "These retained phases are finite local native service observations, not WAN acceptance, zkVM full-proof generation, tail-latency qualification, original winning-W1 Node admission, or deployment readiness.",
+    "Twenty successful named native process returns repeat the same five names over four jobs; they are not twenty additional distinct tests and do not amend the separately reported local qualification denominator.",
+    "Original ZIPs and non-allowlisted contents remain outside Git. Public compressed evidence contains only positively allowlisted unmodified logs, receipts, identities and reports. parsed-native-diagnostic.json is a post-hoc projection."
+  ]
+}

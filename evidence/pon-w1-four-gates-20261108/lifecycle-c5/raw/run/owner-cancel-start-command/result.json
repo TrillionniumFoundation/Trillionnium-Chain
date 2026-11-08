@@ -1,0 +1,29 @@
+{
+  "all_descendants_reaped": null,
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b/scripts/w1_owner_cancellation_v1.py",
+    "start",
+    "--config",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/config.json",
+    "--request",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/target-request.json",
+    "--out",
+    "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/owner-cancel-start"
+  ],
+  "can_authorize_payment": false,
+  "completed_monotonic_ns": 1191715869463353,
+  "completion_clock_scope": "actual Rust caller observed helper exit; not helper pre-handoff timestamp",
+  "completion_observed_before_original_proof_deadline": true,
+  "direct_child_waited": true,
+  "original_proof_deadline_ns": 1191795668407846,
+  "pid": 3171334,
+  "proof_deadline_renewed": false,
+  "returncode": 0,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "signal": null,
+  "started_monotonic_ns": 1191682647616516,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "4a7e17b2acfade7705d851aa62d954db7a71e657debfa0c4035c8c704d36377d",
+  "timed_out": false
+}

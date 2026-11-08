@@ -1,0 +1,98 @@
+{
+  "checkpoint_manifest_segment_count": 43,
+  "checkpoint_manifest_sha256": "07285cc244eef034e27423071484fcbd601e48b386f941a2bce572ebfa9cd2e8",
+  "checkpoint_manifest_source": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+  "complete_historical_process_tree_accounting": "UNKNOWN",
+  "deadline_renewed": false,
+  "full_proof_verified": false,
+  "gpu_accounting": "UNKNOWN",
+  "helper_error": "ValueError: actual prepared full execution changed",
+  "helper_result_complete": false,
+  "m12_meta_sequence": 2,
+  "m12_raw_event_tags": [
+    {
+      "payload_bytes": 866,
+      "payload_sha256": "741fac0bf7f7910e898667258a92f971c228bc53ab2fb1d58707ba3b367b7ecb",
+      "payload_tag_u8": 0,
+      "root": "0b53dddf5c02069ac558a7ca96549a10121b5a82fa9847029d0843647e4e1502",
+      "sequence": 1
+    },
+    {
+      "payload_bytes": 249,
+      "payload_sha256": "5ea5105b4262fc3dc1599767511d5e87acd83846157f0fd2f354265afdf370db",
+      "payload_tag_u8": 1,
+      "root": "42509b63b18dddef11ac0c076320befccd0256f8b705e2a54e5fbc43b7dae822",
+      "sequence": 2
+    }
+  ],
+  "native_active": {
+    "generation": 1,
+    "slot": 1,
+    "tip": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf"
+  },
+  "native_active_kv_keys": [],
+  "native_cancel_wire_exists": false,
+  "native_canonical_blocks_observed": [
+    {
+      "height": 0,
+      "id": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+      "parent": null
+    },
+    {
+      "height": 1,
+      "id": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+      "parent": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312"
+    }
+  ],
+  "new_generation_dispatches_by_reader": 0,
+  "new_native_transactions_by_reader": 0,
+  "observed_monotonic_ns": 1189704994699904,
+  "operation": "f57598b2be2ed23e839bffbd2d2ea9c8f4b339a5e0a5e52923b207a6c6a3e5bc",
+  "original_deadline_ns": 1189048740638185,
+  "original_native_funded_intent": {
+    "can_authorize_payment": false,
+    "journal_identity": "708cea222363b8fa70454ebbcd3fb4353baf57f9f7c3012b064c1d41a6f3985e",
+    "local_proof_plan": {
+      "compression_mode": "balanced",
+      "compression_workers": 2,
+      "rayon_threads": 4,
+      "segment_workers": 2
+    },
+    "native_obligation_units": 1000,
+    "native_reserve_parent": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+    "native_reserve_tip": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+    "normalized_request_digest": "09f4dcdda3b227f28029bc288d0a0eebc1cf0353682d56570635f3a3984fb5e3",
+    "original_deadline_ns": 1189048740638185,
+    "provider_operation": "f57598b2be2ed23e839bffbd2d2ea9c8f4b339a5e0a5e52923b207a6c6a3e5bc",
+    "research_genesis_only": true,
+    "research_node_path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/research-node",
+    "reserve_nonce": 1,
+    "schema": "TRNM-W1-FUNDED-DISPATCH2",
+    "statement": "0dfcbc2b21d373b0384af92c4053f28298bcf6c3aaa2b6916c2ba4c85f18446b",
+    "target_request_sha256": "e2ded785398ea77eef00e08e0c387b6ecd6c69811410be16521546bd83bb9d5c",
+    "task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+    "winner_monotonic_ns": 1188934109847101
+  },
+  "public_chain_transactions_sent": false,
+  "schema": "TRNM-W1-TIMEOUT-STARTUP-FAILURE-READBACK1",
+  "source_expected": "a5ec1ba30916400c345cb47679602cfb1b30a65f",
+  "target_actual_readback": {
+    "cancel": 0,
+    "operation": "f57598b2be2ed23e839bffbd2d2ea9c8f4b339a5e0a5e52923b207a6c6a3e5bc",
+    "result": null,
+    "state": "child-intent",
+    "statement": "0dfcbc2b21d373b0384af92c4053f28298bcf6c3aaa2b6916c2ba4c85f18446b",
+    "worker": {
+      "identity": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 3002189,
+        "start_ticks": 118894080
+      },
+      "job_id": "7c74da9a53f46d5182caacfccaa3b5dea0205ea2b02c91fbc967d7eaed0de934",
+      "operation": "f57598b2be2ed23e839bffbd2d2ea9c8f4b339a5e0a5e52923b207a6c6a3e5bc",
+      "provider_namespace": "1b74bd56883eb044c5e7c894dd08c0dbe58e4b884c7199b7e353618090eed014",
+      "request_sha256": "e2ded785398ea77eef00e08e0c387b6ecd6c69811410be16521546bd83bb9d5c"
+    }
+  },
+  "typed_terminal_failure_recorded_by_this_reader": false
+}

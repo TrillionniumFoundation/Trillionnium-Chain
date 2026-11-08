@@ -1,0 +1,299 @@
+{
+  "schema": "TRNM-W1-C5-QUALIFICATION-COUNTS-AND-ABBA-BOUNDARY-READONLY-AUDIT1",
+  "audit_scope": "Read-only rehash and raw-log summary recount of four retained final qualification outputs; no source/attestation changes, no new experiment.",
+  "readback_job_id": "1a1b991cb60-12894-1536",
+  "readback_runtime_terminal": {
+    "at_unix_ms": 1794114705378,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b991cb60-12894-1536",
+    "launch_nonce": "dd3e25497f1e264d01b70ee276f409f0",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 21261,
+        "stored": 21261
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+  },
+  "qualification_outputs": [
+    {
+      "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-ci-core-01",
+      "manifest_sha256": "5d12af80e48036c7a9a5549a2910f1c41da5c106460ed9fda7e7727c3e6ab702",
+      "manifest_qualification_complete": true,
+      "command_count": 19,
+      "all_command_exits_zero": true,
+      "raw_log_files_rehashed": 38,
+      "raw_log_pin_mismatches": [],
+      "python_reported_test_methods": 518,
+      "python_ok_summaries": 22,
+      "python_skip_markers": [],
+      "rust_outcomes": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "rust_suite_summaries": [],
+      "failure_summaries": [],
+      "source_before_and_after_match_C5": true,
+      "python_suite_counts": [
+        115,
+        39,
+        77,
+        16,
+        3,
+        13,
+        22,
+        20,
+        11,
+        13,
+        8,
+        8,
+        7,
+        12,
+        4,
+        12,
+        20,
+        14,
+        32,
+        11,
+        11,
+        50
+      ],
+      "ignored_tests": []
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-owner-01",
+      "manifest_sha256": "182b317b9d90962a2595be2421d7813fda627b5654404305edf9f4124833a466",
+      "manifest_qualification_complete": true,
+      "command_count": 19,
+      "all_command_exits_zero": true,
+      "raw_log_files_rehashed": 38,
+      "raw_log_pin_mismatches": [],
+      "python_reported_test_methods": 0,
+      "python_ok_summaries": 0,
+      "python_skip_markers": [],
+      "rust_outcomes": {
+        "passed": 37,
+        "failed": 0,
+        "ignored": 4
+      },
+      "rust_suite_summaries": [
+        {
+          "label": "09-m12-tests",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0,
+          "filtered_out": 46
+        },
+        {
+          "label": "10-node-short-tests",
+          "passed": 20,
+          "failed": 0,
+          "ignored": 4,
+          "filtered_out": 1187
+        },
+        {
+          "label": "11-legacy-admission-root-tests",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "filtered_out": 1210
+        },
+        {
+          "label": "12-legacy-reorg-root-tests",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "filtered_out": 1206
+        }
+      ],
+      "failure_summaries": [],
+      "source_before_and_after_match_C5": true,
+      "python_suite_counts": [],
+      "ignored_tests": [
+        "test store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation ... ignored, explicit resource-heavy fresh full-W1 proof; requires clean frozen source and TRNM_W1_FUNDED_CONFIG",
+        "test store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_owner_cancel_after_segment_start ... ignored, explicit owner cancellation of a real expensive W1 worker; requires a new research Node and original operation",
+        "test store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg ... ignored, explicit new research operation; actual r0vm original deadline, principal refund and real fork/cold round trip",
+        "test store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile ... ignored, read-only cold reconciliation of an existing owner-cancel attempt; never dispatches generation or cancellation"
+      ]
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01",
+      "manifest_sha256": "85b90b184ec79f8c9a0fc19d662593d2085532a77015528e6e86114a8414d436",
+      "manifest_qualification_complete": true,
+      "command_count": 4,
+      "all_command_exits_zero": true,
+      "raw_log_files_rehashed": 8,
+      "raw_log_pin_mismatches": [],
+      "python_reported_test_methods": 11,
+      "python_ok_summaries": 1,
+      "python_skip_markers": [],
+      "rust_outcomes": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "rust_suite_summaries": [],
+      "failure_summaries": [],
+      "source_before_and_after_match_C5": true,
+      "python_suite_counts": [
+        11
+      ],
+      "ignored_tests": []
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01",
+      "manifest_sha256": "557caa36c01ade287b9183c8bb846f4bcc8977edb4aef5bc38284820f504c84f",
+      "manifest_qualification_complete": true,
+      "command_count": 10,
+      "all_command_exits_zero": true,
+      "raw_log_files_rehashed": 20,
+      "raw_log_pin_mismatches": [],
+      "python_reported_test_methods": 0,
+      "python_ok_summaries": 0,
+      "python_skip_markers": [],
+      "rust_outcomes": {
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0
+      },
+      "rust_suite_summaries": [
+        {
+          "label": "tests-native",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "filtered_out": 0
+        },
+        {
+          "label": "tests-verifier",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0,
+          "filtered_out": 0
+        }
+      ],
+      "failure_summaries": [],
+      "source_before_and_after_match_C5": true,
+      "python_suite_counts": [],
+      "ignored_tests": []
+    }
+  ],
+  "totals": {
+    "python_passed": 529,
+    "rust_passed": 41,
+    "ordinary_test_methods_passed": 570,
+    "rust_ignored": 4,
+    "python_skips_detected": 0,
+    "failed": 0
+  },
+  "counting_limits": [
+    "Counts cover the four listed final qualification outputs only.",
+    "Four ignored heavy/cold tests are not counted as passes in these ordinary outputs.",
+    "Separate explicitly executed heavy/cold lifecycle runs are outside this audit and must be reported separately; this audit neither verifies nor adds them.",
+    "Source identity checks and successful build/check commands are not counted as additional tests.",
+    "Native qualification contains 2 native-example and 2 verifier Rust tests; historical native suite was not reexecuted.",
+    "Native build record declares independent_cleanroom_build=false and guest_compilation_performed=false; all qualification source reports bind C5 but are not fresh full-proof generation evidence."
+  ],
+  "abba_preparation": {
+    "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/full-generation-abba-plan",
+    "state": "prepared_not_executed",
+    "files": [
+      {
+        "name": "preparation.json",
+        "bytes": 6794,
+        "sha256": "b5e3b55f1bde8baf1aa175ed50caea6ab082adea5cc28af2eca627cb410fdb4c",
+        "contains_final_source_literal": false
+      },
+      {
+        "name": "README.md",
+        "bytes": 7685,
+        "sha256": "b85dc11689cd50c496eff1858b1ec6f9594066b15587c7c8ad5da0a789202f75",
+        "contains_final_source_literal": false
+      }
+    ],
+    "final_source_bound": false,
+    "current_executable_set_bound": false,
+    "ready_for_execution": false,
+    "basis": "All frozen-source, runner, native-winner, verifier and guest-ELF/image-ID required-before-execution fields remain null. No claim is made here that all current ELF files were independently rehashed; the plan does not bind any current set.",
+    "reference_source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+    "required_before_execution": {
+      "actual_C4_guest_elf_and_image_id": null,
+      "actual_C4_native_winner_path_and_sha256": null,
+      "actual_C4_runner_path_and_sha256": null,
+      "actual_C4_verifier_path_and_sha256": null,
+      "actual_source_build_qualification": null,
+      "exact_host_resource_capacity_rechecked": false,
+      "frozen_C4_commit": null,
+      "frozen_C4_tree": null,
+      "legal_Node_candidate_parent_state_and_artifact_commitments": null,
+      "material_header_expected_artifact_raw_pins": null,
+      "new_trial_ids_and_output_directories": null,
+      "original_trial_deadlines_and_boot_ids_must_be_recorded_before_each_winner": true,
+      "predeclared_failure_and_stop_policy": null,
+      "source_map_and_negative_control_gates_passed": false
+    },
+    "planned_order": [
+      "sequential",
+      "balanced",
+      "balanced",
+      "sequential"
+    ],
+    "planned_fresh_generations": 4,
+    "planned_per_scheme": 2,
+    "completed_fresh_generations": 0,
+    "execute_authorized_by_this_file": false,
+    "no_expensive_generation_started": true,
+    "claims_not_established": {
+      "Node_admission": false,
+      "WAN_benefit": false,
+      "fresh_generation_samples_completed_in_this_preparation": 0,
+      "general_causal_speedup": false,
+      "gpu_resource_qualified": false,
+      "original_business_budget_passed": false,
+      "payment_authorized": false,
+      "prover_population_p99": false,
+      "source_C4_full_generation": false,
+      "winner_population_tail": false
+    },
+    "limits": [
+      "80 historical ABBA rows are verification-only and are not fresh generation repeats.",
+      "The prospective plan is a parameter/argv draft, with null actual-source/ELF/legal-candidate/trial/stop-policy binding; it cannot be described as C5-ready or executed.",
+      "No Node admission follows from the historical placeholder PNH1 parent/roots materials.",
+      "Even four successful future fresh trials (two per scheme) would not establish population p99 or general causal acceleration.",
+      "Historical fixed-fixture work estimate is about 6.6575 hours, up to four 7200-second research deadlines; no such new campaign ran in this audit."
+    ]
+  },
+  "production_qualification_established": false,
+  "security_qualification_established": false,
+  "original_business_budget_passed": false,
+  "payment_qualified": false
+}

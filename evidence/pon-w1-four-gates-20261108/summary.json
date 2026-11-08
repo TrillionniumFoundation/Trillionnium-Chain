@@ -1,0 +1,180 @@
+{
+  "schema": "TRNM-W1-C5-FOUR-GATE-ATTESTATION1",
+  "tested_source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "tested_source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+  "attestation_is_executed_source": false,
+  "source_qualification_complete": true,
+  "components": {
+    "final-ci-core": {
+      "manifest": "final-ci-core-manifest.json",
+      "sha256": "5d12af80e48036c7a9a5549a2910f1c41da5c106460ed9fda7e7727c3e6ab702",
+      "actual_command_count": 19,
+      "original_source_binding": {
+        "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "python_test_methods_reported": 518,
+      "rust_test_outcomes": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "original_test_counts": null
+    },
+    "final-owner": {
+      "manifest": "final-owner-manifest.json",
+      "sha256": "182b317b9d90962a2595be2421d7813fda627b5654404305edf9f4124833a466",
+      "actual_command_count": 19,
+      "original_source_binding": {
+        "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "python_test_methods_reported": 0,
+      "rust_test_outcomes": {
+        "passed": 37,
+        "failed": 0,
+        "ignored": 4
+      },
+      "original_test_counts": null
+    },
+    "final-receiver": {
+      "manifest": "final-receiver-manifest.json",
+      "sha256": "85b90b184ec79f8c9a0fc19d662593d2085532a77015528e6e86114a8414d436",
+      "actual_command_count": 4,
+      "original_source_binding": {
+        "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "python_test_methods_reported": 11,
+      "rust_test_outcomes": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      "original_test_counts": null
+    },
+    "final-backend": {
+      "manifest": "final-backend-manifest.json",
+      "sha256": "7e500f1b607916648f8c3b96402e40018ecae90eb859d930bfa82cd8223142a6",
+      "actual_command_count": 7,
+      "original_source_binding": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "python_test_methods_reported": 0,
+      "rust_test_outcomes": null,
+      "original_test_counts": null
+    },
+    "final-native": {
+      "manifest": "final-native-manifest.json",
+      "sha256": "557caa36c01ade287b9183c8bb846f4bcc8977edb4aef5bc38284820f504c84f",
+      "actual_command_count": 10,
+      "original_source_binding": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "python_test_methods_reported": 0,
+      "rust_test_outcomes": null,
+      "original_test_counts": {
+        "native_example": 2,
+        "native_historical_suite_reexecuted": false,
+        "verifier": 2
+      }
+    }
+  },
+  "commands_matching_predeclared_outcome": 59,
+  "exit_zero_commands": 58,
+  "expected_nonzero_source_probe_commands": 1,
+  "expected_nonzero_explanation": "The runner actually verified committed source, then the source-only unknown-stage probe exited 1 as declared; it did not start proof work.",
+  "ordinary_tests": {
+    "python_passed": 529,
+    "rust_passed": 41,
+    "total_passed": 570,
+    "failed": 0,
+    "ignored_heavy_entrypoints_in_ordinary_suite": 4,
+    "native_test_scope": {
+      "native_winner": 2,
+      "verifier": 2
+    },
+    "full_historical_native_243_suite_rerun": false
+  },
+  "real_lifecycle_tests_separate": {
+    "expensive_original_timeout_refund_reorg_passed": 1,
+    "separate_process_cold_passed": 1,
+    "new_complete_proofs": 0
+  },
+  "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+  "original_deadline_monotonic_ns": 1191795668407846,
+  "target_terminal_monotonic_ns": 1191796086929474,
+  "target_terminal_after_original_deadline_ns": 418521628,
+  "dispatch_terminal": "Done",
+  "consumed_resources": null,
+  "resource_cap_retained_in_full": true,
+  "native_cancel_principal_refund": 1000,
+  "native_principal_refund_is_provider_payment": false,
+  "new_complete_generation_samples": 0,
+  "historical_complete_generation_samples_per_scheme": 1,
+  "verification_only_rows_reaudited": 80,
+  "full_generation_abba": {
+    "status": "prepared_not_executed",
+    "frozen_source_and_elf_pins_bound": false,
+    "reference_source": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+    "launch_ready": false,
+    "requires_legal_node_candidate_and_matching_proving_interface": true
+  },
+  "qualification_limits": {
+    "independent_cleanroom_build": false,
+    "guest_recompiled": false,
+    "actual_sqlite_io_owner_budget_domain_qualified": false,
+    "complete_historical_process_tree_reaped": false,
+    "full_resource_billing_complete": false,
+    "gpu_usage_known": false,
+    "positive_provider_payment_qualified": false,
+    "winning_w1_node_admission_qualified": false,
+    "deployment_wan_qualified": false,
+    "original_business_budget_qualified": false,
+    "population_tail_latency_established": false,
+    "causal_generation_speedup_established": false,
+    "verification_or_transport_deployment_benefit_established": false,
+    "cryptographic_and_protocol_security_qualified": false
+  },
+  "gates": {
+    "winner_receiver": "HOLD",
+    "same_resource_full_backend": "HOLD",
+    "real_async_owner": "HOLD",
+    "deployment_benefit_and_security": "HOLD"
+  },
+  "provenance_notes": [
+    "CI-core and owner raw manifests retain an unused retained_verifier_source_commit=C3 descriptive field; neither component executes a verifier. The separate final-receiver manifest, actual argv and native build artifacts bind the new C5 verifier. Raw manifests were not rewritten.",
+    "The C5 backend reused a cached binary freshly built in the same physical checkout at C4; only CI/meta changes separate C4 and C5. Actual runtime source probe verified C5. Native winner and verifier were actual non-fresh-cache Cargo artifacts at C5.",
+    "Ordinary tests and the separate actual lifecycle are different cohorts. The four ignored selectors are not counted as ordinary passing tests.",
+    "The ABBA parameter draft retains null source/ELF pin fields. It is not a C5 executable campaign and launched no work."
+  ],
+  "qualification_scope": "Local exact-source component tests, builds, source guards and separately observed research lifecycle; not a globally green GitHub CI result.",
+  "remote_ci_qualified": false,
+  "github_ci_snapshot": {
+    "path": "ci-c5/checks-snapshot-01.json",
+    "read_at_utc": "2026-11-08T05:20:34.309204+00:00",
+    "head": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "check_count": 104,
+    "counts": {
+      "SUCCESS": 48,
+      "FAILURE": 8,
+      "IN_PROGRESS": 45,
+      "SKIPPED": 3
+    },
+    "is_global_terminal_snapshot": false
+  },
+  "remote_ci_failure_jobs_read": 8,
+  "remote_ci_failure_layers": {
+    "historical_artifact_missing_diagnostic_not_executed": 1,
+    "actual_original_native_campaign_failure": 1,
+    "actual_fresh_service_failure": 2,
+    "actual_protocol_confirmation_failure": 4
+  },
+  "remote_ci_failure_report_pins": {
+    "protocol/summary.json": "7dcfdf8861c14ca6fca7d04a984ff1400db10c2c111d35099db5c4ff791cade1",
+    "business/summary.json": "a37d383949efc149d5e70f1c235e472596fd946b7bde8f351e69fce429f4bb6a"
+  },
+  "remote_ci_artifact_readback_reruns": 0
+}

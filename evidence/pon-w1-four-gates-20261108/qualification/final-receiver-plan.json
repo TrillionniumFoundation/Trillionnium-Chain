@@ -1,0 +1,30 @@
+{
+  "commands": [
+    {
+      "label": "real-receiver-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_w1_receiver_real.py",
+        "--verifier",
+        "/home/qian-qi/work/chain-w1-four-gates-native-target-20261108-ec265b/release/w1-verify-v2",
+        "--verifier-sha256",
+        "91bbf96300d9b6d34cbf36415febae33908b8589de3004801e2a9e136153b7bd",
+        "--receipt",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "--input",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/input.bin",
+        "--header",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/header.bin",
+        "--expected-artifacts",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+        "--out",
+        "@OUT@/real-receiver-controls"
+      ]
+    }
+  ],
+  "native_build_manifest": {
+    "path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/manifest.json",
+    "sha256": "557caa36c01ade287b9183c8bb846f4bcc8977edb4aef5bc38284820f504c84f"
+  },
+  "new_receipts_generated": 0
+}

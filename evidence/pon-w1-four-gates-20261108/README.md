@@ -1,58 +1,75 @@
-# W1 四个工程门：新代码、严格证据与仍未闭合的资格
+# W1 四个工程门：C5 实际超时、退款重组、冷恢复与精确资格
 
-本轮以 C3 `abab79dac0cb89eb2753d3f579119ac135650eb5` 为基线，整合 M12 topic `a5ec1ba30916400c345cb47679602cfb1b30a65f`、新的 receiver / 成本证据绑定、独立 ABBA 审计及前瞻式进程 collector。旧证明、原实验 deadline、旧 operation、原资源保留及失败样本均未改写。本目录是提交前已经实际取得的证据；最终精确提交构建、测试和新增真实生命周期由后续独立资格 attestation 固定，关联 PR 的索引指向该原件。
+本轮已将昂贵生成的自然超时、失败终态、owner 撤销、本金退款、真实分支重组和独立进程冷恢复走通。新 operation 的派发状态为 Done，完整资源 cap 仍保留；provider 未付款。四个部署工程门继续 HOLD。
 
-## 工程门状态
+实际运行源码固定为 [C5 034aa74358e0a5fa33f33e83cb63669e9738da4b](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/034aa74358e0a5fa33f33e83cb63669e9738da4b)，tree 8dd452c376452224602fb202940ae84fc1f84d2e，继承 C3 和 M12 topic a5ec1ba3。本页及新的资格/生命周期文件是独立文档分支的事后 attestation；没有把事后文档提交冒充为被运行源码。旧两份完整证明、各原实验 deadline、旧 operation 和失败原件保持原事实。
 
-| 工程门 | 本目录已经建立的增量 | 仍需实际证据 |
+## 四门更新
+
+| 工程门 | 本轮实际增量 | 尚未闭合 |
 | --- | --- | --- |
-| winner / receiver 采集 | 修复实际 stdout 与 observer digest 未绑定的缺口；11 项真实 receiver 控制通过。新增独立 subreaper 的有限真实进程控制，保留父/子退出、pidfd 与 wait4 / ECHILD。 | 原 winner 的合法 Node 父状态与 admission、部署 WAN、所有历史进程身份及完整资源计费。新 collector 不补写旧树。 |
-| 完整后端同资源实验 | 两份旧结果的 80 行 / 20 个 ABBA block 经严格类型、原始字节和闭合 pin 重审，未生成新 proof。 | 两个完整生成方案仍各 n=1，配置差异、总体尾延迟与因果加速未闭合；原业务资源条件未通过。 |
-| 真实异步 owner 接线 | `begin()` 在持久化 owner cancel 后不会再派发；新的 typed terminal reconciliation 绑定原身份、时钟和 deadline。资源未知仍占全额 cap，reorg 不回退本地历史。旧本金退款费用独立验算。 | 新昂贵自然超时、退款、实际 fork 与冷恢复需要独立新 operation 原件；正向 provider 付款和完整资源结算仍未建立。 |
-| 部署收益与安全资格 | 两个真实证据接收反例已修复并加入 mandatory CI；系统级 CPU 隔离短探针实际执行成功；C3 业务 CI 失败原件完整保留。 | 验证/传输收益、业务预算、完整密码学及协议安全资格仍未建立。 |
+| 实际 winner / receiver 采集 | 修复实际 verifier stdout 与 observer digest 未绑定、JSON 类型别名和最终输入 pin 缺口；11 项真实 receiver 控制用新 C5 verifier 通过。新增 subreaper 的有限真实进程回收控制。 | 中奖 W1 的合法 Node admission、部署 WAN、全部历史进程身份/回收及完整资源计费。 |
+| 完整后端同资源实验 | 原 80 行 / 20 个 ABBA block 通过独立严格重审；保留同资源完整生成参数草案。 | 两方案仍各 n=1，配置差异与总体尾延迟未消除；新完整生成数 0。草案的冻结源码/ELF pins 仍为空，未绑定 C5、不可直接开跑。原业务预算未通过。 |
+| 真实异步 owner 接线 | 新昂贵任务真实启动后自然到达唯一原 deadline，先写 Failure Unknown，再 owner 撤销及本金退款；实际 fork 移除/恢复同一原 Cancel；独立 cold 不重派。新操作 M12 Done。 | Done 是派发终态，资源消耗仍 null、全 cap 保留；正向 provider 付款与完整资源结算未建立。旧两个相关操作仍按原记录 Pending。 |
+| 部署收益与安全资格 | 精确 C5 完成 570 项普通测试；证据攻击反例进入 mandatory CI；新增 CPU 隔离短探针和费用独立审计，C3 业务失败全部保留。 | 验证/传输部署收益、原业务资源条件、完整密码学及协议安全资格未建立。 |
 
-所有四门保持 HOLD，局部测试通过不改变该状态。
+## 1. 实际昂贵超时、资金和重组
 
-## 可核验的增量
+[生命周期原件与允许公开的逐文件清单](lifecycle-c5/README.md) 对应新 operation 3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77。研究限制是 8 CPU、8 GiB、120 秒原始 proof 期限；外层 240 秒只用于终止/退款闭合，不恢复证明资格或更新原 deadline。
 
-### 1. 证据接收不能只信 JSON 中的数值
+| 实际阶段 | 已观察到的事实 |
+| --- | --- |
+| 昂贵启动 | 固定 r0vm ELF 的 prove-batch-0000 实际进程及 parent runner、PID birth、boot、child cgroup、CPU affinity 一致；启动观察早于原 deadline。 |
+| 自然超时 | 唯一原 deadline 为 1191795668407846 ns。Target cause=original-deadline、sticky_cancel=false、真实 exit=-9；结束观察 1191796086929474 ns，比原 deadline 晚 0.418521628 秒。 |
+| 失败入账 | Runtime/helper 与 Rust caller 的实际终态绑定原 job、request、statement、source、clock；Failure Unknown 先于 owner 撤销。consumed=null，全 cap 保留。 |
+| 取消与本金 | 后续显式 owner veto 阻止再派发；原 NativeTask Cancel 退回本金 1000。该退款不构成 provider 付款或资源 credit。 |
+| 实际重组 | 更长有效 fork 移除原 Cancel，canonical 状态回到 Reserved/1000、不能继续声称已退款。本地操作历史不回退。通过延长原 ancestry 恢复同一 wire、packet 和 inclusion，不另签退款交易。 |
+| 独立冷恢复 | 全新进程复用同一 operation、statement、原 deadline 和原 target 终态：M12 Done、cap 保留、原 Cancel 仍 canonical；0 dispatch、0 target cancel、0 native transaction。 |
 
-原 C3 reader 接受将真实保留行的 verifier 内部时间从 33,114,440 ns 改为 1 ns、却保留旧 observer stdout digest 的副本。独立审计器另接受把原始行整数 `0` 改为布尔 `false` 的类型别名。新路径绑定实际读取字节，严格检查 UTF-8、重复键、类型、有限值、原时钟、退出/超时状态及所有输入的最终 pin。
+实际 heavy 入口 1 通过，123.23 秒含超时后的收尾；独立 cold 入口 1 通过，0.45 秒。两次父进程均 exit 0 且输出完整持久。target 的 late terminal 是超时观察，不是完整 proof 的完成时间；本轮新增完整 proof 为 0。当前 child cgroup 递归为空、worker 原 birth identity 已不存在，不证明所有历史后代曾被完整记录和 wait/reap；cold 也只核原终态与当前 worker，不增加历史全树资格。
 
-[复现、修复边界及真实 receiver 控制](evidence-binding/README.md) 保留第一版和后续差量的原始记录。整合树已实际通过 12 项绑定、20 项审计、10 项 CI 接线负控制和 11 项真实 receiver 控制。真实 receiver 重用已资格 C3 verifier 及既有完整 v2 receipt，未产生新完整 proof。
+[此前新 operation 的源码拒绝失败](failed-operation/README.md) 单独保留：旧 C3 runner 从编译时 checkout 查询出的真实源码与新计划不符，原操作没有重派或延长 deadline，M12 仍 Pending、全 cap 保留。后续成功试验使用新构建来源和全新 operation，未改写该失败。
 
-### 2. 原 winner 的链上上下文尚不成立
+## 2. 精确源码本地资格已经完成
 
-[header 与 admission 源规则诊断](winner-admission/README.md) 对原 318-byte PNH1 header 完成逐字段解码/重编码。它包含固定 parent `05×32`、height/time=1 和占位承诺；native winner 明确没有检查 parent eligibility。当前 Growth Node 要求 354-byte PGH2 及独立的 growth challenge 域，不能用包壳方式替换原声明。Legacy admission 仍需要原父状态、交易 body、分支规则与 task eligibility；旧原件没有提供这些上下文。本轮只有源码与材料诊断，实际 submit / negative admission 事件均为 0。
+[完整资格、缓存来源、二进制 pin 与原始日志](qualification/README.md) 固定 C5 前后 clean source：
 
-### 3. 80 行 ABBA 仍是验证阶段比较
+| 组件 | 实际普通测试 |
+| --- | ---: |
+| CI / source / evidence | 518 Python |
+| 实际 receiver | 11 Python |
+| Owner / M12 / retained admission / retained reorg | 37 Rust |
+| Native winner 与 verifier | 4 Rust |
+| 合计 | 570 通过；普通套件中另有 4 个 heavy 入口 ignored |
 
-[独立审计](abba-audit/README.md) 全部接受 80 行。按 block 均值比再取中位数，proof/native 为 12.0628448679 与 13.7398970544；原边际中位数比仍是 13.0634904873 与 13.4308277868。两个统计口径分开保留。全部 20 个 block 中 proof 验证更慢，不能把这些行计为新的生成实验或生成加速。
+[C5 GitHub CI 快照与实际失败](ci-c5/README.md) 单独记录远端状态。05:20 UTC 的 104 checks 为 48 success、8 failure、45 in progress、3 skipped，尚非全局终态；本地通过不表示远端全绿。
 
-### 4. 进程 collector 只结算自身真实 wait 域
+mandatory W1 为 151 项，645 个 PQ source pins 仍以原严格规则验证且资格结论保持 HOLD。两 crate strict Clippy、自有 Rust fmt、locked/offline Cargo 图和实际 compiler artifact 均核对。实际 costly/cold 两次入口另列，未把 ignored 数量或验证重复次数算作完整生成样本。没有重跑历史 native 243 项全套，也没有建立完整 SQLite I/O owner-domain 业务预算资格。
 
-[collector 控制与接口](collector-controls.md) 保留首次缺少 `/proc/.../children` 导致的两次本地清理失败、修复后 14/14、本机首轮启动等待失败、独立桌面 14/14 和最小等待窗修正后的定向复验。原 target 的 `dispatch → _worker → _exec` 实际链已被新 collector 包裹并执行有限载荷，原 `Popen` 状态未被窃取。
+## 3. 修复了真实证据接收反例
 
-collector 使用单线程初始空 wait 域、subreaper、原 boot/PID birth、pidfd、waitid/wait4、真实父进程返回码及原钟闭合；最终 ECHILD 只证明该存活 collector 所拥有/收养的可等待后代已回收。它不枚举中间父进程早已回收的所有历史孩子，不将共享 cgroup 与 wait4 CPU 重复累加，也不授权付款。完整历史树、GPU 与 billing 字段保持未资格。
+[绑定反例与修复](evidence-binding/README.md) 记录旧 C3 reader 接受把真实 verifier 内部时间从 33,114,440 ns 改为 1 ns、却保留旧 observer digest 的副本。旧审计器还接受整数 0 变为布尔 false。新实现绑定真正读取的字节，严格验证 UTF-8、重复键、有限值、递归类型、原时钟、真实退出及最终输入 pins；未闭合之前不发布成功身份。
 
-### 5. 新系统级隔离能力不回填旧任务
+开发阶段的历史控制使用当时可读的旧 verifier；最终 11 项真实 receiver 明确使用新 C5 verifier。旧 ELF 路径后来缺失造成的 C4 pre-test 失败原件仍保留，不把零执行测试算作通过。
 
-[CPU 隔离探针](cpu-system-scope/README.md) 保留 systemd 255 transient 属性不兼容的首轮失败和成功后 12/12 条件。新动态 UID 的短服务对 7 个真实 GPU 设备的原路径/备用映射共 28 次 open 全部拒绝；socket、ptrace、继承 fd 控制和 null/zero 正向控制均实际执行。父进程壁钟为 4.612593864 秒。
+## 4. 完整生成与 admission 仍有具体阻塞
 
-这是一个 0.25 CPU、256 MiB 的新短探针。尚未证明完整 zkVM 在相同隔离下可运行；旧 `gpu_ns=null`、full cap 与计费状态不变。
+[原 winner header 与 admission 诊断](winner-admission/README.md) 逐字解码/重编码了 318-byte PNH1。现有保留原件未提供与其固定 parent 和承诺匹配的合法 Node 父状态及事务上下文；native winner 也未检查 parent eligibility。当前 Growth Node 使用 354-byte PGH2 和 growth challenge 域。现有原件没有证明同一中奖声明已被真实 Node 接纳；针对这两份旧证明所对应中奖 W1 的实际 submit/negative admission 事件均为 0。
 
-### 6. 旧取消费用已有独立推导
+[完整生成 ABBA 草案](full-generation-abba-plan/README.md) 仅准备 A/B 同资源参数。原 preparation 仍为 prepared_not_executed，source_constraint 仍引用 A d3037c…，冻结 source/tree 和 runner/native/verifier/guest ELF 字段为 null。先需要合法 Node candidate、同候选 native admission 与对应 proving interface，再固定所有执行 pins、创建新操作/新 deadline，才能执行该比较。不能称为 C5 已就绪的执行计划。
 
-[旧取消费用审计](old-cancellation-fees/README.md) 从 exact C1b config/wire 计算 reserve 419、cancel 291，验证两份 Ed25519 签名及金额关系：本金 1000，cancel 余额净增 709，reserve+cancel 合计净减 710。读回只打开既有私有分析副本，SQLite SHA 前后相同；没有新签名、提交、退款或资源返还。
+[原 80 行严格审计](abba-audit/README.md) 的两个 per-block 均值比中位数为 12.0628448679 / 13.7398970544；原边际中位数比仍是 13.0634904873 / 13.4308277868。全部 20 个 block 中 proof 验证更慢；receipt/native payload 为 5.191573 倍。这些都是旧完整 receipt 的重复验证，新增生成数为 0，没有总体 p99 或因果生成加速结论。
 
-### 7. C3 业务失败不因新单测通过而消失
+## 5. 进程、隔离与资金边界
 
-[C3 CI 原件](ci-c3/README.md) 固定三份公开 artifact 的 ZIP 哈希及 41 个原始记录。3 次完整原生 campaign 的 9 个原 30 秒阶段均未通过 finite criteria；baseline 均只确认计划 3 项中的 1 项，压力阶段均为 0/3。固定 .25 CPU / 2 GiB 的 4 秒控制也有真实业务失败，不能说成工具启动失败。
+[Collector 控制](collector-controls.md) 保留首次失败、修复及最终 14 项实际控制。单独 subreaper 只拥有新 command 的 wait 域，使用 boot/PID birth、pidfd、waitid/wait4 和实际 caller exit；原 target 的 dispatch→worker→exec 有限载荷真实运行。最终 ECHILD 的含义限制在该存活 collector 所拥有/收养的可等待后代，不能补齐其他父进程已回收的全部历史孩子。额外真实 SIGKILL 控制和原始证据在 qualification 归档中。
 
-本轮是这些 C3 结果的保留与诊断，不是重跑，也没有将短控制升级为新的业务预算通过。
+[系统级 CPU 隔离探针](cpu-system-scope/README.md) 12/12 条件实际通过：7 个真实 GPU 设备共 28 次 open 全部拒绝，并完成 socket、ptrace、继承 fd 及 null/zero 正向控制。该新短探针未运行完整 zkVM，不能回填旧任务的 GPU=0 或完整资源计费。
 
-## 源资格边界
+[旧取消费用独立审计](old-cancellation-fees/README.md) 从原 config/wire 推导 Reserve 419、Cancel 291，重新验证两个 Ed25519 签名。本金 1000 对应取消净增 709、Reserve+Cancel 净减 710。原只读副本 SHA 前后相同；该审计没有产生新资金动作。
 
-M12 topic 的 20 项 Node 短控、11 项 M12 短控及 strict Clippy 已实际通过，4 个资源密集入口按既有显式开关保持 ignored；这 4 个入口不计为已完成的昂贵实验。mandatory W1 Python command block 固定为 151 个实际测试，真实 receiver 为 11 个，并对删除、重复、吞错、移 lane、降计数及 skip 设置负控制。
+## 6. 保留业务失败与资格限制
 
-最终集成必须使用干净的精确 commit、锁定 Cargo graph 与实际父进程状态。构建缓存复用与保留 verifier / guest / upstream r0vm 必须分别声明；尤其 staged runner 的 `source_commit()` 从编译时 checkout 查询 Git，不能把旧 C3 ELF 重标为新源码。本轮首个新 timeout operation 正因该严格检查而失败，原失败 operation 保留且禁止重派。新源码必须重新构建该 runner 后，以新的 operation 和预声明 deadline 再测。
+[C3 公开 CI 原件](ci-c3/README.md) 固定三个 campaign 的 9 个原 30 秒阶段，finite criteria 均未通过；baseline 各只确认计划 3 项中的 1 项，压力阶段均为 0/3。4 秒、0.25 CPU、2 GiB 的相关控制也存在实际业务失败。这些 C3 记录不是本轮重跑，不能由新的普通测试通过覆盖。[C5 当前 CI](ci-c5/README.md) 另外实际产生了新的失败：3 次 native campaign 的 9 个原 30 秒阶段全部 finite=false；fresh-service 的 head/merge 两 lane 未通过原 4 秒／6 层目标；4 个 protocol/cost job 在确认目标失败。另有一项历史 artifact 缺失导致诊断未执行，不能混作业务失败。
+
+[机器可读总表](summary.json) 将各工程门及部署、资源计费、业务预算和完整密码学/协议安全资格明确保持 HOLD/false。当前最关键的后续依赖依次是：合法同声明 Node admission 与 proving interface；冻结输入后完整生成的同资源重复实验；执行时可审计的全历史资源所有权与计费；在合法完成/结算条件成立后验证一次性正向 provider 付款；最后在原业务资源和真实网络条件下验证端到端收益。

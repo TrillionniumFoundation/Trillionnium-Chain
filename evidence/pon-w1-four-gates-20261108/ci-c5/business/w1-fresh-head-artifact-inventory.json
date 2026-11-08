@@ -1,0 +1,405 @@
+{
+  "artifact_id": 13604969104,
+  "entries": [
+    {
+      "bytes": 108305,
+      "compressed_bytes": 7776,
+      "crc32": 2075002085,
+      "directory": false,
+      "name": "fresh-service/build.log"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33622,
+      "crc32": 1581979833,
+      "directory": false,
+      "name": "fresh-service/fresh/baseline/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/fresh/baseline/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "name": "fresh-service/fresh/baseline/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/fresh/baseline/receiver/owner.lock"
+    },
+    {
+      "bytes": 196608,
+      "compressed_bytes": 9361,
+      "crc32": 994842766,
+      "directory": false,
+      "name": "fresh-service/fresh/pressure/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/fresh/pressure/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "name": "fresh-service/fresh/pressure/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/fresh/pressure/receiver/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": 3407097486,
+      "directory": false,
+      "name": "fresh-service/fresh/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/fresh/producer/owner.lock"
+    },
+    {
+      "bytes": 6818861,
+      "compressed_bytes": 364286,
+      "crc32": 3220677580,
+      "directory": false,
+      "name": "fresh-service/fresh/report.json"
+    },
+    {
+      "bytes": 914,
+      "compressed_bytes": 478,
+      "crc32": 159524670,
+      "directory": false,
+      "name": "fresh-service/fresh.log"
+    },
+    {
+      "bytes": 8897,
+      "compressed_bytes": 1997,
+      "crc32": 720263840,
+      "directory": false,
+      "name": "fresh-service/manifest.json"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33622,
+      "crc32": 1581979833,
+      "directory": false,
+      "name": "fresh-service/original/baseline/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/original/baseline/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "name": "fresh-service/original/baseline/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/original/baseline/receiver/owner.lock"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13267,
+      "crc32": 3643880431,
+      "directory": false,
+      "name": "fresh-service/original/pressure/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/original/pressure/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": 3752630567,
+      "directory": false,
+      "name": "fresh-service/original/pressure/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/original/pressure/receiver/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": 3407097486,
+      "directory": false,
+      "name": "fresh-service/original/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service/original/producer/owner.lock"
+    },
+    {
+      "bytes": 9931084,
+      "compressed_bytes": 407441,
+      "crc32": 3049184269,
+      "directory": false,
+      "name": "fresh-service/original/report.json"
+    },
+    {
+      "bytes": 420,
+      "compressed_bytes": 277,
+      "crc32": 3608732563,
+      "directory": false,
+      "name": "fresh-service/original.log"
+    },
+    {
+      "bytes": 10971408,
+      "compressed_bytes": 4426075,
+      "crc32": 1563461855,
+      "directory": false,
+      "name": "fresh-service/public_v3_from_zero"
+    },
+    {
+      "bytes": 128,
+      "compressed_bytes": 37,
+      "crc32": 2321039516,
+      "directory": false,
+      "name": "fresh-service-controls.log"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": 3011331718,
+      "directory": false,
+      "name": "fresh-service-host/actual-systemd-parent.log"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": 3011331718,
+      "directory": false,
+      "name": "fresh-service-host/actual-systemd-parent-after.log"
+    },
+    {
+      "bytes": 1634,
+      "compressed_bytes": 792,
+      "crc32": 1449850238,
+      "directory": false,
+      "name": "fresh-service-host/after-provision.json"
+    },
+    {
+      "bytes": 2801,
+      "compressed_bytes": 710,
+      "crc32": 1251268073,
+      "directory": false,
+      "name": "fresh-service-host/before-provision.json"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": 321726484,
+      "directory": false,
+      "name": "fresh-service-host/child-final-load-state.log"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": 321726484,
+      "directory": false,
+      "name": "fresh-service-host/child-load-state.log"
+    },
+    {
+      "bytes": 353,
+      "compressed_bytes": 233,
+      "crc32": 207326088,
+      "directory": false,
+      "name": "fresh-service-host/child-result.json"
+    },
+    {
+      "bytes": 7701,
+      "compressed_bytes": 1994,
+      "crc32": 1250194698,
+      "directory": false,
+      "name": "fresh-service-host/controller-result.json"
+    },
+    {
+      "bytes": 1712,
+      "compressed_bytes": 818,
+      "crc32": 3904698406,
+      "directory": false,
+      "name": "fresh-service-host/inside-after.json"
+    },
+    {
+      "bytes": 1701,
+      "compressed_bytes": 808,
+      "crc32": 3325812519,
+      "directory": false,
+      "name": "fresh-service-host/inside-before.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service-host/install-reviewed-unit.log"
+    },
+    {
+      "bytes": 1668,
+      "compressed_bytes": 833,
+      "crc32": 632756601,
+      "directory": false,
+      "name": "fresh-service-host/outside-after.json"
+    },
+    {
+      "bytes": 146,
+      "compressed_bytes": 111,
+      "crc32": 4046598973,
+      "directory": false,
+      "name": "fresh-service-host/parent-properties.log"
+    },
+    {
+      "bytes": 921,
+      "compressed_bytes": 519,
+      "crc32": 1442554237,
+      "directory": false,
+      "name": "fresh-service-host/prepare-build/process.json"
+    },
+    {
+      "bytes": 7069,
+      "compressed_bytes": 1609,
+      "crc32": 831729072,
+      "directory": false,
+      "name": "fresh-service-host/prepare-build/stderr"
+    },
+    {
+      "bytes": 108363,
+      "compressed_bytes": 7760,
+      "crc32": 1241279665,
+      "directory": false,
+      "name": "fresh-service-host/prepare-build/stdout"
+    },
+    {
+      "bytes": 3406,
+      "compressed_bytes": 1229,
+      "crc32": 2287224190,
+      "directory": false,
+      "name": "fresh-service-host/prepare-build.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service-host/seal-parent-directory.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service-host/seal-parent-receipt.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service-host/start-fixed-parent.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": 0,
+      "directory": false,
+      "name": "fresh-service-host/systemd-reload.log"
+    },
+    {
+      "bytes": 542,
+      "compressed_bytes": 371,
+      "crc32": 723584209,
+      "directory": false,
+      "name": "fresh-service-host/systemd-run.log"
+    },
+    {
+      "bytes": 229,
+      "compressed_bytes": 139,
+      "crc32": 2035026314,
+      "directory": false,
+      "name": "fresh-service-host/unprovisioned-parent.json"
+    },
+    {
+      "bytes": 178,
+      "compressed_bytes": 38,
+      "crc32": 1518723612,
+      "directory": false,
+      "name": "original-host-controls.log"
+    },
+    {
+      "bytes": 24541,
+      "compressed_bytes": 4014,
+      "crc32": 656914225,
+      "directory": false,
+      "name": "original-native-controls.log"
+    },
+    {
+      "bytes": 133,
+      "compressed_bytes": 114,
+      "crc32": 1692302564,
+      "directory": false,
+      "name": "preflight.log"
+    },
+    {
+      "bytes": 3304,
+      "compressed_bytes": 1228,
+      "crc32": 1352497591,
+      "directory": false,
+      "name": "public-fixture-parent.json"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 240,
+      "crc32": 2925178925,
+      "directory": false,
+      "name": "source-after.json"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 240,
+      "crc32": 2925178925,
+      "directory": false,
+      "name": "source.json"
+    }
+  ],
+  "zip_sha256": "e990e58f09aa8e6de43054c0d86c4b39074ec846dcbb2304a933ce21a9ef57a5"
+}

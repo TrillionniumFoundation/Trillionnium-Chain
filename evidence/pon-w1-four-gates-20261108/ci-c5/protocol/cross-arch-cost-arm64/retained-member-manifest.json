@@ -1,0 +1,201 @@
+{
+  "scope": "Exact unmodified original ZIP member bytes selected by a positive allowlist. Only logs, process receipts, source identity and three native reports. No SQLite, native executable, full state tree, proc environ or credentials.",
+  "original_zip_sha256": "b2f58e247b79889c5222180ae00472d9894d63990a8324e17c280b159077086e",
+  "files": [
+    {
+      "path": "from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321"
+    },
+    {
+      "path": "from-zero-native-host/controller-result.json",
+      "bytes": 7644,
+      "sha256": "936eb8f39461a05926ec6a74cdacf2e42acc2228132300d09352361043af533e"
+    },
+    {
+      "path": "from-zero-native-host/inside-after.json",
+      "bytes": 1696,
+      "sha256": "9d64d75f6b20c72bfab3fa7d2f890f7e91e4485179213ffcfb1d702df5825cc9"
+    },
+    {
+      "path": "from-zero-native-host/inside-before.json",
+      "bytes": 1683,
+      "sha256": "9bc78e31e350381401b3caf3c2a26f3e246d06d30f5942bc6e9b11c3880119e8"
+    },
+    {
+      "path": "from-zero-native-host/prepare-build.json",
+      "bytes": 3425,
+      "sha256": "bcadc3f339bb768865b7c711456fbe4722550d8162bc6c6c24e8907d3f7fffd1"
+    },
+    {
+      "path": "from-zero-native-host/prepare-build/process.json",
+      "bytes": 919,
+      "sha256": "54143cbb84c93a095e295be5020f2ac43ac2ca724f97d981bab36d454f7c1609"
+    },
+    {
+      "path": "from-zero-native-host/prepare-build/stderr",
+      "bytes": 4792,
+      "sha256": "cafcb278d459265ea1662618fdca8cf55b352c67652811d278672ff8b82d7e5f"
+    },
+    {
+      "path": "from-zero-native-host/prepare-build/stdout",
+      "bytes": 113333,
+      "sha256": "e68ba540861840d479644b5ea962ee5764e4a1243271771d8284965b25db4ab2"
+    },
+    {
+      "path": "from-zero-native-host/systemd-run.log",
+      "bytes": 6903,
+      "sha256": "69fa53b12276eafa1735b5daf513b188cf230a47e49fb8c63e90b2043be61250"
+    },
+    {
+      "path": "from-zero-native/build/process.json",
+      "bytes": 894,
+      "sha256": "756bc7bbea970c75d56f29a524702c009d6702ea4504491fb4d3b7df973bee67"
+    },
+    {
+      "path": "from-zero-native/build/stderr",
+      "bytes": 62,
+      "sha256": "6b1c8cbe0bd9cb3b12baa322a9182419af04da4050d3affc7c9798b1b46e30b5"
+    },
+    {
+      "path": "from-zero-native/build/stdout",
+      "bytes": 113234,
+      "sha256": "cbfb37a22b60383117f411ca2feb64972df4c39f2ec9c0d953e4bfe81039b320"
+    },
+    {
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 885,
+      "sha256": "cd5de0a6a4f8f7e687d7a81e0c1aff51da48cb04db850cb700fab3b5861258ac"
+    },
+    {
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+    },
+    {
+      "path": "from-zero-native/confirmation/report.json",
+      "bytes": 12358149,
+      "sha256": "8eb6952952fd0d0acac4601d20649541806724df506c3c48fc1bbe3739815d15"
+    },
+    {
+      "path": "from-zero-native/format-check/process.json",
+      "bytes": 793,
+      "sha256": "bb397e53dab4cad1761dfa5d38f1b4e686c50cf61c65fb632d8cf2f1eb778c60"
+    },
+    {
+      "path": "from-zero-native/format-check/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/format-check/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/format-copy/process.json",
+      "bytes": 819,
+      "sha256": "6218c727b359d976cf5a64db468fdd9b3ccbbde7e95c22509a4414b497a71227"
+    },
+    {
+      "path": "from-zero-native/format-copy/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/format-copy/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "000fc5b63762ac26897327769e8ab97ab4878378e70f05ecab0cded52b745d6c"
+    },
+    {
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3363,
+      "sha256": "6bbd0169647011612a5db46635772a3a99f3e2d1ba1e99b724e75c37e14a2991"
+    },
+    {
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 897,
+      "sha256": "81a6913f55a4ce62cdf495097059646d70380d85faf3e27fc17743991cb74b92"
+    },
+    {
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+    },
+    {
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 911,
+      "sha256": "2969865c08c40b8a863b5799693ef9d423dcdc63032aabae1c007f8c42bddfc4"
+    },
+    {
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 915,
+      "sha256": "32cd8805eb2200ceefa3c9d78f6e06934e77153a386f9cbf67459ead1e67e7da"
+    },
+    {
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 948,
+      "sha256": "55e6056398bcb325baf26f59d4fbf1367415c0b50f78727c042aa9aeada4f7f6"
+    },
+    {
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 407,
+      "sha256": "d82b888feb4cdcedea3de3194ec397d13490dfcdda0b60d11a34f024809dbc52"
+    },
+    {
+      "path": "from-zero-native/manifest.json",
+      "bytes": 72914,
+      "sha256": "1ed760a24e2a1bc0f0e9d48ceb42f6efb7f2e84de46049391e25a80511af94c7"
+    },
+    {
+      "path": "from-zero-native/native/report.json",
+      "bytes": 3476867,
+      "sha256": "0a36dbbf9c3176d9c2dd0e0603eb4e2350dc836fc5ae833ad99ea2f31ac3f841"
+    },
+    {
+      "path": "from-zero-native/native/sustained/report.json",
+      "bytes": 19730181,
+      "sha256": "9688600fbda27537f8a75e3a71a9768c53d2ffba03224cdaeeabe875bf2ac0d6"
+    },
+    {
+      "path": "public-fixture-parent.json",
+      "bytes": 3197,
+      "sha256": "3c7d16420c4a0fe8154e744f9cbc5405d0fc38d68ae257f90774f8ef59e49b2c"
+    },
+    {
+      "path": "source.json",
+      "bytes": 423,
+      "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+    }
+  ]
+}
