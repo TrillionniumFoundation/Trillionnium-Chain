@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 1,
+  "observed_unix_seconds": 1794138407.6801744,
+  "qualification_granted": false,
+  "result": "FAIL",
+  "schema": "trnm-pq-inventory-negative-v1",
+  "source": "d8280daa8651ca387813b25e2a712f3fd1c82a1d",
+  "stderr": {
+    "bytes": 76,
+    "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

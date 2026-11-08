@@ -8,6 +8,9 @@ case "${1:?required job}" in
     # A passing HOLD check does not certify whole-chain PQ or PQ-128.
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
+    python3 scripts/ci/test_pq_authority_effect_register.py
+    python3 scripts/ci/pq_authority_effect_register.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only

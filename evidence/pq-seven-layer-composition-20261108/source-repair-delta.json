@@ -1,0 +1,8 @@
+{
+  "diff_name_status": "M\tconfig/pon/pq-cross-branch-corpus-v1.json\nM\tevidence/pq-seven-layer-composition-20261108/README.md\nA\tevidence/pq-seven-layer-composition-20261108/distributed-inventory-repair.json\nA\tevidence/pq-seven-layer-composition-20261108/source-preparation-followup.json\nM\ttrillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "generated_native_source_inventory_changed": true,
+  "initial_source": "d8280daa8651ca387813b25e2a712f3fd1c82a1d",
+  "native_authorization_rules_changed": false,
+  "native_results_are_source_specific": true,
+  "repaired_source": "1d29818ad927f549f43d74a06f51e91771feac70"
+}

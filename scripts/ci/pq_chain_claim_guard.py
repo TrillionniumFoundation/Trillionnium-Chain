@@ -14,6 +14,7 @@ import sys
 
 from pq_source_reader import SourceReadError, read_regular
 from pq_lifetime_budget import (BudgetError, DEFAULT_MANIFEST as LIFETIME_BUDGET,
+                                DEFAULT_SOURCE_LOCK as LIFETIME_SOURCE_LOCK,
                                 inspect as inspect_lifetime_budget)
 
 CONFIG = 'config/pon/post-quantum-transition-v1.json'
@@ -66,6 +67,11 @@ GATES = {
         'scripts/ci/test_pq_authority_trace.py',
         'config/pon/pq-authority-traces-v1.json',
         'docs/security/PQ_AUTHORITY_TRACE_V1.md',
+
+        'scripts/ci/pq_authority_effect_register.py',
+        'scripts/ci/test_pq_authority_effect_register.py',
+        'config/pon/pq-authority-effects-v1.json',
+        'docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md',
         'docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md',
     ),
     'proof_pq128': (
@@ -106,6 +112,7 @@ GATES = {
     ),
     'lifetime_budget': (
         LIFETIME_BUDGET,
+        LIFETIME_SOURCE_LOCK,
         'scripts/ci/pq_lifetime_budget.py',
         'scripts/ci/test_pq_lifetime_budget.py',
         'docs/security/PQ128_LIFETIME_BUDGET_V1.md',
@@ -269,6 +276,7 @@ def inspect(root: Path) -> dict:
                   for gate, paths in GATES.items()},
         'lifetime_budget': {key: lifetime[key] for key in (
             'schema', 'status', 'manifest_sha256', 'allocated_sum',
+            'source_revision_bound', 'source_binding_scope', 'source_lock_sha256',
             'model_arithmetic_sum', 'actual_lifetime_failure_bound',
             'unknown_terms', 'unknown_query_budgets',
             'composition_coverage_proved', 'theorem_applicability_verified',

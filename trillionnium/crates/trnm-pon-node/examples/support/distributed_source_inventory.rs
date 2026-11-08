@@ -204,6 +204,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-authority-effects-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-authority-effects-v1.json"
+        )),
+    ),
+    (
         "config/pon/pq-authority-traces-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -264,6 +271,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/pq128-lifetime-example-v1.json"
+        )),
+    ),
+    (
+        "config/pon/pq128-source-lock-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq128-source-lock-v1.json"
         )),
     ),
     (
