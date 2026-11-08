@@ -1,0 +1,1364 @@
+{
+  "arm_observations": [
+    {
+      "arm": "generation-arm-1",
+      "comparison": {
+        "bytes": 214153,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "sha256": "1c20ddb6496e9576ad84d77f9af1e9220a3ef50fe257d0593d6a651103b4f8bc"
+      },
+      "comparison_output_directory": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1",
+      "dispatch_attempted": true,
+      "error": null,
+      "observer_directory": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/observe-generation-arm-1",
+      "process": {
+        "bytes": 6206,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/observe-generation-arm-1/result.json",
+        "sha256": "d10369060b24c0288608516c9c0a14f000344f3b141b76c565587ed45ef666b6"
+      }
+    },
+    {
+      "arm": "generation-arm-2",
+      "comparison": {
+        "bytes": 214717,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "sha256": "d1a0d767680d1304231088911461b0b42dd7a19a8f6a3f3f282ed073c1c29a3d"
+      },
+      "comparison_output_directory": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2",
+      "dispatch_attempted": true,
+      "error": null,
+      "observer_directory": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/observe-generation-arm-2",
+      "process": {
+        "bytes": 5732,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/observe-generation-arm-2/result.json",
+        "sha256": "1053ad641392ca3f6f64a7aabd2208ddfc38bc5f3fb5131c7ac250c896deb14e"
+      }
+    }
+  ],
+  "audit_errors": [],
+  "binding": {
+    "bytes": 3043,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-binding-01/binding.json",
+    "sha256": "8a3f3961e29692b7ade104b5060a40d0f467853031d776dd66e8ddb7b6f8a7af"
+  },
+  "canceled_signal": null,
+  "cancellation_event": null,
+  "clock_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "cost_comparison": {
+    "arm2_over_arm1_proof_inner_median": 0.9953888662698372,
+    "per_arm": [
+      {
+        "cold_process_benefit_observed": false,
+        "native": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.3838812238536775,
+            "median": 0.2906128515023738,
+            "minimum": 0.2773780629504472,
+            "p95_nearest_rank": 0.3145924729760736,
+            "p99_nearest_rank": 0.3838812238536775,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 5470166,
+            "median": 2658634.5,
+            "minimum": 1933305,
+            "p95_nearest_rank": 5012235,
+            "p99_nearest_rank": 5470166,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.005813,
+            "median": 0.005135000000000001,
+            "minimum": 0.003546,
+            "p95_nearest_rank": 0.005433,
+            "p99_nearest_rank": 0.005813,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "payload_byte_benefit_observed": false,
+        "proof": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.3241907141637057,
+            "median": 0.29144723305944353,
+            "minimum": 0.2738429568707943,
+            "p95_nearest_rank": 0.3142791260033846,
+            "p99_nearest_rank": 0.3241907141637057,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 63550505,
+            "median": 34731046.5,
+            "minimum": 30642732,
+            "p95_nearest_rank": 59710534,
+            "p99_nearest_rank": 63550505,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.039746000000000004,
+            "median": 0.038655999999999996,
+            "minimum": 0.033684,
+            "p95_nearest_rank": 0.039445,
+            "p99_nearest_rank": 0.039746000000000004,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "proof_over_native_cold_wall_median": 1.0028711103199883,
+        "proof_over_native_inner_median": 13.063490487315951,
+        "receipt_over_native_payload_bytes": 5.191572738657941,
+        "verification_inner_benefit_observed": false
+      },
+      {
+        "cold_process_benefit_observed": false,
+        "native": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.48474837793037295,
+            "median": 0.2886295081116259,
+            "minimum": 0.2729562649037689,
+            "p95_nearest_rank": 0.42869339510798454,
+            "p99_nearest_rank": 0.48474837793037295,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 4988411,
+            "median": 2573996.0,
+            "minimum": 2233490,
+            "p95_nearest_rank": 4003652,
+            "p99_nearest_rank": 4988411,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.0051909999999999994,
+            "median": 0.004944,
+            "minimum": 0.003873,
+            "p95_nearest_rank": 0.00516,
+            "p99_nearest_rank": 0.0051909999999999994,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "payload_byte_benefit_observed": false,
+        "proof": {
+          "cold_process_wall_seconds": {
+            "count": 20,
+            "maximum": 0.44589301804080606,
+            "median": 0.3046814830740914,
+            "minimum": 0.279219564050436,
+            "p95_nearest_rank": 0.44166439585387707,
+            "p99_nearest_rank": 0.44589301804080606,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "verifier_inner_ns": {
+            "count": 20,
+            "maximum": 60631674,
+            "median": 34570897.0,
+            "minimum": 32722011,
+            "p95_nearest_rank": 60466037,
+            "p99_nearest_rank": 60631674,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          },
+          "wait4_cpu_seconds": {
+            "count": 20,
+            "maximum": 0.041637,
+            "median": 0.038324,
+            "minimum": 0.033525,
+            "p95_nearest_rank": 0.039594,
+            "p99_nearest_rank": 0.041637,
+            "scope": "descriptive repeated verification of this fixed claim on this host"
+          }
+        },
+        "proof_over_native_cold_wall_median": 1.0556144625249386,
+        "proof_over_native_inner_median": 13.430827786834168,
+        "receipt_over_native_payload_bytes": 5.191572738657941,
+        "verification_inner_benefit_observed": false
+      }
+    ],
+    "scope": "ratio of two finite proof-verification medians under common requested conditions; not a paired ratio, new proof generation, or population tail"
+  },
+  "deadline_exhausted_at_snapshot": false,
+  "declaration": {
+    "bytes": 2695,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-proposal-01/declaration.json",
+    "sha256": "b524761ffe38d0fd7bcd883d812315d90f9541620dc1a86eb242660a4de412b3"
+  },
+  "distinct_receipt_byte_identities": 2,
+  "error": null,
+  "fresh_proof_generations": 0,
+  "funded_owner_or_admission_qualified": false,
+  "generation_terminals_preserved": [
+    {
+      "at_unix_ms": 1794083957727,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b75f99d3-12894-a75",
+      "launch_nonce": "b33f9665ea39b096a09ddc9090fdd64f",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 207,
+          "stored": 207
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    {
+      "at_unix_ms": 1794083855202,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b75fd351-12894-a76",
+      "launch_nonce": "a903808c955315c4a34d3dc6e1fdae3d",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 225,
+          "stored": 225
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  ],
+  "local_cost_deadline_monotonic_ns": 1163240272834461,
+  "local_cost_started_monotonic_ns": 1162640272834461,
+  "main_generation_deadline_extended": false,
+  "operation_complete": true,
+  "owned_scope_closed_observed": true,
+  "planned_rows": [
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 0,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 0
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 1,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 1
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 2,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 2
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 3,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 3
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 4,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 4
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 5,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 5
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 6,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 6
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 7,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 7
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 8,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 8
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 9,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 9
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 10,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 10
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 11,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 11
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 12,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 12
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 13,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 13
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 14,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 14
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 15,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 15
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 16,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 16
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 17,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 17
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 18,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 18
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 19,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 19
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 20,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 20
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 21,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 21
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 22,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 22
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 23,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 23
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 24,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 24
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 25,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 25
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 26,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 26
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 27,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 27
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 28,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 28
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 29,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 29
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 30,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 30
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 31,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 31
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 32,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 32
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 33,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 33
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 34,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 34
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 35,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 35
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 36,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 36
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 37,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 37
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 38,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 38
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-1",
+      "dispatched": true,
+      "index": 39,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-1/result.json",
+        "row_index": 39
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 0,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 0
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 1,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 1
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 2,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 2
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 3,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 3
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 4,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 4
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 5,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 5
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 6,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 6
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 7,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 7
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 8,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 8
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 9,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 9
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 10,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 10
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 11,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 11
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 12,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 12
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 13,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 13
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 14,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 14
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 15,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 15
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 16,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 16
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 17,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 17
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 18,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 18
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 19,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 19
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 20,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 20
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 21,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 21
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 22,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 22
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 23,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 23
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 24,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 24
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 25,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 25
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 26,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 26
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 27,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 27
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 28,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 28
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 29,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 29
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 30,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 30
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 31,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 31
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 32,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 32
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 33,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 33
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 34,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 34
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 35,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 35
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 36,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 36
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 37,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 37
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 38,
+      "kind": "proof",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 38
+      },
+      "state": "ACCEPTED"
+    },
+    {
+      "accepted": true,
+      "arm": "generation-arm-2",
+      "dispatched": true,
+      "index": 39,
+      "kind": "native",
+      "observation": {
+        "comparison_result": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/generation-arm-2/result.json",
+        "row_index": 39
+      },
+      "state": "ACCEPTED"
+    }
+  ],
+  "population_tail_established": false,
+  "real_exit_zero_and_no_operation_cancellation_sidecar_required": true,
+  "resource_note": "do not sum this scope with nested stage wait4 CPU; memory peak includes setup",
+  "result_is_pre_handoff_snapshot": true,
+  "schema": "TRNM-W1-COMMON-RAYON2-ABBA-STUDY1",
+  "scope_after": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b7cc14c0-12894-c57.service",
+    "cpu_max": "200000 100000",
+    "cpu_usage_ns": 40287375000,
+    "members": [
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 2069,
+        "pid": 1750808,
+        "start_ticks": 116263450
+      },
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 1750808,
+        "pid": 1750815,
+        "start_ticks": 116263459
+      }
+    ],
+    "memory_max": "8589934592",
+    "memory_peak_upper_bound_bytes": 447021056,
+    "monotonic_ns": 1162676067992677
+  },
+  "scope_before": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b7cc14c0-12894-c57.service",
+    "cpu_max": "200000 100000",
+    "cpu_usage_ns": 4868433000,
+    "members": [
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 2069,
+        "pid": 1750808,
+        "start_ticks": 116263450
+      },
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 1750808,
+        "pid": 1750815,
+        "start_ticks": 116263459
+      }
+    ],
+    "memory_max": "8589934592",
+    "memory_peak_upper_bound_bytes": 442953728,
+    "monotonic_ns": 1162640268832756
+  },
+  "single_cgroup_cpu_delta_including_cleanup_and_setup_overlap_ns": 35418942000,
+  "source_after": {
+    "command": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-after.json"
+      ],
+      "exit": 0,
+      "label": "source-after",
+      "stage_result": {
+        "bytes": 3150,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-after-process/result.json",
+        "sha256": "8e8598a9b6c3ad59c6649d545a132ba04eb08406a2d0daaa30e16b2fe8ae073d"
+      },
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-after-process/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-after-process/stdout.log",
+        "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+      }
+    },
+    "report": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-after.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    }
+  },
+  "source_before": {
+    "command": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-before.json"
+      ],
+      "exit": 0,
+      "label": "source-before",
+      "stage_result": {
+        "bytes": 3876,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-before-process/result.json",
+        "sha256": "2f1ce1bd54269c9348afd0d1a5250f31eb73c9565b4913ab7bcc86e1d3a23c9a"
+      },
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-before-process/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-before-process/stdout.log",
+        "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+      }
+    },
+    "report": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/common-rayon2-abba-A-01/audit/source-before.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    }
+  },
+  "source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+  "source_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9"
+}

@@ -585,5 +585,128 @@ class CorpusGateTests(unittest.TestCase):
                     check(self.root)
 
 
+    def postwin_dependency_fixture(self):
+        # This literal inventory is independent of the checker's required set.
+        # The fixture is source bytes only, never a successful prover/receiver.
+        dependencies = (
+            ".github/workflows/pon-w1-transparent-profile.yml",
+            "scripts/ci/ci_job.sh",
+            "scripts/ci/check_ci_contract.py",
+            "scripts/ci/test_ci_contract.py",
+            "scripts/ci/check_pq_research_integration.py",
+            "scripts/ci/test_pq_research_integration.py",
+            "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+            "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+            "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+            "scripts/ci/test_w1_cancellation_handoff.py",
+            "scripts/ci/test_w1_coordinator_contract.py",
+            "scripts/ci/test_w1_postwin_identity.py",
+            "scripts/ci/test_w1_kaggle_worker_contract.py",
+            "scripts/ci/test_w1_staged_observer.py",
+            "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+            "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+            "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1_staged_prover/schedule.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1_staged_prover/schedule_tests.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1_staged_prover/recursion_tests.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1_staged_prover/parallel_segments.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1_staged_prover/parallel_segments_tests.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1_staged_prover/guest_identity.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/host-v2/Cargo.toml",
+            "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/Cargo.toml",
+            "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/build.rs",
+            "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+            "formal/pon-nakamoto-v1/w1_zkvm/RETAINED_V2_GUEST.md",
+            "evidence/pon-w1-backend-sdk-20261107/fixed-sdk-contract.json",
+            "scripts/run_w1_receiver.py",
+            "scripts/run_w1_postwin_proof.py",
+            "scripts/run_w1_deployment_comparison.py",
+            "scripts/audit_w1_deployment_comparison.py",
+            "scripts/ci/test_w1_deployment_comparison_audit.py",
+            "scripts/ci/test_w1_deployment_evidence_binding.py",
+            "scripts/w1_owned_process_collector_v1.py",
+            "scripts/test_w1_owned_process_collector_v1.py",
+            "scripts/ci/test_w1_receiver_real.py",
+            "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+            "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+            "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/task_owner.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/terminal.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/terminal.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy/cancellation/timeout.rs",
+            "trillionnium/crates/trnm-service-settlement/src/lib.rs",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "scripts/kaggle_generation_contract_v2.py",
+            "scripts/test_kaggle_generation_contract_v2.py",
+            "scripts/w1_generation_target_v2.py",
+            "scripts/test_w1_generation_target_v2.py",
+            "scripts/w1_owner_cancellation_v1.py",
+            "scripts/test_w1_owner_cancellation_v1.py",
+            "scripts/w1_owned_generation_runtime_v2.py",
+            "scripts/test_w1_owned_generation_runtime_v2.py",
+            "scripts/build_w1_kaggle_source.py",
+            "scripts/w1_kaggle_worker_template.py",
+            "scripts/ci/test_w1_kaggle_source_builder.py",
+            "evidence/pon-w1-full-v2-20261105/succinct.bin",
+            "evidence/pon-w1-full-v2-20261105/input.bin",
+            "evidence/pon-w1-full-v2-20261105/header.bin",
+            "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+            "evidence/pon-w1-full-v2-20261105/guest.bin",
+            "evidence/pon-w1-full-v2-20261105/asset-sha256.json",
+            "evidence/pon-w1-statement-v2-20261105/input-declaration.json",
+            "evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+        )
+        for name in dependencies:
+            if name not in self.pins:
+                self.put(name, name.encode())
+            if name not in self.manifest["required_paths"]:
+                self.manifest["required_paths"].append(name)
+        self.save()
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertFalse(result["cryptographic_acceptance"])
+        self.assertFalse(result["node_activated"])
+        return dependencies
+
+    def test_postwin_dependencies_cannot_omit_requirements_or_pins(self):
+        dependencies = self.postwin_dependency_fixture()
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+
+    def test_postwin_dependencies_cannot_mutate_under_retained_blob_pins(self):
+        for name in self.postwin_dependency_fixture():
+            with self.subTest(path=name):
+                source = self.root / name
+                original = source.read_bytes()
+                try:
+                    source.write_bytes(original + b"changed post-win source or retained input")
+                    with self.assertRaisesRegex(IntegrityError, "changed source"):
+                        check(self.root)
+                finally:
+                    source.write_bytes(original)
+        self.assertFalse(check(self.root)["node_activated"])
+
+
+
 if __name__ == "__main__":
     unittest.main()

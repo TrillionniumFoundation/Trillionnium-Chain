@@ -1,0 +1,887 @@
+{
+  "analysis_complete": true,
+  "arms": {
+    "funded-balanced": {
+      "arm": "funded-balanced",
+      "checkpoint_event_counts": {
+        "ALL_SEGMENT_STARKS_VERIFIED": 1,
+        "BACKEND_CLIENT_CONSTRUCTED": 55,
+        "BACKEND_WORKERS_JOINED": 29,
+        "BACKEND_WORKERS_STARTED": 29,
+        "BALANCED_RECURSION_ROOT_COMPLETE": 1,
+        "BALANCED_RECURSION_ROUND_COMPLETE": 6,
+        "COMPLETE_RELATION_EXECUTED": 1,
+        "EXECUTE_STARTED": 1,
+        "FULL_COMPOSITE_VERIFIED_INTERNAL_ONLY": 1,
+        "FULL_SUCCINCT_STARK_SAVED_VERIFIED": 1,
+        "PARALLEL_BATCH_CANONICAL_PREFIX_PUBLISHED": 253,
+        "PARALLEL_SEGMENT_BATCH_STARTED": 22,
+        "REAL_RECURSION_STARTED": 85,
+        "REAL_RECURSIVE_STARK_SAVED_VERIFIED": 85,
+        "REAL_SEGMENT_CANDIDATE_SAVED_VERIFIED_UNLINKED": 43,
+        "REAL_SEGMENT_PROVING_STARTED": 43,
+        "REAL_SUCCINCT_COMPRESSION_STARTED": 1,
+        "RECURSION_SCHEDULE_DECLARED": 1,
+        "SEGMENT_BUDGET_EXHAUSTED": 22,
+        "SEGMENT_EXPORTED": 43
+      },
+      "complete_execute": {
+        "cryptographic_proof_complete": false,
+        "cycles": 9040798,
+        "elapsed_ns": 847317102,
+        "segments": 43,
+        "stage": "COMPLETE_RELATION_EXECUTED"
+      },
+      "compression_internal": {
+        "compress_entry_scope": "load and verify all segments, full composite, recursion, final verify, serialize, fsync, readback; excludes CLI/source checks and this final event publication",
+        "compress_entry_to_receipt_readback_ns": 2434972813789,
+        "compression_prover_ns": 2431929653173,
+        "compression_prover_ns_scope": "recursive schedule, including checkpoint reuse verification and publication; excludes full composite preparation and final verification/publication",
+        "consensus_admission": false,
+        "final_serialization_publication_readback_ns": 5828181,
+        "final_verify_ns": 66872344,
+        "fresh_process_verification_required": true,
+        "pre_recursion_ns": 2969224086,
+        "proof_randomness_tickets": 0,
+        "receipt_bytes": 257014,
+        "receipt_sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57",
+        "stage": "FULL_SUCCINCT_STARK_SAVED_VERIFIED",
+        "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+      },
+      "constructor_observation": "explicit parallel client events only; zero events is uninstrumented, not zero startup cost",
+      "controller_stages_complete": 32,
+      "event_timings_scope": "Different operations within one proof; these are not independent prover trials or tail samples.",
+      "explicit_client_constructor_ns": {
+        "count": 55,
+        "max_ns": 7138490,
+        "median_ns": 5382648,
+        "min_ns": 3963056,
+        "sum_ns": 293962659
+      },
+      "fresh_full_proof_trials_observed": 1,
+      "gpu_ns": null,
+      "guest_rebuilt": false,
+      "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "image_id": [
+        1958252411,
+        3287394615,
+        1805488136,
+        1516578702,
+        78549041,
+        790278610,
+        301018785,
+        4279049364
+      ],
+      "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "native_winner_ns": 1155534490086143,
+      "new_joins": 42,
+      "new_lifts": 43,
+      "new_segment_seals": 43,
+      "node_admission_qualified": false,
+      "observed_stage_wait4_cpu_scope": "new stages only; prior raw costs retained separately; no reconstruction of unreaped or missed descendants",
+      "observed_stage_wait4_cpu_seconds": 40276.868358,
+      "original_deadline_ns": 1162725467096441,
+      "original_files_inventoried": 746,
+      "original_job_id": "1a1b75f99d3-12894-a75",
+      "production_qualified": false,
+      "readback": {
+        "legacy_A_target_observation_limit": "The original A target reported direct cgroup members only; current whole original scope observation is separate and does not retroactively prove full historical billing or descendant wait/reap.",
+        "original_job_scope": {
+          "all_descendants_wait_reaped": null,
+          "current_live_members_observed": false,
+          "historical_full_billing_established": false,
+          "observed_monotonic_ns": 1162802075839281,
+          "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75f99d3-12894-a75.service",
+          "state": "ABSENT"
+        },
+        "original_postwin_scope": {
+          "all_descendants_wait_reaped": null,
+          "current_live_members_observed": false,
+          "historical_full_billing_established": false,
+          "observed_monotonic_ns": 1162802075925670,
+          "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75f99d3-12894-a75.service/trnm-w1-generation-e92c0bfb3f87c738f20719ab73e6933a5fad706e69bf754e2e20f7ecb090f308",
+          "state": "ABSENT"
+        },
+        "original_target_child": {
+          "original": {
+            "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+            "pid": 1405083,
+            "start_ticks": 115554604
+          },
+          "state": "ABSENT"
+        },
+        "original_target_worker": {
+          "original": {
+            "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+            "pid": 1404920,
+            "start_ticks": 115554439
+          },
+          "state": "ABSENT"
+        }
+      },
+      "receipt": {
+        "bytes": 257014,
+        "device": 2050,
+        "hardlinks": 1,
+        "inode": 53528975,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/checkpoint/succinct.bin",
+        "retained_copy": "raw/funded-balanced-run-01/proof/checkpoint/succinct.bin",
+        "sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+      },
+      "resource_plan": {
+        "compression_mode": "balanced",
+        "compression_workers": 2,
+        "maximum_planned_rayon_workers": 8,
+        "rayon_scope": "explicit child Rayon pool sizes; not an aggregate CPU quota or host isolation",
+        "rayon_threads": 4,
+        "segment_mode": "parallel",
+        "segment_workers": 2
+      },
+      "resource_scope_complete": false,
+      "reused_recursion_checkpoints": 0,
+      "sdk_join_call_ns": {
+        "count": 42,
+        "max_ns": 56521364381,
+        "median_ns": 53175960597.5,
+        "min_ns": 41154987672,
+        "sum_ns": 2183935844868
+      },
+      "sdk_lift_call_ns": {
+        "count": 43,
+        "max_ns": 59103901789,
+        "median_ns": 55343094924,
+        "min_ns": 42285684283,
+        "sum_ns": 2371113720466
+      },
+      "sdk_segment_call_ns": {
+        "count": 43,
+        "max_ns": 155524308471,
+        "median_ns": 145221742595,
+        "min_ns": 65688478017,
+        "sum_ns": 6188921316831
+      },
+      "small_raw_files_retained": 447,
+      "source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+      "source_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9",
+      "stage_table": "funded-balanced-stage-table.json",
+      "startup_loading_scope": "SDK call timers include backend subprocess startup/loading; constructors, stage CLI/source checks, verification, publication and caller ACK occupy separately recorded scopes. Inner startup and loading have no isolated measurement.",
+      "terminal_success_complete_durable": true,
+      "timing_seconds": {
+        "compression_stage": 2438.9861697889864,
+        "fresh_full_pipeline": 6044.373854391975,
+        "fresh_strict_verify_stage": 0.3349822268355638,
+        "prepare_stage": 5.057029230054468,
+        "segment_process_stage_count": 22,
+        "segment_stage_sum": 3587.708623741055,
+        "whole_controller": 6052.875036572805,
+        "winner_to_crosshost_complete_bundle": 6648.759586639,
+        "winner_to_local_receiver_ack": 6059.180275149
+      }
+    },
+    "sequential-unfunded": {
+      "arm": "sequential-unfunded",
+      "checkpoint_event_counts": {
+        "ALL_SEGMENT_STARKS_VERIFIED": 1,
+        "CHECKPOINT_CRYPTOGRAPHICALLY_REVERIFIED": 903,
+        "COMPLETE_RELATION_EXECUTED": 1,
+        "EXECUTE_STARTED": 1,
+        "FULL_COMPOSITE_VERIFIED_INTERNAL_ONLY": 1,
+        "FULL_SUCCINCT_STARK_SAVED_VERIFIED": 1,
+        "REAL_RECURSION_STARTED": 85,
+        "REAL_RECURSIVE_STARK_SAVED_VERIFIED": 85,
+        "REAL_SEGMENT_PROVING_STARTED": 43,
+        "REAL_SEGMENT_STARK_SAVED_VERIFIED": 43,
+        "REAL_SUCCINCT_COMPRESSION_STARTED": 1,
+        "SEGMENT_BUDGET_EXHAUSTED": 43,
+        "SEGMENT_EXPORTED": 43
+      },
+      "complete_execute": {
+        "cryptographic_proof_complete": false,
+        "cycles": 9040798,
+        "elapsed_ns": 800127823,
+        "segments": 43,
+        "stage": "COMPLETE_RELATION_EXECUTED"
+      },
+      "compression_internal": {
+        "compress_entry_scope": "load and verify all segments, full composite, recursion, final verify, serialize, fsync, readback; excludes CLI/source checks and this final event publication",
+        "compress_entry_to_receipt_readback_ns": 2472707148516,
+        "compression_prover_ns": 2469733084160,
+        "compression_prover_ns_scope": "recursive schedule, including checkpoint reuse verification and publication; excludes full composite preparation and final verification/publication",
+        "consensus_admission": false,
+        "final_serialization_publication_readback_ns": 10647209,
+        "final_verify_ns": 45508095,
+        "fresh_process_verification_required": true,
+        "pre_recursion_ns": 2916601146,
+        "proof_randomness_tickets": 0,
+        "receipt_bytes": 257014,
+        "receipt_sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2",
+        "stage": "FULL_SUCCINCT_STARK_SAVED_VERIFIED",
+        "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+      },
+      "constructor_observation": "explicit parallel client events only; zero events is uninstrumented, not zero startup cost",
+      "controller_stages_complete": 53,
+      "event_timings_scope": "Different operations within one proof; these are not independent prover trials or tail samples.",
+      "explicit_client_constructor_ns": {
+        "count": 0
+      },
+      "fresh_full_proof_trials_observed": 1,
+      "gpu_ns": null,
+      "guest_rebuilt": false,
+      "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "image_id": [
+        1958252411,
+        3287394615,
+        1805488136,
+        1516578702,
+        78549041,
+        790278610,
+        301018785,
+        4279049364
+      ],
+      "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "native_winner_ns": 1155549063640127,
+      "new_joins": 42,
+      "new_lifts": 43,
+      "new_segment_seals": 43,
+      "node_admission_qualified": false,
+      "observed_stage_wait4_cpu_scope": "new stages only; prior raw costs retained separately; no reconstruction of unreaped or missed descendants",
+      "observed_stage_wait4_cpu_seconds": 40380.216517,
+      "original_deadline_ns": 1162741070990231,
+      "original_files_inventoried": 797,
+      "original_job_id": "1a1b75fd351-12894-a76",
+      "production_qualified": false,
+      "readback": {
+        "original_job_scope": {
+          "all_descendants_wait_reaped": null,
+          "current_live_members_observed": false,
+          "historical_full_billing_established": false,
+          "observed_monotonic_ns": 1162805939943785,
+          "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75fd351-12894-a76.service",
+          "state": "ABSENT"
+        },
+        "original_postwin_scope": {
+          "all_descendants_wait_reaped": null,
+          "current_live_members_observed": false,
+          "historical_full_billing_established": false,
+          "observed_monotonic_ns": 1162805940058751,
+          "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75fd351-12894-a76.service",
+          "state": "ABSENT"
+        }
+      },
+      "receipt": {
+        "bytes": 257014,
+        "device": 2050,
+        "hardlinks": 1,
+        "inode": 53528958,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/checkpoint/succinct.bin",
+        "retained_copy": "raw/sequential-unfunded-run-01/postwin/checkpoint/succinct.bin",
+        "sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+      },
+      "resource_plan": {
+        "compression_mode": "sequential",
+        "compression_workers": 1,
+        "maximum_planned_rayon_workers": 8,
+        "rayon_scope": "explicit child Rayon pool sizes; not an aggregate CPU quota or host isolation",
+        "rayon_threads": 8,
+        "segment_mode": "sequential",
+        "segment_workers": 1
+      },
+      "resource_scope_complete": false,
+      "reused_recursion_checkpoints": 0,
+      "sdk_join_call_ns": {
+        "count": 42,
+        "max_ns": 32401409995,
+        "median_ns": 29169171935.0,
+        "min_ns": 28090577683,
+        "sum_ns": 1232018773819
+      },
+      "sdk_lift_call_ns": {
+        "count": 43,
+        "max_ns": 31601585564,
+        "median_ns": 28571578279,
+        "min_ns": 27126839749,
+        "sum_ns": 1229573806184
+      },
+      "sdk_segment_call_ns": {
+        "count": 43,
+        "max_ns": 80756866476,
+        "median_ns": 75628285783,
+        "min_ns": 37629019822,
+        "sum_ns": 3204979261371
+      },
+      "small_raw_files_retained": 477,
+      "source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+      "source_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9",
+      "stage_table": "sequential-unfunded-stage-table.json",
+      "startup_loading_scope": "SDK call timers include backend subprocess startup/loading; constructors, stage CLI/source checks, verification, publication and caller ACK occupy separately recorded scopes. Inner startup and loading have no isolated measurement.",
+      "terminal_success_complete_durable": true,
+      "timing_seconds": {
+        "compression_stage": 2477.049590254901,
+        "fresh_full_pipeline": 5939.121782160131,
+        "fresh_strict_verify_stage": 0.35054397280327976,
+        "prepare_stage": 4.82531847897917,
+        "segment_process_stage_count": 43,
+        "segment_stage_sum": 3438.087902006693,
+        "whole_controller": 5947.7491960439365,
+        "winner_to_crosshost_complete_bundle": 6658.476311439,
+        "winner_to_local_receiver_ack": 5941.545213301
+      }
+    }
+  },
+  "cold_static_review": {
+    "bytes": 1867,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/full-A-terminal-analysis-01/cold-launch-static-review-01/review.json",
+    "sha256": "5bda5310dd63e2c89d566177915bead17ccae1f052ca5c777c29bd1c72fedcef"
+  },
+  "comparison": {
+    "different_receipt_bytes": true,
+    "fresh_full_proof_trials": 2,
+    "full_pipeline_balanced_divided_by_sequential": 1.0177218242178496,
+    "full_pipeline_balanced_minus_sequential_seconds": 105.25207223184407,
+    "funded_fresh_trials": 1,
+    "population_p99_established": false,
+    "scope": "One fixed-input fresh proof per plan, simultaneously on a shared host. Equal requested eight-CPU quota and eight-GiB memory; different core sets, worker plans, owner path and internal verifier Rayon settings. No randomized repeated experiment.",
+    "shared_fixed_input": true,
+    "shared_host_causal_benefit_established": false,
+    "unfunded_fresh_trials": 1
+  },
+  "completed_monotonic_ns": 1163122095155294,
+  "corrected_source_originals": [
+    {
+      "bytes": 38450,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "sha256": "712449761ccd96f428b9b1dfd2d587be4f49350720384f738f570f2f975185ec"
+    },
+    {
+      "bytes": 17880,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/run_w1_postwin_proof.py",
+      "sha256": "dca5351d21f5d4f89ec9dca5655160f3044a1d79e20286e9b28e5089e938caa2"
+    }
+  ],
+  "current_terminal_scope_observations": {
+    "funded-balanced": {
+      "legacy_A_target_observation_limit": "The original A target reported direct cgroup members only; current whole original scope observation is separate and does not retroactively prove full historical billing or descendant wait/reap.",
+      "original_job_scope": {
+        "all_descendants_wait_reaped": null,
+        "current_live_members_observed": false,
+        "historical_full_billing_established": false,
+        "observed_monotonic_ns": 1162802075839281,
+        "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75f99d3-12894-a75.service",
+        "state": "ABSENT"
+      },
+      "original_postwin_scope": {
+        "all_descendants_wait_reaped": null,
+        "current_live_members_observed": false,
+        "historical_full_billing_established": false,
+        "observed_monotonic_ns": 1162802075925670,
+        "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75f99d3-12894-a75.service/trnm-w1-generation-e92c0bfb3f87c738f20719ab73e6933a5fad706e69bf754e2e20f7ecb090f308",
+        "state": "ABSENT"
+      },
+      "original_target_child": {
+        "original": {
+          "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+          "pid": 1405083,
+          "start_ticks": 115554604
+        },
+        "state": "ABSENT"
+      },
+      "original_target_worker": {
+        "original": {
+          "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+          "pid": 1404920,
+          "start_ticks": 115554439
+        },
+        "state": "ABSENT"
+      }
+    },
+    "sequential-unfunded": {
+      "original_job_scope": {
+        "all_descendants_wait_reaped": null,
+        "current_live_members_observed": false,
+        "historical_full_billing_established": false,
+        "observed_monotonic_ns": 1162805939943785,
+        "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75fd351-12894-a76.service",
+        "state": "ABSENT"
+      },
+      "original_postwin_scope": {
+        "all_descendants_wait_reaped": null,
+        "current_live_members_observed": false,
+        "historical_full_billing_established": false,
+        "observed_monotonic_ns": 1162805940058751,
+        "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b75fd351-12894-a76.service",
+        "state": "ABSENT"
+      }
+    }
+  },
+  "errors": [],
+  "funding": {
+    "actual_original_config": {
+      "bytes": 41064,
+      "device": 2050,
+      "hardlinks": 1,
+      "inode": 53511733,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/experiment-launch-plans-01/funded-balanced-config.json",
+      "sha256": "da00644c188f37d3b6e69329aa6d0f3a4eea97e2a37c1d3bb7525c3f02404395"
+    },
+    "database_original_pins": [
+      {
+        "bytes": 12288,
+        "device": 2050,
+        "hardlinks": 1,
+        "inode": 53511763,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/native-generation-v2.sqlite",
+        "sha256": "1d928ccc07ea07f2c4fbdb53644192eb25c4e07a2902705cb33b7e3eb80c4465"
+      },
+      {
+        "bytes": 221184,
+        "device": 2050,
+        "hardlinks": 1,
+        "inode": 53511764,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-research-node-01/native.sqlite",
+        "sha256": "eb17db9a8270719277bfb4d982bfc156dab2dfdb662551f1685e7870ce1e4815"
+      },
+      {
+        "bytes": 20480,
+        "device": 2050,
+        "hardlinks": 1,
+        "inode": 53511769,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-research-node-01/native.sqlite.w1-generation-owner-v2.sqlite",
+        "sha256": "d8929d34165cf9a9e5a30779866e50b6e208a0b5cebc2be194895ab270f2e79b"
+      }
+    ],
+    "event_tag_decode_scope": "Exact stored Borsh discriminants and hash chain only; actual Rust cold replay and full state checks are retained in funded result and source.",
+    "event_tags": [
+      {
+        "kind": "Prepare",
+        "payload_bytes": 866,
+        "payload_sha256": "fb1ef0a9abaf5be8c2a749f7e4cec966fb5e4dd46d45327308532875858e2d8c",
+        "root": "32bf5ae70ff87e1880dd7d68dfe5a8d021cb822985fb95e0d69031bc6dbca91c",
+        "sequence": 1
+      },
+      {
+        "kind": "Intent",
+        "payload_bytes": 249,
+        "payload_sha256": "448aa2ad5b40241308762d7153b7dbdc18eba504b6a79a660e003c0b25f84d52",
+        "root": "febc6a701f13fb7403ba30e39620af8e85d7d74e6700533b7c3280c16967031e",
+        "sequence": 2
+      },
+      {
+        "kind": "BindJob",
+        "payload_bytes": 197,
+        "payload_sha256": "831cba656c1a64a7ea492bc0a8d85dcbf4300c48277eb04fa95e26aac0c0ba70",
+        "root": "56c0c8757beaac5d3a8dfcf2042d44992c1e91d97ea201bf04350cbf97171aa9",
+        "sequence": 3
+      }
+    ],
+    "gpu_usage_ns": null,
+    "journal_identity": "a9a18fd360441d1e94d4b64a072c2edddf9459a4848ef50a82e235c99e4bbf25",
+    "journal_payment_event_present": false,
+    "journal_raw_chain_verified": true,
+    "journal_settlement_event_present": false,
+    "native_database_schema": [
+      {
+        "columns": [
+          "singleton",
+          "tip",
+          "generation",
+          "state_slot"
+        ],
+        "name": "active",
+        "total_rows": 1
+      },
+      {
+        "columns": [
+          "block",
+          "level",
+          "ancestor",
+          "ancestor_height",
+          "left_seal",
+          "right_seal",
+          "seal"
+        ],
+        "name": "ancestry_jump",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "id",
+          "data"
+        ],
+        "name": "archive_nodes",
+        "total_rows": 10
+      },
+      {
+        "columns": [
+          "id",
+          "parent",
+          "height",
+          "chainwork",
+          "packet",
+          "state_root"
+        ],
+        "name": "blocks",
+        "total_rows": 2
+      },
+      {
+        "columns": [
+          "block",
+          "key",
+          "before",
+          "after"
+        ],
+        "name": "deltas",
+        "total_rows": 4
+      },
+      {
+        "columns": [
+          "generation",
+          "ordinal",
+          "kind",
+          "block"
+        ],
+        "name": "events",
+        "total_rows": 1
+      },
+      {
+        "columns": [
+          "block",
+          "data"
+        ],
+        "name": "growth_states",
+        "total_rows": 2
+      },
+      {
+        "columns": [
+          "slot",
+          "key",
+          "value"
+        ],
+        "name": "kv",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "ordinal",
+          "id",
+          "status",
+          "reason"
+        ],
+        "name": "local_pool_groups",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "singleton",
+          "context",
+          "limits",
+          "gc_groups",
+          "gc_records",
+          "gc_bytes",
+          "gc_head",
+          "checked_parent",
+          "checked_generation"
+        ],
+        "name": "local_pool_metadata",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "ordinal",
+          "id",
+          "group_id",
+          "reason"
+        ],
+        "name": "local_pool_removals",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "group_id",
+          "position",
+          "digest",
+          "sender",
+          "nonce",
+          "expiry",
+          "fee_limit",
+          "raw"
+        ],
+        "name": "local_pool_rows",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "key",
+          "value"
+        ],
+        "name": "metadata",
+        "total_rows": 3
+      },
+      {
+        "columns": [
+          "session_id",
+          "chain_id",
+          "protocol_digest",
+          "peer_id",
+          "profile_digest",
+          "generation",
+          "highest_ack",
+          "pending_nonce",
+          "pending_digest",
+          "pending_bytes",
+          "pending_payload",
+          "pending_wire",
+          "pending_wire_digest"
+        ],
+        "name": "peer_outbox",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "session_id",
+          "chain_id",
+          "protocol_digest",
+          "peer_id",
+          "profile_digest",
+          "generation",
+          "highest_ack",
+          "pending_nonce",
+          "pending_digest",
+          "pending_bytes"
+        ],
+        "name": "peer_replay",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "session_id",
+          "nonce",
+          "payload_digest",
+          "payload",
+          "response_digest",
+          "response",
+          "status"
+        ],
+        "name": "peer_request_audit",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "singleton",
+          "old_tip",
+          "new_tip",
+          "generation",
+          "cursor",
+          "done"
+        ],
+        "name": "reorg",
+        "total_rows": 1
+      },
+      {
+        "columns": [
+          "operation",
+          "old_tip",
+          "new_tip",
+          "generation",
+          "old_slot",
+          "old_root",
+          "owner_context",
+          "outcome",
+          "cancelled_cursor",
+          "reason"
+        ],
+        "name": "reorg_lifecycle_v1",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "block",
+          "state"
+        ],
+        "name": "snapshots",
+        "total_rows": 0
+      },
+      {
+        "columns": [
+          "ordinal",
+          "kind",
+          "block"
+        ],
+        "name": "steps",
+        "total_rows": 1
+      }
+    ],
+    "native_task_refund_observed": false,
+    "original_result": {
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "can_authorize_payment": false,
+      "cold_replay_dispatch": "Pending",
+      "fresh_proof_trials": 1,
+      "full_proof_verified": true,
+      "funded_generation": "Pending",
+      "latency_scope": "original owner clock: native ticket hit through parent-observed independent verifier helper exit and result binding",
+      "local_proof_plan": {
+        "compression_mode": "balanced",
+        "compression_workers": 2,
+        "rayon_threads": 4,
+        "segment_workers": 2
+      },
+      "native_remaining_units": 1000,
+      "native_task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+      "node_positive": false,
+      "original_deadline_ns": 1162725467096441,
+      "parent_observed_verifier_monotonic_ns": 1161623272905141,
+      "payment_observed": false,
+      "production_qualified": false,
+      "public_chain_transactions_sent": false,
+      "receipt_sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57",
+      "research_node_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-research-node-01",
+      "reserve_nonce": 1,
+      "resource_accounting": "GPU_UNKNOWN",
+      "resource_reservation_retained": true,
+      "schema": "TRNM-W1-FUNDED-FRESH-RESULT2",
+      "statement": "821b6ad7a35cfae98b662da8b5ec5764d6484ce4108d90863bf791a441f95cd9",
+      "verifier_helper_completed_monotonic_ns": 1161622225525219,
+      "winner_to_independent_verifier_ns": 6088782818998
+    },
+    "private_copies_and_dumps_excluded_from_publication": true,
+    "resource_cap_retained": {
+      "cpu_ns": 57600000000000,
+      "gpu_ns": 14400000000000,
+      "memory_peak_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "resource_credit_granted": false,
+    "schema": "TRNM-W1-A-FUNDED-TERMINAL-ANALYSIS1",
+    "source_formula": "GenerationReadbackV2 uses the full original resource_cap when neither Verified nor a Failure with complete consumption is recorded."
+  },
+  "native_funding_rows": {
+    "bytes": 1579,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/full-A-terminal-analysis-01/completion-02/native-funding-rows.json",
+    "sha256": "9394ff5de617a19395379cf2829e2a1721c7fdb1a0cfb284d04d5d46ec20cf9f"
+  },
+  "original_database_connections_opened": 0,
+  "original_databases_written": false,
+  "original_file_inventory": {
+    "bytes": 609132,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/full-A-terminal-analysis-01/original-file-inventory.json",
+    "sha256": "f9f18926810595cece2c9bcc931e403df2368d9d6e613c32dd76cce021c42c3b"
+  },
+  "original_file_inventory_rows": 1554,
+  "original_source_files_unchanged": true,
+  "predecessor_failure_preserved": [
+    {
+      "message": "[Errno 2] No such file or directory: '/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/w1_full_staged_run.py'",
+      "type": "FileNotFoundError"
+    }
+  ],
+  "predecessor_manifest": {
+    "bytes": 25249,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/full-A-terminal-analysis-01/manifest.json",
+    "sha256": "fc17606914c658002a9ff3520a0ae554d7fcb21cdc618da6b745e2f1cecc6ce8"
+  },
+  "private_database_copies_excluded_from_publication": true,
+  "proofs_dispatched": 0,
+  "rechecked_original_facts": [
+    {
+      "bytes": 1079838,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/result.json",
+      "sha256": "6433c78cc33d03a3fe32ce30893e3458a407993b0435113c5f8db352a4380414"
+    },
+    {
+      "bytes": 1013347,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/controller/result.json",
+      "sha256": "86df7cd2771e38d443f8f71f79e8a5e22880520304c6952c82f17eabfb89653f"
+    },
+    {
+      "bytes": 218584,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/checkpoint/stages.jsonl",
+      "sha256": "012eb70a0d8bd78493ffcba50e2816bdfcd12314a0cb6f20a404507220d162f4"
+    },
+    {
+      "bytes": 8463,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/checkpoint/manifest.json",
+      "sha256": "46f942c8e7abca03519e2e3dea9ce1bb163437bd7e2556fbc9f564bba8627274"
+    },
+    {
+      "bytes": 257014,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/proof/checkpoint/succinct.bin",
+      "sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+    },
+    {
+      "bytes": 1067,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/native-winner/result.json",
+      "sha256": "93eaa2f08367708b9239e467e5575a4dd6b47c5a8bbdf2713746e5e63d92cab5"
+    },
+    {
+      "bytes": 1064227,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/result.json",
+      "sha256": "96b2324f3cac040fabc0ec0301c40bc630cf6c34e1d0c734a37d6e2c7aeebdf2"
+    },
+    {
+      "bytes": 1065427,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/controller/result.json",
+      "sha256": "ab78299af7e9cd7546516b5ad6905605043f70a43eb296c21ac8b47ed32d099c"
+    },
+    {
+      "bytes": 193380,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/checkpoint/stages.jsonl",
+      "sha256": "96da34b57e85e814713ef2096c018cc8f3e8b986a664fedeec692201608de4df"
+    },
+    {
+      "bytes": 8463,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/checkpoint/manifest.json",
+      "sha256": "587c7be4869955bf67ee10af2175a87df4351d124df89fb944767bd2af59d773"
+    },
+    {
+      "bytes": 257014,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/postwin/checkpoint/succinct.bin",
+      "sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+    },
+    {
+      "bytes": 1067,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/sequential-unfunded-run-01/native-winner/result.json",
+      "sha256": "4fcd30695a2b20242f41dac0745aa6bbe71bc8eeb73df40119923c88cae825df"
+    },
+    {
+      "bytes": 1403,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/funded-result.json",
+      "sha256": "4c31cbd1e6f508c0c18d5748963b4d671470e4e1d1fee79808d07b0720fe4ca6"
+    },
+    {
+      "bytes": 12288,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-balanced-run-01/native-generation-v2.sqlite",
+      "sha256": "1d928ccc07ea07f2c4fbdb53644192eb25c4e07a2902705cb33b7e3eb80c4465"
+    },
+    {
+      "bytes": 221184,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-research-node-01/native.sqlite",
+      "sha256": "eb17db9a8270719277bfb4d982bfc156dab2dfdb662551f1685e7870ce1e4815"
+    },
+    {
+      "bytes": 20480,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/funded-research-node-01/native.sqlite.w1-generation-owner-v2.sqlite",
+      "sha256": "d8929d34165cf9a9e5a30779866e50b6e208a0b5cebc2be194895ab270f2e79b"
+    },
+    {
+      "bytes": 41064,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/experiment-launch-plans-01/funded-balanced-config.json",
+      "sha256": "da00644c188f37d3b6e69329aa6d0f3a4eea97e2a37c1d3bb7525c3f02404395"
+    }
+  ],
+  "schema": "TRNM-W1-A-TERMINAL-ANALYSIS-COMPLETION1",
+  "source_checks": {
+    "after": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/full-A-terminal-analysis-01/completion-02/source-after.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    "before": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/full-A-terminal-analysis-01/completion-02/source-before.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    }
+  },
+  "source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+  "source_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9",
+  "started_monotonic_ns": 1163112428070150
+}

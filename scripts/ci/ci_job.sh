@@ -48,6 +48,49 @@ case "${1:?required job}" in
     python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_six_workpackage_native_rosters.py
     python3 scripts/ci/test_w1_full_v2_disposition.py
+    # Historical clocks and finite screening do not qualify a proof for block admission.
+    python3 scripts/ci/test_pon_proof_latency.py
+    python3 scripts/ci/test_w1_proof_latency_readback.py
+    # Real signal/deadline controls and provider contracts do not generate a proof.
+    (
+      w1_contract_out="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/w1-postwin-contracts"
+      test ! -e "$w1_contract_out"
+      test ! -L "$w1_contract_out"
+      mkdir -p "$(dirname "$w1_contract_out")"
+      mkdir "$w1_contract_out"
+      w1_contract_tmp="$(mktemp -d /dev/shm/trnm-w1-contract-XXXXXXXX)"
+      trap 'rm -rf -- "$w1_contract_tmp"' EXIT
+      export TMPDIR="$w1_contract_tmp"
+      export PYTHONDONTWRITEBYTECODE=1
+      python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee "$w1_contract_out/cancellation-handoff.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"
+      python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"
+      python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"
+      python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"
+      python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_evidence_binding.py -v 2>&1 | tee "$w1_contract_out/deployment-evidence-binding.log"
+      python3 -m unittest discover -s scripts/ci -p test_w1_deployment_comparison_audit.py -v 2>&1 | tee "$w1_contract_out/deployment-comparison-audit.log"
+      python3 scripts/test_w1_owned_process_collector_v1.py -v 2>&1 | tee "$w1_contract_out/owned-process-collector.log"
+      python3 - "$w1_contract_out" <<'PY'
+from pathlib import Path
+import re, sys
+root = Path(sys.argv[1])
+expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
+            ("provider-contract", 11), ("generation-target", 13), ("owner-cancellation", 8),
+            ("source-builder", 8),
+            ("owned-runtime-reader", 7), ("kaggle-worker-contract", 12), ("winner-identity", 4),
+            ("deployment-evidence-binding", 12), ("deployment-comparison-audit", 20),
+            ("owned-process-collector", 14))
+for name, count in expected:
+    text = (root / (name + ".log")).read_text()
+    if (re.findall(r"^Ran ([0-9]+) tests in ", text, re.M) != [str(count)]
+            or not re.search(r"^OK$", text, re.M) or "skipped=" in text):
+        raise SystemExit(f"{name}: all {count} controls must execute without skips")
+PY
+    )
     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py

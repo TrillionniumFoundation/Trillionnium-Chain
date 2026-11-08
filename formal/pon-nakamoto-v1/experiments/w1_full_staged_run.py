@@ -14,9 +14,12 @@ import resource
 import shutil
 import sys
 import time
+import uuid
 
 sys.dont_write_bytecode = True
-from w1_stage_measure import Canceled, cancel_on_signals, measure, sha, write_new
+from w1_stage_measure import (CANCELLATION_SCHEMA, SNAPSHOT_SCHEMA, Canceled,
+                              DeferredCancellation, cancel_on_signals, measure,
+                              publish_cancellation, run_cli, sha, write_new)
 
 INPUT_BYTES = 49506
 HEADER_BYTES = 318
@@ -158,6 +161,88 @@ def validate_external_commitments(checkpoint, expected_artifacts):
             "prepared relation differs from independently supplied expected artifacts")
 
 
+def current_boot_id():
+    value = Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+    require(str(uuid.UUID(value)) == value, "noncanonical local Linux boot ID")
+    return value
+
+
+def effective_deadline(started, total, prior, original=None):
+    local = started + total - prior
+    return min(local, original) if original is not None else local
+
+
+def resource_plan(segment_workers, compression_mode, compression_workers, rayon_threads):
+    require(type(segment_workers) is int and 1 <= segment_workers <= 4,
+            "segment workers must be in [1,4]")
+    require(type(compression_workers) is int and 1 <= compression_workers <= 4,
+            "compression workers must be in [1,4]")
+    require(compression_mode in ("sequential", "balanced"), "unknown compression mode")
+    require(compression_mode != "sequential" or compression_workers == 1,
+            "sequential compression has exactly one worker")
+    require(type(rayon_threads) is int and 1 <= rayon_threads <= 8,
+            "Rayon threads must be in [1,8]")
+    require(segment_workers * rayon_threads <= 8 and compression_workers * rayon_threads <= 8,
+            "every planned worker count times Rayon threads must be at most eight")
+    return {"segment_workers": segment_workers,
+            "segment_mode": "sequential" if segment_workers == 1 else "parallel",
+            "compression_mode": compression_mode, "compression_workers": compression_workers,
+            "rayon_threads": rayon_threads,
+            "maximum_planned_rayon_workers": max(segment_workers, compression_workers) * rayon_threads,
+            "rayon_scope": "explicit child Rayon pool sizes; not an aggregate CPU quota or host isolation"}
+
+
+def segment_command(base, checkpoint, workers):
+    if workers == 1:
+        return [*base, "prove", checkpoint, "1"]
+    return [*base, "prove-parallel", checkpoint, str(workers), str(workers)]
+
+
+def compression_command(base, checkpoint, mode, workers):
+    if mode == "sequential":
+        return [*base, "compress", checkpoint]
+    return [*base, "compress-balanced", checkpoint, str(workers)]
+
+
+def completion_hook_declaration(path):
+    before = sha(path)
+    value = read_json(path, limit=1024 * 1024)
+    require(sha(path) == before, "completion hook declaration changed during read")
+    require(type(value) is dict and set(value) == {"schema", "argv", "ack_path"}
+            and value["schema"] == "TRNM-W1-COMPLETION-HOOK1", "invalid completion hook schema")
+    argv = value["argv"]
+    require(type(argv) is list and 0 < len(argv) <= 128
+            and all(type(arg) is str and arg and "\0" not in arg for arg in argv),
+            "completion hook requires a bounded nonempty string argv")
+    executable = Path(argv[0])
+    require(executable.is_absolute() and executable.is_file(),
+            "completion hook executable must be an existing absolute file")
+    require(type(value["ack_path"]) is str and value["ack_path"]
+            and "\0" not in value["ack_path"], "invalid completion ACK path")
+    ack = Path(value["ack_path"])
+    require(ack.is_absolute() and not os.path.lexists(ack),
+            "completion ACK path must be absolute and initially absent")
+    return {**value, "config_path": str(path), "config_sha256": before,
+            "argv0_sha256": sha(executable),
+            "scope": "predeclared independent receiver command; no Node admission authority"}
+
+
+def validate_receiver_ack(row, identity):
+    require(type(row) is dict and row.get("schema") == "TRNM-W1-RECEIVER-ACK2",
+            "wrong independent receiver ACK schema")
+    require(row.get("receiver_operation_complete") is True and row.get("verified") is True
+            and row.get("admission_authorized") is False,
+            "receiver ACK does not establish bounded independent completion")
+    require(row.get("error") is None and row.get("cancellation_event") is None
+            and row.get("canceled_signal") is None and row.get("cleanup_unknown") is not True
+            and row.get("deadline_exhausted_at_snapshot") is False,
+            "receiver ACK records error, cancellation, unknown cleanup, or expiry")
+    for field, expected in (("work_id", "work_id"), ("header_sha256", "header_sha256"),
+                            ("expected_artifacts_sha256", "external_artifacts_sha256"),
+                            ("receipt_sha256", "receipt_sha256")):
+        require(row.get(field) == identity[expected], f"receiver ACK {field} differs")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runner", type=Path, required=True)
@@ -166,6 +251,13 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--prior-result", type=Path, action="append", default=[])
     parser.add_argument("--total-wall-seconds", type=float, default=5400)
+    parser.add_argument("--deadline-monotonic", type=float)
+    parser.add_argument("--deadline-boot-id")
+    parser.add_argument("--segment-workers", type=int, default=1)
+    parser.add_argument("--compression-mode", choices=("sequential", "balanced"), default="sequential")
+    parser.add_argument("--compression-workers", type=int, default=1)
+    parser.add_argument("--rayon-threads", type=int, default=8)
+    parser.add_argument("--completion-hook-json", type=Path)
     parser.add_argument("--pause-file", type=Path)
     parser.add_argument("--prepare-input", type=Path)
     parser.add_argument("--statement-version", type=int, choices=(1, 2), default=1)
@@ -176,12 +268,26 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if not math.isfinite(args.total_wall_seconds) or not 0 < args.total_wall_seconds <= 7200:
         parser.error("total wall budget must be in (0,7200]")
+    if (args.deadline_monotonic is None) != (args.deadline_boot_id is None):
+        parser.error("original monotonic deadline and local boot ID must be supplied together")
+    if args.deadline_monotonic is not None and not math.isfinite(args.deadline_monotonic):
+        parser.error("finite original monotonic deadline required")
+    try:
+        boot_id = current_boot_id()
+        plan = resource_plan(args.segment_workers, args.compression_mode,
+                             args.compression_workers, args.rayon_threads)
+    except (OSError, ValueError) as failure:
+        parser.error(str(failure))
+    if args.deadline_boot_id is not None and args.deadline_boot_id != boot_id:
+        parser.error("original monotonic deadline belongs to a different host or boot")
     if not 1000 <= args.local_bytes_per_second <= 1_000_000_000:
         parser.error("bounded local sender pacing in [1000,1000000000] bytes/s required")
     if args.statement_version == 2 and (not args.fresh_verifier or not args.expected_artifacts):
         parser.error("v2 requires --fresh-verifier and independent --expected-artifacts")
     if args.statement_version == 1 and args.expected_artifacts:
         parser.error("v1 has no independent artifact-commitment statement")
+    if args.completion_hook_json and args.statement_version != 2:
+        parser.error("independent completion hook requires the complete v2 statement")
     if args.prepare_input and (args.prior_result or args.checkpoint.exists()):
         parser.error("fresh preparation requires a new checkpoint and no prior-result costs")
     args.runner = args.runner.resolve(strict=True)
@@ -195,16 +301,24 @@ def main(argv=None):
         args.expected_artifacts = args.expected_artifacts.resolve(strict=True)
     if args.prepare_input:
         args.prepare_input = args.prepare_input.resolve(strict=True)
+    if args.completion_hook_json:
+        args.completion_hook_json = args.completion_hook_json.resolve(strict=True)
     args.out.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
     own_cpu_start = resource.getrusage(resource.RUSAGE_SELF)
     prior, stages, benchmarks, local = [], [], {}, {}
+    stage_dispatch_attempts = []
     manifest = identity = None
     receipt_verified = experiment_complete = False
+    controller_cancellation = None
+    hook = receiver_ack_observation = None
     receipt_observed_seconds = verified_observed_seconds = local_delivery_observed_seconds = None
     paused_seconds, prior_seconds, error = 0.0, 0.0, None
     try:
         executable_hashes = {str(path): sha(path) for path in {args.runner, args.r0vm, args.fresh_verifier, args.native_verifier}}
+        if args.completion_hook_json:
+            hook = completion_hook_declaration(args.completion_hook_json)
+            executable_hashes[hook["argv"][0]] = hook["argv0_sha256"]
         seen_prior = set()
         for path in args.prior_result:
             result = read_json(path)
@@ -218,20 +332,27 @@ def main(argv=None):
             prior.append({"path": str(path.resolve()), "sha256": prior_hash, "result": result})
             prior_seconds += wall
     except (OSError, ValueError, TypeError, RecursionError) as failure:
-        write_new(args.out / "result.json", {"schema": "TRNM-W1-COMPLETE-STAGED-RUN2",
+        write_new(args.out / "result.json", {"schema": "TRNM-W1-COMPLETE-STAGED-RUN3",
                   "phase": "INITIALIZATION_FAILED", "complete_proof_claim": False,
                   "end_to_end_observation_complete": False,
                   "error": f"{type(failure).__name__}: {failure}", "prior_runs": prior, "stages": []})
         return 1
-    deadline = started + args.total_wall_seconds - prior_seconds
+    deadline = effective_deadline(started, args.total_wall_seconds, prior_seconds, args.deadline_monotonic)
     declaration = {
-        "schema": "TRNM-W1-COMPLETE-STAGED-RUN2", "statement_version": args.statement_version,
+        "schema": "TRNM-W1-COMPLETE-STAGED-RUN3", "statement_version": args.statement_version,
+        "cancellation_schema": CANCELLATION_SCHEMA, "result_is_pre_handoff_snapshot": True,
         "started_unix_ns": time.time_ns(), "started_monotonic": started,
         "deadline_monotonic": deadline, "total_wall_budget_seconds": args.total_wall_seconds,
+        "deadline_boot_id": boot_id, "original_deadline_monotonic": args.deadline_monotonic,
+        "original_deadline_boot_id": args.deadline_boot_id,
+        "original_local_deadline_supplied": args.deadline_monotonic is not None,
+        "effective_deadline_rule": "minimum of original local deadline and started plus total minus prior wall",
+        "resource_plan": plan, "completion_hook": hook,
         "prior_bounded_wall_seconds": prior_seconds, "prior_runs": prior,
         "fresh_preparation_included": bool(args.prepare_input),
         "input_fixture_construction_included": False,
         "per_new_segment_wall_seconds": 300, "free_disk_floor_bytes": 1024**3,
+        "per_segment_batch_wall_seconds": 300 * args.segment_workers,
         "checkpoint_disk_cap_bytes": 256 * 1024**2,
         "pause_file": str(args.pause_file) if args.pause_file else None,
         "pause_and_controller_wall_consume_budget": True,
@@ -268,12 +389,35 @@ def main(argv=None):
                  "disk_free_bytes": free, "checkpoint": size, "argv": list(map(str, command))}
         append_event(args.out / "events.jsonl", event)
         print(json.dumps(event), flush=True)
-        result = measure(list(map(str, command)), args.out / label, min(cap, 7200), deadline=deadline)
-        record = {"stage": label, "result": result}
-        stages.append(record)
-        append_event(args.out / "stages.jsonl", record)
-        print(json.dumps({"stage": label, "status": "FINISHED", "returncode": result["returncode"],
-                          "wall_seconds": result["wall_seconds"], "termination_reasons": result["termination_reasons"]}), flush=True)
+        stage_cancellation = None
+        try:
+            stage_dispatch_attempts.append(label)
+            result = measure(list(map(str, command)), args.out / label, min(cap, 7200), deadline=deadline,
+                             environment_overrides={"RAYON_NUM_THREADS": str(args.rayon_threads)})
+        except (Canceled, KeyboardInterrupt) as failure:
+            stage_cancellation = failure
+            snapshot = getattr(failure, "observed_snapshot", None)
+            if not (type(snapshot) is dict and snapshot.get("schema") == SNAPSHOT_SCHEMA
+                    and snapshot.get("kind") == "stage"
+                    and snapshot.get("path") == str(args.out / label / "result.json")
+                    and type(snapshot.get("value")) is dict):
+                raise
+            result = snapshot["value"]
+        with DeferredCancellation(stage_cancellation,
+                                  phase="coordinator-stage-retention") as retention:
+            try:
+                record = {"stage": label, "result": result}
+                stages.append(record)
+                if retention.observed_snapshot is None:
+                    retention.published_snapshot("stage", args.out / label / "result.json")
+                append_event(args.out / "stages.jsonl", record)
+                print(json.dumps({"stage": label, "status": "FINISHED", "returncode": result["returncode"],
+                                  "wall_seconds": result["wall_seconds"], "termination_reasons": result["termination_reasons"]}), flush=True)
+            except Exception as failure:
+                # F2: the stage already appended above must survive a failed
+                # append/fsync/print, and that I/O error cannot replace cancel.
+                retention.record_error("retention_error", failure)
+                raise
         require(result["stage_process_complete"], f"actual stage failed: {label}, returncode={result['returncode']}, reasons={result['termination_reasons']}")
         require(remaining() > 0, "declared cumulative budget expired after stage settlement")
         return result
@@ -290,13 +434,20 @@ def main(argv=None):
             if args.statement_version == 2:
                 validate_external_commitments(args.checkpoint, args.expected_artifacts)
             stage("reverify-existing-prefix", [*base, "prove", args.checkpoint, "0"], 180)
-            for index in range(len(manifest["segments"])):
-                path = args.checkpoint / f"receipt-{index:04}.bin"
-                if path.exists():
-                    continue
-                stage(f"prove-{index:04}", [*base, "prove", args.checkpoint, "1"], 300)
-                require(path.is_file(), "successful process omitted its required segment receipt")
-            stage("complete-recursive-compression", [*base, "compress", args.checkpoint], 7200)
+            while True:
+                missing = [index for index in range(len(manifest["segments"]))
+                           if not (args.checkpoint / f"receipt-{index:04}.bin").exists()]
+                if not missing:
+                    break
+                batch = missing[:args.segment_workers]
+                label = (f"prove-{batch[0]:04}" if args.segment_workers == 1
+                         else f"prove-batch-{batch[0]:04}")
+                stage(label, segment_command(base, args.checkpoint, args.segment_workers),
+                      300 * args.segment_workers)
+                require(all((args.checkpoint / f"receipt-{index:04}.bin").is_file() for index in batch),
+                        "successful process omitted its required segment receipt")
+            stage("complete-recursive-compression", compression_command(
+                base, args.checkpoint, args.compression_mode, args.compression_workers), 7200)
             receipt_observed_seconds = time.monotonic() - started
             identity = saved_identity(args.checkpoint, args.expected_artifacts, args.statement_version, manifest)
             receipt, header = args.checkpoint / "succinct.bin", args.checkpoint / "header.bin"
@@ -310,6 +461,27 @@ def main(argv=None):
             require(remaining() > 0, "fresh proof verification was not fully observed before the common deadline")
             receipt_verified = True
             verified_observed_seconds = time.monotonic() - started
+
+            if hook is not None:
+                require(sha(args.completion_hook_json) == hook["config_sha256"],
+                        "completion hook declaration changed before dispatch")
+                ack_path = Path(hook["ack_path"])
+                require(not os.path.lexists(ack_path), "completion ACK existed before receiver dispatch")
+                stage("independent-receiver", hook["argv"], 7200)
+                ack_hash = sha(ack_path)
+                ack = read_json(ack_path, limit=16 * 1024 * 1024)
+                validate_receiver_ack(ack, identity)
+                require(sha(ack_path) == ack_hash, "receiver ACK changed during readback")
+                require(identity == saved_identity(args.checkpoint, args.expected_artifacts,
+                                                    args.statement_version, manifest),
+                        "saved proof identity changed during receiver verification")
+                require(remaining() > 0, "receiver completion missed original effective deadline")
+                observed_ns = time.monotonic_ns()
+                require(observed_ns / 1e9 < deadline,
+                        "parent ACK observation missed original effective deadline")
+                receiver_ack_observation = {
+                    "monotonic_ns": observed_ns, "boot_id": boot_id,
+                    "ack": {"path": str(ack_path), "sha256": ack_hash, "value": ack}}
 
             helper = Path(__file__).with_name("w1_local_payload.py")
             payload_out = args.out / "local-payloads"
@@ -348,46 +520,83 @@ def main(argv=None):
                     "saved artifacts changed during cost observations")
             require(remaining() > 0, "final observations completed after the common deadline")
             experiment_complete = True
-        except (Canceled, KeyboardInterrupt, OSError, RuntimeError, ValueError, TypeError, KeyError, RecursionError) as failure:
+        except (Canceled, KeyboardInterrupt) as failure:
+            controller_cancellation = failure
+            experiment_complete = False
             error = f"{type(failure).__name__}: {failure}"
-    own_cpu_end = resource.getrusage(resource.RUSAGE_SELF)
-    elapsed = time.monotonic() - started
-    wait4_rows = [row["result"]["rusage"] for row in stages]
-    result = {
-        **declaration, "complete_proof_claim": receipt_verified, "end_to_end_observation_complete": experiment_complete,
-        "error": error, "stages": stages, "manifest": manifest, "identity": identity,
-        "new_controller_wall_seconds": elapsed, "cumulative_bounded_wall_seconds": prior_seconds + elapsed,
-        "coordinated_pause_seconds": paused_seconds, "checkpoint_final": footprint(args.checkpoint),
-        "disk_free_final_bytes": shutil.disk_usage(args.out).free,
-        "receipt_saved_observed_seconds_from_start": receipt_observed_seconds,
-        "fresh_verified_receipt_observed_seconds_from_start": verified_observed_seconds,
-        "local_transparent_delivery_observed_seconds_from_start": local_delivery_observed_seconds,
-        "fresh_proof_pipeline_seconds": verified_observed_seconds if args.prepare_input and receipt_verified else None,
-        "fresh_proof_pipeline_scope": "preparation, full execution, all segments, recursion, source/checkpoint checks, controller pauses, and fresh strict verification; starts after fixture availability; excludes build/setup",
-        "observer_own_user_cpu_seconds": own_cpu_end.ru_utime - own_cpu_start.ru_utime,
-        "observer_own_system_cpu_seconds": own_cpu_end.ru_stime - own_cpu_start.ru_stime,
-        "observed_new_stage_wait4_user_cpu_seconds": sum(row["user_seconds"] or 0 for row in wait4_rows),
-        "observed_new_stage_wait4_system_cpu_seconds": sum(row["system_seconds"] or 0 for row in wait4_rows),
-        "all_new_stage_wait4_usage_available": all(row["user_seconds"] is not None for row in wait4_rows),
-        "wait4_cpu_sum_scope": "new stages only; prior raw costs retained separately; no reconstruction of unreaped or missed descendants",
-        "aggregate_process_tree_peak_rss_bytes": None,
-        "benchmarks": benchmarks, "local_observations": local,
-        "post_find_publish_seconds": None, "real_network_propagation_seconds": None,
-        "node_admission_seconds": None, "confirmation_seconds": None, "stale_block_rate": None,
-        "proof_randomness_tickets": 0, "independent_full_proof_trials_observed": int(receipt_verified),
-        "prover_p99_established": False, "prover_resource_completeness_established": False,
-        "benefit_gate_passed": None, "production_qualification": False, "consensus_admission": False,
-    }
-    if experiment_complete and time.monotonic() >= deadline:
-        experiment_complete = False
-        error = "final result construction exceeded the common deadline"
-        result["end_to_end_observation_complete"] = False
-        result["error"] = error
-    write_new(args.out / "result.json", result)
-    print(json.dumps({"complete_proof_claim": receipt_verified, "end_to_end_observation_complete": experiment_complete,
-                      "error": error, "completed_stages": len(stages)}), flush=True)
-    return 0 if experiment_complete else 1
+        except (OSError, RuntimeError, ValueError, TypeError, KeyError, RecursionError) as failure:
+            experiment_complete = False
+            error = f"{type(failure).__name__}: {failure}"
+        try:
+            with DeferredCancellation(controller_cancellation,
+                                      phase="controller-finalization",
+                                      live_deadline=(deadline, boot_id)) as completion:
+                own_cpu_end = resource.getrusage(resource.RUSAGE_SELF)
+                elapsed = time.monotonic() - started
+                wait4_rows = [row["result"]["rusage"] for row in stages]
+                completion.phase = "controller-snapshot"
+                if completion.canceled_signal is not None:
+                    experiment_complete = False
+                    if error is None:
+                        error = "cancellation observed during controller finalization"
+                result = {
+                    **declaration, "complete_proof_claim": receipt_verified, "end_to_end_observation_complete": experiment_complete,
+                    "error": error, "stages": stages, "manifest": manifest, "identity": identity,
+                    "controller_canceled_signal": completion.canceled_signal,
+                    "stage_dispatch_attempts": list(stage_dispatch_attempts),
+                    "unretained_stage_labels": [label for label in stage_dispatch_attempts
+                        if not any(row["stage"] == label for row in stages)],
+                    "deadline_exhausted_at_snapshot": time.monotonic() >= deadline,
+                    "controller_cancellation_event": completion.pending_event(),
+                    "new_controller_wall_seconds": elapsed, "cumulative_bounded_wall_seconds": prior_seconds + elapsed,
+                    "coordinated_pause_seconds": paused_seconds, "checkpoint_final": footprint(args.checkpoint),
+                    "disk_free_final_bytes": shutil.disk_usage(args.out).free,
+                    "receipt_saved_observed_seconds_from_start": receipt_observed_seconds,
+                    "fresh_verified_receipt_observed_seconds_from_start": verified_observed_seconds,
+                    "local_transparent_delivery_observed_seconds_from_start": local_delivery_observed_seconds,
+                    "fresh_proof_pipeline_seconds": verified_observed_seconds if args.prepare_input and receipt_verified else None,
+                    "fresh_proof_pipeline_scope": "preparation, full execution, all segments, recursion, source/checkpoint checks, controller pauses, and fresh strict verification; starts after fixture availability; excludes build/setup",
+                    "observer_own_user_cpu_seconds": own_cpu_end.ru_utime - own_cpu_start.ru_utime,
+                    "observer_own_system_cpu_seconds": own_cpu_end.ru_stime - own_cpu_start.ru_stime,
+                    "observed_new_stage_wait4_user_cpu_seconds": sum(row["user_seconds"] or 0 for row in wait4_rows),
+                    "observed_new_stage_wait4_system_cpu_seconds": sum(row["system_seconds"] or 0 for row in wait4_rows),
+                    "all_new_stage_wait4_usage_available": (len(stages) == len(stage_dispatch_attempts)
+                        and all(row["user_seconds"] is not None and row["system_seconds"] is not None
+                                for row in wait4_rows)),
+                    "wait4_cpu_sum_scope": "new stages only; prior raw costs retained separately; no reconstruction of unreaped or missed descendants",
+                    "aggregate_process_tree_peak_rss_bytes": None,
+                    "benchmarks": benchmarks, "local_observations": local,
+                    "independent_receiver_ack": (receiver_ack_observation["ack"]
+                                                 if receiver_ack_observation else None),
+                    "parent_observed_receiver_ack_monotonic_ns": (receiver_ack_observation["monotonic_ns"]
+                                                                  if receiver_ack_observation else None),
+                    "parent_observed_receiver_ack_boot_id": (receiver_ack_observation["boot_id"]
+                                                             if receiver_ack_observation else None),
+                    "parent_ack_observation_scope": "local coordinator monotonic clock after receiver process settlement, ACK binding checks, and original-deadline check; no cross-host clock subtraction",
+                    "post_find_publish_seconds": None, "real_network_propagation_seconds": None,
+                    "node_admission_seconds": None, "confirmation_seconds": None, "stale_block_rate": None,
+                    "proof_randomness_tickets": 0, "independent_full_proof_trials_observed": int(receipt_verified),
+                    "fresh_full_pipeline_trials_observed": int(bool(args.prepare_input) and receipt_verified),
+                    "prover_p99_established": False, "prover_resource_completeness_established": False,
+                    "benefit_gate_passed": None, "production_qualification": False, "consensus_admission": False,
+                }
+                result["deadline_exhausted_at_snapshot"] = time.monotonic() >= deadline
+                if experiment_complete and result["deadline_exhausted_at_snapshot"]:
+                    experiment_complete = False
+                    error = "final result construction exceeded the common deadline"
+                    result["end_to_end_observation_complete"] = False
+                    result["error"] = error
+                write_new(args.out / "result.json", result)
+                completion.published_snapshot("controller", args.out / "result.json")
+                print(json.dumps({"complete_proof_claim": receipt_verified, "end_to_end_observation_complete": experiment_complete,
+                                  "error": error, "completed_stages": len(stages)}), flush=True)
+        except (Canceled, KeyboardInterrupt) as failure:
+            publish_cancellation(args.out / "cancellation.json", failure, "controller")
+            raise
+    # A durable snapshot remains an observation if its fsync/handoff crosses
+    # the deadline. The live operation must nevertheless return failure.
+    return 0 if experiment_complete and time.monotonic() < deadline else 1
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(run_cli(main))

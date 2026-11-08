@@ -6,7 +6,12 @@ license.workspace = true
 publish.workspace = true
 
 [build-dependencies]
+risc0-binfmt = "=3.0.5"
 risc0-build = "=3.0.3"
+sha2 = "=0.10.9"
+
+[features]
+retained-v2-guest = []
 
 [package.metadata.risc0]
 methods = ["../methods/guest-v2"]
