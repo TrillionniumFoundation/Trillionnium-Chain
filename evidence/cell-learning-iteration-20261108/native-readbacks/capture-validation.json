@@ -1,0 +1,28 @@
+{
+  "actor_fixture_cases": 2,
+  "actual_model_execution": false,
+  "actual_test_count": 39,
+  "expected_test_count": 39,
+  "expected_test_names_sha256": "70c73f29515e30588203a1fba9d78741ba8f27f376a78537485a42d5216c8855",
+  "fixture_manifest_sha256": "597a20d27e48a91dd6b19dc3102952ed7048fc39946bc9d42e84c23a40fc3557",
+  "independent_evaluation_established": false,
+  "native_junit_sha256": "10c64d05635532a030c9d58967473a88d9b2ed05f0913abc2e495251562457fa",
+  "native_log_sha256": "e0e75da06c749313b986eb10daeef0a786d148d76381023c10bb681d5a3bd36a",
+  "native_result_sha256": "7ed73680708e579af144d4c6b1b457bfc0cfc2f87905a70bb268826cc354a552",
+  "native_run_id": "daa6f76b-4408-4a08-b6ce-22d1fb7d7bdd",
+  "native_selected_suite_passed": true,
+  "pins_are_fixture_derived": true,
+  "portable_current_permission": false,
+  "production_final_use_qualified": false,
+  "raw_document_fields_rewritten": false,
+  "readback_phases": 4,
+  "schema": "trnm-cell-learning-native-capture-validation-v2",
+  "source": {
+    "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+    "native_tree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+    "runner_sha256": "9d972b409baa35ccf35236541ee684dead429f40ff249a4fa83c64cf4f6e992d",
+    "status": "",
+    "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+  }
+}

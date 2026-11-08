@@ -471,11 +471,30 @@ def main():
     parser.add_argument("--readback-sha256", required=True)
     parser.add_argument("--expected", type=Path, required=True)
     parser.add_argument("--expected-sha256", required=True)
+    parser.add_argument("--learning-checkpoint", type=Path)
+    parser.add_argument("--learning-checkpoint-sha256")
+    parser.add_argument("--learning-freeze", type=Path)
+    parser.add_argument("--learning-freeze-sha256")
     args = parser.parse_args()
     expected_raw = read_bounded(args.expected, MAX_EXPECTED)
     require(sha(expected_raw) == hex_digest(args.expected_sha256), "EXPECTATIONS_PIN")
-    result = review_native_learning_use(read_bounded(args.readback, MAX_WIRE),
-        expected_readback_sha256=args.readback_sha256, expected=decode(expected_raw, MAX_EXPECTED))
+    readback_raw = read_bounded(args.readback, MAX_WIRE)
+    expected = decode(expected_raw, MAX_EXPECTED)
+    joining = (args.learning_checkpoint, args.learning_checkpoint_sha256,
+               args.learning_freeze, args.learning_freeze_sha256)
+    if any(value is not None for value in joining):
+        require(all(value is not None for value in joining), "LEARNING_JOIN_ARGUMENTS")
+        from cell_learning_iteration_join import MAX_CHECKPOINT, MAX_FREEZE, review_native_learning_iteration
+        freeze_raw = read_bounded(args.learning_freeze, MAX_FREEZE)
+        require(sha(freeze_raw) == hex_digest(args.learning_freeze_sha256), "LEARNING_FREEZE_PIN")
+        result = review_native_learning_iteration(
+            read_bounded(args.learning_checkpoint, MAX_CHECKPOINT), readback_raw,
+            expected_checkpoint_sha256=args.learning_checkpoint_sha256,
+            expected_readback_sha256=args.readback_sha256,
+            frozen=decode(freeze_raw, MAX_FREEZE), expected=expected)
+    else:
+        result = review_native_learning_use(readback_raw,
+            expected_readback_sha256=args.readback_sha256, expected=expected)
     print(json.dumps(result, sort_keys=True, separators=(",", ":"), allow_nan=False))
 
 

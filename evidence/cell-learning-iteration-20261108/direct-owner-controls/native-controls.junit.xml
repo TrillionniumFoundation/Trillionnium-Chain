@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="3" failures="0" errors="0" uuid="c7136f6b-8515-4198-ad9b-9441c1ac964c" timestamp="2026-11-08T07:31:56.755-05:00" time="2.404">
+    <testsuite name="codex-hepta-agentd" tests="3" disabled="0" errors="0" failures="0">
+        <testcase name="neuron_generation_update_bootstrap::learning::tests::actual_same_model_use_cold_reopens_without_new_nonce_or_journal_work" classname="codex-hepta-agentd" timestamp="2026-11-08T07:31:56.757-05:00" time="0.788">
+        </testcase>
+        <testcase name="neuron_generation_update_bootstrap::learning::tests::current_withdrawal_and_revocation_refuse_new_learning_observations_and_recovery" classname="codex-hepta-agentd" timestamp="2026-11-08T07:31:56.757-05:00" time="0.986">
+        </testcase>
+        <testcase name="neuron_generation_update_bootstrap::learning::tests::retained_use_rejects_failed_cancelled_rejected_and_late_work" classname="codex-hepta-agentd" timestamp="2026-11-08T07:31:57.546-05:00" time="1.613">
+        </testcase>
+    </testsuite>
+</testsuites>

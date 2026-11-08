@@ -26,6 +26,12 @@ It does **not** authenticate the host or issuer, verify a FinalUse signature,
 recover current permission from a past witness, or authorize another operation.
 Its successful result still says `qualification: HOLD_NO_GO`.
 
+The optional [original learning-iteration join](CELL_LEARNING_ITERATION_JOIN_V2.md)
+adds separately pinned HEPLCP02 checkpoint and frozen-request inputs through
+this same CLI. It preserves this v1 readback relation and all authority limits.
+The combined report verifies request/receipt/selection binding, not the time
+or authenticity of independent freeze custody or a completed production loop.
+
 ## Exact bytes and independent expectations
 
 The outer object contains exactly `schema`, `payload_json`, and

@@ -1,0 +1,187 @@
+{
+  "actual_model_execution": false,
+  "cache": {
+    "cache_is_not_provenance": true,
+    "private_target": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-target",
+    "reuse_completed_native_run": {
+      "bytes": 17517,
+      "device": 66306,
+      "inode": 35791545,
+      "mtime_ns": 1794140931906745404,
+      "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/native-v3/result.json",
+      "sha256": "7ed73680708e579af144d4c6b1b457bfc0cfc2f87905a70bb268826cc354a552"
+    },
+    "source_target_mutated_by_other_work": false
+  },
+  "engineering_controls_only": true,
+  "error": null,
+  "exit_code": 0,
+  "machine": {
+    "boot_id_sha256": "b307c434f05d9ba52a7c477add1da56d90a59e372992ed1152fbf278a6e84eaf",
+    "configured_host": "rog",
+    "machine": "x86_64",
+    "machine_id_sha256": "c67efd30ee6bcef9fbbdedce3e127151262d01a4ee23068cdf9c4136d9b9421b",
+    "release": "7.0.0-42-generic",
+    "sysname": "Linux",
+    "version": "#42-Ubuntu SMP PREEMPT_DYNAMIC Thu Oct 15 08:06:44 UTC 2026"
+  },
+  "owner_readback_files_exported_by_driver": false,
+  "paired_checkpoint_stdout_opt_in": false,
+  "pins_are_fixture_derived": true,
+  "production_final_use_qualified": false,
+  "resources_after": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-direct-v1.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 4808385\nuser_usec 4391707\nsystem_usec 416678\nnice_usec 4385000\ncore_sched.force_idle_usec 0\nnr_periods 37\nnr_throttled 4\nthrottled_usec 3965\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "308334592",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0",
+    "pids.max": "146420",
+    "pids.peak": "22"
+  },
+  "resources_before": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-direct-v1.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 67275\nuser_usec 32876\nsystem_usec 34399\nnice_usec 31000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "21278720",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0",
+    "pids.max": "146420",
+    "pids.peak": "22"
+  },
+  "source_after": {
+    "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+    "native_tree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+    "runner_sha256": "b794d2d5b701f0c5f337daa492989505f55c99ac57ce00df463c0c9d06d05a8f",
+    "status": "",
+    "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+  },
+  "source_before": {
+    "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+    "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+    "native_tree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+    "runner_sha256": "b794d2d5b701f0c5f337daa492989505f55c99ac57ce00df463c0c9d06d05a8f",
+    "status": "",
+    "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+  },
+  "source_unchanged": true,
+  "stdout_readback_opt_in": false,
+  "steps": [
+    {
+      "binary_after": [
+        {
+          "bytes": 239908944,
+          "device": 66306,
+          "inode": 35673586,
+          "mtime_ns": 1794130222213556964,
+          "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-target/debug/deps/codex_hepta_agentd-d5f7e3c8e45facf6",
+          "sha256": "610ac6b3507bc9e072534ee12a567f8c48d5d8bbcef2988f3d94402b1e379a05"
+        },
+        {
+          "bytes": 240303960,
+          "device": 66306,
+          "inode": 35697189,
+          "mtime_ns": 1794140922769345153,
+          "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-target/debug/deps/codex_hepta_agentd-d6345fda85a765d4",
+          "sha256": "5129f7adba1fabac5ec8cf6def95ce2ce72bad1bae28b5203730db63532d8178"
+        },
+        {
+          "bytes": 4636984,
+          "device": 66306,
+          "inode": 35697190,
+          "mtime_ns": 1794140890440575344,
+          "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-target/debug/deps/codex_hepta_learning_artifacts-b73fa1b9b3099753",
+          "sha256": "e471d4890c07ebe56fe5712af575db9e7083c9cb44fcc250876133bb0ec0a878"
+        }
+      ],
+      "command": [
+        "just",
+        "test",
+        "--locked",
+        "-p",
+        "codex-hepta-learning-artifacts",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "-E",
+        "test(=neuron_generation_update_bootstrap::learning::tests::actual_same_model_use_cold_reopens_without_new_nonce_or_journal_work) | test(=neuron_generation_update_bootstrap::learning::tests::retained_use_rejects_failed_cancelled_rejected_and_late_work) | test(=neuron_generation_update_bootstrap::learning::tests::current_withdrawal_and_revocation_refuse_new_learning_observations_and_recovery)",
+        "--success-output",
+        "final",
+        "--failure-output",
+        "final"
+      ],
+      "exit_code": 0,
+      "junit": {
+        "attributes": {
+          "errors": "0",
+          "failures": "0",
+          "name": "nextest-run",
+          "tests": "3",
+          "time": "2.404",
+          "timestamp": "2026-11-08T07:31:56.755-05:00",
+          "uuid": "c7136f6b-8515-4198-ad9b-9441c1ac964c"
+        },
+        "bytes": 1089,
+        "device": 66306,
+        "inode": 35791567,
+        "mtime_ns": 1794141119158974574,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/direct-v1/native-controls.junit.xml",
+        "run_id": "c7136f6b-8515-4198-ad9b-9441c1ac964c",
+        "sha256": "ee7777400d6e6cbc03748486a86a01c4700c54f057f5815f65bf3927fcffb7ec",
+        "testcases": [
+          "neuron_generation_update_bootstrap::learning::tests::actual_same_model_use_cold_reopens_without_new_nonce_or_journal_work",
+          "neuron_generation_update_bootstrap::learning::tests::current_withdrawal_and_revocation_refuse_new_learning_observations_and_recovery",
+          "neuron_generation_update_bootstrap::learning::tests::retained_use_rejects_failed_cancelled_rejected_and_late_work"
+        ]
+      },
+      "log": {
+        "bytes": 18432,
+        "device": 66306,
+        "inode": 35791559,
+        "mtime_ns": 1794141119158974574,
+        "path": "/home/qian-qi/work/hepta-frozen-eval-f6247-f5f617-20261108-evidence/direct-v1/native-controls.log",
+        "sha256": "8791c1abe519bf1a3c55e86b118a59ec4faf7bc8edd024ef69cf2234b4d6fad1"
+      },
+      "resources_after": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-frozen-eval-4a93-f5f617-direct-v1.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 4501696\nuser_usec 4180433\nsystem_usec 321263\nnice_usec 4177000\ncore_sched.force_idle_usec 0\nnr_periods 35\nnr_throttled 4\nthrottled_usec 3965\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "308334592",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0",
+        "pids.max": "146420",
+        "pids.peak": "22"
+      },
+      "source_after": {
+        "head": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+        "index_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+        "native_tree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+        "runner_sha256": "b794d2d5b701f0c5f337daa492989505f55c99ac57ce00df463c0c9d06d05a8f",
+        "status": "",
+        "tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198"
+      },
+      "wall_seconds": 3.0528225360321812
+    }
+  ],
+  "toolchain": {
+    "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)\n",
+    "just": "just 1.51.0\n",
+    "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: x86_64-unknown-linux-gnu\nrelease: 1.96.0\nLLVM version: 22.1.2\n"
+  }
+}
