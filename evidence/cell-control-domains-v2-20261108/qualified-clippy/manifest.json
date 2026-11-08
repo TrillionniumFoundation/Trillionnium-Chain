@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "bytes": 1727,
+      "name": "environment.json",
+      "sha256": "cf5821058865582ea24214093863a574e0fa286e7399ddf54c671ad62f77f933"
+    },
+    {
+      "bytes": 2212,
+      "name": "executed-runner.py.txt",
+      "sha256": "87d8be1445dfd8c1d03c47762e5d1b55251a509b5893c2390263bf2f8e02418c"
+    },
+    {
+      "bytes": 2077,
+      "name": "preflight.json",
+      "sha256": "9f74d298d7c1973280a1ce99eb82613233f73770f7d6a4770107246196032cf7"
+    },
+    {
+      "bytes": 169,
+      "name": "preflight.log",
+      "sha256": "c1e0aa1a9f7af1156456cce127044f4248a9809e162efb97b6f9c3766495514d"
+    },
+    {
+      "bytes": 2256,
+      "name": "qualified-strict-clippy.json",
+      "sha256": "a2fc33783528831349cceab0b82eb79409865de8eb838dfdb326be77838b6d9e"
+    },
+    {
+      "bytes": 325,
+      "name": "qualified-strict-clippy.log",
+      "sha256": "1b965c36c1438c73b28d80867561037b384cb853da8eb63d6caf0af7ae59b9dd"
+    }
+  ]
+}

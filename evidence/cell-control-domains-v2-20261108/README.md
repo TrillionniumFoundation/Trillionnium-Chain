@@ -52,7 +52,7 @@ underlying verification functions; they are not independent deployments.
 | Repository and local Markdown links | Passed |
 | Locked complete Cargo dependency graph | Passed |
 | Rust formatting | Passed |
-| Workspace, all targets, all features, strict Clippy | Passed with `-D warnings` |
+| Workspace, all targets, all features, strict Clippy | Exit 0 with `-D warnings`; original SQLite build-witness warning retained, corrected follow-up below |
 | Exact full tracked bytes before and after | Identical source receipts: 11,570 entries, 1,092,808,076 bytes |
 
 The complete original source-identity JSON is retained in
@@ -86,3 +86,31 @@ required. The inherited WAN V4 matching audit remains a separate requirement.
 No native runtime test, protected-main merge or production activation was executed
 by this control-material validation. Hosted CI and prospective-merge outcomes
 remain separate from these local passes.
+
+## Corrected Clippy environment and hosted observations
+
+A later log review found that the original lint command exited 0 while its
+SQLite build witness printed `UNQUALIFIED: RUSTC must be absolute`. The
+[original warning](validation/strict-clippy.stderr.txt) is unmodified. A zero
+Clippy exit did not qualify that native build witness.
+
+The [follow-up receipt](qualified-clippy/qualified-strict-clippy.json) records
+the full workspace/all-target/all-feature `-D warnings` command on published
+commit `6f1eb8da8c2ce4ce1b689417865631f48cc8282f`, with absolute compiler/doc
+paths, explicit consistent Rustup home/toolchain and the toolchain top-level
+loader directory. It exited 0 in 81.09 seconds, with no warning or
+UNQUALIFIED diagnostic. The [raw log](qualified-clippy/qualified-strict-clippy.log),
+[environment](qualified-clippy/environment.json), preflight record and executed
+runner are retained. Before/after source identities match across 11,648 tracked
+entries / 1,093,876,638 bytes. The curated environment's archive-reference field
+was normalized to the actual `validation/` path; command receipts and logs were
+not rewritten. This remains a lint/build-witness observation, without local
+native runtime execution.
+
+On that same published evidence head, hosted
+[release reference/native baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42476108301)
+and [original large-state CPU acceptance](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42476108315)
+each completed all four x64/ARM exact-head/prospective-merge jobs successfully.
+Those named workflows do not qualify full public pressure or independently
+controlled real deployments. This appendix changes evidence only; it does not
+relabel its later publication commit as either workflow's tested commit.

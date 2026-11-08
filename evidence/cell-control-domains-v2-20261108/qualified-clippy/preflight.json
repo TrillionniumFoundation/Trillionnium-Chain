@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+    "tested_tree": "39ef904576978e7c476e3e47f17a7ca97207d318",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1093876638,
+    "tracked_entries": 11648,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+    "tested_tree": "39ef904576978e7c476e3e47f17a7ca97207d318",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1093876638,
+    "tracked_entries": 11648,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/10366560c781/chain-control",
+  "elapsed_ns": 6409603816,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/10366560c781/control-cargo-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 169,
+  "log_file": "preflight.log",
+  "log_sha256": "c1e0aa1a9f7af1156456cce127044f4248a9809e162efb97b6f9c3766495514d",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-08T12:00:48.270631+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

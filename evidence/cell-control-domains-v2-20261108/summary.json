@@ -7,7 +7,23 @@
   "development_tree_equals_published": true,
   "hepta_final_use": false,
   "hidden_control_excluded": false,
-  "hosted_ci_status": "not final; separately observed and not included in local passes",
+  "hosted_ci_status": "Named workflows on 6f1eb8da are recorded separately; other workflows and public/independent qualification remain open",
+  "hosted_observations": [
+    {
+      "conclusion": "success",
+      "jobs": "x64/ARM exact head and prospective merge, four successful jobs",
+      "run_id": 42476108301,
+      "source_commit": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+      "workflow": "Release finality reference and native baseline"
+    },
+    {
+      "conclusion": "success",
+      "jobs": "x64/ARM exact head and prospective merge, four successful jobs",
+      "run_id": 42476108315,
+      "source_commit": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+      "workflow": "PoN original large-state CPU acceptance"
+    }
+  ],
   "implementation_commit": "ca8ca808ee636cc282dfee9558e419ab1225820f",
   "implementation_tree": "13d136f1a8732fb454f12f3d196cd69816c9a53b",
   "independent_control_accepted": false,
@@ -16,8 +32,23 @@
   "native_runtime_tests_executed": false,
   "new_domain_and_join_tests": 20,
   "new_tests_included_in_reference_count": true,
+  "original_clippy_sqlite_build_witness_qualified": false,
+  "original_clippy_sqlite_warning": "UNQUALIFIED: RUSTC must be absolute; original exit 0 is a lint result only",
   "original_learning_owner": "two existing signed V3 cases and two actual wrong-parent refusals",
   "production_activation": false,
+  "qualified_clippy_followup": {
+    "elapsed_ns": 81090070310,
+    "exit_code": 0,
+    "native_runtime_tests_executed": false,
+    "receipt": "qualified-clippy/qualified-strict-clippy.json",
+    "source_before_equals_after": true,
+    "source_commit": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+    "source_tree": "39ef904576978e7c476e3e47f17a7ca97207d318",
+    "status": "command_succeeded",
+    "tracked_bytes": 1093876638,
+    "tracked_entries": 11648,
+    "warning_count": 0
+  },
   "rust_format_passed": true,
   "schema": "trnm-cell-control-domains-local-qualification-v1",
   "source_before_equals_after": true,

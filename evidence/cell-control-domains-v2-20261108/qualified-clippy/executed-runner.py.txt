@@ -1,0 +1,21 @@
+from pathlib import Path
+import os,json,subprocess,sys,datetime
+root=Path('/workspace/scratch/10366560c781/chain-control')
+out=Path('/workspace/scratch/10366560c781/control-qualified-clippy')
+head='6f1eb8da8c2ce4ce1b689417865631f48cc8282f'
+tc=Path('/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu')
+env=os.environ.copy()
+env.update(PATH=str(tc/'bin')+':'+env['PATH'],RUSTC=str(tc/'bin/rustc'),RUSTDOC=str(tc/'bin/rustdoc'),LD_LIBRARY_PATH=str(tc/'lib'),RUSTUP_HOME='/workspace/scratch/d95a703b8dd6/toolchain/rustup',RUSTUP_TOOLCHAIN='1.95.0-x86_64-unknown-linux-gnu',CARGO_HOME='/workspace/scratch/10366560c781/control-cargo-home',CARGO_TARGET_DIR='/workspace/scratch/10366560c781/control-cargo-target',CARGO_BUILD_JOBS='1',CARGO_INCREMENTAL='0',PYTHONDONTWRITEBYTECODE='1')
+commands={
+ 'preflight':['bash','scripts/project-preflight.sh'],
+ 'qualified-strict-clippy':['cargo','clippy','--locked','--offline','--manifest-path','trillionnium/Cargo.toml','--workspace','--all-targets','--all-features','--','-D','warnings']}
+out.mkdir(exist_ok=False)
+(out/'environment.json').write_text(json.dumps({'source_commit':head,'environment':{k:env.get(k) for k in ['PATH','RUSTC','RUSTDOC','LD_LIBRARY_PATH','RUSTUP_HOME','RUSTUP_TOOLCHAIN','CARGO_HOME','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','CARGO_INCREMENTAL','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS']},'observed_prior_warning':'trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute','prior_command_exit_code':0,'warning_preserved_at':'evidence/cell-control-domains-v2-20261108/strict-clippy.stderr.txt','created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()},indent=2,sort_keys=True)+'\n')
+for label,cmd in commands.items():
+ assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()==head
+ assert not subprocess.check_output(['git','status','--porcelain'],cwd=root)
+ args=['python3','-B','scripts/ci/record_pq_native_command.py','--kind','head','--candidate',head,'--tested',head,'--label',label,'--output',str(out),'--']+cmd
+ p=subprocess.run(args,cwd=root,env=env)
+ if p.returncode:
+  print((out/(label+'.log')).read_text(errors='replace')[-4000:])
+  sys.exit(p.returncode)
