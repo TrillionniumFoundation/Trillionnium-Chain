@@ -8435,3 +8435,18 @@ launch as absent. Fixed-source checks must retain their original failures.
 General interpreters, shared-library loading, tokenizer/router extensions and
 external model runtime closure remain unsupported; isolated native deployment,
 original-8193 resources, whole-state rollback and activation remain HOLD / NO-GO.
+
+The published source `059e149ccf683a69e6dad4e7f5a21fdd76b671fc` (tree
+`c9ea28106d0dfc33f9edb04d396e6e3c6f8783ba`) has 15 complete official command
+receipts with unchanged before/after tracked bytes. Thirteen source/static
+commands and 155 Python cases pass; locked graphs remain 176/181 packages with
+26 workspace members. The selected complete policy/M15 groups finish **67
+passed, 8 failed, 1 ignored**, including all 12 new passing regressions. The
+eight unchanged service fixtures fail at Unix-socket creation with `EPERM`;
+owned-path and abstract-namespace diagnostics reproduce that environment
+boundary before any bind. Existing hosted full-library commands cover those
+tests, but no hosted pass is claimed here. Strict workspace/all-target/all-feature
+Clippy passes after explicitly aligning the Rustup shim with the actual compiler;
+its original exit-0 / SQLite-UNQUALIFIED observation remains retained separately.
+The isolated fixed-root ordinary consumer remains unexecuted. These results do
+not qualify the general model loader or any production activation.

@@ -1,0 +1,7 @@
+{
+  "local_source_commit": "0bc39741809c8987018523ce3b2827604403a2f1",
+  "remote_source_commit": "059e149ccf683a69e6dad4e7f5a21fdd76b671fc",
+  "identical_tree": "c9ea28106d0dfc33f9edb04d396e6e3c6f8783ba",
+  "guarded_update_ref": true,
+  "worktree_clean": true
+}
