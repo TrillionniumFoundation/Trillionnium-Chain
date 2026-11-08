@@ -1,0 +1,61 @@
+{
+  "entries": [
+    {
+      "binary_not_copied": true,
+      "bytes": 174574184,
+      "captured_after_validation": true,
+      "path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/cell_native_v1-7e4acc24f712ce42",
+      "resolved_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/cell_native_v1-7e4acc24f712ce42",
+      "role": "test:cell_native_v1.rs",
+      "sha256": "62aa341f7a5441ced8e406746517d9987c823cfe37a90bdc8772e414c67cde93"
+    },
+    {
+      "binary_not_copied": true,
+      "bytes": 173984760,
+      "captured_after_validation": true,
+      "path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_owner_journal-11ae6f188e60cef8",
+      "resolved_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_owner_journal-11ae6f188e60cef8",
+      "role": "test:native_owner_journal.rs",
+      "sha256": "bbd11b44164f923fdb501fe6ea31be6f4491e92f9df2b5167747d9c825e2e68c"
+    },
+    {
+      "binary_not_copied": true,
+      "bytes": 175749928,
+      "captured_after_validation": true,
+      "path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_owner_observation-0e260fab5dedc11d",
+      "resolved_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_owner_observation-0e260fab5dedc11d",
+      "role": "test:native_owner_observation.rs",
+      "sha256": "a405a155bc3bad41f5104e6f2fe12d25ea3a67ec9a1b4e73d19f0e22e9bc90ed"
+    },
+    {
+      "binary_not_copied": true,
+      "bytes": 174579528,
+      "captured_after_validation": true,
+      "path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_risk_ledger-66b309f1fcce5d0a",
+      "resolved_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/deps/native_risk_ledger-66b309f1fcce5d0a",
+      "role": "test:native_risk_ledger.rs",
+      "sha256": "0f0d9ef357a174fd3580a963f06153283ca570fbf647a4064b5e0f5d9369fb62"
+    },
+    {
+      "binary_not_copied": true,
+      "bytes": 171373520,
+      "captured_after_validation": true,
+      "path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/examples/native_owner_journal_v1",
+      "resolved_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/examples/native_owner_journal_v1",
+      "role": "example:native_owner_journal_v1",
+      "sha256": "9fe89b59ee3202932384e25996a33ab9840c2b240f682ab62c707d86ef6b39c5"
+    },
+    {
+      "binary_not_copied": true,
+      "bytes": 171804864,
+      "captured_after_validation": true,
+      "path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/examples/native_risk_ledger_v1",
+      "resolved_path": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target/debug/examples/native_risk_ledger_v1",
+      "role": "example:native_risk_ledger_v1",
+      "sha256": "a03f8dfa4913c1a73290c6632843d84eb0197c1cd48e3f94577e2c7d467c6e04"
+    }
+  ],
+  "head": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "independent_execution_attestation": false,
+  "schema": "native-binary-hashes-after-validation-v1"
+}

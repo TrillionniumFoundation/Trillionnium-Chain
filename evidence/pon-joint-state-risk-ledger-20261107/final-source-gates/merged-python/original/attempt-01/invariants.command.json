@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "scripts/ci/check_invariants.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 4.440342094982043,
+  "exit_code": 0,
+  "name": "invariants",
+  "started_at_utc": "2026-11-08T00:11:40.167174+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 0,
+      "file": "invariants.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 142,
+      "file": "invariants.stdout.log",
+      "sha256": "c43f1aae3b9226e7be6c220bbb287f5ef9646ca4b4a9d5fcb90baa2d2c9cfe39"
+    }
+  },
+  "test_summary_lines": []
+}

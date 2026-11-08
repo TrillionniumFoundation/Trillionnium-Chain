@@ -128,3 +128,8 @@ one retained native owner and declared budget. Their separate passes cannot be
 multiplied or added into a real confirmation-security number without the missing
 common premises. Production and actual native probability qualifications remain
 false, and `global_failure_probability` remains null.
+
+
+## Final merged-source record
+
+The [exact merged-source validation and retained raw evidence](final-source-gates/README.md) binds the complete component results to merge commit 2d46d8682201bc0619f5b156af50e77fb399322e. It includes fresh owner/risk execution, real signature composition, the source-preservation audit and explicit incomplete full-lane coverage. The final evidence addition leaves every non-evidence source file equal to that tested merge. Scientific and production qualifications remain HOLD.
