@@ -1,0 +1,102 @@
+{
+  "chainwork_awarded": 0,
+  "claim_boundaries": {
+    "classical_rom_aggregate_query_argument": "conditional; includes preprocessing, delegation and verifier queries",
+    "coalition_implementation_transfer_established": false,
+    "coalition_query_argument": "conditional; real global caps, bounded award, canonical statement and hidden equality feedback are assumptions",
+    "external_demand_authenticated": false,
+    "global_verification_cap_enforced": false,
+    "hidden_verifier_side_channel_model_verified": false,
+    "independent_operators": false,
+    "minimum_fresh_neural_cost_proved": false,
+    "physical_resource_lower_bound_proved": false,
+    "production_proof_and_wan_availability_costs_complete": false,
+    "proof_system_soundness_implies_work_hardness": false,
+    "quantum_security_proved": false
+  },
+  "engineering_evidence_status": "PASS",
+  "final_source_followup": "Only top-level theorem docstring changed; canonical proof hashing alone is not ticket multiplicity.",
+  "fresh_work_campaign": {
+    "cancelled_native_prefix_steps": 17,
+    "candidate_bytes": 742,
+    "capsule_bytes": 862,
+    "controls": 251,
+    "fresh_neural_contractions_per_primary_nonce_after_prep": 0,
+    "hits": 7,
+    "independent_audit_checks": 45,
+    "misses": 9,
+    "native_exchanges": 368,
+    "native_producer_step_hashes_primary": 1024,
+    "native_proof_bytes": 134,
+    "packets_and_receipts": 87,
+    "primary_attempts": 16,
+    "primary_packet_bytes": [
+      3522,
+      3523
+    ],
+    "python_primary_crosscheck_step_hashes": 1024,
+    "python_untrusted_producer_step_hashes": 64,
+    "verification_remaining": 0,
+    "verification_reservations": 256,
+    "verification_spent": 83,
+    "verified": 16
+  },
+  "implementation_commit": "b9ccd327b363335ae6c219fd73565ab4ccaa9f17",
+  "integration_base_commit": "9602cb704f97fb9c87d6fd379809bef468c3c1e8",
+  "new_gpu_allocations": 0,
+  "observed_costs": {
+    "all_children_cpu_seconds": 1.2643809999999998,
+    "campaign_wall_ns": 3202521043,
+    "cpu_or_wall_subtotals_are_not_additive": true,
+    "isolation": "uncontrolled shared host, validation and finite campaigns overlapped; finite observations, no throughput or physical-cost floor",
+    "median_independent_full_cell_wall_ns": 6476816.0,
+    "median_native_64_step_producer_wall_ns": 9274.0,
+    "median_tcp_full_receiver_roundtrip_wall_ns": 16889142.0,
+    "native_child_cpu_seconds_subset": 0.375407,
+    "parent_process_cpu_ns": 1285820745
+  },
+  "pow_qualified": false,
+  "production_activation": false,
+  "remote_delivery": {
+    "alternate_access_path_attempted": false,
+    "new_pull_request_created": false,
+    "observation": "GitHub connector returned HTTP403: account suspended",
+    "remote_branch_pushed": false,
+    "status": "BLOCKED"
+  },
+  "schema": "pon-grouped-fresh-work-evidence-acceptance-v0",
+  "shortcut_campaign": {
+    "attempts": 208,
+    "controlled_attempts": 96,
+    "distinct_challenges": 80,
+    "preparation_plus_16_round_mac_totals": {
+      "controlled_dense_dropout/dense": 419424,
+      "controlled_dense_dropout/lut": 74016,
+      "controlled_dense_dropout/sparse": 222930,
+      "controlled_zero_rank1/cached": 50880,
+      "controlled_zero_rank1/direct": 511424,
+      "controlled_zero_rank1/zero_skip": 24672,
+      "real_dropout/dense": 419424,
+      "real_dropout/lut": 74016,
+      "real_dropout/sparse": 42786,
+      "real_mixing/cached": 73920,
+      "real_mixing/direct": 1472096,
+      "real_rank1/cached": 75552,
+      "real_rank1/direct": 536096
+    },
+    "real_model_original_inputs_attempts": 112,
+    "these_are_not_208_independent_lottery_queries": true,
+    "verified": 208
+  },
+  "source_commit": "1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7",
+  "validation": {
+    "commands_failed": 0,
+    "commands_not_started": 0,
+    "commands_passed": 21,
+    "full_workspace_unit_tests_executed": false,
+    "hosted_ci_on_this_source_executed": false,
+    "original_service_campaign_executed": false,
+    "strict_workspace_all_targets_all_features_clippy": "PASS"
+  },
+  "work_profile_qualification": "HOLD"
+}

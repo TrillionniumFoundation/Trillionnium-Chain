@@ -28,7 +28,7 @@ is not an old-format complete State root.
 | Lane | Existing original funding | Separate resource cap |
 | --- | --- | --- |
 | Mining | One native `reward:` row, already issued by M06 | Verified work units, CPU ns |
-| Contribution | Sponsor-debited `release:` escrow | Training CPU ns, parameter bytes |
+| Contribution | Sponsor-debited `release:` escrow for adopted improvements, or a separately prepaid `task:` for commissioned training | Training CPU ns, parameter bytes |
 | Evaluation | Explicit sponsor-debited `task:` escrow | Evaluation CPU ns, evaluated examples |
 | Storage | Explicit sponsor-debited `task:` escrow | Retained bytes, retained byte-blocks |
 | Repair | A distinct sponsor-debited `task:` escrow | CPU ns, downloaded bytes, uploaded bytes, attempts |
@@ -87,6 +87,35 @@ source, subject, beneficiary and gross/net amounts. The subject is the task
 output, release contribution ID, quota result or original reward ID. A payment
 operation is the exact ordinary transaction ID, or that original reward ID for
 maturation. A decreasing escrow balance, an RPC ACK or an arbitrary supplied funding field is insufficient.
+
+### Contract fees are separate from improvement rewards
+
+A correctly completed training or evaluation contract can produce `NoGain`.
+Its original `Task` escrow can still pay the commissioned work; a correctly
+used ordinary service can likewise receive its original `Quota` fee without
+improving a model. The local journal accepts those already executed payment
+observations only after the exact effect has a completion receipt, resources
+have been recorded, and the native owner reexecutes the exact signed payment.
+An absent resource measurement still charges the whole original reservation
+under the existing resource API; that conservative charge is not a physical
+measurement. `Invalid`, `Unknown` and `Cancelled` outcomes do not acquire this
+eligibility.
+
+This exception is restricted to `Task/Contribution`, `Task/Evaluation` and
+`Quota/Serving`. `Release/Contribution` remains a separate model-improvement
+allocation and requires `Positive`; mining rewards do too. Storage and repair
+retain their existing completed-service rule. Source type, ID, lane, original
+ceiling, subject, payee and operation remain pinned. A reward cannot be renamed
+as a task, and a different native namespace with the same bytes is not funding.
+The new rule adds no stored field, signed domain, transaction type, issuance,
+consensus weight or payment method. It repairs qualification for observing an
+already executed monetary fact; it does not execute or authorize that payment.
+
+The research plan, prior commission and permitted experiment remain obligations
+of the original task/experiment owner. Native task signatures and prepayment
+bind parties, amount and deadline; by themselves they do not establish scientific
+value, controller independence or a positive future-window result. Paying this
+fee does not unlock a release, model-improvement reward or additional chainwork.
 
 For native task settlement, release claims and mining maturity, the beneficiary
 credit equals the gross escrow debit. A sender's separately debited fee is not
@@ -149,3 +178,8 @@ cancellation, operation reuse,
 foreign databases, corrupt journal entries and the exact fresh hash namespace.
 Passing these controls is not a claim of independent evaluator quality,
 public reward eligibility, physical backing or production activation.
+
+The bounded NoGain fee rule and its source/lane refusal controls are reused from
+[the PR744 source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3e44c471187fc6c883693c836cdae6adae4bdafb/trillionnium/crates/trnm-service-settlement/src/native_budget.rs).
+This transplant does not import that entire PR, its input harness or its prior
+validation claims. The current composed source requires its own native checks.

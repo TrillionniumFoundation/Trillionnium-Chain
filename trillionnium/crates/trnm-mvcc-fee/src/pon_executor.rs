@@ -22,6 +22,7 @@ pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
 pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
+pub mod funded_service_v1;
 pub mod growth;
 #[cfg(feature = "pq-native-openssl")]
 pub mod pq_accounts;
@@ -1479,6 +1480,7 @@ fn prepare(
     signatures: &AtomicUsize,
     parent: Option<&State>,
 ) -> Result<Prepared> {
+    funded_service_v1::check_config(cfg)?;
     cfg.check_account_profile()?;
     if pq_accounts_v2::enabled(cfg) {
         let timestamp = timestamp.ok_or("PQ2_HEADER_TIMESTAMP_REQUIRED")?;
@@ -1506,6 +1508,7 @@ fn prepare(
         return pq_accounts::prepare(raw, height, cfg, signatures, policy);
     }
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    funded_service_v1::check_command(cfg, tx.tag, &tx.payload)?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
         "WORK_TASK_PROFILE",
@@ -1630,6 +1633,9 @@ fn apply_task_command(
     height: u64,
     cfg: &Config,
 ) -> Result<()> {
+    if funded_service_v1::apply_task_command(s, sender_id, nonce, tag, payload, height, cfg)? {
+        return Ok(());
+    }
     let sender = hex::encode(sender_id);
     let mut p = Payload {
         bytes: payload,
@@ -2930,6 +2936,7 @@ fn execute_with_state_inputs<E: Send>(
         force_repeated_sender_speculation,
     } = inputs;
     let progress = control.progress;
+    funded_service_v1::check_config(cfg)?;
     cfg.check_account_profile()?;
     require(
         !cfg.is_pq_account_profile() || pq_accounts_v2::enabled(cfg) || observer.is_none(),
@@ -3215,6 +3222,7 @@ fn prepare_block_state_with_inputs(
     monetary_input: Option<&MonetaryObligationInput<'_>>,
     growth: Option<&growth::AccountPartition>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
+    funded_service_v1::check_config(cfg)?;
     cfg.check_account_profile()?;
     pq_accounts_v2::validate_state(parent, cfg)?;
     #[cfg(feature = "pq-native-openssl")]

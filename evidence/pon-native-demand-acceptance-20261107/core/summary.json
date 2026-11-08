@@ -1,0 +1,209 @@
+{
+  "all_selected_gates_passed": true,
+  "gates": [
+    {
+      "child_max_rss_kib": 800012,
+      "child_system_cpu_seconds": 28.592279,
+      "child_user_cpu_seconds": 912.631926,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-service-settlement",
+        "-p",
+        "trnm-protocol",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--no-fail-fast",
+        "--",
+        "--test-threads=1"
+      ],
+      "elapsed_seconds": 793.817994594574,
+      "exit_code": 0,
+      "independent_business_acceptance": false,
+      "label": "core-suites",
+      "logs": {
+        "stderr.log": {
+          "bytes": 7091,
+          "sha256": "12c04586aa96e2b0ba5c149517b983aad35aed42194ddd9fdb8ff6722be26633"
+        },
+        "stdout.log": {
+          "bytes": 44667,
+          "sha256": "e02cd5ff3bb86d3f12fa30f522ec7a2180a56604e0fb82eb9da0ff139702fc59"
+        }
+      },
+      "schema": "pon-h-core-reexecution-v1",
+      "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+      "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+      "source_unchanged": true,
+      "started_unix_seconds": 1794065566.990274
+    },
+    {
+      "child_max_rss_kib": 1718516,
+      "child_system_cpu_seconds": 34.071209,
+      "child_user_cpu_seconds": 257.710378,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_seconds": 156.94725704193115,
+      "exit_code": 0,
+      "independent_business_acceptance": false,
+      "label": "workspace-clippy",
+      "logs": {
+        "stderr.log": {
+          "bytes": 6935,
+          "sha256": "c3945a3ff5f5fd14dede7c8e82eaab0a51c308e3003cf53ec771424824669898"
+        },
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "pon-h-core-reexecution-v1",
+      "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+      "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+      "source_unchanged": true,
+      "started_unix_seconds": 1794066361.4568417
+    },
+    {
+      "child_max_rss_kib": 1718516,
+      "child_system_cpu_seconds": 0.17364999999999498,
+      "child_user_cpu_seconds": 19.044351000000006,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "elapsed_seconds": 19.870147705078125,
+      "exit_code": 0,
+      "independent_business_acceptance": false,
+      "label": "formatting",
+      "logs": {
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "pon-h-core-reexecution-v1",
+      "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+      "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+      "source_unchanged": true,
+      "started_unix_seconds": 1794066519.0087826
+    },
+    {
+      "cargo_graph": {
+        "packages": 180,
+        "workspace_members": 26
+      },
+      "child_max_rss_kib": 1718516,
+      "child_system_cpu_seconds": 0.06938799999999645,
+      "child_user_cpu_seconds": 0.14010400000006484,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_seconds": 0.8801651000976562,
+      "exit_code": 0,
+      "independent_business_acceptance": false,
+      "label": "metadata-root",
+      "logs": {
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.log": {
+          "bytes": 863223,
+          "sha256": "1ec54313dda4cafa54b7b47e75964a4cf7ba3adcba8cd01cc317450f359473af"
+        }
+      },
+      "schema": "pon-h-core-reexecution-v1",
+      "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+      "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+      "source_unchanged": true,
+      "started_unix_seconds": 1794066539.4559047
+    },
+    {
+      "cargo_graph": {
+        "packages": 147,
+        "workspace_members": 1
+      },
+      "child_max_rss_kib": 1718516,
+      "child_system_cpu_seconds": 0.048430000000003304,
+      "child_user_cpu_seconds": 0.13217400000007729,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_seconds": 1.0205445289611816,
+      "exit_code": 0,
+      "independent_business_acceptance": false,
+      "label": "metadata-fuzz",
+      "logs": {
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.log": {
+          "bytes": 725483,
+          "sha256": "56cb05b3be7f62c6372422992e93429bfb2ce9002670c524abc9a006a629c06b"
+        }
+      },
+      "schema": "pon-h-core-reexecution-v1",
+      "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+      "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+      "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+      "source_unchanged": true,
+      "started_unix_seconds": 1794066540.9172418
+    }
+  ],
+  "schema": "pon-h-core-reexecution-summary-v1",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939"
+}

@@ -220,6 +220,8 @@ fn verify_source(
     // These source-local observations remain archive facts, never candidate
     // dispatch or payment authority. Check their set and real source history.
     node.validate_native_budget_records_v1()?;
+    node.validate_native_task_operation_pins_v1()?;
+    node.validate_native_demand_evidence_v1()?;
     let pool: u64 = node
         .db
         .query_row("SELECT count(*) FROM local_pool_metadata", [], |r| r.get(0))?;

@@ -1,0 +1,179 @@
+{
+  "all_selected_gates_passed": true,
+  "cargo_started": false,
+  "complete_repository_or_links_or_source_integrity_started": false,
+  "independent_acceptance": false,
+  "old_local_receipts_recovered": false,
+  "preflight": {
+    "command": [
+      "/usr/bin/bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 133,
+      "path": "preflight.stdout.log",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    }
+  },
+  "production_activation": false,
+  "recovery_provenance": "New H execution after scratch became unavailable. Prior local raw logs and receipts were not recovered and their counts are not reused.",
+  "results": [
+    {
+      "exit_code": 0,
+      "label": "ci-contract",
+      "receipt": {
+        "bytes": 3002,
+        "path": "ci-contract/receipt.json",
+        "sha256": "52c49c917f226c7cb84e2784f2cc07cf62a905cb1a5c8f8ccec73c531b607ff2"
+      },
+      "result": "PASS",
+      "source_unchanged": true,
+      "unittest": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failed": 0,
+        "framework_outcome": "OK",
+        "framework_seconds": "35.806",
+        "ignored": null,
+        "ignored_note": "unittest uses skipped; no Rust ignored count inferred",
+        "passed": 103,
+        "skipped": 0,
+        "tests_run": 103,
+        "unexpected_successes": 0,
+        "verified": true
+      }
+    },
+    {
+      "exit_code": 0,
+      "label": "new-references",
+      "receipt": {
+        "bytes": 3080,
+        "path": "new-references/receipt.json",
+        "sha256": "bfb1d2e3cdcd4c550c55c48b028bf8c167a147d378a70b00802529719c307c85"
+      },
+      "result": "PASS",
+      "source_unchanged": true,
+      "unittest": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failed": 0,
+        "framework_outcome": "OK",
+        "framework_seconds": "3.068",
+        "ignored": null,
+        "ignored_note": "unittest uses skipped; no Rust ignored count inferred",
+        "passed": 52,
+        "skipped": 0,
+        "tests_run": 52,
+        "unexpected_successes": 0,
+        "verified": true
+      }
+    },
+    {
+      "exit_code": 0,
+      "label": "retained-model",
+      "receipt": {
+        "bytes": 3284,
+        "path": "retained-model/receipt.json",
+        "sha256": "0a35e5729c457f1ea00c90eaf90197cb829c6bcc104cceb84032a2a39b65f502"
+      },
+      "result": "PASS",
+      "source_unchanged": true,
+      "unittest": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failed": 0,
+        "framework_outcome": "OK",
+        "framework_seconds": "20.745",
+        "ignored": null,
+        "ignored_note": "unittest uses skipped; no Rust ignored count inferred",
+        "passed": 131,
+        "skipped": 0,
+        "tests_run": 131,
+        "unexpected_successes": 0,
+        "verified": true
+      }
+    }
+  ],
+  "runner_failures": [],
+  "schema": "pon-static-gates-recovery-v1",
+  "script": {
+    "bytes": 12708,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/run_static_gates_recovery_v1.py",
+    "sha256": "d3077d2fdf5cddaa899ab82b4d60e2dd9a62c248997f7c5cb964fbc369574ba1"
+  },
+  "selections": [
+    {
+      "label": "new-references",
+      "python_args": [
+        "-m",
+        "unittest",
+        "-v",
+        "test_demand_evidence",
+        "test_upgrade_policy"
+      ],
+      "pythonpath": "formal/pon-nakamoto-v1"
+    },
+    {
+      "label": "retained-model",
+      "python_args": [
+        "-m",
+        "unittest",
+        "-v",
+        "test_reward_budget_oracle",
+        "test_model_evolution_oracle",
+        "test_model_task_windows_oracle",
+        "test_work_utility",
+        "test_public_evaluation_lifecycle",
+        "test_evaluation",
+        "test_evaluation_bundle",
+        "test_model_acceptance"
+      ],
+      "pythonpath": "formal/pon-nakamoto-v1"
+    },
+    {
+      "label": "ci-contract",
+      "python_args": [
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "pythonpath": null
+    }
+  ],
+  "source_after": {
+    "canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+    "clean": true,
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "manifest": {
+      "bytes": 1920026,
+      "path": "source-f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98.json",
+      "sha256": "dc8ea0949db7a427bc901fa630c6969de94cc98fb289e22ed1a05ac72f9e415d"
+    },
+    "matches_original_node_run": true,
+    "materialized_bytes": 35472819,
+    "materialized_entries": 2254,
+    "omitted_historical_archive_entries": 8457,
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_before": {
+    "canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+    "clean": true,
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "manifest": {
+      "bytes": 1920026,
+      "path": "source-f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98.json",
+      "sha256": "dc8ea0949db7a427bc901fa630c6969de94cc98fb289e22ed1a05ac72f9e415d"
+    },
+    "matches_original_node_run": true,
+    "materialized_bytes": 35472819,
+    "materialized_entries": 2254,
+    "omitted_historical_archive_entries": 8457,
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_unchanged": true
+}

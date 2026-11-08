@@ -1,0 +1,48 @@
+{
+  "schema": "hepta-local-github-publication-v1",
+  "published_at_utc": "2026-11-07T15:01:14.952797+00:00",
+  "channel": "HeptaRuntime desktop /usr/bin/gh and ordinary local git push",
+  "repository": "https://github.com/TrillionniumFoundation/hepta-private-ci",
+  "repository_private": false,
+  "source_commit": "e0a3bd2bde77c58a0ae7d211214f326371a72a4a",
+  "source_tree": "a28ed8f9dbc3569b8108e7f5fe5096b16c881792",
+  "published_head": "9c352c77d21923eb7c2022c96496228ee428d278",
+  "published_tree": "25d16999e4bdf0adc1ab7f9875cd4c4575e725df",
+  "remote_branch": "fix/pon-evaluated-noupdate-bundle-20261107-525798",
+  "remote_branch_head_verified": "9c352c77d21923eb7c2022c96496228ee428d278",
+  "pull_request": {
+    "number": 5318,
+    "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5318",
+    "draft": true,
+    "state": "open",
+    "head": "9c352c77d21923eb7c2022c96496228ee428d278",
+    "base_head": "b8d12ad02a2d8311581a4aa69e6cdf07d18f9758",
+    "base_branch": "research/ndu-native-nextuse-source-20261107-8ef7"
+  },
+  "remote_file_readback": [
+    {
+      "path": "qualification/pon-evaluated-no-update-20261107-525798/MANIFEST.json",
+      "bytes": 46033,
+      "sha256": "56443a7d04a33c2f8de1b311a61d3281939c70be62744c1aeb21da1563545135",
+      "git_blob": "0cdd3e94578b8520c93db6e726bf9fa7f32ebe2c"
+    },
+    {
+      "path": "qualification/pon-evaluated-no-update-20261107-525798/raw/accepted-evaluated-noupdate-native-v1.stderr.log",
+      "bytes": 253089,
+      "sha256": "36205963dd330dcdb66428336312c27d41f9ae0423782eefa55559fde75320b7",
+      "git_blob": "d395e701d1c47c3c488c815f0eb471dde354552c"
+    }
+  ],
+  "evidence_only_commits_after_source": [
+    "2616391624de696f44beec31d6ddd71c3bc4e1f1",
+    "9c352c77d21923eb7c2022c96496228ee428d278"
+  ],
+  "merged": false,
+  "production_activated": false,
+  "source_status_after": "",
+  "push": {
+    "exit_code": 0,
+    "stdout_sha256": "342cbed716b6e03632cf6e9f9a51959efc6948b93727fb6b35c2b14228403215",
+    "stderr_sha256": "bfeeb18902bf2be111492374e3164f195570454ca6dc5951f8974b2731d1c600"
+  }
+}

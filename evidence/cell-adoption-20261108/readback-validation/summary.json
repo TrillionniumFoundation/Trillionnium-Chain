@@ -1,0 +1,177 @@
+{
+  "schema": "cell-adoption-exact-source-validation-v1",
+  "tested_commit": "1011c05d14be10151f2fb042eada04098b77274d",
+  "tree": "6ec02ddf1ac915f79dad90ae32a02321e23bf589",
+  "python": "3.14.4",
+  "cryptography": "46.0.5",
+  "all_selected_commands_passed": true,
+  "source_after_status": "",
+  "native_chain_cargo_changed": false,
+  "full_node_campaign_executed": false,
+  "production_activation": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit_code": 0,
+      "seconds": 0.02349383500404656,
+      "log": "preflight.txt",
+      "bytes": 174,
+      "sha256": "c8c014f17e387e02000e54f8996a5d3a7391a7d739eb2bd3c12f5a0448d8e6f4"
+    },
+    {
+      "name": "source-before",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "1011c05d14be10151f2fb042eada04098b77274d",
+        "--output",
+        "/home/qian-qi/work/chain-cell-adoption-20261108-3279-validation3/source-before.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.701841650006827,
+      "log": "source-before.txt",
+      "bytes": 423,
+      "sha256": "3cfde56d58ea3cb9ede93147019a2f67d4b5c8de3947bb0939a25dbaaff64d42"
+    },
+    {
+      "name": "finality",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "formal/release-finality-v2/run_conformance.py",
+        "--out",
+        "/home/qian-qi/work/chain-cell-adoption-20261108-3279-validation3/finality"
+      ],
+      "exit_code": 0,
+      "seconds": 0.9073783599887975,
+      "log": "finality.txt",
+      "bytes": 2251,
+      "sha256": "93790760cbb796d46d781dbf47ba85b70e19a894c770d36b183bbe97f62ab2f3"
+    },
+    {
+      "name": "native-readback-reader",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/test_cell_adoption_readback.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06657620199257508,
+      "log": "native-readback-reader.txt",
+      "bytes": 4725,
+      "sha256": "8ee33f254c47becc1fd873362a3a2377ea3ace82fbb30adc6fcacd1ec091cc01",
+      "unittest_count": 26
+    },
+    {
+      "name": "source-integrity-negatives",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1.8988215540302917,
+      "log": "source-integrity-negatives.txt",
+      "bytes": 6898,
+      "sha256": "140d3443bc80b60bb1839e91ff2a4c9808195a212ac043881c9bbda568f6f91f",
+      "unittest_count": 43
+    },
+    {
+      "name": "ci-contract",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0432258159853518,
+      "log": "ci-contract.txt",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "name": "ci-contract-negatives",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 4.4443135860492475,
+      "log": "ci-contract-negatives.txt",
+      "bytes": 17640,
+      "sha256": "df5a34df9c55a6d2fb1d44a233164dc1ce08904944728f326e38766043a58c69",
+      "unittest_count": 105
+    },
+    {
+      "name": "finality-profile",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_finality_profile.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.020791749004274607,
+      "log": "finality-profile.txt",
+      "bytes": 86,
+      "sha256": "9f13e6c98108b2a82e73a7c658df612a8027d68f74b8b18610d649a3e3846364"
+    },
+    {
+      "name": "original-parent",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/test_model_generation_sequence_parent.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3250742870150134,
+      "log": "original-parent.txt",
+      "bytes": 1821,
+      "sha256": "a1cb9567256ee4e94864c4c42648fcb1e309d7f38a7cc6ccdc2d10f0c3fb4417",
+      "unittest_count": 10
+    },
+    {
+      "name": "original-learning",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "formal/release-finality-v2/check_existing_learning_owner.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.08014243899378926,
+      "log": "original-learning.txt",
+      "bytes": 105,
+      "sha256": "5a6abd032bd2e9e4fd4254ed96bd3f838e47a9b1717807f43f6efbd9a0004ba9"
+    },
+    {
+      "name": "source-after",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "1011c05d14be10151f2fb042eada04098b77274d",
+        "--output",
+        "/home/qian-qi/work/chain-cell-adoption-20261108-3279-validation3/source-after.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7104245939990506,
+      "log": "source-after.txt",
+      "bytes": 423,
+      "sha256": "3cfde56d58ea3cb9ede93147019a2f67d4b5c8de3947bb0939a25dbaaff64d42"
+    }
+  ]
+}

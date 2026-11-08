@@ -1,0 +1,1221 @@
+{
+  "archives": [
+    {
+      "archive": "validation-canonical-v1.tar.gz",
+      "archive_bytes": 164758,
+      "archive_sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6",
+      "container_metadata_normalized": true,
+      "local_member_readback_verified": true,
+      "member_bytes_unchanged": true,
+      "member_count": 57,
+      "payload_bytes": 1837063,
+      "readback_verified": true,
+      "schema": "pon-evidence-archive-members-v0"
+    },
+    {
+      "archive": "fanout-exact-rog-v1.tar.gz",
+      "archive_bytes": 1058988,
+      "archive_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89",
+      "container_metadata_normalized": true,
+      "local_member_readback_verified": true,
+      "member_bytes_unchanged": true,
+      "member_count": 396,
+      "payload_bytes": 8426422,
+      "readback_verified": true,
+      "schema": "pon-evidence-archive-members-v0"
+    },
+    {
+      "archive": "owner-exact-rog-v1.tar.gz",
+      "archive_bytes": 132151,
+      "archive_sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685",
+      "container_metadata_normalized": true,
+      "local_member_readback_verified": true,
+      "member_bytes_unchanged": true,
+      "member_count": 134,
+      "payload_bytes": 959249,
+      "readback_verified": true,
+      "schema": "pon-evidence-archive-members-v0"
+    },
+    {
+      "archive": "readiness-capture-v1.tar.gz",
+      "archive_bytes": 415145,
+      "archive_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d",
+      "container_metadata_normalized": true,
+      "local_member_readback_verified": true,
+      "member_bytes_unchanged": true,
+      "member_count": 41,
+      "payload_bytes": 5739335,
+      "readback_verified": true,
+      "schema": "pon-evidence-archive-members-v0"
+    }
+  ],
+  "created_utc": "2026-11-07T15:21:52.488114+00:00",
+  "failures": [],
+  "files": [
+    {
+      "bytes": 164758,
+      "chunks": 3,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/validation-canonical-v1.tar.gz",
+      "remote_version": "66306:48262916:164758:1794064370074170498:1794064370074170498",
+      "sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6",
+      "verified": true
+    },
+    {
+      "bytes": 12154,
+      "chunks": 1,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/validation-canonical-v1.tar.gz.members.json",
+      "remote_version": "66306:48262917:12154:1794064370080170400:1794064370080170400",
+      "sha256": "632965f916a9fc6e0b34819f2a703d01d376f20e9570d5d0a1f25ef5dfadfa6e",
+      "verified": true
+    },
+    {
+      "bytes": 1058988,
+      "chunks": 17,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/fanout-exact-rog-v1.tar.gz",
+      "remote_version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+      "sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89",
+      "verified": true
+    },
+    {
+      "bytes": 85664,
+      "chunks": 2,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/fanout-exact-rog-v1.tar.gz.members.json",
+      "remote_version": "66306:48262919:85664:1794064370241167778:1794064370241167778",
+      "sha256": "1dd21ab1391badd58196b1159e084845b3b7a23315ccdca99937443ededad18f",
+      "verified": true
+    },
+    {
+      "bytes": 132151,
+      "chunks": 3,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/owner-exact-rog-v1.tar.gz",
+      "remote_version": "66306:48262920:132151:1794064370287167028:1794064370287167028",
+      "sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685",
+      "verified": true
+    },
+    {
+      "bytes": 27326,
+      "chunks": 1,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/owner-exact-rog-v1.tar.gz.members.json",
+      "remote_version": "66306:48262921:27326:1794064370293546484:1794064370293546484",
+      "sha256": "792f4110807d998d338c5a939b81e9749fafa711ed1a0e1eb548eef170685794",
+      "verified": true
+    },
+    {
+      "bytes": 415145,
+      "chunks": 7,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/readiness-capture-v1.tar.gz",
+      "remote_version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+      "sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d",
+      "verified": true
+    },
+    {
+      "bytes": 10494,
+      "chunks": 1,
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/readiness-capture-v1.tar.gz.members.json",
+      "remote_version": "66306:48263040:10494:1794064627130808782:1794064627130808782",
+      "sha256": "f7b19cb175aa7a1e1bc13e0a4cd2214fbeb7655ff34857ad6c56fa13ac82770d",
+      "verified": true
+    }
+  ],
+  "key_records": [
+    {
+      "archive": "validation-canonical-v1.tar.gz",
+      "bytes": 2622,
+      "member": "validation-canonical-v1/summary.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/validation-canonical-v1/summary.json",
+      "sha256": "5c655dbbcdfa8bcbbe3726329be934d363526a1a2ed5e6ba699207a553c5203c"
+    },
+    {
+      "archive": "validation-canonical-v1.tar.gz",
+      "bytes": 1108,
+      "member": "validation-canonical-v1/runner-bindings.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/validation-canonical-v1/runner-bindings.json",
+      "sha256": "2710471212a9572bb66fb79783ac229bfb1201d5c91c1e0f9f447d2620fc6bba"
+    },
+    {
+      "archive": "validation-canonical-v1.tar.gz",
+      "bytes": 570,
+      "member": "validation-canonical-v1/source-before.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/validation-canonical-v1/source-before.json",
+      "sha256": "c76b9ef7b99eb5cec9c2850fec860ebc9954ca206f8f5d49cf3a419c189af686"
+    },
+    {
+      "archive": "validation-canonical-v1.tar.gz",
+      "bytes": 570,
+      "member": "validation-canonical-v1/source-after.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/validation-canonical-v1/source-after.json",
+      "sha256": "c76b9ef7b99eb5cec9c2850fec860ebc9954ca206f8f5d49cf3a419c189af686"
+    },
+    {
+      "archive": "validation-canonical-v1.tar.gz",
+      "bytes": 1384,
+      "member": "validation-canonical-v1/authority-native-build.result.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/validation-canonical-v1/authority-native-build.result.json",
+      "sha256": "b749b91873b906ef75f4afcb8b99a4c785b872aad8ea6c40c398fd07da05bf34"
+    },
+    {
+      "archive": "fanout-exact-rog-v1.tar.gz",
+      "bytes": 402979,
+      "member": "fanout-exact-rog/report.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/fanout-exact-rog/report.json",
+      "sha256": "915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96"
+    },
+    {
+      "archive": "fanout-exact-rog-v1.tar.gz",
+      "bytes": 4109,
+      "member": "fanout-exact-rog/demand-bridge-audit.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/fanout-exact-rog/demand-bridge-audit.json",
+      "sha256": "1a05597f969f8a7f26512172dbb1e191f48b71d2797c414d1483bfb6e5eba34d"
+    },
+    {
+      "archive": "owner-exact-rog-v1.tar.gz",
+      "bytes": 93820,
+      "member": "owner-exact-rog/report.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/owner-exact-rog/report.json",
+      "sha256": "bd9d20f15ea86aa7d948937bf32e8f1a884e37e9949396b8831312202825b8ab"
+    },
+    {
+      "archive": "owner-exact-rog-v1.tar.gz",
+      "bytes": 5227,
+      "member": "owner-exact-rog/plan.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/owner-exact-rog/plan.json",
+      "sha256": "a5642168e68e5e781a5a62123088f5aa53b83486ae777b9f2cc1d7d1a77582c7"
+    },
+    {
+      "archive": "owner-exact-rog-v1.tar.gz",
+      "bytes": 812,
+      "member": "owner-exact-rog/request.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/owner-exact-rog/request.json",
+      "sha256": "b97d710931cf6d702f751a8e3cfa226e83a66d93a48ff72945fd2928d55344c0"
+    },
+    {
+      "archive": "readiness-capture-v1.tar.gz",
+      "bytes": 16980,
+      "member": "readiness-capture-v1/preparation/sqlite-qualification-review-v1.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/readiness-capture-v1/preparation/sqlite-qualification-review-v1.json",
+      "sha256": "36f410dd267b825e1b9f30960925e7b224a92c3569ef3b2979161b29d96b1002"
+    },
+    {
+      "archive": "readiness-capture-v1.tar.gz",
+      "bytes": 30538,
+      "member": "readiness-capture-v1/preparation/owner-independent-audit-v2.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/readiness-capture-v1/preparation/owner-independent-audit-v2.json",
+      "sha256": "1e916cc460b37cc2779ad96aa08503f2bf45f3d731c86eb31426cc019b818234"
+    },
+    {
+      "archive": "readiness-capture-v1.tar.gz",
+      "bytes": 11244,
+      "member": "readiness-capture-v1/preparation/campaign-summary-v1.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/readiness-capture-v1/preparation/campaign-summary-v1.json",
+      "sha256": "ebab5022e0d6dcfd40ad296396532ee78b05501a1b731c43dbe00e06ca7fb433"
+    },
+    {
+      "archive": "readiness-capture-v1.tar.gz",
+      "bytes": 50299,
+      "member": "readiness-capture-v1/inputs/runtime-launch-provenance-v1.json",
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/key-records/readiness-capture-v1/inputs/runtime-launch-provenance-v1.json",
+      "sha256": "812d13fa382fc17e94db1200bea9216c8ccf19c816abed3b2f0c1b7d5ae77367"
+    }
+  ],
+  "schema": "hepta-pinned-evidence-return-v1",
+  "status": "PASS",
+  "transport": {
+    "chunks": [
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.0",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.0",
+          "sha256": "9383f1f2eec2c18d6c9450f19dbdc2ebeeab512b0108f55d63d0bd27f32e581f"
+        },
+        "name": "validation-canonical-v1.tar.gz",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "9383f1f2eec2c18d6c9450f19dbdc2ebeeab512b0108f55d63d0bd27f32e581f",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+          "size": 164758,
+          "version": "66306:48262916:164758:1794064370074170498:1794064370074170498"
+        },
+        "total": 164758,
+        "version": "66306:48262916:164758:1794064370074170498:1794064370074170498",
+        "whole_sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.65536",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.65536",
+          "sha256": "cd56ea49c7ec17a8e4394c444492841ede27bcfaba5b8d08b41e81cbeadf2969"
+        },
+        "name": "validation-canonical-v1.tar.gz",
+        "offset": 65536,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "cd56ea49c7ec17a8e4394c444492841ede27bcfaba5b8d08b41e81cbeadf2969",
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+          "size": 164758,
+          "version": "66306:48262916:164758:1794064370074170498:1794064370074170498"
+        },
+        "total": 164758,
+        "version": "66306:48262916:164758:1794064370074170498:1794064370074170498",
+        "whole_sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6"
+      },
+      {
+        "limit": 33686,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.131072",
+        "local_write": {
+          "bytes": 33686,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.131072",
+          "sha256": "300f510e1bf96644b27c8709ec5e963a7434a6a6c136cc36d941e6594741f5c7"
+        },
+        "name": "validation-canonical-v1.tar.gz",
+        "offset": 131072,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "300f510e1bf96644b27c8709ec5e963a7434a6a6c136cc36d941e6594741f5c7",
+          "eof": true,
+          "next_offset": 164758,
+          "offset": 131072,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+          "size": 164758,
+          "version": "66306:48262916:164758:1794064370074170498:1794064370074170498"
+        },
+        "total": 164758,
+        "version": "66306:48262916:164758:1794064370074170498:1794064370074170498",
+        "whole_sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6"
+      },
+      {
+        "limit": 12154,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.members.json.0",
+        "local_write": {
+          "bytes": 12154,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/validation-canonical-v1.tar.gz.members.json.0",
+          "sha256": "632965f916a9fc6e0b34819f2a703d01d376f20e9570d5d0a1f25ef5dfadfa6e"
+        },
+        "name": "validation-canonical-v1.tar.gz.members.json",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz.members.json",
+        "remote_read": {
+          "chunk_sha256": "632965f916a9fc6e0b34819f2a703d01d376f20e9570d5d0a1f25ef5dfadfa6e",
+          "eof": true,
+          "next_offset": 12154,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz.members.json",
+          "size": 12154,
+          "version": "66306:48262917:12154:1794064370080170400:1794064370080170400"
+        },
+        "total": 12154,
+        "version": "66306:48262917:12154:1794064370080170400:1794064370080170400",
+        "whole_sha256": "632965f916a9fc6e0b34819f2a703d01d376f20e9570d5d0a1f25ef5dfadfa6e"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.0",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.0",
+          "sha256": "e9d1e8ba0a14598858a25eb537e5d30a65e162bef420b0c9ebcaed1c9496ea96"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "e9d1e8ba0a14598858a25eb537e5d30a65e162bef420b0c9ebcaed1c9496ea96",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.65536",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.65536",
+          "sha256": "7e165b209cae938b18a880d8db047ffa240e059542310361868d4b1961f8e7d9"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 65536,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "7e165b209cae938b18a880d8db047ffa240e059542310361868d4b1961f8e7d9",
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.131072",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.131072",
+          "sha256": "f56225d1b59fc9f663074ba1c131ee88a58e39ec2cff86578cece2303276eb91"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 131072,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "f56225d1b59fc9f663074ba1c131ee88a58e39ec2cff86578cece2303276eb91",
+          "eof": false,
+          "next_offset": 196608,
+          "offset": 131072,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.196608",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.196608",
+          "sha256": "e3349a87bd96e4f3a5bae82a1240675b0dc7a2b25fa3f72ba98f0cc5a996ca2a"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 196608,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "e3349a87bd96e4f3a5bae82a1240675b0dc7a2b25fa3f72ba98f0cc5a996ca2a",
+          "eof": false,
+          "next_offset": 262144,
+          "offset": 196608,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.262144",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.262144",
+          "sha256": "8e6c2394383f14f4d9a0762fe7201eb1219f90e8ef1fdbecae1268abc8aba668"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 262144,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "8e6c2394383f14f4d9a0762fe7201eb1219f90e8ef1fdbecae1268abc8aba668",
+          "eof": false,
+          "next_offset": 327680,
+          "offset": 262144,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.327680",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.327680",
+          "sha256": "dc1fd1369c67f2acbba69555c7740f22b21ae17402bd83f99751503f3ace2496"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 327680,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "dc1fd1369c67f2acbba69555c7740f22b21ae17402bd83f99751503f3ace2496",
+          "eof": false,
+          "next_offset": 393216,
+          "offset": 327680,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.393216",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.393216",
+          "sha256": "7913314192aa2ed25286e480def18b1f7f3f78bbf9db607d1ee0d91f306d8b40"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 393216,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "7913314192aa2ed25286e480def18b1f7f3f78bbf9db607d1ee0d91f306d8b40",
+          "eof": false,
+          "next_offset": 458752,
+          "offset": 393216,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.458752",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.458752",
+          "sha256": "1e3097e0e15641e972f4d9056049af84487fb37f7f1145693c1696252ff6a53d"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 458752,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "1e3097e0e15641e972f4d9056049af84487fb37f7f1145693c1696252ff6a53d",
+          "eof": false,
+          "next_offset": 524288,
+          "offset": 458752,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.524288",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.524288",
+          "sha256": "772f0b67eeb0172facb8696fd7f1c7e1b8dbca8a50a748d151d9f9c505195616"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 524288,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "772f0b67eeb0172facb8696fd7f1c7e1b8dbca8a50a748d151d9f9c505195616",
+          "eof": false,
+          "next_offset": 589824,
+          "offset": 524288,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.589824",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.589824",
+          "sha256": "88f3fdd4b30efc16a1bc8ea65bc775da43387440e171a47247d57e4f08779398"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 589824,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "88f3fdd4b30efc16a1bc8ea65bc775da43387440e171a47247d57e4f08779398",
+          "eof": false,
+          "next_offset": 655360,
+          "offset": 589824,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.655360",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.655360",
+          "sha256": "07d3f200f9124f88b3befa7186bee3dff1b1a2d653ac0d6470ee1b0a3d7e012e"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 655360,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "07d3f200f9124f88b3befa7186bee3dff1b1a2d653ac0d6470ee1b0a3d7e012e",
+          "eof": false,
+          "next_offset": 720896,
+          "offset": 655360,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.720896",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.720896",
+          "sha256": "029afee6b84af8fea4326d173c0fa4b859f44f17680121b7127d6d914313c904"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 720896,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "029afee6b84af8fea4326d173c0fa4b859f44f17680121b7127d6d914313c904",
+          "eof": false,
+          "next_offset": 786432,
+          "offset": 720896,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.786432",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.786432",
+          "sha256": "f17707fb868a0ae0abb58bdcd5396ebd749679fbaf39fc967ad205ce003e6947"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 786432,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "f17707fb868a0ae0abb58bdcd5396ebd749679fbaf39fc967ad205ce003e6947",
+          "eof": false,
+          "next_offset": 851968,
+          "offset": 786432,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.851968",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.851968",
+          "sha256": "5e26cab874a579949e49b28802e72473fe2c9155de9efe250de958f34db244a0"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 851968,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "5e26cab874a579949e49b28802e72473fe2c9155de9efe250de958f34db244a0",
+          "eof": false,
+          "next_offset": 917504,
+          "offset": 851968,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.917504",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.917504",
+          "sha256": "655a2ba5e28e5fa990222a3d0ea457c9c6ebafd2bd485d5087dbcbce07275557"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 917504,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "655a2ba5e28e5fa990222a3d0ea457c9c6ebafd2bd485d5087dbcbce07275557",
+          "eof": false,
+          "next_offset": 983040,
+          "offset": 917504,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.983040",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.983040",
+          "sha256": "5e86c03ebdb233b0b3241488b53d260e5f2dbb5127846874f08357b39acb15b5"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 983040,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "5e86c03ebdb233b0b3241488b53d260e5f2dbb5127846874f08357b39acb15b5",
+          "eof": false,
+          "next_offset": 1048576,
+          "offset": 983040,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 10412,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.1048576",
+        "local_write": {
+          "bytes": 10412,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.1048576",
+          "sha256": "0490a2d34f57cc2a257090110314fa4742870e026cdf04da9d20287b1a553d08"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "offset": 1048576,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "0490a2d34f57cc2a257090110314fa4742870e026cdf04da9d20287b1a553d08",
+          "eof": true,
+          "next_offset": 1058988,
+          "offset": 1048576,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+          "size": 1058988,
+          "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+        },
+        "total": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299",
+        "whole_sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.members.json.0",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.members.json.0",
+          "sha256": "96cc6a5b6629628f132feda89a87d16cf5f530fbb350ab0a462aa628a38c9aea"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz.members.json",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz.members.json",
+        "remote_read": {
+          "chunk_sha256": "96cc6a5b6629628f132feda89a87d16cf5f530fbb350ab0a462aa628a38c9aea",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz.members.json",
+          "size": 85664,
+          "version": "66306:48262919:85664:1794064370241167778:1794064370241167778"
+        },
+        "total": 85664,
+        "version": "66306:48262919:85664:1794064370241167778:1794064370241167778",
+        "whole_sha256": "1dd21ab1391badd58196b1159e084845b3b7a23315ccdca99937443ededad18f"
+      },
+      {
+        "limit": 20128,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.members.json.65536",
+        "local_write": {
+          "bytes": 20128,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/fanout-exact-rog-v1.tar.gz.members.json.65536",
+          "sha256": "d904e894893c036cfca5e8d8c26a3fbcbbac2ce274832227686ac6816c64ec38"
+        },
+        "name": "fanout-exact-rog-v1.tar.gz.members.json",
+        "offset": 65536,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz.members.json",
+        "remote_read": {
+          "chunk_sha256": "d904e894893c036cfca5e8d8c26a3fbcbbac2ce274832227686ac6816c64ec38",
+          "eof": true,
+          "next_offset": 85664,
+          "offset": 65536,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz.members.json",
+          "size": 85664,
+          "version": "66306:48262919:85664:1794064370241167778:1794064370241167778"
+        },
+        "total": 85664,
+        "version": "66306:48262919:85664:1794064370241167778:1794064370241167778",
+        "whole_sha256": "1dd21ab1391badd58196b1159e084845b3b7a23315ccdca99937443ededad18f"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.0",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.0",
+          "sha256": "ee1968728a785f5ab47ba6714b8e6f3bdb5a16de28a9732e1b7ab288ccb7fbbf"
+        },
+        "name": "owner-exact-rog-v1.tar.gz",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "ee1968728a785f5ab47ba6714b8e6f3bdb5a16de28a9732e1b7ab288ccb7fbbf",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+          "size": 132151,
+          "version": "66306:48262920:132151:1794064370287167028:1794064370287167028"
+        },
+        "total": 132151,
+        "version": "66306:48262920:132151:1794064370287167028:1794064370287167028",
+        "whole_sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.65536",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.65536",
+          "sha256": "4535feb1dee50afc8f030b53a909311e19e58ce6185035dda8a21bf0732952b1"
+        },
+        "name": "owner-exact-rog-v1.tar.gz",
+        "offset": 65536,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "4535feb1dee50afc8f030b53a909311e19e58ce6185035dda8a21bf0732952b1",
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+          "size": 132151,
+          "version": "66306:48262920:132151:1794064370287167028:1794064370287167028"
+        },
+        "total": 132151,
+        "version": "66306:48262920:132151:1794064370287167028:1794064370287167028",
+        "whole_sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685"
+      },
+      {
+        "limit": 1079,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.131072",
+        "local_write": {
+          "bytes": 1079,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.131072",
+          "sha256": "f50a3002a5a4e61a64b047902ae7c5c2fb4f2c63b33e4dbe3c4a4672cdb8a8f4"
+        },
+        "name": "owner-exact-rog-v1.tar.gz",
+        "offset": 131072,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "f50a3002a5a4e61a64b047902ae7c5c2fb4f2c63b33e4dbe3c4a4672cdb8a8f4",
+          "eof": true,
+          "next_offset": 132151,
+          "offset": 131072,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+          "size": 132151,
+          "version": "66306:48262920:132151:1794064370287167028:1794064370287167028"
+        },
+        "total": 132151,
+        "version": "66306:48262920:132151:1794064370287167028:1794064370287167028",
+        "whole_sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685"
+      },
+      {
+        "limit": 27326,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.members.json.0",
+        "local_write": {
+          "bytes": 27326,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/owner-exact-rog-v1.tar.gz.members.json.0",
+          "sha256": "792f4110807d998d338c5a939b81e9749fafa711ed1a0e1eb548eef170685794"
+        },
+        "name": "owner-exact-rog-v1.tar.gz.members.json",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz.members.json",
+        "remote_read": {
+          "chunk_sha256": "792f4110807d998d338c5a939b81e9749fafa711ed1a0e1eb548eef170685794",
+          "eof": true,
+          "next_offset": 27326,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz.members.json",
+          "size": 27326,
+          "version": "66306:48262921:27326:1794064370293546484:1794064370293546484"
+        },
+        "total": 27326,
+        "version": "66306:48262921:27326:1794064370293546484:1794064370293546484",
+        "whole_sha256": "792f4110807d998d338c5a939b81e9749fafa711ed1a0e1eb548eef170685794"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.0",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.0",
+          "sha256": "6fb6c30ebaec47c7eb200f61b0446baff6e16e49b71e148d0c9a514e5daa0583"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "6fb6c30ebaec47c7eb200f61b0446baff6e16e49b71e148d0c9a514e5daa0583",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.65536",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.65536",
+          "sha256": "bd3da681fbbb5774bdcf5cb44790d2cf27e7957ca23c39ae258663e5c4f1c714"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 65536,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "bd3da681fbbb5774bdcf5cb44790d2cf27e7957ca23c39ae258663e5c4f1c714",
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.131072",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.131072",
+          "sha256": "866a547bf5b0b0c365ad2a964acecd5eca33f66162010083812ef4c9f9141eb2"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 131072,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "866a547bf5b0b0c365ad2a964acecd5eca33f66162010083812ef4c9f9141eb2",
+          "eof": false,
+          "next_offset": 196608,
+          "offset": 131072,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.196608",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.196608",
+          "sha256": "b7c893a665b00348d781916b69b4a46e7b83bca3acd8dfd1940f3adca3f3a475"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 196608,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "b7c893a665b00348d781916b69b4a46e7b83bca3acd8dfd1940f3adca3f3a475",
+          "eof": false,
+          "next_offset": 262144,
+          "offset": 196608,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.262144",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.262144",
+          "sha256": "d9a55678405fdbb1553290bea2c29f9847111c580e7ac31b4928d573f298e5e0"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 262144,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "d9a55678405fdbb1553290bea2c29f9847111c580e7ac31b4928d573f298e5e0",
+          "eof": false,
+          "next_offset": 327680,
+          "offset": 262144,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 65536,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.327680",
+        "local_write": {
+          "bytes": 65536,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.327680",
+          "sha256": "76043717f895dfbba0a337944717b00ae373172c944a6742d6ee9d21be1e8150"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 327680,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "76043717f895dfbba0a337944717b00ae373172c944a6742d6ee9d21be1e8150",
+          "eof": false,
+          "next_offset": 393216,
+          "offset": 327680,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 21929,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.393216",
+        "local_write": {
+          "bytes": 21929,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.393216",
+          "sha256": "ee3064bcb5ea8102b8a32cd24a96826cd205f5252a13fe84e7b3f65a9f9ca71f"
+        },
+        "name": "readiness-capture-v1.tar.gz",
+        "offset": 393216,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote_read": {
+          "chunk_sha256": "ee3064bcb5ea8102b8a32cd24a96826cd205f5252a13fe84e7b3f65a9f9ca71f",
+          "eof": true,
+          "next_offset": 415145,
+          "offset": 393216,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+          "size": 415145,
+          "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+        },
+        "total": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222",
+        "whole_sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d"
+      },
+      {
+        "limit": 10494,
+        "local": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.members.json.0",
+        "local_write": {
+          "bytes": 10494,
+          "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/rog-delivery-v1/chunks/readiness-capture-v1.tar.gz.members.json.0",
+          "sha256": "f7b19cb175aa7a1e1bc13e0a4cd2214fbeb7655ff34857ad6c56fa13ac82770d"
+        },
+        "name": "readiness-capture-v1.tar.gz.members.json",
+        "offset": 0,
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz.members.json",
+        "remote_read": {
+          "chunk_sha256": "f7b19cb175aa7a1e1bc13e0a4cd2214fbeb7655ff34857ad6c56fa13ac82770d",
+          "eof": true,
+          "next_offset": 10494,
+          "offset": 0,
+          "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz.members.json",
+          "size": 10494,
+          "version": "66306:48263040:10494:1794064627130808782:1794064627130808782"
+        },
+        "total": 10494,
+        "version": "66306:48263040:10494:1794064627130808782:1794064627130808782",
+        "whole_sha256": "f7b19cb175aa7a1e1bc13e0a4cd2214fbeb7655ff34857ad6c56fa13ac82770d"
+      }
+    ],
+    "failures": [],
+    "files": [
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "validation-canonical-v1.tar.gz",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz",
+        "sha256": "26f2d895fa1ec4da4d5c5e687dd42f279bcf01b095af4a5f36cc480adce87ba6",
+        "size": 164758,
+        "version": "66306:48262916:164758:1794064370074170498:1794064370074170498"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "validation-canonical-v1.tar.gz.members.json",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz.members.json",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/validation-canonical-v1.tar.gz.members.json",
+        "sha256": "632965f916a9fc6e0b34819f2a703d01d376f20e9570d5d0a1f25ef5dfadfa6e",
+        "size": 12154,
+        "version": "66306:48262917:12154:1794064370080170400:1794064370080170400"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "fanout-exact-rog-v1.tar.gz",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz",
+        "sha256": "dc3dc9921caec520c800ef69d294be19fb4ee7518d0658d73e86c5123c662f89",
+        "size": 1058988,
+        "version": "66306:48262918:1058988:1794064370209168299:1794064370209168299"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "fanout-exact-rog-v1.tar.gz.members.json",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz.members.json",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/fanout-exact-rog-v1.tar.gz.members.json",
+        "sha256": "1dd21ab1391badd58196b1159e084845b3b7a23315ccdca99937443ededad18f",
+        "size": 85664,
+        "version": "66306:48262919:85664:1794064370241167778:1794064370241167778"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "owner-exact-rog-v1.tar.gz",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz",
+        "sha256": "43c82756dbf6a8b979f41d72474118a0c89e28b7494ae9d6ce0b981f2c231685",
+        "size": 132151,
+        "version": "66306:48262920:132151:1794064370287167028:1794064370287167028"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "owner-exact-rog-v1.tar.gz.members.json",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz.members.json",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/owner-exact-rog-v1.tar.gz.members.json",
+        "sha256": "792f4110807d998d338c5a939b81e9749fafa711ed1a0e1eb548eef170685794",
+        "size": 27326,
+        "version": "66306:48262921:27326:1794064370293546484:1794064370293546484"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "readiness-capture-v1.tar.gz",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz",
+        "sha256": "ae8a1cf4f2ba77770a3baf0ae3ac28e46036485245f7b0a25c4d62aa976c3d2d",
+        "size": 415145,
+        "version": "66306:48263039:415145:1794064627115355222:1794064627115355222"
+      },
+      {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "name": "readiness-capture-v1.tar.gz.members.json",
+        "path": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz.members.json",
+        "remote": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/archives-final-v1/readiness-capture-v1.tar.gz.members.json",
+        "sha256": "f7b19cb175aa7a1e1bc13e0a4cd2214fbeb7655ff34857ad6c56fa13ac82770d",
+        "size": 10494,
+        "version": "66306:48263040:10494:1794064627130808782:1794064627130808782"
+      }
+    ]
+  }
+}

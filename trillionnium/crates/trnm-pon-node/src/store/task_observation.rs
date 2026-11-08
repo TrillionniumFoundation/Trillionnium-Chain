@@ -97,6 +97,11 @@ fn unique_acceptance<'a>(
             ),
         };
         if tx.tag() == 5 {
+            // This legacy convenience type names only customer acceptance.
+            // Frozen arbitrator decisions use the native payment/evidence owner.
+            if tx.payload().len() != 64 {
+                return Ok(None);
+            }
             // A multi-accept block cannot name one unambiguous upgrade in this
             // optional convenience observation.
             if acceptance.is_some() {

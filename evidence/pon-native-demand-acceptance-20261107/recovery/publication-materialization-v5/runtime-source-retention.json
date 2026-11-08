@@ -1,0 +1,230 @@
+{
+  "jobs": [
+    {
+      "job_id": "1a1b6b17808-12894-5f1",
+      "label": "initial-readonly-inventory",
+      "logs_retained": [
+        {
+          "bytes": 30503,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b17808-12894-5f1/stdout.log",
+          "sha256": "80f92bf50f604025e7d284024cd817ca4be60a78b3c183d7b5610f91ca60238a"
+        },
+        {
+          "bytes": 153,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b17808-12894-5f1/stderr.log",
+          "sha256": "44aa20123e9542614d244d55fe2febc163c3452f1fe8ccc344b722f1183f72ce"
+        },
+        {
+          "bytes": 506,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b17808-12894-5f1/exit.json",
+          "sha256": "a03ddc7dd3a8de90a538210402bf563d7b42304b94c78a8a21223e9b65e6456a"
+        }
+      ],
+      "observed_files": [
+        "child.json",
+        "exit.json",
+        "exit.witness.json",
+        "launch.json",
+        "launch.lock",
+        "owner-intent.json",
+        "owner.lock",
+        "request.json",
+        "runner.py",
+        "started.json",
+        "stderr.log",
+        "stdout.log"
+      ],
+      "runtime_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6b17808-12894-5f1",
+      "source": {
+        "bytes": 2444,
+        "path": "publication-materialization-v5/runtime-jobs/1a1b6b17808-12894-5f1/actual-shell-command.sh",
+        "sha256": "350bcdb45e956013c434fe43822f7d29b7bf4086b690cd6f37594ab8f1982152"
+      },
+      "source_candidates": [
+        "request.json.args"
+      ],
+      "source_retained": true
+    },
+    {
+      "job_id": "1a1b6b3c0ca-12894-606",
+      "label": "sized-official-inventory",
+      "logs_retained": [
+        {
+          "bytes": 13966,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b3c0ca-12894-606/stdout.log",
+          "sha256": "480ccfbdcf30f76e358fee39f95a4fb50fb457adae03e4d4988466284e88219a"
+        },
+        {
+          "bytes": 0,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b3c0ca-12894-606/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 502,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b3c0ca-12894-606/exit.json",
+          "sha256": "695a4edacbdebec37b66c1ff78e98a097c17586059cf777edcff11746167eb7d"
+        }
+      ],
+      "observed_files": [
+        "child.json",
+        "exit.json",
+        "exit.witness.json",
+        "launch.json",
+        "launch.lock",
+        "owner-intent.json",
+        "owner.lock",
+        "request.json",
+        "runner.py",
+        "started.json",
+        "stderr.log",
+        "stdout.log"
+      ],
+      "runtime_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6b3c0ca-12894-606",
+      "source": {
+        "bytes": 4192,
+        "path": "publication-materialization-v5/runtime-jobs/1a1b6b3c0ca-12894-606/actual-shell-command.sh",
+        "sha256": "5207dad4dbb114fadfb4d2c7790c3ecb7e688bece4a6c4839a478134a99594aa"
+      },
+      "source_candidates": [
+        "request.json.args"
+      ],
+      "source_retained": true
+    },
+    {
+      "job_id": "1a1b6b58336-12894-611",
+      "label": "first-archive-raw",
+      "logs_retained": [
+        {
+          "bytes": 777,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/stdout.log",
+          "sha256": "18ea3a271c0f50a0fd3e092ff8a012dee44cc8190ff489f5d670cbeec3d91f5f"
+        },
+        {
+          "bytes": 0,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 498,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/exit.json",
+          "sha256": "b6000f170c74e85b624038ba6695137d2c68f06bbf98a437d98182dbb815afb3"
+        }
+      ],
+      "observed_files": [
+        "child.json",
+        "exit.json",
+        "exit.witness.json",
+        "launch.json",
+        "launch.lock",
+        "owner-intent.json",
+        "owner.lock",
+        "request.json",
+        "runner.py",
+        "started.json",
+        "stderr.log",
+        "stdout.log"
+      ],
+      "runtime_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6b58336-12894-611",
+      "source": {
+        "bytes": 1824,
+        "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/actual-shell-command.sh",
+        "sha256": "c9c9bb6c1685051a969d7452b612899ee58f1add9bbbece25fcdf95d2b903cd5"
+      },
+      "source_candidates": [
+        "request.json.args"
+      ],
+      "source_retained": true
+    },
+    {
+      "job_id": "1a1b6b770e6-12894-61f",
+      "label": "bounded-remaining-recovery",
+      "logs_retained": [
+        {
+          "bytes": 6312,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b770e6-12894-61f/stdout.log",
+          "sha256": "b26d9a9f70a41489557bcd9e99f17c072d401d9b6d222ccd15a618b839471225"
+        },
+        {
+          "bytes": 0,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b770e6-12894-61f/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 500,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6b770e6-12894-61f/exit.json",
+          "sha256": "5dc6b683a13b1e171f58de98fcb795cd47403766e1af0f76ff1e773b1226bde4"
+        }
+      ],
+      "observed_files": [
+        "child.json",
+        "exit.json",
+        "exit.witness.json",
+        "launch.json",
+        "launch.lock",
+        "owner-intent.json",
+        "owner.lock",
+        "request.json",
+        "runner.py",
+        "started.json",
+        "stderr.log",
+        "stdout.log"
+      ],
+      "runtime_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6b770e6-12894-61f",
+      "source": {
+        "bytes": 5620,
+        "path": "publication-materialization-v5/runtime-jobs/1a1b6b770e6-12894-61f/actual-shell-command.sh",
+        "sha256": "10efd28bb768b8dcd37b899043a2502d14892853cdb0013e5d2b7f2e6dd39212"
+      },
+      "source_candidates": [
+        "request.json.args"
+      ],
+      "source_retained": true
+    },
+    {
+      "job_id": "1a1b6bf8b3c-12894-675",
+      "label": "complete-checkout-validation",
+      "logs_retained": [
+        {
+          "bytes": 2020,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6bf8b3c-12894-675/stdout.log",
+          "sha256": "35690c4966dffc59a4d29ca90b16aebb0b895ea87d18eaadbed8f6d16f901268"
+        },
+        {
+          "bytes": 0,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6bf8b3c-12894-675/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 500,
+          "path": "publication-materialization-v5/runtime-jobs/1a1b6bf8b3c-12894-675/exit.json",
+          "sha256": "c020376d0a4910540c0dda150e8786388d1015004fab992727423014bd8a3844"
+        }
+      ],
+      "observed_files": [
+        "child.json",
+        "exit.json",
+        "exit.witness.json",
+        "launch.json",
+        "launch.lock",
+        "owner-intent.json",
+        "owner.lock",
+        "request.json",
+        "runner.py",
+        "started.json",
+        "stderr.log",
+        "stdout.log"
+      ],
+      "runtime_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6bf8b3c-12894-675",
+      "source": {
+        "bytes": 7631,
+        "path": "publication-materialization-v5/runtime-jobs/1a1b6bf8b3c-12894-675/actual-shell-command.sh",
+        "sha256": "7a1c2785d23d25ffcba1e41bc24724fda35d9c86b87ec12100a15164710c87a9"
+      },
+      "source_candidates": [
+        "request.json.args"
+      ],
+      "source_retained": true
+    }
+  ],
+  "missing_sources": []
+}

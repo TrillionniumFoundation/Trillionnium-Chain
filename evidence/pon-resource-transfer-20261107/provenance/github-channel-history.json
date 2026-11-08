@@ -1,0 +1,296 @@
+{
+  "schema": "hepta-local-github-publication-history-v0",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "fix/chain-fresh-work-floor-20261107",
+  "host": "mac",
+  "final_prior_commit": "37c1f3fe24c88476f39b0bd6e9ed32453bfc4551",
+  "actual_chainwork": 0,
+  "failed_attempts": [
+    {
+      "job_id": "1a1b64ed568-12894-386",
+      "idempotency_key": "chain-fresh-floor-37c1f3fe-mac-isolated-clone-v1",
+      "operation": "filtered no-checkout single-branch clone of existing integration branch",
+      "outcome": "failed",
+      "detail": "Python subprocess timed out after 900 seconds before any publication. Retained partial clone; successful narrow depth-1 base fetch used a separate isolated checkout.",
+      "status": {
+        "at_unix_ms": 1794060885380,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b64ed568-12894-386",
+        "launch_nonce": "6af00e9b78158deb8d0c8e94b050bdeb",
+        "log_bytes": {
+          "stderr": {
+            "seen": 1356,
+            "stored": 1356
+          },
+          "stdout": {
+            "seen": 0,
+            "stored": 0
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "job_id": "1a1b66a24c5-12894-427",
+      "idempotency_key": "chain-fresh-floor-37c1f3fe-publish-nonforce-v1",
+      "operation": "publication pre-read identity query",
+      "outcome": "failed_before_push",
+      "detail": "gh api user failed with TCP i/o timeout. No account switch or permission bypass.",
+      "status": {
+        "at_unix_ms": 1794061802325,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b66a24c5-12894-427",
+        "launch_nonce": "5fe6c4ccf3220e17b1c1f5eb7497feca",
+        "log_bytes": {
+          "stderr": {
+            "seen": 622,
+            "stored": 622
+          },
+          "stdout": {
+            "seen": 0,
+            "stored": 0
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "receipt": "publish-37c.json"
+    },
+    {
+      "job_id": "1a1b66e2d29-12894-43f",
+      "idempotency_key": "chain-fresh-floor-37c1f3fe-publish-git-readback-v2",
+      "operation": "sparse checkout preflight",
+      "outcome": "failed_before_push",
+      "detail": "Index was not materialized; real project-preflight script absent and command returned 127. Materialized 33 required files in the isolated checkout before the next attempt. Preflight was not weakened.",
+      "status": {
+        "at_unix_ms": 1794062036552,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b66e2d29-12894-43f",
+        "launch_nonce": "fbf5f0e825f8e4b64220b18ef48aa747",
+        "log_bytes": {
+          "stderr": {
+            "seen": 623,
+            "stored": 623
+          },
+          "stdout": {
+            "seen": 0,
+            "stored": 0
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "receipt": "publish-37c-git-readback.json"
+    }
+  ],
+  "unresolved_launch": {
+    "job_id": "1a1b6605cc1-12894-3eb",
+    "idempotency_key": "chain-fresh-floor-37c1f3fe-bundle-part-04-v1",
+    "original_state": "launch_unknown",
+    "exact_retry_reused_original_job": true,
+    "retried_launch": false,
+    "latest_status": {
+      "isError": true,
+      "error_code": "INVALID_ARGUMENT",
+      "text": "remote helper on hepta-mac-local failed with 1\nstdout:\n\nstderr:\nTraceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n  File \"<string>\", line 25, in private_job_directory\nFileNotFoundError: [Errno 2] No such file or directory: '1a1b6605cc1-12894-3eb'"
+    },
+    "original_process_terminal_outcome": "UNKNOWN",
+    "resolution": "The missing immutable 350000-byte part was separately create-only atomically published with h_binary_write(expected_version='absent'). Full bundle SHA256 later matched. No new process key was used to restart the unknown operation. If the original process arrives late, its existing code compares identical existing bytes or uses create-only creation.",
+    "target": "incoming/37c-part-04.bin",
+    "bytes": 350000,
+    "sha256": "18e2fbb0bb14741d47d34d58c99256acdbfd9e3a7daeed458ea7138ce0c48b68",
+    "atomic_write_version": "16777233:595809867:350000:1794061520947868039:1794061520948473706",
+    "retains_unknown_despite_verified_byte_transfer": true
+  },
+  "reconciled_transport_timeouts": [
+    {
+      "part": 1,
+      "job_id": "1a1b656a9cf-12894-3b5",
+      "resolution": "Exact same request and idempotency key reconciled; target bytes were later SHA256 checked."
+    },
+    {
+      "part": 2,
+      "job_id": "1a1b65b1360-12894-3cb",
+      "resolution": "Exact same request and idempotency key reconciled; target bytes were later SHA256 checked."
+    }
+  ],
+  "successful_publication": {
+    "job_id": "1a1b670521f-12894-448",
+    "idempotency_key": "chain-fresh-floor-37c1f3fe-publish-git-readback-v3",
+    "status": {
+      "at_unix_ms": 1794062249803,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b670521f-12894-448",
+      "launch_nonce": "2a907040acfdbe5bb3779765ab54db72",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 427,
+          "stored": 427
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "receipt": "publish-37c-git-readback-v3.json",
+    "preflight_dev_passed": true,
+    "preflight_push_passed": true,
+    "ordinary_nonforce_git_push": true,
+    "git_remote_readback": "37c1f3fe24c88476f39b0bd6e9ed32453bfc4551",
+    "readback_utc": "2026-11-07T14:37:29.582218+00:00",
+    "new_pr_created": false,
+    "main_or_integration_updated": false,
+    "full_mac_worktree_source_guard_rerun": false,
+    "hosted_ci_claim": false,
+    "merge_claim": false
+  },
+  "safe_public_api_readback": {
+    "job_id": "1a1b6749506-12894-45b",
+    "idempotency_key": "chain-fresh-floor-37c1f3fe-public-api-readback-v1",
+    "status": {
+      "at_unix_ms": 1794062468341,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b6749506-12894-45b",
+      "launch_nonce": "171246455a68184d5ad372d9a9673e63",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 2645,
+          "stored": 2645
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "receipt": "github-readback-37c-public.json",
+    "identity": {
+      "login": "ProfHepta",
+      "id": 102159240
+    },
+    "permissions": {
+      "admin": true,
+      "push": true
+    },
+    "integration_ref": "fix/chain-six-axis-performance-20261103",
+    "integration_sha": "96e1eede091153199894532c91430bfc0f8e4572",
+    "previous_pr_688_http_status": 404,
+    "credentials_or_private_email_requested_or_copied": false
+  },
+  "staged_source_not_pushed": {
+    "commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+    "tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+    "bundle_bytes": 71421,
+    "bundle_sha256": "e96c4b7c6af3c83dba1cd2db0e141d948ed9a1632b02077801026fedb7430f7f",
+    "local_mac_ref": "refs/remotes/incoming/source-e95e2eb9",
+    "waiting_for": "Root confirmation of full exact-source 24-gate PASS and final evidence bundle",
+    "atomic_transfer_receipt": {
+      "mode": 384,
+      "sha256": "e96c4b7c6af3c83dba1cd2db0e141d948ed9a1632b02077801026fedb7430f7f",
+      "size": 71421,
+      "version": "16777233:595900098:71421:1794061940738805070:1794061940742603216",
+      "written": 71421
+    }
+  }
+}

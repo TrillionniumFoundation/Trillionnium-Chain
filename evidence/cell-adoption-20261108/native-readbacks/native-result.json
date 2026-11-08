@@ -1,0 +1,151 @@
+{
+  "actual_model_execution": false,
+  "engineering_controls_only": true,
+  "error": null,
+  "exit_code": 0,
+  "machine": {
+    "boot_id_sha256": "b307c434f05d9ba52a7c477add1da56d90a59e372992ed1152fbf278a6e84eaf",
+    "configured_host": "rog",
+    "machine": "x86_64",
+    "machine_id_sha256": "c67efd30ee6bcef9fbbdedce3e127151262d01a4ee23068cdf9c4136d9b9421b",
+    "release": "7.0.0-42-generic",
+    "sysname": "Linux",
+    "version": "#42-Ubuntu SMP PREEMPT_DYNAMIC Thu Oct 15 08:06:44 UTC 2026"
+  },
+  "owner_readback_files_exported_by_driver": false,
+  "production_final_use_qualified": false,
+  "resources_after": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-readback-20261108-3279.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 329317443\nuser_usec 306278202\nsystem_usec 23039240\nnice_usec 306274000\ncore_sched.force_idle_usec 0\nnr_periods 1806\nnr_throttled 699\nthrottled_usec 8162737\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "5671137280",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0",
+    "pids.max": "146420",
+    "pids.peak": "42"
+  },
+  "resources_before": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-readback-20261108-3279.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "1h 30min",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 68998\nuser_usec 33183\nsystem_usec 35814\nnice_usec 31000\ncore_sched.force_idle_usec 0\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.max": "8589934592",
+    "memory.peak": "22368256",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0",
+    "pids.max": "146420",
+    "pids.peak": "22"
+  },
+  "source_after": {
+    "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+    "index_tree": "319737f613f1a9f786df78c4fb79e9c32cac5542",
+    "native_tree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+    "runner_sha256": "6c5289054cab43f8c6fdac0b4ac743de56f9365d26da23f0d220471c592ef848",
+    "status": "",
+    "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+  },
+  "source_before": {
+    "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+    "index_tree": "319737f613f1a9f786df78c4fb79e9c32cac5542",
+    "native_tree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+    "runner_sha256": "6c5289054cab43f8c6fdac0b4ac743de56f9365d26da23f0d220471c592ef848",
+    "status": "",
+    "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+  },
+  "source_unchanged": true,
+  "stdout_readback_opt_in": true,
+  "steps": [
+    {
+      "binary_after": [
+        {
+          "bytes": 240010480,
+          "device": 66306,
+          "inode": 48419014,
+          "mtime_ns": 1794116522680598319,
+          "path": "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/target/debug/deps/codex_hepta_agentd-d6345fda85a765d4",
+          "sha256": "2440beddc6b4059edc3fac389e6b8ab219cad276f809c815e4329ebcfec97bd6"
+        }
+      ],
+      "command": [
+        "just",
+        "test",
+        "--locked",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "-E",
+        "test(=neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset) | test(=neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation) | test(=neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution) | test(=neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation) | test(=neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors)",
+        "--success-output",
+        "final",
+        "--failure-output",
+        "final"
+      ],
+      "exit_code": 0,
+      "junit": {
+        "attributes": {
+          "errors": "0",
+          "failures": "0",
+          "name": "nextest-run",
+          "tests": "5",
+          "time": "8.342",
+          "timestamp": "2026-11-08T00:42:03.098-05:00",
+          "uuid": "a9f9b028-83ba-43f6-afe0-2fb1ce3e42ca"
+        },
+        "bytes": 1587,
+        "device": 66306,
+        "inode": 34121007,
+        "mtime_ns": 1794116531439590735,
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/readback-candidate-2c2a/native-controls.junit.xml",
+        "run_id": "a9f9b028-83ba-43f6-afe0-2fb1ce3e42ca",
+        "sha256": "3b24d2e09d1020b2ac30b6af2a7756a4f4cc600fee649847a2cd8f925cf04fe8",
+        "testcases": [
+          "neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+          "neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation",
+          "neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+          "neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors",
+          "neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation"
+        ]
+      },
+      "log": {
+        "bytes": 90678,
+        "device": 66306,
+        "inode": 34121002,
+        "mtime_ns": 1794116531439590735,
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/readback-candidate-2c2a/native-controls.log",
+        "sha256": "752c7e73292e964253c84baab5ef521dbc5576ed6261faf29d2b892107616ece"
+      },
+      "resources_after": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cell-adoption-native-readback-20261108-3279.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "1h 30min",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 329133341\nuser_usec 306160735\nsystem_usec 22972605\nnice_usec 306152000\ncore_sched.force_idle_usec 0\nnr_periods 1805\nnr_throttled 699\nthrottled_usec 8162737\nnr_bursts 0\nburst_usec 0",
+        "memory.max": "8589934592",
+        "memory.peak": "5671137280",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0",
+        "pids.max": "146420",
+        "pids.peak": "42"
+      },
+      "source_after": {
+        "head": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+        "index_tree": "319737f613f1a9f786df78c4fb79e9c32cac5542",
+        "native_tree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+        "runner_sha256": "6c5289054cab43f8c6fdac0b4ac743de56f9365d26da23f0d220471c592ef848",
+        "status": "",
+        "tree": "319737f613f1a9f786df78c4fb79e9c32cac5542"
+      },
+      "wall_seconds": 180.18691074399976
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "archive": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/native-validation-source-v2-collected-v2.tar.gz",
+  "bytes": 786460,
+  "collector_sha256": "b040668f385e0f35d8c67df6870399f151a4938ab1736273e072598334bc3743",
+  "evidence_integrity_status": "PASS",
+  "file_bytes": 8378067,
+  "issues": [],
+  "member_count": 132,
+  "out": "/home/qian-qi/work/chain-native-profile-closure-20261107-89df/validation-history-v2-corrected",
+  "qualification_run": false,
+  "readback_verified": true,
+  "review_status": "PASS",
+  "schema": "pon-native-profile-validation-history-archive-receipt-v1",
+  "sha256": "94ec2b427b94afef22bcdd6309ee4009821f06f240662cd232dce9f350dcb147",
+  "status": "PASS"
+}

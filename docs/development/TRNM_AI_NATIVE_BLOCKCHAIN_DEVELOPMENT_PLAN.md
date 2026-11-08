@@ -334,6 +334,215 @@ independent and their failed evidence remains retained.
 The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
 contains the complete local replay, counterexample/repair and source-pinned gates.
 
+
+**Cell original native use readbacks, 2026-11-08:** Preserve the original
+Hepta actor as the owner of retained-parent and adopted-candidate next-use.
+The [readback review](specs/pon/CELL_ADOPTION_READBACK_V1.md) consumes exact
+serialize-only actor exports, original manifests/publications/receipts and
+independently pinned task/intent context. Five selected native tests at Hepta
+`2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd` emitted four actual engineering
+fixtures, pending and after ACK for both dispositions. The separate Chain
+reader has 26 controls, including historical real-model download/64-forward
+rejection as a substitute for FinalUse. Retain the original before-use zero
+execution revocation case. NoUpdate keeps the complete parent manifest.
+Current permission cannot be exported, ACK is not learning completion, and
+these controlled workers do not prove actual real-model loading, independent
+evaluation, settlement or installation. Complete-cycle qualification remains
+**HOLD_NO_GO**; preserve original actor-to-control association as an explicit
+unsatisfied obligation. Evidence: `evidence/cell-adoption-20261108/`.
+
+**Cell role-control material review, 2026-11-08 America/New_York:** Continue the
+ordinary-host adoption work from the exact #785 candidate. Add a
+[read-only seven-role control-material check](specs/pon/CELL_CONTROL_SEPARATION_V1.md)
+and compose it with the unchanged signed V3 parent/NoUpdate verifier. Preserve
+the original Hepta StableId controller mappings; merge known shared administrators,
+custodians and other control edges transitively. Freeze minimum separation pairs,
+reviewer separation, source/campaign/current-policy pins and missing inventories.
+Different keys, processes, hosts and replica labels do not create independent
+control. A complete review of supplied materials does not authenticate their
+documents, exclude hidden control, establish physical installation, authorize
+settlement or issue FinalUse. The protected-installed host and real next-task
+adoption gates remain separate and unqualified.
+
+
+**Multi-owner and current-native evidence continuation, 2026-11-07 America/New_York:**
+Compose research head `0a0ac0cc9d33f4ddea01c72938a131ad2a946105` with the
+original native funded-demand owner at `4a7e07e970d5bdb79626dda6bc98ae7906a02f18`.
+The [bounded composition and current-readback contract](specs/pon/GROUPED_MULTI_OWNER_NATIVE_EVIDENCE_V1.md)
+retains original policy/evidence inputs, owner operation identities and full
+native query preimages across the declared participant set. Detect conflicting
+shared challenges, duplicated executions, cost overlap and transfer identities
+through unknown intermediate costs without asserting public-network completeness.
+Add a fresh read-only V3 observation to the original Node/M12 owners: exact
+expected full contract and binding, already reconciled journal head/epoch,
+original provider delivery and payment on one checked active generation.
+Historical replay and current membership remain distinct after reorganization;
+the read neither issues a target grant nor claims actual consumer FinalUse.
+Preserve every inherited failure and original gate, use the existing integration
+lineage, and keep actual chainwork, production eligibility and activation zero.
+Real independent issuers/customers, current consumer use, external funds,
+authenticated complete meters and cheapest physical-cost transfer remain open.
+
+Execution is retained in the [native profile evidence record](../../evidence/pon-native-profile-closure-20261107/README.md). The original native post-hash observer now records seed and step originals, including cancellation and a synced interrupted prefix whose original operation reopens UNKNOWN. Corrected committed source `732b8ff5e8cae74bb0fb6490550d9984f2f5b0d6` passes all 33 selected commands on an exact complete checkout; the first 32/33 run and the earlier GC expectation failure remain retained. The core crates retain ten explicitly ignored observations. An actual isolated Colab CPU kernel separately passes the same pinned 45 profile and 37 composition tests. These controlled observations leave independent demand, public coverage, complete cost transfer and native profile registration unestablished.
+
+The first hosted PQ continuation rejected eight stale source pins in this integrated candidate. The [review and complete failed-job originals](../../evidence/pon-native-profile-closure-20261107/ci-source-pin-repair-v1/README.md) retain all four refusals and the separate inherited unavailable historical pressure artifact. Review covers every one of the 580 pins; synchronization changes eight source identities only, preserving all acceptance flags and old evidence. The corrected committed candidate is revalidated against the frozen 33-command plan plus the original nine PQ source/claim controls. This source repair grants no network, demand, cost or consensus qualification.
+
+**Security-work metering continuation, 2026-11-07 America/New_York:** Continue
+`4699b4079fca323f8db7b9d3644fbb159aa687c0` under the
+[explicit metering contract](specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md).
+Count classical seal step-oracle queries and preserve lawful cached Cell
+outputs; a new ticket does not imply fresh producer neural contractions.
+Inspect separately pinned task/target policies, exact observed query identities,
+declared consumer operations and typed resource scopes without promoting pins
+or fixture signatures into public authority. Preserve unknown/private queries,
+missing costs and all planned attempts. Reject missing work identities, missing
+or negative byte counts, overflowed CPU totals, impossible child subsets and
+unknown attempt states in the existing fanout cost reader. Reanalyze original
+bytes without overwriting prior reports. Current external authorization, actual
+demand/FinalUse/settlement, complete public query coverage and physical-cost
+transfer remain explicit obligations. Keep native W1 and the existing research
+owner intact, retain all CI gates, and award zero actual chainwork.
+
+**Verifier resource transfer, 2026-11-07 America/New_York:** Continue the sealed
+grouped research from evidence checkpoint `37c1f3fe24c88476f39b0bd6e9ed32453bfc4551`
+under the [resource-transfer contract](specs/pon/GROUPED_RESOURCE_TRANSFER_V0.md).
+Replace a per-receiver cap with one explicitly trusted, immutable owner for the
+closed deployment: reserve and persist started work before full native replay,
+retain unknown work without refunds, return exact cached retries and close a
+candidate after successful equality even on a target miss. Do not export a
+reusable verification permit or expose an unmetered producer service. Measure
+the contrasting one/two/four independent-receiver fanout with all planned
+attempts, process costs and raw TCP bytes. Keep verifier queries explicit in
+the conservative classical bound; test copied-cap, extra-feedback and coherent
+search counterexamples. The current legal cache constructively refutes a
+positive fresh producer neural-contraction floor. Existing task/escrow/consumer
+owners still require an actual grouped-output join and real independent demand.
+Public-network admission, physical/quantum hardness and production qualification
+remain open; all 21 previous validation gates remain and three are added.
+Publish through the user's authorized HeptaRuntime local GitHub channel,
+preserving existing integration history and leaving chainwork/activation zero.
+
+**Fresh-query cost continuation, 2026-11-07 UTC:** Continue the prior legal-work
+source `9602cb704f97fb9c87d6fd379809bef468c3c1e8` with the
+[fresh-work floor research](specs/pon/GROUPED_FRESH_WORK_FLOOR_V0.md).
+Implement exact cached rank-one/mixing/dropout counterexamples before claiming
+that a new challenge forces new useful arithmetic. Keep lawful sparse-merged
+business reuse, and explicitly add a fixed 64-step security seal whose endpoint
+is the only ticket. Separate the conditional classical aggregate oracle-query
+bound from attacker-owned physical resources and neural cost. Bind one frozen
+model/request/target policy through a new strict native signed capsule, actual
+Node parent/target checks, full independent Cell replay and canonical proof.
+Reserve verification permits durably before expensive replay, retaining failed,
+abandoned and duplicate charges under a local 256-submission cap. Measure full
+local signatures, production, verification, persistence and actual TCP alongside
+all misses and controls; retain real historical input provenance and explicitly
+controlled demand/keys. Global quotas, hidden-verifier assumptions, real demand,
+quantum security and intrinsic useful-work hardness remain open. Actual
+chainwork and production activation remain zero; existing integration candidate
+and original required gates remain the delivery path.
+
+**Legal work, input choice and grouped lottery audit, 2026-11-07 America/New_York:**
+Continue the existing #688 integration candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66`
+with the [fixed int257 audit](specs/pon/GROUPED_WORK_FAIRNESS_AUDIT_V0.md).
+Freeze 16 ordered requests, one model/numeric relation and a non-self-referential
+candidate/challenge/statement/ticket sequence. Independently test every bound
+field, canonical encoding, fresh caller clock and precommitted target; count a
+ticket query even when subsequent verification refuses the request. Compare
+lawful direct-selected, cached-merged, grouped, sparse, repeated-input and exact
+factor execution while retaining preparation, failures and full reference cost.
+The original grouped arithmetic is challenge invariant: cached correct outputs
+can produce new hash-only audit tickets. Keep actual chainwork and all rewards
+zero, preserve W1, and leave minimum fresh-work, hardware/quantum security, real
+demand and original service qualification open. The new tests join the existing
+`test_grouped*.py` CI collection without changing the required gate or budgets.
+
+**Exact-source native acceptance observation, 2026-11-07 America/New_York:**
+The native funded-contract/evidence/prospective-operation implementation is
+`690f710c1b6808787996e86aa4c36bd53e1f3939`, tree
+`b9ff2e5c4ca6e465b86cb4b2bd466ad831147899`, in
+[draft PR #779](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/779),
+stacked on #777 and the existing #688 integration lineage. The
+[actual acceptance record](../../evidence/pon-native-demand-acceptance-20261107/README.md)
+separates tested implementation from later evidence-only publication commits.
+New HeptaRuntime desktop execution passed the three core crates with 388 passed
+and 10 ignored, workspace warnings-as-errors Clippy, formatting, exact locked
+root/fuzz Cargo graphs and the 52/131/103 Python groups. The original complete
+Node attempt reached its process limit after 30 complete targets, one interrupted
+target and 60 unstarted targets. It retained eight failures and lacks its original
+closing source-after receipt. A separately bound continuation covers the remaining
+61 targets and ended with exit 101. The complete 91-target cross-run coverage
+records 1,548 passed, 15 failed and 55 ignored; it remains separate from a
+successful original complete command. Complete Node qualification is not granted.
+The original refusals include two CPU-budget cases, three PQ witness transport
+cases and three fixed host-parent prerequisite cases; detailed observations and
+unresolved causes are retained without widening original budgets or deadlines.
+
+Hepta [draft PR #5318](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5318)
+continues #5316 with the original evaluated-NoUpdate owner and full selection-bundle
+identity. Its exact implementation `e0a3bd2bde77c58a0ae7d211214f326371a72a4a`
+passed the original 60-test selector; 662 other tests were outside that selector.
+The Chain archive retains only the verified Hepta interoperability handoff; it
+does not combine independent repository test counts into deployment qualification.
+Actual external customer/control and funding evidence, independent prospective
+cost-matched evaluation, production learning-owner recovery, and real canary,
+installation, next-task use, withdrawal and rollback remain acceptance obligations.
+Owner cost declarations are not independent physical meters; consumer-epoch
+reconciliation is not a network-epoch proof. Honest NoGain service fees do not
+qualify an improvement bonus. No main merge or production activation follows.
+
+
+**Native funded Task admission and owner reconciliation, 2026-11-07 America/New_York:**
+Continue the published demand/evaluation candidate through the user-selected
+HeptaRuntime local GitHub channel. The prior evidence continuation is retained in
+[PR #777](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/777),
+targeting the existing #688 integration branch. Extend the original M06 Task
+escrow with an explicitly selected fresh classical development context for
+[frozen service contracts and enforceable arbitration](specs/pon/FUNDED_SERVICE_TASK_V1.md).
+Request, model, input, output specification, work-reference, evaluation, fee and
+dispute terms are frozen before delivery; real payer acceptance or the frozen
+arbitrator settles or refunds through the original native monetary transition.
+Add typed M12 journal export and
+[Node-owned reconciliation](specs/pon/NATIVE_TASK_EVIDENCE_V1.md) of actual retained
+funding, delivery and exact replayed payments. Keep historical operation/cost and
+payment facts across restart and reorganization while rechecking their current
+branch status. Source commitments, local resource declarations and distinct
+account keys do not prove useful work, truthful physical cost or independent
+business control. Use the separate
+[V2 prospective operation owner](specs/pon/NATIVE_TASK_OPERATION_V2.md) for unknown
+outputs: immutable task/operation binding, one durable begin, original provider
+receipt replay, first-delivery identity and a Node-retained journal prefix.
+V1's already-known output subject must not be retrospectively described as a
+training authorization. Historical active snapshots require the original
+generation's actual activation event; retained side branches alone are insufficient.
+Run exact-source native integration, full Node qualification and the ordinary
+Hepta owner gates with retained failures. Real external funding/control evidence,
+independent future cost-matched evaluation and actual product adoption retain
+their separate acceptance gates. No default-chain or production activation is
+authorized by component test results.
+
+**Funded demand and continuous-upgrade evidence, 2026-11-07 America/New_York:**
+Continue the existing #688 candidate at `3d1b6507671ec694ce58e86d4063a125c8deeb66`
+with the [demand/evaluation composition contract](specs/pon/DEMAND_EVALUATION_UPGRADE_V1.md).
+Reuse V5 complete-model evaluation, native zero-credit maintenance and the M12
+funding/payment owners. Port only PR744's Task/Contribution and completed NoGain
+service-fee observation repair, preserving positive-only improvement and mining
+reward boundaries. Add an owner-pinned, bounded evidence observer that binds
+request/model/input/output/deadlines to funding, delivery, dispute, provenance,
+evaluation, retention, adoption and exact gross/net payment records. Separate
+external-attested, project-budget, related-party and unknown origins; deduplicate
+business outputs and improvement receipts without denying legitimate repeated
+service purchases. No transfer or dispatch capability is introduced.
+Add a separately versioned conditional upgrade reference with frozen four-control
+paired net-utility tests, all declared costs, cumulative alpha spending including
+failed/cancelled attempts, fresh-window requirements, observed canary and explicit
+NoUpdate. All real independence, native adoption, payment and activation flags
+remain false. Native export/reconciliation, funded dispute enforcement, actual
+external customers/evaluators, persistent global evidence ownership and ordinary
+Hepta installation/next-task/rollback remain acceptance gates. Existing HOLD,
+work-security, service-capacity, PQ and independent-operation decisions remain.
+The [frozen implementation evidence](../../evidence/pon-demand-evaluation-upgrade-20261107/README.md)
+retains final-source command receipts, original failures and publication tree identities.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

@@ -48,6 +48,41 @@ def verify_learning_packet(packet, trusted):
                                              "authorized untouched future tasks", "real neural training and service use"])
 
 
+def review_learning_control_material(packet, trusted, manifest_raw, policy_raw,
+                                    control_trusted, *, now):
+    """Compose the original V3 learning verifier with pinned role-control review.
+
+    Both trust inputs belong to the existing qualification owner. In particular,
+    controller bindings are original owner observations, never inferred from
+    packet signatures, process counts, or the submitted control manifest. This
+    read-only entry retains every old physical-use and authority boundary.
+    """
+    from control_separation import review_control_separation
+
+    require(type(control_trusted) is dict and set(control_trusted) == {
+        "manifest", "policy", "revision", "bindings"}, "CONTROL_TRUST_FIELDS")
+    # Preserve the original verifier, signed bytes, parent lineage and NoUpdate
+    # semantics. A successful role-material review cannot repair bad learning.
+    learning = verify_learning_packet(packet, trusted)
+    controls = review_control_separation(
+        manifest_raw, policy_raw,
+        expected_manifest=control_trusted["manifest"],
+        expected_policy=control_trusted["policy"],
+        expected_campaign=trusted["campaign"], expected_pair=trusted["pair"],
+        expected_revision=control_trusted["revision"],
+        expected_bindings=control_trusted["bindings"], now=now)
+    return dict(
+        schema="release-learning-control-review-v2",
+        learning_input_review=learning, control_material_review=controls,
+        frozen_pair=copy.deepcopy(trusted["pair"]), campaign=trusted["campaign"],
+        qualification="HOLD_NO_GO", independent_control_accepted=False,
+        learning_actor_control_binding_verified=False,
+        physical_installation_accepted=False, prospective_neural_gain_accepted=False,
+        hepta_final_use=False, production_activation=False,
+        missing_external_acceptance=list(learning["missing_external_acceptance"]) +
+            ["original learning actor-to-control binding"])
+
+
 def finite_number(value, positive=False):
     require(type(value) in (int, float) and math.isfinite(value) and
             (value > 0 if positive else value >= 0), "MEASUREMENT_NUMBER")

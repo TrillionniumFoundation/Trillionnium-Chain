@@ -1,0 +1,693 @@
+{
+  "architecture_details_file": "architecture-failure-690f-v1.json",
+  "architecture_public_receive_source": {
+    "end_line": 2581,
+    "input": "ingress_source",
+    "start_line": 2531,
+    "text": "pub fn receive_public_page_from(\n    node: &mut Node,\n    source: SocketAddr,\n    page: Page,\n    tip: Hash,\n    after: Hash,\n    clock: u64,\n) -> Result<Hash> {\n    receive_public_page_from_before(\n        node,\n        source,\n        page,\n        tip,\n        after,\n        clock,\n        Instant::now() + history_import::PAGE_BUDGET,\n    )\n}\n/// The caller supplies one original business deadline, shared across pages.\n/// Busy/expiry does not classify a proof as invalid or undo a durable commit.\npub fn receive_public_page_from_before(\n    node: &mut Node,\n    source: SocketAddr,\n    page: Page,\n    tip: Hash,\n    after: Hash,\n    clock: u64,\n    deadline: Instant,\n) -> Result<Hash> {\n    receive_public_page_from_before_observed(node, source, page, tip, after, clock, deadline, None)\n}\n\n/// Explicit optional local measurements over the identical full importer. The\n/// observer adds no admission capability, budget, deadline or signed bytes.\n#[allow(clippy::too_many_arguments)] // Original seven inputs plus one optional diagnostic sink.\npub fn receive_public_page_from_before_observed(\n    node: &mut Node,\n    source: SocketAddr,\n    page: Page,\n    tip: Hash,\n    after: Hash,\n    clock: u64,\n    deadline: Instant,\n    observation: Option<&HistoryImportObserver>,\n) -> Result<Hash> {\n    use history_import::{observe_host, HistoryHostPhase};\n    // The ORIGINAL fixed administrator-owned Host parent is required even\n    // for a loopback source: a caller's socket address is not provenance.\n    let kernel = observe_host(observation, HistoryHostPhase::Resolve, || {\n        crate::host_kernel_parent::require_host_kernel_budget(\n            source,"
+  },
+  "core_reexecution": {
+    "by_package": {
+      "trnm-mvcc-fee": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 8,
+        "measured": 0,
+        "passed": 257,
+        "targets": 25
+      },
+      "trnm-protocol": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 2,
+        "measured": 0,
+        "passed": 75,
+        "targets": 6
+      },
+      "trnm-service-settlement": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 56,
+        "targets": 1
+      }
+    },
+    "details_file": "core-target-counts-690f-v1.json",
+    "gate_exits": {
+      "core-suites": 0,
+      "formatting": 0,
+      "metadata-fuzz": 0,
+      "metadata-root": 0,
+      "workspace-clippy": 0
+    },
+    "harness_count": 32,
+    "job_id": "1a1b6a40024-12894-58c",
+    "totals": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 10,
+      "measured": 0,
+      "passed": 388
+    }
+  },
+  "created_utc": "2026-11-07T16:05:50.361341+00:00",
+  "failures": [
+    {
+      "classification": "cpu_budget",
+      "confirmed": [
+        "First authenticated=false iteration reached a settled native PublicMutationCpuBudget Capacity refusal.",
+        "Same original held-fallback CPU owner; outer 10 second deadline was not consumed.",
+        "Accounting was available, active state unchanged on refusal, and owner counts settled to zero."
+      ],
+      "fixed": false,
+      "id": "lib-large-genesis",
+      "observations": {
+        "backend_authenticated": false,
+        "complete_key_value_bytes": 8625548,
+        "credited_refill_ns": 676052562,
+        "dispatch_wall_ns": 2718308382,
+        "initial_credit_ns": 2000000000,
+        "log_lines": [
+          1317,
+          1319,
+          1321,
+          1322
+        ],
+        "paid_cpu_ns": 2686699580,
+        "settled_credit_ns": -10647018
+      },
+      "original_panic": [
+        {
+          "line": 1321,
+          "raw_line_including_newline_sha256": "adee3ecf5ee2f886f5a34b6e1f2b7573193626b1d18635f1ba98646409cf1ced",
+          "text": "thread 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner' (484510) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:877:31:"
+        },
+        {
+          "line": 1322,
+          "raw_line_including_newline_sha256": "369c1900d156364013d315d8c49fa4a3a997671fb95171183c98fb03acdcb429",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        }
+      ],
+      "source_anchors": {
+        "large_genesis_source": [
+          615,
+          729,
+          840,
+          864,
+          868,
+          877
+        ],
+        "metered_owner_source": [
+          78,
+          115
+        ],
+        "scalar_cpu_source": [
+          17,
+          24,
+          385,
+          397
+        ]
+      },
+      "source_input": "large_genesis_source",
+      "test_name": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "uncertainty": [
+        "This failure does not prove failure of the later authenticated=true iteration.",
+        "No cost-reducing patch or unique expensive inner stage is qualified by this diagnosis."
+      ]
+    },
+    {
+      "classification": "cpu_budget",
+      "confirmed": [
+        "Six earlier one-packet pages succeeded without early activation; final page 6 refused PUBLIC_MUTATION_CPU_BUDGET within the original 30 second page budget.",
+        "Fixture builds a straight seven-successor history, not an explicit equal-work tie.",
+        "Final activation retains the original CPU operation; reserve gate requires stored credit plus that operation remaining start principal to reach 25ms."
+      ],
+      "fixed": false,
+      "id": "lib-history-final-page",
+      "observations": {
+        "elapsed_ns": 523714353,
+        "log_lines": [
+          1325,
+          1331,
+          1333,
+          1334
+        ],
+        "original_page_budget_seconds": 30,
+        "page_index": 6,
+        "paid_cpu_ns": 816953332,
+        "settled_credit_ns": 13429683,
+        "start_principal_ns": 100000000,
+        "termination_reserve_ns": 25000000
+      },
+      "original_panic": [
+        {
+          "line": 1333,
+          "raw_line_including_newline_sha256": "6a328e0a8b45b62fe2dc26d3536abc22d31fc197026ba1ca10ef11af291d0ae7",
+          "text": "thread 'store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation' (535262) panicked at crates/trnm-pon-node/src/native_authenticated_tests.rs:834:24:"
+        },
+        {
+          "line": 1334,
+          "raw_line_including_newline_sha256": "369c1900d156364013d315d8c49fa4a3a997671fb95171183c98fb03acdcb429",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+        }
+      ],
+      "source_anchors": {
+        "history_import_source": [
+          383,
+          424
+        ],
+        "history_test_source": [
+          780,
+          834
+        ],
+        "scalar_cpu_source": [
+          1180,
+          1200,
+          1210,
+          1216,
+          1222
+        ]
+      },
+      "source_input": "history_test_source",
+      "test_name": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "uncertainty": [
+        "Post-settlement 13.43ms is not the instantaneous reserve allowance; settlement samples, refills and returns start principal.",
+        "No distinct reserve-time snapshot or error code identifies whether refusal came from reserve, its initial checkpoint or an earlier activation progress check.",
+        "No final-activation wait-logic patch is claimed."
+      ]
+    },
+    {
+      "classification": "npq6_transport",
+      "confirmed": [
+        "First legitimate send at line586 returned ConnectionReset.",
+        "Parent phase diagnostic explicitly records mutation_commit/advance_cas/client_cas transport PQ_WITNESS_DEADLINE at the original 250ms exchange bound, then tcp_read_request PQ_WITNESS_UNAVAILABLE.",
+        "The transport-entered failure latches the witness client unavailable; the original store owner invalidates its execution epoch.",
+        "Original cleanup observed node worker joined, witness child successful exit and preserved primary error."
+      ],
+      "fixed": false,
+      "id": "lib-npq6-after-rejected-signature",
+      "observations": {
+        "client_cas_wall_ns": 250112753,
+        "effective_exchange_remaining_ns": 249999716,
+        "exchange_cap_ns": 250000000,
+        "log_lines": [
+          1337,
+          1338,
+          1340,
+          1341,
+          1342
+        ],
+        "original_outer_remaining_ns": 9523544026,
+        "request_sign_self_verify_wall_ns": 65846557,
+        "transport_wall_ns": 184198728
+      },
+      "original_panic": [
+        {
+          "line": 1340,
+          "raw_line_including_newline_sha256": "abbac8ccfd651f831bdee53ebf6196c6f51e17ad94c8e75a26f43a3d43fc3fa4",
+          "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (540836) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+        },
+        {
+          "line": 1341,
+          "raw_line_including_newline_sha256": "609c0f1caa0af5e5f88532da46b0287f1f9ecdd2fef7da4e3872afa7d8a966c8",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }"
+        }
+      ],
+      "source_anchors": {
+        "npq6_test_source": [
+          554,
+          582,
+          586
+        ],
+        "pq_network_source": [
+          710,
+          744
+        ],
+        "witness_client_source": [
+          75,
+          291,
+          305,
+          405,
+          409
+        ],
+        "witness_store_owner_source": [
+          157,
+          165,
+          324,
+          329
+        ]
+      },
+      "source_input": "npq6_test_source",
+      "test_name": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+      "uncertainty": [
+        "Process-local operation IDs are not a cross-process correlation key.",
+        "From the fixture order and two TCP phase outcomes, the earlier bad-frame handling encountered the witness deadline before the later legitimate request hit unavailable; this is an inference, not successful signature-rejection recovery."
+      ]
+    },
+    {
+      "classification": "npq6_transport",
+      "confirmed": [
+        "First legitimate send returned FRAME_EOF before the cleanup sentinel branch.",
+        "Child last service_cas records actual commit; its final reply write failed with broken_pipe.",
+        "Original cleanup observed successful child exit, joined worker and preserved primary error."
+      ],
+      "fixed": false,
+      "id": "lib-npq6-cleanup",
+      "observations": {
+        "child_cas_committed": true,
+        "child_connection_wall_ns": 338837482,
+        "child_reply_sign_self_verify_wall_ns": 107920234,
+        "child_service_commit_wall_ns": 160469737,
+        "child_witness_handle_wall_ns": 276398694,
+        "log_lines": [
+          1345,
+          1346,
+          1348,
+          1349,
+          1350
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1348,
+          "raw_line_including_newline_sha256": "5e85be9c9c93e457c90fb6ea4b6322a4cba5d20272948eb5df769efbdd688df0",
+          "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (540936) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+        },
+        {
+          "line": 1349,
+          "raw_line_including_newline_sha256": "e5cdd73839a8b80a936e3e28df09f07ff613e73fc649e8845a48f6e9265ccb01",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }"
+        }
+      ],
+      "source_anchors": {
+        "npq6_test_source": [
+          581,
+          586,
+          589,
+          594
+        ],
+        "witness_client_source": [
+          75,
+          291,
+          409
+        ]
+      },
+      "source_input": "npq6_test_source",
+      "test_name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+      "uncertainty": [
+        "Parent phase diagnostic was suppressed by the original process log cap; a unique parent refusal site is not available.",
+        "The observed child latency is consistent with the 250ms client cap, but this diagnosis does not transfer the first test cause to this test.",
+        "Witness CAS commit alone is not a successful authenticated business response."
+      ]
+    },
+    {
+      "classification": "npq6_transport",
+      "confirmed": [
+        "First legitimate send returned FRAME_EOF before replay and restart assertions.",
+        "Original cleanup recorded worker join, successful witness child exit, complete cleanup and preserved primary error."
+      ],
+      "fixed": false,
+      "id": "lib-npq6-replay-restart",
+      "observations": {
+        "log_lines": [
+          1350,
+          1353,
+          1355,
+          1356
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1355,
+          "raw_line_including_newline_sha256": "9cc00e9399d0f708e158b5423e7841c9f7dceadfd179e0d5ba1522ad0693a487",
+          "text": "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (541117) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6:"
+        },
+        {
+          "line": 1356,
+          "raw_line_including_newline_sha256": "e5cdd73839a8b80a936e3e28df09f07ff613e73fc649e8845a48f6e9265ccb01",
+          "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: \"FRAME_EOF\", source: None, request_history_budget: false }"
+        }
+      ],
+      "source_anchors": {
+        "npq6_test_source": [
+          581,
+          586,
+          632,
+          645
+        ]
+      },
+      "source_input": "npq6_test_source",
+      "test_name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+      "uncertainty": [
+        "No retained parent or child phase detail identifies the internal refusal site for this test after the process log cap was reached.",
+        "The other NPQ6 failures cannot be substituted as proof of this test cause."
+      ]
+    },
+    {
+      "classification": "host_kernel_prerequisite",
+      "confirmed": [
+        "All 18 bounded original failure rows report PUBLIC_HOST_KERNEL_PARENT. cold_reopen_equal is true in every row. The failing all-samples predicate requires both cold reopen equality and an empty errors array; the recorded non-empty error arrays violate it.",
+        "All finite business targets were reported false; no winner or protocol switch was declared."
+      ],
+      "fixed": false,
+      "id": "architecture",
+      "observations": {
+        "all_cold_reopen_equal": true,
+        "all_errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "all_native_state_equal": false,
+        "log_lines": [
+          1476,
+          1477,
+          1478,
+          1479,
+          1480,
+          1481,
+          1482,
+          1483,
+          1484,
+          1485,
+          1486,
+          1487,
+          1488,
+          1489,
+          1490,
+          1491,
+          1492,
+          1493,
+          1494,
+          1495,
+          1496,
+          1497
+        ],
+        "samples": 18
+      },
+      "original_panic": [
+        {
+          "line": 1496,
+          "raw_line_including_newline_sha256": "a5250abad122c2819258f69106c675afccf79377a5f876829e13bccf64de6b97",
+          "text": "thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (569248) panicked at crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:"
+        },
+        {
+          "line": 1497,
+          "raw_line_including_newline_sha256": "f8913041e08ea92d67aef7e926c743922570138b61a41119fa6843008affeb86",
+          "text": "retained native delivery/replay invariants failed"
+        }
+      ],
+      "source_anchors": {
+        "architecture_source": [
+          636,
+          648,
+          672,
+          695,
+          702,
+          777,
+          834,
+          839
+        ]
+      },
+      "source_input": "architecture_source",
+      "test_name": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "uncertainty": [
+        "No architecture winner, protocol switch, WAN qualification, independent operator acceptance or production activation is established.",
+        "The complete temporary report advertised in stdout is not reconstructed here; this extract preserves actual retained stdout observations.",
+        "The separate later host-prerequisite probe is not a per-sample cgroup trace."
+      ]
+    },
+    {
+      "classification": "host_kernel_prerequisite",
+      "confirmed": [
+        "Original test panic reports PUBLIC_HOST_KERNEL_PARENT from the real full-sync CLI invocation."
+      ],
+      "fixed": false,
+      "id": "evaluation-sync",
+      "observations": {
+        "log_lines": [
+          1629,
+          1631,
+          1632
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1631,
+          "raw_line_including_newline_sha256": "eb9f4d8dc0281dd79bf7d366a2ad7370e2345981dbe74902917f0fa98b86a3e9",
+          "text": "thread 'actual_public_full_sync_query_partial_refusals_reorg_and_retirement' (606701) panicked at crates/trnm-pon-node/tests/evaluation_sync_observation.rs:475:17:"
+        },
+        {
+          "line": 1632,
+          "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+          "text": "PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ],
+      "source_anchors": {
+        "evaluation_sync_source": [
+          475
+        ],
+        "host_kernel_source": [
+          363,
+          380,
+          1239
+        ]
+      },
+      "source_input": "evaluation_sync_source",
+      "test_name": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "uncertainty": [
+        "The later read-only host probe supports the missing prerequisite; it is not a reconstructed original per-process kernel snapshot."
+      ]
+    },
+    {
+      "classification": "host_kernel_prerequisite",
+      "confirmed": [
+        "Original panic explicitly records child exit status2 and stderr PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "id": "mining-service-budget",
+      "observations": {
+        "child_exit_code": 2,
+        "log_lines": [
+          1719,
+          1720,
+          1721
+        ]
+      },
+      "original_panic": [
+        {
+          "line": 1719,
+          "raw_line_including_newline_sha256": "0392d5b4d37abd6e6bfa9e241815b9fec1cbc6d527c2ff2ca1255dfe45aaae82",
+          "text": "thread 'mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain' (619637) panicked at crates/trnm-pon-node/tests/mining_service_budget.rs:102:5:"
+        },
+        {
+          "line": 1720,
+          "raw_line_including_newline_sha256": "864cd8140835136d124bf38ae5536ad631b5ca123ca89fd57fd7b25373d7565b",
+          "text": "None status=exit status: 2 stderr=PUBLIC_HOST_KERNEL_PARENT"
+        }
+      ],
+      "source_anchors": {
+        "host_kernel_source": [
+          363,
+          380,
+          1239
+        ],
+        "mining_budget_source": [
+          102
+        ]
+      },
+      "source_input": "mining_budget_source",
+      "test_name": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "uncertainty": [
+        "The later read-only host probe supports the missing prerequisite; it is not a reconstructed original per-process kernel snapshot."
+      ]
+    }
+  ],
+  "inputs": {
+    "architecture_source": {
+      "bytes": 36607,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661"
+    },
+    "core_gate_summary": {
+      "bytes": 7345,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-core-gates-690f-v1/summary.json",
+      "sha256": "7ae138b863ab5c0469fb6a635d43e9ebd5b8f9109daa36e1de52363f719c23d9"
+    },
+    "core_source_snapshot": {
+      "bytes": 2320287,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-core-gates-690f-v1/source.json",
+      "sha256": "9c7791917a4721a2b7d70397a09109ac44dba4a9364e02813d41c0e30e83c9d6"
+    },
+    "core_stderr": {
+      "bytes": 7091,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-core-gates-690f-v1/core-suites/stderr.log",
+      "sha256": "12c04586aa96e2b0ba5c149517b983aad35aed42194ddd9fdb8ff6722be26633"
+    },
+    "core_stdout": {
+      "bytes": 44667,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-core-gates-690f-v1/core-suites/stdout.log",
+      "sha256": "e02cd5ff3bb86d3f12fa30f522ec7a2180a56604e0fb82eb9da0ff139702fc59"
+    },
+    "evaluation_sync_source": {
+      "bytes": 30433,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+      "sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04"
+    },
+    "history_import_source": {
+      "bytes": 22763,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "sha256": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882"
+    },
+    "history_test_source": {
+      "bytes": 55792,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "sha256": "ae673ce5027eb5a1780ff85680d151a4a599ccd60a4c4bfdb184a59544c80f2e"
+    },
+    "host_kernel_source": {
+      "bytes": 53670,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d"
+    },
+    "ingress_source": {
+      "bytes": 217368,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "sha256": "4ee4efc6cc1f5fac5ee78710a2620cc7acba6034e9bfaf3aed5e602efdec002e"
+    },
+    "kernel_parent_probe": {
+      "bytes": 3358,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/kernel-parent-prerequisite-readonly-v1.json",
+      "sha256": "08d6c9ecc57fa98ec17b44674d014c3e4c1768f8da936a17f010c94f9d02bcdc"
+    },
+    "large_genesis_source": {
+      "bytes": 45294,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "sha256": "ec2674e91b92e06db9a094fe4ce795b441c6612390f28f2fe1ab9a8b187bcbe1"
+    },
+    "metered_owner_source": {
+      "bytes": 5106,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "sha256": "d0ade11bcbc3a83e9500e2d92b4d7c0c70061ea89f57516b8cf4a32b3306d020"
+    },
+    "mining_budget_source": {
+      "bytes": 15899,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+      "sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2"
+    },
+    "npq6_test_source": {
+      "bytes": 26042,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+      "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+    },
+    "original_node_log": {
+      "bytes": 268168,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+      "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+    },
+    "original_source_before": {
+      "bytes": 2320287,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/source-before.json",
+      "sha256": "9c7791917a4721a2b7d70397a09109ac44dba4a9364e02813d41c0e30e83c9d6"
+    },
+    "original_started": {
+      "bytes": 531,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/started.json",
+      "sha256": "72a5e934d05847dbf4044c66fcfb9308d7fa72242fc7d0ba8e4c76cea8595c55"
+    },
+    "pq_network_source": {
+      "bytes": 28940,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "sha256": "2262453942e084556d64334a776b91e9356fabd8ab128c6d115c7d1634fbe31e"
+    },
+    "reorg_termination_source": {
+      "bytes": 19512,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "sha256": "8a0ef781a87fdfb7334ac9a3e75de46a5c4ef7915e42bf4e3167a851b2b95d9f"
+    },
+    "scalar_cpu_source": {
+      "bytes": 76907,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "sha256": "41b7be4de0ed9083afe69d37396bd78289c64efd3fda2834e70821208a2b6d69"
+    },
+    "witness_client_source": {
+      "bytes": 36217,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "sha256": "8edd159a4246cf1c423f00a17fed924a049af7667412fea054b9de8bcbc29601"
+    },
+    "witness_store_owner_source": {
+      "bytes": 16488,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+      "sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d"
+    }
+  },
+  "kernel_prerequisite": {
+    "actual_process_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b6ad9539-12894-5d1.service\n",
+    "fixed_parent_exists": false,
+    "fixed_parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "kernel_guards_bypassed": false,
+    "observed_unix_seconds": 1794066193.4527109,
+    "probe_input": "kernel_parent_probe",
+    "probe_job_id": "1a1b6ad9539-12894-5d1",
+    "required_parent_mutated": false,
+    "scope": "This later read-only probe diagnoses a missing prerequisite. It is not the original test-time cgroup receipt and does not explain either CPU failure or any NPQ6 failure.",
+    "source_anchor": [
+      363,
+      380,
+      1239
+    ],
+    "source_input": "host_kernel_source",
+    "source_rule": "Canonical fixed root-owned parent is required; a user.slice service is not an approved substitute. Live ownership/membership/limits remain required.",
+    "uid": 1000
+  },
+  "not_claimed": [
+    "Original full Node program passed or completed all originally scheduled targets.",
+    "Any of these eight failures was repaired by creating this diagnosis.",
+    "Recovery core PASS transfers to original Node failures or a different source.",
+    "Real independent customers, funding, evaluator independence, net learning improvement, production canary/installation or cross-repository business acceptance."
+  ],
+  "original_completion_receipt_reconstructed": false,
+  "original_failures_classification": {
+    "cpu_budget": 2,
+    "host_kernel_prerequisite": 3,
+    "npq6_transport": 3
+  },
+  "original_library_result": {
+    "failed": 5,
+    "filtered_out": 0,
+    "ignored": 31,
+    "log_line": 1366,
+    "passed": 1139,
+    "wall_seconds": 5106.26
+  },
+  "original_observations_file": "node-failure-observations-690f-v1.json",
+  "original_receipt_files_observed": [
+    "complete-node.log",
+    "environment.json",
+    "source-before.json",
+    "started.json",
+    "toolchain.json"
+  ],
+  "original_source_after_receipt_created": false,
+  "schema": "pon-690f-post-run-readonly-diagnosis-v1",
+  "scope": "Post-run extraction and source analysis only. No source/ref/PR changes, rebuild, rerun, budget/deadline changes, host-kernel mutations or acceptance promotion. This report is not the missing original full-Node completion/source-after receipt.",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_pin_readback": [
+    "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  ],
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+}

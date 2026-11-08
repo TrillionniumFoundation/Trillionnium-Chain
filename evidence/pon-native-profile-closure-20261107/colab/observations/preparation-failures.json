@@ -1,0 +1,56 @@
+{
+  "complete_preparation_cost": "UNKNOWN",
+  "failed_attempt_cost": "UNKNOWN",
+  "failures": [
+    {
+      "cloud_job_started": false,
+      "error": "re.PatternError: missing ), unterminated subpattern at position 39",
+      "host_exit_code": 1,
+      "host_job_id": "1a1b86ca6b1-12894-f3f",
+      "operation": "readonly_source_interface_probe_v1",
+      "private_fields_not_published": [
+        "full source-probe stdout and traceback"
+      ],
+      "raw_private_record": {
+        "sha256": "064d83dcc16324652b74c23bf6b4a6e23abc36a29d8956c92455341717ed916a",
+        "size_bytes": 2078
+      }
+    },
+    {
+      "adapter_exit_code": 3,
+      "cause": "work ancestor mode 0775; installed adapter rejects group-writable ancestors",
+      "error": "AUTH_STATUS_PATH_UNSAFE",
+      "host_job_id": "1a1b87251f7-12894-f71",
+      "host_wrapper_exit_code": 0,
+      "kernel_creation_requested": false,
+      "operation": "dedicated_setup_initial_state_path",
+      "path_observation": "observations/path-diagnosis-public.json",
+      "receipt": "observations/setup-path-rejection-public.json",
+      "remediation": "New task-only 0700 state/profile root directly under verified home; shared work permissions and global defaults unchanged",
+      "runtime_allocation_requested": false,
+      "state_directory_absent_after_rejection": true,
+      "test_submission_requested": false
+    },
+    {
+      "error": "exec-server rejected request: Argument list too long (os error 7)",
+      "operation": "local_evidence_log_export_attempt",
+      "process_created": false,
+      "provider_job_started": false,
+      "remediation": "Export bounded public projections; original host jobs retained by immutable IDs",
+      "scope": "LOCAL_PREPARATION_ONLY"
+    },
+    {
+      "error": "JavaScript template SyntaxError before tool execution",
+      "operation": "local_public_package_script_initial_dispatch",
+      "process_created": false,
+      "provider_job_started": false,
+      "remediation": "Correct local packaging quoting without changing test payload or cloud job",
+      "scope": "LOCAL_PREPARATION_ONLY"
+    }
+  ],
+  "native_gate_qualification": false,
+  "physical_meter_proven": false,
+  "provider_test_submit_attempts": 1,
+  "schema": "pon-cloud-preparation-failures-v1",
+  "scope": "PREPARATION_AND_SETUP_NOT_PROVIDER_TEST_REEXECUTION"
+}

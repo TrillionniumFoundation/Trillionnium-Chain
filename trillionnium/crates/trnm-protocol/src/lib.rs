@@ -1,4 +1,5 @@
 pub mod crypto_profile;
+pub mod funded_service_task_v1;
 pub mod pq_frame;
 pub mod pq_legacy_profile;
 pub mod pq_native_accounts_v2;

@@ -1,0 +1,119 @@
+{
+  "baseline_archive": {
+    "path": "/workspace/scratch/89df848c3501/evidence/recovered-formal-source.tar.xz",
+    "python_members": 277,
+    "sha256": "f4f0b4337d9220bb46f53e8b56f7858c6815f47a726ffaca6a2aed259a2fe1ee"
+  },
+  "changed_formal_python_files": [
+    {
+      "baseline_sha256": null,
+      "baseline_status": "absent",
+      "bytes": 10601,
+      "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+      "sha256": "3ac9a625421addd573aba827da1830ab6579af17fff82cf24dcf35222d1208a9"
+    },
+    {
+      "baseline_sha256": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+      "baseline_status": "changed",
+      "bytes": 22380,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+      "sha256": "eeec2e1cc1fa5b269635d3dfa1fcf800325b5d3a6ebe5dba2c935638d4bf3773"
+    },
+    {
+      "baseline_sha256": null,
+      "baseline_status": "absent",
+      "bytes": 30519,
+      "path": "formal/pon-nakamoto-v1/grouped_work_profile_v1.py",
+      "sha256": "8e63a160cc639ea77a3b122f982bc5a885ba1c926bb92531270897fd80164b66"
+    },
+    {
+      "baseline_sha256": null,
+      "baseline_status": "absent",
+      "bytes": 16031,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+      "sha256": "03f24af7ba0db3d05ef87220803b6511fbb678df108b96677f00950c0576ca56"
+    },
+    {
+      "baseline_sha256": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+      "baseline_status": "changed",
+      "bytes": 28876,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+      "sha256": "9ce117792b57c2ee6656f2141094404b2eb829d0272910fe3481980b89c90dab"
+    },
+    {
+      "baseline_sha256": null,
+      "baseline_status": "absent",
+      "bytes": 29045,
+      "path": "formal/pon-nakamoto-v1/test_grouped_work_profile_v1.py",
+      "sha256": "c54730920ff28a77f3125333314b88e0bfdf8fbbce04fd9ad3e8e799d4c82120"
+    }
+  ],
+  "ci_entry_inventory": [
+    {
+      "entries": [
+        {
+          "line": 84,
+          "text": "    TRNM_GROUPED_NATIVE=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_routed_int257_grouped\")\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_grouped*.py' -v"
+        },
+        {
+          "line": 85,
+          "text": "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_query_floor_v0.py' -v"
+        },
+        {
+          "line": 86,
+          "text": "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_resource_transfer_v0.py' -v"
+        }
+      ],
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "fcec64199bf99ee1cfee4ff6adcdf72f642fb5f68ea50cc7ce2b3544b88c56bb"
+    },
+    {
+      "entries": [
+        {
+          "line": 276,
+          "text": "    TRNM_GROUPED_NATIVE=\"$(realpath -e \"${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_routed_int257_grouped\")\" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_grouped*.py' -v"
+        },
+        {
+          "line": 277,
+          "text": "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_query_floor_v0.py' -v"
+        },
+        {
+          "line": 278,
+          "text": "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_resource_transfer_v0.py' -v"
+        }
+      ],
+      "path": "scripts/ci/check_ci_contract.py",
+      "sha256": "48f7b94085aefca8246fc0c026606249a640a7950bd33ac940d0e7fc3d0b1168"
+    },
+    {
+      "entries": [
+        {
+          "line": 87,
+          "text": "                                      'formal/pon-nakamoto-v1', '-p', 'test_grouped*.py', '-v']),"
+        },
+        {
+          "line": 91,
+          "text": "                              'formal/pon-nakamoto-v1', '-p', 'test_fresh_work_query_floor_v0.py', '-v']),"
+        },
+        {
+          "line": 93,
+          "text": "                                    'formal/pon-nakamoto-v1', '-p', 'test_fresh_work_resource_transfer_v0.py', '-v']),"
+        }
+      ],
+      "path": "formal/pon-nakamoto-v1/experiments/validate_grouped_fresh_work_v0.py",
+      "sha256": "f32c38ce97270511783051b48b1249c7ce0e93af0c4e728077cdddfaeef64b64"
+    }
+  ],
+  "default_grouped_native_exists": false,
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": null,
+    "TRNM_GROUPED_AUTHORITY_NATIVE": null,
+    "TRNM_GROUPED_FRESH_NATIVE": null,
+    "TRNM_GROUPED_NATIVE": null
+  },
+  "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": "grouped-final-local-validation-entry-inventory-v1",
+  "scope": "Local Python discovery plus syntax and whitespace checks only; native exact-source validation delegated to parent.",
+  "working_directory": "/workspace/scratch/89df848c3501/candidate"
+}

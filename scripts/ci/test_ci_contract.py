@@ -238,6 +238,33 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 warnings = 'error::ResourceWarning' if 'PYTHONWARNINGS=' in command else 'unset'
                 self.assertEqual(result.stdout, f'synthetic migration test called {warnings}\n')
 
+    def test_fresh_work_theory_and_native_admission_controls_are_additive_and_mandatory(self):
+        theory = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_query_floor_v0.py' -v\n"
+        native = ' --test grouped_fresh_admission_v0'
+        self.assertEqual(self.script.count(theory), 1)
+        self.assertEqual(self.script.count(native), 1)
+        for changed in (self.script.replace(theory, ''), self.script.replace(theory, theory * 2),
+                        self.script.replace(theory, theory.rstrip() + ' || true\n'),
+                        self.script.replace(native, ''),
+                        self.script.replace(native, ' --test grouped_fresh_admission_v0 -- --ignored')):
+            with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
+    def test_resource_transfer_and_shared_authority_controls_cannot_be_omitted_or_swallowed(self):
+        theory = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_resource_transfer_v0.py' -v\n"
+        native = ' --test grouped_verification_authority_v0'
+        self.assertEqual(self.script.count(theory), 1)
+        self.assertEqual(self.script.count(native), 1)
+        variants = (self.script.replace(theory, ''),
+                    self.script.replace(theory, theory * 2),
+                    self.script.replace(theory, theory.rstrip() + ' || true\n'),
+                    self.script.replace(theory, '    if false; then\n' + theory + '    fi\n'),
+                    self.script.replace(native, ''),
+                    self.script.replace(native, native + ' -- --ignored'))
+        for changed in variants:
+            with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
             '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell\n',
@@ -462,6 +489,29 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                ('moved', original.replace(command, '').replace(
                                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
             with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'reward budget'):
+                check_independent_conformance(changed, self.lanes)
+
+    def test_demand_upgrade_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        for name in ('test_demand_evidence.py', 'test_upgrade_policy.py'):
+            command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
+            original = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+            for label, changed in [('omitted', original.replace(command, '')),
+                                   ('duplicated', original.replace(command, command * 2)),
+                                   ('swallowed', original.replace(command, command.rstrip() + ' || true\n')),
+                                   ('moved', original.replace(command, '').replace(
+                                       '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+                with self.subTest(command=name, change=label), self.assertRaisesRegex(ValueError, 'demand evidence'):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        from check_ci_contract import NATIVE_DEMAND_CONTRACTS
+        command = NATIVE_DEMAND_CONTRACTS
+        for label, changed in [('omitted', self.script.replace(command, '')),
+                               ('duplicated', self.script.replace(command, command * 2)),
+                               ('swallowed', self.script.replace(command, command.rstrip() + ' || true\n')),
+                               ('moved', self.script.replace(command, '').replace(
+                                   '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'native demand'):
                 check_independent_conformance(changed, self.lanes)
 
     def test_parent_material_checks_cannot_be_omitted_duplicated_or_moved(self):

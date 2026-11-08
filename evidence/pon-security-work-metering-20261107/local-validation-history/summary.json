@@ -1,0 +1,327 @@
+{
+  "all_requested_discovery_commands_executed": true,
+  "all_tests_passed": false,
+  "candidate_sources_modified": false,
+  "ci_entry_inventory": "entry-inventory.json",
+  "code": [
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 10601,
+      "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+      "sha256": "3ac9a625421addd573aba827da1830ab6579af17fff82cf24dcf35222d1208a9",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 22380,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+      "sha256": "eeec2e1cc1fa5b269635d3dfa1fcf800325b5d3a6ebe5dba2c935638d4bf3773",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 30519,
+      "path": "formal/pon-nakamoto-v1/grouped_work_profile_v1.py",
+      "sha256": "8e63a160cc639ea77a3b122f982bc5a885ba1c926bb92531270897fd80164b66",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 16031,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+      "sha256": "03f24af7ba0db3d05ef87220803b6511fbb678df108b96677f00950c0576ca56",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 28876,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+      "sha256": "9ce117792b57c2ee6656f2141094404b2eb829d0272910fe3481980b89c90dab",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 29045,
+      "path": "formal/pon-nakamoto-v1/test_grouped_work_profile_v1.py",
+      "sha256": "c54730920ff28a77f3125333314b88e0bfdf8fbbce04fd9ad3e8e799d4c82120",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    },
+    {
+      "ast_and_in_memory_compile_status": "PASS",
+      "bytes": 8758,
+      "path": "evidence/pon-security-work-metering-20261107/replay_retained_query_trace.py",
+      "sha256": "71b6c30bfe78b910b075126279e30165d021ae4df47b44455f05d47ce8625c3e",
+      "syntax_exit_code": 0,
+      "whitespace_raw_exit_code": 1,
+      "whitespace_status": "PASS"
+    }
+  ],
+  "dependency_installations": false,
+  "generated_utc": "2026-11-07T17:33:37.873258+00:00",
+  "native_build_or_execution_performed": false,
+  "pyc_output_requested": false,
+  "remote_operations": false,
+  "schema": "grouped-final-local-validation-summary-v1",
+  "scope": "Three CI-aligned Python unittest discovery patterns; local staging validation only, not native exact-commit or release qualification.",
+  "skips_are_not_passes": true,
+  "status": "INCOMPLETE_NATIVE_SKIPS_AND_STAGING_GIT_ERRORS",
+  "suites": [
+    {
+      "bytecode_writes_disabled": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_grouped*.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/89df848c3501/candidate",
+      "elapsed_seconds": 4.378033580000192,
+      "errors": 3,
+      "exit_code": 1,
+      "failures": 0,
+      "finished_utc": "2026-11-07T17:31:44.853160+00:00",
+      "label": "grouped",
+      "log": "/workspace/scratch/89df848c3501/evidence/final-local-validation/grouped.log",
+      "log_sha256": "94b5259f874377076ef433442d1fa3c71c54c852dfe3b68080408b7b30f30bea",
+      "module_counts": {
+        "test_grouped_cell_operator_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 9,
+          "skipped": 2,
+          "total": 11
+        },
+        "test_grouped_challenge_shortcuts_v0": {
+          "errors": 1,
+          "failed": 0,
+          "passed": 8,
+          "skipped": 0,
+          "total": 9
+        },
+        "test_grouped_fanout_reanalysis_v1": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 18,
+          "skipped": 0,
+          "total": 18
+        },
+        "test_grouped_fresh_admission_wire_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 12,
+          "skipped": 0,
+          "total": 12
+        },
+        "test_grouped_fresh_deployment_cost_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 41,
+          "skipped": 0,
+          "total": 41
+        },
+        "test_grouped_fresh_work_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 11,
+          "skipped": 0,
+          "total": 11
+        },
+        "test_grouped_legal_strategy_v0": {
+          "errors": 2,
+          "failed": 0,
+          "passed": 17,
+          "skipped": 0,
+          "total": 19
+        },
+        "test_grouped_low_rank_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 6,
+          "skipped": 0,
+          "total": 6
+        },
+        "test_grouped_request_batch_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 15,
+          "skipped": 0,
+          "total": 15
+        },
+        "test_grouped_work_lottery_adversarial_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 27,
+          "skipped": 0,
+          "total": 27
+        },
+        "test_grouped_work_profile_v1": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 41,
+          "skipped": 0,
+          "total": 41
+        }
+      },
+      "nonpassing_tests": [
+        {
+          "module": "test_grouped_cell_operator_v0",
+          "reason": "skipped 'TRNM_GROUPED_NATIVE is unset: actual native integration not executed'",
+          "status": "SKIP",
+          "test": "test_grouped_cell_operator_v0.GroupedNativeIntegrationTests.test_one_real_process_init_all_shapes_full_scalar_and_numpy_differential"
+        },
+        {
+          "module": "test_grouped_cell_operator_v0",
+          "reason": "skipped 'TRNM_GROUPED_NATIVE is unset: actual native integration not executed'",
+          "status": "SKIP",
+          "test": "test_grouped_cell_operator_v0.GroupedNativeIntegrationTests.test_real_process_hostile_frames_reject_without_success_fallback"
+        },
+        {
+          "module": "test_grouped_challenge_shortcuts_v0",
+          "reason": "git rev-parse HEAD exited 128: candidate staging has no Git metadata",
+          "status": "ERROR",
+          "test": "test_grouped_challenge_shortcuts_v0.ChallengeShortcutTests.test_plan_exists_before_failed_load_and_keeps_complete_denominator"
+        },
+        {
+          "module": "test_grouped_legal_strategy_v0",
+          "reason": "git rev-parse HEAD exited 128: candidate staging has no Git metadata",
+          "status": "ERROR",
+          "test": "test_grouped_legal_strategy_v0.CampaignIntegrityTests.test_load_failure_retains_unstarted_real_arms_and_preregistered_schedule"
+        },
+        {
+          "module": "test_grouped_legal_strategy_v0",
+          "reason": "git rev-parse HEAD exited 128: candidate staging has no Git metadata",
+          "status": "ERROR",
+          "test": "test_grouped_legal_strategy_v0.CampaignIntegrityTests.test_source_gate_failure_prevents_observations_but_retains_full_plan"
+        }
+      ],
+      "passed": 205,
+      "skipped": 2,
+      "started_utc": "2026-11-07T17:31:40.474998+00:00",
+      "tests_total": 210,
+      "unittest_reported_seconds": 4.002
+    },
+    {
+      "bytecode_writes_disabled": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_query_floor_v0.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/89df848c3501/candidate",
+      "elapsed_seconds": 0.13026822899973922,
+      "errors": 0,
+      "exit_code": 0,
+      "failures": 0,
+      "finished_utc": "2026-11-07T17:31:40.606936+00:00",
+      "label": "fresh-query-floor",
+      "log": "/workspace/scratch/89df848c3501/evidence/final-local-validation/fresh-query-floor.log",
+      "log_sha256": "273162fb6378135ae166da94f11c97a80a6507e908ff61f104ca9ced8388a81e",
+      "module_counts": {
+        "test_fresh_work_query_floor_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 27,
+          "skipped": 0,
+          "total": 27
+        }
+      },
+      "nonpassing_tests": [],
+      "passed": 27,
+      "skipped": 0,
+      "started_utc": "2026-11-07T17:31:40.476588+00:00",
+      "tests_total": 27,
+      "unittest_reported_seconds": 0.025
+    },
+    {
+      "bytecode_writes_disabled": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fresh_work_resource_transfer_v0.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/89df848c3501/candidate",
+      "elapsed_seconds": 0.18386943800032896,
+      "errors": 0,
+      "exit_code": 0,
+      "failures": 0,
+      "finished_utc": "2026-11-07T17:31:40.635205+00:00",
+      "label": "fresh-resource-transfer",
+      "log": "/workspace/scratch/89df848c3501/evidence/final-local-validation/fresh-resource-transfer.log",
+      "log_sha256": "579eb25451b1de29e83015323ac905e04ddbce117bad2b22f5de7a66e47cfa34",
+      "module_counts": {
+        "test_fresh_work_resource_transfer_v0": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 15,
+          "skipped": 0,
+          "total": 15
+        }
+      },
+      "nonpassing_tests": [],
+      "passed": 15,
+      "skipped": 0,
+      "started_utc": "2026-11-07T17:31:40.451208+00:00",
+      "tests_total": 15,
+      "unittest_reported_seconds": 0.076
+    }
+  ],
+  "syntax_and_whitespace": {
+    "files_checked": 7,
+    "method": "AST parse plus in-memory compile (no pyc), git diff --no-index --check against archived baseline or /dev/null for new files. Raw git diff exit 1 indicates changes; no whitespace diagnostics.",
+    "report": "syntax-and-whitespace.json",
+    "status": "PASS"
+  },
+  "totals": {
+    "errors": 3,
+    "failures": 0,
+    "passed": 247,
+    "skipped": 2,
+    "tests_total": 252
+  },
+  "uncompleted_gates": [
+    {
+      "gate": "GroupedNativeIntegrationTests (two tests)",
+      "reason": "TRNM_GROUPED_NATIVE unset; default native binary absent. Tests explicitly skipped; not passed."
+    },
+    {
+      "gate": "Three challenge/legal campaign source-context tests",
+      "reason": "Each was attempted and errored because git rev-parse HEAD exits 128 in the staging directory without Git metadata. Original logs retained; no replacement Git context created."
+    },
+    {
+      "gate": "Native exact-commit build, Rust tests, Cargo graph/lockfile, Clippy and native release checks",
+      "reason": "Outside this delegated local Python task; parent is responsible on authoritative checkout."
+    }
+  ]
+}

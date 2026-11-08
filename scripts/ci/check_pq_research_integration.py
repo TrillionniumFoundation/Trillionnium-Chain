@@ -548,6 +548,36 @@ W1_POSTWIN_REQUIRED_PATHS = frozenset((
     "evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
 ))
 CONVERGENCE_REQUIRED_PATHS |= W1_POSTWIN_REQUIRED_PATHS
+# Funded service admission and durable native operation/evidence owners are
+# required source, never independent demand or model-acceptance certificates.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'formal/pon-nakamoto-v1/demand_evidence.py',
+    'formal/pon-nakamoto-v1/test_demand_evidence.py',
+    'formal/pon-nakamoto-v1/upgrade_policy.py',
+    'formal/pon-nakamoto-v1/test_upgrade_policy.py',
+    'docs/development/specs/pon/DEMAND_EVALUATION_UPGRADE_V1.md',
+    'docs/development/specs/pon/FUNDED_SERVICE_TASK_V1.md',
+    'docs/development/specs/pon/NATIVE_TASK_EVIDENCE_V1.md',
+    'trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs',
+    'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1.rs',
+    'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/demand_evidence.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/task_operation_v2.rs',
+    'trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs',
+    'trillionnium/crates/trnm-pon-node/tests/funded_service_contract.rs',
+    'trillionnium/crates/trnm-pon-node/tests/native_demand_evidence.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_budget/evidence.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2.rs',
+))
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'docs/development/specs/pon/NATIVE_TASK_OPERATION_V2.md',
+    'trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs',
+))
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-pon-node/tests/native_active_anchor.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/task_operation_v2/reconciliation.rs',
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

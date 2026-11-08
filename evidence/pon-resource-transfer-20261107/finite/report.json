@@ -1,0 +1,119 @@
+{
+  "bit_leak": {
+    "actual_chainwork": 0,
+    "actual_verifier_step_queries_each_world": 64,
+    "bits": 8,
+    "case": "synthetic_endpoint_bit_feedback",
+    "exact_expected_credit": {
+      "denominator": 1,
+      "numerator": 64
+    },
+    "invalid_equality_only_bound": {
+      "denominator": 247,
+      "numerator": 1152
+    },
+    "length": 64,
+    "maximum_award": 128,
+    "maximum_verifier_calls": 9,
+    "mean_verifier_calls": {
+      "denominator": 32,
+      "numerator": 287
+    },
+    "observed_native_side_channel": false,
+    "oracle_worlds": 256,
+    "own_chain_queries": 0,
+    "successful_winning_worlds": 128,
+    "target": 127,
+    "valid_total_work_bound_with_cached_verifier": {
+      "denominator": 1,
+      "numerator": 584
+    }
+  },
+  "callback_cap_example": {
+    "authenticated_native_cap": false,
+    "complete_replays_per_submission": 1,
+    "conditional_step_query_cap": 16384,
+    "length": 64,
+    "submission_cap": 256
+  },
+  "conclusion": {
+    "actual_chainwork": 0,
+    "aggregate_classical_transfer": "conditional_with_explicit_verifier_queries",
+    "endpoint_only_coalition_transfer_established": false,
+    "physical_resource_lower_bound_proved": false,
+    "positive_producer_fresh_contraction_floor_refuted_for_current_cache_scope": true,
+    "producer_fresh_business_contractions_after_legal_preparation": 0,
+    "production_qualification": "HOLD",
+    "quantum_security_proved": false
+  },
+  "copied_budget": {
+    "actual_chainwork": 0,
+    "actual_submission_cap": 128,
+    "bits": 12,
+    "canonical_candidates": 1,
+    "case": "copied_local_quotas_one_candidate",
+    "correctly_aggregated_bound": {
+      "denominator": 31,
+      "numerator": 128
+    },
+    "exact_expected_credit": {
+      "denominator": 1,
+      "numerator": 4
+    },
+    "incorrectly_assumed_local_bound": {
+      "denominator": 255,
+      "numerator": 128
+    },
+    "independent_budget_copies": 8,
+    "length": 64,
+    "local_cap": 16,
+    "maximum_award": 128,
+    "observed_native_exploit": false,
+    "own_chain_queries": 0,
+    "target": 2047
+  },
+  "quantum": {
+    "actual_chainwork": 0,
+    "bits": 64,
+    "candidate_count": 64,
+    "case": "ideal_quantum_search_random_candidates",
+    "coherent_native_circuit_implemented": false,
+    "exact_expected_credit": {
+      "denominator": 77371252455336267181195264,
+      "numerator": 173109108033340059308999177911
+    },
+    "exact_success_probability": {
+      "denominator": 316912650057057350374175801344,
+      "numerator": 173109108033340059308999177911
+    },
+    "exceeds_classical_envelope": true,
+    "forward_step_queries": 320,
+    "inapplicable_classical_credit_envelope": {
+      "denominator": 2251799813685248,
+      "numerator": 1729382256910272771
+    },
+    "independent_verifier_and_propagation_costs_complete": false,
+    "independent_verifier_step_queries": 64,
+    "iterations_precommitted": 5,
+    "length": 64,
+    "marked_count_classes": 65,
+    "marked_set_count": 18446744073709551616,
+    "measured_candidate_check_step_queries": 64,
+    "nominal_award": 4096,
+    "one_candidate_probability": {
+      "denominator": 64,
+      "numerator": 1
+    },
+    "own_abstract_step_queries": 704,
+    "physical_resources_complete": false,
+    "quantum_lower_bound_proved": false,
+    "target": 288230376151711743,
+    "total_abstract_step_queries": 768,
+    "uncomputation_step_queries": 320,
+    "zero_marked_probability": {
+      "denominator": 39402006196394479212279040100143613805079739270465446667948293404245721771497210611414266254884915640806627990306816,
+      "numerator": 14381201289858923833733732277241427911251598557516928831287151963615866190845260542210496569296551598609485715599361
+    }
+  },
+  "schema": "pon-fresh-work-resource-transfer-model-v0"
+}

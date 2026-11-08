@@ -9,12 +9,14 @@ use std::sync::Mutex;
 use trnm_crypto_primitives::pon_work;
 use trnm_mvcc_fee::pon_executor::pq_accounts_v2;
 use trnm_mvcc_fee::pon_executor::{self, CanonicalTransitionObserver, State};
+use trnm_protocol::funded_service_task_v1::{FundedServiceDecisionV1, FundedServiceVerdictV1};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header};
 
 const MAX_ANCESTORS: usize = 4096;
 const MAX_CANDIDATE_BYTES: usize = 16 * 1024 * 1024;
 struct PaymentObserver<'a> {
     query: &'a NativePaymentQueryV1,
+    config: &'a pon_executor::Config,
     height: u64,
     quota_unit_price: u64,
     result: Mutex<Option<(u64, u64)>>,
@@ -175,13 +177,46 @@ impl PaymentObserver<'_> {
         let successor = writes.get(&source_key).ok_or("NATIVE_PAYMENT_SOURCE")?;
         let (gross, credit) = match self.query.source {
             NativeFundingSourceV1::Task(task) => {
+                if raw.len() != 64 {
+                    let decision = FundedServiceDecisionV1::decode(raw)
+                        .map_err(|_| "NATIVE_PAYMENT_PAYLOAD")?;
+                    let contract = pon_executor::funded_service_v1::read_contract(
+                        task,
+                        original,
+                        self.config,
+                    )?
+                    .ok_or("NATIVE_PAYMENT_BINDING")?;
+                    let resolved = pon_executor::funded_service_v1::read_contract(
+                        task,
+                        successor,
+                        self.config,
+                    )?
+                    .ok_or("NATIVE_PAYMENT_BINDING")?;
+                    check(
+                        command.tag == 5
+                            && decision.verdict == FundedServiceVerdictV1::PayProvider
+                            && decision.task == task
+                            && decision.contract_digest == contract.contract_digest
+                            && decision.output == self.query.subject
+                            && command.sender == contract.terms.arbitrator
+                            && resolved.resolution.as_ref().is_some_and(|resolution| {
+                                resolution.kind
+                                    == pon_executor::funded_service_v1::ServiceResolutionKindV1::ArbitratorPaid
+                                    && resolution.actor == command.sender
+                                    && resolution.height == self.height
+                                    && resolution.evidence == Some(decision.evidence)
+                            }),
+                    )?;
+                } else {
+                    check(
+                        command.tag == 5
+                            && h(&raw[..32])? == task
+                            && h(&raw[32..])? == self.query.subject
+                            && text(original, "owner")? == hex::encode(command.sender),
+                    )?;
+                }
                 check(
-                    command.tag == 5
-                        && raw.len() == 64
-                        && h(&raw[..32])? == task
-                        && h(&raw[32..])? == self.query.subject
-                        && text(original, "owner")? == hex::encode(command.sender)
-                        && text(original, "provider")? == hex::encode(self.query.beneficiary)
+                    text(original, "provider")? == hex::encode(self.query.beneficiary)
                         && text(original, "status")? == "receipt"
                         && text(original, "output")? == hex::encode(self.query.subject)
                         && self.height < n(original, "deadline")?
@@ -278,11 +313,27 @@ impl Node {
         &self,
         query: &NativePaymentQueryV1,
     ) -> Result<NativePaymentObservationV1> {
+        self.native_payment_observation_from_anchor_v1(query, None)
+    }
+    /// Historical evidence only. Replays a retained branch without activating it
+    /// or treating its past payment as a currently canonical settlement.
+    pub(crate) fn native_payment_observation_at_anchor_v1(
+        &self,
+        query: &NativePaymentQueryV1,
+        anchor: NativeBudgetAnchorV1,
+    ) -> Result<NativePaymentObservationV1> {
+        self.native_payment_observation_from_anchor_v1(query, Some(anchor))
+    }
+    fn native_payment_observation_from_anchor_v1(
+        &self,
+        query: &NativePaymentQueryV1,
+        retained_anchor: Option<NativeBudgetAnchorV1>,
+    ) -> Result<NativePaymentObservationV1> {
         ensure(query.maximum_gross_units > 0, "NATIVE_PAYMENT_LIMIT")?;
         self.namespace()?;
         let read = self.db.unchecked_transaction()?;
         self.storage_context()?;
-        let anchor = if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+        let active_anchor = if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             let view = self.growth_snapshot_in_read()?;
             NativeBudgetAnchorV1 {
                 network: view.commitment.network,
@@ -306,6 +357,8 @@ impl Node {
                 generation,
             }
         };
+        let anchor = retained_anchor.unwrap_or(active_anchor);
+        self.validate_native_active_anchor_v1(&anchor)?;
         let mut cursor = anchor.block;
         let mut examined = 0usize;
         let mut candidate_bytes = 0usize;
@@ -382,6 +435,7 @@ impl Node {
                 if found {
                     let observer = PaymentObserver {
                         query,
+                        config: &self.settings.app,
                         height: record.height,
                         quota_unit_price: self.settings.limit("quota_unit_price")?,
                         result: Mutex::new(None),
@@ -430,7 +484,7 @@ impl Node {
             }
         })
     }
-    fn native_payment_header(&self, id: Hash) -> Result<Header> {
+    pub(in crate::store) fn native_payment_header(&self, id: Hash) -> Result<Header> {
         let growth = self.state_backend == StateBackend::PermanentAccountGrowthV2;
         let width = if growth {
             4 + trnm_protocol::pon_growth::GROWTH_HEADER_BYTES
@@ -456,7 +510,7 @@ impl Node {
             Ok(h)
         }
     }
-    fn check_native_payment_transition(
+    pub(in crate::store) fn check_native_payment_transition(
         &self,
         id: Hash,
         observer: &dyn CanonicalTransitionObserver,

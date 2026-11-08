@@ -1,0 +1,13 @@
+{
+  "all_command_log_hashes_verified": true,
+  "all_indexed_bytes_verified": true,
+  "archive": "native-validation-source-v2.tar.gz",
+  "bytes": 212011,
+  "indexed_files": 126,
+  "members": 127,
+  "schema": "pon-profile-validation-capture-readback-v1",
+  "scope": "Code validation and capture integrity do not establish public qualification.",
+  "sha256": "e4f4bcf5883a3190ec1a90fabc7d7b113c7fd038a102a1c5194ac7e9ba858ec0",
+  "source": "ed2ed1ba614edb913b22b43b49bc3c7c43a0201f",
+  "validation_status": "PASS"
+}

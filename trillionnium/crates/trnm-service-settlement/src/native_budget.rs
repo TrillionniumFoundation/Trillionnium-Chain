@@ -13,6 +13,9 @@
 //! to dispatch again. An operator restoring this entire database from an old copy
 //! is outside its anti-rollback guarantee; the Node/target must retain their fences.
 
+pub mod evidence;
+pub mod task_operation_v2;
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use serde_json::Value;
@@ -257,6 +260,8 @@ pub struct NativeBudgetClaimV1 {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, BorshSerialize, BorshDeserialize)]
 pub enum NativeResourceOutcomeV1 {
     Positive,
+    /// Completed work without a demonstrated model gain. This never qualifies
+    /// a release/mining reward; a separate fulfilled contract may still pay.
     NoGain,
     Invalid,
     Unknown,
@@ -411,7 +416,8 @@ fn funding(
         }
         (
             NativeFundingSourceV1::Task(_),
-            NativeBudgetLaneV1::Evaluation
+            NativeBudgetLaneV1::Contribution
+            | NativeBudgetLaneV1::Evaluation
             | NativeBudgetLaneV1::Storage
             | NativeBudgetLaneV1::Repair,
         ) => {
@@ -508,6 +514,30 @@ struct Claim {
     payment: Option<NativePaymentObservationV1>,
 }
 impl Claim {
+    fn payment_observation_allowed(&self, source: NativeFundingSourceV1) -> bool {
+        match self.outcome {
+            Some(NativeResourceOutcomeV1::Positive) => true,
+            Some(NativeResourceOutcomeV1::NoGain) => {
+                // A sponsor can pay for a completed experiment or ordinary
+                // service even when it produces no model improvement. The
+                // native owner must still prove the exact executed payment.
+                // A local result alone cannot create that obligation, retype a
+                // pinned source, or unlock a Release/Reward allocation.
+                matches!(
+                    (source, self.specification.resource_reservation.lane()),
+                    (
+                        NativeFundingSourceV1::Task(_),
+                        NativeBudgetLaneV1::Contribution | NativeBudgetLaneV1::Evaluation
+                    ) | (NativeFundingSourceV1::Quota(_), NativeBudgetLaneV1::Serving)
+                ) && self
+                    .effect
+                    .as_ref()
+                    .is_some_and(|effect| effect.receipt.is_some())
+            }
+            _ => false,
+        }
+    }
+
     fn monetary_commitment(&self) -> u64 {
         if let Some(payment) = &self.payment {
             payment.gross_escrow_debit
@@ -1160,6 +1190,9 @@ impl NativeBudgetStoreV1 {
         })
     }
     /// Records an already executed ordinary payment. This method issues nothing.
+    /// A completed NoGain training/evaluation Task or serving Quota may have a
+    /// contract fee. Release/Reward payments still require Positive; neither
+    /// a fee nor a local Positive outcome proves model adoption or chainwork.
     pub fn record_native_payment(
         &mut self,
         owner: &mut impl NativeFundingOwnerV1,
@@ -1645,7 +1678,7 @@ impl BudgetState {
                 let budget = self.budget(record.specification.budget)?;
                 require(
                     record.payment.is_none()
-                        && record.outcome == Some(NativeResourceOutcomeV1::Positive)
+                        && record.payment_observation_allowed(budget.policy.source)
                         && observed.source == budget.policy.source
                         && observed.subject == record.specification.subject
                         && observed.beneficiary == record.specification.beneficiary

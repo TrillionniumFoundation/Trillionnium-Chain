@@ -1,0 +1,11 @@
+{
+  "input_bytes": 25975,
+  "input_sha256": "54828d2aa7ceb92e4f05282cb10f558e37132937f6f918c7a28e71e1a7dc9f7a",
+  "returncode": 0,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout_bytes": 4189,
+  "stdout_sha256": "7dab0319227952bc1d16ce3c2aa6e189de0ce58d7ff8d32673d97a9e47cacef8",
+  "stdout_truncated": false
+}

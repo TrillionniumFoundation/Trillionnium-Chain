@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 4194304,
+  "actual_git_blob_sha1": "e6a1f97499c1f981ae89e21dd0304fb4fafa1c32",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/e6a1f97499c1f981ae89e21dd0304fb4fafa1c32"
+  ],
+  "elapsed_seconds": 17.301953554153442,
+  "exit_code": 0,
+  "expected_blob": "e6a1f97499c1f981ae89e21dd0304fb4fafa1c32",
+  "expected_bytes": 4194304,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "e6a1f97499c1f981ae89e21dd0304fb4fafa1c32\n",
+  "imported": true,
+  "path": "evidence/pon-w1-factorial-v3-20261102/successful-2b250859-observations.tar.zst.part-00",
+  "raw_sha256": "0d67bf3193aca4517e13103d90fb8d7a458f4edeecaceac0eb2e5570c22b9edf",
+  "timed_out": false
+}
