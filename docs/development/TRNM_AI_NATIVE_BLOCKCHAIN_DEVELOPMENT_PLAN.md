@@ -7327,3 +7327,33 @@ no-swap and 256-PID service contract; original request/history limits; and
 the independent-administrator, 72-hour WAN acceptance requirements. The
 eight-thread research job does not replace those budgets. No qualification,
 activation, merge or release is performed by this entry.
+
+
+## 2026-11-08 W1 structural admission continuation
+
+Starting from PR783 commit `3bbd072e4983eceee4531d7576d329da5b0d0900`,
+the standalone complete W1 research verifier now scans both fixed P3 0.8.0
+proof buffers before either allocation-owning decode or preprocessing. The
+unchanged component profiles have envelope caps of 4,550,213 and 778,437 bytes;
+the pair plus the exact public statement is at most 5,705,940 encoded bytes.
+This is an allocation-free structural operation/encoded-input bound, not a
+bound on total heap, CPU, wall time, queues, cleanup or all malicious proofs.
+
+The new native wire suite passed 13 cases, in addition to the original 18+3
+tests. The retained full-proof comparison completed three positive fresh
+verifier processes and 96 structural-negative processes in ABBA order; eight
+negative-shape medians were 8.25--10.92 ms versus 144.65--978.08 ms with the
+old pinned binary. A separately identified successor replay passed one full
+positive, 11 ordinary negatives and four original typed late FRI negatives.
+Historical proof-generation provenance was not rewritten; new proof count
+for these campaigns is zero. Raw source/binary/resource observations and
+the precise scope are in the research crate's `evidence/round3-wire/` and
+`WIRE_ADMISSION.md`.
+
+All five substantive gates remain open: complete concrete noninteractive
+PCS/hash/Fiat--Shamir lifecycle proof; positive production end-to-end backend
+benefit; global malicious rejection cost under the production budget;
+universal cheapest-legal-strategy physical work; production Node admission
+and qualification. Approximately 63.95 conditional RBR bits are not NI or
+PQ128 qualification. Status remains **HOLD_NO_GO**; no production dispatch,
+chainwork activation or main-branch merge is introduced here.

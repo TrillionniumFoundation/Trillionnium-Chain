@@ -168,3 +168,12 @@ worst-case rejection cost, economic gain, cheapest-strategy physical work
 bound, and production integration remain gates until supported by their
 own evidence. Neither successful test counts nor this research verdict
 change **HOLD_NO_GO**.
+
+## 2026-11-08 fixed-profile wire admission
+
+The continuation adds [allocation-free structural admission](WIRE_ADMISSION.md)
+before decoding or verifier setup, with exact per-component envelope bounds,
+13 native mutation tests, a 96-process malformed-shape comparison, and
+an explicit successor replay of the 11 ordinary and four late controls.
+The original proof/security results above remain historical. This is not
+a global resource, noninteractive-security, physical-work or Node qualification.

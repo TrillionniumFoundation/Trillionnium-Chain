@@ -11,6 +11,7 @@ use p3_uni_stark::{prove_with_preprocessed, setup_preprocessed, verify_with_prep
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use w1_full_public_stark_research::proof_config::{W1Proof, config, security_metadata};
+use w1_full_public_stark_research::proof_wire::{Component, limits, scan_proof};
 use w1_full_public_stark_research::public::{Expected, PUBLIC_BYTES, PublicStatement};
 use w1_full_public_stark_research::sha_air::W1ShaAir;
 use w1_full_public_stark_research::sha_plan::{HEADER_BYTES, INPUT_BYTES, PREFIX_BYTES};
@@ -84,10 +85,8 @@ fn encode_proof(proof: &W1Proof, magic: &[u8; 8]) -> Result<Vec<u8>, String> {
     Ok(bytes)
 }
 
-fn decode_proof(bytes: &[u8], magic: &[u8; 8], degree_bits: usize) -> Result<W1Proof, String> {
-    if bytes.len() < 8 || bytes.len() > MAX_PROOF_BYTES || &bytes[..8] != magic {
-        return Err("proof envelope".into());
-    }
+// Private: the only caller admits BOTH immutable byte buffers before decoding.
+fn decode_admitted_proof(bytes: &[u8], component: Component) -> Result<W1Proof, String> {
     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
         bincode::DefaultOptions::new()
             .with_fixint_encoding()
@@ -97,7 +96,7 @@ fn decode_proof(bytes: &[u8], magic: &[u8; 8], degree_bits: usize) -> Result<W1P
     }))
     .map_err(|_| "proof decode panic contained".to_owned())?;
     let proof = result.map_err(|e| format!("proof decoding: {e}"))?;
-    if proof.degree_bits != degree_bits {
+    if proof.degree_bits != component.degree_bits() {
         return Err("proof trace degree".into());
     }
     Ok(proof)
@@ -210,17 +209,21 @@ fn verify(args: &[String]) -> Result<Value, String> {
     let expected = expected(&args[1], &args[2])?;
     let sha_bytes = read_bounded(
         &Path::new(&args[3]).join("sha.proof.bin"),
-        MAX_PROOF_BYTES,
+        limits(Component::Sha).maximum_bytes,
         None,
     )?;
     let arith_bytes = read_bounded(
         &Path::new(&args[3]).join("arith.proof.bin"),
-        MAX_PROOF_BYTES,
+        limits(Component::Arithmetic).maximum_bytes,
         None,
     )?;
-    // Reject malformed envelopes and wrong fixed degrees before costly setup.
-    let sha_proof = decode_proof(&sha_bytes, SHA_MAGIC, 13)?;
-    let arith_proof = decode_proof(&arith_bytes, ARITH_MAGIC, 17)?;
+    // Both shapes are admitted before either allocation-owning P3 decode.
+    let sha_shape =
+        scan_proof(&sha_bytes, Component::Sha).map_err(|e| format!("proof decoding: {e}"))?;
+    let arith_shape = scan_proof(&arith_bytes, Component::Arithmetic)
+        .map_err(|e| format!("proof decoding: {e}"))?;
+    let sha_proof = decode_admitted_proof(&sha_bytes, Component::Sha)?;
+    let arith_proof = decode_admitted_proof(&arith_bytes, Component::Arithmetic)?;
     elapsed("bounded_read_decode_and_proof_shape", start, &mut timings);
     let start = Instant::now();
     let (sha_plan, arith) = statement.plans(&expected)?;
@@ -272,6 +275,14 @@ fn verify(args: &[String]) -> Result<Value, String> {
         json!({"status":"VERIFIED_COMPLETE_W1_RESEARCH_ONLY", "statement_sha256":digest(&public_bytes),
         "public_bytes":public_bytes.len(), "sha_proof_bytes":sha_bytes.len(),"sha_proof_sha256":digest(&sha_bytes),
         "arith_proof_bytes":arith_bytes.len(),"arith_proof_sha256":digest(&arith_bytes),"timings":timings,
+        "wire_admission": {
+            "schema": "w1-fixed-p3-wire-admission-v1",
+            "sha": {"field_elements":sha_shape.field_elements,"vector_headers":sha_shape.vector_headers,
+                "merkle_siblings":sha_shape.merkle_siblings,"maximum_bytes":limits(Component::Sha).maximum_bytes},
+            "arithmetic": {"field_elements":arith_shape.field_elements,"vector_headers":arith_shape.vector_headers,
+                "merkle_siblings":arith_shape.merkle_siblings,"maximum_bytes":limits(Component::Arithmetic).maximum_bytes},
+            "structural_admission_only":true,"global_rejection_cost_bound":false
+        },
         "preprocessing_source":"canonical public statement plus independent expected inputs; rebuilt in this process",
         "security_claim":"research execution only; no concrete noninteractive security qualification"}),
     )

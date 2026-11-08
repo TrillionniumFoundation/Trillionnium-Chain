@@ -1,0 +1,14 @@
+{
+  "schema": "trnm-w1-successor-replay-v1",
+  "qualification": "HOLD_NO_GO",
+  "historical_proof_source_commit": "3bbd072e4983eceee4531d7576d329da5b0d0900",
+  "historical_proof_sha256": {
+    "statement.bin": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "sha.proof.bin": "ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c",
+    "arith.proof.bin": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204"
+  },
+  "historical_provenance_unchanged": true,
+  "new_proofs_generated": 0,
+  "successor_verifier_sha256": "44c0d3b88a1d8198c4db0ba3b27ed1072faf69377773fa97e835c8ccb8e2bd94",
+  "global_malicious_rejection_cost_bound": false
+}

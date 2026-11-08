@@ -3,6 +3,7 @@
 
 pub mod arith_air;
 pub mod proof_config;
+pub mod proof_wire;
 pub mod public;
 pub mod sha_air;
 pub mod sha_plan;
