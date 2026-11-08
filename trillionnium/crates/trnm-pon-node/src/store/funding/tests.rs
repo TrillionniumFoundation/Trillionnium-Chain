@@ -357,9 +357,16 @@ fn late_money_observation(backend: StateBackend, payment: bool, context_change: 
         reader_writes,
         "observation must issue no writes"
     );
-    assert!(
-        result.is_err(),
-        "a result from the old snapshot escaped after a foreign commit"
+    let expected = if context_change {
+        "STORAGE_CONTEXT"
+    } else {
+        "NATIVE_MONEY_OBSERVATION_EPOCH_CHANGED"
+    };
+    assert_eq!(
+        result
+            .expect_err("a result from the old snapshot escaped after a foreign commit")
+            .to_string(),
+        expected
     );
     // Repair only the deliberate fixture corruption and make a fresh read.
     // The observer itself neither rewinds anything nor creates a replacement.
