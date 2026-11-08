@@ -61,6 +61,14 @@ pub enum GrowthProgress {
     MembershipRead {
         index: u64,
     },
+    /// Before each distinct included body and its complete W1/M06 replay.
+    ConfirmationBody {
+        index: usize,
+    },
+    /// Before each complete confirmation-ancestry link, then at EOF.
+    ConfirmationAncestor {
+        index: u64,
+    },
     ObservationDelta,
     BeforeObservationTask,
     ObservationReady,
