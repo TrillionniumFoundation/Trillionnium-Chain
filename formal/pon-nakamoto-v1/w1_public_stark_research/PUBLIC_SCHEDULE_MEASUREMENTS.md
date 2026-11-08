@@ -119,3 +119,68 @@ the 49,506-byte native candidate, and the public statement alone is 7.62 times
 that candidate. Historical native timing is not inserted into this ABBA table.
 Any current native reference must be reported separately with its own source,
 input, resource and time-window receipt.
+
+## Observed verifier cost shift and exact source receipt
+
+Within the separate recorded verification phases, SHA independent preprocessing
+has median 45.8565695 ms for A and 202.0868175 ms for B. SHA proof verification
+falls from 261.727286 ms to 177.207567 ms; canonical planning rises from
+13.493809 ms to 19.9938645 ms. The larger independently rebuilt public table
+therefore accounts for a substantial measured cost increase, while the narrower
+proof reduces the PCS verification phase. This is consistent with the overall
+verifier regression. Phase medians should not be added to reconstruct the
+median process wall time.
+
+The [exact code-commit receipt](evidence/public-schedule-r4/exact-code-commit-checks.json)
+binds commit eb944645cc3e30af5955edf9dbbcb43488fa38c1. Both clean tracked-source
+receipts agree; the Cargo graph/lockfile, formatting, 57 Rust tests, strict
+Clippy, repository/Markdown checks, 50 repository negatives and 43 source
+integrity negatives all passed. Runtime Rust/Cargo and both measured binaries
+match the original ABBA hashes. The expanded scanner tests are explicitly
+identified as subsequent test-only changes.
+
+The [raw observation archive](evidence/public-schedule-r4/raw-observations.tar.gz)
+retains 298 nonbinary campaign/control/check files. Its
+[index](evidence/public-schedule-r4/raw-observations-index.json) records every
+original byte count and SHA-256. Original proof/statement bytes remain at their
+recorded campaign paths, and the actual component 5 SHA proof is additionally
+retained as a repository scanner fixture.
+
+## Separately timed current native reference
+
+The later native reference uses the actual current pon_work::verify FullLimb
+implementation through the v3 Node-adapter binary, with independently expected
+header equality. It performs no Node admission, producer work, proof generation,
+or STARK verification. Six fresh processes made 600 calls over the same two
+inputs; each process made 100 sequential calls. CPU affinity, eight-thread
+environment and 4 GiB process-group budget match the requested research settings.
+The root explicitly paused its compilation for the declared second block;
+the host still had external shared load.
+
+| Input | Fresh processes / calls | Median inner native call | Median outer process, 100 calls |
+| --- | ---: | ---: | ---: |
+| retained | 3 / 300 | 1.7933015 ms | 0.215299514 s |
+| dense | 3 / 300 | 1.7988155 ms | 0.215342903 s |
+
+Inner call timing includes header.challenge() and FullLimb verification, but
+excludes process startup and bounded raw/header reads; those are included in
+outer process wall time. The first calls in each process range from 1.711136 ms
+to 2.291451 ms. OS caches were not flushed. These repeated calls are not
+independent cryptographic proofs, independent tasks, or a production Node
+latency distribution. This later block is not pooled into or substituted for
+the STARK ABBA campaign. The different timing boundaries do not support a
+precise native-versus-STARK speedup factor; they do show that the current
+research receiver remains far more expensive than the native primitive.
+
+Binary SHA-256 is
+14f123c6e51f5b9a3a54176bf55b9d7f5a424083af701411b8b2c41311790cbb.
+All native-source, binary and raw/header fingerprints agree before and after
+the block. A first setup attempt referenced an obsolete package name and failed
+before any native call. It produced zero timing samples and is retained with
+its traceback and exact executed script. The predeclared replacement kept the
+same call count, input order and resource settings.
+
+[Native summary](evidence/public-schedule-r4/native-reference-summary.json),
+[raw native observations](evidence/public-schedule-r4/native-reference-observations.tar.gz),
+and their [index](evidence/public-schedule-r4/native-reference-index.json) retain
+the complete separate timing window and failed setup attempt.

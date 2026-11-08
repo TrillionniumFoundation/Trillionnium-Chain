@@ -1,0 +1,161 @@
+{
+  "schema": "w1-public-schedule-exact-commit-checks-v1",
+  "qualification": "HOLD_NO_GO",
+  "commit": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+  "result": "PASS",
+  "commands": [
+    {
+      "name": "source-before",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "eb944645cc3e30af5955edf9dbbcb43488fa38c1"
+      ],
+      "exit_code": 0,
+      "seconds": 3.7492291927337646,
+      "stdout_sha256": "88e8b67dc68fa831097d76cc11a4e42952f1b1c9b7df4f6ea285e443dfee3e25",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository-links",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "seconds": 18.422809600830078,
+      "stdout_sha256": "be5bed6d2ac90f25567b2c72d607c1bc588fed4bf65040424416736e78b58dc2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository-negatives",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_repository.py"
+      ],
+      "exit_code": 0,
+      "seconds": 175.5753309726715,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "44064743d0da437cb10ae5bc27ea53a3f3f84c12f66facd458df17303517233e"
+    },
+    {
+      "name": "source-integrity-negatives",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "seconds": 6.0680992603302,
+      "stdout_sha256": "93671815f42dfc4140aa6594a993e332f3447d910e5e7dfb9471f1eb1bb53408",
+      "stderr_sha256": "4cb9a0ebebb3b91f7ab096c56b4b9ca593ad63b0f1f35fbef688bcbfb7dafb71"
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.35633015632629395,
+      "stdout_sha256": "e87da92f349375d4f6c9ca8824a2536671f899fcd449048970a7fd949185e951",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.22444438934326172,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--offline",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 29.079428672790527,
+      "stdout_sha256": "e4eea26450f23ebe3875e2c4be93d899c0133cd54cd7dd12f7259a701ee8e081",
+      "stderr_sha256": "a5e25dc314958ad8b65578283e2b179551eae856ec49ba83b72b4e357b7dd9b6"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.27928662300109863,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4f27ac380b22e1d975eee20ce727fa8cbc09061177f6253af0777fd4de7b7506"
+    },
+    {
+      "name": "source-after",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "eb944645cc3e30af5955edf9dbbcb43488fa38c1"
+      ],
+      "exit_code": 0,
+      "seconds": 2.6028506755828857,
+      "stdout_sha256": "88e8b67dc68fa831097d76cc11a4e42952f1b1c9b7df4f6ea285e443dfee3e25",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "runtime_and_cargo_hashes_match_abba": true,
+  "binary_hashes_match_abba": {
+    "A": true,
+    "B": true
+  },
+  "runtime_hashes": {
+    "examples/carry_backend.rs": "7540a86eff7d2496fd1a2c4f9d2aebecd782c6b1c1ad79c8dc7facb523a04f99",
+    "examples/hash_role_probe.rs": "93072125eca6661bd2b2f8ee44d3209d1ac8b13f17f7e69569dccca90aea8144",
+    "examples/mutate_last_query.rs": "3695900e5341c2a7790b37657a35398b9044d5ed9bc057e1b2bf0b7275b6546f",
+    "examples/mutate_structure.rs": "bccf2cca0381cb49d04e5733259c45ea8a7a797ee2cbd0814ed6a3751a6fcdb8",
+    "examples/packed_carry_backend.rs": "43049ce43de27d02335a14ccc39fe5c51ba32d66651ae39235d7526224be65ea",
+    "examples/scheduled_sha_backend.rs": "2782d4004889ea40be680cc752844ca1d48bb537e54d8ef5fe1d77f6888702ad",
+    "src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+    "src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+    "src/lib.rs": "02af0734368cb416dd4ed600254727f32e1c096e33a158b3abad903f5027ade1",
+    "src/main.rs": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76",
+    "src/proof_config.rs": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+    "src/proof_wire.rs": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921",
+    "src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+    "src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "src/sha_schedule_air.rs": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64",
+    "Cargo.toml": "e4abafba6867bf145ddd3f5b8f669ce039a93973d80f7eb3096dd3a7ce1c184c",
+    "Cargo.lock": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1"
+  },
+  "test_only_changes_after_abba": [
+    "tests/wire_admission.rs"
+  ],
+  "new_complete_proofs_in_this_check": 0,
+  "build_artifacts_restored_to_original_paths": true,
+  "old_untracked_check_logs_relocated_to": "/home/qian-qi/work/chain-w1-scheduled-sha-exact-20261108-f16ac-r4-01/untracked-artifacts"
+}
