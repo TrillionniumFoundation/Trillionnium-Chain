@@ -2,6 +2,7 @@
 mod cell_native_cli;
 mod growth_cli;
 mod host_public_guard;
+mod packet_observer_cli;
 use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -1393,7 +1394,7 @@ fn run() -> Result<Value> {
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --packet-stdin --peer",
-        "packet-status" => "--packet --packet-stdin --peer",
+        "packet-status" => "--packet --packet-stdin --peer --observation-cpu-seconds --observation-wall-seconds --observation-snapshot-bytes --packet-observer-worker",
         "push" => "--packet --packet-stdin --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
@@ -1429,6 +1430,16 @@ fn run() -> Result<Value> {
         if !allowed.split_whitespace().any(|k| k == key) {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
+    }
+    if command == "packet-status" && !args.contains_key("--peer") {
+        if let Some(value) = packet_observer_cli::supervise(&args)? {
+            return Ok(value);
+        }
+    } else if args
+        .keys()
+        .any(|key| key.starts_with("--observation-") || key == "--packet-observer-worker")
+    {
+        return Err("PACKET_OBSERVATION_LOCAL_ONLY".into());
     }
     let growth_network = growth_network_options(&command, &args)?;
     validate_host_kernel_profile(&command, &args)?;
@@ -1927,14 +1938,35 @@ fn run() -> Result<Value> {
             ingress::call(address, &request)
         };
     }
-    if command == "packet-status"
-        && !Path::new(need(&args, "--store")?)
-            .join("native.sqlite")
-            .is_file()
-    {
-        return Err("PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
-    }
     let clock = number(&args, "--logical-now", ingress::now()?)?;
+    if command == "packet-status" {
+        // A status query cannot start an outside owner or execute Node::recover.
+        // The live owner's existing exact_packet_observation remains available
+        // to that owner; this CLI requires a closed store without outside policy.
+        if owner_task_config.is_some() {
+            return Err("PACKET_STATUS_EXTERNAL_OWNER_UNSUPPORTED".into());
+        }
+        let packet = Packet::decode(&packet_input(&args)?)?;
+        let value = trnm_pon_node::observe_existing_packet(
+            Path::new(need(&args, "--store")?),
+            settings,
+            &packet,
+            if authenticated_state {
+                trnm_pon_node::PacketObservationBackend::AuthenticatedV1
+            } else {
+                trnm_pon_node::PacketObservationBackend::LegacyV2
+            },
+            number(&args, "--workers", 1)? as usize,
+            number(
+                &args,
+                "--observation-snapshot-bytes",
+                trnm_pon_node::DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+            )?,
+        )?;
+        return Ok(json!({"result":value,
+            "clock_scope":if args.contains_key("--logical-now"){"logical-test"}else{"local-wall"},
+            "production_activation":false}));
+    }
     let mut node = if growth_network {
         Node::open_with_permanent_account_growth_v2_and_workers(
             Path::new(need(&args, "--store")?),
@@ -1952,10 +1984,6 @@ fn run() -> Result<Value> {
     };
     let value = match command.as_str() {
         "status" | "recover" => node.stats()?,
-        "packet-status" => {
-            let packet = Packet::decode(&packet_input(&args)?)?;
-            node.exact_packet_observation(&packet)?
-        }
         "capacity-observe" => serde_json::to_value(node.capacity_observation()?)?,
         "evaluation-observe" => {
             let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
