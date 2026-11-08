@@ -8451,3 +8451,36 @@ deployed root or production permission. Exact-source integration receipts remain
 separate from native and independent end-to-end qualification. All seven layers
 retain their open composition obligations; the complete actual lifetime bound
 stays null and whole-chain PQ/activation stay false.
+
+### 2026-11-08 real root-signature and durable recovery continuation
+
+Continue #806 at `0788c44f4139c74772a8a9d7d475821f56e5b727` with the
+[real signature/journal V2 contract](../security/PQ_ROOT_RECOVERY_NATIVE_V2.md)
+and [explicit lifetime/independence gaps](../security/PQ_ROOT_LIFETIME_GAPS_V2.md).
+Keep the original V1 model, #796 source failures, existing Rust owners and all
+production/HOLD boundaries. This is a bounded Python research owner executing
+native OpenSSL signatures, not a native M15 production migration.
+
+Require real ML-DSA-87 2/3 AND SLH-DSA-SHA2-256s 2/3 for every root action, exact
+DER/OID suite binding, complete statement signatures and separate all-six-key
+successor possession. Persist semantic nonces, revoked signer IDs, complete
+root/effect state and original signed evidence. Replay bounded canonical state
+from enrollment; pin the expected owner scope separately. Commit pending state
+before the independently authenticated exact-head CAS and fence uncertainty.
+Authenticate both anchor writer requests and fresh responses with separately
+pinned dual-family keys. Never promote caller JSON or a stale provider receipt
+into external-effect reconciliation.
+
+Bind effect entry to current root authority and signed expiry; retain entered
+and Unknown outcomes through restart/reorganization. Require authenticated
+provider readback and explicit current-orphan liability/compensation declaration.
+Keep the full owner-plus-anchor rollback counterexample: restoring every source
+of retained currentness remains indistinguishable from a valid old history.
+Same-host files, keys and processes are not independent custody or deployment.
+
+Add mandatory structural and native CI tests without removing any original gate.
+Exact-source receipts will distinguish component execution, original gate
+failures, source integrity and external qualification. Preserve hard research
+capacity refusal without pruning/reinitializing lifetime history. The original
+15-path lifetime register remains explicitly limited to its old declared sources;
+its pass cannot cover the new bridge or instantiate missing probability bounds.
