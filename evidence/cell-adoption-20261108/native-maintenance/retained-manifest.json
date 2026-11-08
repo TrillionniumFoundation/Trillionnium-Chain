@@ -1,0 +1,182 @@
+{
+  "authority": "DENY_ALL",
+  "commands": [
+    {
+      "command": [
+        "just",
+        "fix",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 102.00597071700031
+    },
+    {
+      "command": [
+        "just",
+        "fmt"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.07805796200409532
+    },
+    {
+      "command": [
+        "just",
+        "clippy",
+        "-p",
+        "codex-hepta-agentd",
+        "--lib",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 119.96678920596605
+    }
+  ],
+  "files": [
+    {
+      "bytes": 312,
+      "file": "hepta-runtime.stderr.log",
+      "origin": {
+        "host": "rog",
+        "job_id": "1a1b9b3756f-12894-162b",
+        "kind": "durable-process-output",
+        "next_offset": 312,
+        "offset": 0,
+        "stream": "stderr"
+      },
+      "sha256": "36c5addf61cdaf00a72ff9709ab639539b31c738330d74e093f6af40039268a9"
+    },
+    {
+      "bytes": 9711,
+      "file": "hepta-runtime.stdout.log",
+      "origin": {
+        "host": "rog",
+        "job_id": "1a1b9b3756f-12894-162b",
+        "kind": "durable-process-output",
+        "next_offset": 9711,
+        "offset": 0,
+        "stream": "stdout"
+      },
+      "sha256": "a547fcf9be1f152112b9754ece5c705e4392708690556a60f49dbf2428b80a4e"
+    },
+    {
+      "bytes": 0,
+      "file": "post-fmt-source-diff.patch",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/post-fmt-source-diff.patch",
+        "verified_file_version": "66306:34121035:0:1794117011595472990:1794117011595472990"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 73,
+      "file": "post-fmt.log",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/post-fmt.log"
+      },
+      "sha256": "b6a6d5ad920f48c9b49a3ca8c2308227b7849b9e0a498dc452f3a7bd2f7fb752"
+    },
+    {
+      "bytes": 11113,
+      "file": "maintenance-result.json",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/result.json",
+        "verified_file_version": "66306:34121039:11113:1794117131590610966:1794117131590610966"
+      },
+      "sha256": "0bbefea3347dd3e5b467cb89a250207058e95abaf36b57f7a74c65d0942e8ae2"
+    },
+    {
+      "bytes": 0,
+      "file": "scoped-fix-source-diff.patch",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/scoped-fix-source-diff.patch",
+        "verified_file_version": "66306:34121032:0:1794117011509884770:1794117011509884770"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 20626,
+      "file": "scoped-fix.log",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/scoped-fix.log"
+      },
+      "sha256": "269a46167d1b791fb6dadd3b0f3873794ceacd64df25b452e14df81d4cb75690"
+    },
+    {
+      "bytes": 2271,
+      "file": "maintenance-start.json",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/start.json",
+        "verified_file_version": "66306:34121029:2271:1794116909498769079:1794116909498769079"
+      },
+      "sha256": "953746fb894f6f750917fbc1350addc0a41a59f185d66c3fbc670a4f81c825eb"
+    },
+    {
+      "bytes": 0,
+      "file": "strict-clippy-source-diff.patch",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/strict-clippy-source-diff.patch",
+        "verified_file_version": "66306:34121038:0:1794117131571271650:1794117131571271650"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 20095,
+      "file": "strict-clippy.log",
+      "origin": {
+        "kind": "remote-regular-file",
+        "path": "/home/qian-qi/work/cell-adoption-native-observations-20261108-3279/maintenance-2c2a/strict-clippy.log"
+      },
+      "sha256": "9dcf0f2aec0d48b4e24a2079dcfee0107d651efa3d98527fec48becef7701c42"
+    },
+    {
+      "bytes": 737,
+      "file": "hepta-runtime-terminal-receipt.json",
+      "origin": {
+        "host": "rog",
+        "job_id": "1a1b9b3756f-12894-162b",
+        "kind": "durable-process-status-text",
+        "representation": "original MCP text block plus terminal newline"
+      },
+      "sha256": "f03ad3bedb063333949aeb6f01cf880e7272ae8b43bb2870854f8fa3717e3720"
+    },
+    {
+      "bytes": 1764,
+      "file": "retained-file-read-receipts.json",
+      "origin": {
+        "content_bytes_omitted": true,
+        "host": "rog",
+        "kind": "typed-file-read-metadata"
+      },
+      "sha256": "af3f74a9370e19eef4bdd2043f9444ac40b4148f4277a67d4be2e3ba5cede641"
+    }
+  ],
+  "host": "rog",
+  "job_id": "1a1b9b3756f-12894-162b",
+  "original_native_capture_manifest": {
+    "bytes": 4384,
+    "modified": false,
+    "relative_path": "../capture-manifest.json",
+    "sha256": "bcd988d171ea13a78bc44c4f576784078df47bdb5c8a2f4a83575bf89cb4bbb2"
+  },
+  "purpose": "Byte retention and provenance for post-test scoped maintenance; no grant or model-adoption authority",
+  "schema": "cell-adoption-native-maintenance-retained-manifest.v1",
+  "scope": "engineering fixture validation and maintenance only",
+  "source_before_equals_after": true,
+  "tested_commit": "2c2a3adbcc4d6d6784e4ba76106bb1beb700e3bd",
+  "tested_native_subtree": "5287bca8328bbea7feb92a0fb8cc0c616104adc5",
+  "tested_tree": "319737f613f1a9f786df78c4fb79e9c32cac5542",
+  "tests_rerun_after_maintenance": false
+}

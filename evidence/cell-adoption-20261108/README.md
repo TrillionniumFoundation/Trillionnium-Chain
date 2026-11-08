@@ -88,6 +88,32 @@ installation/use by this review. Actual protected installation, independently
 qualified owner inputs, current authorization, real model loading and the
 next task's exact version observation remain separate acceptance requirements.
 
+## Exact-source validation and maintenance
+
+The integrated Chain source was committed as
+`1011c05d14be10151f2fb042eada04098b77274d` before validation. Its
+[retained summary](readback-validation/summary.json) records all selected
+commands passing: release-finality/control conformance **120**, native-export
+reader **26**, source-integrity controls **43**, CI-contract controls **105**,
+and original parent/NoUpdate tests **10**. The existing CI contract, disabled
+finality profile and original signed-learning join also passed. Full tracked
+source verification succeeded before and after, with a clean worktree. The
+individual conformance receipt retains its narrower same-author/reference
+scope; the separate source-verifier records provide the full-checkout evidence.
+This is not a full Node native campaign or a substitute for hosted CI results.
+
+Hepta scoped fix, format and strict Clippy (`-D warnings`) all completed
+successfully without changing the tested Rust files or native subtree. The
+[maintenance records](native-maintenance/retained-manifest.json) and
+[original archive](native-maintenance/maintenance-2c2a.tar.gz) preserve logs and
+zero-byte source diffs. The final Hepta documentation commit is
+`62bbb4c7ba1394d66abe80c6397c386bf101f206`; its only change after tested
+`2c2a3adb` is `docs/hepta-generation-learning-readback.md`.
+
+Subsequent Chain evidence-only retention does not change the tested scripts,
+formal verifiers, workflow, or protocol documentation. Qualification remains
+**HOLD_NO_GO** for a real independently operated evolution cycle.
+
 ## Reproduction
 
 ```sh
