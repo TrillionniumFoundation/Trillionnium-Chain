@@ -218,3 +218,55 @@ All operational qualifications remain HOLD_NO_GO.
 Source setup also preserves the initial missing-background-PATH `rustup` failure
 and its explicit-absolute-toolchain recovery in the two `ai395-source-setup-*`
 directories. The failed attempt is not relabelled as a compiler failure.
+
+## Frozen implementation verification
+
+Exact implementation candidate `d27619a725a6e2969a5bd25d45d5c8514631c320`
+(tree `389581c6668982bf7a2a20835d2028ea5a149d99`) passed **all 19 unchanged gates**
+on the prepared ai395 Linux development host. The [complete summary](implementation-gates/summary.json),
+[source before](implementation-gates/source-before.json), [source after](implementation-gates/source-after.json)
+and [stored-byte manifest](ai395-implementation-gates-evidence-manifest.json)
+bind this result to that exact clean source. The two source receipts match.
+
+The unfiltered [complete DA execution](implementation-gates/complete-da-native.stdout.log)
+passed **468 library tests + 34 integration tests + 13 compile-fail doctests**,
+with zero failures, ignores or filters. Library runtime was 77.48 seconds;
+the complete Cargo command took 81.37 seconds. Strict workspace/all-target/
+all-feature Clippy with `-D warnings` passed in 14.42 seconds. Locked/offline
+workspace, all-feature and fuzz graphs; format; both encoding vectors;
+discovery CI controls; all three retained negative-control suites; repository
+links; 599 source pins; and source inventory passed. These durations describe
+this component check, not the original WAN service contract.
+
+Rust/Cargo 1.95.0, provider files, Cargo configuration, actual task mount,
+environment handling and runtime outputs are retained in the same directory.
+Native tests used persistent local NVMe storage. Only the three Python
+synthetic controls used isolated tmpfs data, with separately probed executable
+guards; no native runtime acceptance used tmpfs. The earlier C2 differential
+continues to identify its own exact source and unchanged auth/test bytes.
+
+This evidence commit requires its own complete final-source rerun. The PR
+publication record reports that final commit and result. Component checks do
+not establish independent operation, funded repair, sustained WAN availability
+or the joined real-loader/Hepta next-task path; operational status stays HOLD_NO_GO.
+
+### Preliminary cloud evidence gap
+
+An early cloud preparation Cargo compile reported ENOSPC, but its original
+stdout/stderr and exact argv/filter were not durably recovered. The
+[explicit gap record](cloud-preparation-evidence-gap.json) preserves the
+available observation and preparation-tree scope without guessing a command,
+test count or immutable commit execution. It is excluded from acceptance.
+Full raw-log retention applies to the archived frozen-source runs above;
+it must not be extended to this preliminary attempt.
+
+### Evidence transfer recovery
+
+The first desktop transfer of this green archive reported ENOSPC and left
+the destination absent. The [transport observations](desktop-evidence-transfer-recovery.json)
+and [task-cache cleanup receipt](desktop-task-cache-cleanup.json) retain the
+failure, original unstarted job reconciliation and successful recovery.
+Only this task's stopped, reproducible Cargo target was reclaimed; source,
+provider and validation evidence remained intact. Capacity changed concurrently
+on the shared host, so this record does not attribute all recovered free space
+to the task. The re-transferred archive was checked by exact size and SHA-256.

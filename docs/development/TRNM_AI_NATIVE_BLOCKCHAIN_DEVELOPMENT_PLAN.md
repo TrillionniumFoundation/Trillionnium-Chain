@@ -8045,3 +8045,17 @@ entire failed run, host/provider/toolchain inputs and all earlier failures.
 The successor still requires a new complete source-bound run. Production
 authentication bytes and original deadlines/budgets remain unchanged; all five
 storage-network operational qualifications stay HOLD_NO_GO.
+
+Authenticated-epoch frozen software acceptance (2026-11-08): exact candidate
+`d27619a725a6e2969a5bd25d45d5c8514631c320` passed all 19 unchanged gates on
+ai395 with persistent native-test storage, Rust/Cargo 1.95.0 and the verified
+isolated OpenSSL 3.5.9 backend. Unfiltered DA execution passed 468 library and
+34 integration tests plus 13 compile-fail doctests; strict all-feature Clippy,
+locked graphs, vectors, negative controls, links, 599 pins and source inventory
+passed. Source-before/source-after matched and source stayed clean. Archive
+the complete C3 run and retain both prior frozen failures. Record separately
+the early cloud preparation ENOSPC raw-log/argv gap and the desktop evidence
+transfer ENOSPC with bounded own-cache recovery; neither changes the C3 result.
+The final evidence commit still receives a complete exact-source rerun before
+PR publication. All five operational gates and missing implementation-owner
+boundaries remain HOLD_NO_GO under the storage acceptance contract.
