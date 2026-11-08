@@ -1,0 +1,14 @@
+{
+  "schema": "pon-cloud-workspace-loss-observation-v1",
+  "original_task_directory": "/workspace/scratch/525798dad3c2",
+  "original_directory_available_after_reconnect": false,
+  "implementation_published_before_loss": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "unpublished_documentation_commits_reported_before_loss": [
+    "478eae32749be622a4b94ce1b8573842f8370ff5",
+    "2995df5eeee3d18bc1b857874e5bcdd914a8b4dc"
+  ],
+  "those_commits_retrieved": false,
+  "old_raw_logs_retrieved": false,
+  "new_H_runs_are_distinct_observations": true,
+  "production_activation": false
+}

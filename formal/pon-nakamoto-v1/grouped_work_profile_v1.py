@@ -18,7 +18,9 @@ do not create new distinct queries. Cost ``included_in`` edges identify diagnost
 subsets in an explicit containment forest. Sibling coverage must be disjoint;
 overlapping diagnostics require explicit nesting. Descendant recorded minima
 must fit every enclosing amount or upper bound. Only root scopes are summed,
-separately for each unit.
+separately for each unit. Known payer and beneficiary identities must agree
+throughout each ancestor path; an unknown intermediate cannot hide a conflict
+or acquire an identity from a surrounding record.
 
 The result is a qualification HOLD with a useful structural assessment, never a
 registration/activation API. The native seal has no conversion to VerifiedWork.
@@ -453,6 +455,20 @@ def assess(evidence, *, expected_policy, expected_policy_sha256):
         for identity in sibling_ids:
             require(not (sibling_atoms & atoms[identity]), 'COST_AMBIGUOUS_SUBSET_OVERLAP')
             sibling_atoms.update(atoms[identity])
+    # Check the entire path, not only adjacent rows. Unknown intermediate
+    # identities do not erase a known ancestor's binding. Carry immutable
+    # bindings separately for each child so unrelated branches remain distinct;
+    # never fill an unknown observation with an inferred payer or beneficiary.
+    transfer_stack = [(row['id'], (None, None)) for row in roots]
+    while transfer_stack:
+        identity, inherited = transfer_stack.pop()
+        declared = tuple(costs[identity][field] for field in ('payer', 'beneficiary'))
+        require(all(prior is None or current is None or prior == current
+                    for prior, current in zip(inherited, declared)),
+                'COST_SUBSET_TRANSFER_CONFLICT')
+        bindings = tuple(current if current is not None else prior
+                         for prior, current in zip(inherited, declared))
+        transfer_stack.extend((child, bindings) for child in children[identity])
     # Every disjoint descendant charge is a recorded lower amount for each
     # ancestor, even through an unknown intermediate. This is arithmetic
     # consistency of supplied counters, not a physical resource lower bound.

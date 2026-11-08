@@ -33,6 +33,73 @@ pub enum Progress {
     Step(u16),
 }
 
+/// One seed/step evaluation observed immediately after its actual hash call.
+///
+/// Fields are private and this type has no decoder or caller constructor. It
+/// is diagnostic evidence, not an admission capability. Copies/retransmissions
+/// do not establish another execution. `preimage` only frames captured bytes:
+/// it does not evaluate the oracle again or recompute the profile hash.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct EvaluatedQuery {
+    point: Progress,
+    profile: Hash,
+    challenge: Hash,
+    statement: Hash,
+    predecessor: Hash,
+    answer: Hash,
+}
+impl EvaluatedQuery {
+    pub fn progress(&self) -> Progress {
+        self.point
+    }
+    pub fn ordinal(&self) -> u16 {
+        match self.point {
+            Progress::Seed => 0,
+            Progress::Step(index) => index,
+        }
+    }
+    pub fn profile(&self) -> Hash {
+        self.profile
+    }
+    pub fn challenge(&self) -> Hash {
+        self.challenge
+    }
+    pub fn statement(&self) -> Hash {
+        self.statement
+    }
+    pub fn predecessor(&self) -> Option<Hash> {
+        match self.point {
+            Progress::Seed => None,
+            Progress::Step(_) => Some(self.predecessor),
+        }
+    }
+    pub fn answer(&self) -> Hash {
+        self.answer
+    }
+    pub fn preimage(&self) -> Vec<u8> {
+        let index = self.ordinal().to_be_bytes();
+        let (tag, parts): (&[u8], Vec<&[u8]>) = match self.point {
+            Progress::Seed => (
+                b"seed",
+                vec![&self.profile, &self.challenge, &self.statement],
+            ),
+            Progress::Step(_) => (
+                b"step",
+                vec![&self.profile, &self.challenge, &index, &self.predecessor],
+            ),
+        };
+        let mut raw = Vec::with_capacity(145);
+        raw.extend_from_slice(DOMAIN);
+        raw.extend_from_slice(&(tag.len() as u16).to_be_bytes());
+        raw.extend_from_slice(tag);
+        for part in parts {
+            raw.extend_from_slice(&(part.len() as u32).to_be_bytes());
+            raw.extend_from_slice(part);
+        }
+        raw
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum VerifyError<E> {
     Relation(SealError),
@@ -96,26 +163,41 @@ pub fn profile_hash() -> Hash {
     )
 }
 
-fn endpoint_with_progress<E>(
+fn endpoint_with_query_observer<E>(
     challenge: Hash,
     statement: Hash,
-    progress: &mut impl FnMut(Progress) -> Result<(), E>,
+    observer: &mut impl FnMut(&EvaluatedQuery) -> Result<(), E>,
 ) -> Result<Hash, E> {
     let profile = profile_hash();
     let mut state = hash(b"seed", &[&profile, &challenge, &statement]);
-    progress(Progress::Seed)?;
+    observer(&EvaluatedQuery {
+        point: Progress::Seed,
+        profile,
+        challenge,
+        statement,
+        predecessor: [0; 32],
+        answer: state,
+    })?;
     // Legal SHA-256 prefix preparation is included in this producer. A query
     // count is not a claim that every invocation repeats all prefix compression
     // work or has an architecture-independent CPU/energy price.
     let prefix = framed_hasher(b"step", &[&profile, &challenge]);
     for index in 1..=STEPS {
+        let predecessor = state;
         let mut digest = prefix.clone();
         digest.update(2_u32.to_be_bytes());
         digest.update(index.to_be_bytes());
         digest.update(32_u32.to_be_bytes());
-        digest.update(state);
+        digest.update(predecessor);
         state = digest.finalize().into();
-        progress(Progress::Step(index))?;
+        observer(&EvaluatedQuery {
+            point: Progress::Step(index),
+            profile,
+            challenge,
+            statement,
+            predecessor,
+            answer: state,
+        })?;
     }
     Ok(state)
 }
@@ -147,7 +229,19 @@ pub fn prove_with_progress<E>(
     statement: Hash,
     mut progress: impl FnMut(Progress) -> Result<(), E>,
 ) -> Result<Vec<u8>, E> {
-    endpoint_with_progress(challenge, statement, &mut progress)
+    prove_with_query_observer(challenge, statement, |query| progress(query.progress()))
+}
+
+/// Opt-in observations of the already evaluated seed and steps. The callback
+/// runs once after each actual evaluation, including the evaluation at which
+/// it cancels. No subsequent query or successful partial witness is produced.
+/// Observer work and profile/framing hashes are not counted as step queries.
+pub fn prove_with_query_observer<E>(
+    challenge: Hash,
+    statement: Hash,
+    mut observer: impl FnMut(&EvaluatedQuery) -> Result<(), E>,
+) -> Result<Vec<u8>, E> {
+    endpoint_with_query_observer(challenge, statement, &mut observer)
         .map(|endpoint| encode(challenge, statement, endpoint))
 }
 
@@ -213,9 +307,24 @@ pub fn verify_with_progress<E>(
     bytes: &[u8],
     mut progress: impl FnMut(Progress) -> Result<(), E>,
 ) -> Result<VerifiedFreshSeal, VerifyError<E>> {
+    verify_with_query_observer(challenge, statement, target, bytes, |query| {
+        progress(query.progress())
+    })
+}
+
+/// Observes only this invocation's actual seed/step evaluations. A framing
+/// rejection emits no query; a false endpoint still emits the full replay.
+/// It does not reconstruct a historical or cached verification transcript.
+pub fn verify_with_query_observer<E>(
+    challenge: Hash,
+    statement: Hash,
+    target: Hash,
+    bytes: &[u8],
+    mut observer: impl FnMut(&EvaluatedQuery) -> Result<(), E>,
+) -> Result<VerifiedFreshSeal, VerifyError<E>> {
     let expected =
         claimed_endpoint(challenge, statement, target, bytes).map_err(VerifyError::Relation)?;
-    let actual = endpoint_with_progress(challenge, statement, &mut progress)
+    let actual = endpoint_with_query_observer(challenge, statement, &mut observer)
         .map_err(VerifyError::Cancelled)?;
     if actual != expected {
         return Err(VerifyError::Relation(SealError::Endpoint));
@@ -347,5 +456,85 @@ mod tests {
             }
         });
         assert_eq!(result.unwrap_err(), VerifyError::Cancelled("stop"));
+    }
+
+    #[test]
+    fn observer_captures_actual_framed_seed_and_step_inputs() {
+        let mut generated = Vec::new();
+        let proof = prove_with_query_observer([41; 32], [42; 32], |query| {
+            generated.push(*query);
+            Ok::<_, ()>(())
+        })
+        .unwrap();
+        assert_eq!(generated.len(), usize::from(STEPS) + 1);
+        let mut prior = None;
+        for (ordinal, query) in generated.iter().enumerate() {
+            assert_eq!(usize::from(query.ordinal()), ordinal);
+            assert_eq!(query.profile(), profile_hash());
+            assert_eq!(query.challenge(), [41; 32]);
+            assert_eq!(query.statement(), [42; 32]);
+            assert_eq!(query.predecessor(), prior);
+            let raw = query.preimage();
+            assert_eq!(raw.len(), if ordinal == 0 { 139 } else { 145 });
+            // Independent test replay is NOT another original observation.
+            let expected: Hash = Sha256::digest(&raw).into();
+            assert_eq!(query.answer(), expected);
+            prior = Some(query.answer());
+        }
+        let mut verified = Vec::new();
+        let seal = verify_with_query_observer([41; 32], [42; 32], [255; 32], &proof, |query| {
+            verified.push(*query);
+            Ok::<_, ()>(())
+        })
+        .unwrap();
+        assert_eq!(verified, generated);
+        assert_eq!(Some(seal.ticket()), prior);
+        assert_eq!(seal.chainwork_awarded(), 0);
+        assert_eq!(proof, prove([41; 32], [42; 32]));
+    }
+
+    #[test]
+    fn observer_cancellation_includes_the_just_evaluated_query() {
+        let proof = prove([51; 32], [52; 32]);
+        for stop in [0, 17, STEPS] {
+            let mut observed = Vec::new();
+            let result =
+                verify_with_query_observer([51; 32], [52; 32], [255; 32], &proof, |query| {
+                    observed.push(*query);
+                    if query.ordinal() == stop {
+                        Err("observer-stop")
+                    } else {
+                        Ok(())
+                    }
+                });
+            assert_eq!(result.unwrap_err(), VerifyError::Cancelled("observer-stop"));
+            assert_eq!(observed.len(), usize::from(stop) + 1);
+            assert_eq!(observed.last().unwrap().ordinal(), stop);
+        }
+    }
+
+    #[test]
+    fn observer_distinguishes_precheck_rejection_from_false_endpoint_replay() {
+        let mut proof = prove([61; 32], [62; 32]);
+        let mut count = 0;
+        let result = verify_with_query_observer([61; 32], [62; 32], [0; 32], &proof, |_| {
+            count += 1;
+            Ok::<_, ()>(())
+        });
+        assert_eq!(
+            result.unwrap_err(),
+            VerifyError::Relation(SealError::Target)
+        );
+        assert_eq!(count, 0);
+        proof[102..].fill(0);
+        let result = verify_with_query_observer([61; 32], [62; 32], [255; 32], &proof, |_| {
+            count += 1;
+            Ok::<_, ()>(())
+        });
+        assert_eq!(
+            result.unwrap_err(),
+            VerifyError::Relation(SealError::Endpoint)
+        );
+        assert_eq!(count, usize::from(STEPS) + 1);
     }
 }

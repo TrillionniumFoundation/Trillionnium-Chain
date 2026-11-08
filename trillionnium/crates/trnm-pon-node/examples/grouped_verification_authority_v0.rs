@@ -469,6 +469,18 @@ struct WireCommand {
     receiver: String,
     signature_hex: String,
 }
+
+/// Explicit local-fixture instrumentation, never a new network wire action.
+/// The existing Execute signature still binds the original command only.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ObservedCommandV1 {
+    schema: String,
+    command: UnsignedCommand,
+    cancel_after_query: Option<u16>,
+    abort_after_query: Option<u16>,
+}
+
 #[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Endpoint {
@@ -543,6 +555,149 @@ fn prepare(directory: &Path, config_path: &Path) -> Result<()> {
         "producer_seal_queries":0,"no_service_prove_operation":true,"chainwork_awarded":0,
         "production_activation":false});
     write_json(&directory.join("preparation.json"), &report)?;
+    stdout(&report)
+}
+
+fn execute_observed_v1(
+    directory: &Path,
+    request_path: &Path,
+    output: &Path,
+    receiver_fixture_index: u64,
+) -> Result<()> {
+    if !directory.is_absolute() || !request_path.is_absolute() || !output.is_absolute() {
+        return Err("OBSERVED_ABSOLUTE_PATHS_REQUIRED".into());
+    }
+    let whole = Stamp::start();
+    let request_raw = read_file(request_path)?;
+    let request: ObservedCommandV1 = checked(serde_json::from_value(parse(&request_raw)?))?;
+    if request.schema != "pon-grouped-owner-observed-command-v1"
+        || request.command.action != "execute"
+        || request.cancel_after_query.is_some_and(|n| n > seal::STEPS)
+        || request.abort_after_query.is_some_and(|n| n > seal::STEPS)
+        || (request.cancel_after_query.is_some() && request.abort_after_query.is_some())
+        || !matches!(receiver_fixture_index, 73 | 74)
+    {
+        return Err("OBSERVED_FIXTURE_COMMAND".into());
+    }
+    let name = output
+        .file_name()
+        .and_then(|v| v.to_str())
+        .ok_or("OBSERVED_OUTPUT_NAME")?;
+    let trace_path = output.with_file_name(format!("{name}.queries.ndjson"));
+    // Reserve both create-only destinations before an attempt can begin. An
+    // interrupted output may be empty; its durable query prefix remains here.
+    let mut output_file = checked(OpenOptions::new().write(true).create_new(true).open(output))?;
+    let mut trace_file = checked(
+        OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&trace_path),
+    )?;
+    let raw = read_file(&directory.join("config.json"))?;
+    let f = load_fixture(directory, &raw)?;
+    let binary_sha = runner_sha()?;
+    let mut authority = checked(owner::VerificationAuthority::open(
+        &directory.join("authority.sqlite"),
+        f.policy.clone(),
+    ))?;
+    let mut submission = request
+        .command
+        .clone()
+        .native(public(receiver_fixture_index)?, Vec::new())?;
+    submission.signature = sign(
+        receiver_fixture_index,
+        &checked(submission.signing_message(&f.policy, owner::Action::Execute))?,
+    )?;
+    let signed_request = WireCommand {
+        command: request.command,
+        receiver: hex::encode(submission.receiver),
+        signature_hex: hex::encode(&submission.signature),
+    };
+    let mut observations = Vec::with_capacity(usize::from(seal::STEPS) + 1);
+    let mut capture_error = None;
+    let execution = authority.execute_with_query_observer(
+        &submission,
+        &f.relation,
+        &f.node,
+        || fixture_now(f.now_ns, f.clock_anchor_unix_ns),
+        |_| true,
+        |event| {
+            if observations.len() >= usize::from(seal::STEPS) + 1 {
+                capture_error = Some("OBSERVED_QUERY_LIMIT".to_owned());
+                return false;
+            }
+            let value = event.observation();
+            observations.push(value.clone());
+            let persisted = canonical(&value).and_then(|mut raw| {
+                raw.push(b'\n');
+                checked(trace_file.write_all(&raw))?;
+                checked(trace_file.sync_all())
+            });
+            if let Err(error) = persisted {
+                capture_error = Some(error);
+                return false;
+            }
+            if request.abort_after_query == Some(event.ordinal()) {
+                let _ = stdout(
+                    &json!({"schema":"pon-grouped-owner-observer-interruption-v1",
+                    "after_query_ordinal":event.ordinal(),"event_id":hex::encode(event.event_id()),
+                    "prefix_fsynced":true,"deliberate_fixture_exit_code":86,
+                    "original_started_reservation_must_reconcile_without_reexecution":true}),
+                );
+                // Controlled test interruption; no unwinding, core dump or
+                // artificial journal mutation. The native started fence remains.
+                std::process::exit(86);
+            }
+            request.cancel_after_query != Some(event.ordinal())
+        },
+    );
+    let observed_seed = observations
+        .iter()
+        .filter(|row| row["kind"] == "seed")
+        .count();
+    let observed_steps = observations
+        .iter()
+        .filter(|row| row["kind"] == "step")
+        .count();
+    let invocation_complete = match &execution {
+        Ok(owner::SubmissionState::Complete {
+            receipt,
+            cached: false,
+        }) => {
+            capture_error.is_none()
+                && observed_seed as u64 == receipt.cost.seed_queries
+                && observed_steps as u64 == receipt.cost.step_queries
+        }
+        Ok(
+            owner::SubmissionState::Complete { cached: true, .. }
+            | owner::SubmissionState::Unknown { .. },
+        ) => observations.is_empty(),
+        _ => false,
+    };
+    let native_result = match &execution {
+        Ok(state) => json!({"ok":true,"result":state.observation()}),
+        Err(error) => json!({"ok":false,"error":format!("{error:?}")}),
+    };
+    let snapshot = match authority.snapshot() {
+        Ok(value) => json!({"ok":true,"result":value}),
+        Err(error) => json!({"ok":false,"error":format!("{error:?}")}),
+    };
+    let report = json!({"schema":"pon-grouped-owner-execution-observation-v1",
+        "source_commit":f.source_commit,"runner_sha256":binary_sha,"config_sha256":f.config_sha256,
+        "request_sha256":hex::encode(admission::sha256(&request_raw)),"signed_request":signed_request,
+        "policy":f.policy.observation(),"native_result":native_result,"snapshot":snapshot,
+        "query_observations":observations,"observed_seed_queries":observed_seed,
+        "observed_step_queries":observed_steps,"query_prefix_path":trace_path,
+        "this_invocation_trace_complete":invocation_complete,"capture_error":capture_error,
+        "startup_prepare_cost":f.prepare_cost,"whole_before_report_write":whole.end(),
+        "query_scope":"only this invocation's actual native post-hash seed/step callbacks; seed_hash is separate from the step-oracle denomination",
+        "observer_cost_scope":"event framing,metadata hashes,JSON and fsynced prefix writes are real observer overhead inside owner replay wall time; not additional seal-step queries",
+        "unknown_cost_scope":"a retained prefix is a subset of the original UNKNOWN upper bound, never an extra charge on top of that bound",
+        "historical_trace_reconstructed":false,"public_query_coverage_complete":false,
+        "fixture_keys_public":true,"independent_operators":false,"external_demand_authenticated":false,
+        "physical_resource_lower_bound_proved":false,"chainwork_awarded":0,"production_activation":false});
+    checked(output_file.write_all(&canonical(&report)?))?;
+    checked(output_file.sync_all())?;
     stdout(&report)
 }
 
@@ -758,8 +913,9 @@ fn main() -> Result<()> {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     match args.as_slice() {
         [mode,dir,config] if mode=="prepare"=>prepare(&PathBuf::from(dir),&PathBuf::from(config)),
+        [mode,dir,request,out,receiver] if mode=="execute_observed_v1"=>execute_observed_v1(&PathBuf::from(dir),&PathBuf::from(request),&PathBuf::from(out),checked(receiver.parse())?),
         [mode,dir,out,count] if mode=="serve"=>serve(&PathBuf::from(dir),&PathBuf::from(out),checked(count.parse())?),
         [mode,endpoint,requests,out,receiver] if mode=="client"=>client(&PathBuf::from(endpoint),&PathBuf::from(requests),&PathBuf::from(out),checked(receiver.parse())?),
-        _=>Err("usage: prepare OWNER_DIR CONFIG_JSON | serve OWNER_DIR RUN_DIR MAX_CONNECTIONS | client ENDPOINT_JSON REQUESTS_JSON OUTPUT_JSON RECEIVER_FIXTURE_INDEX".into()),
+        _=>Err("usage: prepare OWNER_DIR CONFIG_JSON | execute_observed_v1 OWNER_DIR COMMAND_JSON OUTPUT_JSON RECEIVER_FIXTURE_INDEX | serve OWNER_DIR RUN_DIR MAX_CONNECTIONS | client ENDPOINT_JSON REQUESTS_JSON OUTPUT_JSON RECEIVER_FIXTURE_INDEX".into()),
     }
 }

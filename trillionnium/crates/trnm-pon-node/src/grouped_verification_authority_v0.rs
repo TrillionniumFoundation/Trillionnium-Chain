@@ -539,6 +539,76 @@ pub enum Progress {
     Step(u16),
 }
 
+/// Actual post-hash observation bound to this owner's already-started attempt.
+///
+/// No public constructor/decoder exists. The event identity is stable across
+/// exported carriers; it grants no receipt, current-use authority or chainwork.
+/// Its sequence belongs to the original durable journal and cannot authorize
+/// execution elsewhere. Profile/metadata/observer hashes are outside the traced
+/// seed/step evaluations. Clone/rollback resistance remains unestablished.
+#[derive(Clone, Debug)]
+pub struct QueryObservation {
+    policy: Hash,
+    authority: Hash,
+    epoch: Hash,
+    generation: u64,
+    sequence: u64,
+    receiver: Hash,
+    request_id: Hash,
+    candidate: Hash,
+    request_fingerprint: Hash,
+    query: seal::EvaluatedQuery,
+}
+impl QueryObservation {
+    pub fn ordinal(&self) -> u16 {
+        self.query.ordinal()
+    }
+    pub fn query(&self) -> &seal::EvaluatedQuery {
+        &self.query
+    }
+    pub fn event_id(&self) -> Hash {
+        hash(
+            b"pon-grouped-owner-query-event-v1",
+            &[
+                &self.policy,
+                &self.authority,
+                &self.epoch,
+                &self.generation.to_be_bytes(),
+                &self.sequence.to_be_bytes(),
+                &self.receiver,
+                &self.request_id,
+                &self.candidate,
+                &self.request_fingerprint,
+                &self.ordinal().to_be_bytes(),
+            ],
+        )
+    }
+    pub fn observation(&self) -> serde_json::Value {
+        let (kind, index, denomination) = match self.query.progress() {
+            seal::Progress::Seed => ("seed", None, "seed_hash"),
+            seal::Progress::Step(index) => {
+                ("step", Some(index), "classical-seal-step-oracle-query")
+            }
+        };
+        serde_json::json!({
+            "schema":"pon-grouped-owner-query-observation-v1",
+            "event_id":hex::encode(self.event_id()),
+            "policy":hex::encode(self.policy),"authority":hex::encode(self.authority),
+            "epoch":hex::encode(self.epoch),"generation":self.generation,
+            "sequence":self.sequence,"receiver":hex::encode(self.receiver),
+            "request_id":hex::encode(self.request_id),"candidate":hex::encode(self.candidate),
+            "request_fingerprint":hex::encode(self.request_fingerprint),
+            "ordinal":self.ordinal(),"kind":kind,"index":index,"denomination":denomination,
+            "profile_hash":hex::encode(self.query.profile()),
+            "challenge":hex::encode(self.query.challenge()),
+            "statement":hex::encode(self.query.statement()),
+            "predecessor":self.query.predecessor().map(hex::encode),
+            "input_hex":hex::encode(self.query.preimage()),
+            "answer":hex::encode(self.query.answer())
+        })
+    }
+}
+
 pub struct VerificationAuthority {
     db: Connection,
     _held_file: File,
@@ -893,6 +963,23 @@ impl VerificationAuthority {
         mut now_ns: impl FnMut() -> u64,
         mut progress: impl FnMut(Progress) -> bool,
     ) -> Result<SubmissionState> {
+        self.execute_with_query_observer(s, relation, node, &mut now_ns, &mut progress, |_| true)
+    }
+    /// Opt-in capture of only this invocation's actual seed/step queries.
+    /// Existing authentication, reservation, started fence and receipts are
+    /// unchanged. A cached/UNKNOWN reply emits no observations. Completed-query
+    /// cost is charged BEFORE invoking a possibly canceling observer. A panic
+    /// or process death leaves the original started/UNKNOWN accounting intact;
+    /// it must not be retried as fresh work to reconstruct a missing transcript.
+    pub fn execute_with_query_observer(
+        &mut self,
+        s: &Submission,
+        relation: &FrozenRelation,
+        node: &Node,
+        mut now_ns: impl FnMut() -> u64,
+        mut progress: impl FnMut(Progress) -> bool,
+        mut observer: impl FnMut(&QueryObservation) -> bool,
+    ) -> Result<SubmissionState> {
         require(
             relation.fingerprint == self.policy.relation,
             AuthorityError::MaterialBinding,
@@ -922,7 +1009,28 @@ impl VerificationAuthority {
         tx.commit().map_err(|_| AuthorityError::Journal)?;
         let start = Instant::now();
         let mut cost = ReplayCost::default();
-        let (outcome, endpoint) = replay(s, relation, node, &mut now_ns, &mut progress, &mut cost);
+        let (outcome, endpoint) = replay(
+            s,
+            relation,
+            node,
+            &mut now_ns,
+            &mut progress,
+            &mut cost,
+            &mut |query| {
+                observer(&QueryObservation {
+                    policy: self.policy.id,
+                    authority: self.policy.authority,
+                    epoch: self.policy.epoch,
+                    generation: self.policy.generation,
+                    sequence,
+                    receiver: s.receiver,
+                    request_id: s.request_id,
+                    candidate: s.candidate,
+                    request_fingerprint: fingerprint,
+                    query: *query,
+                })
+            },
+        );
         cost.wall_ns = u64::try_from(start.elapsed().as_nanos()).unwrap_or(u64::MAX);
         let good = matches!(outcome, Outcome::VerifiedHit | Outcome::VerifiedMiss);
         let receipt = Receipt {
@@ -1055,6 +1163,7 @@ fn replay(
     now: &mut impl FnMut() -> u64,
     progress: &mut impl FnMut(Progress) -> bool,
     cost: &mut ReplayCost,
+    observer: &mut impl FnMut(&seal::EvaluatedQuery) -> bool,
 ) -> (Outcome, Option<Hash>) {
     if !progress(Progress::Started) {
         return (Outcome::Cancelled, None);
@@ -1094,13 +1203,13 @@ fn replay(
     if !progress(Progress::CellVerified) {
         return (Outcome::Cancelled, None);
     }
-    let result = seal::verify_with_progress(
+    let result = seal::verify_with_query_observer(
         candidate.challenge,
         candidate.statement,
         [0xff; 32],
         &s.proof,
-        |p| {
-            let p = match p {
+        |query| {
+            let p = match query.progress() {
                 seal::Progress::Seed => {
                     cost.seed_queries += 1;
                     Progress::Seed
@@ -1110,7 +1219,7 @@ fn replay(
                     Progress::Step(i)
                 }
             };
-            if progress(p) {
+            if observer(query) && progress(p) {
                 Ok(())
             } else {
                 Err(())

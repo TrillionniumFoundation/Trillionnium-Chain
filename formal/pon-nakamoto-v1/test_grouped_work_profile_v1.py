@@ -369,6 +369,81 @@ class ProfileTests(unittest.TestCase):
         self.assertIsNone(transfer['beneficiary'])
         self.assertEqual(transfer['executor'], 'miner')
 
+    def test_known_transfer_identity_cannot_cross_unknown_ancestors(self):
+        original = copy.deepcopy(self.evidence)
+        for field in ('payer', 'beneficiary'):
+            for depth in (1, 3):
+                with self.subTest(field=field, unknown_depth=depth):
+                    self.evidence = copy.deepcopy(original)
+                    root = self.evidence['costs'][1]
+                    parent = root
+                    for index in range(depth):
+                        middle = copy.deepcopy(root)
+                        middle.update(id=identity(f'unknown-{field}-{index}'),
+                                      amount=1000, included_in=parent['id'])
+                        middle[field] = None
+                        self.evidence['costs'].append(middle)
+                        parent = middle
+                    leaf = copy.deepcopy(root)
+                    leaf.update(id=identity('conflicting-transfer-leaf'), amount=500,
+                                included_in=parent['id'])
+                    leaf[field] = 'consumer'
+                    self.evidence['costs'].append(leaf)
+                    # Evidence order must not determine which ancestor binds.
+                    self.evidence['costs'].reverse()
+                    with self.assertRaisesRegex(ValueError, 'COST_SUBSET_TRANSFER_CONFLICT'):
+                        self.assess()
+
+    def test_consistent_ancestor_does_not_fill_unknown_transfer_observation(self):
+        root = self.evidence['costs'][1]
+        middle = copy.deepcopy(root)
+        middle.update(id=identity('unknown-transfer-middle'), amount=1000,
+                      included_in=root['id'], payer=None, beneficiary=None)
+        leaf = copy.deepcopy(root)
+        leaf.update(id=identity('consistent-transfer-leaf'), amount=500,
+                    included_in=middle['id'])
+        self.evidence['costs'].extend([middle, leaf])
+        before = copy.deepcopy(self.evidence)
+        report = self.assess()
+        self.assertEqual(report['resources']['totals_by_unit']['cpu_ns']['total'], 1550)
+        self.assertEqual(report['observation_status'], 'INCOMPLETE')
+        for field in ('PAYER', 'BENEFICIARY'):
+            self.assertIn('COST_' + field + '_UNKNOWN:' + middle['id'], report['local_issues'])
+        self.assertEqual(self.evidence, before)
+
+    def test_unknown_root_preserves_distinct_disjoint_transfer_branches(self):
+        root = self.evidence['costs'][1]
+        root.update(payer=None, beneficiary=None,
+                    coverage=[identity('transfer-branch-A'), identity('transfer-branch-B')])
+        for atom, owner in zip(root['coverage'], ('miner', 'consumer')):
+            child = copy.deepcopy(root)
+            child.update(id=identity('transfer-child-' + atom), amount=500,
+                         coverage=[atom], included_in=root['id'],
+                         payer=owner, beneficiary=owner)
+            self.evidence['costs'].append(child)
+        report = self.assess()
+        self.assertEqual(report['resources']['totals_by_unit']['cpu_ns']['total'], 1550)
+        transfer = next(row for row in report['resources']['transfers'] if row['cost'] == root['id'])
+        self.assertIsNone(transfer['payer'])
+        self.assertIsNone(transfer['beneficiary'])
+        self.assertEqual(report['qualification'], 'HOLD')
+
+    def test_nonroot_known_transfer_identity_binds_its_own_descendants(self):
+        root = self.evidence['costs'][1]
+        root.update(payer=None, beneficiary=None)
+        known = copy.deepcopy(root)
+        known.update(id=identity('known-nonroot-transfer'), amount=1000,
+                     included_in=root['id'], payer='miner', beneficiary='miner')
+        middle = copy.deepcopy(root)
+        middle.update(id=identity('unknown-nonroot-transfer'), amount=750,
+                      included_in=known['id'])
+        leaf = copy.deepcopy(root)
+        leaf.update(id=identity('conflicting-nonroot-transfer'), amount=500,
+                    included_in=middle['id'], payer='consumer', beneficiary='consumer')
+        self.evidence['costs'].extend([known, middle, leaf])
+        with self.assertRaisesRegex(ValueError, 'COST_SUBSET_TRANSFER_CONFLICT'):
+            self.assess()
+
     def test_unknown_meter_stays_unresolved_even_with_known_amount(self):
         self.evidence['costs'][1]['meter'] = None
         report = self.assess()

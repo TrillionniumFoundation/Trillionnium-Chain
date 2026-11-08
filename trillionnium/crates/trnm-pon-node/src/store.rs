@@ -6,6 +6,7 @@ mod append_readback_tests;
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
 pub mod capacity_observation;
+pub mod demand_evidence;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 mod funding;
@@ -40,6 +41,7 @@ mod root_rejection_cache_tests;
 mod state_merge;
 pub mod storage_service;
 mod task_observation;
+pub mod task_operation_v2;
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
@@ -2121,6 +2123,8 @@ impl Node {
             // by this backend. Validate/refuse them before any growth recovery.
             node.validate_native_budget_records_v1()?;
             node.growth_cold_open(!growth_observation_only)?;
+            node.validate_native_task_operation_pins_v1()?;
+            node.validate_native_demand_evidence_v1()?;
             // Settings retain the immutable genesis input for exact reopen. Hot
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
@@ -2138,6 +2142,8 @@ impl Node {
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
         node.validate_native_budget_records_v1()?;
+        node.validate_native_task_operation_pins_v1()?;
+        node.validate_native_demand_evidence_v1()?;
         node.recover()?;
         node.read_active()?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context()?, node.active()?.0)?;

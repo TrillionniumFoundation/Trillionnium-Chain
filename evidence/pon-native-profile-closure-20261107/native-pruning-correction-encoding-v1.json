@@ -1,0 +1,11 @@
+{
+  "gzip_bytes": 1328,
+  "gzip_name": "native-pruning-correction-v1.patch.gz",
+  "gzip_sha256": "2d670b8b7a7257b2ac43639780455b7e27d96ee71946f2f8c9ef1b1465eaa6d7",
+  "original_bytes": 4093,
+  "original_bytes_modified": false,
+  "original_name": "native-pruning-correction-v1.patch",
+  "original_sha256": "ab869cf642cd33ccdfddada85956ec2bb0c20c4c8abd2835357ddf44efa18b25",
+  "readback_verified": true,
+  "schema": "pon-original-artifact-gzip-v1"
+}

@@ -1,0 +1,88 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded",
+  "elapsed_seconds": 1.0485312938690186,
+  "exit_code": 0,
+  "inventory": {
+    "bytes": 33120,
+    "path": "node-target-inventory-recovery-v1.json",
+    "sha256": "e7e2f7e0717cfaa4dc1278f0ef0bec449796c7a738def2fb093ea8b2a38300e5"
+  },
+  "metadata": {
+    "bytes": 863223,
+    "path": "cargo-metadata-recovery-v1.json",
+    "sha256": "1ec54313dda4cafa54b7b47e75964a4cf7ba3adcba8cd01cc317450f359473af"
+  },
+  "metadata_stderr": {
+    "bytes": 0,
+    "path": "cargo-metadata-recovery-v1.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_job_modified": false,
+  "original_recorder_modified": false,
+  "parser_syntax_observation": {
+    "bytes": 25955,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/parse_complete_node_log_recovery_v1.py",
+    "sha256": "d6878878e290fe414a2c208fb9f0300b59a4595572f187edf90f733b96770be0",
+    "syntax_check": "AST only; parser not executed"
+  },
+  "preflight": {
+    "bytes": 133,
+    "path": "preflight-recovery-v1.log",
+    "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+  },
+  "production_activation": false,
+  "recovery_provenance": "Newly authored on desktop after scratch became unavailable; no old local artifact bytes were recovered or reused.",
+  "run_inputs": {
+    "environment": {
+      "bytes": 1068,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/environment.json",
+      "sha256": "8f1908b30b513bec120ab5e1e1ac83e4252846b12600897e93f6e68e5e279632"
+    },
+    "run_recorder": {
+      "bytes": 7770,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/run_remote_node_gate.py",
+      "sha256": "049c64cf32927bcd16a82059707a468c91d6fc9be7d7abc9047bb3efcd2d8123"
+    },
+    "source_before": {
+      "bytes": 2320287,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/source-before.json",
+      "sha256": "9c7791917a4721a2b7d70397a09109ac44dba4a9364e02813d41c0e30e83c9d6"
+    },
+    "started": {
+      "bytes": 531,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/started.json",
+      "sha256": "72a5e934d05847dbf4044c66fcfb9308d7fa72242fc7d0ba8e4c76cea8595c55"
+    }
+  },
+  "schema": "pon-node-inventory-capture-recovery-v1",
+  "script": {
+    "bytes": 8631,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/capture_node_inventory_recovery_v1.py",
+    "sha256": "c63f7354113db269a031db1041ed12de034dc5b2cb45b00f0b66ef93d29dc6c3"
+  },
+  "source_after": {
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_before": {
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_modified": false,
+  "source_unchanged": true,
+  "started_unix_seconds": 1794063974.5556467,
+  "tests_started": false
+}

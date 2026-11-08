@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 4194304,
+  "actual_git_blob_sha1": "f3ede15c3037394b4b2d4c657ba6f0bce02f9dd1",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/f3ede15c3037394b4b2d4c657ba6f0bce02f9dd1"
+  ],
+  "elapsed_seconds": 20.805025100708008,
+  "exit_code": 0,
+  "expected_blob": "f3ede15c3037394b4b2d4c657ba6f0bce02f9dd1",
+  "expected_bytes": 4194304,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "f3ede15c3037394b4b2d4c657ba6f0bce02f9dd1\n",
+  "imported": true,
+  "path": "evidence/pon-w1-factorial-v3-20261102/failed-d78-full-observation.tar.zst.part-03",
+  "raw_sha256": "f432f1f0c1edaf74f033228fb9d04f7e2d4afdcb9194ef1257ad2e49aa5bd684",
+  "timed_out": false
+}

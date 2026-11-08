@@ -1,0 +1,2592 @@
+{
+  "case_count": 7,
+  "cases": [
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 7536,
+          "start_inclusive": 7196
+        },
+        "block_bytes": 340,
+        "block_sha256": "7f1e06fbf78ad1882a1d62ab95492d62389597ab28d4db193ea4cfab15e01c22",
+        "first_line": 109,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 111,
+            "raw_line_including_newline_sha256": "95146c9055e58415bc6bdbbb9790f17c8b0badce29f988145bb692cfdedb4998",
+            "text": "thread 'test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner' (809581) panicked at crates/trnm-pon-node/tests/native_node.rs:1590:5:"
+          },
+          {
+            "line": 112,
+            "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+            "text": "PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner' (809581) panicked at crates/trnm-pon-node/tests/native_node.rs:1590:5:\nPUBLIC_HOST_KERNEL_PARENT\n\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n",
+      "prior_v1_classification": "host_kernel_prerequisite_reported",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53",
+          "label": "tests/native_node.rs",
+          "line": 72,
+          "raw": "     Running tests/native_node.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 8518,
+          "start_inclusive": 4531
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 8445,
+          "start_inclusive": 8345
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "native_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+          "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+          "test": true
+        },
+        "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "test": true
+      },
+      "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]",
+      "test_name": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 8185,
+          "start_inclusive": 7536
+        },
+        "block_bytes": 649,
+        "block_sha256": "d66e8802a142c20c81ab541711f1e98bb761ecc03cf8ac6f8399badb477aafdb",
+        "first_line": 116,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 118,
+            "raw_line_including_newline_sha256": "c87b102ac302cd806239f79bbcf8f6c60fbae64a764cfb18d6ea2f54e022a193",
+            "text": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1407:37:"
+          },
+          {
+            "line": 121,
+            "raw_line_including_newline_sha256": "fb4f6f432ee6ebbe923bb37ab766b6467e69919475f424e2251b6086381e3187",
+            "text": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "native_cpu_budget_refused_during_complete_page_import",
+      "classification_scope": "direct retained error plus exact frozen call site",
+      "confirmed": [
+        "The first retained panic at native_node.rs:1407 unwraps imported for a complete final history page; the actual error is PublicMutationCpuBudget / PUBLIC_MUTATION_CPU_BUDGET.",
+        "The frozen source calls the actual ingress::sync_from socket API at line1405; line1407 expects the complete page result to equal tip.",
+        "The later Any panic at line1432 is result.unwrap() on the catch_unwind result after stop and server cleanup; it is not the server join failure."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:\ncalled `Result::unwrap()` on an `Err` value: Any { .. }\n\n\n",
+      "prior_v1_classification": "unclassified_failure",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53",
+          "label": "tests/native_node.rs",
+          "line": 72,
+          "raw": "     Running tests/native_node.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/native_node-5936921b7f3bbf53)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 8518,
+          "start_inclusive": 4531
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 8445,
+          "start_inclusive": 8345
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "native_node",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+          "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+          "test": true
+        },
+        "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]"
+      },
+      "qualification": false,
+      "refined_raw_evidence": "cpu_import_then_captured_panic",
+      "run": "remainder",
+      "source_evidence": "native_node",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "native_node",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "source_sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "test": true
+      },
+      "target_key": "[\"test\",\"native_node\",\"trillionnium/crates/trnm-pon-node/tests/native_node.rs\"]",
+      "test_name": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+      "uncertainty": [
+        "The trace does not uniquely identify the internal CPU reserve/checkpoint/activation refusal point or a cost-reducing fix.",
+        "This is a distinct test from the original library history-page failure; its detailed budget cause is not transferred.",
+        "The later root equality, receiver height and cold-reopen assertions were not reached successfully."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 18473,
+          "start_inclusive": 18119
+        },
+        "block_bytes": 354,
+        "block_sha256": "26ffeb9eb873ce0eb23946ca527fb9729c32ae634332d1b390c1d665e73e7a49",
+        "first_line": 278,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 280,
+            "raw_line_including_newline_sha256": "17ddd7f3141e158d84f9d82bdaa22e3c8028ee6c3b43ac718fa2d76572fd3987",
+            "text": "thread 'actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history' (820950) panicked at crates/trnm-pon-node/tests/public_cli.rs:38:5:"
+          },
+          {
+            "line": 281,
+            "raw_line_including_newline_sha256": "e8553bfbaca5b582511f6325d0532481a3697b029c84bddfe1665605c5827708",
+            "text": "PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history' (820950) panicked at crates/trnm-pon-node/tests/public_cli.rs:38:5:\nPUBLIC_HOST_KERNEL_PARENT\n\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\n",
+      "prior_v1_classification": "host_kernel_prerequisite_reported",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_cli-91fff1936f900ea0",
+          "label": "tests/public_cli.rs",
+          "line": 269,
+          "raw": "     Running tests/public_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_cli-91fff1936f900ea0)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 18734,
+          "start_inclusive": 17678
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 18662,
+          "start_inclusive": 18564
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_cli",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+          "source_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_cli.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        "source_sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_cli.rs\"]",
+      "test_name": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 20576,
+          "start_inclusive": 20079
+        },
+        "block_bytes": 497,
+        "block_sha256": "de8f9513a38ca85186462ad4f0cd8730e5508694c33cc9237933ab0a64da926f",
+        "first_line": 314,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 316,
+            "raw_line_including_newline_sha256": "8c41bc941cdb15cb7b921d219462c493fef04baeee93ce9510a322a27aa55d01",
+            "text": "thread 'one_packet_history_preserves_partial_progress_and_independent_validation' (821762) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:"
+          },
+          {
+            "line": 317,
+            "raw_line_including_newline_sha256": "757d492f60e05142fdc3ea045fe4bf5b2d180d74af5e023fb1f0d37a2c6b88cd",
+            "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'one_packet_history_preserves_partial_progress_and_independent_validation' (821762) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:316:14:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n",
+      "prior_v1_classification": "host_kernel_prerequisite_reported",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696",
+          "label": "tests/public_intake_v2.rs",
+          "line": 306,
+          "raw": "     Running tests/public_intake_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 21378,
+          "start_inclusive": 19693
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 21300,
+          "start_inclusive": 21202
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_intake_v2",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+          "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_intake_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]",
+      "test_name": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 21023,
+          "start_inclusive": 20576
+        },
+        "block_bytes": 447,
+        "block_sha256": "d9a941f0c16bbcd52b1cb65b497f4f3224aeb36669dd65b72138cfaf87a73780",
+        "first_line": 320,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 322,
+            "raw_line_including_newline_sha256": "6c7c2a81e5656a2ab6e22b1e1ada6fa106031f4b83e5417e9192e610cf0c445d",
+            "text": "thread 'unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work' (821769) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:"
+          },
+          {
+            "line": 323,
+            "raw_line_including_newline_sha256": "757d492f60e05142fdc3ea045fe4bf5b2d180d74af5e023fb1f0d37a2c6b88cd",
+            "text": "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work' (821769) panicked at crates/trnm-pon-node/tests/public_intake_v2.rs:202:6:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: \"PUBLIC_HOST_KERNEL_PARENT\", source: None, request_history_budget: false }\n\n\n",
+      "prior_v1_classification": "host_kernel_prerequisite_reported",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696",
+          "label": "tests/public_intake_v2.rs",
+          "line": 306,
+          "raw": "     Running tests/public_intake_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_intake_v2-986a187331701696)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 21378,
+          "start_inclusive": 19693
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 21300,
+          "start_inclusive": 21202
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_intake_v2",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+          "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_intake_v2",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "source_sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_intake_v2\",\"trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs\"]",
+      "test_name": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 22529,
+          "start_inclusive": 22013
+        },
+        "block_bytes": 516,
+        "block_sha256": "ed1262a4fd2c5884b80fb9839ea983024884dec6913d6e3097e88cb1b8368301",
+        "first_line": 345,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 347,
+            "raw_line_including_newline_sha256": "a1b43836ec21c431bb95d8280e48b5623269c8db760e119e957906a46d8e1ded",
+            "text": "thread '<unnamed>' (821789) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:582:30:"
+          },
+          {
+            "line": 351,
+            "raw_line_including_newline_sha256": "eefc9e53812701c15779492a1a57373b5160bf85a34afd544b88da23c6355ecd",
+            "text": "thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (821784) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "receiver_readiness_failure_with_same_test_kernel_marker",
+      "classification_scope": "direct same-test marker and failure sequence; emitter attribution remains limited",
+      "confirmed": [
+        "The actual single-threaded libtest progress line336 names this test and prints PUBLIC_HOST_KERNEL_PARENT before FAILED.",
+        "The reader thread panics at public_pool_cli.rs:582 because lines.next() is None: no first stdout readiness line was received by that reader.",
+        "The parent test then panics at line722 with Disconnected while waiting on receiver_rx; the receiver readiness channel closed.",
+        "Frozen source line722 is the receiver readiness wait. Both source and receiver children inherit stderr, so the inline marker is retained outside the captured panic block."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (821784) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:\ncalled `Result::unwrap()` on an `Err` value: Disconnected\n\n",
+      "prior_v1_classification": "unclassified_failure",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab",
+          "label": "tests/public_pool_cli.rs",
+          "line": 333,
+          "raw": "     Running tests/public_pool_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 23205,
+          "start_inclusive": 21378
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 23128,
+          "start_inclusive": 23029
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_pool_cli",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+          "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]"
+      },
+      "qualification": false,
+      "refined_raw_evidence": [
+        "same_test_inherited_kernel_marker",
+        "reader_eof_and_receiver_disconnected"
+      ],
+      "run": "remainder",
+      "source_evidence": "public_pool_cli",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]",
+      "test_name": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "uncertainty": [
+        "The inherited stderr marker does not carry a child process identity; the retained record does not uniquely assign that marker to source versus receiver.",
+        "No child terminal status or separate phase trace is retained here to prove that the kernel guard was the sole cause of receiver readiness loss.",
+        "The original v1 classification omitted this inline marker because it inspected only the later captured panic block; it remains retained, not rewritten."
+      ]
+    },
+    {
+      "capture_evidence": {
+        "block_byte_span": {
+          "end_exclusive": 22864,
+          "start_inclusive": 22529
+        },
+        "block_bytes": 335,
+        "block_sha256": "14e214dec3635118158f41e952e2ff3300634b2189f053c09f036534fa86252d",
+        "first_line": 354,
+        "log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "matching_test_panic_found": true,
+        "panic_or_kernel_marker_lines": [
+          {
+            "line": 356,
+            "raw_line_including_newline_sha256": "1652df6c578d7cc7cc14e883bbc3d320ebbb97a0396f3c491091dd636662b0e0",
+            "text": "thread 'actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver' (821793) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:"
+          },
+          {
+            "line": 357,
+            "raw_line_including_newline_sha256": "cdcc9f8a4c19ad2167b96372a1dbaa1ef0bc0e9d9e6df88c6689d1a069c26817",
+            "text": "first independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT"
+          }
+        ]
+      },
+      "capture_header_count": 1,
+      "classification": "host_kernel_prerequisite_reported",
+      "classification_scope": "explicit retained marker or unclassified symptom; no source repair",
+      "confirmed": [
+        "The retained primary panic context contains PUBLIC_HOST_KERNEL_PARENT."
+      ],
+      "fixed": false,
+      "primary_excerpt_truncated": false,
+      "primary_panic_tail_excerpt": "thread 'actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver' (821793) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:153:5:\nfirst independent full-native sync: stderr=PUBLIC_HOST_KERNEL_PARENT\n stdout=\n\n\n",
+      "prior_v1_classification": "host_kernel_prerequisite_reported",
+      "provenance": {
+        "cargo_header": {
+          "executable": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab",
+          "label": "tests/public_pool_cli.rs",
+          "line": 333,
+          "raw": "     Running tests/public_pool_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab)"
+        },
+        "command": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--example",
+          "account_archive_vectors",
+          "--example",
+          "account_execution_vectors",
+          "--example",
+          "continuous_pipeline",
+          "--example",
+          "distributed_pipeline",
+          "--example",
+          "hepta_task_fixture",
+          "--example",
+          "history_state_cost",
+          "--example",
+          "lifecycle_atomic_continuity",
+          "--example",
+          "lifecycle_continuity",
+          "--example",
+          "llm_zero_gain_round",
+          "--example",
+          "native_reorg_query_cost",
+          "--example",
+          "operator_owned_finite_mining",
+          "--example",
+          "operator_pool_fixture",
+          "--example",
+          "pon_w1_budget_report",
+          "--example",
+          "pon_w1_cost_matrix_v2",
+          "--example",
+          "pon_w1_false_trace_reuse_v1",
+          "--example",
+          "pon_w1_legal_strategy_v1",
+          "--example",
+          "pon_w1_legal_strategy_v3",
+          "--example",
+          "pon_w1_preparation_strategy_v4",
+          "--example",
+          "pon_w1_reused_cost_v3",
+          "--example",
+          "public_pool_fixture",
+          "--test",
+          "model_composition_v4",
+          "--test",
+          "model_evidence_v3",
+          "--test",
+          "native_active_anchor",
+          "--test",
+          "native_compact_execution",
+          "--test",
+          "native_demand_evidence",
+          "--test",
+          "native_growth_cli",
+          "--test",
+          "native_growth_public_cli",
+          "--test",
+          "native_node",
+          "--test",
+          "native_task_operation_v2",
+          "--test",
+          "no_gain_fees",
+          "--test",
+          "nonce_speculation_cost",
+          "--test",
+          "one_zero_task_preparation_lifecycle",
+          "--test",
+          "operation_local_parent",
+          "--test",
+          "operator_actors",
+          "--test",
+          "pinned_peer_polling",
+          "--test",
+          "pool_mining",
+          "--test",
+          "pq_account_native",
+          "--test",
+          "pq_migration_inventory",
+          "--test",
+          "protected_ingress",
+          "--test",
+          "public_cache_modes",
+          "--test",
+          "public_cli",
+          "--test",
+          "public_evaluation",
+          "--test",
+          "public_intake_v2",
+          "--test",
+          "public_pool_cli",
+          "--test",
+          "public_pool_v3",
+          "--test",
+          "public_submit_recovery",
+          "--test",
+          "public_v3_from_zero",
+          "--test",
+          "public_v3_multiprocess",
+          "--test",
+          "public_v3_observation_cli",
+          "--test",
+          "public_v3_observer",
+          "--test",
+          "public_v3_request_accounting",
+          "--test",
+          "public_v3_service_campaign",
+          "--test",
+          "qualified_tasks",
+          "--test",
+          "release_finality_v2",
+          "--test",
+          "task_lifecycle",
+          "--test",
+          "task_lifecycle_v3",
+          "--test",
+          "task_lifecycle_v4",
+          "--test",
+          "task_output_root_parity",
+          "--test",
+          "work_fuzz_semantics",
+          "--test",
+          "work_header_binding",
+          "--test",
+          "zero_task_preparation_lifecycle",
+          "--all-features",
+          "--no-fail-fast",
+          "--",
+          "--test-threads=1"
+        ],
+        "job_id": "1a1b6b4fa87-12894-60d",
+        "raw_log": {
+          "bytes": 50255,
+          "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+          "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+        },
+        "run_id": "remainder",
+        "segment_byte_span": {
+          "end_exclusive": 23205,
+          "start_inclusive": 21378
+        },
+        "source_after_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_after_present": true,
+        "source_before_canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+        "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+        "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+        "summary_byte_span": {
+          "end_exclusive": 23128,
+          "start_inclusive": 23029
+        },
+        "target": {
+          "harness": null,
+          "kind": [
+            "test"
+          ],
+          "name": "public_pool_cli",
+          "required_features": [],
+          "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+          "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+          "test": true
+        },
+        "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]"
+      },
+      "qualification": false,
+      "run": "remainder",
+      "target": {
+        "harness": null,
+        "kind": [
+          "test"
+        ],
+        "name": "public_pool_cli",
+        "required_features": [],
+        "source": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "source_sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "test": true
+      },
+      "target_key": "[\"test\",\"public_pool_cli\",\"trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs\"]",
+      "test_name": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "uncertainty": [
+        "No guard was changed. A missing fixed parent observed separately does not reconstruct per-process membership at the original event."
+      ]
+    }
+  ],
+  "counts_by_classification": {
+    "host_kernel_prerequisite_reported": 5,
+    "native_cpu_budget_refused_during_complete_page_import": 1,
+    "receiver_readiness_failure_with_same_test_kernel_marker": 1
+  },
+  "cpu_deadline_guard_or_os_modified": false,
+  "earlier_classification_file_rewritten": false,
+  "fixed": false,
+  "frozen_source_extracts": {
+    "native_node": [
+      {
+        "first_line": 1350,
+        "last_line": 1419,
+        "lines": [
+          {
+            "line": 1350,
+            "raw_line_including_newline_sha256": "d2cd4db48a350e8f0b47944c46e3ffdbba132d2290a91d7012b56eb46c8ab4f6",
+            "text": "#[test]"
+          },
+          {
+            "line": 1351,
+            "raw_line_including_newline_sha256": "f8ecc9172f57fbe702de1461de7d4bb79a8981cd3dff54a0ad67b1dd0dbcc61c",
+            "text": "fn test_full_transaction_pages_use_byte_limits_and_recover_all_native_state() {"
+          },
+          {
+            "line": 1352,
+            "raw_line_including_newline_sha256": "bb8a3c91c26bd52cb13c30d097d9e1e4f7403fd3a2147541606b6930c4a51249",
+            "text": "    let temp = tempfile::tempdir().unwrap();"
+          },
+          {
+            "line": 1353,
+            "raw_line_including_newline_sha256": "336e9911e583daabb3870c680b1a1ef509d5400ce5ea1a0babb273584362d847",
+            "text": "    let clock = ingress::now().unwrap();"
+          },
+          {
+            "line": 1354,
+            "raw_line_including_newline_sha256": "ec0c64f55b2aa23d2554e0c2ceb6f32272d968098f4ca1b8763bb4aa25e15d2f",
+            "text": "    let settings = Settings::development(Some(clock - 200)).unwrap();"
+          },
+          {
+            "line": 1355,
+            "raw_line_including_newline_sha256": "8013b06a64f70e6a8836899550e98ddf7e42bb06636c9431f377538848d26db8",
+            "text": "    let mut source = Node::open(&temp.path().join(\"source\"), settings.clone(), 4).unwrap();"
+          },
+          {
+            "line": 1356,
+            "raw_line_including_newline_sha256": "62f0234899ef78c03f4dc896cc145523919e32187130f8a243a46a2b5e6d616c",
+            "text": "    let mut tip = settings.genesis();"
+          },
+          {
+            "line": 1357,
+            "raw_line_including_newline_sha256": "b95d222c01fbf5ad9826b97fb70e4ba09bb62e75b83d9e84f99e3af9d400b9b9",
+            "text": "    for height in 1u64..=12 {"
+          },
+          {
+            "line": 1358,
+            "raw_line_including_newline_sha256": "05e32e2d7f91da6278142e0598f2564483bacf0986ea35dc8e91cdb2a0941ab0",
+            "text": "        let txs = (1..=256)"
+          },
+          {
+            "line": 1359,
+            "raw_line_including_newline_sha256": "92e7b22d922b8b4bc24800ff96a39671ebb5c66e126cae832e8e56302b47612a",
+            "text": "            .map(|i| signed_transfer(&settings, 1, (height - 1) * 256 + i))"
+          },
+          {
+            "line": 1360,
+            "raw_line_including_newline_sha256": "42c644c8909565a3342d8b10d4e845fd44dd9c5ad8f9c6d46d50118e2c49c37a",
+            "text": "            .collect();"
+          },
+          {
+            "line": 1361,
+            "raw_line_including_newline_sha256": "ade62071ff4f681a36e07feeeacabad80a39aa2fcb1ba62051f0c070b1d6d574",
+            "text": "        let packet = source"
+          },
+          {
+            "line": 1362,
+            "raw_line_including_newline_sha256": "bb6736d2ec74e7c4be4235c2df392bd050d986951c9504263e9ca09f4daa9501",
+            "text": "            .make("
+          },
+          {
+            "line": 1363,
+            "raw_line_including_newline_sha256": "8bbbb46eb4dbc9fe9f25e7ba76436fb98a1db5cf5ad42306658dcbdce8cd16f2",
+            "text": "                tip,"
+          },
+          {
+            "line": 1364,
+            "raw_line_including_newline_sha256": "79eefde22f0e251b10915683d5c01d6a1eae735c860ec4b178f732ab5ad38ea8",
+            "text": "                txs,"
+          },
+          {
+            "line": 1365,
+            "raw_line_including_newline_sha256": "94850cef4d41c53eee40f9abd5406548aff56579ba4dde33275ebb8f954f33d7",
+            "text": "                development_public(0).unwrap(),"
+          },
+          {
+            "line": 1366,
+            "raw_line_including_newline_sha256": "dda3bdd76d8f4058f0985965c33f3467c1cf39c4b78293afba5193f944d27755",
+            "text": "                clock - 200 + height * 10,"
+          },
+          {
+            "line": 1367,
+            "raw_line_including_newline_sha256": "5ed7b15d3ddca2004be0383378743d4e399cc101425baaf94164d7203ba97b2b",
+            "text": "                4096,"
+          },
+          {
+            "line": 1368,
+            "raw_line_including_newline_sha256": "55032e964d0932351e5d185269281b171a3a09b08b286e661ea470323c82eb4d",
+            "text": "            )"
+          },
+          {
+            "line": 1369,
+            "raw_line_including_newline_sha256": "9c6ffef8b1d4b64603559debdb40613f75398bddf8a0b4e2e004d1572242f6e3",
+            "text": "            .unwrap();"
+          },
+          {
+            "line": 1370,
+            "raw_line_including_newline_sha256": "8c2f40d0d10d2f68bcfeaa07eb142bfce26ea46ae5baf9dfec984801dff25f55",
+            "text": "        tip = source.admit(&packet, clock).unwrap();"
+          },
+          {
+            "line": 1371,
+            "raw_line_including_newline_sha256": "50f8a4e1386a386939f805f18304794c5c03f15c6651f3e21a15a5b236443245",
+            "text": "        source.activate_observed(tip, clock).unwrap();"
+          },
+          {
+            "line": 1372,
+            "raw_line_including_newline_sha256": "4893f40e3781eb896c82d046a08067a11e35cdf2f1dfaf26fea90b8db6676413",
+            "text": "    }"
+          },
+          {
+            "line": 1373,
+            "raw_line_including_newline_sha256": "dffc8e68d528ca6df17ffec7288545488de276df49ec7856ced75fae06b6903b",
+            "text": "    let expected_root = source.stats().unwrap()[\"state_root\"].clone();"
+          },
+          {
+            "line": 1374,
+            "raw_line_including_newline_sha256": "c98d00ad572ac68301e6e8c8634a1c53af61fb6eb4aca7444d614d7d8ef36d48",
+            "text": "    let listener = std::net::TcpListener::bind(\"127.0.0.1:0\").unwrap();"
+          },
+          {
+            "line": 1375,
+            "raw_line_including_newline_sha256": "3c5f2f4277054edfb742ac523cebbdd57c316758a30e67497892d7480689cafe",
+            "text": "    let address = listener.local_addr().unwrap();"
+          },
+          {
+            "line": 1376,
+            "raw_line_including_newline_sha256": "fa31560474b8d1535ce185f11555f00dfe828c5275969e2941daf34280513b51",
+            "text": "    let stop = Arc::new(AtomicBool::new(false));"
+          },
+          {
+            "line": 1377,
+            "raw_line_including_newline_sha256": "7eaac4b95abc81281151607413fc330c4f4697078a19c4d27843df2ed3f19768",
+            "text": "    let child_stop = stop.clone();"
+          },
+          {
+            "line": 1378,
+            "raw_line_including_newline_sha256": "4961aabba24e353aefe2ca58d2d306ae50d6d1320f67e1b90e74d6278c0b3069",
+            "text": "    let server = std::thread::spawn(move || {"
+          },
+          {
+            "line": 1379,
+            "raw_line_including_newline_sha256": "e6e97a59f8aefdec7dc8acd89d9ba430bd5a45318ceff8608914ccdcfc77ba3c",
+            "text": "        ingress::serve(listener, source, Duration::from_secs(120), child_stop)"
+          },
+          {
+            "line": 1380,
+            "raw_line_including_newline_sha256": "22d11caf43e97ef369e6beed1a268bd05838f29b9dd254bf69ba64884147234a",
+            "text": "    });"
+          },
+          {
+            "line": 1381,
+            "raw_line_including_newline_sha256": "557bd442494a05844e9415f58a28a906b973345c2dcce520564bc2361b26a25b",
+            "text": "    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {"
+          },
+          {
+            "line": 1382,
+            "raw_line_including_newline_sha256": "62ed87abfe26ec07377cf25403b6c45d9feb5d47193df622a60662ddd5dde5d9",
+            "text": "        let mut receiver = Node::open(&temp.path().join(\"receiver\"), settings.clone(), 4).unwrap();"
+          },
+          {
+            "line": 1383,
+            "raw_line_including_newline_sha256": "5f54a32c07891e45c494cd0f3749b26f0de800ff5b94aded66355ecdc5f190a7",
+            "text": "        let mut after = settings.genesis();"
+          },
+          {
+            "line": 1384,
+            "raw_line_including_newline_sha256": "d159bd7e9f30646c83bba27adfd0021c2da561b83ff2bed0e4a63b3990acead3",
+            "text": "        let mut page_count = 0;"
+          },
+          {
+            "line": 1385,
+            "raw_line_including_newline_sha256": "4c2285f1b978c5241e2aa11dbc17a0695ee19b4a189c8e91d1dfd5414521c33e",
+            "text": "        while after != tip {"
+          },
+          {
+            "line": 1386,
+            "raw_line_including_newline_sha256": "54a5da2f7669f3431122c778bc0413d035db6ee4aabb8f954423aafb46c72e3b",
+            "text": "            let value = ingress::call("
+          },
+          {
+            "line": 1387,
+            "raw_line_including_newline_sha256": "03f9604608103f4977b226b5583b86af61d7324c747a147814560344ca298474",
+            "text": "                address,"
+          },
+          {
+            "line": 1388,
+            "raw_line_including_newline_sha256": "4d5a05265ef6de061b36a263cd6dd13e63aff177d54b2261008573ed400c4c3d",
+            "text": "                &ingress::Request::History {"
+          },
+          {
+            "line": 1389,
+            "raw_line_including_newline_sha256": "30526697505f17423661ccf4a8a0308d2bc3f14f0a2405e3535cc32d990dbed0",
+            "text": "                    tip: hex::encode(tip),"
+          },
+          {
+            "line": 1390,
+            "raw_line_including_newline_sha256": "4465294bbd045605ecc63b7318c3e1506f94eb74108c7279818c2c326a72cb51",
+            "text": "                    after: hex::encode(after),"
+          },
+          {
+            "line": 1391,
+            "raw_line_including_newline_sha256": "91ca7abb78737656584174e6720b0b950e76e4d9d62e27a82bacdcb84eb56da4",
+            "text": "                },"
+          },
+          {
+            "line": 1392,
+            "raw_line_including_newline_sha256": "55032e964d0932351e5d185269281b171a3a09b08b286e661ea470323c82eb4d",
+            "text": "            )"
+          },
+          {
+            "line": 1393,
+            "raw_line_including_newline_sha256": "9c6ffef8b1d4b64603559debdb40613f75398bddf8a0b4e2e004d1572242f6e3",
+            "text": "            .unwrap();"
+          },
+          {
+            "line": 1394,
+            "raw_line_including_newline_sha256": "9c651ab7943c99ba2f0f74e4483c3e0c9a4a77d868b7ba3c8aed3b0232c54cbe",
+            "text": "            assert!(serde_json::to_vec(&value).unwrap().len() <= 2_097_152);"
+          },
+          {
+            "line": 1395,
+            "raw_line_including_newline_sha256": "d87b1baca48df1dfd6b3766b67068bd26945863d522ff97c76d1adf0328a25a2",
+            "text": "            let page: ingress::Page = serde_json::from_value(value).unwrap();"
+          },
+          {
+            "line": 1396,
+            "raw_line_including_newline_sha256": "e09eefee6be1fdc447042cc9803f1b5f1c0a31f4cae872e3a3fce08b76fcec87",
+            "text": "            assert!(!page.packets.is_empty());"
+          },
+          {
+            "line": 1397,
+            "raw_line_including_newline_sha256": "34dc0ed7f6802e275fb99404f781de518908ebb1f160812d232812f3b035cbe0",
+            "text": "            if page_count == 0 {"
+          },
+          {
+            "line": 1398,
+            "raw_line_including_newline_sha256": "7aca0cbdece1f582c487fb01ea1ee7f17205a4d4a8f11a210841ed295211c251",
+            "text": "                assert!(!page.complete);"
+          },
+          {
+            "line": 1399,
+            "raw_line_including_newline_sha256": "6554d17ac073703638de2dbfa2779c7c3313f20d2e643f59cce07c761e7dcf94",
+            "text": "                assert!(page.packets.len() < 12);"
+          },
+          {
+            "line": 1400,
+            "raw_line_including_newline_sha256": "5522c42cd19c6d03d808c452720552825b7ea1c5b491b218511cac7415cf9d9b",
+            "text": "            }"
+          },
+          {
+            "line": 1401,
+            "raw_line_including_newline_sha256": "2b3021c8c81ca34736c31377d64e40b3507ac54a5c18bb5ae679a8b1b031550f",
+            "text": "            // This fixture intentionally serves the explicit legacy loopback"
+          },
+          {
+            "line": 1402,
+            "raw_line_including_newline_sha256": "50e0110b7c94c99f3ec10d0c0146ea2eb4b90021464c896d7339c82409294459",
+            "text": "            // protocol. Import through its actual socket sync API; do not"
+          },
+          {
+            "line": 1403,
+            "raw_line_including_newline_sha256": "224440554c72e2301af9144cba4e00b143e479e253dfdd82b4c8a65a05ff3ed3",
+            "text": "            // restore a public addressless/native-parser bypass."
+          },
+          {
+            "line": 1404,
+            "raw_line_including_newline_sha256": "e4d2b7f035669d26e0a57eebb686d73e52903f342286d2514253dfa27f5a43c7",
+            "text": "            let expected_after = digest(&page.next).unwrap();"
+          },
+          {
+            "line": 1405,
+            "raw_line_including_newline_sha256": "a0a154b66a40c07dde3e43487b8b4f92f6f0a752a3cb3349064967df2455289d",
+            "text": "            let imported = ingress::sync_from(&mut receiver, address, tip, after, 1);"
+          },
+          {
+            "line": 1406,
+            "raw_line_including_newline_sha256": "451f0343bcb42229f5aa29cf2c091c1d384a14e8da0f8a4bccd45ee02aeb7e11",
+            "text": "            if page.complete {"
+          },
+          {
+            "line": 1407,
+            "raw_line_including_newline_sha256": "f464a149fe0de8c4d0dcf8c2055214ee49c31c8c79cc73ff8738b798d030c465",
+            "text": "                assert_eq!(imported.unwrap(), tip);"
+          },
+          {
+            "line": 1408,
+            "raw_line_including_newline_sha256": "4d4fd98fd8b88c329502f14cc835f54c506d8ee34ae726c840c246eccd1ac9f1",
+            "text": "            } else {"
+          },
+          {
+            "line": 1409,
+            "raw_line_including_newline_sha256": "f5e8c656bb7effd7d00b7917466fc4720f2e705194d3b1f46d0a478a615bfd2f",
+            "text": "                assert!(imported"
+          },
+          {
+            "line": 1410,
+            "raw_line_including_newline_sha256": "2d7be93c514d0a95aeb067111a04290f4fa44a031abea3501bccb02f9564e328",
+            "text": "                    .unwrap_err()"
+          },
+          {
+            "line": 1411,
+            "raw_line_including_newline_sha256": "cc2a0fc3c00f6bd8cd9300936a7ab37334447ec1aa6700119ac3c32a543284e0",
+            "text": "                    .to_string()"
+          },
+          {
+            "line": 1412,
+            "raw_line_including_newline_sha256": "985203aa801112beb00790383331c3dc20ce39650af40fdecda79d8aa372048a",
+            "text": "                    .starts_with(\"INCOMPLETE_HISTORY:\"));"
+          },
+          {
+            "line": 1413,
+            "raw_line_including_newline_sha256": "5522c42cd19c6d03d808c452720552825b7ea1c5b491b218511cac7415cf9d9b",
+            "text": "            }"
+          },
+          {
+            "line": 1414,
+            "raw_line_including_newline_sha256": "4aeceac0a24751e6719eb28e1dda5ec9591e035282f4647e4aa111f51ec8a72c",
+            "text": "            after = expected_after;"
+          },
+          {
+            "line": 1415,
+            "raw_line_including_newline_sha256": "aa00b942ab0c662e9f1a8f96a7f76a581033e6e9b0c29ea94a29691428b4a1f6",
+            "text": "            page_count += 1;"
+          },
+          {
+            "line": 1416,
+            "raw_line_including_newline_sha256": "fc4573618b9bc9795afa5037792eb5d3573361e1f4fb70a273206840a62e8538",
+            "text": "            assert!(page_count <= 12);"
+          },
+          {
+            "line": 1417,
+            "raw_line_including_newline_sha256": "e6b04491469722e8363a94e4044538e013a2a217e36b1e568ba60acb7b4c8f2e",
+            "text": "        }"
+          },
+          {
+            "line": 1418,
+            "raw_line_including_newline_sha256": "0e1fae2d8a38f4c0c31160d8a601f6dd84f29e454ef134dda08232c1bce4e17f",
+            "text": "        assert!(page_count >= 2);"
+          },
+          {
+            "line": 1419,
+            "raw_line_including_newline_sha256": "849b7649c08399197f0fb728beb9a3b91bcb8eac8a9a138f0ee86e1b6a1df586",
+            "text": "        assert_eq!(receiver.stats().unwrap()[\"state_root\"], expected_root);"
+          }
+        ]
+      },
+      {
+        "first_line": 1429,
+        "last_line": 1432,
+        "lines": [
+          {
+            "line": 1429,
+            "raw_line_including_newline_sha256": "2c746ea2834183923b5b4b1ca098f2c41a55c2ccd4ededbf32ec59451e1aa978",
+            "text": "    }));"
+          },
+          {
+            "line": 1430,
+            "raw_line_including_newline_sha256": "ffd982860bc9f4e81ea78999ae3242c8465bf45becc79b5bda5f988936cf3c67",
+            "text": "    stop.store(true, Ordering::Release);"
+          },
+          {
+            "line": 1431,
+            "raw_line_including_newline_sha256": "125387b6c18ff7501cf5d83f6f9c129db7aca8e4791b3db8743f89b345314af1",
+            "text": "    server.join().unwrap().unwrap();"
+          },
+          {
+            "line": 1432,
+            "raw_line_including_newline_sha256": "75ec5c738681ae1d8aa779fd4062ba86223e64b84f0e43460c0a52bd88d9b239",
+            "text": "    result.unwrap();"
+          }
+        ]
+      }
+    ],
+    "public_pool_cli": [
+      {
+        "first_line": 571,
+        "last_line": 585,
+        "lines": [
+          {
+            "line": 571,
+            "raw_line_including_newline_sha256": "e350dbbd0520dab191f437ad1fea01c4ac083d435368f62183e1c1571e7d997c",
+            "text": "fn reading_service("
+          },
+          {
+            "line": 572,
+            "raw_line_including_newline_sha256": "4e59a82a4be96ee7f315fdd1e50f799d27f64c321becfcfbf82710f5af8c7cfc",
+            "text": "    mut child: Child,"
+          },
+          {
+            "line": 573,
+            "raw_line_including_newline_sha256": "40a5ecee4ae4a6f29a2d5084272fa4f641e651f5cc1011076694c388a91d15a3",
+            "text": ") -> ("
+          },
+          {
+            "line": 574,
+            "raw_line_including_newline_sha256": "e1273c742f21b7cb252850a8263364793731e67bd3da6bb4b228c95bc17da952",
+            "text": "    Running,"
+          },
+          {
+            "line": 575,
+            "raw_line_including_newline_sha256": "54c4c443fac9ad5e0bde0cecd041fc91968d3a6e4ca84e0adf4a24711c347b29",
+            "text": "    mpsc::Receiver<String>,"
+          },
+          {
+            "line": 576,
+            "raw_line_including_newline_sha256": "5cca1067e6df4dff4451df5d5f64ee48e336ad6d2a907da621ab9aaf37243c61",
+            "text": "    thread::JoinHandle<Vec<String>>,"
+          },
+          {
+            "line": 577,
+            "raw_line_including_newline_sha256": "3f163f7786c42ca889270f753a780626426c03f973a05adeaedd4fa4d270f0d5",
+            "text": ") {"
+          },
+          {
+            "line": 578,
+            "raw_line_including_newline_sha256": "1ceace02c89791a23fff50711fecc548a5d3c3746d3fab7f6b48003549bf291c",
+            "text": "    let stdout = child.stdout.take().unwrap();"
+          },
+          {
+            "line": 579,
+            "raw_line_including_newline_sha256": "92e299e2418b6600e6063d625387ad51afd00c656cdc2957eab87035b4c9e2a2",
+            "text": "    let (tx, rx) = mpsc::channel();"
+          },
+          {
+            "line": 580,
+            "raw_line_including_newline_sha256": "02305c3faf4485480d1aca44c7fc54d9d4abfdea9af5a2fe12d440536632c832",
+            "text": "    let reader = thread::spawn(move || {"
+          },
+          {
+            "line": 581,
+            "raw_line_including_newline_sha256": "81377e33ffcfca182c0c5a2562bd7c9307af6654698477d94737e04943f78f92",
+            "text": "        let mut lines = BufReader::new(stdout).lines();"
+          },
+          {
+            "line": 582,
+            "raw_line_including_newline_sha256": "b3c49355d9343edbfbccadd463c16339fcc7c80ce2ae9c6777346c328e2cfbcf",
+            "text": "        tx.send(lines.next().unwrap().unwrap()).unwrap();"
+          },
+          {
+            "line": 583,
+            "raw_line_including_newline_sha256": "8973a9bea0c27982938ac6ad081e2af4dab450f1a3a157e7059524d085101f87",
+            "text": "        lines.collect::<std::io::Result<Vec<_>>>().unwrap()"
+          },
+          {
+            "line": 584,
+            "raw_line_including_newline_sha256": "22d11caf43e97ef369e6beed1a268bd05838f29b9dd254bf69ba64884147234a",
+            "text": "    });"
+          },
+          {
+            "line": 585,
+            "raw_line_including_newline_sha256": "7a444141c615d08113adc4da7e67ad57179a28c1d4d52f7b968db59d1e96e968",
+            "text": "    (Running(child), rx, reader)"
+          }
+        ]
+      },
+      {
+        "first_line": 642,
+        "last_line": 670,
+        "lines": [
+          {
+            "line": 642,
+            "raw_line_including_newline_sha256": "26b53b556caa965da843297d9b3806efa9bf94cf0b4991bc72e97b9194d673ca",
+            "text": "    let source_child = command(\"serve\", &source_store, genesis)"
+          },
+          {
+            "line": 643,
+            "raw_line_including_newline_sha256": "4ab4961257fe16670633825d3311cf4580e03272c91424d07fe8da935790f45f",
+            "text": "        .args(["
+          },
+          {
+            "line": 644,
+            "raw_line_including_newline_sha256": "1e94e4b8e17da7e310a332357d2c7fce2614546fc8482c6d97fd70d8a0fe0bad",
+            "text": "            \"--admission-profile\","
+          },
+          {
+            "line": 645,
+            "raw_line_including_newline_sha256": "772b93b3066f82737c276771940a76eeaff834ffd5b52f1d7d8b6374c89318e0",
+            "text": "            ingress::public_v3::PROFILE,"
+          },
+          {
+            "line": 646,
+            "raw_line_including_newline_sha256": "f40ad313a8ffd042f9f017b80639d20cd7b5ae060a6d448991c85791d1d9ee79",
+            "text": "            \"--public-development-network\","
+          },
+          {
+            "line": 647,
+            "raw_line_including_newline_sha256": "53f44f4c413fd62f87041afd1f433fc7d17fdef4030a453c6982aa600734cb46",
+            "text": "            \"--mine\","
+          },
+          {
+            "line": 648,
+            "raw_line_including_newline_sha256": "dc90e0882558a342e25d5b78257c3ebfec23994325c7bfa826b41533a048438f",
+            "text": "            \"--task-bootstrap\","
+          },
+          {
+            "line": 649,
+            "raw_line_including_newline_sha256": "757a03c1f2bdd045272eb1d9b4229fac1a615b7d71908b23a49615e283b12e6d",
+            "text": "            \"--seconds\","
+          },
+          {
+            "line": 650,
+            "raw_line_including_newline_sha256": "b7aef1d24027ba670a61128022abdc6b6db24fa2d5fdd9929fa7043cd2bcef2f",
+            "text": "            \"6\","
+          },
+          {
+            "line": 651,
+            "raw_line_including_newline_sha256": "b7cc329348582f795851c455233248096a21c46f714b9113a9e916f7976f4fb2",
+            "text": "            \"--blocks\","
+          },
+          {
+            "line": 652,
+            "raw_line_including_newline_sha256": "a2ef673703c6f5521c0d1476ad47e824794e1117105d262ba9d58c1fc90284a4",
+            "text": "            \"3\","
+          },
+          {
+            "line": 653,
+            "raw_line_including_newline_sha256": "deafa3f9e167b2b6e753d00c4ca994e8087262e3a28bafdb33b2f18145ebbd95",
+            "text": "            \"--pace-ms\","
+          },
+          {
+            "line": 654,
+            "raw_line_including_newline_sha256": "0fd84ef5368ac63ef3a433ec40df4e4f77db8c4c8cab7bcb7bf856d0c1fab59f",
+            "text": "            \"1000\","
+          },
+          {
+            "line": 655,
+            "raw_line_including_newline_sha256": "f9c517bb8f9f423930f955fadb2220553339acf8c74f3d0d91f19de091623618",
+            "text": "            \"--admission-bits\","
+          },
+          {
+            "line": 656,
+            "raw_line_including_newline_sha256": "afc7248bb30da2d72eaeec632c6d5e56345f130ef5bfc41f22af03fa8e28d036",
+            "text": "            \"8\","
+          },
+          {
+            "line": 657,
+            "raw_line_including_newline_sha256": "99ed0b0c5f44167554b47f82b08296a08df527b610ffb21d9be1cc6bb66a72b4",
+            "text": "            \"--listen\","
+          },
+          {
+            "line": 658,
+            "raw_line_including_newline_sha256": "d248d1188fe752fcd353064bcb97bd8ece4e173d721b03cb82af0474d22c0a86",
+            "text": "            \"127.0.0.1:0\","
+          },
+          {
+            "line": 659,
+            "raw_line_including_newline_sha256": "0276c1d1f9785e5560d0bb5f79c2e979997b70cded1f3b68eeb0cd1910ae227a",
+            "text": "        ])"
+          },
+          {
+            "line": 660,
+            "raw_line_including_newline_sha256": "476c8b3c0255a3f005205aac1ce314f26290e98a2d1e7f76f1e1dfb90e541bb3",
+            "text": "        .arg(\"--pool-policy\")"
+          },
+          {
+            "line": 661,
+            "raw_line_including_newline_sha256": "2a88eae4a5fbccb541bf434d537788aee27b9a82663006cd94f4ed644fbfd22e",
+            "text": "        .arg(&policy)"
+          },
+          {
+            "line": 662,
+            "raw_line_including_newline_sha256": "3471ceace4d0095394cf50934c2391a81cce9d6b8e222661974678ff3cd52324",
+            "text": "        .arg(\"--auth-secret\")"
+          },
+          {
+            "line": 663,
+            "raw_line_including_newline_sha256": "d25a19663c117276b2e9b8575d94cfc0cd2ba9440e6c57c914ac7f230fe9e4fd",
+            "text": "        .arg(&source_key)"
+          },
+          {
+            "line": 664,
+            "raw_line_including_newline_sha256": "7cff7181f6d8e92ffd1890b5b0c192f6d5d046f3d3e1b5b31bbd5e6dbc2f3a1a",
+            "text": "        .stdout(Stdio::piped())"
+          },
+          {
+            "line": 665,
+            "raw_line_including_newline_sha256": "1f7b655c5860d92c8ff581818bc5e8b5a392f5bcd848bf5ab65534696dd89ac8",
+            "text": "        .stderr(Stdio::inherit())"
+          },
+          {
+            "line": 666,
+            "raw_line_including_newline_sha256": "0c69e391910b30073af678d7e1a491e29f63869d5fdfc994ed511b2a310a7b6c",
+            "text": "        .spawn()"
+          },
+          {
+            "line": 667,
+            "raw_line_including_newline_sha256": "2f484cae26e0fc212931cd4741d2693400d1a4bb536c57f63701d544038a1846",
+            "text": "        .unwrap();"
+          },
+          {
+            "line": 668,
+            "raw_line_including_newline_sha256": "2e8f224c4d520102bf651b1a515084a7f07b1b60f52fd024258b368adc45aa2a",
+            "text": "    let (mut source, source_rx, source_reader) = reading_service(source_child);"
+          },
+          {
+            "line": 669,
+            "raw_line_including_newline_sha256": "e5bcd5d53656dcd8765199b2bf8dc3994e90aac756a472142403fcf40bbc0e71",
+            "text": "    let ready: Value ="
+          },
+          {
+            "line": 670,
+            "raw_line_including_newline_sha256": "0045627e09267a6615edb6ee84346c6a14e93bbfcc1556077e767901f7ce17ad",
+            "text": "        serde_json::from_str(&source_rx.recv_timeout(Duration::from_secs(5)).unwrap()).unwrap();"
+          }
+        ]
+      },
+      {
+        "first_line": 696,
+        "last_line": 722,
+        "lines": [
+          {
+            "line": 696,
+            "raw_line_including_newline_sha256": "0cb30f0de41f2fb17c7105ddb686d8c6a636cbfa40fb3c81d36908ea558152f8",
+            "text": "    let receiver_child = command(\"serve\", &receiver_store, genesis)"
+          },
+          {
+            "line": 697,
+            "raw_line_including_newline_sha256": "4ab4961257fe16670633825d3311cf4580e03272c91424d07fe8da935790f45f",
+            "text": "        .args(["
+          },
+          {
+            "line": 698,
+            "raw_line_including_newline_sha256": "1e94e4b8e17da7e310a332357d2c7fce2614546fc8482c6d97fd70d8a0fe0bad",
+            "text": "            \"--admission-profile\","
+          },
+          {
+            "line": 699,
+            "raw_line_including_newline_sha256": "772b93b3066f82737c276771940a76eeaff834ffd5b52f1d7d8b6374c89318e0",
+            "text": "            ingress::public_v3::PROFILE,"
+          },
+          {
+            "line": 700,
+            "raw_line_including_newline_sha256": "f40ad313a8ffd042f9f017b80639d20cd7b5ae060a6d448991c85791d1d9ee79",
+            "text": "            \"--public-development-network\","
+          },
+          {
+            "line": 701,
+            "raw_line_including_newline_sha256": "757a03c1f2bdd045272eb1d9b4229fac1a615b7d71908b23a49615e283b12e6d",
+            "text": "            \"--seconds\","
+          },
+          {
+            "line": 702,
+            "raw_line_including_newline_sha256": "57f60de284fe29bfc2cea533cd01e500358d692d624759d501fdc72a6ca214b7",
+            "text": "            \"5\","
+          },
+          {
+            "line": 703,
+            "raw_line_including_newline_sha256": "f9c517bb8f9f423930f955fadb2220553339acf8c74f3d0d91f19de091623618",
+            "text": "            \"--admission-bits\","
+          },
+          {
+            "line": 704,
+            "raw_line_including_newline_sha256": "afc7248bb30da2d72eaeec632c6d5e56345f130ef5bfc41f22af03fa8e28d036",
+            "text": "            \"8\","
+          },
+          {
+            "line": 705,
+            "raw_line_including_newline_sha256": "99ed0b0c5f44167554b47f82b08296a08df527b610ffb21d9be1cc6bb66a72b4",
+            "text": "            \"--listen\","
+          },
+          {
+            "line": 706,
+            "raw_line_including_newline_sha256": "d248d1188fe752fcd353064bcb97bd8ece4e173d721b03cb82af0474d22c0a86",
+            "text": "            \"127.0.0.1:0\","
+          },
+          {
+            "line": 707,
+            "raw_line_including_newline_sha256": "61210a2a518e4c8a406c0a5d55334a74b6ec32fa199a794f4d610834260ce2b7",
+            "text": "            \"--peer-pages\","
+          },
+          {
+            "line": 708,
+            "raw_line_including_newline_sha256": "9c93da11e54b223f17dcbbd3204dd3968f0fdc5b3be3f2eb524cb96691b3c56e",
+            "text": "            \"1\","
+          },
+          {
+            "line": 709,
+            "raw_line_including_newline_sha256": "0276c1d1f9785e5560d0bb5f79c2e979997b70cded1f3b68eeb0cd1910ae227a",
+            "text": "        ])"
+          },
+          {
+            "line": 710,
+            "raw_line_including_newline_sha256": "476c8b3c0255a3f005205aac1ce314f26290e98a2d1e7f76f1e1dfb90e541bb3",
+            "text": "        .arg(\"--pool-policy\")"
+          },
+          {
+            "line": 711,
+            "raw_line_including_newline_sha256": "2a88eae4a5fbccb541bf434d537788aee27b9a82663006cd94f4ed644fbfd22e",
+            "text": "        .arg(&policy)"
+          },
+          {
+            "line": 712,
+            "raw_line_including_newline_sha256": "3471ceace4d0095394cf50934c2391a81cce9d6b8e222661974678ff3cd52324",
+            "text": "        .arg(\"--auth-secret\")"
+          },
+          {
+            "line": 713,
+            "raw_line_including_newline_sha256": "cfd0849b0da088ce16b78336222f84044e8a6093491428baacf228f5af1d4ebc",
+            "text": "        .arg(&receiver_key)"
+          },
+          {
+            "line": 714,
+            "raw_line_including_newline_sha256": "ae81da22f6984a5756b2f9d9bda24bee264f39cc062e09bb22efd0299ade2378",
+            "text": "        .arg(\"--peers\")"
+          },
+          {
+            "line": 715,
+            "raw_line_including_newline_sha256": "0ecf2e28dac8a5218f1756b1ddfdc6f96e546de365da8bb83cda05b9188eabcc",
+            "text": "        .arg(&peers)"
+          },
+          {
+            "line": 716,
+            "raw_line_including_newline_sha256": "7cff7181f6d8e92ffd1890b5b0c192f6d5d046f3d3e1b5b31bbd5e6dbc2f3a1a",
+            "text": "        .stdout(Stdio::piped())"
+          },
+          {
+            "line": 717,
+            "raw_line_including_newline_sha256": "1f7b655c5860d92c8ff581818bc5e8b5a392f5bcd848bf5ab65534696dd89ac8",
+            "text": "        .stderr(Stdio::inherit())"
+          },
+          {
+            "line": 718,
+            "raw_line_including_newline_sha256": "0c69e391910b30073af678d7e1a491e29f63869d5fdfc994ed511b2a310a7b6c",
+            "text": "        .spawn()"
+          },
+          {
+            "line": 719,
+            "raw_line_including_newline_sha256": "2f484cae26e0fc212931cd4741d2693400d1a4bb536c57f63701d544038a1846",
+            "text": "        .unwrap();"
+          },
+          {
+            "line": 720,
+            "raw_line_including_newline_sha256": "3bed01c6b1a49ea36868539df54b26eb94d89ac393bcdbfb1316d1169b2a480b",
+            "text": "    let (mut receiver, receiver_rx, receiver_reader) = reading_service(receiver_child);"
+          },
+          {
+            "line": 721,
+            "raw_line_including_newline_sha256": "99cc2f8097ae76901533ac1c92817bc47d389c76fd6ae0848e7ea4fbea50fe47",
+            "text": "    let received_ready: Value ="
+          },
+          {
+            "line": 722,
+            "raw_line_including_newline_sha256": "dca3c24a041cd8e84d232c1603e8920373475d6776d5cf84e9de6965cf04c07b",
+            "text": "        serde_json::from_str(&receiver_rx.recv_timeout(Duration::from_secs(5)).unwrap()).unwrap();"
+          }
+        ]
+      }
+    ]
+  },
+  "inputs": {
+    "frozen_source_files": {
+      "native_node": {
+        "bytes": 59539,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98"
+      },
+      "public_pool_cli": {
+        "bytes": 37556,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db"
+      }
+    },
+    "full_coverage_summary": {
+      "bytes": 31715,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/coverage-summary.json",
+      "sha256": "36f17f8123241259fb76012b8cf70c550c4d7a0a833641bddefc4d037859bf1a"
+    },
+    "initial_classification": {
+      "bytes": 122521,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-failure-classification-v1/failure-classification.json",
+      "sha256": "775f6d170d3d67bd19c7f752013a730d892d157cf02d7af55353ee3f9e56baa4"
+    },
+    "inventory": {
+      "bytes": 33120,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-target-inventory-recovery-v1.json",
+      "sha256": "e7e2f7e0717cfaa4dc1278f0ef0bec449796c7a738def2fb093ea8b2a38300e5"
+    },
+    "remainder_raw_log": {
+      "bytes": 50255,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+      "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+    },
+    "union": {
+      "bytes": 918710,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+      "sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2"
+    }
+  },
+  "original_eight_failures_retained": true,
+  "qualification": false,
+  "raw_line_evidence": {
+    "cpu_import_then_captured_panic": [
+      {
+        "line": 116,
+        "raw_line_including_newline_sha256": "1b33495c262a82c3619443dcae9fdd07ff82749ba110b3757a38bdfe79f70cf9",
+        "text": "---- test_full_transaction_pages_use_byte_limits_and_recover_all_native_state stdout ----"
+      },
+      {
+        "line": 117,
+        "raw_line_including_newline_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "text": ""
+      },
+      {
+        "line": 118,
+        "raw_line_including_newline_sha256": "c87b102ac302cd806239f79bbcf8f6c60fbae64a764cfb18d6ea2f54e022a193",
+        "text": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1407:37:"
+      },
+      {
+        "line": 119,
+        "raw_line_including_newline_sha256": "369c1900d156364013d315d8c49fa4a3a997671fb95171183c98fb03acdcb429",
+        "text": "called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: \"PUBLIC_MUTATION_CPU_BUDGET\", source: None, request_history_budget: false }"
+      },
+      {
+        "line": 120,
+        "raw_line_including_newline_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "text": ""
+      },
+      {
+        "line": 121,
+        "raw_line_including_newline_sha256": "fb4f6f432ee6ebbe923bb37ab766b6467e69919475f424e2251b6086381e3187",
+        "text": "thread 'test_full_transaction_pages_use_byte_limits_and_recover_all_native_state' (811108) panicked at crates/trnm-pon-node/tests/native_node.rs:1432:12:"
+      },
+      {
+        "line": 122,
+        "raw_line_including_newline_sha256": "39027c2dd4a251b742c0066b48b7bcb97ce337ae1af0887eed159323af290e2f",
+        "text": "called `Result::unwrap()` on an `Err` value: Any { .. }"
+      }
+    ],
+    "reader_eof_and_receiver_disconnected": [
+      {
+        "line": 345,
+        "raw_line_including_newline_sha256": "51daf75565de910fb3de8b7c9ae78ce38842cc600139d3550a38f363d9e74c76",
+        "text": "---- actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner stdout ----"
+      },
+      {
+        "line": 346,
+        "raw_line_including_newline_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "text": ""
+      },
+      {
+        "line": 347,
+        "raw_line_including_newline_sha256": "a1b43836ec21c431bb95d8280e48b5623269c8db760e119e957906a46d8e1ded",
+        "text": "thread '<unnamed>' (821789) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:582:30:"
+      },
+      {
+        "line": 348,
+        "raw_line_including_newline_sha256": "1a92dab3ac6a65fd53c4b77f324c0a1ac4db313a7de6b8d63f8815bcb7426dc0",
+        "text": "called `Option::unwrap()` on a `None` value"
+      },
+      {
+        "line": 349,
+        "raw_line_including_newline_sha256": "d7e9e747ec2e9a278bbae982dcddc352559f8fdfc0eff66358f46dd565b74a6f",
+        "text": "note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+      },
+      {
+        "line": 350,
+        "raw_line_including_newline_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "text": ""
+      },
+      {
+        "line": 351,
+        "raw_line_including_newline_sha256": "eefc9e53812701c15779492a1a57373b5160bf85a34afd544b88da23c6355ecd",
+        "text": "thread 'actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner' (821784) panicked at crates/trnm-pon-node/tests/public_pool_cli.rs:722:80:"
+      },
+      {
+        "line": 352,
+        "raw_line_including_newline_sha256": "2cc7b4ca9780fc6d7bca19f216c862ba694c97d94c60588b7b5f533ca048b7e2",
+        "text": "called `Result::unwrap()` on an `Err` value: Disconnected"
+      }
+    ],
+    "same_test_inherited_kernel_marker": [
+      {
+        "line": 333,
+        "raw_line_including_newline_sha256": "9d0146e776e2cad4f7ebec4addeb8216f2b61a7aaf3696801882e793c44af147",
+        "text": "     Running tests/public_pool_cli.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/public_pool_cli-b49faaebc1ed30ab)"
+      },
+      {
+        "line": 334,
+        "raw_line_including_newline_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "text": ""
+      },
+      {
+        "line": 335,
+        "raw_line_including_newline_sha256": "3d55bdd0482e400203bc649a48fe0ea73f869d1970dfeb42822d6c0ca0fb7033",
+        "text": "running 5 tests"
+      },
+      {
+        "line": 336,
+        "raw_line_including_newline_sha256": "3d9d5a0de7e3e8793556861777ad1c170301b3fb1f20cb722b1086187b682537",
+        "text": "test actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner ... PUBLIC_HOST_KERNEL_PARENT"
+      },
+      {
+        "line": 337,
+        "raw_line_including_newline_sha256": "03cbb6c52e522ce55e217e3f9d66dbd66d21ef6bf85024016a3b7f3080c7944f",
+        "text": "FAILED"
+      },
+      {
+        "line": 338,
+        "raw_line_including_newline_sha256": "38d93dcd2ace5dacd1c6d1e0c3b947de7ce79a6e9aa4906c8f41aead4d1c4c5d",
+        "text": "test actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver ... FAILED"
+      }
+    ]
+  },
+  "schema": "pon-node-remainder-failure-diagnosis-v2",
+  "scope": "Precision refinement of two conservative v1 cases from actual retained bytes and frozen source. Counts and original failures are unchanged.",
+  "source_after": {
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_before": {
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_modified": false,
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "tests_started": false,
+  "union_counts_changed": false
+}

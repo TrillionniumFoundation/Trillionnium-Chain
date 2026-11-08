@@ -108,6 +108,9 @@ case "${1:?required job}" in
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_python_runtime_contract.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
+    python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v
+    python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test no_gain_fees --test funded_service_contract --test native_demand_evidence --test native_task_operation_v2 --test native_active_anchor --all-features -- --test-threads=1
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v

@@ -1,0 +1,84 @@
+{
+  "cargo_invoked_by_runner": false,
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "cwd": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded",
+  "elapsed_seconds": 36.00493621826172,
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": null,
+    "python_executable": "/usr/bin/python3",
+    "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "exit_code": 0,
+  "filters_added": false,
+  "independent_acceptance": false,
+  "label": "ci-contract",
+  "original_node_job_modified": false,
+  "original_recorder_modified": false,
+  "production_activation": false,
+  "recovery_provenance": "New H execution after scratch became unavailable. Prior local raw logs and receipts were not recovered and their counts are not reused.",
+  "result": "PASS",
+  "schema": "pon-python-gate-recovery-v1",
+  "source_after": {
+    "canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+    "clean": true,
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "manifest": {
+      "bytes": 1920026,
+      "path": "source-f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98.json",
+      "sha256": "dc8ea0949db7a427bc901fa630c6969de94cc98fb289e22ed1a05ac72f9e415d"
+    },
+    "matches_original_node_run": true,
+    "materialized_bytes": 35472819,
+    "materialized_entries": 2254,
+    "omitted_historical_archive_entries": 8457,
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_before": {
+    "canonical_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+    "clean": true,
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "manifest": {
+      "bytes": 1920026,
+      "path": "source-f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98.json",
+      "sha256": "dc8ea0949db7a427bc901fa630c6969de94cc98fb289e22ed1a05ac72f9e415d"
+    },
+    "matches_original_node_run": true,
+    "materialized_bytes": 35472819,
+    "materialized_entries": 2254,
+    "omitted_historical_archive_entries": 8457,
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_error": null,
+  "source_unchanged": true,
+  "started_unix_seconds": 1794064514.014629,
+  "stderr": {
+    "bytes": 17225,
+    "path": "ci-contract/stderr.log",
+    "sha256": "042afadb54022c7c316d652c4b1fa555ae4c9662f03e94cdef4a43f09f88aa8a"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "ci-contract/stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests_skipped_by_runner": false,
+  "timed_out": false,
+  "unittest": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failed": 0,
+    "framework_outcome": "OK",
+    "framework_seconds": "35.806",
+    "ignored": null,
+    "ignored_note": "unittest uses skipped; no Rust ignored count inferred",
+    "passed": 103,
+    "skipped": 0,
+    "tests_run": 103,
+    "unexpected_successes": 0,
+    "verified": true
+  }
+}

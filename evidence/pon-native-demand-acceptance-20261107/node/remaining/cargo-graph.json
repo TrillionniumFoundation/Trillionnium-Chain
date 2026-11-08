@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "exit_code": 0,
+  "identical_to_inventory_metadata": true,
+  "metadata": {
+    "bytes": 863223,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/cargo-metadata.json",
+    "sha256": "1ec54313dda4cafa54b7b47e75964a4cf7ba3adcba8cd01cc317450f359473af"
+  },
+  "node_inventory_targets": 91,
+  "resolved_packages": 180,
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/cargo-metadata.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "workspace_members": 26
+}

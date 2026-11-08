@@ -190,9 +190,18 @@ pub struct Envelope {
 pub(crate) fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
     let size = match tag {
         1 => 40,
-        2 => 80,
+        2 if p.len() == 80 => 80,
+        2 => {
+            crate::funded_service_task_v1::FundedServiceReservationV1::decode(p)?;
+            p.len()
+        }
         3 => 32,
-        4 | 5 => 64,
+        4 => 64,
+        5 if p.len() == 64 => 64,
+        5 => {
+            crate::funded_service_task_v1::FundedServiceDecisionV1::decode(p)?;
+            p.len()
+        }
         6 => 176,
         7 => 104,
         8 => {

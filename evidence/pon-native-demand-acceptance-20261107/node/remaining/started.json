@@ -1,0 +1,296 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--example",
+    "account_archive_vectors",
+    "--example",
+    "account_execution_vectors",
+    "--example",
+    "continuous_pipeline",
+    "--example",
+    "distributed_pipeline",
+    "--example",
+    "hepta_task_fixture",
+    "--example",
+    "history_state_cost",
+    "--example",
+    "lifecycle_atomic_continuity",
+    "--example",
+    "lifecycle_continuity",
+    "--example",
+    "llm_zero_gain_round",
+    "--example",
+    "native_reorg_query_cost",
+    "--example",
+    "operator_owned_finite_mining",
+    "--example",
+    "operator_pool_fixture",
+    "--example",
+    "pon_w1_budget_report",
+    "--example",
+    "pon_w1_cost_matrix_v2",
+    "--example",
+    "pon_w1_false_trace_reuse_v1",
+    "--example",
+    "pon_w1_legal_strategy_v1",
+    "--example",
+    "pon_w1_legal_strategy_v3",
+    "--example",
+    "pon_w1_preparation_strategy_v4",
+    "--example",
+    "pon_w1_reused_cost_v3",
+    "--example",
+    "public_pool_fixture",
+    "--test",
+    "model_composition_v4",
+    "--test",
+    "model_evidence_v3",
+    "--test",
+    "native_active_anchor",
+    "--test",
+    "native_compact_execution",
+    "--test",
+    "native_demand_evidence",
+    "--test",
+    "native_growth_cli",
+    "--test",
+    "native_growth_public_cli",
+    "--test",
+    "native_node",
+    "--test",
+    "native_task_operation_v2",
+    "--test",
+    "no_gain_fees",
+    "--test",
+    "nonce_speculation_cost",
+    "--test",
+    "one_zero_task_preparation_lifecycle",
+    "--test",
+    "operation_local_parent",
+    "--test",
+    "operator_actors",
+    "--test",
+    "pinned_peer_polling",
+    "--test",
+    "pool_mining",
+    "--test",
+    "pq_account_native",
+    "--test",
+    "pq_migration_inventory",
+    "--test",
+    "protected_ingress",
+    "--test",
+    "public_cache_modes",
+    "--test",
+    "public_cli",
+    "--test",
+    "public_evaluation",
+    "--test",
+    "public_intake_v2",
+    "--test",
+    "public_pool_cli",
+    "--test",
+    "public_pool_v3",
+    "--test",
+    "public_submit_recovery",
+    "--test",
+    "public_v3_from_zero",
+    "--test",
+    "public_v3_multiprocess",
+    "--test",
+    "public_v3_observation_cli",
+    "--test",
+    "public_v3_observer",
+    "--test",
+    "public_v3_request_accounting",
+    "--test",
+    "public_v3_service_campaign",
+    "--test",
+    "qualified_tasks",
+    "--test",
+    "release_finality_v2",
+    "--test",
+    "task_lifecycle",
+    "--test",
+    "task_lifecycle_v3",
+    "--test",
+    "task_lifecycle_v4",
+    "--test",
+    "task_output_root_parity",
+    "--test",
+    "work_fuzz_semantics",
+    "--test",
+    "work_header_binding",
+    "--test",
+    "zero_task_preparation_lifecycle",
+    "--all-features",
+    "--no-fail-fast",
+    "--",
+    "--test-threads=1"
+  ],
+  "environment": {
+    "bytes": 1068,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/environment.json",
+    "sha256": "8f1908b30b513bec120ab5e1e1ac83e4252846b12600897e93f6e68e5e279632"
+  },
+  "expected_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "expected_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "graph": {
+    "bytes": 953,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/cargo-graph.json",
+    "sha256": "5cb44a27d8812e98b8d1cd315b028245a1a754c1c5e7444bf1d87336ac3fee55"
+  },
+  "inputs": {
+    "inventory": {
+      "bytes": 33120,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-target-inventory-recovery-v1.json",
+      "sha256": "e7e2f7e0717cfaa4dc1278f0ef0bec449796c7a738def2fb093ea8b2a38300e5"
+    },
+    "inventory_capture": {
+      "bytes": 3570,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/inventory-capture-recovery-v1.json",
+      "sha256": "5fcee5ec1ce721a7e2dc954f6e5352737e46da8562db06e89245aaaa58fc386f"
+    },
+    "original_audit": {
+      "bytes": 189970,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/original-node-failed-inventory-v1.json",
+      "sha256": "d906a690639ee78b6b38e1a97e27904e1a1b7a540f9206cadbde03aa40adbc70"
+    },
+    "original_environment": {
+      "bytes": 1068,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/environment.json",
+      "sha256": "8f1908b30b513bec120ab5e1e1ac83e4252846b12600897e93f6e68e5e279632"
+    },
+    "original_log": {
+      "bytes": 268168,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+      "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+    },
+    "original_metadata": {
+      "bytes": 863223,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/cargo-metadata-recovery-v1.json",
+      "sha256": "1ec54313dda4cafa54b7b47e75964a4cf7ba3adcba8cd01cc317450f359473af"
+    },
+    "original_recorder": {
+      "bytes": 7770,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/run_remote_node_gate.py",
+      "sha256": "049c64cf32927bcd16a82059707a468c91d6fc9be7d7abc9047bb3efcd2d8123"
+    },
+    "original_source_before": {
+      "bytes": 2320287,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/source-before.json",
+      "sha256": "9c7791917a4721a2b7d70397a09109ac44dba4a9364e02813d41c0e30e83c9d6"
+    },
+    "original_started": {
+      "bytes": 531,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/started.json",
+      "sha256": "72a5e934d05847dbf4044c66fcfb9308d7fa72242fc7d0ba8e4c76cea8595c55"
+    },
+    "original_terminal": {
+      "bytes": 735,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/original-node-terminal-status.json",
+      "sha256": "1ad19471b75c6b97570592289ebabe6bd1d486dca60d6bcb794a9dd40137e949"
+    },
+    "original_toolchain": {
+      "bytes": 725,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/toolchain.json",
+      "sha256": "b9cc50b62336203365d17c6097eba4fa407330deb5763822d9ed547320ea8de4"
+    },
+    "provider": {
+      "bytes": 3248,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/pq-provider/provider.json",
+      "sha256": "ceabed0dca2eb705ff1bd37222466c55bf1a7d3df32901075a1e2f2c5881230a"
+    },
+    "provider_env": {
+      "bytes": 609,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/provider.env",
+      "sha256": "0564a963b39cd9bfa08e14ef470a8eeedba053762b870f701d2d03d2cc73db3f"
+    }
+  },
+  "preflight": {
+    "command": [
+      "/usr/bin/bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 133,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/preflight.stdout.log",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    }
+  },
+  "process_context": {
+    "bytes": 947,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/process-context.json",
+    "sha256": "f3a8f8e5f5d033946a6a15357ba715ff616bcd072c8ad95a305591e2fc070c8f"
+  },
+  "provider_artifacts": [
+    {
+      "bytes": 8933408,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+      "sha256": "8ff7dd91270fd4a8fc377031f0fd2f2cee1cd17a32ce30e4fd773a25730a120f"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12381776,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/lib/libcrypto.a",
+      "sha256": "dabf2189afd2e29591c5b597ac2cb9b7cd7066eaf7ce674106123614da32eb0f"
+    },
+    {
+      "bytes": 2123138,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/lib/libssl.a",
+      "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+    }
+  ],
+  "provider_cli": {
+    "bytes": 8933408,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+    "sha256": "8ff7dd91270fd4a8fc377031f0fd2f2cee1cd17a32ce30e4fd773a25730a120f"
+  },
+  "qualification": false,
+  "recorder": {
+    "bytes": 24242,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/run_remaining_node_gate_recovery_v1.py",
+    "sha256": "1611df0f8b814226c19134aabc8f463786774deb7cbf791bb0bda2e4efed7c9b"
+  },
+  "schema": "pon-native-remaining-node-start-v1",
+  "selection": {
+    "bytes": 52584,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/selection.json",
+    "sha256": "9bd89ad1849745b3be329094de6a37571fb680307b868dea2375d3526812cb46"
+  },
+  "source_before": {
+    "bytes": 2320287,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/source-before.json",
+    "sha256": "9c7791917a4721a2b7d70397a09109ac44dba4a9364e02813d41c0e30e83c9d6"
+  },
+  "source_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "started_unix_seconds": 1794066679.3085887,
+  "toolchain": {
+    "bytes": 725,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/toolchain.json",
+    "sha256": "b9cc50b62336203365d17c6097eba4fa407330deb5763822d9ed547320ea8de4"
+  }
+}
