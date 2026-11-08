@@ -388,7 +388,7 @@
     "scripts/pon_w1_reused_cost_reader_v3.py": "bdbca8674356b7746af428f9c0ea61e1b3135af0",
     "scripts/read_w1_full_v2_disposition.py": "c4b3f0c76860d79a4e5cef9febc66875f37f1382",
     "scripts/run_llm_cell_native_handoff.py": "3249f6fe218fafc2097343ecb90f814c6fc4233b",
-    "scripts/run_smollm_cell_replica_research.py": "626c73c9257e4e39b30da9594484586e86989873",
+    "scripts/run_smollm_cell_replica_research.py": "132afbb0436aaf199804acf90038505534712d13",
     "scripts/test_llm_answer_eos_loss_v3.py": "46d47a328cf2fc0ba2eee277bf4f06d9b8ec5467",
     "scripts/test_llm_answer_eos_research_v3.py": "c1143b780c7b406520b6d1accab442164caab884",
     "scripts/test_llm_answer_eos_task_research_v4.py": "4f0695f75cf4ee498692efb484aa61bd993fb9af",

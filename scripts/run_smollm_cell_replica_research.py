@@ -36,11 +36,47 @@ TRANSFER_SECONDS = 180
 
 
 def run_logged(argv, directory, name, *, timeout, expected_success=True):
-    start = time.monotonic()
-    completed = subprocess.run([str(v) for v in argv], capture_output=True, text=True, timeout=timeout)
-    (directory / (name + ".log")).write_text(completed.stdout + completed.stderr)
-    write_json(directory / (name + "-command.json"), dict(argv=[str(v) for v in argv],
-        returncode=completed.returncode, elapsed_seconds=time.monotonic() - start))
+    # Preserve every dispatched command, including TimeoutExpired's partial
+    # output. The original timeout is passed unchanged; this records no new
+    # CPU allowance or process-family cleanup guarantee.
+    command = [str(v) for v in argv]
+    start = time.monotonic_ns()
+    stdout, stderr, returncode = b"", b"", None
+    outcome, error_type, output_complete = "launch-failed", None, False
+    try:
+        native = subprocess.run(command, capture_output=True, timeout=timeout)
+        stdout, stderr, returncode = native.stdout, native.stderr, native.returncode
+        output_complete = True
+        outcome = "exit-zero" if returncode == 0 else "exit-nonzero"
+        # Native CLI consumers retain their original text interface. Separate
+        # raw streams below preserve bytes even when decoding fails.
+        completed = subprocess.CompletedProcess(native.args, returncode,
+            stdout.decode("utf-8"), stderr.decode("utf-8"))
+    except subprocess.TimeoutExpired as error:
+        stdout, stderr = error.stdout or b"", error.stderr or b""
+        outcome, error_type = "timeout", type(error).__name__
+        raise
+    except BaseException as error:
+        outcome = "cancelled" if isinstance(error, KeyboardInterrupt) else "command-error"
+        error_type = type(error).__name__
+        raise
+    finally:
+        finish = time.monotonic_ns()
+        for suffix, raw in ((".stdout.log", stdout), (".stderr.log", stderr),
+                            (".log", stdout + stderr)):
+            (directory / (name + suffix)).write_bytes(raw)
+        write_json(directory / (name + "-command.json"), dict(
+            schema="trnm-smollm-command-receipt-v2", argv=command, returncode=returncode,
+            outcome=outcome, error_type=error_type, expected_success=expected_success,
+            started_monotonic_ns=start, finished_monotonic_ns=finish,
+            elapsed_ns=finish - start, elapsed_seconds=(finish - start) / 1_000_000_000,
+            timeout_seconds=timeout, timing_scope="subprocess-call-excluding-receipt-writes",
+            output_complete=output_complete,
+            stdout_bytes=len(stdout), stderr_bytes=len(stderr),
+            stdout_sha256=hashlib.sha256(stdout).hexdigest(),
+            stderr_sha256=hashlib.sha256(stderr).hexdigest(),
+            cpu_ns=None, peak_rss_bytes=None, process_family_cleanup_verified=False,
+            native_execution_authenticated=False, throughput_qualified=False))
     if expected_success:
         completed.check_returncode()
     elif completed.returncode == 0:
