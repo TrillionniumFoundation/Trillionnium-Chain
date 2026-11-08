@@ -17,6 +17,24 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
+Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
+Complete bounded signer-set checks before release signature mathematics, and
+preflight both old/new root quorums before either mathematical verification.
+Preserve all signed bytes, every supplied signature check, current-authority
+requirements, complete recovery state, source bounds and original acceptance
+flags. Retain the original 43 release controls and the nine new regressions as
+an exact 52-test CI registry with actual execution readback. The old kernel's
+six red failures and repaired nine passes are preserved. Measure 64 fresh
+paired root proposals with ML-DSA-87 component observations and fixed
+ML-DSA-87 2-of-3 AND SLH-DSA-SHA2-256s 2-of-3 candidate observations; keep
+component success incapable of satisfying the AND policy. Keep raw command,
+frame, rejection and staged timing evidence; prior roster distribution, durable
+root effects, independent custody and production resource qualification remain
+unmeasured. See the [authority review](../security/PQ_AUTHORITY_PREFLIGHT_20261108.md)
+and [execution evidence](../../evidence/pq-authority-preflight-20261108-9d315/README.md).
+Retain whole-chain, running-network and production acceptance as false.
+
 **PQ migration and recovery continuation, 2026-11-07 UTC:**
 Continue the existing #723 candidate from `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`,
 preserving the concurrent `f943c23b` migration/schema-reader work and `0ca272d0`

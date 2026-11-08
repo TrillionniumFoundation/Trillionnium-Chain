@@ -2,12 +2,15 @@
 """Negative checks for real lane execution, merge identity, and generated navigation."""
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
+import textwrap
 import tomllib
 import unittest
 from pathlib import Path
@@ -26,6 +29,8 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
                                GSC2_SYNTHETIC_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
+from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
+                               PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -586,6 +591,301 @@ class W1ReuseV3LaneTests(unittest.TestCase):
             self.assertNotEqual(run(after).returncode, 0)
             env['TRNM_EXPECTED_BASE_SHA'] = base
             self.assertEqual(run(after).returncode, 0)
+
+
+class PqReleaseAuthorityCiTests(unittest.TestCase):
+    """Exercise the real workflow readers/loop with explicit synthetic logs.
+
+    The loop tests substitute only recorded Cargo execution. They keep the real
+    exact-test reader and never claim that synthetic libtest output is native work.
+    """
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+        self.root = Path(self.temporary.name)
+        for relative in (PQ_RELEASE_WORKFLOW, PQ_RELEASE_MANIFEST, *PQ_ROOT_HARNESS_FILES,
+                         'scripts/ci/check_required_native_test.py'):
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, target)
+        self.manifest = json.loads((self.root / PQ_RELEASE_MANIFEST).read_text())
+
+    def tearDown(self):
+        self.temporary.cleanup()
+
+    def step(self, name):
+        text = (self.root / PQ_RELEASE_WORKFLOW).read_text()
+        marker = '      - name: ' + name + '\n'
+        self.assertEqual(text.count(marker), 1)
+        return marker + text.split(marker, 1)[1].split('\n      - ', 1)[0] + '\n'
+
+    def release_step(self):
+        return self.step('Require initial-root and quorum controls from the complete release registry')
+
+    def harness_step(self):
+        return self.step('Run root-quorum codec and policy test doubles without native crypto claims')
+
+    @staticmethod
+    def inline_python(step):
+        return textwrap.dedent(step.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0]) + '\n'
+
+    def rejected_source(self, relative, before, after):
+        path = self.root / relative
+        original = path.read_text()
+        self.assertIn(before, original)
+        try:
+            path.write_text(original.replace(before, after, 1))
+            with self.assertRaises(ValueError):
+                check_pq_release_authority_controls(self.root)
+        finally:
+            path.write_text(original)
+
+    def rejected_manifest(self, mutate):
+        path = self.root / PQ_RELEASE_MANIFEST
+        original = path.read_text()
+        altered = json.loads(original)
+        mutate(altered)
+        try:
+            path.write_text(json.dumps(altered))
+            with self.assertRaises(ValueError):
+                check_pq_release_authority_controls(self.root)
+        finally:
+            path.write_text(original)
+
+    def registry_log(self, names=None, count=52):
+        if names is None:
+            names = self.manifest['complete_release_tests']
+        return ''.join(name + ': test\n' for name in names) + f'\n{count} tests, 0 benchmarks\n'
+
+    def read_registry(self, text, output):
+        output.mkdir(exist_ok=True)
+        (output / 'initial-root-release-registry.log').write_text(text)
+        return subprocess.run(
+            [sys.executable, '-B', '-c', self.inline_python(self.release_step()),
+             str(self.root / PQ_RELEASE_MANIFEST), str(output)],
+            cwd=self.root, capture_output=True, text=True,
+        )
+
+    def read_harness(self, text, output):
+        output.mkdir(exist_ok=True)
+        log = output / 'root-quorum-harness.log'
+        log.write_text(text)
+        return subprocess.run(
+            [sys.executable, '-B', '-c', self.inline_python(self.harness_step()), str(log)],
+            cwd=self.root, capture_output=True, text=True,
+        )
+
+    def test_reviewed_groups_complete_registry_and_hosted_execution_are_required(self):
+        result = check_pq_release_authority_controls(self.root)
+        self.assertEqual(result['groups'], {'original_release': 37, 'initial_root_material': 6,
+                                           'quorum_preflight': 9})
+        self.assertEqual(result['complete_release'], 52)
+        self.assertEqual(result['python_test_doubles'], 18)
+        self.assertFalse(result['tests_executed'])
+
+    def test_original_initial_root_and_quorum_names_cannot_be_relabelled_together(self):
+        for group in PQ_RELEASE_GROUPS:
+            with self.subTest(group=group):
+                def rename(value):
+                    name = value[group + '_tests'][0]
+                    value[group + '_tests'][0] = name + '_renamed'
+                    index = value['complete_release_tests'].index(name)
+                    value['complete_release_tests'][index] = name + '_renamed'
+                    value['complete_release_tests'].sort()
+                self.rejected_manifest(rename)
+
+    def test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims(self):
+        mutations = [
+            lambda v: v['expected_controls'].__setitem__('complete_release', 43),
+            lambda v: v['expected_controls'].__setitem__('complete_release', 52.0),
+            lambda v: v['expected_controls'].pop('quorum_preflight'),
+            lambda v: v.__setitem__('scope', 'immutable-initial-root-public-key-material-only'),
+            lambda v: v['complete_release_tests'].pop(),
+            lambda v: v['complete_release_tests'].__setitem__(0, v['complete_release_tests'][1]),
+            lambda v: v['complete_release_tests'].__setitem__(0, 'unreviewed::test'),
+            lambda v: v['quorum_preflight_tests'].__setitem__(0, v['original_release_tests'][0]),
+            lambda v: v['quorum_preflight_tests'].__setitem__(0, v['quorum_preflight_tests'][1]),
+            lambda v: v.pop('quorum_preflight_tests'),
+        ]
+        for index, mutate in enumerate(mutations):
+            with self.subTest(mutation=index):
+                self.rejected_manifest(mutate)
+        for flag in ('authorization_results_cached', 'signature_results_cached', 'performance_qualified',
+                     'production_activation', 'consensus_authority', 'whole_chain_quantum_security_qualified'):
+            for value in (True, 0):
+                with self.subTest(flag=flag, value=value):
+                    self.rejected_manifest(lambda v, flag=flag, value=value: v.__setitem__(flag, value))
+
+    def test_workflow_cannot_reduce_registry_queue_exact_execution_or_readback(self):
+        step = self.release_step()
+        reader = ('            elif ! python3 scripts/ci/check_required_native_test.py '
+                  '"$out/$label.log" --test "$selector" > "$out/$label-execution.json"; then\n')
+        changes = [
+            ('len(names) != 52', 'len(names) < 52'),
+            ('set(names) != sets["complete_release"]', 'not sets["complete_release"].issubset(set(names))'),
+            ('for group in groups for index, name', 'for group in groups[:2] for index, name'),
+            ('"$selector" -- --exact --show-output', '"$selector" -- --show-output'),
+            (reader, '            elif ! true; then\n'),
+            ('          test "$failed" = 0\n', '          true\n'),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                self.assertIn(before, step)
+                self.rejected_source(PQ_RELEASE_WORKFLOW, step, step.replace(before, after, 1))
+
+    def test_workflow_cannot_skip_or_untrigger_authority_and_harness_controls(self):
+        for step in (self.release_step(), self.harness_step()):
+            for replacement in ('', step.replace('        shell: bash\n', '        if: false\n        shell: bash\n', 1),
+                                step.replace('        shell: bash\n', '        continue-on-error: true\n        shell: bash\n', 1)):
+                with self.subTest(step=step.splitlines()[0], replacement=replacement[:80]):
+                    self.rejected_source(PQ_RELEASE_WORKFLOW, step, replacement)
+        self.rejected_source(PQ_RELEASE_WORKFLOW, '  primitive-interoperability:\n',
+                             '  primitive-interoperability:\n    if: false\n')
+        for relative in (*PQ_ROOT_HARNESS_FILES, 'scripts/ci/check_ci_contract.py', 'scripts/ci/test_ci_contract.py'):
+            self.rejected_source(PQ_RELEASE_WORKFLOW, '      - ' + relative + '\n', '')
+        self.rejected_source(PQ_RELEASE_WORKFLOW, 'python3 -B formal/pon-nakamoto-v1/test_pq_root_quorum_research.py -v',
+                             'true # python3 -B formal/pon-nakamoto-v1/test_pq_root_quorum_research.py -v')
+
+    def test_harness_source_keeps_all_eighteen_reviewed_test_double_names(self):
+        path = self.root / PQ_ROOT_HARNESS_FILES[1]
+        module = ast.parse(path.read_text())
+        test_class = next(node for node in module.body
+                          if isinstance(node, ast.ClassDef) and node.name == 'RootQuorumResearchTests')
+        name = next(node.name for node in test_class.body
+                    if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'))
+        self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'def ' + name + '(', 'def test_unreviewed(')
+        self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'class RootQuorumResearchTests(', 'class UnreviewedTests(')
+
+    def test_actual_registry_reader_requires_exact_complete_52_and_three_groups(self):
+        output = self.root / 'registry-positive'
+        result = self.read_registry(self.registry_log(), output)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['scope'], 'registry-presence-only')
+        rows = [line.split('\t') for line in (output / 'release-authority-required.tsv').read_text().splitlines()]
+        self.assertEqual(len(rows), 52)
+        self.assertEqual(len({name for _, name in rows}), 52)
+        self.assertEqual({name for _, name in rows}, set(self.manifest['complete_release_tests']))
+        for prefix, count in (('original-release-', 37), ('initial-root-', 6), ('quorum-preflight-', 9)):
+            self.assertEqual(sum(label.startswith(prefix) for label, _ in rows), count)
+        names = self.manifest['complete_release_tests']
+        invalid = [
+            self.registry_log(names[:-1], 51),
+            self.registry_log(names + ['unreviewed::test'], 53),
+            self.registry_log(names[:-1] + [names[0]], 52),
+            self.registry_log(names[:-1] + ['unreviewed::test'], 52),
+            self.registry_log(count=43),
+            self.registry_log() + '52 tests, 0 benchmarks\n',
+            ''.join(name + ': test\n' for name in names),
+        ]
+        for index, log in enumerate(invalid):
+            with self.subTest(index=index):
+                result = self.read_registry(log, self.root / f'registry-negative-{index}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+
+    def test_actual_exact_loop_checks_every_result_and_preserves_failure_status(self):
+        # Only the recorder/Cargo call is synthetic; the workflow loop and its
+        # check_required_native_test.py invocation below are the original bytes.
+        prefix = r'''set -euo pipefail
+source_args=()
+out="$TRNM_SYNTHETIC_OUTPUT"
+python3() {
+  if test "${1:-}" != scripts/ci/record_pq_native_command.py; then
+    command python3 "$@"
+    return
+  fi
+  shift
+  test "${1:-}" = --label || return 99
+  local label="$2"
+  shift 2
+  test "${1:-}" = --output || return 99
+  local directory="$2"
+  shift 2
+  test "${1:-}" = -- || return 99
+  shift
+  local part
+  for part in cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib; do
+    test "${1:-}" = "$part" || return 99
+    shift
+  done
+  local selector="$1"
+  shift
+  test "$*" = '-- --exact --show-output --test-threads=1' || return 99
+  printf '%s\t%s\n' "$label" "$selector" >> "$directory/calls.tsv"
+  local mode=pass
+  if test "$selector" = "$TRNM_SYNTHETIC_TARGET"; then
+    mode="$TRNM_SYNTHETIC_MODE"
+  fi
+  case "$mode" in
+    zero)
+      printf '%s\n' 'running 0 tests' 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.00s' > "$directory/$label.log"
+      ;;
+    ignored)
+      printf 'running 1 test\ntest %s ... ignored\ntest result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 51 filtered out; finished in 0.00s\n' "$selector" > "$directory/$label.log"
+      ;;
+    *)
+      local actual="$selector"
+      if test "$mode" = wrong; then actual="${selector}::wrong"; fi
+      printf 'running 1 test\ntest %s ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 51 filtered out; finished in 0.00s\n' "$actual" > "$directory/$label.log"
+      if test "$mode" = duplicate; then
+        printf 'test %s ... ok\n' "$selector" >> "$directory/$label.log"
+      fi
+      ;;
+  esac
+  if test "$mode" = process; then return 7; fi
+  return 0
+}
+'''
+        loop = textwrap.dedent(self.release_step().split('          PY\n', 1)[1])
+        target = self.manifest['quorum_preflight_tests'][-1]
+        for mode in ('pass', 'zero', 'ignored', 'wrong', 'duplicate', 'process'):
+            with self.subTest(mode=mode):
+                output = self.root / ('loop-' + mode)
+                registry = self.read_registry(self.registry_log(), output)
+                self.assertEqual(registry.returncode, 0, registry.stderr)
+                env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', TRNM_SYNTHETIC_OUTPUT=str(output),
+                           TRNM_SYNTHETIC_MODE=mode, TRNM_SYNTHETIC_TARGET=target)
+                result = subprocess.run(['bash', '-c', prefix + loop], cwd=self.root, env=env,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode == 0, mode == 'pass', result.stderr)
+                calls = [line.split('\t') for line in (output / 'calls.tsv').read_text().splitlines()]
+                self.assertEqual(len(calls), 52)
+                self.assertEqual({name for _, name in calls}, set(self.manifest['complete_release_tests']))
+                for label, name in calls:
+                    if mode != 'pass' and name == target:
+                        continue
+                    execution = json.loads((output / (label + '-execution.json')).read_text())
+                    self.assertEqual(execution['test'], name)
+                    self.assertEqual(execution['executed_tests'], 1)
+
+    def test_actual_python_harness_runs_all_eighteen_and_readback_has_no_native_claim(self):
+        run = subprocess.run([sys.executable, '-B', str(self.root / PQ_ROOT_HARNESS_FILES[1]), '-v'],
+                             cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        self.assertEqual(run.returncode, 0, run.stdout)
+        result = self.read_harness(run.stdout, self.root / 'harness-positive')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        observed = json.loads(result.stdout)
+        self.assertEqual(observed['executed_tests'], 18)
+        self.assertEqual(observed['scope'], 'python-codec-policy-test-doubles-only')
+        self.assertIs(observed['native_crypto_observed'], False)
+        self.assertIs(observed['production_activation'], False)
+        rows = run.stdout.splitlines()
+        first = next(line for line in rows if line.startswith('test_'))
+        invalid = [
+            'Ran 0 tests in 0.00s\n\nOK\n',
+            run.stdout.replace(first + '\n', '', 1),
+            run.stdout + first + '\n',
+            run.stdout.replace(first, first.replace(' ... ok', ' ... skipped'), 1),
+            run.stdout.replace(first, first.replace('RootQuorumResearchTests', 'UnreviewedTests'), 1),
+            run.stdout.replace('Ran 18 tests', 'Ran 17 tests'),
+            run.stdout.replace('\nOK\n', '\nOK (skipped=1)\n'),
+            run.stdout.replace('\nOK\n', '\nFAILED (failures=1)\n'),
+        ]
+        first_name = first.split(' ', 1)[0]
+        invalid.append(run.stdout.replace(first_name, 'test_unreviewed'))
+        for index, log in enumerate(invalid):
+            with self.subTest(index=index):
+                result = self.read_harness(log, self.root / f'harness-negative-{index}')
+                self.assertNotEqual(result.returncode, 0, result.stdout)
 
 
 class CiContractTests(unittest.TestCase):

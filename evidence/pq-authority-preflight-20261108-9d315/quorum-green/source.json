@@ -1,0 +1,10 @@
+{
+  "base": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+  "phase": "fixed kernel with same regression tests (rustfmt)",
+  "sha256": {
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": "d07034b3a674a687135aa344e23ab8644dacefd9e1e587fbe76c07150ab0df6e",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs": "0791d81f9f0059ca5672d6c042dd9c9bb7d7f2b5403dafce35631bd0c3c1e34b"
+  }
+}

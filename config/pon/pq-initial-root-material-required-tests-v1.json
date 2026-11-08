@@ -28,6 +28,15 @@
     "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
     "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
     "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+    "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+    "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+    "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+    "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+    "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+    "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+    "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+    "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+    "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state",
     "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
     "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
     "pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature",
@@ -47,9 +56,10 @@
   ],
   "consensus_authority": false,
   "expected_controls": {
-    "complete_release": 43,
+    "complete_release": 52,
     "initial_root_material": 6,
-    "original_release": 37
+    "original_release": 37,
+    "quorum_preflight": 9
   },
   "harness": "lib",
   "initial_root_material_tests": [
@@ -102,8 +112,19 @@
   "package": "trnm-release-bundle",
   "performance_qualified": false,
   "production_activation": false,
+  "quorum_preflight_tests": [
+    "pq_release::tests::quorum_preflight_tests::release_counts_lengths_and_bad_extra_signatures_still_fail_closed",
+    "pq_release::tests::quorum_preflight_tests::release_preflights_late_cache_pin_faults_before_invalid_first_signature",
+    "pq_release::tests::quorum_preflight_tests::release_preflights_late_duplicate_before_invalid_first_signature",
+    "pq_release::tests::quorum_preflight_tests::release_preflights_late_unknown_before_invalid_first_signature",
+    "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_counts_before_old_signature_math",
+    "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_duplicate_before_old_signature_math",
+    "pq_release::tests::quorum_preflight_tests::rotation_preflights_successor_unknown_before_old_signature_math",
+    "pq_release::tests::quorum_preflight_tests::rotation_still_verifies_every_extra_old_and_new_signature",
+    "pq_release::tests::quorum_preflight_tests::successful_release_rotation_and_recovery_preserve_complete_authority_state"
+  ],
   "schema": "trnm-pq-initial-root-material-required-tests-v1",
-  "scope": "immutable-initial-root-public-key-material-only",
+  "scope": "immutable-initial-root-public-key-material-and-release-quorum-preflight-only",
   "signature_results_cached": false,
   "whole_chain_quantum_security_qualified": false
 }

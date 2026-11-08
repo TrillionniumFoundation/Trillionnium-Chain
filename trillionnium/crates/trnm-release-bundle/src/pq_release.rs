@@ -26,6 +26,7 @@ use std::{
     sync::Arc,
 };
 use trnm_crypto_primitives::pq_auth::PqNativeVerifier;
+use trnm_protocol::pq_frame::ML_DSA_65_SIGNATURE_BYTES;
 
 mod bundle_quorum;
 use bundle_quorum::VerifiedBundleQuorumV1;
@@ -474,18 +475,14 @@ impl PqReleaseAuthorityV1 {
             return Err(PqReleaseErrorV1::HistoryFull);
         }
         let message = validated.signing_message();
-        verify_quorum(
-            &self.root.offline_root,
-            &self.verifiers,
-            &message,
-            old_signatures,
-        )?;
-        verify_quorum(
-            &next.offline_root,
-            &validated.verifiers,
-            &message,
-            new_signatures,
-        )?;
+        // Reject both complete signer sets before spending signature-verification
+        // work on either quorum. These borrows retain no authorization result.
+        let old_quorum =
+            preflight_quorum(&self.root.offline_root, &self.verifiers, old_signatures)?;
+        let new_quorum =
+            preflight_quorum(&next.offline_root, &validated.verifiers, new_signatures)?;
+        verify_preflighted_quorum(&message, old_quorum)?;
+        verify_preflighted_quorum(&message, new_quorum)?;
         let verifiers = Arc::new(validated.into_verifiers());
         let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
@@ -660,7 +657,7 @@ pub fn pq_release_signature_digest_v1(
         if previous == Some(signature.key_id) {
             return Err(PqReleaseErrorV1::DuplicateSigner);
         }
-        if signature.signature.len() != 3309 {
+        if signature.signature.len() != ML_DSA_65_SIGNATURE_BYTES {
             return Err(PqReleaseErrorV1::SignatureRejected);
         }
         hash.update(signature.key_id);
@@ -735,10 +732,24 @@ fn verify_quorum(
     message: &[u8],
     signatures: &[PqReleaseSignatureV1],
 ) -> Result<(), PqReleaseErrorV1> {
+    verify_preflighted_quorum(message, preflight_quorum(role, verifiers, signatures)?)
+}
+
+type PreflightQuorumV1<'keys, 'signatures> = Vec<(&'keys PqNativeVerifier, &'signatures [u8])>;
+
+/// Complete bounded, cheap checks before any mathematical signature verification.
+/// The returned pairs borrow these exact immutable pins and signature bytes;
+/// neither a successful preflight nor a retained verifier is authorization.
+fn preflight_quorum<'keys, 'signatures>(
+    role: &PqReleaseRoleKeysV1,
+    verifiers: &'keys ReleaseVerifiersV1,
+    signatures: &'signatures [PqReleaseSignatureV1],
+) -> Result<PreflightQuorumV1<'keys, 'signatures>, PqReleaseErrorV1> {
     if signatures.len() < usize::from(role.threshold) || signatures.len() > MAX_RELEASE_KEYS_V1 {
         return Err(PqReleaseErrorV1::InsufficientSignatures);
     }
     let mut seen = BTreeSet::new();
+    let mut quorum = Vec::with_capacity(signatures.len());
     for signature in signatures {
         if !seen.insert(signature.key_id) {
             return Err(PqReleaseErrorV1::DuplicateSigner);
@@ -755,8 +766,23 @@ fn verify_quorum(
         {
             return Err(PqReleaseErrorV1::InvalidKey);
         }
+        if signature.signature.len() != ML_DSA_65_SIGNATURE_BYTES {
+            return Err(PqReleaseErrorV1::SignatureRejected);
+        }
+        quorum.push((verifier, signature.signature.as_slice()));
+    }
+    Ok(quorum)
+}
+
+fn verify_preflighted_quorum(
+    message: &[u8],
+    quorum: PreflightQuorumV1<'_, '_>,
+) -> Result<(), PqReleaseErrorV1> {
+    // Every supplied signature must verify, including all entries beyond the
+    // threshold. No successful mathematical observation is cached or reused.
+    for (verifier, signature) in quorum {
         verifier
-            .verify_exact_message(message, &signature.signature)
+            .verify_exact_message(message, signature)
             .map_err(|_| PqReleaseErrorV1::SignatureRejected)?;
     }
     Ok(())
