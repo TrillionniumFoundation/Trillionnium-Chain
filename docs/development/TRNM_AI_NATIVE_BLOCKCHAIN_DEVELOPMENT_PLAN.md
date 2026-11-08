@@ -10106,3 +10106,56 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+### 2026-11-08 data, ordering and deterministic execution continuation
+
+Continue from the same unified source `7e044b65454f4c9ea505591727332acffb33e7e5`.
+The updated
+[architecture comparison contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md#2026-11-08-implementation-order-and-decision-gates)
+keeps the order explicit: improve existing data/ordering boundaries, bounded
+batch operations and deterministic execution; measure the complete native path
+under the original aggregate resource contract; consider a full NG, Prism or
+GHOSTDAG successor only when propagation/ordering/fork loss is demonstrated to
+dominate. Existing M06 parallel preparation, canonical conflict replay, History
+batching and the withdrawn mixed-sender experiment are preserved.
+
+The primary-source comparison now states the original Bitcoin-NG one-quarter
+adversarial mining-power premise, Prism's shared winning-hash role sortition,
+GHOSTDAG's rate/delay-dependent parameterization, the committee assumptions of
+Narwhal/Tusk and Mysticeti, v2's validated transaction-vote integration and
+Block-STM's preset-order execution scope. The IEEE S&P 2026 round-jumping
+counterexample and the 2026-11-03 Starfish revision add concrete dependency,
+catch-up and dissemination fault obligations. They do not identify a measured
+winner for this project or qualify a production implementation.
+
+Preserve exact byte/state/receipt/root/error equivalence, one durable writer,
+current authority at commit, joined bounded workers, stable operation IDs and
+all failures. The CPU/memory/PID contract covers every worker in aggregate.
+Separate completed-only latency from full-population censored tails and retain
+unknown/unstarted outcomes in the planned population. Overlapping stage
+intervals are not additive bottleneck costs. No source check or microbenchmark
+may replace original four-second/six-depth/quarter-CPU hostile service, History,
+cold recovery or independent WAN observations.
+
+Work-cost, legal preparation reuse, probability and joint-state bounds, native
+time/DAA/credit, and whole-chain PQ composition continue as independent proof
+and implementation gates. Later drafts are not presumed ancestors of this
+candidate. The separately described useful-computation application service
+requires a declared security model and reviewed migration; it adds no automatic
+fallback or authority. All current HOLD, production and FinalUse flags remain.
+
+The finite `stateful_tail.make_optimal_tail` factory now captures a private
+immutable model before constructing its Bellman cache. The original frozen
+dataclass still held mutable caller mappings: replacing an action after an
+initial query could mix a cached probability of zero with an uncached
+probability of one. Existing static reports did not mutate their model, so this
+is not a retraction of those reports or a new W1 security result. A query now
+keeps construction-time semantics; a changed model requires a new query, and
+the caller must keep the model stable during construction.
+
+Seven new controls cover cached and uncached queries, state-set changes,
+mutable action/outcome sequences, detached record aliases, invalid laws and the
+unchanged complete historical report. The 6,156 dynamic-program cases, 324
+binomial comparisons, report digest and all seven original HOLD flags are
+preserved. The additive test command is required once in repository-truth
+alongside the original report, under the existing CI contract.
