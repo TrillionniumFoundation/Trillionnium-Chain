@@ -1,0 +1,2856 @@
+{
+  "all_observed_test_cases": [
+    {
+      "log_line": 6,
+      "name": "cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved",
+      "status": "ok"
+    },
+    {
+      "log_line": 7,
+      "name": "cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots",
+      "status": "ok"
+    },
+    {
+      "log_line": 8,
+      "name": "cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects",
+      "status": "ok"
+    },
+    {
+      "log_line": 9,
+      "name": "cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history",
+      "status": "ok"
+    },
+    {
+      "log_line": 10,
+      "name": "cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen",
+      "status": "ok"
+    },
+    {
+      "log_line": 11,
+      "name": "cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root",
+      "status": "ok"
+    },
+    {
+      "log_line": 12,
+      "name": "cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty",
+      "status": "ok"
+    },
+    {
+      "log_line": 13,
+      "name": "cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible",
+      "status": "ok"
+    },
+    {
+      "log_line": 14,
+      "name": "cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation",
+      "status": "ok"
+    },
+    {
+      "log_line": 15,
+      "name": "cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack",
+      "status": "ok"
+    },
+    {
+      "log_line": 16,
+      "name": "cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 17,
+      "name": "cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation",
+      "status": "ok"
+    },
+    {
+      "log_line": 18,
+      "name": "cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent",
+      "status": "ok"
+    },
+    {
+      "log_line": 19,
+      "name": "cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration",
+      "status": "ok"
+    },
+    {
+      "log_line": 20,
+      "name": "cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart",
+      "status": "ok"
+    },
+    {
+      "log_line": 21,
+      "name": "cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype",
+      "status": "ok"
+    },
+    {
+      "log_line": 22,
+      "name": "cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots",
+      "status": "ok"
+    },
+    {
+      "log_line": 23,
+      "name": "cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity",
+      "status": "ok"
+    },
+    {
+      "log_line": 24,
+      "name": "cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement",
+      "status": "ok"
+    },
+    {
+      "log_line": 25,
+      "name": "cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration",
+      "status": "ok"
+    },
+    {
+      "log_line": 26,
+      "name": "cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources",
+      "status": "ok"
+    },
+    {
+      "log_line": 27,
+      "name": "cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity",
+      "status": "ok"
+    },
+    {
+      "log_line": 28,
+      "name": "cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root",
+      "status": "ok"
+    },
+    {
+      "log_line": 29,
+      "name": "cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible",
+      "status": "ok"
+    },
+    {
+      "log_line": 30,
+      "name": "cell::archive::tests::unknown_schema_or_missing_catalog_never_opens_as_empty_archive",
+      "status": "ok"
+    },
+    {
+      "log_line": 31,
+      "name": "cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity",
+      "status": "ok"
+    },
+    {
+      "log_line": 32,
+      "name": "cell::bep52::tests::a_valid_external_hash_never_replaces_the_internal_manifest_or_context_pin",
+      "status": "ok"
+    },
+    {
+      "log_line": 33,
+      "name": "cell::bep52::tests::alternate_bencoding_path_names_codecs_and_overlarge_metadata_fail_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 34,
+      "name": "cell::bep52::tests::boundary_file_lengths_and_exact_last_piece_lengths_verify",
+      "status": "ok"
+    },
+    {
+      "log_line": 35,
+      "name": "cell::bep52::tests::full_piece_layers_are_checked_even_when_infohash_is_unchanged",
+      "status": "ok"
+    },
+    {
+      "log_line": 36,
+      "name": "cell::bep52::tests::larger_chunks_and_empty_cells_are_explicitly_outside_this_profile",
+      "status": "ok"
+    },
+    {
+      "log_line": 37,
+      "name": "cell::bep52::tests::magnet_profile_rejects_ambiguous_topics_and_network_parameter_injection",
+      "status": "ok"
+    },
+    {
+      "log_line": 38,
+      "name": "cell::bep52::tests::maximum_declared_tree_has_bounded_metadata_and_fourteen_sibling_proof",
+      "status": "ok"
+    },
+    {
+      "log_line": 39,
+      "name": "cell::bep52::tests::non_power_of_two_tree_uses_zero_digest_padding_and_omits_padding_in_piece_layer",
+      "status": "ok"
+    },
+    {
+      "log_line": 40,
+      "name": "cell::bep52::tests::reordered_chunks_cross_index_replays_and_every_single_byte_proof_corruption_fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 41,
+      "name": "cell::bep52::tests::short_single_leaf_has_unpadded_sha256_root_and_exact_bencoding",
+      "status": "ok"
+    },
+    {
+      "log_line": 42,
+      "name": "cell::bep52::tests::truncated_extra_and_hostile_proof_shapes_are_rejected_before_indexing",
+      "status": "ok"
+    },
+    {
+      "log_line": 43,
+      "name": "cell::bep52::tests::wholly_padded_upper_subtrees_are_hashes_of_zero_children_not_zero",
+      "status": "ok"
+    },
+    {
+      "log_line": 44,
+      "name": "cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs",
+      "status": "ok"
+    },
+    {
+      "log_line": 45,
+      "name": "cell::closure_tests::closure_checks_independent_owner_context_and_required_roles",
+      "status": "ok"
+    },
+    {
+      "log_line": 46,
+      "name": "cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership",
+      "status": "ok"
+    },
+    {
+      "log_line": 47,
+      "name": "cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 48,
+      "name": "cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 49,
+      "name": "cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities",
+      "status": "ok"
+    },
+    {
+      "log_line": 50,
+      "name": "cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases",
+      "status": "ok"
+    },
+    {
+      "log_line": 51,
+      "name": "cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies",
+      "status": "ok"
+    },
+    {
+      "log_line": 52,
+      "name": "cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts",
+      "status": "ok"
+    },
+    {
+      "log_line": 53,
+      "name": "cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 54,
+      "name": "cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 55,
+      "name": "cell::custody::tests::cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report",
+      "status": "ok"
+    },
+    {
+      "log_line": 56,
+      "name": "cell::custody::tests::complementary_partial_archives_never_count_as_a_complete_replica",
+      "status": "ok"
+    },
+    {
+      "log_line": 57,
+      "name": "cell::custody::tests::complete_models_with_one_partial_environment_leave_the_whole_version_incomplete",
+      "status": "ok"
+    },
+    {
+      "log_line": 58,
+      "name": "cell::custody::tests::complete_payload_budget_is_reserved_before_any_partial_scan",
+      "status": "ok"
+    },
+    {
+      "log_line": 59,
+      "name": "cell::custody::tests::complete_version_counts_real_model_and_environment_on_the_same_archives",
+      "status": "ok"
+    },
+    {
+      "log_line": 60,
+      "name": "cell::custody::tests::complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans",
+      "status": "ok"
+    },
+    {
+      "log_line": 61,
+      "name": "cell::custody::tests::complete_version_refuses_to_splice_a_valid_environment_from_another_physical_store",
+      "status": "ok"
+    },
+    {
+      "log_line": 62,
+      "name": "cell::custody::tests::declared_domain_and_owner_aliases_and_absent_evidence_fail_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 63,
+      "name": "cell::custody::tests::expected_store_identifier_cannot_be_counted_twice_from_two_local_directories",
+      "status": "ok"
+    },
+    {
+      "log_line": 64,
+      "name": "cell::custody::tests::expired_original_observation_deadline_is_not_refreshed",
+      "status": "ok"
+    },
+    {
+      "log_line": 65,
+      "name": "cell::custody::tests::future_and_expired_promises_never_count_even_when_all_bytes_remain",
+      "status": "ok"
+    },
+    {
+      "log_line": 66,
+      "name": "cell::custody::tests::historical_ack_cannot_hide_corruption_and_failed_probes_are_not_refunded",
+      "status": "ok"
+    },
+    {
+      "log_line": 67,
+      "name": "cell::custody::tests::missed_fixed_repair_window_requires_replacement_without_extending_paid_terms",
+      "status": "ok"
+    },
+    {
+      "log_line": 68,
+      "name": "cell::custody::tests::origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 69,
+      "name": "cell::custody::tests::policy_pin_rejects_changed_domain_and_continuation_owners_before_probe",
+      "status": "ok"
+    },
+    {
+      "log_line": 70,
+      "name": "cell::custody::tests::reachable_sponsor_is_never_treated_as_available_funds_or_paid_renewal",
+      "status": "ok"
+    },
+    {
+      "log_line": 71,
+      "name": "cell::custody::tests::same_payload_under_another_version_is_not_the_pinned_whole_release",
+      "status": "ok"
+    },
+    {
+      "log_line": 72,
+      "name": "cell::custody::tests::sponsor_disappearance_keeps_original_deadline_duty_and_full_coverage_target",
+      "status": "ok"
+    },
+    {
+      "log_line": 73,
+      "name": "cell::custody::tests::three_complete_target_readbacks_survive_source_and_cache_loss",
+      "status": "ok"
+    },
+    {
+      "log_line": 74,
+      "name": "cell::custody::tests::version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor",
+      "status": "ok"
+    },
+    {
+      "log_line": 75,
+      "name": "cell::custody::tests::version_continuation_preserves_environment_probe_refusal_and_actual_reservations",
+      "status": "ok"
+    },
+    {
+      "log_line": 76,
+      "name": "cell::custody::tests::version_continuation_refuses_either_missing_component_observation",
+      "status": "ok"
+    },
+    {
+      "log_line": 77,
+      "name": "cell::custody::tests::version_continuation_retains_each_original_term_owner_and_component_size",
+      "status": "ok"
+    },
+    {
+      "log_line": 78,
+      "name": "cell::custody::tests::version_continuation_validates_one_bounded_sponsor_union_before_component_plans",
+      "status": "ok"
+    },
+    {
+      "log_line": 79,
+      "name": "cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins",
+      "status": "ok"
+    },
+    {
+      "log_line": 80,
+      "name": "cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication",
+      "status": "ok"
+    },
+    {
+      "log_line": 81,
+      "name": "cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target",
+      "status": "ok"
+    },
+    {
+      "log_line": 82,
+      "name": "cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target",
+      "status": "ok"
+    },
+    {
+      "log_line": 83,
+      "name": "cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads",
+      "status": "ok"
+    },
+    {
+      "log_line": 84,
+      "name": "cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success",
+      "status": "ok"
+    },
+    {
+      "log_line": 85,
+      "name": "cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write",
+      "status": "ok"
+    },
+    {
+      "log_line": 86,
+      "name": "cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps",
+      "status": "ok"
+    },
+    {
+      "log_line": 87,
+      "name": "cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused",
+      "status": "ok"
+    },
+    {
+      "log_line": 88,
+      "name": "cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins",
+      "status": "ok"
+    },
+    {
+      "log_line": 89,
+      "name": "cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target",
+      "status": "ok"
+    },
+    {
+      "log_line": 90,
+      "name": "cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 91,
+      "name": "cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 92,
+      "name": "cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 93,
+      "name": "cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 94,
+      "name": "cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 95,
+      "name": "cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 96,
+      "name": "cell::discovery::diversity_tests::real_tcp_low_owner_flood_keeps_later_bootstrap_provider_and_original_budgets",
+      "status": "ok"
+    },
+    {
+      "log_line": 97,
+      "name": "cell::discovery::diversity_tests::real_tcp_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 98,
+      "name": "cell::discovery::diversity_tests::real_tcp_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry",
+      "status": "ok"
+    },
+    {
+      "log_line": 99,
+      "name": "cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation",
+      "status": "ok"
+    },
+    {
+      "log_line": 100,
+      "name": "cell::discovery::pq3::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 101,
+      "name": "cell::discovery::pq3::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 102,
+      "name": "cell::discovery::pq3::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 103,
+      "name": "cell::discovery::pq3::directory::deadline_tests::publish_commit_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 104,
+      "name": "cell::discovery::pq3::directory::deadline_tests::publish_owner_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 105,
+      "name": "cell::discovery::pq3::directory::deadline_tests::publish_writer_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 106,
+      "name": "cell::discovery::pq3::directory_tests::actual_mldsa_v3_binds_every_unsigned_byte_and_rejects_other_namespaces",
+      "status": "ok"
+    },
+    {
+      "log_line": 107,
+      "name": "cell::discovery::pq3::directory_tests::bounded_epoch_churn_cannot_consume_permanent_owner_capacity",
+      "status": "ok"
+    },
+    {
+      "log_line": 108,
+      "name": "cell::discovery::pq3::directory_tests::epoch_and_wire_column_corruption_fail_before_pruning_or_ack",
+      "status": "ok"
+    },
+    {
+      "log_line": 109,
+      "name": "cell::discovery::pq3::directory_tests::failed_deadline_does_not_retire_epoch_or_change_durable_state",
+      "status": "ok"
+    },
+    {
+      "log_line": 110,
+      "name": "cell::discovery::pq3::directory_tests::full_512_slot_epoch_recovers_without_widening_database_or_replay_limits",
+      "status": "ok"
+    },
+    {
+      "log_line": 111,
+      "name": "cell::discovery::pq3::directory_tests::key_expiry_returns_active_quota_and_is_rechecked_after_verification",
+      "status": "ok"
+    },
+    {
+      "log_line": 112,
+      "name": "cell::discovery::pq3::directory_tests::manifest_expiry_reclaims_active_slots_across_operations_and_restart",
+      "status": "ok"
+    },
+    {
+      "log_line": 113,
+      "name": "cell::discovery::pq3::directory_tests::owner_expiry_reclaims_active_quota_and_renewal_must_repay_it",
+      "status": "ok"
+    },
+    {
+      "log_line": 114,
+      "name": "cell::discovery::pq3::directory_tests::randomized_mldsa_equivalence_keeps_original_wire_and_changed_statement_fails",
+      "status": "ok"
+    },
+    {
+      "log_line": 115,
+      "name": "cell::discovery::pq3::directory_tests::read_only_usage_advances_its_fence_after_reconciling_a_higher_revision",
+      "status": "ok"
+    },
+    {
+      "log_line": 116,
+      "name": "cell::discovery::pq3::directory_tests::read_only_usage_refuses_rewinding_a_revision_already_observed_in_process",
+      "status": "ok"
+    },
+    {
+      "log_line": 117,
+      "name": "cell::discovery::pq3::directory_tests::shorter_latest_ttl_cannot_resurrect_a_long_lived_lower_sequence",
+      "status": "ok"
+    },
+    {
+      "log_line": 118,
+      "name": "cell::discovery::pq3::directory_tests::signed_epoch_limits_ttl_skew_and_integer_overflow",
+      "status": "ok"
+    },
+    {
+      "log_line": 119,
+      "name": "cell::discovery::pq3::directory_tests::source_and_prefix_limits_release_expired_capacity_without_origin_reassignment",
+      "status": "ok"
+    },
+    {
+      "log_line": 120,
+      "name": "cell::discovery::pq3::directory_tests::unrepresentable_epoch_end_cannot_commit_an_unrecoverable_directory_clock",
+      "status": "ok"
+    },
+    {
+      "log_line": 121,
+      "name": "cell::discovery::pq3::directory_tests::v3_never_migrates_v1_v2_or_changes_pinned_roster_and_namespace",
+      "status": "ok"
+    },
+    {
+      "log_line": 122,
+      "name": "cell::discovery::pq3::directory_tests::withdrawal_returns_active_quota_but_persists_replay_evidence",
+      "status": "ok"
+    },
+    {
+      "log_line": 123,
+      "name": "cell::discovery::pq3::multisource_tests::real_tcp_malicious_first_source_cannot_overwrite_later_authenticated_provider",
+      "status": "ok"
+    },
+    {
+      "log_line": 124,
+      "name": "cell::discovery::pq3::multisource_tests::real_tcp_native_low_owner_flood_keeps_later_source_before_and_after_active_quota",
+      "status": "ok"
+    },
+    {
+      "log_line": 125,
+      "name": "cell::discovery::pq3::server_tests::real_tcp_rendezvous_prioritizes_ninth_active_provider_over_eight_withdrawn_rows",
+      "status": "ok"
+    },
+    {
+      "log_line": 126,
+      "name": "cell::discovery::pq3::server_tests::real_tcp_rendezvous_skips_expired_or_revoked_key_while_record_ttl_is_live",
+      "status": "ok"
+    },
+    {
+      "log_line": 127,
+      "name": "cell::discovery::pq3::transport_tests::actual_server_bounds_signing_and_mandatory_self_verification_together",
+      "status": "ok"
+    },
+    {
+      "log_line": 128,
+      "name": "cell::discovery::pq3::transport_tests::duplicate_source_keys_and_wrong_generations_fail_before_connecting",
+      "status": "ok"
+    },
+    {
+      "log_line": 129,
+      "name": "cell::discovery::pq3::transport_tests::epoch_rollover_resets_sequence_without_reusing_old_sources_or_expiry",
+      "status": "ok"
+    },
+    {
+      "log_line": 130,
+      "name": "cell::discovery::pq3::transport_tests::maximum_signed_result_fits_original_byte_cap_and_binds_last_record",
+      "status": "ok"
+    },
+    {
+      "log_line": 131,
+      "name": "cell::discovery::pq3::transport_tests::native_response_binds_complete_query_nonce_target_result_status_and_lifetime",
+      "status": "ok"
+    },
+    {
+      "log_line": 132,
+      "name": "cell::discovery::pq3::transport_tests::real_tcp_authenticated_announce_cold_fetch_withdrawal_and_failed_denominators",
+      "status": "ok"
+    },
+    {
+      "log_line": 133,
+      "name": "cell::discovery::pq3::transport_tests::real_tcp_failed_payload_retains_shared_session_connection_and_byte_totals",
+      "status": "ok"
+    },
+    {
+      "log_line": 134,
+      "name": "cell::discovery::pq3::transport_tests::real_tcp_partial_byte_exhaustion_prevents_another_dial_and_deadline_is_original",
+      "status": "ok"
+    },
+    {
+      "log_line": 135,
+      "name": "cell::discovery::pq3::transport_tests::real_tcp_replayed_and_unsigned_replies_keep_actual_failure_denominator",
+      "status": "ok"
+    },
+    {
+      "log_line": 136,
+      "name": "cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 137,
+      "name": "cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 138,
+      "name": "cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 139,
+      "name": "cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 140,
+      "name": "cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 141,
+      "name": "cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 142,
+      "name": "cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire",
+      "status": "ok"
+    },
+    {
+      "log_line": 143,
+      "name": "cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound",
+      "status": "ok"
+    },
+    {
+      "log_line": 144,
+      "name": "cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart",
+      "status": "ok"
+    },
+    {
+      "log_line": 145,
+      "name": "cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication",
+      "status": "ok"
+    },
+    {
+      "log_line": 146,
+      "name": "cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 147,
+      "name": "cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 148,
+      "name": "cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 149,
+      "name": "cell::discovery::pq::tests::real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 150,
+      "name": "cell::discovery::pq::tests::real_tcp_pq_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 151,
+      "name": "cell::discovery::pq::tests::real_tcp_pq_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry",
+      "status": "ok"
+    },
+    {
+      "log_line": 152,
+      "name": "cell::discovery::selection::tests::bootstrap_flood_cannot_take_all_slots_from_later_observed_sources",
+      "status": "ok"
+    },
+    {
+      "log_line": 153,
+      "name": "cell::discovery::selection::tests::dedup_uses_latest_current_expiry_without_losing_actual_source_provenance",
+      "status": "ok"
+    },
+    {
+      "log_line": 154,
+      "name": "cell::discovery::selection::tests::ipv4_and_ipv6_prefixes_and_ips_precede_additional_ports_of_low_keys",
+      "status": "ok"
+    },
+    {
+      "log_line": 155,
+      "name": "cell::discovery::selection::tests::one_network_fallbacks_survive_and_candidate_identity_is_not_peer_chosen",
+      "status": "ok"
+    },
+    {
+      "log_line": 156,
+      "name": "cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 157,
+      "name": "cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 158,
+      "name": "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+      "status": "ok"
+    },
+    {
+      "log_line": 159,
+      "name": "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+      "status": "ok"
+    },
+    {
+      "log_line": 160,
+      "name": "cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate",
+      "status": "ok"
+    },
+    {
+      "log_line": 161,
+      "name": "cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply",
+      "status": "ok"
+    },
+    {
+      "log_line": 162,
+      "name": "cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding",
+      "status": "ok"
+    },
+    {
+      "log_line": 163,
+      "name": "cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 164,
+      "name": "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets",
+      "status": "ok"
+    },
+    {
+      "log_line": 165,
+      "name": "cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 166,
+      "name": "cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports",
+      "status": "ok"
+    },
+    {
+      "log_line": 167,
+      "name": "cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts",
+      "status": "ok"
+    },
+    {
+      "log_line": 168,
+      "name": "cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys",
+      "status": "ok"
+    },
+    {
+      "log_line": 169,
+      "name": "cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals",
+      "status": "ok"
+    },
+    {
+      "log_line": 170,
+      "name": "cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack",
+      "status": "ok"
+    },
+    {
+      "log_line": 171,
+      "name": "cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns",
+      "status": "ok"
+    },
+    {
+      "log_line": 172,
+      "name": "cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts",
+      "status": "ok"
+    },
+    {
+      "log_line": 173,
+      "name": "cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps",
+      "status": "ok"
+    },
+    {
+      "log_line": 174,
+      "name": "cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 175,
+      "name": "cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit",
+      "status": "ok"
+    },
+    {
+      "log_line": 176,
+      "name": "cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater",
+      "status": "ok"
+    },
+    {
+      "log_line": 177,
+      "name": "cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector",
+      "status": "ok"
+    },
+    {
+      "log_line": 178,
+      "name": "cell::erasure::tests::all_fifteen_four_shard_subsets_restore_real_non_aligned_chunk",
+      "status": "ok"
+    },
+    {
+      "log_line": 179,
+      "name": "cell::erasure::tests::all_padding_remainders_and_short_sources_are_reconstructed_exactly",
+      "status": "ok"
+    },
+    {
+      "log_line": 180,
+      "name": "cell::erasure::tests::corrupted_required_or_extra_shards_never_return_verified_source_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 181,
+      "name": "cell::erasure::tests::every_field_product_matches_independent_polynomial_division",
+      "status": "ok"
+    },
+    {
+      "log_line": 182,
+      "name": "cell::erasure::tests::every_single_byte_wire_mutation_is_rejected_by_shape_or_pinned_recovery",
+      "status": "ok"
+    },
+    {
+      "log_line": 183,
+      "name": "cell::erasure::tests::exact_systematic_and_partial_shard_vectors_and_crs1_identity",
+      "status": "ok"
+    },
+    {
+      "log_line": 184,
+      "name": "cell::erasure::tests::full_four_mebibyte_chunk_recovers_with_two_missing_systematic_shards",
+      "status": "ok"
+    },
+    {
+      "log_line": 185,
+      "name": "cell::erasure::tests::insufficient_duplicate_and_reordered_shards_are_not_silently_reinterpreted",
+      "status": "ok"
+    },
+    {
+      "log_line": 186,
+      "name": "cell::erasure::tests::internal_context_object_and_chunk_pins_cannot_be_replaced_by_shard_headers",
+      "status": "ok"
+    },
+    {
+      "log_line": 187,
+      "name": "cell::erasure::tests::nonzero_padding_is_rejected_even_when_original_payload_hash_would_match",
+      "status": "ok"
+    },
+    {
+      "log_line": 188,
+      "name": "cell::erasure::tests::singular_matrix_is_an_error_and_does_not_claim_recovery",
+      "status": "ok"
+    },
+    {
+      "log_line": 189,
+      "name": "cell::erasure::tests::truncated_extra_oversized_and_hostile_headers_refuse_before_payload_copy",
+      "status": "ok"
+    },
+    {
+      "log_line": 190,
+      "name": "cell::model_root_tests::actual_direct_parent_roots_require_complete_matching_family_and_older_generation",
+      "status": "ok"
+    },
+    {
+      "log_line": 191,
+      "name": "cell::model_root_tests::independent_python_model_root_vector_and_every_truncated_prefix",
+      "status": "ok"
+    },
+    {
+      "log_line": 192,
+      "name": "cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root",
+      "status": "ok"
+    },
+    {
+      "log_line": 193,
+      "name": "cell::model_root_tests::router_omission_lineage_alias_and_changed_owner_context_are_refused",
+      "status": "ok"
+    },
+    {
+      "log_line": 194,
+      "name": "cell::network::availability::tests::absence_and_interrupted_io_do_not_quarantine_or_renew_the_original_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 195,
+      "name": "cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output",
+      "status": "ok"
+    },
+    {
+      "log_line": 196,
+      "name": "cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session",
+      "status": "ok"
+    },
+    {
+      "log_line": 197,
+      "name": "cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback",
+      "status": "ok"
+    },
+    {
+      "log_line": 198,
+      "name": "cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 199,
+      "name": "cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance",
+      "status": "ok"
+    },
+    {
+      "log_line": 200,
+      "name": "cell::network::availability::tests::malformed_inventory_padding_is_quarantined_and_oversize_page_never_dials",
+      "status": "ok"
+    },
+    {
+      "log_line": 201,
+      "name": "cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 202,
+      "name": "cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch",
+      "status": "ok"
+    },
+    {
+      "log_line": 203,
+      "name": "cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback",
+      "status": "ok"
+    },
+    {
+      "log_line": 204,
+      "name": "cell::network::budget_tests::chunk_deadline_expiry_does_not_quarantine_peer_but_invalid_bytes_do",
+      "status": "ok"
+    },
+    {
+      "log_line": 205,
+      "name": "cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 206,
+      "name": "cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock",
+      "status": "ok"
+    },
+    {
+      "log_line": 207,
+      "name": "cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff",
+      "status": "ok"
+    },
+    {
+      "log_line": 208,
+      "name": "cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest",
+      "status": "ok"
+    },
+    {
+      "log_line": 209,
+      "name": "cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits",
+      "status": "ok"
+    },
+    {
+      "log_line": 210,
+      "name": "cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes",
+      "status": "ok"
+    },
+    {
+      "log_line": 211,
+      "name": "cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 212,
+      "name": "cell::network::cancellation_tests::cancellation_keeps_partial_response_charge_without_retry_or_peer_quarantine",
+      "status": "ok"
+    },
+    {
+      "log_line": 213,
+      "name": "cell::network::cancellation_tests::cancellation_poll_timeouts_keep_original_partial_frame_and_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 214,
+      "name": "cell::network::cancellation_tests::cancelled_budget_wait_preserves_unused_capacity_without_reviving_session",
+      "status": "ok"
+    },
+    {
+      "log_line": 215,
+      "name": "cell::network::cancellation_tests::observed_cancellation_remains_with_original_session_after_flag_reset",
+      "status": "ok"
+    },
+    {
+      "log_line": 216,
+      "name": "cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 217,
+      "name": "cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 218,
+      "name": "cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 219,
+      "name": "cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers",
+      "status": "ok"
+    },
+    {
+      "log_line": 220,
+      "name": "cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame",
+      "status": "ok"
+    },
+    {
+      "log_line": 221,
+      "name": "cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output",
+      "status": "ok"
+    },
+    {
+      "log_line": 222,
+      "name": "cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks",
+      "status": "ok"
+    },
+    {
+      "log_line": 223,
+      "name": "cell::network::persistent::rarest_tests::v3_invalid_local_inventory_range_and_v2_profile_cannot_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 224,
+      "name": "cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines",
+      "status": "ok"
+    },
+    {
+      "log_line": 225,
+      "name": "cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume",
+      "status": "ok"
+    },
+    {
+      "log_line": 226,
+      "name": "cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance",
+      "status": "ok"
+    },
+    {
+      "log_line": 227,
+      "name": "cell::network::persistent::rarest_tests::v3_partial_inventory_drops_connection_without_implicit_frame_retry",
+      "status": "ok"
+    },
+    {
+      "log_line": 228,
+      "name": "cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections",
+      "status": "ok"
+    },
+    {
+      "log_line": 229,
+      "name": "cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk",
+      "status": "ok"
+    },
+    {
+      "log_line": 230,
+      "name": "cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 231,
+      "name": "cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 232,
+      "name": "cell::network::persistent::rarest_tests::v3_wrong_magic_or_noncanonical_inventory_quarantines_without_fallback",
+      "status": "ok"
+    },
+    {
+      "log_line": 233,
+      "name": "cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_new_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 234,
+      "name": "cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_reused_frame",
+      "status": "ok"
+    },
+    {
+      "log_line": 235,
+      "name": "cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame",
+      "status": "ok"
+    },
+    {
+      "log_line": 236,
+      "name": "cell::network::persistent::tests::interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allowances",
+      "status": "ok"
+    },
+    {
+      "log_line": 237,
+      "name": "cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 238,
+      "name": "cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame",
+      "status": "ok"
+    },
+    {
+      "log_line": 239,
+      "name": "cell::network::persistent::tests::old_response_magic_is_rejected_without_namespace_fallback_or_redial",
+      "status": "ok"
+    },
+    {
+      "log_line": 240,
+      "name": "cell::network::persistent::tests::original_cancellation_stops_waiting_pool_request_without_new_frame_or_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 241,
+      "name": "cell::network::persistent::tests::quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion",
+      "status": "ok"
+    },
+    {
+      "log_line": 242,
+      "name": "cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 243,
+      "name": "cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix",
+      "status": "ok"
+    },
+    {
+      "log_line": 244,
+      "name": "cell::network::persistent::tests::reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial",
+      "status": "ok"
+    },
+    {
+      "log_line": 245,
+      "name": "cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown",
+      "status": "ok"
+    },
+    {
+      "log_line": 246,
+      "name": "cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests",
+      "status": "ok"
+    },
+    {
+      "log_line": 247,
+      "name": "cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 248,
+      "name": "cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response",
+      "status": "ok"
+    },
+    {
+      "log_line": 249,
+      "name": "cell::network::persistent::tests::temporary_response_reservation_after_connection_wait_is_not_exhaustion",
+      "status": "ok"
+    },
+    {
+      "log_line": 250,
+      "name": "cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection",
+      "status": "ok"
+    },
+    {
+      "log_line": 251,
+      "name": "cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 252,
+      "name": "cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin",
+      "status": "ok"
+    },
+    {
+      "log_line": 253,
+      "name": "cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged",
+      "status": "ok"
+    },
+    {
+      "log_line": 254,
+      "name": "cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff",
+      "status": "ok"
+    },
+    {
+      "log_line": 255,
+      "name": "cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error",
+      "status": "ok"
+    },
+    {
+      "log_line": 256,
+      "name": "cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup",
+      "status": "ok"
+    },
+    {
+      "log_line": 257,
+      "name": "cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap",
+      "status": "ok"
+    },
+    {
+      "log_line": 258,
+      "name": "cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch",
+      "status": "ok"
+    },
+    {
+      "log_line": 259,
+      "name": "cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store",
+      "status": "ok"
+    },
+    {
+      "log_line": 260,
+      "name": "cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval",
+      "status": "ok"
+    },
+    {
+      "log_line": 261,
+      "name": "cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers",
+      "status": "ok"
+    },
+    {
+      "log_line": 262,
+      "name": "cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 263,
+      "name": "cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 264,
+      "name": "cell::network::serving::tests::ready_callback_requires_capacity_and_cannot_renew_or_ignore_cancellation",
+      "status": "ok"
+    },
+    {
+      "log_line": 265,
+      "name": "cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path",
+      "status": "ok"
+    },
+    {
+      "log_line": 266,
+      "name": "cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry",
+      "status": "ok"
+    },
+    {
+      "log_line": 267,
+      "name": "cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry",
+      "status": "ok"
+    },
+    {
+      "log_line": 268,
+      "name": "cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge",
+      "status": "ok"
+    },
+    {
+      "log_line": 269,
+      "name": "cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker",
+      "status": "ok"
+    },
+    {
+      "log_line": 270,
+      "name": "cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation",
+      "status": "ok"
+    },
+    {
+      "log_line": 271,
+      "name": "cell::pq::tests::cached_release_rechecks_current_retirement_rotation_scope_and_sequence",
+      "status": "ok"
+    },
+    {
+      "log_line": 272,
+      "name": "cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates",
+      "status": "ok"
+    },
+    {
+      "log_line": 273,
+      "name": "cell::pq::tests::selecting_old_content_requires_a_new_owner_approved_sequence",
+      "status": "ok"
+    },
+    {
+      "log_line": 274,
+      "name": "cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures",
+      "status": "ok"
+    },
+    {
+      "log_line": 275,
+      "name": "cell::pq::version::tests::cpv3_cached_publisher_observation_rechecks_current_owner_not_only_time",
+      "status": "ok"
+    },
+    {
+      "log_line": 276,
+      "name": "cell::pq::version::tests::cpv3_cannot_reuse_a_signature_for_same_files_with_other_dependency_edges",
+      "status": "ok"
+    },
+    {
+      "log_line": 277,
+      "name": "cell::pq::version::tests::cpv3_signs_complete_version_and_rejects_statement_signature_mutations",
+      "status": "ok"
+    },
+    {
+      "log_line": 278,
+      "name": "cell::pq::version::tests::cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback",
+      "status": "ok"
+    },
+    {
+      "log_line": 279,
+      "name": "cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix",
+      "status": "ok"
+    },
+    {
+      "log_line": 280,
+      "name": "cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries",
+      "status": "ok"
+    },
+    {
+      "log_line": 281,
+      "name": "cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection",
+      "status": "ok"
+    },
+    {
+      "log_line": 282,
+      "name": "cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 283,
+      "name": "cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 284,
+      "name": "cell::release::transport_tests::rarest::v3_release_closure_model_and_tensor_keep_one_pool_and_aggregate_inventory_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 285,
+      "name": "cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_frames_at_member_boundary_and_resume_is_explicit",
+      "status": "ok"
+    },
+    {
+      "log_line": 286,
+      "name": "cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_response_bytes_at_member_boundary",
+      "status": "ok"
+    },
+    {
+      "log_line": 287,
+      "name": "cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels",
+      "status": "ok"
+    },
+    {
+      "log_line": 288,
+      "name": "cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections",
+      "status": "ok"
+    },
+    {
+      "log_line": 289,
+      "name": "cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work",
+      "status": "ok"
+    },
+    {
+      "log_line": 290,
+      "name": "cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version",
+      "status": "ok"
+    },
+    {
+      "log_line": 291,
+      "name": "cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 292,
+      "name": "cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound",
+      "status": "ok"
+    },
+    {
+      "log_line": 293,
+      "name": "cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 294,
+      "name": "cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback",
+      "status": "ok"
+    },
+    {
+      "log_line": 295,
+      "name": "cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores",
+      "status": "ok"
+    },
+    {
+      "log_line": 296,
+      "name": "cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections",
+      "status": "ok"
+    },
+    {
+      "log_line": 297,
+      "name": "cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 298,
+      "name": "cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path",
+      "status": "ok"
+    },
+    {
+      "log_line": 299,
+      "name": "cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed",
+      "status": "ok"
+    },
+    {
+      "log_line": 300,
+      "name": "cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks",
+      "status": "ok"
+    },
+    {
+      "log_line": 301,
+      "name": "cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download",
+      "status": "ok"
+    },
+    {
+      "log_line": 302,
+      "name": "cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download",
+      "status": "ok"
+    },
+    {
+      "log_line": 303,
+      "name": "cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 304,
+      "name": "cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing",
+      "status": "ok"
+    },
+    {
+      "log_line": 305,
+      "name": "cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff",
+      "status": "ok"
+    },
+    {
+      "log_line": 306,
+      "name": "cell::residency::budget_task_tests::prefetch_deduplicates_exact_ram_needs_and_preserves_complete_transport_counts",
+      "status": "ok"
+    },
+    {
+      "log_line": 307,
+      "name": "cell::residency::budget_task_tests::prefetch_ram_capacity_refuses_after_metadata_before_any_payload_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 308,
+      "name": "cell::residency::budget_task_tests::prefetch_readiness_does_not_refresh_connection_or_response_allowances",
+      "status": "ok"
+    },
+    {
+      "log_line": 309,
+      "name": "cell::residency::budget_task_tests::prefetch_reference_capacity_refuses_after_metadata_before_any_payload_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 310,
+      "name": "cell::residency::budget_task_tests::task_cancellation_is_latched_and_does_not_promise_erasure_of_copied_public_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 311,
+      "name": "cell::residency::budget_task_tests::task_cutoff_cannot_be_renewed_by_a_later_hot_lookup",
+      "status": "ok"
+    },
+    {
+      "log_line": 312,
+      "name": "cell::residency::budget_task_tests::task_lookup_rechecks_current_context_and_never_invokes_consumer_after_a_mismatch",
+      "status": "ok"
+    },
+    {
+      "log_line": 313,
+      "name": "cell::residency::budget_task_tests::task_working_set_enforces_all_aggregate_limits_and_nonzero_task_identity",
+      "status": "ok"
+    },
+    {
+      "log_line": 314,
+      "name": "cell::residency::budget_task_tests::task_working_set_is_complete_deduplicated_and_runs_with_no_disk_or_peer",
+      "status": "ok"
+    },
+    {
+      "log_line": 315,
+      "name": "cell::residency::budget_task_tests::task_working_set_refuses_missing_or_noncanonical_members_without_partial_readiness",
+      "status": "ok"
+    },
+    {
+      "log_line": 316,
+      "name": "cell::residency::tensor::tests::resident_correct_hash_invalid_later_tensor_file_returns_no_admission_or_selection_change",
+      "status": "ok"
+    },
+    {
+      "log_line": 317,
+      "name": "cell::residency::tensor::tests::resident_payload_reader_checks_cancellation_on_read_and_seek",
+      "status": "ok"
+    },
+    {
+      "log_line": 318,
+      "name": "cell::residency::tensor::tests::resident_tensor_admission_rejects_independent_pin_context_and_contract_transplants",
+      "status": "ok"
+    },
+    {
+      "log_line": 319,
+      "name": "cell::residency::tensor::tests::resident_tensor_cold_miss_and_wrong_selection_do_not_fetch_or_select",
+      "status": "ok"
+    },
+    {
+      "log_line": 320,
+      "name": "cell::residency::tensor::tests::resident_tensor_deadline_and_mid_admission_cancellation_preserve_residency_and_selection",
+      "status": "ok"
+    },
+    {
+      "log_line": 321,
+      "name": "cell::residency::tensor::tests::resident_tensor_views_preserve_unaligned_cross_chunk_elements_and_half_bits",
+      "status": "ok"
+    },
+    {
+      "log_line": 322,
+      "name": "cell::residency::tensor::tests::resident_tensors_admit_complete_real_containers_then_compute_without_disk_or_provider",
+      "status": "ok"
+    },
+    {
+      "log_line": 323,
+      "name": "cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 324,
+      "name": "cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges",
+      "status": "ok"
+    },
+    {
+      "log_line": 325,
+      "name": "cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 326,
+      "name": "cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal",
+      "status": "ok"
+    },
+    {
+      "log_line": 327,
+      "name": "cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection",
+      "status": "ok"
+    },
+    {
+      "log_line": 328,
+      "name": "cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets",
+      "status": "ok"
+    },
+    {
+      "log_line": 329,
+      "name": "cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 330,
+      "name": "cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection",
+      "status": "ok"
+    },
+    {
+      "log_line": 331,
+      "name": "cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets",
+      "status": "ok"
+    },
+    {
+      "log_line": 332,
+      "name": "cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 333,
+      "name": "cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin",
+      "status": "ok"
+    },
+    {
+      "log_line": 334,
+      "name": "cell::residency::tests::residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry",
+      "status": "ok"
+    },
+    {
+      "log_line": 335,
+      "name": "cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 336,
+      "name": "cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings",
+      "status": "ok"
+    },
+    {
+      "log_line": 337,
+      "name": "cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest",
+      "status": "ok"
+    },
+    {
+      "log_line": 338,
+      "name": "cell::residency::version::tests::complete_disk_bytes_and_model_only_residency_cannot_admit_a_complete_version",
+      "status": "ok"
+    },
+    {
+      "log_line": 339,
+      "name": "cell::residency::version::tests::complete_version_admission_and_lookup_keep_the_original_task_cutoff",
+      "status": "ok"
+    },
+    {
+      "log_line": 340,
+      "name": "cell::residency::version::tests::complete_version_cancellation_is_latched_even_on_a_mismatching_lookup",
+      "status": "ok"
+    },
+    {
+      "log_line": 341,
+      "name": "cell::residency::version::tests::complete_version_charges_shared_allocations_once_but_each_context_mapping_separately",
+      "status": "ok"
+    },
+    {
+      "log_line": 342,
+      "name": "cell::residency::version::tests::complete_version_next_task_reads_actual_model_and_environment_after_cache_loss",
+      "status": "ok"
+    },
+    {
+      "log_line": 343,
+      "name": "cell::residency::version::tests::complete_version_rejects_another_tmr1_lineage_even_when_all_closures_match",
+      "status": "ok"
+    },
+    {
+      "log_line": 344,
+      "name": "cell::residency::version::tests::complete_version_task_limits_charge_environment_bytes_references_and_closure",
+      "status": "ok"
+    },
+    {
+      "log_line": 345,
+      "name": "cell::residency::version::tests::environment_only_residency_and_corrupted_missing_environment_never_create_partial_readiness",
+      "status": "ok"
+    },
+    {
+      "log_line": 346,
+      "name": "cell::residency::version::tests::paired_lookup_rechecks_task_and_both_current_contexts_before_any_consumer_call",
+      "status": "ok"
+    },
+    {
+      "log_line": 347,
+      "name": "cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack",
+      "status": "ok"
+    },
+    {
+      "log_line": 348,
+      "name": "cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement",
+      "status": "ok"
+    },
+    {
+      "log_line": 349,
+      "name": "cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 350,
+      "name": "cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 351,
+      "name": "cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 352,
+      "name": "cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 353,
+      "name": "cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen",
+      "status": "ok"
+    },
+    {
+      "log_line": 354,
+      "name": "cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id",
+      "status": "ok"
+    },
+    {
+      "log_line": 355,
+      "name": "cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term",
+      "status": "ok"
+    },
+    {
+      "log_line": 356,
+      "name": "cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge",
+      "status": "ok"
+    },
+    {
+      "log_line": 357,
+      "name": "cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost",
+      "status": "ok"
+    },
+    {
+      "log_line": 358,
+      "name": "cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor",
+      "status": "ok"
+    },
+    {
+      "log_line": 359,
+      "name": "cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair",
+      "status": "ok"
+    },
+    {
+      "log_line": 360,
+      "name": "cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration",
+      "status": "ok"
+    },
+    {
+      "log_line": 361,
+      "name": "cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation",
+      "status": "ok"
+    },
+    {
+      "log_line": 362,
+      "name": "cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair",
+      "status": "ok"
+    },
+    {
+      "log_line": 363,
+      "name": "cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge",
+      "status": "ok"
+    },
+    {
+      "log_line": 364,
+      "name": "cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse",
+      "status": "ok"
+    },
+    {
+      "log_line": 365,
+      "name": "cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id",
+      "status": "ok"
+    },
+    {
+      "log_line": 366,
+      "name": "cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled",
+      "status": "ok"
+    },
+    {
+      "log_line": 367,
+      "name": "cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation",
+      "status": "ok"
+    },
+    {
+      "log_line": 370,
+      "name": "cell::retention::tests::retention_process_child",
+      "status": "ok"
+    },
+    {
+      "log_line": 371,
+      "name": "cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent",
+      "status": "ok"
+    },
+    {
+      "log_line": 372,
+      "name": "cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 373,
+      "name": "cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge",
+      "status": "ok"
+    },
+    {
+      "log_line": 374,
+      "name": "cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 375,
+      "name": "cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 376,
+      "name": "cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 377,
+      "name": "cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge",
+      "status": "ok"
+    },
+    {
+      "log_line": 378,
+      "name": "cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch",
+      "status": "ok"
+    },
+    {
+      "log_line": 379,
+      "name": "cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity",
+      "status": "ok"
+    },
+    {
+      "log_line": 380,
+      "name": "cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 381,
+      "name": "cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss",
+      "status": "ok"
+    },
+    {
+      "log_line": 382,
+      "name": "cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention",
+      "status": "ok"
+    },
+    {
+      "log_line": 383,
+      "name": "cell::retention::tests::retention_process_child",
+      "status": "ok"
+    },
+    {
+      "log_line": 384,
+      "name": "cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation",
+      "status": "ok"
+    },
+    {
+      "log_line": 385,
+      "name": "cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty",
+      "status": "ok"
+    },
+    {
+      "log_line": 386,
+      "name": "cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen",
+      "status": "ok"
+    },
+    {
+      "log_line": 387,
+      "name": "cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage",
+      "status": "ok"
+    },
+    {
+      "log_line": 388,
+      "name": "cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early",
+      "status": "ok"
+    },
+    {
+      "log_line": 389,
+      "name": "cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open",
+      "status": "ok"
+    },
+    {
+      "log_line": 390,
+      "name": "cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal",
+      "status": "ok"
+    },
+    {
+      "log_line": 391,
+      "name": "cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic",
+      "status": "ok"
+    },
+    {
+      "log_line": 392,
+      "name": "cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 393,
+      "name": "cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen",
+      "status": "ok"
+    },
+    {
+      "log_line": 394,
+      "name": "cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery",
+      "status": "ok"
+    },
+    {
+      "log_line": 395,
+      "name": "cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it",
+      "status": "ok"
+    },
+    {
+      "log_line": 396,
+      "name": "cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds",
+      "status": "ok"
+    },
+    {
+      "log_line": 397,
+      "name": "cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close",
+      "status": "ok"
+    },
+    {
+      "log_line": 398,
+      "name": "cell::tensor_tests::tensor_contract_and_model_wire_reject_downgrades_suffixes_and_source_transplants",
+      "status": "ok"
+    },
+    {
+      "log_line": 399,
+      "name": "cell::tensor_tests::tensor_contract_rejects_shape_overflow_dimension_rank_and_noncanonical_rosters",
+      "status": "ok"
+    },
+    {
+      "log_line": 400,
+      "name": "cell::tensor_tests::tensor_contract_requires_all_base_and_adapter_files_but_not_tokenizer_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 401,
+      "name": "cell::tensor_tests::tensor_correct_hash_garbage_and_oversized_or_invalid_header_are_refused",
+      "status": "ok"
+    },
+    {
+      "log_line": 402,
+      "name": "cell::tensor_tests::tensor_duplicate_names_escaped_aliases_fields_and_metadata_are_refused",
+      "status": "ok"
+    },
+    {
+      "log_line": 403,
+      "name": "cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object",
+      "status": "ok"
+    },
+    {
+      "log_line": 404,
+      "name": "cell::tensor_tests::tensor_exact_roster_dtype_and_shape_cannot_be_replaced_by_equal_sized_data",
+      "status": "ok"
+    },
+    {
+      "log_line": 405,
+      "name": "cell::tensor_tests::tensor_offsets_reject_overlap_holes_trailing_and_wrong_element_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 406,
+      "name": "cell::tensor_tests::tensor_real_file_all_supported_dtypes_scalar_and_metadata_hash_are_verified",
+      "status": "ok"
+    },
+    {
+      "log_line": 407,
+      "name": "cell::tensor_tests::tensor_streams_whole_payload_in_bounded_chunks_and_expired_calls_read_nothing",
+      "status": "ok"
+    },
+    {
+      "log_line": 408,
+      "name": "cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks",
+      "status": "ok"
+    },
+    {
+      "log_line": 409,
+      "name": "cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 410,
+      "name": "cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row",
+      "status": "ok"
+    },
+    {
+      "log_line": 411,
+      "name": "cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance",
+      "status": "ok"
+    },
+    {
+      "log_line": 412,
+      "name": "cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance",
+      "status": "ok"
+    },
+    {
+      "log_line": 413,
+      "name": "cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset",
+      "status": "ok"
+    },
+    {
+      "log_line": 414,
+      "name": "cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once",
+      "status": "ok"
+    },
+    {
+      "log_line": 415,
+      "name": "cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite",
+      "status": "ok"
+    },
+    {
+      "log_line": 416,
+      "name": "cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance",
+      "status": "ok"
+    },
+    {
+      "log_line": 417,
+      "name": "cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge",
+      "status": "ok"
+    },
+    {
+      "log_line": 418,
+      "name": "cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup",
+      "status": "ok"
+    },
+    {
+      "log_line": 419,
+      "name": "cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup",
+      "status": "ok"
+    },
+    {
+      "log_line": 420,
+      "name": "cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten",
+      "status": "ok"
+    },
+    {
+      "log_line": 421,
+      "name": "cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null",
+      "status": "ok"
+    },
+    {
+      "log_line": 422,
+      "name": "cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed",
+      "status": "ok"
+    },
+    {
+      "log_line": 423,
+      "name": "cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes",
+      "status": "ok"
+    },
+    {
+      "log_line": 424,
+      "name": "cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation",
+      "status": "ok"
+    },
+    {
+      "log_line": 425,
+      "name": "cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated",
+      "status": "ok"
+    },
+    {
+      "log_line": 426,
+      "name": "cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap",
+      "status": "ok"
+    },
+    {
+      "log_line": 427,
+      "name": "cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible",
+      "status": "ok"
+    },
+    {
+      "log_line": 428,
+      "name": "cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset",
+      "status": "ok"
+    },
+    {
+      "log_line": 429,
+      "name": "cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite",
+      "status": "ok"
+    },
+    {
+      "log_line": 430,
+      "name": "cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes",
+      "status": "ok"
+    },
+    {
+      "log_line": 431,
+      "name": "cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap",
+      "status": "ok"
+    },
+    {
+      "log_line": 432,
+      "name": "cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin",
+      "status": "ok"
+    },
+    {
+      "log_line": 433,
+      "name": "cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers",
+      "status": "ok"
+    },
+    {
+      "log_line": 434,
+      "name": "cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites",
+      "status": "ok"
+    },
+    {
+      "log_line": 435,
+      "name": "cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry",
+      "status": "ok"
+    },
+    {
+      "log_line": 436,
+      "name": "cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash",
+      "status": "ok"
+    },
+    {
+      "log_line": 437,
+      "name": "cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged",
+      "status": "ok"
+    },
+    {
+      "log_line": 438,
+      "name": "cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode",
+      "status": "ok"
+    },
+    {
+      "log_line": 439,
+      "name": "cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works",
+      "status": "ok"
+    },
+    {
+      "log_line": 440,
+      "name": "cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline",
+      "status": "ok"
+    },
+    {
+      "log_line": 441,
+      "name": "cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output",
+      "status": "ok"
+    },
+    {
+      "log_line": 442,
+      "name": "cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication",
+      "status": "ok"
+    },
+    {
+      "log_line": 443,
+      "name": "cell::tests::foreign_database_is_not_repurposed",
+      "status": "ok"
+    },
+    {
+      "log_line": 444,
+      "name": "cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication",
+      "status": "ok"
+    },
+    {
+      "log_line": 445,
+      "name": "cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes",
+      "status": "ok"
+    },
+    {
+      "log_line": 446,
+      "name": "cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair",
+      "status": "ok"
+    },
+    {
+      "log_line": 447,
+      "name": "cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes",
+      "status": "ok"
+    },
+    {
+      "log_line": 448,
+      "name": "cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation",
+      "status": "ok"
+    },
+    {
+      "log_line": 449,
+      "name": "cell::tests::release_manifest_requires_complete_context_bound_closure",
+      "status": "ok"
+    },
+    {
+      "log_line": 450,
+      "name": "cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads",
+      "status": "ok"
+    },
+    {
+      "log_line": 451,
+      "name": "cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin",
+      "status": "ok"
+    },
+    {
+      "log_line": 452,
+      "name": "cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback",
+      "status": "ok"
+    },
+    {
+      "log_line": 453,
+      "name": "cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 454,
+      "name": "cell::version::tests::aggregate_and_per_owner_limits_are_checked_before_payload_reads",
+      "status": "ok"
+    },
+    {
+      "log_line": 455,
+      "name": "cell::version::tests::complete_version_covers_exact_canonical_manifest_set",
+      "status": "ok"
+    },
+    {
+      "log_line": 456,
+      "name": "cell::version::tests::complete_version_matches_independent_python_framing_vector",
+      "status": "ok"
+    },
+    {
+      "log_line": 457,
+      "name": "cell::version::tests::complete_version_roundtrip_and_actual_model_environment_readback",
+      "status": "ok"
+    },
+    {
+      "log_line": 458,
+      "name": "cell::version::tests::environment_binding_requires_exact_declared_runtime_closure",
+      "status": "ok"
+    },
+    {
+      "log_line": 459,
+      "name": "cell::version::tests::full_version_rejects_missing_environment_payload_after_successful_readback",
+      "status": "ok"
+    },
+    {
+      "log_line": 460,
+      "name": "cell::version::tests::same_release_files_with_different_dependency_graph_change_complete_commitment",
+      "status": "ok"
+    },
+    {
+      "log_line": 461,
+      "name": "cell::version::tests::version_loader_scope_and_original_deadline_fail_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 462,
+      "name": "cell::version::tests::version_wire_is_bounded_and_has_no_legacy_or_trailing_fallback",
+      "status": "ok"
+    },
+    {
+      "log_line": 463,
+      "name": "tests::admission_is_atomic_replay_safe_and_bounded",
+      "status": "ok"
+    },
+    {
+      "log_line": 464,
+      "name": "tests::attestation_and_certificate_reject_foreign_committed_context",
+      "status": "ok"
+    },
+    {
+      "log_line": 465,
+      "name": "tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse",
+      "status": "ok"
+    },
+    {
+      "log_line": 466,
+      "name": "tests::attestation_manifest_is_stable_across_certificate_retention_and_repair",
+      "status": "ok"
+    },
+    {
+      "log_line": 467,
+      "name": "tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot",
+      "status": "ok"
+    },
+    {
+      "log_line": 468,
+      "name": "tests::durable_before_attest_survives_reopen_and_rejects_bad_signature",
+      "status": "ok"
+    },
+    {
+      "log_line": 469,
+      "name": "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "status": "ok"
+    },
+    {
+      "log_line": 470,
+      "name": "tests::row_tamper_is_rejected_on_reopen",
+      "status": "ok"
+    },
+    {
+      "log_line": 471,
+      "name": "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+      "status": "ok"
+    },
+    {
+      "log_line": 472,
+      "name": "tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens",
+      "status": "ok"
+    },
+    {
+      "log_line": 473,
+      "name": "tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 474,
+      "name": "tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder",
+      "status": "ok"
+    },
+    {
+      "log_line": 475,
+      "name": "tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy",
+      "status": "ok"
+    },
+    {
+      "log_line": 476,
+      "name": "tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed",
+      "status": "ok"
+    },
+    {
+      "log_line": 477,
+      "name": "tests::tamper_latches_unavailable_and_exact_repair_recovers",
+      "status": "ok"
+    },
+    {
+      "log_line": 478,
+      "name": "tests::typed_namespace_and_batch_derivation_are_deterministic",
+      "status": "ok"
+    },
+    {
+      "log_line": 479,
+      "name": "tests::under_quorum_and_signed_equivocation_are_distinct",
+      "status": "ok"
+    },
+    {
+      "log_line": 480,
+      "name": "tests::weighted_certificate_retrieval_retention_and_gc_close",
+      "status": "ok"
+    },
+    {
+      "log_line": 499,
+      "name": "two_actual_process_writers_share_the_cache_gate_and_replay_exactly_after_reader_release",
+      "status": "ok"
+    },
+    {
+      "log_line": 506,
+      "name": "cli_bounds_input_descriptor_and_rejects_symlink_directory_and_wrong_wire",
+      "status": "ok"
+    },
+    {
+      "log_line": 507,
+      "name": "cli_fetches_real_bytes_shares_budget_resumes_and_never_overwrites_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 508,
+      "name": "cli_model_root_bad_pin_and_symlink_refuse_before_cache_or_peer",
+      "status": "ok"
+    },
+    {
+      "log_line": 509,
+      "name": "cli_model_root_composes_and_fetches_exact_closure_without_granting_use_or_changing_tcd1",
+      "status": "ok"
+    },
+    {
+      "log_line": 510,
+      "name": "cli_rejects_owner_context_and_authentication_downgrade_before_cache_or_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 517,
+      "name": "cli_bootstrap_only_fetch_uses_real_signed_records_and_exact_shared_response_budget",
+      "status": "ok"
+    },
+    {
+      "log_line": 518,
+      "name": "cli_private_key_length_permissions_and_symlink_fail_without_secret_output",
+      "status": "ok"
+    },
+    {
+      "log_line": 519,
+      "name": "cli_rejects_record_pin_mismatch_and_mutated_records_before_bootstrap_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 520,
+      "name": "cli_requires_explicit_profile_and_rejects_unknown_or_duplicate_arguments_before_init",
+      "status": "ok"
+    },
+    {
+      "log_line": 521,
+      "name": "cli_wrong_cell_context_cannot_discover_provider_or_publish_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 528,
+      "name": "cli_delivers_real_uncached_bytes_with_seconds_and_subtwo_second_milliseconds",
+      "status": "ok"
+    },
+    {
+      "log_line": 529,
+      "name": "cli_manifest_reads_persisted_caps_and_cannot_create_a_missing_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 530,
+      "name": "cli_preserves_original_request_minimum_and_overall_must_cover_request",
+      "status": "ok"
+    },
+    {
+      "log_line": 531,
+      "name": "cli_requires_each_persistent_quota_before_creating_a_writer_cache",
+      "status": "ok"
+    },
+    {
+      "log_line": 532,
+      "name": "cli_requires_exactly_one_deadline_unit_and_a_positive_bounded_duration",
+      "status": "ok"
+    },
+    {
+      "log_line": 539,
+      "name": "cli_downloads_real_manifest_and_multiple_chunks_through_one_explicit_v2_connection",
+      "status": "ok"
+    },
+    {
+      "log_line": 540,
+      "name": "invalid_or_missing_request_bounds_and_unsupported_profile_combinations_fail_before_cache_creation",
+      "status": "ok"
+    },
+    {
+      "log_line": 541,
+      "name": "persistent_cli_server_requires_bounded_workers_and_each_request_allowance",
+      "status": "ok"
+    },
+    {
+      "log_line": 542,
+      "name": "rarest::v3_cli_invalid_combinations_and_limits_refuse_before_cache_or_dial",
+      "status": "ok"
+    },
+    {
+      "log_line": 543,
+      "name": "rarest::v3_cli_provider_ready_and_consumer_share_one_connection_for_inventory_and_weights",
+      "status": "ok"
+    },
+    {
+      "log_line": 550,
+      "name": "provider_ready_cli_never_advertises_an_invalid_cache_as_ready",
+      "status": "ok"
+    },
+    {
+      "log_line": 551,
+      "name": "provider_ready_cli_preserves_the_only_connection_for_actual_payload",
+      "status": "ok"
+    },
+    {
+      "log_line": 558,
+      "name": "cli_pins_release_and_shares_budgets_before_create_only_completion",
+      "status": "ok"
+    },
+    {
+      "log_line": 559,
+      "name": "cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets",
+      "status": "ok"
+    },
+    {
+      "log_line": 566,
+      "name": "hash_correct_container_with_wrong_dtype_never_publishes_tensor_completion",
+      "status": "ok"
+    },
+    {
+      "log_line": 567,
+      "name": "invalid_persistent_tensor_transport_combinations_refuse_before_cache_creation",
+      "status": "ok"
+    },
+    {
+      "log_line": 568,
+      "name": "persistent_rarest_tensor_cli_verifies_complete_model_and_then_works_cache_only",
+      "status": "ok"
+    },
+    {
+      "log_line": 569,
+      "name": "persistent_tensor_cli_keeps_verified_prefix_on_request_exhaustion_and_explicit_retry_resumes",
+      "status": "ok"
+    },
+    {
+      "log_line": 570,
+      "name": "persistent_tensor_cli_shares_one_connection_and_four_requests_across_manifest_and_chunks",
+      "status": "ok"
+    },
+    {
+      "log_line": 571,
+      "name": "real_tcp_tensor_model_publishes_exact_manifest_then_revalidates_without_origin",
+      "status": "ok"
+    },
+    {
+      "log_line": 572,
+      "name": "wrong_tensor_manifest_pin_is_rejected_before_cache_creation",
+      "status": "ok"
+    },
+    {
+      "log_line": 579,
+      "name": "discovery_cli_pq_key_and_fresh_directory_reject_classic_wire_and_seed_aliases",
+      "status": "ok"
+    },
+    {
+      "log_line": 580,
+      "name": "original_release_cli_pq_fetch_checks_auth_before_cache_or_marker",
+      "status": "ok"
+    },
+    {
+      "log_line": 587,
+      "name": "crates/trnm-data-availability/src/cell/pq.rs - cell::pq::VerifiedCellPqReleaseV2 (line 359) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 588,
+      "name": "crates/trnm-data-availability/src/cell/residency/tensor.rs - cell::residency::tensor::CellResidentTensorModelV1 (line 21) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 589,
+      "name": "crates/trnm-data-availability/src/cell/residency/version.rs - cell::residency::version::CellResidentVersionV1 (line 32) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 590,
+      "name": "crates/trnm-data-availability/src/cell/residency/working_set.rs - cell::residency::working_set::CellResidentWorkingSetV1 (line 31) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 591,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 16) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 592,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 24) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 593,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 29) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 594,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 39) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 595,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 46) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 596,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 51) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 597,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 58) - compile fail",
+      "status": "ok"
+    },
+    {
+      "log_line": 598,
+      "name": "crates/trnm-data-availability/src/lib.rs - (line 9) - compile fail",
+      "status": "ok"
+    }
+  ],
+  "complete_target_results": [
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 473,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 0,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 0,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 1,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 7,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 12,
+      "status": "ok"
+    }
+  ],
+  "failed_new_tests": [],
+  "failed_test_names": [],
+  "groups": {
+    "cell::discovery::pq3::directory::": 6,
+    "cell::discovery::pq3::directory_tests::": 17,
+    "cell::discovery::pq3::multisource_tests::": 2,
+    "cell::discovery::pq3::server_tests::": 2,
+    "cell::discovery::pq3::transport_tests::": 9,
+    "cell::residency::version::tests::": 9
+  },
+  "listed_new_tests": [
+    "cell::discovery::pq3::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::publish_commit_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::publish_owner_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::publish_writer_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory_tests::actual_mldsa_v3_binds_every_unsigned_byte_and_rejects_other_namespaces",
+    "cell::discovery::pq3::directory_tests::bounded_epoch_churn_cannot_consume_permanent_owner_capacity",
+    "cell::discovery::pq3::directory_tests::epoch_and_wire_column_corruption_fail_before_pruning_or_ack",
+    "cell::discovery::pq3::directory_tests::failed_deadline_does_not_retire_epoch_or_change_durable_state",
+    "cell::discovery::pq3::directory_tests::full_512_slot_epoch_recovers_without_widening_database_or_replay_limits",
+    "cell::discovery::pq3::directory_tests::key_expiry_returns_active_quota_and_is_rechecked_after_verification",
+    "cell::discovery::pq3::directory_tests::manifest_expiry_reclaims_active_slots_across_operations_and_restart",
+    "cell::discovery::pq3::directory_tests::owner_expiry_reclaims_active_quota_and_renewal_must_repay_it",
+    "cell::discovery::pq3::directory_tests::randomized_mldsa_equivalence_keeps_original_wire_and_changed_statement_fails",
+    "cell::discovery::pq3::directory_tests::read_only_usage_advances_its_fence_after_reconciling_a_higher_revision",
+    "cell::discovery::pq3::directory_tests::read_only_usage_refuses_rewinding_a_revision_already_observed_in_process",
+    "cell::discovery::pq3::directory_tests::shorter_latest_ttl_cannot_resurrect_a_long_lived_lower_sequence",
+    "cell::discovery::pq3::directory_tests::signed_epoch_limits_ttl_skew_and_integer_overflow",
+    "cell::discovery::pq3::directory_tests::source_and_prefix_limits_release_expired_capacity_without_origin_reassignment",
+    "cell::discovery::pq3::directory_tests::unrepresentable_epoch_end_cannot_commit_an_unrecoverable_directory_clock",
+    "cell::discovery::pq3::directory_tests::v3_never_migrates_v1_v2_or_changes_pinned_roster_and_namespace",
+    "cell::discovery::pq3::directory_tests::withdrawal_returns_active_quota_but_persists_replay_evidence",
+    "cell::discovery::pq3::multisource_tests::real_tcp_malicious_first_source_cannot_overwrite_later_authenticated_provider",
+    "cell::discovery::pq3::multisource_tests::real_tcp_native_low_owner_flood_keeps_later_source_before_and_after_active_quota",
+    "cell::discovery::pq3::server_tests::real_tcp_rendezvous_prioritizes_ninth_active_provider_over_eight_withdrawn_rows",
+    "cell::discovery::pq3::server_tests::real_tcp_rendezvous_skips_expired_or_revoked_key_while_record_ttl_is_live",
+    "cell::discovery::pq3::transport_tests::actual_server_bounds_signing_and_mandatory_self_verification_together",
+    "cell::discovery::pq3::transport_tests::duplicate_source_keys_and_wrong_generations_fail_before_connecting",
+    "cell::discovery::pq3::transport_tests::epoch_rollover_resets_sequence_without_reusing_old_sources_or_expiry",
+    "cell::discovery::pq3::transport_tests::maximum_signed_result_fits_original_byte_cap_and_binds_last_record",
+    "cell::discovery::pq3::transport_tests::native_response_binds_complete_query_nonce_target_result_status_and_lifetime",
+    "cell::discovery::pq3::transport_tests::real_tcp_authenticated_announce_cold_fetch_withdrawal_and_failed_denominators",
+    "cell::discovery::pq3::transport_tests::real_tcp_failed_payload_retains_shared_session_connection_and_byte_totals",
+    "cell::discovery::pq3::transport_tests::real_tcp_partial_byte_exhaustion_prevents_another_dial_and_deadline_is_original",
+    "cell::discovery::pq3::transport_tests::real_tcp_replayed_and_unsigned_replies_keep_actual_failure_denominator",
+    "cell::residency::version::tests::complete_disk_bytes_and_model_only_residency_cannot_admit_a_complete_version",
+    "cell::residency::version::tests::complete_version_admission_and_lookup_keep_the_original_task_cutoff",
+    "cell::residency::version::tests::complete_version_cancellation_is_latched_even_on_a_mismatching_lookup",
+    "cell::residency::version::tests::complete_version_charges_shared_allocations_once_but_each_context_mapping_separately",
+    "cell::residency::version::tests::complete_version_next_task_reads_actual_model_and_environment_after_cache_loss",
+    "cell::residency::version::tests::complete_version_rejects_another_tmr1_lineage_even_when_all_closures_match",
+    "cell::residency::version::tests::complete_version_task_limits_charge_environment_bytes_references_and_closure",
+    "cell::residency::version::tests::environment_only_residency_and_corrupted_missing_environment_never_create_partial_readiness",
+    "cell::residency::version::tests::paired_lookup_rechecks_task_and_both_current_contexts_before_any_consumer_call"
+  ],
+  "missing_new_tests": [],
+  "native_command": {
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--",
+      "--test-threads=1"
+    ],
+    "bytes": 58997,
+    "elapsed_seconds": 110.47330081000018,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "p2p-complete",
+    "launch_error": null,
+    "log": "p2p-complete.log",
+    "log_may_still_change": false,
+    "log_observed_at": "2026-11-08T17:56:50.573028+00:00",
+    "passed": true,
+    "process_group_cleanup": null,
+    "sha256": "fc6ff11f38f0ac414ad759589057b10bab8faf9a46648f500ac0f9bf7414132c",
+    "started_at": "2026-11-08T17:55:00.099684+00:00",
+    "timeout": false,
+    "timeout_seconds": 1200
+  },
+  "native_listing_present": true,
+  "native_log_present": true,
+  "not_listed_new_tests": [],
+  "not_observed_new_tests": [],
+  "passed": true,
+  "reported_executed_test_denominator": 519,
+  "reported_selected_test_denominator": 519,
+  "reported_test_totals": {
+    "failed": 0,
+    "filtered": 0,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 519
+  },
+  "required_new_tests": [
+    "cell::discovery::pq3::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::publish_commit_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::publish_owner_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory::deadline_tests::publish_writer_contention_keeps_original_deadline",
+    "cell::discovery::pq3::directory_tests::actual_mldsa_v3_binds_every_unsigned_byte_and_rejects_other_namespaces",
+    "cell::discovery::pq3::directory_tests::bounded_epoch_churn_cannot_consume_permanent_owner_capacity",
+    "cell::discovery::pq3::directory_tests::epoch_and_wire_column_corruption_fail_before_pruning_or_ack",
+    "cell::discovery::pq3::directory_tests::failed_deadline_does_not_retire_epoch_or_change_durable_state",
+    "cell::discovery::pq3::directory_tests::full_512_slot_epoch_recovers_without_widening_database_or_replay_limits",
+    "cell::discovery::pq3::directory_tests::key_expiry_returns_active_quota_and_is_rechecked_after_verification",
+    "cell::discovery::pq3::directory_tests::manifest_expiry_reclaims_active_slots_across_operations_and_restart",
+    "cell::discovery::pq3::directory_tests::owner_expiry_reclaims_active_quota_and_renewal_must_repay_it",
+    "cell::discovery::pq3::directory_tests::randomized_mldsa_equivalence_keeps_original_wire_and_changed_statement_fails",
+    "cell::discovery::pq3::directory_tests::read_only_usage_advances_its_fence_after_reconciling_a_higher_revision",
+    "cell::discovery::pq3::directory_tests::read_only_usage_refuses_rewinding_a_revision_already_observed_in_process",
+    "cell::discovery::pq3::directory_tests::shorter_latest_ttl_cannot_resurrect_a_long_lived_lower_sequence",
+    "cell::discovery::pq3::directory_tests::signed_epoch_limits_ttl_skew_and_integer_overflow",
+    "cell::discovery::pq3::directory_tests::source_and_prefix_limits_release_expired_capacity_without_origin_reassignment",
+    "cell::discovery::pq3::directory_tests::unrepresentable_epoch_end_cannot_commit_an_unrecoverable_directory_clock",
+    "cell::discovery::pq3::directory_tests::v3_never_migrates_v1_v2_or_changes_pinned_roster_and_namespace",
+    "cell::discovery::pq3::directory_tests::withdrawal_returns_active_quota_but_persists_replay_evidence",
+    "cell::discovery::pq3::multisource_tests::real_tcp_malicious_first_source_cannot_overwrite_later_authenticated_provider",
+    "cell::discovery::pq3::multisource_tests::real_tcp_native_low_owner_flood_keeps_later_source_before_and_after_active_quota",
+    "cell::discovery::pq3::server_tests::real_tcp_rendezvous_prioritizes_ninth_active_provider_over_eight_withdrawn_rows",
+    "cell::discovery::pq3::server_tests::real_tcp_rendezvous_skips_expired_or_revoked_key_while_record_ttl_is_live",
+    "cell::discovery::pq3::transport_tests::actual_server_bounds_signing_and_mandatory_self_verification_together",
+    "cell::discovery::pq3::transport_tests::duplicate_source_keys_and_wrong_generations_fail_before_connecting",
+    "cell::discovery::pq3::transport_tests::epoch_rollover_resets_sequence_without_reusing_old_sources_or_expiry",
+    "cell::discovery::pq3::transport_tests::maximum_signed_result_fits_original_byte_cap_and_binds_last_record",
+    "cell::discovery::pq3::transport_tests::native_response_binds_complete_query_nonce_target_result_status_and_lifetime",
+    "cell::discovery::pq3::transport_tests::real_tcp_authenticated_announce_cold_fetch_withdrawal_and_failed_denominators",
+    "cell::discovery::pq3::transport_tests::real_tcp_failed_payload_retains_shared_session_connection_and_byte_totals",
+    "cell::discovery::pq3::transport_tests::real_tcp_partial_byte_exhaustion_prevents_another_dial_and_deadline_is_original",
+    "cell::discovery::pq3::transport_tests::real_tcp_replayed_and_unsigned_replies_keep_actual_failure_denominator",
+    "cell::residency::version::tests::complete_disk_bytes_and_model_only_residency_cannot_admit_a_complete_version",
+    "cell::residency::version::tests::complete_version_admission_and_lookup_keep_the_original_task_cutoff",
+    "cell::residency::version::tests::complete_version_cancellation_is_latched_even_on_a_mismatching_lookup",
+    "cell::residency::version::tests::complete_version_charges_shared_allocations_once_but_each_context_mapping_separately",
+    "cell::residency::version::tests::complete_version_next_task_reads_actual_model_and_environment_after_cache_loss",
+    "cell::residency::version::tests::complete_version_rejects_another_tmr1_lineage_even_when_all_closures_match",
+    "cell::residency::version::tests::complete_version_task_limits_charge_environment_bytes_references_and_closure",
+    "cell::residency::version::tests::environment_only_residency_and_corrupted_missing_environment_never_create_partial_readiness",
+    "cell::residency::version::tests::paired_lookup_rechecks_task_and_both_current_contexts_before_any_consumer_call"
+  ],
+  "roster_passed": true,
+  "total_failed_tests_including_doctests": 0,
+  "total_successful_tests_including_doctests": 519
+}

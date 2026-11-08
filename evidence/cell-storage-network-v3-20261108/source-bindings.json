@@ -1,0 +1,118 @@
+{
+  "base": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+  "default_profiles_migrated": false,
+  "independent_wan_or_hepta_final_use_accepted": false,
+  "initial_source": "9170779008ec8abdd1fd27b8ff16f2c2462fdb47",
+  "production_qualification": false,
+  "reviewed_native_results": [
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 473,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 0,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 0,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 1,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 5,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 7,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2,
+      "status": "ok"
+    },
+    {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 12,
+      "status": "ok"
+    }
+  ],
+  "reviewed_source": "266d9be8e7f6a2ecb556a129b1be69e6ec9553a2",
+  "reviewed_tracked_entries": 16804,
+  "reviewed_tree": "52a76f7280792b68ef539adc610bfff2e339d849",
+  "schema": "trnm-cell-storage-source-bindings-v1",
+  "source_pin_count": 602
+}

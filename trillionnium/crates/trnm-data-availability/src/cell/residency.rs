@@ -24,8 +24,10 @@ use super::{
 };
 
 mod tensor;
+mod version;
 mod working_set;
 pub use tensor::{CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1};
+pub use version::{CellResidentVersionV1, CellResidentVersionViewV1};
 pub use working_set::CellResidentWorkingSetV1;
 
 static RESIDENCY_OWNER_SEQUENCE: AtomicU64 = AtomicU64::new(1);
