@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_staged_observer.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo",
+  "started_at": "2026-11-08T02:13:51.077373+00:00",
+  "wall_ns": 2860453925,
+  "returncode": 0,
+  "before_sha256": "4a0e6d8ee682950f23251d6e8f8d94835cb8b2b37f704efaf30a036962a8eae4",
+  "after_sha256": "763acbdb380da2784038aaceaa579571305e57b2919375a21b9a1688db28e5b6",
+  "diff_sha256": "806583f5fbb22a1271b649a5e0fd616782ae623b4688834e888f93b9c9f4cae1",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "76235f6c1035417544696f8ece62abce17f04f7fcd830c64197dc378ea0c3070",
+  "production_code_changed": false,
+  "source_budget_seconds": 0.2,
+  "workflow_rerun_requested": false
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-original-native-CI-source-comparison-v1",
+  "paths": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "versions": {
+        "bef17d632d1e40014167dba2a1089b85366b67b8": {
+          "bytes": 111313,
+          "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+        },
+        "a490d3b971997e927de3aece19864497d65d5984": {
+          "bytes": 111313,
+          "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+        }
+      },
+      "identical": true
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "versions": {
+        "bef17d632d1e40014167dba2a1089b85366b67b8": {
+          "bytes": 22343,
+          "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+        },
+        "a490d3b971997e927de3aece19864497d65d5984": {
+          "bytes": 22343,
+          "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+        }
+      },
+      "identical": true
+    }
+  ],
+  "direct_source_identity_is_not_counterfactual_timing_proof": true
+}

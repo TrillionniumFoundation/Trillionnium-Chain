@@ -1,0 +1,60 @@
+{
+  "cargo_log_sha256": "b9b75af14de190109b1a8080c02305bd790fbc75ecda66aaf50cda8f896deeeb",
+  "compiler_artifact": {
+    "executable": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader/debug/deps/trnm_pon_node-87c69d7ef5166336",
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader/debug/deps/trnm_pon_node-87c69d7ef5166336"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "test": true
+    }
+  },
+  "exclusive_calibration": false,
+  "identity": {
+    "elf_machine": 62,
+    "elf_magic": true,
+    "mode": "0o700",
+    "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader/debug/deps/trnm_pon_node-87c69d7ef5166336",
+    "resolved_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader/debug/deps/trnm_pon_node-87c69d7ef5166336",
+    "sha256": "dd00fb09345d78f28d45a8f431355c2eb5503f2729a3dd88409eb6356d8206dd",
+    "size_bytes": 105447528
+  },
+  "physical_hardware_calibrated": false,
+  "production_activation": false,
+  "quantum_hardware_executed": false,
+  "quantum_mining_qualified": false,
+  "selection": "unique current successful Cargo compiler-artifact, no filename glob",
+  "source": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "whole_chain_qualified": false
+}

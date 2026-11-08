@@ -17,6 +17,24 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Constructed W1 costs and finite-horizon literal search, 2026-11-07 America/New_York:**
+Continue the #755 quantum research lineage from
+`7a98f27f99abccc28da2f1f3cc60bdaa2eca4890`, preserving the existing #750/#723/#688
+integration chain. Bind the actual full and prefix-restricted circuit counts,
+their separate literal marked sets, all-processor physical resource envelope
+and exact paid finite-deadline phases. Full candidate checks accept legal W1
+winners even when the restricted phase oracle leaves them unmarked. Repair
+exact rational-angle Grover probabilities so an impossible event cannot obtain
+a floating-point probability. Preserve failed observations and all unstarted,
+interrupted, failed and successful work; distinguish modeled proof-clock
+completion from offline scalar proof replay and native admission. The
+[research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) and
+[validation record](../../evidence/pon-quantum-bounded-search-20261107/README.md)
+own this component scope. No quantum lower bound, calibrated physical machine,
+profitable fork attack, mixed-miner security theorem or production activation
+follows. Dynamic native DAA/fork choice and all original service limits remain
+unchanged; their acceptance must be established independently.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3
@@ -8234,3 +8252,338 @@ The [research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) an
 record this scope. No new test freeze or qualification is asserted here; the
 candidate remains **Draft/HOLD**, with production and whole-chain acceptance
 ungranted.
+
+### 2026-11-07 quantum four-gate continuation — Draft/HOLD
+
+Continue from PR #773's bounded literal-search candidate and preserve all
+historical observations. The original native required-work function, DAA,
+median/future timestamp checks, strict greater-work activation, service profile
+and four-second research deadline are unchanged.
+
+The [lifecycle envelope](../../formal/pon-nakamoto-v1/w1_machine_envelope.py)
+adds whole-schedule initialization, input/result transfer, readout, controller
+waits, bounded magic-state service attempts and discard/reset events. It
+separates heralded failure from accepted-output faults and composes conditional
+event bounds under a stated ideal-trace coupling. Physical clocks, noise,
+layout, energy and prices remain uncalibrated. A conservative construction is
+an implementation cost, not a lower bound for the cheapest adversary.
+
+The [finite consensus certificate](../../formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md)
+binds every measured nonce to its actual block and successor context, uses one
+shared resource/error envelope, and checks the complete declared finite action
+graph. It conditions on a real existing prefix and a fixed public competitor;
+it does not cover all future honest mining or every timestamp/network policy.
+Classical uniform q=0, constructed quantum search, and census-selected witnesses
+remain separately identified. Initial advice and preprocessing are explicit.
+
+The [native bridge](../../formal/pon-nakamoto-v1/experiments/w1_native_bridge.py)
+and explicit ignored Rust research controls connect complete selected paths to
+fresh native admission, separate activation and persistent reopen. CI must
+explicitly run and check both named tests; successful compilation or an ignored
+test count is not execution evidence. Preserve unsuccessful builds, incomplete
+paths and native refusals with their exact source and original limits.
+
+The [observed economics reader](../../scripts/pon_w1_observed_economics_v1.py)
+replays complete retained V4 denominators under fixed CPU budgets without a
+fastest-per-sample oracle, future-sample skipping or invented reuse. Its
+historical source scope is distinct from current-source validation. The
+[18-cell construction comparison](../../formal/pon-nakamoto-v1/experiments/w1_machine_frontier.py)
+keeps all full/restricted predicates, processor counts and q choices, including
+refusals. Neither comparison establishes calibrated equal-resource mining.
+
+This continuation changes research implementations, evidence validation and CI
+coverage. Hardware calibration, least-cost bounds, profitable native quantum
+attacks, general mixed quantum/classical consensus security and production
+activation remain separately unqualified. Final execution receipts must name
+their actual frozen source; no green result is inferred from this plan entry.
+
+
+### 2026-11-07 quantum four-gate observations — exact-source research / HOLD
+
+The continuation was frozen at `ec3a939706592c6ec9dd677b70589a7e8860cdfd`, tree
+`94a2dd1ebda9ce4eb262b6887b739e623616f08a`, with published parent
+`5d7ca0f5e260b65f5a2b8ab09dfd038718129346`. Its complete evidence is in
+[the four-gate record](../../evidence/pon-quantum-four-gates-20261107/README.md).
+The later evidence-only continuation does not imply rerunning executable suites
+at a different source SHA.
+
+- Frozen local validation passed 412 quantum/W1/reversible/DAA tests, 18 observed
+  economics tests, 43 source-integrity negatives, 108 CI contracts and 38 PQ
+  integration controls: 619 distinct Python tests. Main/fuzz locked offline
+  graphs, formatting, strict workspace all-target/all-feature Clippy, 688 source
+  pins and 3,597 local links passed with complete committed-byte checks.
+- The same source was imported by a verified incremental Git bundle into an
+  isolated HeptaRuntime checkout. Rust/Cargo 1.95.0 and static OpenSSL 3.5.9
+  generated the actual all-feature ELF `bfb1087323f1760046ddd7303d8fcdaa13cfa95cda7b7324c6636e8d9f817c2b`.
+  Its full Node library suite finished with **1,243 passed / 2 failed / 35 ignored**.
+  Both failed release-owner tests reproduce in exact-selector diagnostics:
+  root cold replay reports invalid type string "1", expected u8, and sealed-copy final
+  recheck rejects changed identity/seals. These failures remain unresolved;
+  the unchanged release-owner directory was not rewritten to obtain a green run.
+- The two exact ignored native bridge tests separately executed and passed.
+  There are two native contexts, 16 complete nonce checks and two legal winners.
+  Seed9's independent classical sample draws 7 then 5 and both miss. Only the
+  explicitly labelled observer-advice path 6 then 1 generates two receiver
+  admissions and a real branch replacement, from public work 37 to private work
+  44. All four authenticated receiver reopens agree. Completed misses are
+  freshly proved/verified and timed rather than removed from the denominator.
+- Under the declared complete serial lifecycle and four-second modeled window,
+  q0/q1 both stop during initialization. The ideal quantum-class risk is zero,
+  but its conditional fault-union upper bound remains about 0.00274527357349.
+  The separate no-QPU classical finite class has exact ideal risk 1/64 and an
+  assumed host-fault bound 1.6e-29. These are conditional finite statements, not
+  calibrated hardware or network-security results. All 18 fixed frontier cells
+  are retained; no interval-certified dominance is established.
+- Historical CPU ledgers were fully reparsed: 16 parts, 197 members, 36 cost
+  shards and 12 controls, with 464,320 nonce attempts including 436,288 misses.
+  Nine of the historical 95 source inputs differ from this candidate; the
+  report explicitly refuses to relabel old timings as fresh measurements.
+- Independent reviewers verified the finite probabilities, actual nonce/parent
+  paths, source/receipt bindings and full machine arithmetic. The machine review
+  passed 3,813 assertions; this is not an additional native execution. Native
+  CPU probes ran concurrently with the full regression and are not exclusive
+  machine calibration.
+- The GitHub connector returned HTTP 403 (account suspended), so the new commits
+  could not be published through that connection. Exact local source and
+  evidence commits are delivered as an incremental Git bundle. No replacement
+  credential, force push, merge, production activation or qualification upgrade
+  was performed. All physical-cost, cheapest-attacker, real quantum execution
+  and general mixed-consensus gates remain HOLD.
+
+
+### 2026-11-07 continuing public competition and paid service architectures — Draft/HOLD
+
+Continue the existing quantum component lineage from
+`b45545e241c16ebc9ea0b22d8169d78123d8d166`, preserving its exact-source records and
+all prior failures. The [finite consensus contract](../../formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md)
+now adds two source-declared public arrival schedules inside the unchanged four-second
+research window. A separate public-view producer extends real public height 16 to
+17 and 18, while the receiver interleaves those complete native packets with private
+publication. Retain every honest and private proof attempt, including misses, the
+selected tip/work after each event, and authenticated reopen. Ever replacing the
+public branch and remaining selected at the horizon are separate events.
+
+The finite action envelope explicitly admits census and future-schedule advice;
+fixed-q samples remain separately non-anticipating. Actions are non-preemptive.
+The conditional error coupling covers private-machine faults given exact public
+identities, arrivals and receiver transitions; honest-production, receiver and
+network faults remain outside it. This is a bounded conditional process, not a
+stochastic continuously interacting network theorem or a native quantum execution.
+
+The [service and reuse contract](../../formal/pon-nakamoto-v1/MACHINE_SERVICE_AND_REUSE.md)
+adds three declared reset/readout service architectures, reserving auxiliary patches,
+ports, controllers and their complete allocation time. Its new 54-cell comparison
+retains the original 18-cell report separately. External calibration records are
+checked for source/architecture/model identity, validity and artifact coverage;
+passing those checks establishes provenance and coverage only, never measured
+physical bounds. Energy, capital and compiled-controller-memory fit remain unknown.
+A bounded classical LRU campaign starts each capacity empty, uses the same nonce-major
+schedule, and rebuilds complete noise, trace, ticket and proof for every candidate.
+Native proof byte identity, independent relation checks, failed attempts, evictions,
+cache payload and separately measured observer overhead remain explicit.
+
+Repair both retained M15 regression causes without relaxing release authorization
+or object identity: decode canonical v1 JSON role names through tagged replay while
+rejecting duplicate/alias keys; publish sealed objects using a same-number read-only
+descriptor while preserving timestamp, inode, seal and content checks. Stored v1
+bytes and signing domains are unchanged. New controls preserve real dual-quorum
+replay and reject successful metadata changes. Native rerun results are pending at
+this source preparation entry and must be attached with their actual frozen SHA.
+
+CI retains all original commands and adds six Python control suites, two explicit
+ignored native competition tests and exact named-test checks, plus fresh service
+and cache observations with the flushed stage journal. No original consensus rule,
+work weight, difficulty, resource budget or production qualification is changed.
+Development disk-full failures and their verified restorations remain evidence;
+complete frozen source checks run on a fully materialized checkout. Publication
+uses the user-authorized existing HeptaRuntime local GitHub channel, preserves the
+old connector failure, and requires exact object/ref readback with no force update.
+All four general safety gates remain HOLD until their missing evidence is supplied.
+
+### 2026-11-07 — frozen competing-schedule evidence outcome (research / HOLD)
+
+Implementation a56889a54aac5f14141bb45fb602141dd6a37645 (tree
+b4e64c82d2646b9f32124feb510edc3349a375d0) completed the declared remote
+observation pipeline. This outcome updates the pending validation state in the
+preceding continuation entry; the original observations remain immutable.
+
+- All 696 Python tests, exact-source/inventory/link/CI/PQ checks, formatting,
+  main locked/offline dependency graph and strict workspace Clippy passed.
+- The full native Node outer suite returned exit 0 with 1250 passed, 0 failed
+  and 37 ignored. Root/sealed targeted groups passed 6/6 and 7/7.
+  An external driver parser rejected legitimate nested libtest summaries;
+  its original FAIL is retained. An independent checker matched the complete
+  same-ELF inventory and every outer result, recognizing all child output.
+- Four explicit native bridge tests passed. Both source-bound Python observe
+  and verify campaigns passed. Eight continuing-competition replays retain
+  sixteen fresh honest blocks, seventy-two honest attempts (fifty-six misses),
+  eight private checks (four misses), and eight matching authenticated reopens.
+  Only the late-arrival observer-advice classical control briefly replaces the
+  public tip; all eight runs end with honest work 51.
+- Eight finite certificates complete. The late classical finite replacement
+  probability is 1/64 and horizon survival is zero; early classical and the
+  declared serial quantum lifecycle have zero ideal replacement/survival.
+  Fault perturbations bound only private-machine faults under the exact
+  prescribed honest/receiver trajectory.
+- All 54 declared service configurations construct; twelve q0 configurations
+  complete within four modeled seconds, all thirty-six positive-q configurations
+  do not. These service cells are separate from the serial competition action
+  configuration. Physical calibration is absent.
+- Three empty-cache capacities each materialize sixteen complete native-matching
+  proofs, including fourteen target misses. The 262144-byte payload cap computes
+  AB once and reuses it fifteen times; noise, trace, ticket and full independent
+  checks remain charged. Payload limits and CPU timings do not certify complete
+  physical memory, unbiased speed, equal real resources or a quantum advantage.
+- The first optional fuzz graph check failed because three locked archives were
+  absent. A separate cache and complete online/offline graph replay passed with
+  identical metadata, 149 packages/nodes and all 136 registry checksums verified.
+  The original failed row and main result were not rewritten.
+
+All four general quantum gates remain HOLD: no calibrated complete machine,
+minimum legal cost/lower bound, QPU mining execution or general mixed-network
+settlement theorem is claimed. Production activation remains false.
+
+Evidence, full raw outputs, exact source/ELF identities, independent reviews and
+supplemental reconciliations are retained at
+[evidence/pon-quantum-competing-gates-20261107](../../evidence/pon-quantum-competing-gates-20261107/README.md).
+
+### 2026-11-07 responsive mining, numerical calibration and legal producer portfolio — Draft/HOLD
+
+Continue from implementation a56889a54aac5f14141bb45fb602141dd6a37645 and
+evidence bef17d632d1e40014167dba2a1089b85366b67b8. Preserve prior failures,
+deadlines and source identities. The updated
+[finite contract](../../formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md)
+adds bounded receiver-following honest mining, delayed selection notices,
+charged in-flight cancellation and completed stale deliveries. A source-bound
+reader reconstructs complete native events and four ancestry/ownership outcomes.
+The scalar CPU observer stays distinct from the modeled quantum clock.
+A timely positive-q request without an implemented sampler fails explicitly.
+
+The finite Bellman/forward model declares stochastic successes and visibility,
+includes honest reactions and separates private ownership from private ancestry.
+Its four-second horizon, action caps and constant-work abstraction remain
+conditional limits, not arbitrary-algorithm or long-horizon settlement proof.
+
+The [machine/reuse contract](../../formal/pon-nakamoto-v1/MACHINE_SERVICE_AND_REUSE.md)
+adds numerical calibration admissibility and active-event gap reporting.
+Four exact complete-proof producers and four payload capacities each run once
+fully and once with an independent four-second deadline. Partial, canceled,
+late and never-started work stays visible. Portable CPU execution inherits
+explicitly delegated native provenance and retains preparation/source/terminal
+receipts. A configured HeptaRuntime Colab CPU probe has actually succeeded;
+these exact-integer tasks require no GPU and claim no QPU measurement.
+
+Three scoped CI repairs preserve acceptance: enumerate all ignored native
+selectors instead of a stale aggregate; check actual pinned JSON null-profile
+rejection while preserving nonzero exit and untouched databases; follow exact
+SelectedOpen forwarding/dispatch while retaining historical schema identities,
+namespace exclusion, no-fallback and rebinding refusals. Original CodeQL
+deadline and public-service resource constraints remain unchanged.
+
+Final committed-source campaigns and regression results are pending this source
+entry and must be attached with their actual implementation SHA, including
+failed attempts. CI retains all old commands and adds six focused suites, two
+explicit responsive native tests, calibration/portfolio observation and
+independent verification. All four general quantum gates remain HOLD.
+Publication continues through the authorized local Mac GitHub channel on the
+existing review PR, with exact source/object/ref readback, no force and no merge.
+
+### 2026-11-08 — frozen responsive execution and Colab portfolio outcome (research / HOLD)
+
+Implementation `bab83768b7c794b0127dc63d633f3e37a1be025a`, tree
+`21afda717e4f6aaf6a119bbcdeee6f3c397d0d7e`, completed the declared scientific campaign
+from `bef17d632d1e40014167dba2a1089b85366b67b8`. The preceding preparation
+entry remains historical. Complete observations and preserved failures are in
+[the responsive evidence](../../evidence/pon-quantum-responsive-gates-20261107/README.md).
+The evidence descendant does not relabel earlier execution with a later source SHA.
+
+- The frozen ROG driver passed all 62 required commands: 861 non-skipped Python
+  tests; the complete Node outer inventory of 1251 passed, zero failed,
+  39 ignored and zero filtered; six separately selected ignored quantum native
+  tests; formatting, strict whole-workspace all-target/all-feature Clippy,
+  both main/fuzz locked-offline graphs, source pins, negative controls and links.
+  An independent audit verified all 410 inventory artifacts plus final metadata,
+  127 source-boundary records and all 11073 tracked source entries. Existing
+  build cache reuse remains explicit; this is not a clean-build attestation.
+- Twelve bounded native responsive runs and fresh receiver replays retained
+  93 starts, 72 completions including misses, nine cancellations, twelve
+  deadline-censored attempts, ninety actual candidate-proof generations and
+  sixteen admissions. The single private replacement and honest rebind onto
+  a private tip are the predeclared seed9 observer-advice control. Actual
+  completed stale honest arrivals number zero. CPU execution, eager proof
+  work and declared outcome clocks remain separate.
+- Two new responsive reduced certificates independently verify 3361/5236 and
+  2828/5101 states/edges, with four risk definitions. The illustrative one-tick
+  case separates a private ancestor at horizon from a private-owned final tip.
+  Ten samples, both certificates and fourteen ancillary files match byte for
+  byte between ROG and actual Colab CPU. The 1/8 law, constant-work abstraction,
+  sixteen quarter-second ticks and bounded action envelope are conditional,
+  not native DAA or long-horizon settlement claims.
+- Actual Colab CPU also passed the 85-test frozen added-suite subset and ran
+  the complete four-producer/four-payload/full-or-budgeted matrix. All 896
+  planned slots remain: 594 completely verified, ten partial and 292 unstarted.
+  The full sixteen runs verified all 448 candidates; the budgeted sixteen
+  completed 146, of which only 140 finished verification by four seconds.
+  Six late completions receive no timely credit. Independent relation
+  reexecution passes; non-preemptive overruns and outer/management costs remain.
+  Single-observation timing minima do not establish a global cheapest method.
+- Numerical calibration observation and independent replay remain
+  `OBSERVED_HOLD` / `VERIFIED_HOLD`: all nine active physical-event classes
+  lack admitted hardware samples. Conservative direct IID zero-fault sample
+  counts and confidence allocations do not prove an adaptive execution bound;
+  alternative error-correction/decoder proof routes also remain unsupported.
+- The old 18-cell construction frontier, 54 service configurations, three cache
+  capacities, eight prescribed-arrival certificates and complete historical
+  CPU ledger replay remain separately retained. Development refusals, wrong
+  source-pin refresh, unsafe-clock rejection, generated-cache quarantine and
+  runtime/readback failures are preserved instead of overwritten.
+- The prior GitHub PQ network TCP reset remains unresolved despite the present
+  full ROG pass. CodeQL deadlines and public-service resource limits remain
+  unchanged. Current remote CI is a distinct observation, never inferred green.
+
+The owned Colab allocation remains ACTIVE_RELEASE_BLOCKED after two normal guarded
+release refusals before unassign. Read-only inventory still bound the endpoint at
+2026-11-08T00:55:36.835049+00:00. All scientific jobs and downloads completed;
+actual release time is null and the allocation/cost interval after that cutoff
+remains open. The release refusal and timeline are retained in the evidence.
+
+Publication uses the user-authorized HeptaRuntime local Mac GitHub channel and
+the existing review PR, with exact source/evidence object identities, no force
+update, no merge and no production activation. All four general quantum gates
+remain HOLD: no complete calibrated quantum machine, global legal-cost lower
+bound/equal-resource proof, QPU adversarial execution or general hybrid
+settlement theorem is claimed.
+
+## 2026-11-08 Responsive continuation: current CI evidence and scoped budget-test repair
+
+The scientific implementation `bab83768` and evidence `a490d3b9` were published
+through HeptaRuntime's local Mac GitHub channel to draft PR 781 and read back.
+The complete 62-command scientific validation remains bound to its original
+source; no later CI snapshot is substituted for that execution.
+
+The 02:21:16 UTC current-head snapshot retained 100 checks: 71 successful,
+14 failed, one skipped and 14 running. Failure triage recovered original
+confirmation-target failures under unchanged service limits, the missing
+historical artifact, incomplete original native campaigns (including failed
+baselines), the CodeQL export's absent exact-source data, and a brittle
+staged-observer test assertion. The selected original logs/reports and
+verification scope are retained in
+[evidence/pon-quantum-responsive-ci-20261108](../../evidence/pon-quantum-responsive-ci-20261108/README.md).
+
+Only the staged-observer test changes existing executable source in this follow-up.
+The added evidence verifier checks archive identity and extraction completeness.
+Its coordinator-local failed controls verify one cumulative deadline and
+expiry before launch; production clocks, limits, rejection criteria and
+real subprocess lifecycle controls remain unchanged. The entire module
+passes 31 tests, and both deliberate in-memory guard/deadline mutations are
+rejected. The original failure remains retained; its deleted temporary
+receipt is not reconstructed as an observed fact.
+
+A later read-only allocation inventory at 02:04:13 UTC no longer lists the
+owned Colab endpoint. This updates the operational observation while leaving
+the exact release time, mechanism and complete cost interval unknown.
+Earlier guarded-release refusals remain intact.
+
+All four general quantum gates remain HOLD. These CPU observations and
+bounded certificates do not supply calibrated quantum hardware, a global
+legal-work lower bound, native QPU execution or general settlement security.

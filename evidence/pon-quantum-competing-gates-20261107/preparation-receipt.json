@@ -1,0 +1,48 @@
+{
+  "archive_member_readback_verified": true,
+  "created_utc": "2026-11-07T15:19:28.749844+00:00",
+  "credential_environment_keys_checked_against_explicit_build_only_inventory": true,
+  "direct_copy_bytes_verified": true,
+  "elapsed_seconds": 1.7146432520239614,
+  "input_artifact_inventories_verified": [
+    {
+      "members_verified": 283,
+      "path": "validation-competing-a56889a/artifact-inventory.json",
+      "sha256": "8fcebac0edc0721306cf7667caf9941d0d1542171e7cf3b6d26760c06e35b097"
+    },
+    {
+      "members_verified": 19,
+      "path": "fuzz-validation-a56889a-20261107/artifact-inventory.json",
+      "sha256": "cf578a7b222c19b1aece8e235fd8de560a0e1a14379670476dfa1829b4e22f32"
+    },
+    {
+      "members_verified": 21,
+      "path": "supplemental-validation/whole-node-a56889a-20261107/artifact-inventory.json",
+      "sha256": "4f0fd8917733598c2e7d2b167065d41ebef91a289246be9432824308160cc22b"
+    }
+  ],
+  "original_inputs_unchanged": true,
+  "preparation_script_sha256": "e8cd0cd88ec4e492cde2484ec3f7699acd12f235a1e332263c9edbbebb7ecd48",
+  "quantum_hardware_executed": false,
+  "quantum_mining_qualified": false,
+  "retained_preparation_failure": {
+    "path": "prepared-competing-evidence-attempt1-failed",
+    "reason": "Initial preparer expected status object, but observed readback result is a two-command receipt list; fixed only external preparer",
+    "sha256": "4ce774b173c4c9fb1adef2fd549b060b1b3f205d3448b912e1e98b2fa4095a58"
+  },
+  "schema": "trnm-competing-evidence-preparation-v1",
+  "source_after": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "source_before": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "source_helper_sha256": "48a259891b7da79f845cf578f71c035679c73844d6c3ddc3610352f22e2f9f39",
+  "status": "PREPARED_NOT_COMMITTED_OR_PUBLISHED"
+}

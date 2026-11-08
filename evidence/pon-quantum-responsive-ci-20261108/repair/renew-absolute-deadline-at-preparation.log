@@ -1,0 +1,33 @@
+test_preparation_consumes_same_cumulative_budget (postpublish_staged_observer_controls.CoordinatorFailureTests.test_preparation_consumes_same_cumulative_budget) ... FAIL
+
+======================================================================
+FAIL: test_preparation_consumes_same_cumulative_budget (postpublish_staged_observer_controls.CoordinatorFailureTests.test_preparation_consumes_same_cumulative_budget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/scripts/ci/test_w1_staged_observer.py", line 490, in test_preparation_consumes_same_cumulative_budget
+    self.assertEqual(coordinator.main(self.invocation(
+                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+        temp, "raise AssertionError('control must not spawn')", .2)), 1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py", line 285, in main
+    stage("prepare-full-execution", [*base, "prepare", args.checkpoint, args.prepare_input, "18"], 180)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py", line 271, in stage
+    result = measure(list(map(str, command)), args.out / label, min(cap, 7200), deadline=deadline)
+  File "/usr/lib/python3.14/unittest/mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/unittest/mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/unittest/mock.py", line 1247, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/scripts/ci/test_w1_staged_observer.py", line 475, in expired_preparation
+    self.assertAlmostEqual(deadline, 100.2)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 280.05 != 100.2 within 7 places (179.85000000000002 difference)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)

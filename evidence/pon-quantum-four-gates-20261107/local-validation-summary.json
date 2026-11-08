@@ -1,0 +1,82 @@
+{
+  "distinct_python_tests": 619,
+  "groups": {
+    "economics": {
+      "commands": 2,
+      "group": "economics",
+      "native_quantum_execution": false,
+      "production_activation": false,
+      "source": {
+        "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+        "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+        "tracked_files": 10997,
+        "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+      },
+      "status": "PASS",
+      "whole_chain_qualified": false
+    },
+    "fuzz": {
+      "commands": 3,
+      "group": "fuzz",
+      "native_quantum_execution": false,
+      "production_activation": false,
+      "source": {
+        "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+        "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+        "tracked_files": 10997,
+        "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+      },
+      "status": "PASS",
+      "whole_chain_qualified": false
+    },
+    "quantum": {
+      "commands": 6,
+      "group": "quantum",
+      "native_quantum_execution": false,
+      "production_activation": false,
+      "source": {
+        "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+        "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+        "tracked_files": 10997,
+        "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+      },
+      "status": "PASS",
+      "whole_chain_qualified": false
+    },
+    "repository": {
+      "commands": 8,
+      "group": "repository",
+      "native_quantum_execution": false,
+      "production_activation": false,
+      "source": {
+        "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+        "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+        "tracked_files": 10997,
+        "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+      },
+      "status": "PASS",
+      "whole_chain_qualified": false
+    },
+    "rust": {
+      "commands": 7,
+      "group": "rust",
+      "native_quantum_execution": false,
+      "production_activation": false,
+      "source": {
+        "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+        "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+        "tracked_files": 10997,
+        "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+      },
+      "status": "PASS",
+      "whole_chain_qualified": false
+    }
+  },
+  "python_unit_counts": {
+    "economics": 18,
+    "fuzz": 0,
+    "quantum": 412,
+    "repository": 189,
+    "rust": 0
+  }
+}

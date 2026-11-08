@@ -1,0 +1,1415 @@
+{
+  "artifact_bytes": {
+    "native-fixture.json": 542756,
+    "native-responsive-execution.json": 859792,
+    "native-responsive-independent-verifier.stderr": 0,
+    "native-responsive-independent-verifier.stdout": 17308,
+    "native-responsive-plan-verifier.stderr": 0,
+    "native-responsive-plan-verifier.stdout": 204970,
+    "native-responsive-replay.json": 235171,
+    "packets/0843a97974f648b427230969cf54b3b82f146833e32b2f39527b10b42096442b.pnk": 49508,
+    "packets/0f4e851cc186a414293a0d1372d7ad702147c062db76c6867ef361fb73649a34.pnk": 49508,
+    "packets/13479567872b7843c76df33fe4a383933668acf18ea8dae84b4d303543bdcfeb.pnk": 49508,
+    "packets/1a62625729d92a6b97b1ab0fd93f0b4028adcbf0390a8465c71d763593c4d2b1.pnk": 49508,
+    "packets/2971c855a56a9a7641f536fef32c3c2447ff98daedca1aa8a3c0bbd65d79b018.pnk": 49508,
+    "packets/2dcb92c8ed9998af5932365fefbc86dc5a0ed2088af9c4daa9f0aa2e2451cfb9.pnk": 49508,
+    "packets/2ee6f153a16b5917c6008e7db93ba88dbde77b003ce25b7c8746bc27d8622c34.pnk": 49508,
+    "packets/2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad.pnk": 49508,
+    "packets/3a98980fefd1a42e32e5b55dffffd9edf9bbac351bcf2d6305f086253f1f3ae2.pnk": 49508,
+    "packets/3ad60df5acf70fe0a10020a70b46ebb6117b29c949293741458674ec092887bf.pnk": 49508,
+    "packets/3b2d2598f2db2843ffc802f626f2c7fc6be0d34d950dc3dfae01b32431c72ee4.pnk": 49508,
+    "packets/3e529b00037e98c35dcfbf439a502ea3e1586a4e55bd6a9bfcabace5ac4de574.pnk": 49508,
+    "packets/53a74e70ff5564996e95a4e9ccf32f68593c04c337732b09c3e4cb8ae4e02ee6.pnk": 49508,
+    "packets/56dec70ac65ea34bf47610f64ea7dc3e26eacd23178c575b687fae6549d3b971.pnk": 49508,
+    "packets/635235e5b36614dd63ad498b99425c37aefd5019ccb1ba13888c152cfd5b4875.pnk": 49508,
+    "packets/65b1355dcb26355a802570f0bb751f54799a409b8d2eb04cc333a01d675ba9a7.pnk": 49508,
+    "packets/67f2787dc3db4145753c687fe05acdb95beefef39fdd8a706f6c7d929820bf56.pnk": 49508,
+    "packets/69839ea3b9789d0b6171036c59486ae14dd962412d7e22581745146d61ce0d09.pnk": 49508,
+    "packets/6a021706023b914a366ed53d77f96d58f4a9dcd6d661ba64156caf1ffe39d099.pnk": 49508,
+    "packets/6bdb5c493a5b85b60a7ea6992bb2ad1b206704ba00f2a52d8630af8908acb024.pnk": 49508,
+    "packets/6dc41aaa3dc2e685cf9185d3cd83a176062f5c8331f922405ccc853061ae6fad.pnk": 49508,
+    "packets/6e9f1130c9fa90f11e52861bd307cc91a36389e904b5709171d15f0494eaa4ba.pnk": 49508,
+    "packets/74f90487c90eea783b9381f75ed8288c1ace2c173074bfc3bb39d075da3493b4.pnk": 49508,
+    "packets/84b5c2627cbd085924149a2d91bc92cb1e5f7b4d33a71afaaf0869ddd09b4782.pnk": 49508,
+    "packets/873eeb5f527dd3d82a6fe9670a586afe9d10b08661644eb620266ef397b9c229.pnk": 49508,
+    "packets/8e3de6dd830ae33b3763071bf834c0c4690e7f3cac29db62d1372abe2f56eb92.pnk": 49508,
+    "packets/96519dddb45ba1f46d244747fd7f48b62cc93ccdeca03bd38d83eaca61a9bc9c.pnk": 49508,
+    "packets/983816877211f919546c10116b5c88c388199e0545dbcff378f0e8d4921bd1cf.pnk": 49508,
+    "packets/a1aed287d315a1fcdd3cb76f08ea751cbe4588071488b09201d965cd1b78c6a2.pnk": 49508,
+    "packets/a5f69578db49cbf3c1fabbc9d37a0c841be29089534db887fad4a8b158a9e7b9.pnk": 49508,
+    "packets/a9747b579209ee9d01dcb9bee274093a08ffd00a3c2dfd2af1db303e18feac3a.pnk": 49508,
+    "packets/afc8261908122059152d4fba3029a4d3c5541b57cd44a51ba5f58f1910c012a7.pnk": 49508,
+    "packets/b463a6e5737c3d3730f1054f38070b1b6239c3a98bf2d5150e6934030cc78ad0.pnk": 49508,
+    "packets/b6210c24cda12acb4ce25dd401322b68b9ff50b0cd2341c0f2caf83a100dc7d9.pnk": 49508,
+    "packets/b792fb527961e671fcc7cc5852f4b330155cde13000d68ded2c80f88cfdcb9c2.pnk": 49508,
+    "packets/bb72ef91a4e65c94509ff474b6656a1b58810bea5a69c56cac6867a230cdd324.pnk": 49508,
+    "packets/bdfe7a7ef61794645db119ff1b871d67c18e6ed67c04ff472cac19159cd48b2f.pnk": 49508,
+    "packets/bf43e0a781293c302d9541e0a2f6c8921e1997569bdb5263835ce816aa17e6f8.pnk": 49508,
+    "packets/c151ede45c0e48950cdb517254e0a806005145676808e0a8d344561b0c8f7247.pnk": 49508,
+    "packets/c88cdc09dd0daa328154e9532268bec0c2f2d3283a8ddafaa376ba276e13519b.pnk": 49508,
+    "packets/ca1276b52dc2658e3974578c2c873df333014f74ca948ede5d760b70e8944205.pnk": 49508,
+    "packets/cdb9aefa0866d5ece8f4d2062aad8dbff90238523031eb84dd6f1bdd7f14e6af.pnk": 49508,
+    "packets/cfc1ac976e5844ba486deb2cce9a0759197e50684fbbaaef1b7a69bff42817fc.pnk": 49508,
+    "packets/d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986.pnk": 49508,
+    "packets/df458f6ce26e92fe5ab62c0be53b0765cd36d0649e759abf1a68f745f3968d95.pnk": 49508,
+    "packets/e4644fab95b54b52a498163b7fbb94d921dd7b7153ef687ec348156af006e5f2.pnk": 49508,
+    "packets/e7749b52042370e2c1ca14b23265e7d6a6cac4936c5ae08328e8610e07561516.pnk": 49508,
+    "packets/e7770d0ed009feaa19baab15e41b98e3090679ad9194c50109c23d658b6a03bf.pnk": 49508,
+    "packets/eb99d621e67575d358973d21804d00d28c900ec4d88e4069ec11a6ddb4728bcb.pnk": 49508,
+    "packets/f06bb58f58435a86541d96c660ba7fc46b4a7f0b6cc98306d8c26050805cc793.pnk": 49508,
+    "packets/f603fe9897485039155d7f238fabec4598f49b2a1196bbd1262a812d588441ed.pnk": 49508,
+    "packets/f8af9bc321c0be8ca7bbe8552d128f94fa1fcc5f4eabcf07907639b9be61b318.pnk": 49508,
+    "packets/f972f9e03b07971a525dbbae90500288827e3a4fa9e55cf0eae34e733c7e9fe7.pnk": 49508,
+    "packets/fb254c5a6cf20bd5f9fae2357f0949187e3bd500a3f7da98fb205acd15b28836.pnk": 49508,
+    "packets/ff0fa2c5d22b234d2857f7966cc335af601c789a63a843394955cce86158bc25.pnk": 49508,
+    "responsive-clock-records.json": 230105,
+    "responsive-plan.json": 16506,
+    "responsive-run-0.jsonl": 17559,
+    "responsive-run-1.jsonl": 20996,
+    "responsive-run-10.jsonl": 30828,
+    "responsive-run-11.jsonl": 34359,
+    "responsive-run-2.jsonl": 20999,
+    "responsive-run-3.jsonl": 24461,
+    "responsive-run-4.jsonl": 13678,
+    "responsive-run-5.jsonl": 13690,
+    "responsive-run-6.jsonl": 17559,
+    "responsive-run-7.jsonl": 13690,
+    "responsive-run-8.jsonl": 28369,
+    "responsive-run-9.jsonl": 30821
+  },
+  "artifact_files_checked": 76,
+  "artifact_sha256": {
+    "native-fixture.json": "e7b3c108c3a0985f67806d986620d090ea467e15446071fbf6d9bc2e6b7c3fcd",
+    "native-responsive-execution.json": "050fe6389f27e21fcbe472b012d51c9ee5f8d39c68a5799cb070c257d7c82030",
+    "native-responsive-independent-verifier.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-responsive-independent-verifier.stdout": "014c8b446256136ee425e5e4a184fb646e0154d2dfded792dd95504d461c9706",
+    "native-responsive-plan-verifier.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-responsive-plan-verifier.stdout": "8a1915dcc3ef59cbb43d56c71b67ecb6b0d549d10cafe568e286aec98a82fe98",
+    "native-responsive-replay.json": "b62454ec36980ce9b0bfafcee25715a57f01e522366904a43931e5c34c3be8b7",
+    "packets/0843a97974f648b427230969cf54b3b82f146833e32b2f39527b10b42096442b.pnk": "f62e081fdec2ff4557e3831b23ec148c68ee4fa7340f8e4bb0ff454ce40b7cc6",
+    "packets/0f4e851cc186a414293a0d1372d7ad702147c062db76c6867ef361fb73649a34.pnk": "25820d8b7f8d4a0fde2c432fd3e2ff99ed96c0cce5aa928a85f886ae5b1f83d1",
+    "packets/13479567872b7843c76df33fe4a383933668acf18ea8dae84b4d303543bdcfeb.pnk": "0d2907dcf3973d0f99782ee2a204bed45ffa3d1ce338ea7de3ec1d02fb4836b4",
+    "packets/1a62625729d92a6b97b1ab0fd93f0b4028adcbf0390a8465c71d763593c4d2b1.pnk": "990ccb656e561f9e63b3644715a4c4006e5257990eb9dedd86f837a7e418d522",
+    "packets/2971c855a56a9a7641f536fef32c3c2447ff98daedca1aa8a3c0bbd65d79b018.pnk": "dffa15e358629fd95e622caab9c4021092accff4e8094a3519b7b0d9c5d44957",
+    "packets/2dcb92c8ed9998af5932365fefbc86dc5a0ed2088af9c4daa9f0aa2e2451cfb9.pnk": "1132a720973777bcd9d8a687d657ea802eb45d742765e545e85ce822be69f85b",
+    "packets/2ee6f153a16b5917c6008e7db93ba88dbde77b003ce25b7c8746bc27d8622c34.pnk": "4aae9cc7af9a858bf8cb30b63827ac0e3ec51b01de1a88d3da2643c3cbd73569",
+    "packets/2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad.pnk": "3cd7f7ef2a03bd45e247e2d7e88f3b63c0348c16dcaacc38070973744ba42c68",
+    "packets/3a98980fefd1a42e32e5b55dffffd9edf9bbac351bcf2d6305f086253f1f3ae2.pnk": "92db57f50650dbb0525e5873a33d05ba75b3e1a88f5d9cf54ff82dee97a36b2e",
+    "packets/3ad60df5acf70fe0a10020a70b46ebb6117b29c949293741458674ec092887bf.pnk": "96850d5f6c07037ead6abb4fee6defba9f97b10b4f9a36197716cf3fbaaff396",
+    "packets/3b2d2598f2db2843ffc802f626f2c7fc6be0d34d950dc3dfae01b32431c72ee4.pnk": "0db305586f94af908f3bc3a61f20016cf5e6994e9ff57b65904402fac34490c7",
+    "packets/3e529b00037e98c35dcfbf439a502ea3e1586a4e55bd6a9bfcabace5ac4de574.pnk": "18199ef0e4ce5f4240b203021393fce8df5f023823605f3ecce7a8447543d928",
+    "packets/53a74e70ff5564996e95a4e9ccf32f68593c04c337732b09c3e4cb8ae4e02ee6.pnk": "2c29002fef30de515b7f0c40d7fcd2a9a2f69c32e2a4b4ac2a0d897e2b2b2f26",
+    "packets/56dec70ac65ea34bf47610f64ea7dc3e26eacd23178c575b687fae6549d3b971.pnk": "0f02166e8eb4ace6f7f4e4eb65c1e7f9db5eed0c00c0ecf5cdb19c03069c6865",
+    "packets/635235e5b36614dd63ad498b99425c37aefd5019ccb1ba13888c152cfd5b4875.pnk": "97ce086d05b84cc87db00e4641880a4d88ff951720393a1cf3c92ab0fe6c20ef",
+    "packets/65b1355dcb26355a802570f0bb751f54799a409b8d2eb04cc333a01d675ba9a7.pnk": "428abb7e1c17dcf39cd09525c6d5111649113b5a6259d9d7f84497d8b8078217",
+    "packets/67f2787dc3db4145753c687fe05acdb95beefef39fdd8a706f6c7d929820bf56.pnk": "37bbda5eebee0b0862c7ac2f185078bb5ce19ef12b3c40611b7b110acbf73d6c",
+    "packets/69839ea3b9789d0b6171036c59486ae14dd962412d7e22581745146d61ce0d09.pnk": "24906be9813e14aa530d343668d4a4b9464f8e437ec8726ad85a68c496121b3e",
+    "packets/6a021706023b914a366ed53d77f96d58f4a9dcd6d661ba64156caf1ffe39d099.pnk": "de76776ff07ca1a7c9a793f7bbed5afe9ed90dea8f6e72855fc05f47b4ebc473",
+    "packets/6bdb5c493a5b85b60a7ea6992bb2ad1b206704ba00f2a52d8630af8908acb024.pnk": "86ef2910c1d4b4927767fda48fbbe1ffcdff9c5222a6c7fc63e801e27ad1c4cc",
+    "packets/6dc41aaa3dc2e685cf9185d3cd83a176062f5c8331f922405ccc853061ae6fad.pnk": "fee41768b9a7989344ac02b2cc96545cde85d05792185f1e6d3ee526bfae4669",
+    "packets/6e9f1130c9fa90f11e52861bd307cc91a36389e904b5709171d15f0494eaa4ba.pnk": "401a8963a35e1afb4f746a0c544a8cbfa543a28daf29319488e858a74ab14115",
+    "packets/74f90487c90eea783b9381f75ed8288c1ace2c173074bfc3bb39d075da3493b4.pnk": "7bc65fa78ceec698df6f6da0e67a6f500c04542aaf7adc518bbcd1ec6fa6b39a",
+    "packets/84b5c2627cbd085924149a2d91bc92cb1e5f7b4d33a71afaaf0869ddd09b4782.pnk": "7397674d85cb16724432c6deed6d9aa3e083a809ccf451a1f6f100aaeaff3723",
+    "packets/873eeb5f527dd3d82a6fe9670a586afe9d10b08661644eb620266ef397b9c229.pnk": "747e2bc6ec3134225dab2d6d67aedb40d623d9f32230427ed11ce9ac2af9f405",
+    "packets/8e3de6dd830ae33b3763071bf834c0c4690e7f3cac29db62d1372abe2f56eb92.pnk": "c05946f590c93dd5234f26b3fae44dcc5cc50506e73b78dc3426553e154f22fc",
+    "packets/96519dddb45ba1f46d244747fd7f48b62cc93ccdeca03bd38d83eaca61a9bc9c.pnk": "175aa0470a14f35098f1e478c13c934795a079463631980c5aade7aba46cbdc3",
+    "packets/983816877211f919546c10116b5c88c388199e0545dbcff378f0e8d4921bd1cf.pnk": "01313f691e4f20b2e3a4fa6aed1545e4eee2ddab9a57a45a459492ae2c6d5cb4",
+    "packets/a1aed287d315a1fcdd3cb76f08ea751cbe4588071488b09201d965cd1b78c6a2.pnk": "286cac02bf2bbcd7eeb2cc4009a49f56ff1cc54ffcb76e3a56fbbaed1a1289d0",
+    "packets/a5f69578db49cbf3c1fabbc9d37a0c841be29089534db887fad4a8b158a9e7b9.pnk": "2e568ba91fec147e645b03900cf0176f5b01408e2e1af98ca91ebc80a86b5f06",
+    "packets/a9747b579209ee9d01dcb9bee274093a08ffd00a3c2dfd2af1db303e18feac3a.pnk": "2eb55ab9fad3ef99c0685759dd26159794d92157dc4fcd182f9491687ec2567b",
+    "packets/afc8261908122059152d4fba3029a4d3c5541b57cd44a51ba5f58f1910c012a7.pnk": "7183b4f51f76a1f92c1a0f610571f403e77de90edec33bf580742b2d334ead7f",
+    "packets/b463a6e5737c3d3730f1054f38070b1b6239c3a98bf2d5150e6934030cc78ad0.pnk": "953c796ee2c17ac12ce40147a6505cfbb1cbce32ece8c194577440cac8ef8cf8",
+    "packets/b6210c24cda12acb4ce25dd401322b68b9ff50b0cd2341c0f2caf83a100dc7d9.pnk": "4ad5a38b0e5d3402908ebdc4c9312035c813a3c54dcaecd2de90a71ca722e2f0",
+    "packets/b792fb527961e671fcc7cc5852f4b330155cde13000d68ded2c80f88cfdcb9c2.pnk": "730534fecba01f96bc4f2426387f032a8c6b7c0b78daf3580a191190b6304fe7",
+    "packets/bb72ef91a4e65c94509ff474b6656a1b58810bea5a69c56cac6867a230cdd324.pnk": "1c2e4d3d04914f712dbc359f0430ae4a87a5e73500f6ae78db893b05b9bffc20",
+    "packets/bdfe7a7ef61794645db119ff1b871d67c18e6ed67c04ff472cac19159cd48b2f.pnk": "274e4dde8b86cad7d28b8298ea4a9be998f4319203402eec9bb18143b2db06ea",
+    "packets/bf43e0a781293c302d9541e0a2f6c8921e1997569bdb5263835ce816aa17e6f8.pnk": "ffc041cc41a5a72eb5d3f5acab7274731ac55136420e93d7adf7adba560c27a0",
+    "packets/c151ede45c0e48950cdb517254e0a806005145676808e0a8d344561b0c8f7247.pnk": "5b75098aeb424eceec8b4920fe6e84c5267478366606be50aa75151a268bc842",
+    "packets/c88cdc09dd0daa328154e9532268bec0c2f2d3283a8ddafaa376ba276e13519b.pnk": "cf3c7acbefbacacf3277d501338f3986a772f557a6d6875cede2e2cb697adc63",
+    "packets/ca1276b52dc2658e3974578c2c873df333014f74ca948ede5d760b70e8944205.pnk": "4259d34e49a540485fc6f651b1a3e2346ff9ca9f34388639cd4a0eeeb976eb36",
+    "packets/cdb9aefa0866d5ece8f4d2062aad8dbff90238523031eb84dd6f1bdd7f14e6af.pnk": "5c0de902437bda7e3bb344213cc5ca5528f75dd71df50d44b9dfe14df1880963",
+    "packets/cfc1ac976e5844ba486deb2cce9a0759197e50684fbbaaef1b7a69bff42817fc.pnk": "6198b0eed38f680eb6da1f83e7fa1d9c1e5a4cae40ed804689bc4182aeb4b940",
+    "packets/d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986.pnk": "904c8fda95615a1344d163afecd45fe5a53ecdc0b3983a7b45bbf29f74daa528",
+    "packets/df458f6ce26e92fe5ab62c0be53b0765cd36d0649e759abf1a68f745f3968d95.pnk": "74b6cbd63d0a6fb9b3a2ac6ec9aa072059b422a009ee27f193f0708faba67d44",
+    "packets/e4644fab95b54b52a498163b7fbb94d921dd7b7153ef687ec348156af006e5f2.pnk": "fe8b7bf870ddaf3bc54586585bd9f93b915bc25bcad843f6caf297b4c182ea13",
+    "packets/e7749b52042370e2c1ca14b23265e7d6a6cac4936c5ae08328e8610e07561516.pnk": "52601d4ab982f30848a8d0265d1471d125806d717fbac521b4ffb88226f8410d",
+    "packets/e7770d0ed009feaa19baab15e41b98e3090679ad9194c50109c23d658b6a03bf.pnk": "19d2911539e24db29dc8b1d01ff70584f8a3f6fe73bfd401ce158bb779dbf1c5",
+    "packets/eb99d621e67575d358973d21804d00d28c900ec4d88e4069ec11a6ddb4728bcb.pnk": "7f5f706788992088f75e4c98efc25f434aea18242fccaf69d2b9198cbf309ed3",
+    "packets/f06bb58f58435a86541d96c660ba7fc46b4a7f0b6cc98306d8c26050805cc793.pnk": "f394d4a8130ecd1ecb84a999b0479ba48aa9984559a0a3aec2ee66821024e5fa",
+    "packets/f603fe9897485039155d7f238fabec4598f49b2a1196bbd1262a812d588441ed.pnk": "0da5acfa980a569fd65037f4255dd6acdd6149fb66775c5eed8b53ca476861be",
+    "packets/f8af9bc321c0be8ca7bbe8552d128f94fa1fcc5f4eabcf07907639b9be61b318.pnk": "1834542ee484954e9b6f1e6e3ef05c02fd8e5d463b2a3667f604b67776667df0",
+    "packets/f972f9e03b07971a525dbbae90500288827e3a4fa9e55cf0eae34e733c7e9fe7.pnk": "7512fb302cbb11ba388347b59d08e5b0d04a15639410140d0d521820fc0f3a61",
+    "packets/fb254c5a6cf20bd5f9fae2357f0949187e3bd500a3f7da98fb205acd15b28836.pnk": "fb369adab47687ae2bb877e19ad4c03aa185c0fc1da50eb1ad63583507766ec4",
+    "packets/ff0fa2c5d22b234d2857f7966cc335af601c789a63a843394955cce86158bc25.pnk": "4241a391e7f4f2c41cf1fa7af619343e116598831eda3c10842e3a227e463211",
+    "responsive-clock-records.json": "9d76524c08e39f28f4e8c38c8d3997f1553b1c80f1248402195172770d5942be",
+    "responsive-plan.json": "d1123e22a413b24016292428bdf26c24c66fdc503980e6e63893285623d51ca1",
+    "responsive-run-0.jsonl": "a4831e76bfb70e236d09ab23bcf284d5fb0e899f2bf08eb797fdce015b20b311",
+    "responsive-run-1.jsonl": "e61782fc4fb7ce00e7006f04de3f71c0b41afa8a649c818276e42fe21f5dd828",
+    "responsive-run-10.jsonl": "e36e4eb13d6e0cc8c6af1563525c525866a3d8b51182260e19718d10266e1f40",
+    "responsive-run-11.jsonl": "1d35050b4b6942ab141601e001cde5801848a42c98b03d0efd8dba819347982d",
+    "responsive-run-2.jsonl": "15009985087221413cb60d7a008bb610463c27733aa6be75ed12ae4ed13e30e1",
+    "responsive-run-3.jsonl": "2ee39f5f57f1af33c41a1de6222e20452cb72c3658886cd78498172a87232d7f",
+    "responsive-run-4.jsonl": "d5c5901328028c86c587a005a2a24e69a12f6b147df07a2429cf05ee69116900",
+    "responsive-run-5.jsonl": "0071f477db2e7bb749a1e2420455b80c6e9ef023e972ac45456b31dc6f5b08ca",
+    "responsive-run-6.jsonl": "6624be5fb2cdab3824dfb1527ecb5755c48d1c9cab118dc42ee75d324da11785",
+    "responsive-run-7.jsonl": "04c8f889119139950e6439617062635e575d33d3f3c7643cfe41fc63ac49774e",
+    "responsive-run-8.jsonl": "d6fd051c962c3b1366759f0bc5ba05f4f9ac24e4fb4b1d09f3f89aa0ee84d845",
+    "responsive-run-9.jsonl": "ce8afedccdaa176bada1a7c95835885401089fdacf418ae9847534ae3e86c3c9"
+  },
+  "audit_method": "Independent standard-library raw-byte hash and event/inventory/accounting fold; did not rerun native tests, regenerate proofs or call the original Python verifier.",
+  "claims": {
+    "full_W1_recomputed_by_auditor": false,
+    "live_public_network_executed": false,
+    "long_horizon_settlement_security_proved": false,
+    "native_program_execution_repeated_by_auditor": false,
+    "physical_clock_calibrated": false,
+    "production_activation": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "source_changed": false,
+    "tests_rerun": false
+  },
+  "definitions": {
+    "completed_attempt": "Honest completion, private target miss at candidate check, or successful private proof completion; private-check winner and private-complete are one attempt.",
+    "cpu_reconciliation": "Unique per-attempt preparation/proof/verification CPU + native admission/notification event CPU + retained other process CPU = whole run process CPU.",
+    "honest_stale_completed_delivery": "An honest packet completed and queued, then its parent differs from receiver selected_before when delivered. Private fork publications are excluded from this count.",
+    "modeled_time": "Declared logical ticks; process wall/CPU are eager observer measurements. Queue propagation accounting is derived logical occupancy, not a physical transfer measurement.",
+    "receiver_selection_change": "A receiver-admit event with selected_before != selected_after, split by packet producer."
+  },
+  "execution_sha256": "050fe6389f27e21fcbe472b012d51c9ee5f8d39c68a5799cb070c257d7c82030",
+  "frozen_git_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "limitations": [
+    "Twelve bounded four-second receiver-following experiments with at most six honest starts and two private attempts; not an ongoing arbitrary public network.",
+    "Observer-advice runs are separately labeled prior winner-census controls and are not blind fixed-policy success estimates.",
+    "Every q>0 private search is censored before candidate completion; no quantum candidate or Grover output was fabricated.",
+    "Actual execution uses CPU native programs and exact packet rules; quantum service clocks remain stated model premises.",
+    "No calibrated physical quantum hardware, exhaustive native honest probability law, equal total real resource proof, global algorithm lower bound or long-term settlement proof.",
+    "The audit verifies consistency and retained bytes. It does not independently attest the original execution environment or repeat the cryptographic/W1 computations."
+  ],
+  "packet_files_checked": 55,
+  "raw_python_readback_receipt_sha256": "014c8b446256136ee425e5e4a184fb646e0154d2dfded792dd95504d461c9706",
+  "raw_readback_equals_embedded_native_replay_receipt": true,
+  "replay_sha256": "b62454ec36980ce9b0bfafcee25715a57f01e522366904a43931e5c34c3be8b7",
+  "run_summaries": [
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 10523828,
+        "attempts_by_owner": {
+          "honest": 7970661,
+          "private": 2553167
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 0,
+          "censored": 1289239,
+          "completed": 9234589
+        },
+        "other_process_work": 422311628,
+        "whole_process": 432835456
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 10522757,
+        "history_replay": 388825448,
+        "other_wall": 58773844,
+        "whole_run": 458122049
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 5,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 16,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 0,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 0,
+      "honest_notifications_delivered": 0,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 0,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 2
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "receiver_selection_changes": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "run_id": "classical-fixed-seed9",
+      "seed": 9,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 20906473,
+        "attempt_stages": 11135726,
+        "attempts_by_owner": {
+          "honest": 8647820,
+          "private": 2487906
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 1308685,
+          "censored": 1660213,
+          "completed": 8166828
+        },
+        "other_process_work": 409585272,
+        "whole_process": 441627471
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 20906660,
+        "attempt_stages": 11134256,
+        "history_replay": 375990201,
+        "other_wall": 58838930,
+        "whole_run": 466870047
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 1,
+          "censored": 1,
+          "completed": 4,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 20,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 1,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 2,
+      "honest_notifications_delivered": 1,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 1,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 2
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 1,
+        "private": 0,
+        "total": 1
+      },
+      "receiver_selection_changes": {
+        "honest": 1,
+        "private": 0,
+        "total": 1
+      },
+      "run_id": "classical-fixed-seed17",
+      "seed": 17,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 20817727,
+        "attempt_stages": 10846875,
+        "attempts_by_owner": {
+          "honest": 8372214,
+          "private": 2474661
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 1328412,
+          "censored": 1274510,
+          "completed": 8243953
+        },
+        "other_process_work": 410365208,
+        "whole_process": 442029810
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 20817802,
+        "attempt_stages": 10845769,
+        "history_replay": 376312545,
+        "other_wall": 61564733,
+        "whole_run": 469540849
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 1,
+          "censored": 1,
+          "completed": 4,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 20,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 1,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 2,
+      "honest_notifications_delivered": 1,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 1,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 2
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 1,
+        "private": 0,
+        "total": 1
+      },
+      "receiver_selection_changes": {
+        "honest": 1,
+        "private": 0,
+        "total": 1
+      },
+      "run_id": "classical-fixed-seed41",
+      "seed": 41,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 41460587,
+        "attempt_stages": 11332312,
+        "attempts_by_owner": {
+          "honest": 8808891,
+          "private": 2523421
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 2918002,
+          "censored": 0,
+          "completed": 8414310
+        },
+        "other_process_work": 412678557,
+        "whole_process": 465471456
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 41460748,
+        "attempt_stages": 11394102,
+        "history_replay": 377052771,
+        "other_wall": 67077863,
+        "whole_run": 496985484
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 2,
+          "censored": 0,
+          "completed": 4,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 24,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 2,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 4,
+      "honest_notifications_delivered": 2,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 2,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 2
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 2,
+        "private": 0,
+        "total": 2
+      },
+      "receiver_selection_changes": {
+        "honest": 2,
+        "private": 0,
+        "total": 2
+      },
+      "run_id": "classical-fixed-seed73",
+      "seed": 73,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 8771945,
+        "attempts_by_owner": {
+          "honest": 8771945,
+          "private": 0
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 0,
+          "censored": 1327289,
+          "completed": 7444656
+        },
+        "other_process_work": 408522051,
+        "whole_process": 417293996
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 8779863,
+        "history_replay": 375924348,
+        "other_wall": 52779398,
+        "whole_run": 437483609
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "serial-lifecycle",
+      "attempts": {
+        "honest": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 5,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 0,
+          "started": 1
+        }
+      },
+      "events": 14,
+      "execution_kind": "constructed-quantum",
+      "fresh_native_receiver_packets_admitted": 0,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 0,
+      "honest_notifications_delivered": 0,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 0,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 16
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 6,
+      "opaque_private_attempts": 1,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 500000000,
+          "numerator": 534075524467
+        },
+        "candidate_check_ticks": 4273,
+        "clock_record_sha256": "be3730510664b0bfc86fa060b14cd874f6bc02effb156ea7171835c39a6713e3",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "receiver_selection_changes": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "run_id": "serial-lifecycle-q0-seed9",
+      "seed": 9,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 8701149,
+        "attempts_by_owner": {
+          "honest": 8701149,
+          "private": 0
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 0,
+          "censored": 1455350,
+          "completed": 7245799
+        },
+        "other_process_work": 421111576,
+        "whole_process": 429812725
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 8700737,
+        "history_replay": 387901339,
+        "other_wall": 53105921,
+        "whole_run": 449707997
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "serial-lifecycle",
+      "attempts": {
+        "honest": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 5,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 0,
+          "started": 1
+        }
+      },
+      "events": 14,
+      "execution_kind": "constructed-quantum",
+      "fresh_native_receiver_packets_admitted": 0,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 0,
+      "honest_notifications_delivered": 0,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 0,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 16
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 6,
+      "opaque_private_attempts": 1,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 500000000,
+          "numerator": 154207284216146467
+        },
+        "candidate_check_ticks": 1233658274,
+        "clock_record_sha256": "87465d363cd881872fa770a0f37d1510f003477b28cae9aa5e7c88a9f79cc9cd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 1,
+      "receiver_admissions": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "receiver_selection_changes": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "run_id": "serial-lifecycle-q1-seed9",
+      "seed": 9,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 10443900,
+        "attempts_by_owner": {
+          "honest": 7937659,
+          "private": 2506241
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 0,
+          "censored": 1278749,
+          "completed": 9165151
+        },
+        "other_process_work": 419215727,
+        "whole_process": 429659627
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 10443084,
+        "history_replay": 386710164,
+        "other_wall": 50074167,
+        "whole_run": 447227415
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "declared-reset-65536-readout-64-v1",
+      "attempts": {
+        "honest": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 5,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 16,
+      "execution_kind": "constructed-quantum",
+      "fresh_native_receiver_packets_admitted": 0,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 0,
+      "honest_notifications_delivered": 0,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 0,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 2
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 500000000,
+          "numerator": 8996467
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "5bd08886a0adfdd41f10c6d011cf36200a598f7b350609c7a598753e100e1540",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "receiver_selection_changes": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "run_id": "declared-reset-65536-readout-64-v1-q0-seed9",
+      "seed": 9,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 8420593,
+        "attempts_by_owner": {
+          "honest": 8420593,
+          "private": 0
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 0,
+          "censored": 1292985,
+          "completed": 7127608
+        },
+        "other_process_work": 421556983,
+        "whole_process": 429977576
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 0,
+        "attempt_stages": 8419952,
+        "history_replay": 389187867,
+        "other_wall": 47367563,
+        "whole_run": 444975382
+      },
+      "all_deliveries_with_nonselected_parent": 0,
+      "architecture": "declared-reset-65536-readout-64-v1",
+      "attempts": {
+        "honest": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 5,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 1,
+          "completed": 0,
+          "started": 1
+        }
+      },
+      "events": 14,
+      "execution_kind": "constructed-quantum",
+      "fresh_native_receiver_packets_admitted": 0,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 0,
+      "honest_notifications_delivered": 0,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 0,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 16
+      },
+      "modeled_private_propagation_elapsed_ticks": 0,
+      "modeled_private_propagation_reserved_ticks": 0,
+      "observer_candidates_generated": 6,
+      "opaque_private_attempts": 1,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "fixed-causal-private-then-publish-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 500000000,
+          "numerator": 154206750149618467
+        },
+        "candidate_check_ticks": 1233654002,
+        "clock_record_sha256": "b7059cfc4e040185f88bc0b7560af658e13932865b53965e8fdfd909a8e728a7",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 1,
+      "receiver_admissions": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "receiver_selection_changes": {
+        "honest": 0,
+        "private": 0,
+        "total": 0
+      },
+      "run_id": "declared-reset-65536-readout-64-v1-q1-seed9",
+      "seed": 9,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 101761518,
+        "attempt_stages": 11704546,
+        "attempts_by_owner": {
+          "honest": 8616763,
+          "private": 3087783
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 1581087,
+          "censored": 0,
+          "completed": 10123459
+        },
+        "other_process_work": 422594797,
+        "whole_process": 536060861
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 101784743,
+        "attempt_stages": 11703789,
+        "history_replay": 386327389,
+        "other_wall": 72936305,
+        "whole_run": 572752226
+      },
+      "all_deliveries_with_nonselected_parent": 2,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 1,
+          "censored": 0,
+          "completed": 5,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 28,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 2,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 1,
+      "honest_cancelled_elapsed_ticks": 1,
+      "honest_notifications_delivered": 1,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": true,
+        "initial_public_block_orphaned_at_horizon": true,
+        "private_ancestor_at_horizon": true,
+        "private_tip_at_horizon": true
+      },
+      "modeled_honest_packet_delivery_ticks": 0,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 10
+      },
+      "modeled_private_propagation_elapsed_ticks": 2,
+      "modeled_private_propagation_reserved_ticks": 2,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "observer-advice-private-winning-path-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 1,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 0,
+        "private": 2,
+        "total": 2
+      },
+      "receiver_selection_changes": {
+        "honest": 0,
+        "private": 1,
+        "total": 1
+      },
+      "run_id": "classical-observer-advice-seed9",
+      "seed": 9,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 71438765,
+        "attempt_stages": 12033361,
+        "attempts_by_owner": {
+          "honest": 8963372,
+          "private": 3069989
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 1421595,
+          "censored": 1649755,
+          "completed": 8962011
+        },
+        "other_process_work": 413194948,
+        "whole_process": 496667074
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 71442244,
+        "attempt_stages": 12032694,
+        "history_replay": 377208918,
+        "other_wall": 72484029,
+        "whole_run": 533167885
+      },
+      "all_deliveries_with_nonselected_parent": 2,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 1,
+          "censored": 1,
+          "completed": 4,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 30,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 3,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 2,
+      "honest_notifications_delivered": 1,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 1,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 10
+      },
+      "modeled_private_propagation_elapsed_ticks": 2,
+      "modeled_private_propagation_reserved_ticks": 2,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "observer-advice-private-winning-path-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 1,
+        "private": 2,
+        "total": 3
+      },
+      "receiver_selection_changes": {
+        "honest": 1,
+        "private": 0,
+        "total": 1
+      },
+      "run_id": "classical-observer-advice-seed17",
+      "seed": 17,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 71604386,
+        "attempt_stages": 11727927,
+        "attempts_by_owner": {
+          "honest": 8606030,
+          "private": 3121897
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 1335504,
+          "censored": 1371924,
+          "completed": 9020499
+        },
+        "other_process_work": 410966776,
+        "whole_process": 494299089
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 71608168,
+        "attempt_stages": 11726760,
+        "history_replay": 374316159,
+        "other_wall": 73220461,
+        "whole_run": 530871548
+      },
+      "all_deliveries_with_nonselected_parent": 2,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 1,
+          "censored": 1,
+          "completed": 4,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 30,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 3,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 2,
+      "honest_notifications_delivered": 1,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 1,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 10
+      },
+      "modeled_private_propagation_elapsed_ticks": 2,
+      "modeled_private_propagation_reserved_ticks": 2,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "observer-advice-private-winning-path-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 1,
+        "private": 2,
+        "total": 3
+      },
+      "receiver_selection_changes": {
+        "honest": 1,
+        "private": 0,
+        "total": 1
+      },
+      "run_id": "classical-observer-advice-seed41",
+      "seed": 41,
+      "stale_honest_delivery_details": []
+    },
+    {
+      "actual_cpu_ns": {
+        "admission_and_notification_events": 101192233,
+        "attempt_stages": 12271849,
+        "attempts_by_owner": {
+          "honest": 9176203,
+          "private": 3095646
+        },
+        "attempts_by_terminal_state": {
+          "cancelled": 3144259,
+          "censored": 0,
+          "completed": 9127590
+        },
+        "other_process_work": 413573651,
+        "whole_process": 527037733
+      },
+      "actual_wall_ns": {
+        "admission_and_notification_events": 101202768,
+        "attempt_stages": 12271031,
+        "history_replay": 374406734,
+        "other_wall": 81261112,
+        "whole_run": 569141645
+      },
+      "all_deliveries_with_nonselected_parent": 2,
+      "architecture": "classical-host",
+      "attempts": {
+        "honest": {
+          "cancelled": 2,
+          "censored": 0,
+          "completed": 4,
+          "started": 6
+        },
+        "private": {
+          "cancelled": 0,
+          "censored": 0,
+          "completed": 2,
+          "started": 2
+        }
+      },
+      "events": 34,
+      "execution_kind": "classical-uniform-q0",
+      "fresh_native_receiver_packets_admitted": 4,
+      "fresh_native_receiver_reopen_equal": true,
+      "honest_cancellations_to_private_tip": 0,
+      "honest_cancelled_elapsed_ticks": 4,
+      "honest_notifications_delivered": 2,
+      "honest_stale_completed_deliveries": 0,
+      "metrics": {
+        "ancestor_includes_tip": true,
+        "ever_private_replacement": false,
+        "initial_public_block_orphaned_at_horizon": false,
+        "private_ancestor_at_horizon": false,
+        "private_tip_at_horizon": false
+      },
+      "modeled_honest_packet_delivery_ticks": 2,
+      "modeled_mining_elapsed_ticks": {
+        "honest": 16,
+        "private": 10
+      },
+      "modeled_private_propagation_elapsed_ticks": 2,
+      "modeled_private_propagation_reserved_ticks": 2,
+      "observer_candidates_generated": 8,
+      "opaque_private_attempts": 0,
+      "pending_deliveries": 0,
+      "pending_notifications": 0,
+      "policy": "observer-advice-private-winning-path-v1",
+      "private_clock": {
+        "candidate_check_seconds_exact": {
+          "denominator": 1000000,
+          "numerator": 1031
+        },
+        "candidate_check_ticks": 1,
+        "clock_record_sha256": "7bc245f856d7a25d50c685f68b48fadac59078d7c3381417470668a16f7a9ddd",
+        "per_block_propagation_seconds_exact": {
+          "denominator": 10,
+          "numerator": 1
+        },
+        "per_block_propagation_ticks": 1,
+        "winner_proof_seconds_exact": {
+          "denominator": 1,
+          "numerator": 1
+        },
+        "winner_proof_ticks": 4
+      },
+      "private_replacement_events": 0,
+      "q": 0,
+      "receiver_admissions": {
+        "honest": 2,
+        "private": 2,
+        "total": 4
+      },
+      "receiver_selection_changes": {
+        "honest": 2,
+        "private": 0,
+        "total": 2
+      },
+      "run_id": "classical-observer-advice-seed73",
+      "seed": 73,
+      "stale_honest_delivery_details": []
+    }
+  ],
+  "schema": "trnm-w1-native-responsive-actual-artifact-audit-v1",
+  "source_census_sha256": "3ddca6132a090f34f66224cf4493a624b42afeb7f2ab06ed998727445cf12d2d",
+  "source_files_checked": 1421,
+  "status": "VERIFIED_RETAINED_ARTIFACT_BINDINGS_AND_ACCOUNTING",
+  "totals": {
+    "actual_attempt_cpu_ns": 127914011,
+    "actual_event_cpu_ns": 429181689,
+    "actual_other_cpu_ns": 4985677174,
+    "actual_process_cpu_ns": 5542772874,
+    "cancelled": 9,
+    "censored": 12,
+    "completed": 72,
+    "honest_cancellations_to_private_tip": 1,
+    "honest_stale_completed_deliveries": 0,
+    "private_replacement_events": 1,
+    "receiver_admissions": 16,
+    "receiver_selection_changes": 9,
+    "runs": 12,
+    "started": 93
+  }
+}

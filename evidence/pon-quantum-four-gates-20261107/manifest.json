@@ -1,0 +1,80 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 18944,
+      "sha256": "8e1890da522a399eed8562db18e2e577611fb65b48271db2bc2576ae0e398e65"
+    },
+    "development-observations-index.json": {
+      "bytes": 10354,
+      "sha256": "308a6e4b9a8583843138367d299588d95ef4d8d623efe280ed439c834e5cefb3"
+    },
+    "development-observations.tar.xz": {
+      "bytes": 154396,
+      "sha256": "423e2119e569f8d006eed41f310baca225deb62a0f159a076de8b13c95f2b95a"
+    },
+    "execution-and-review-index.json": {
+      "bytes": 9106,
+      "sha256": "c8c611f50b37cb7b36e64bc03f6ae742e14b1b36ef382d39cc5469e9add5b3db"
+    },
+    "execution-and-review.tar.xz": {
+      "bytes": 80400,
+      "sha256": "bb3574abc075292c0bf86cdc91a699a261a2932c4d7d1e9afa5d0c68e50da98e"
+    },
+    "finite-independent-review.json": {
+      "bytes": 27028,
+      "sha256": "8e1b2fb4e1ee704e6be10e2271937565491857f525b0e7477e84700bfae1006c"
+    },
+    "local-validation-index.json": {
+      "bytes": 10432,
+      "sha256": "44459c0f24aca27a71151a1948e75d4074e73f859b1023c5d2b131447afd9cf4"
+    },
+    "local-validation-summary.json": {
+      "bytes": 2600,
+      "sha256": "2ea2e686f6034f91556ef43c961b5c8c051071b790ccd7bc0109a732b94f2b58"
+    },
+    "local-validation.tar.xz": {
+      "bytes": 189652,
+      "sha256": "d13d2d04a51ad4e826dcde487b221e6cefe291116e5ba18dd75fc3325975d721"
+    },
+    "machine-frontier-summary.json": {
+      "bytes": 28258,
+      "sha256": "e65721649e8571530c4211a9d725be8079a9cad6e9ae06e373b3afa3685c8c70"
+    },
+    "machine-independent-review.json": {
+      "bytes": 14658,
+      "sha256": "8fdfa9e08ff6f8b2e65de89f3743bac25c9189aec7c4f744c3e49d66fcd87b11"
+    },
+    "native-core-manifest.json": {
+      "bytes": 11946,
+      "sha256": "2c72c23051a646960ec4bcfa501c05ec16383df37ed145fe07b1412a951f9ba9"
+    },
+    "native-evidence.tar.gz": {
+      "bytes": 429031,
+      "sha256": "1bf5f798819449369b1cd517b4635ba4853333edd749ccfd9e13f3998b58aa25"
+    },
+    "native-observation.json": {
+      "bytes": 7487,
+      "sha256": "0972113ceda0794d72df883a917533715bd9236158f990de0a02dc5402efbe81"
+    },
+    "observed-economics-summary.json": {
+      "bytes": 5781,
+      "sha256": "f8b840d4e9aad49daba34e78f0db0816ec0696e9b397770e7dc54ee58255efe4"
+    },
+    "publication.json": {
+      "bytes": 726,
+      "sha256": "5d77d64f13b123e82b5f5bb316475bb97757dfca6b4343648ef0597ce83f1561"
+    },
+    "qualification.json": {
+      "bytes": 8988,
+      "sha256": "e8c97d38a80cc41baa0dd5ced9cf1185cf2c1577fd37c7037ee8d6b26f3ec9a8"
+    },
+    "source-receipts-review.json": {
+      "bytes": 19095,
+      "sha256": "706b900acc7cb8f6ccfc29c8dcbdd6ac649fc7c08dcecaae987a6d9c142c94f5"
+    }
+  },
+  "implementation_commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+  "implementation_tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a",
+  "schema": "trnm-w1-four-gates-evidence-manifest-v1",
+  "self_excluded": "manifest.json"
+}

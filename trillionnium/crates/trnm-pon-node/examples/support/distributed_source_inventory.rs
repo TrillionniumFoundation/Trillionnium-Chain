@@ -5083,6 +5083,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/competition.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/competition.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/responsive.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/responsive.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/release_finality.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

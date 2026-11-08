@@ -1,0 +1,115 @@
+{
+  "schema": "trnm-responsive-independent-portable-export-audit-v1",
+  "status": "PASS",
+  "source_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "portable_file_sha256": "403e708cc68c418d4dd161e0a833bb81c9f094348c6a4d6b7c44402116fd7899",
+  "portable_bytes": 303589,
+  "portable_record_sha256": "87022703f5dda9eaed0fa0ecbfb731d2ae0c5409627793e2eae611d7e8f7316c",
+  "plan_sha256": "25b150c03170894eee512288e69a200f0fd20014a9374e107eee57b78a664ba7",
+  "relevant_source_files_verified_against_disk_and_commit": 21,
+  "source_sha256": {
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "config/pon/evaluation-round-v1.json": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+    "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+    "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/experiments/w1_native_bridge.py": "b96b6a54c69aa180f0245158f6a6a7a7865bd30ba38b898ad2a0ee9a6a350418",
+    "formal/pon-nakamoto-v1/experiments/w1_preprocessing_cache_campaign.py": "87805dd95ec5de39f651b5d87c85a9d35ab59828dc65d19c70d3cff4603f6c5c",
+    "formal/pon-nakamoto-v1/experiments/w1_preprocessing_portfolio_campaign.py": "cc2a81423e11394b72cdda191a786ac91c001339a31d9f6a391e9cf01729b306",
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "b4b6425a59a2def7288f697a43ccc2cfc73a702ba973e46b8435c3c87dc2b357",
+    "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+    "formal/pon-nakamoto-v1/w1_preprocessing_cache.py": "082a2c4471a8a3c29fbe72ba8fc88a6b378a5add11d41ad4233df41e23a0d217",
+    "formal/pon-nakamoto-v1/w1_preprocessing_portfolio.py": "2d2f66ba0a424cca59a49e22fc282178c26c4b46a856925aad936c3b299eddb8",
+    "formal/pon-nakamoto-v1/w1_preprocessing_reuse.py": "660cac37d0f3048f2a809b06e48fa3b24f171968cebf8f3493f3e2dc0ce17c3a",
+    "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+    "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "732f85082c7125d4c3ef6299a5ce3b5b657399df95f88b5498aa338abfa3c655",
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+  },
+  "retained_native_fixture": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-responsive-bab8376/native/native-fixture.json",
+  "retained_native_fixture_sha256": "e7b3c108c3a0985f67806d986620d090ea467e15446071fbf6d9bc2e6b7c3fcd",
+  "native_inventory_files": 1401,
+  "native_inventory_digest": "5d775ce00568c18ac1024590c8b02f399db0ef6c0a967ad0d750c63c4135f1d1",
+  "whole_checkout_validation_inventory_digest_separate_scope": "32df826245ec145f0b70f5421f70451a3e71c3b0bfb06ef9aa981bb9dd483f0b",
+  "native_binary_sha256": "32b7931f7dfc93fe785a0228f7245919807ea648a07b2f655597c5697ed2b4ba",
+  "raw_packet_component_hash_bindings_rechecked": 32,
+  "full_native_relation_reexecuted_in_this_audit": false,
+  "fresh_native_admission_in_this_audit": false,
+  "planned_attempts": 28,
+  "original_native_attempts": 16,
+  "derived_relation_only_attempts": 12,
+  "exact_order_verified": true,
+  "unique_headers_in_ordered_plan": 25,
+  "repeated_attempt_slots": 3,
+  "distinct_exact_AB_cache_keys": 5,
+  "AB_key_hash_by_template": [
+    "8726eba908bd280e0a2559e1f3b9c4998d3506cebcbdeeb836bb0ecfb0a641d6",
+    "8726eba908bd280e0a2559e1f3b9c4998d3506cebcbdeeb836bb0ecfb0a641d6",
+    "8726eba908bd280e0a2559e1f3b9c4998d3506cebcbdeeb836bb0ecfb0a641d6",
+    "8726eba908bd280e0a2559e1f3b9c4998d3506cebcbdeeb836bb0ecfb0a641d6",
+    "27f1e1b08fc5c41feb7ce72c9025d3f29745ce95214654ec8fa12c358aaad3a7",
+    "30f1ec5ba8cc1af696c1d946d990d79fcd6e9894b77ed683ac25b177fffac4ba",
+    "45c5d5e6de067d3d4e1134b312eadc771741f42e50798bf25f821a55b37408a4",
+    "ded4b5a05e9a878e1ac3ecb6170099dd77c83a3515763e4a71cb26612d674e75"
+  ],
+  "native_target_winners_by_context": [
+    [
+      6
+    ],
+    [
+      1
+    ]
+  ],
+  "original_native_admitted_counts": [
+    1,
+    1
+  ],
+  "shared_export_preparation": {
+    "cpu_ns": 1578401403,
+    "different_hosts_CPU_seconds_are_economic_equivalents": false,
+    "outer_process_receipt_embedded": false,
+    "runtime": {
+      "cpu_affinity_count": 32,
+      "cpu_quota": null,
+      "executable": "/usr/bin/python3",
+      "logical_cpus_reported": 32,
+      "machine": "x86_64",
+      "memory_limit": null,
+      "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.43",
+      "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]"
+    },
+    "scope": "one actual export-function execution including full Git/source/fixture/packet validation and plan preparation; interpreter startup and final serialization are in the separate outer process receipt",
+    "shared_input_preparations": 1,
+    "wall_ns": 1585308175
+  },
+  "declared_campaign": {
+    "runs": 32,
+    "planned_attempt_slots": 896,
+    "original_native_slots": 512,
+    "derived_relation_only_slots": 384
+  },
+  "actual_colab_runs_observed_by_this_audit": 0,
+  "claims": {
+    "GPU_executed": false,
+    "all_legal_algorithms_or_caches_enumerated": false,
+    "derived_contexts_native_admitted": false,
+    "exclusive_host_resources_measured": false,
+    "global_minimum_attacker_cost_proved": false,
+    "hard_wall_deadline_guaranteed": false,
+    "native_block_admission_executed": false,
+    "per_cache_capacity_is_total_process_memory": false,
+    "physical_hardware_costs_calibrated": false,
+    "production_activation": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "quantum_oracle_cost_reduced_by_classical_cache_proved": false,
+    "same_total_economic_budget_proved": false,
+    "same_total_physical_resource_budget_proved": false,
+    "timings_independently_attested": false,
+    "unbiased_statistical_speedup_proved": false
+  }
+}

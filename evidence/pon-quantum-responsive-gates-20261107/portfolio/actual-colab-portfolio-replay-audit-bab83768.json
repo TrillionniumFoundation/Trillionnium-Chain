@@ -1,0 +1,73 @@
+{
+  "QPU_executed": false,
+  "actual_relation_reexecution_performed_by_this_ROG_audit": false,
+  "all_nine_replay_scientific_files_verified": true,
+  "fresh_native_Node_execution_in_Colab": false,
+  "frozen_implementation_commit": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "full_proof_attempts_reexecuted": 594,
+  "observation_audit": {
+    "bytes": 102020,
+    "file": "actual-colab-portfolio-observation-audit-bab83768.json",
+    "sha256": "6c959e14ed5f3919326bfd944d05e18e9575d4ea944bb58a6f9dd1e20777ae09"
+  },
+  "observed_clocks_independently_attested": false,
+  "observed_evidence_manifest_sha256": "a42d87d7cd7335cb14ee44a3e5b2cb9dbbc153fa7ee93177de66435a54c31c7a",
+  "observed_summary_file_sha256": "48b19d0fe8975dd50284e3c719098c210b62a0e474b9828f66ef2627b357eb21",
+  "observed_summary_record_sha256": "d8b57583b5ed3bf84fecdfb63c77d2881ce75dd1bfc7f198678fb80641cad6cc",
+  "partial_attempt_prefixes_reexecuted": 10,
+  "portable_input_sha256": "403e708cc68c418d4dd161e0a833bb81c9f094348c6a4d6b7c44402116fd7899",
+  "production_activation": false,
+  "public_scientific_artifacts_relative_to_replay_extracted": {
+    "evidence-manifest.json": {
+      "bytes": 1237,
+      "sha256": "f96c96d939ab33decadcd265640651e98e4a9a9aa3749a2f44daa9c62bc7a986"
+    },
+    "portfolio-verify.process.json": {
+      "bytes": 774,
+      "sha256": "c0a9c5fefdce56e8c628bec3caffc0574f54e93e91a5023ab86132855012c075"
+    },
+    "portfolio-verify.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "portfolio-verify.stdout": {
+      "bytes": 154,
+      "sha256": "1e6637a5d0866ffe4642032848b56dd8b0cc11542ff946783dfe10538b4e0bea"
+    },
+    "previous-evidence-manifest.json": {
+      "bytes": 31188,
+      "sha256": "a42d87d7cd7335cb14ee44a3e5b2cb9dbbc153fa7ee93177de66435a54c31c7a"
+    },
+    "source-manifest.json": {
+      "bytes": 8265,
+      "sha256": "f4fab3e3d77d59c0a50a7fce6aafb684be8dca938492d6913c3d46f5214a02c4"
+    },
+    "task-receipt.json": {
+      "bytes": 2908,
+      "sha256": "de32d02835458cb85654da943a683bdaa1830525eb3d619ff47f61463ea82d89"
+    }
+  },
+  "quantum_mining_qualified": false,
+  "replay_evidence_manifest_sha256": "f96c96d939ab33decadcd265640651e98e4a9a9aa3749a2f44daa9c62bc7a986",
+  "replay_process_receipt": {
+    "bytes": 774,
+    "file": "portfolio-verify.process.json",
+    "sha256": "c0a9c5fefdce56e8c628bec3caffc0574f54e93e91a5023ab86132855012c075"
+  },
+  "replay_stdout": {
+    "bytes": 154,
+    "file": "portfolio-verify.stdout",
+    "sha256": "1e6637a5d0866ffe4642032848b56dd8b0cc11542ff946783dfe10538b4e0bea"
+  },
+  "replay_summary_matches_exact_observation_with_reexecution_flag": true,
+  "replay_whole_child_cpu_ns": 182186627000,
+  "replay_whole_child_wall_ns": 183027385691,
+  "replayed_summary_record_sha256": "59f060745e1398375ba6a0584aeef916f81a5271308c50565651d5b35bf84c86",
+  "schema": "trnm-responsive-independent-portfolio-replay-binding-audit-v1",
+  "separate_Colab_complete_relation_reexecution_passed": true,
+  "source_manifest_sha256": "f4fab3e3d77d59c0a50a7fce6aafb684be8dca938492d6913c3d46f5214a02c4",
+  "status": "PASS",
+  "status_scope": "downloaded separate complete-relation replay receipt and exact observation binding",
+  "total_planned_attempt_slots_retained": 896,
+  "unstarted_attempt_slots_retained": 292
+}

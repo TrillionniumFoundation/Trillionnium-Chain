@@ -1,0 +1,796 @@
+{
+  "artifact_inventory": {
+    "bytes_hashed_in_inventory": 53912879,
+    "files_hashed_against_inventory": 410,
+    "final_metadata_files_separately_bound": 2,
+    "no_extra_or_missing_files": true,
+    "total_current_files_matched": 412
+  },
+  "audit_method": "Independent raw-file hashing, immutable Git-object/source-manifest comparison, per-command/source-boundary reconciliation, raw unittest counting and exact outer Node inventory checking. No tests, builds or repository code were rerun.",
+  "audit_parser_note": {
+    "prior_read_only_audit_job": "1a1b8991649-12894-1046",
+    "prior_stop": "NESTED_PARENT_COMPLETION",
+    "resolution": "The initial audit assumed standalone parent ok lines. Four source-bound explicit-exit/SIGKILL child groups instead leave an unterminated child test prefix; the outer parent completion is appended on that line. The audit checks the declared child, exact indexed lines, terminal ownership and frozen source SHA. No validation artifact, source, test outcome or deadline was modified."
+  },
+  "claims": {
+    "build_rerun_by_auditor": false,
+    "hardware_calibration_performed": false,
+    "production_activation": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "source_mutated_by_auditor": false,
+    "tests_rerun_by_auditor": false,
+    "whole_chain_qualified": false
+  },
+  "command_order_reviewed_against_driver_sha256": "eacb07e5ed8849b03d2ced1a446d87b60b8f05bfc21fa56f2a7e9ae4dd727481",
+  "commands": [
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 0,
+      "log_sha256": "e64e59fde608b043ddd2e31a984d09d19fa4acfe0a4167a18383fd8905a44315",
+      "name": "preflight",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 1,
+      "log_sha256": "63990b3ee50c49ab28d70e29c0f967f0c71330e39243ffeb4d3a8d5878c8a978",
+      "name": "python-version",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 2,
+      "log_sha256": "c034ed37e1ee0ec102326f27e9b3b8fe6a481f8c8ad28df58a2e117b241c0f0e",
+      "name": "cargo-version",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 3,
+      "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "name": "rustc-version",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 4,
+      "log_sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1",
+      "name": "rustfmt-version",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 5,
+      "log_sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8",
+      "name": "clippy-version",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 6,
+      "log_sha256": "ce26347b8f77c3172b8b7ebc5f3f8b414111e22997f480593b685686c5b57f64",
+      "name": "openssl-version",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 7,
+      "log_sha256": "64d0a205d6dd5027a4add7e7edff8ace7a414d93f0962eff7622607a9e4d983f",
+      "name": "host-uname",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 8,
+      "log_sha256": "00920d85c9adf61ab0e1ef00f7d5753b5fc2d5959dc8df95cc59d2da56e1fe10",
+      "name": "quantum-python",
+      "pass": true,
+      "python_tests": 153,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 9,
+      "log_sha256": "8c77db563bea9cdf854df50d6353ff2a42a4028a138d83f827b1835823e797e7",
+      "name": "w1-python",
+      "pass": true,
+      "python_tests": 248,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 10,
+      "log_sha256": "07b7664cb0eff9c29546c0191b2f20e5374430bc2cd4d34e6b182fa1e10ea295",
+      "name": "reversible-python",
+      "pass": true,
+      "python_tests": 17,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 11,
+      "log_sha256": "b0ddfddd3b739063a58592a9efcef414ff42e6cc0ec49bf292256ffc6ccd3c9d",
+      "name": "fast-daa-python",
+      "pass": true,
+      "python_tests": 11,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 12,
+      "log_sha256": "84efda559442dbe6c353cfafe55debf2b0f47bdf612fbaee4e701617876cb130",
+      "name": "parallel-ohie-python",
+      "pass": true,
+      "python_tests": 36,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 13,
+      "log_sha256": "e798d7d3994dbb4b2340eb734aff445df07f8995874ae953667b67be18312a8c",
+      "name": "experiment-w1-python",
+      "pass": true,
+      "python_tests": 109,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 14,
+      "log_sha256": "c57890dbaf36c948c4bcced09ece7b5452aa24a34e6934b018cb9f801b105c79",
+      "name": "economics-unit",
+      "pass": true,
+      "python_tests": 18,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 15,
+      "log_sha256": "1ed479b54a0cfe5a64ce48d1e3ab045c372d197121bb8bae1934a1a07a6c3fe6",
+      "name": "source-integrity-unit",
+      "pass": true,
+      "python_tests": 43,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 16,
+      "log_sha256": "f6d062a008a6dea63a07c6716e65f7199d69cc86ec96545d7ab6b92a46fa5fa3",
+      "name": "ci-contract-unit",
+      "pass": true,
+      "python_tests": 108,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 17,
+      "log_sha256": "9d5574692c1c043b29fef7c19c781a86292e5ca52e366b28701531fce6b24f27",
+      "name": "pq-integration-unit",
+      "pass": true,
+      "python_tests": 38,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 18,
+      "log_sha256": "edb3227ee4a9203d836f7303a942639a9f4b3a48b319fd17dd0998652e928d01",
+      "name": "rust-shard-unit",
+      "pass": true,
+      "python_tests": 8,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 19,
+      "log_sha256": "f6b8bb04c07b0e0adbd539d79e2d0fa22c4120274755eb4aaa37d6b180fe5fc0",
+      "name": "public-readiness-unit",
+      "pass": true,
+      "python_tests": 72,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 20,
+      "log_sha256": "1f2aa7ea3ce9ebf7f4a677cdbf5ddc8ad1deb336f1711329133ff5c901107485",
+      "name": "pq-integration-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 21,
+      "log_sha256": "4228ccb21f0f758369805e1427ff39dc3d5e0a0e1dbfc08a8fc96cd2e51fab89",
+      "name": "repository-links",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 22,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "name": "distributed-source-inventory",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 23,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "tracked-diff-whitespace",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 24,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "economics-full-ledger",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 25,
+      "log_sha256": "452cfd5ad7008b78b05b0252135372f254fd415f46becc5fa5919e4781806311",
+      "name": "fuzz-offline-full-metadata",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 26,
+      "log_sha256": "32c7fcdca5042ffabc2d59010fcf7aaf50dc98326634decf84a6cd029ef325e4",
+      "name": "main-offline-full-metadata",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 27,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "rustfmt-all-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 28,
+      "log_sha256": "0f52abbfe45976e1164c137d757fd73ca7409855e94b2bedf43b27e84f6e0d6f",
+      "name": "strict-workspace-clippy",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 29,
+      "log_sha256": "04e438f5fc729d53a3c23c9fa3e51bc17730c2289434893798fdc6085e4468b5",
+      "name": "node-lib-test-build-json",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 30,
+      "log_sha256": "a167d7a4fbb7c4a5b32b34af1db30fa73076a5c31c94272ca2142032ea24401d",
+      "name": "release-owner-root-six",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 31,
+      "log_sha256": "3082dee0379d1c5456689c9a572413f8a4f8626160978b408288fbb87eb6806a",
+      "name": "release-owner-sealed-seven",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 32,
+      "log_sha256": "4cb6f005535ba47df0c0971c4056eb807cbafe704123169b37596b6c5d70cdb2",
+      "name": "node-test-inventory",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 33,
+      "log_sha256": "815e8836cfea8482720e2c7d5729ad9088a8271a0a1528f1280ba788ae3c343c",
+      "name": "node-ignored-inventory",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 34,
+      "log_sha256": "72b98b230448172b745f91f13f4b42e8680520291a98919d32994ed47354f9d9",
+      "name": "native-base-export",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 35,
+      "log_sha256": "d22f1d70d6bebd9f666f9f7cf13e182bd6078893ee97d9767bc8ec6a6c5f7900",
+      "name": "native-base-export-named-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 36,
+      "log_sha256": "de0de5332d3261eca8e9ef38107d2e6ba1e5547cca62432e03d7578d993648d8",
+      "name": "base-python-observe",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 37,
+      "log_sha256": "cebe45e75f49169eeab385e78e87339c7be7797e6a02a9c3cac59af1cc4739ec",
+      "name": "native-base-replay",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 38,
+      "log_sha256": "837f15b4f107631e40abdc0d2bf3de1f371e8dff5e4abea7d9f2f1b5854a0dcb",
+      "name": "native-base-replay-named-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 39,
+      "log_sha256": "3beb5b605a0e8c748e762ef4c8c2a7d06b57302b2a46876f0e76270bece388f4",
+      "name": "base-python-verify",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 40,
+      "log_sha256": "f4abf44639dd72ae95078049e191418594230d5d676b3fed11e41d84ba0452aa",
+      "name": "native-competition-export",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 41,
+      "log_sha256": "88b8f12991044c4f4d10f44b4f5c9c40451f399e7b7c54e420234d4af49deabf",
+      "name": "native-competition-export-named-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 42,
+      "log_sha256": "54cb25af8119836ab59f13013d823b26a87e65747c3aeba06f8b55852620c209",
+      "name": "competition-python-observe",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 43,
+      "log_sha256": "0e7d2d9860920ab1fbf003a20675958184e4f8555fabd2ed1636c7480732ac49",
+      "name": "native-competition-replay",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 44,
+      "log_sha256": "f2fef846fd831c499bd71bc70e706b8a98cf5415f876c39fc66b649812ae4637",
+      "name": "native-competition-replay-named-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 45,
+      "log_sha256": "359d35963002e31d2b928bb011fbf270490fbb1a3042c725dcc3b8097adafc95",
+      "name": "competition-python-verify",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 46,
+      "log_sha256": "e918dccfc068b9440cdebb90a7f6204b4f05231fe4f481630b75cbe565fef8d5",
+      "name": "responsive-python-plan",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 47,
+      "log_sha256": "2481ae548738a916edeca0bfe479a408e3f2403b13ed71ee7fb7b6cef442706e",
+      "name": "native-responsive-execute",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 48,
+      "log_sha256": "7666b47f02b01ef12c49fdcfb55a544ab3803cc4fb788d168bb0635b16355e16",
+      "name": "native-responsive-execute-named-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 49,
+      "log_sha256": "014c8b446256136ee425e5e4a184fb646e0154d2dfded792dd95504d461c9706",
+      "name": "responsive-python-verify",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 50,
+      "log_sha256": "d19a28b7116e390900e44ea1581c35f3d5e5ebf9591f0d1a06ea0aabda182109",
+      "name": "native-responsive-replay",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 51,
+      "log_sha256": "34ba772a11f9fb356d608d209eef889aa757907f9f8a8cb529b4baf2880a9f7f",
+      "name": "native-responsive-replay-named-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 52,
+      "log_sha256": "9f5d0ffc8fd32b45d0f43fe21ecb2c6163a7fed8025bf65b9c928df7e6872917",
+      "name": "calibration-portable-export",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 53,
+      "log_sha256": "7bae75b1942fe97f644731274c7ee448495b0a4e18af9ce059a179154bdd23a6",
+      "name": "portfolio-portable-export",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 54,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "original-eighteen-frontier",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 55,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "new-fifty-four-service-frontier",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 56,
+      "log_sha256": "905659505f17d053032a618895effb615ecca6dde2e91fed86f73f46be5c2461",
+      "name": "preprocessing-cache-observe",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 57,
+      "log_sha256": "2b10161490cf259a54cab8c24cbc80ef49f56823e16d948a363c5364dcc4b073",
+      "name": "preprocessing-cache-verify",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 58,
+      "log_sha256": "777f2f336f82081d172bad385f8ad2c43a3531bcc076cb604a07f52d62c20bc1",
+      "name": "whole-node-lib",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 59,
+      "log_sha256": "a3e81302c235ac702a06c6787b3d01ddc5a9f31039320f559fc55068b115d01b",
+      "name": "whole-node-exact-outer-check",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 60,
+      "log_sha256": "3d338d56f1537287aad0e5fa06effd7fd43b18f9b749f8df219a03b2b081e9bf",
+      "name": "pq-cli-negative",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    },
+    {
+      "executed": true,
+      "exit_code": 0,
+      "index": 61,
+      "log_sha256": "bda8aaa74c194e2ebd101c634d3aa947beb7a9c9402f941906f03c71fd7b2cb8",
+      "name": "reduced-responsive-certificates",
+      "pass": true,
+      "python_tests": 0,
+      "required": true
+    }
+  ],
+  "committed_source_objects_checked": 9849,
+  "completed_utc": "2026-11-08T00:23:16.985566+00:00",
+  "explicit_native": {
+    "additional_ignored_tests_selected_exactly": 6,
+    "failed": 0,
+    "ignored_during_explicit_runs": 0,
+    "passed": 6,
+    "tests": [
+      {
+        "command": "native-base-export",
+        "ignored": 0,
+        "log_sha256": "72b98b230448172b745f91f13f4b42e8680520291a98919d32994ed47354f9d9",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::export_source_bound_native_dag_fixture"
+      },
+      {
+        "command": "native-base-replay",
+        "ignored": 0,
+        "log_sha256": "cebe45e75f49169eeab385e78e87339c7be7797e6a02a9c3cac59af1cc4739ec",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::replay_source_bound_native_search_samples"
+      },
+      {
+        "command": "native-competition-export",
+        "ignored": 0,
+        "log_sha256": "f4abf44639dd72ae95078049e191418594230d5d676b3fed11e41d84ba0452aa",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture"
+      },
+      {
+        "command": "native-competition-replay",
+        "ignored": 0,
+        "log_sha256": "0e7d2d9860920ab1fbf003a20675958184e4f8555fabd2ed1636c7480732ac49",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples"
+      },
+      {
+        "command": "native-responsive-execute",
+        "ignored": 0,
+        "log_sha256": "2481ae548738a916edeca0bfe479a408e3f2403b13ed71ee7fb7b6cef442706e",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::responsive::execute_source_bound_native_responsive_miners"
+      },
+      {
+        "command": "native-responsive-replay",
+        "ignored": 0,
+        "log_sha256": "d19a28b7116e390900e44ea1581c35f3d5e5ebf9591f0d1a06ea0aabda182109",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::responsive::replay_source_bound_native_responsive_miners"
+      }
+    ]
+  },
+  "failed_commands": 0,
+  "final_identities": {
+    "artifact-inventory.json": {
+      "bytes": 76215,
+      "sha256": "9c2bac335f5d3f9e11db6d39ad24cba1fe9b36ccf2cb21d69de6a5dd33906272"
+    },
+    "commands.json": {
+      "bytes": 141324,
+      "sha256": "d677dbfa1aa639c03c540a381569426f15b90a74a9077307500c0cb90d0e67d5"
+    },
+    "declaration.json": {
+      "bytes": 5393,
+      "sha256": "824e1dcf85bd078f5ceca4d620ce7017ff65790abde47511d7fcdaa53bdbbda2"
+    },
+    "driver-completion.json": {
+      "bytes": 647,
+      "sha256": "3f44cb15bf228ca36a7da1657ae43bec431cb6dfae097afbc1654ff8de92a70b"
+    },
+    "native-test-elf.json": {
+      "bytes": 2342,
+      "sha256": "50243223a53e37a1b75ac0e8b08cbc235e7956b7e63bc40ce111a7e6c2edb92f"
+    },
+    "result.json": {
+      "bytes": 14219,
+      "sha256": "8a4cedc51cbd4e9900a015060efefe9fe6a43d36d11a5227e9271fb90b24e3f4"
+    },
+    "source-inventory.json": {
+      "bytes": 2703594,
+      "sha256": "84a33e0fa5ec02ff15f64a102c480dff8f2a812bfddbf7c03fd87edb0f129834"
+    },
+    "whole-node-recognition.json": {
+      "bytes": 237846,
+      "sha256": "1de7a6bf213725754c2ca63229283a3f4ae39994105715dbad1a230fa0f91a13"
+    }
+  },
+  "incomplete_commands": 0,
+  "limitations": [
+    "These are source-bound retained local validation observations, not independent execution attestation.",
+    "The declared existing Cargo target cache was reused; this was not a clean rebuild or a complete reproducible-build attestation.",
+    "The driver explicitly does not inventory or calibrate every toolchain or loaded-library dependency.",
+    "Per-command child CPU/RSS and wall observations are not exclusive machine calibration; cumulative child peak RSS is not per-command exclusive.",
+    "A local passing suite does not erase the retained prior GitHub PQ transport failure or prove its cause.",
+    "The four quantum-security gates remain conditional/HOLD; no QPU execution, physical quantum calibration, whole-chain qualification or production activation follows from these tests."
+  ],
+  "native_test_elf_sha256": "32b7931f7dfc93fe785a0228f7245919807ea648a07b2f655597c5697ed2b4ba",
+  "observed_driver_wall_seconds": 1868.0710495599778,
+  "other_focused_checks": {
+    "release_owner_root_tests": 6,
+    "release_owner_sealed_tests": 7,
+    "release_owner_tests_also_appear_in_outer_unit_inventory": true,
+    "separate_pq_cli_negative_test": 1
+  },
+  "python": {
+    "failed": 0,
+    "skipped": 0,
+    "suites": {
+      "ci-contract-unit": 108,
+      "economics-unit": 18,
+      "experiment-w1-python": 109,
+      "fast-daa-python": 11,
+      "parallel-ohie-python": 36,
+      "pq-integration-unit": 38,
+      "public-readiness-unit": 72,
+      "quantum-python": 153,
+      "reversible-python": 17,
+      "rust-shard-unit": 8,
+      "source-integrity-unit": 43,
+      "w1-python": 248
+    },
+    "total": 861
+  },
+  "required_commands": 62,
+  "required_commands_executed": 62,
+  "required_commands_passed": 62,
+  "schema": "trnm-responsive-final-validation-artifact-audit-v1",
+  "skipped_commands": 0,
+  "source_boundary_records_checked": 127,
+  "status": "VERIFIED_RETAINED_VALIDATION_COMPLETENESS",
+  "validated_source": {
+    "head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+    "inventory_sha256": "32df826245ec145f0b70f5421f70451a3e71c3b0bfb06ef9aa981bb9dd483f0b",
+    "tracked_files": 11073,
+    "tree": "21afda717e4f6aaf6a119bbcdeee6f3c397d0d7e"
+  },
+  "whole_node": {
+    "exact_outer_checker_sha256": "5d9f5bda1851eab45cdd3fbf45e911afb30ff71e81e546f80b138c6b37c2f18e",
+    "exact_outer_recognition_sha256": "1de7a6bf213725754c2ca63229283a3f4ae39994105715dbad1a230fa0f91a13",
+    "failed": 0,
+    "filtered_out": 0,
+    "ignored": 39,
+    "nested_child_successes_added_to_outer_count": false,
+    "nested_contracts": 6,
+    "outer_inventory": 1290,
+    "passed": 1251,
+    "six_retained_negative_controls_refused": true
+  }
+}

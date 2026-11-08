@@ -1,0 +1,13 @@
+{
+  "name": "ci-contract",
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "started_utc": "2026-11-08T02:49:08.693510+00:00",
+  "completed_utc": "2026-11-08T02:49:08.739951+00:00",
+  "returncode": 0,
+  "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

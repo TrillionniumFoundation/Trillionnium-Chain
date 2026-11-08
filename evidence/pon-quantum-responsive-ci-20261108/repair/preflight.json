@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/bin/bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo",
+  "started_at": "2026-11-08T02:11:51.305386+00:00",
+  "wall_ns": 25026600,
+  "returncode": 0,
+  "stdout_sha256": "e64e59fde608b043ddd2e31a984d09d19fa4acfe0a4167a18383fd8905a44315",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

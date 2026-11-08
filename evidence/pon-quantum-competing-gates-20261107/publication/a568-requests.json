@@ -1,0 +1,322 @@
+[
+  {
+    "method": "GET",
+    "endpoint": "user",
+    "exit_code": 0,
+    "elapsed_seconds": 1.20628225,
+    "request_sha256": null,
+    "response_sha256": "bbe580b3ea468cf482347c56e18b93fce034b4a825a500b130df6a40ab6772e8"
+  },
+  {
+    "method": "GET",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain",
+    "exit_code": 0,
+    "elapsed_seconds": 3.923427875,
+    "request_sha256": null,
+    "response_sha256": "1bdd6b4eb3add5f3cb123f4bdbdba0ec52dd75598d5166c695ad80ad4d44fdc0"
+  },
+  {
+    "method": "GET",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/heads/fix/chain-quantum-closure-api-20261107-c9b4",
+    "exit_code": 0,
+    "elapsed_seconds": 1.9815856669999992,
+    "request_sha256": null,
+    "response_sha256": "c65045690a89c5303f27e359f83005f6dca29bd798e6219497530bb661dd3ec6"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.5919,
+    "request_sha256": "50d15d6a2cf700fcae9646033aed83d0ee83ddaded930a4b3c3ef48d39c5e4f4",
+    "response_sha256": "246b68a5121eabe35421ee5a8fdebc5316e3f34b4806bf01cfe4a6710cd50abb"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 12.149870042,
+    "request_sha256": "1117c6a934570d77ede623912688eccc893b82445e0d3789e82ff999267fa684",
+    "response_sha256": "87a5d69b01947114abd4b8edf9e946d99b324351c8c25f824084439997835394"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 1,
+    "elapsed_seconds": 30.037055666,
+    "request_sha256": "237a48c351e78789c599bab483dce3c40bfdb71466abfd12f44bbc645302416e",
+    "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 5.032716792000002,
+    "request_sha256": "237a48c351e78789c599bab483dce3c40bfdb71466abfd12f44bbc645302416e",
+    "response_sha256": "183c3ee185c598b6c64cfb495b444b0c0ddf0700b3177f6f0ba234fed3c032c3"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.928615708999999,
+    "request_sha256": "e064f692dc41e3b7e48563172d5d1e0568cef55405f995cea47097e1e3d0c740",
+    "response_sha256": "da5ab8a855d22491d01b3a7353e5a3f3a512e8d63281d19571e186879cd17c1e"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.618241290999997,
+    "request_sha256": "53b92c0989b8d766e0e0bf79e0ff517d8d536695a4f34662a2bce608d572cdd9",
+    "response_sha256": "fdfd5eb730459afb0c53fd8bb5936138d9f3d1573451a254f69c31920f39d095"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.3927143330000007,
+    "request_sha256": "2ef2d62e903cf04e40e91db3e3dda322c8c8a2fde0b6b0e95bdc7fe54bbc3544",
+    "response_sha256": "afc562862dcd7d147467ebbcfae4730350695931166d2f3e6cdf34527f9ce16e"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 1.50468608300001,
+    "request_sha256": "32aebb6e05a8a87d0c27be2129f4e2324349e7636208b7f3905785ceceef82b3",
+    "response_sha256": "4d08f7cc57bdbff6530a7fc74d9506cf2ab4d97d92e37f9eb8fdd79520869f8f"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.468947,
+    "request_sha256": "a0e5e4dc8a17990b5205dd64334e326a7c06a33553536777806a1d361fe1df13",
+    "response_sha256": "3443f65bbc6d601e7c1ce1cd8f07f19e826d6ca1d05e7cb45a400e8efc7a79d5"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 3.039018334000005,
+    "request_sha256": "472a03841d954be5d1c962a231399ed146c40dd844046bc9de78f012195dbe21",
+    "response_sha256": "3050b82289b081b61b952dd78489375b24db75498cc37edec971fb5c92e8d030"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 10.287065749999996,
+    "request_sha256": "546b12d082059f469cbfaedea149f9511bccff5b253147e4ede2eda1f0905822",
+    "response_sha256": "30ce3315c91ad38b2175ae01efa4c8d6ec0fe753df4dfc0356f24fc980ad87ad"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.2739359159999992,
+    "request_sha256": "604ec7747fa5201623f0d888e576293c099edbf01b6685f24ed5317dab5e5d9f",
+    "response_sha256": "d740c17c9e0b802b61fc737e2c7c035df59c5bc39664311f783a58deff56f6e3"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 3.069637708000002,
+    "request_sha256": "e0cd23e7d84a507cf08e68ebbf9bc78cf9fd34efeb3ac67dcda3e69dea900b82",
+    "response_sha256": "69504a4011870579b2ba8fd95c06ba5438fcb69fb0ddacf27bf60d439a9028bd"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 5.291615583999999,
+    "request_sha256": "51854b778ea67d8872253b548c11cdb689723661fc447fb9fc48ee3fa6962c8b",
+    "response_sha256": "14c3071cbf3320ebb04db63462a43fcea2f67e067ab735850fe90040707783cc"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 8.535947667000002,
+    "request_sha256": "b07e6dd3e9a1058c1d2e18518aa0fa3ae3c01136b098a06e0dfa7feab7977bbd",
+    "response_sha256": "7f9ed4f345a2bbc8d534325ad4fbd08aef5ee85a00458c45da9059c4ca04a820"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 1.6184366249999869,
+    "request_sha256": "ca0ca6089ba56436c1c4d53486e4180fc056e1036ee8263450182e3eb5f21cd7",
+    "response_sha256": "c50ddfeeb0d294c62f82efa68edef271aebee99f76aa1c6e946a5d5df94f4644"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 1.3443711670000056,
+    "request_sha256": "ad2847e13c168854d1a680b6418e34afb5f9c8cadee503167bb6ff6f039756ff",
+    "response_sha256": "4b31949d45e3687f0732a3e0d814f684fa1b03e41524d4720edfb765160bb878"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 3.2070542080000024,
+    "request_sha256": "e6d73f25bd39b8a65f3fa82558e872903bd61c1810ee16811e162e80f07f0090",
+    "response_sha256": "a63af1ee675750817e9b9d46d4ccf1e159fef0bfc2b2e45424f1bfb1d3601e03"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 1.3874984589999997,
+    "request_sha256": "3dec9835b783a24607a1f30a37b88376613d4a70d5a16408b6369d4a94a787eb",
+    "response_sha256": "e8a58efd870500334dfed413a15149ec204ae66c863da1a249b1ed17893928e7"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.0064038750000037,
+    "request_sha256": "6c8e1f2f3a9be3a24a87762f0006c037044b9da5576329f571e115ab7f70a6ce",
+    "response_sha256": "594b576269ba2d51c1e797c2e9a0f95f47d3cabe0737a5145b47abef7df59e2a"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.772194374999998,
+    "request_sha256": "8c4078bc7a82ccb0b00385a1e305b08d6b94326861391853396b95279f01f82a",
+    "response_sha256": "4e4218e2e3374ecb2e337090863b51d188cb7e3ff9fcbf669e146c33462d1617"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 1,
+    "elapsed_seconds": 30.03553191600001,
+    "request_sha256": "856a53ec0f699ce2f7301fcaf1d639ff3730f8adcfddde4b33028f3146f78202",
+    "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 3.478426500000012,
+    "request_sha256": "856a53ec0f699ce2f7301fcaf1d639ff3730f8adcfddde4b33028f3146f78202",
+    "response_sha256": "b131322192b4793cc53bd97bc80dc367575f819ad502213e56c203ec48ab8cba"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 3.7604748329999893,
+    "request_sha256": "52e62a0e0109b869c1526af847441e68778044e2b87818be4e2350b1747fb847",
+    "response_sha256": "e911376a6019f88a3fbc631c1d1003c0ec41265801fc0eec2dbf2a7063cbe635"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 6.704489416000001,
+    "request_sha256": "66b678360dfa3af7557e9bb00228cb10abe100dc5509ce654009617865771d71",
+    "response_sha256": "c2ec6ba2215624259846ca8726b8ab073985fe349acad08118fe7806d05243fd"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.979465375000018,
+    "request_sha256": "4f47ce3d815956b4445e4568f4249b2ee7cac97f72ccaf90f3e4ff62826a867f",
+    "response_sha256": "a076c1c7d11d023fccb202af2c876b4588b396b16ff710931ee2f16d89d15c68"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 1.6143966249999835,
+    "request_sha256": "17b16a1d17442b134c2b79e4731793aa1fda78b51b76f9eb13a88e0aeb22a608",
+    "response_sha256": "8ba62cfd3c7e83fcf24e553613100f350066ef60998107e4855a8bf8e741ab05"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 3.702851332999984,
+    "request_sha256": "4b876d8395119cc875b54889f2fa34d28bcb90754fb9937a84c7e46a859c0d83",
+    "response_sha256": "c4962cccd365e3cd4c8c53c2f53709e312661eea3bff48d6cd9d414d840e205b"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 2.748860250000007,
+    "request_sha256": "86c9df16733785b8bd8e22d8269696a0f73e986a436b6650c6f2d8e5845442c5",
+    "response_sha256": "303266b551f047761c8c5b9e72b45676c38bd72c4f133bb4d8650daa74adbc32"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs",
+    "exit_code": 0,
+    "elapsed_seconds": 1.660118667000006,
+    "request_sha256": "92d58043af7d9a3acf5a7ea6c02b1712b497407559e95c2514df8b9f532a0f6f",
+    "response_sha256": "285115f51cd78df2237df35b2a47ababed7d65c53cdcb3099f2450a29ea53846"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/trees",
+    "exit_code": 0,
+    "elapsed_seconds": 2.5749984159999997,
+    "request_sha256": "47d0a6792a3e82f031b03195af573e8820a699ce18097602a8aef6075b92294b",
+    "response_sha256": "ab1a236f3935db32be61155202ab1ae33642bbe72184608ad6a8b56968326c9f"
+  },
+  {
+    "method": "POST",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits",
+    "exit_code": 0,
+    "elapsed_seconds": 2.875565542000004,
+    "request_sha256": "b25833c18fef26d5125b157650902a41af9baa831b082fe3a500ad81fe5a72b6",
+    "response_sha256": "5a0635a94914390553c0829e6f1c21f77389825769a4714e8f1aa985a1461dd3"
+  },
+  {
+    "method": "GET",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/heads/fix/chain-quantum-closure-api-20261107-c9b4",
+    "exit_code": 0,
+    "elapsed_seconds": 1.0390393749999873,
+    "request_sha256": null,
+    "response_sha256": "c65045690a89c5303f27e359f83005f6dca29bd798e6219497530bb661dd3ec6"
+  },
+  {
+    "method": "PATCH",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/heads/fix/chain-quantum-closure-api-20261107-c9b4",
+    "exit_code": 0,
+    "elapsed_seconds": 2.1366034999999783,
+    "request_sha256": "e83c97c44324410b15bc0940ee813c24b1e26ae7c4b35cb720b609e7a3c30261",
+    "response_sha256": "18d71fb99757c5f252405fa0775e116cd4c1410c4078d5ba142bb71f98f193b3"
+  },
+  {
+    "method": "GET",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/heads/fix/chain-quantum-closure-api-20261107-c9b4",
+    "exit_code": 0,
+    "elapsed_seconds": 1.4681887090000032,
+    "request_sha256": null,
+    "response_sha256": "18d71fb99757c5f252405fa0775e116cd4c1410c4078d5ba142bb71f98f193b3"
+  },
+  {
+    "method": "GET",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/a56889a54aac5f14141bb45fb602141dd6a37645",
+    "exit_code": 1,
+    "elapsed_seconds": 10.339261707999981,
+    "request_sha256": null,
+    "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "method": "GET",
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/a56889a54aac5f14141bb45fb602141dd6a37645",
+    "exit_code": 0,
+    "elapsed_seconds": 2.7133066250000013,
+    "request_sha256": null,
+    "response_sha256": "5a0635a94914390553c0829e6f1c21f77389825769a4714e8f1aa985a1461dd3"
+  }
+]

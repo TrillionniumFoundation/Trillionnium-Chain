@@ -1,4 +1,6 @@
 use super::sealed::{DataBuilder, Sealed};
+use rustix::fs::{fcntl_getfl, OFlags};
+use rustix::io::{fcntl_getfd, FdFlags};
 use sha2::{Digest, Sha256};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -19,13 +21,57 @@ fn sealed_copy_survives_in_place_source_rewrite_and_path_replacement() {
     fs::rename(&replacement, &source).unwrap();
     assert_eq!(sealed.read(64).unwrap(), b"original authenticated bytes");
     assert!(sealed.file().write_at(b"bad", 0).is_err());
+    sealed.recheck().unwrap();
     assert!(sealed.file().set_len(1).is_err());
+    sealed.recheck().unwrap();
     assert!(sealed.file().set_len(100).is_err());
+    sealed.recheck().unwrap();
     assert!(sealed
         .file()
         .set_permissions(fs::Permissions::from_mode(0o700))
         .is_err());
     sealed.recheck().unwrap();
+}
+
+#[test]
+fn sealed_handoff_retains_reserved_descriptor_as_read_only_and_cloexec() {
+    let builder = DataBuilder::new().unwrap();
+    let reserved = builder.raw_fd();
+    let sealed = builder.finish(b"bound handoff", 64).unwrap();
+    assert_eq!(sealed.raw_fd(), reserved);
+    assert_eq!(
+        fcntl_getfl(sealed.file()).unwrap() & OFlags::ACCMODE,
+        OFlags::RDONLY
+    );
+    assert!(fcntl_getfd(sealed.file())
+        .unwrap()
+        .contains(FdFlags::CLOEXEC));
+    let before = super::sealed::identity(sealed.file()).unwrap();
+    assert!(sealed.file().write_at(b"changed", 0).is_err());
+    assert_eq!(super::sealed::identity(sealed.file()).unwrap(), before);
+    sealed.require_descriptor(reserved as u32).unwrap();
+    let transport = Sealed::untrusted_handoff(reserved as u32, 64).unwrap();
+    assert_eq!(transport.read(64).unwrap(), b"bound handoff");
+    assert_eq!(super::sealed::identity(transport.file()).unwrap(), before);
+    sealed.pass_to_exec().unwrap();
+    assert!(!fcntl_getfd(sealed.file())
+        .unwrap()
+        .contains(FdFlags::CLOEXEC));
+    sealed.recheck().unwrap();
+}
+
+#[test]
+fn read_only_sealed_object_still_rejects_a_successful_permission_change() {
+    let sealed = DataBuilder::new().unwrap().finish(b"bound", 64).unwrap();
+    // F_SEAL_EXEC protects executable bits, not every permission bit. A
+    // successful owner chmod must still invalidate the complete identity.
+    sealed
+        .file()
+        .set_permissions(fs::Permissions::from_mode(0o600))
+        .unwrap();
+    assert!(sealed.recheck().is_err());
+    assert!(sealed.read(64).is_err());
+    assert!(sealed.require_descriptor(sealed.raw_fd() as u32).is_err());
 }
 
 #[test]

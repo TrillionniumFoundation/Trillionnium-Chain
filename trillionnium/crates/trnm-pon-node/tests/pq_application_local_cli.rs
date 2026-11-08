@@ -132,7 +132,9 @@ fn ordinary_npq6_configuration_rejects_missing_null_extra_and_mixed_bindings() {
         assert!(!output.status.success(), "fault {fault}");
         let expected = match fault {
             0 => "missing field `owner_profile`",
-            1 | 6 => "invalid type: null",
+            // The pinned JSON enum decoder rejects a null profile before enum decoding.
+            1 => "JSON: expected value",
+            6 => "invalid type: null",
             2..=4 => "PQ_NETWORK_CONTEXT",
             5 => "PQ_APPLICATION_NETWORK_POLICY",
             7 | 8 => "unknown field `unknown`",

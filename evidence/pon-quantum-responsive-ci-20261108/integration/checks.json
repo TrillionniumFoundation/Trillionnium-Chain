@@ -1,0 +1,93 @@
+{
+  "schema": "trnm-responsive-CI-repair-integration-v1",
+  "parent_head": "a490d3b971997e927de3aece19864497d65d5984",
+  "test_source_sha256": "763acbdb380da2784038aaceaa579571305e57b2919375a21b9a1688db28e5b6",
+  "repaired_module_tests": 31,
+  "negative_mutations_rejected": 2,
+  "scientific_source_and_frozen_evidence_unchanged": true,
+  "archive_verification_members": 101,
+  "checks": [
+    {
+      "name": "pq-integration",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "started_utc": "2026-11-08T02:49:08.631796+00:00",
+      "completed_utc": "2026-11-08T02:49:08.693419+00:00",
+      "returncode": 0,
+      "stdout_sha256": "1f2aa7ea3ce9ebf7f4a677cdbf5ddc8ad1deb336f1711329133ff5c901107485",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "started_utc": "2026-11-08T02:49:08.693510+00:00",
+      "completed_utc": "2026-11-08T02:49:08.739951+00:00",
+      "returncode": 0,
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "started_utc": "2026-11-08T02:49:08.740056+00:00",
+      "completed_utc": "2026-11-08T02:49:25.038717+00:00",
+      "returncode": 0,
+      "stdout_sha256": "700020b649463c38fab1b2dc547a56edf86829535b2857d88ca62cc9d7ddfcb7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "distributed-inventory",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "started_utc": "2026-11-08T02:49:25.038807+00:00",
+      "completed_utc": "2026-11-08T02:49:25.080114+00:00",
+      "returncode": 0,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository-after-lossless-packaging",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "started_utc": "2026-11-08T02:51:58.783704+00:00",
+      "returncode": 0,
+      "stdout_sha256": "a3d588ac9a45e5bccc2e2d275d1b71563970c5c35ee5206bb508cf26fa29516f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "diff-check-after-lossless-packaging",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "started_utc": "2026-11-08T02:52:15.535243+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "initial_artifact_text_whitespace_failure_retained": true,
+  "original_raw_whitespace_preserved_losslessly": true,
+  "current_required_checks_passed": true,
+  "new_full_scientific_suite_claimed": false
+}

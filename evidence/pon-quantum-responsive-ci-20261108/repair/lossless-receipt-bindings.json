@@ -1,0 +1,21 @@
+{
+  "reason": "Preserve exact raw whitespace in lossless gzip while retaining the repository text-diff whitespace gate.",
+  "files": [
+    {
+      "original_name": "remove-prelaunch-budget-guard.log",
+      "original_size": 4568,
+      "original_sha256": "e7da7d66a0fa2ac91a1200e7611412fd900b28b50acb38aee51222353e0a2bcf",
+      "gzip_name": "remove-prelaunch-budget-guard.log.gz",
+      "gzip_size": 756,
+      "gzip_sha256": "93bb74ace4cbc2d3914dd87a64222ac827d500a0270696f0baf5002e073ee7f1"
+    },
+    {
+      "original_name": "staged-observer-repair.diff",
+      "original_size": 6564,
+      "original_sha256": "806583f5fbb22a1271b649a5e0fd616782ae623b4688834e888f93b9c9f4cae1",
+      "gzip_name": "staged-observer-repair.diff.gz",
+      "gzip_size": 1755,
+      "gzip_sha256": "3dce33ae1e05decf0cc00f64ed1964421fc5f2486079f6b8b71f77fdd67173b7"
+    }
+  ]
+}

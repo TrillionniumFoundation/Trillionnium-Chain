@@ -1,0 +1,272 @@
+{
+  "causal_assessment": {
+    "continuation": "Both workflows, native host/runner/test and their reviewed reader/support dependencies are byte-identical to bef17d6 (12 paths). Rust changes are isolated to source inventory and quantum/test CLI code; the added quantum module is cfg(test) and is outside this integration-test library. No continuation edit to the failing mechanism was found. A counterfactual timing regression is not established or excluded by these read-only observations.",
+    "cross_arch": "The original finite confirmation target is false under 16-worker pressure: on-time honest submissions are followed by a native independent history replay deadline. This is a retained unmet service target, not a compile error, native-test process timeout, or dropped observation.",
+    "historical": "The existing pinned historical artifact is unavailable; logs find zero and direct artifact API returns 404. No historical failure may be relabeled as success.",
+    "invariants": "No attack accepted; receiver remains a valid honest prefix and invariant_target_met=true. full_native_state_equal=false is retained with incomplete independent replay; it must not be promoted to full-state agreement."
+  },
+  "cross_arch_outcomes": [
+    {
+      "acceptance_stages": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "status": "passed"
+        }
+      },
+      "all_five_named_native_tests_passed": true,
+      "all_native_invocations_returned_without_timeout": true,
+      "architecture": "x64",
+      "archive": {
+        "bytes": 8506223,
+        "extracted_file_count": 154,
+        "path": "cost-x64-13599378485.complete.zip",
+        "sha256": "e9c9e95c7c8fb0151cab29c2651dab64716151300e5250353c8c0fa727789229"
+      },
+      "baseline_confirmation_latency_ns": 3183436299,
+      "confirmation_report": {
+        "path": "cost-x64-13599378485/from-zero-native/confirmation/report.json",
+        "sha256": "b73e0cef4f864966c1f890c9ee984c2b6ffcb80b6d821abb1fd750eef3be99ef"
+      },
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "native_manifest": {
+        "path": "cost-x64-13599378485/from-zero-native/manifest.json",
+        "sha256": "34d9951b15ba5551fc853aa01406d573589c3631f6ea96381fdca7d53ae9e97f"
+      },
+      "pressure": {
+        "all_honest_submits_ok_inside_original_window": true,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "failed_native_history_replays": 1,
+        "finite_business_target_met": false,
+        "full_native_state_equal": false,
+        "honest_submissions": 7,
+        "invariant_target_met": true,
+        "last_honest_submit_ended_ns": 2198459046,
+        "last_native_history_replay": {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 1,
+          "history_request_ended_ns": 3896332849,
+          "next_after": null,
+          "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "replay_accepted": false,
+          "replay_ended_ns": 4001002377,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 3896366132,
+          "replay_thread_cpu_ns": 8689060,
+          "replay_wall_ns": 104636245
+        },
+        "no_attack_accepted": true,
+        "receiver_matches_valid_honest_prefix": true,
+        "successful_native_history_replays": 1,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    },
+    {
+      "acceptance_stages": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "status": "passed"
+        }
+      },
+      "all_five_named_native_tests_passed": true,
+      "all_native_invocations_returned_without_timeout": true,
+      "architecture": "arm64",
+      "archive": {
+        "bytes": 8508918,
+        "extracted_file_count": 154,
+        "path": "cost-arm64-13599069208.complete.zip",
+        "sha256": "2e85a3f7b2605a926ed6fc06be2473d2f8aa7d72c09c3f89b58deb89fd4cbb53"
+      },
+      "baseline_confirmation_latency_ns": 1883223706,
+      "confirmation_report": {
+        "path": "cost-arm64-13599069208/from-zero-native/confirmation/report.json",
+        "sha256": "045cc38e41dc5f14413f7002a3a4145f147a5e6b308ac5629ceeaf5547404aca"
+      },
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "native_manifest": {
+        "path": "cost-arm64-13599069208/from-zero-native/manifest.json",
+        "sha256": "0f3afb4b65ad4adce6071b9aae1652f776243fa56c3d091231bb2c8f2770f821"
+      },
+      "pressure": {
+        "all_honest_submits_ok_inside_original_window": true,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "failed_native_history_replays": 1,
+        "finite_business_target_met": false,
+        "full_native_state_equal": false,
+        "honest_submissions": 7,
+        "invariant_target_met": true,
+        "last_honest_submit_ended_ns": 1450617862,
+        "last_native_history_replay": {
+          "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+          "history_call_index": 4,
+          "history_request_ended_ns": 3947751465,
+          "next_after": null,
+          "prior_after": "76e41bd250e2f938dcb362eee1f5f928873fede771e32704b413bbae59dfde76",
+          "replay_accepted": false,
+          "replay_ended_ns": 4047578164,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 3947769600,
+          "replay_thread_cpu_ns": 11911200,
+          "replay_wall_ns": 99808564
+        },
+        "no_attack_accepted": true,
+        "receiver_matches_valid_honest_prefix": true,
+        "successful_native_history_replays": 4,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_ns": 4000000000,
+        "workers": 16
+      }
+    }
+  ],
+  "detailed_diagnostics": {
+    "bytes": 25681,
+    "path": "verified-confirmation-diagnostics.json",
+    "sha256": "3844214ed5a8a47c52348df720504a5c1ff3602739c9b2332b64226bdd1d9ba6"
+  },
+  "historical_artifact_failure": {
+    "artifact_api_body": {
+      "documentation_url": "https://docs.github.com/rest/actions/artifacts#get-an-artifact",
+      "message": "Not Found",
+      "status": "404"
+    },
+    "artifact_api_body_sha256": "706afc3b2c7b96e18bb0e38cba9855b65a4d7417718585377e793912fe51b1a2",
+    "artifact_id": 11531476198,
+    "continuation_changed_workflow": false,
+    "expiry_or_deletion_distinguished": false,
+    "job_error": "None of the provided artifact IDs were found",
+    "run_id": 37730166589
+  },
+  "history_replay_details": {
+    "bytes": 4644,
+    "path": "verified-history-replay-details.json",
+    "sha256": "bfceb956db00cb1b3ce9871b0eca6a72c0084feb6390d7959e1ebaa5f9f3a2b4"
+  },
+  "job_logs": [
+    {
+      "conclusion": "failure",
+      "error_excerpts": [
+        {
+          "line": 1166,
+          "text": "2026-11-08T01:50:00.3126869Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "failure_steps": [
+        "Execute exact native from-zero service controls"
+      ],
+      "head_sha": "a490d3b971997e927de3aece19864497d65d5984",
+      "job_id": "128593173791",
+      "name": "cross-arch-cost (x64)",
+      "raw_log": {
+        "bytes": 157074,
+        "path": "job-128593173791.log",
+        "sha256": "69fb6a2b2761c8946ea09bdd9b678aa544e27eff8def153eaf5e35c6be7b0899"
+      },
+      "run_id": 42435447284
+    },
+    {
+      "conclusion": "failure",
+      "error_excerpts": [
+        {
+          "line": 1161,
+          "text": "2026-11-08T01:49:48.8664315Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "failure_steps": [
+        "Execute exact native from-zero service controls"
+      ],
+      "head_sha": "a490d3b971997e927de3aece19864497d65d5984",
+      "job_id": "128593173563",
+      "name": "cross-arch-cost (arm64)",
+      "raw_log": {
+        "bytes": 156867,
+        "path": "job-128593173563.log",
+        "sha256": "249b45b304ad86df1a8463ebd5b02f4750bc12cfd25d1bcb9603b57776d64d62"
+      },
+      "run_id": 42435447284
+    },
+    {
+      "conclusion": "failure",
+      "error_excerpts": [
+        {
+          "line": 54,
+          "text": "2026-11-08T01:43:06.0255429Z Found 0 artifact(s)"
+        },
+        {
+          "line": 55,
+          "text": "2026-11-08T01:43:06.0280231Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found"
+        }
+      ],
+      "failure_steps": [
+        "Retrieve exact historical failed artifact without reclassifying it"
+      ],
+      "head_sha": "a490d3b971997e927de3aece19864497d65d5984",
+      "job_id": "128593173105",
+      "name": "retained-pressure-failure",
+      "raw_log": {
+        "bytes": 4110,
+        "path": "job-128593173105.log",
+        "sha256": "f5676c3349c3368aaad450940fc413f4b6d29dc617b066890282cb86d7ca360f"
+      },
+      "run_id": 42435447257
+    }
+  ],
+  "observed_utc": "2026-11-08T02:14:08.150455+00:00",
+  "parent": "bef17d632d1e40014167dba2a1089b85366b67b8",
+  "published_head": "a490d3b971997e927de3aece19864497d65d5984",
+  "schema": "pon-current-head-ci-economics-triage-v1",
+  "scope": "Only current-head cross-arch-cost x64/arm64 and retained-pressure-failure; local HeptaRuntime GitHub GETs and frozen-source reads. No test rerun, source edit, resource/deadline relaxation, or publication.",
+  "scoped_followup": {
+    "cross_arch": "Keep the original 4-second window, CPU parent, seven-packet sequence and full confirmation requirement. Investigate the paid independent native History import/replay and service scheduling under the same 16-worker pressure; no source fix has been implemented or validated by this triage.",
+    "historical": "Recover the exact historical failed bytes from independently pinned durable custody, verify original source/report identity, then use a durable immutable retrieval reference. Replacing the old ID with unrelated/new passing evidence or silently skipping retrieval would not repair this gate."
+  },
+  "security_gates_remain_hold": true,
+  "source_comparison": {
+    "bytes": 5025,
+    "path": "source-comparison.json",
+    "sha256": "8fa8013c6a666f9535d1646f0eee8be01146885f60924cc60be35972369e9533"
+  },
+  "source_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "source_semantics": {
+    "bytes": 15885,
+    "path": "source-semantics-excerpts.json",
+    "sha256": "c37facdb533a50372a52ac8bc637a23ced69e43e28a2c55b47e5016215efd271"
+  },
+  "status": "DIAGNOSED_FAILURES_RETAINED",
+  "transport_notes": {
+    "all_three_requested_raw_job_logs_complete": true,
+    "first_run_metadata_tls_failure_retained": true,
+    "initial_zip_get_timeouts_retained": true,
+    "original_job_and_scientific_deadlines_unchanged": true,
+    "read_only_run_metadata_retry_succeeded": true,
+    "same_endpoint_range_tail_gets_reconstructed_both_complete_zip_hashes": true
+  }
+}

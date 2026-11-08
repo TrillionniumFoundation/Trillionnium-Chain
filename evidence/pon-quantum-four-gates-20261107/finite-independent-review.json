@@ -1,0 +1,566 @@
+{
+  "classical_certificate": {
+    "conditional_risk_intervals": {
+      "all_paths_covered_by_reserved_events": true,
+      "census_advised_action_envelope": {
+        "lower": {
+          "denominator": 62500000000000000000000000000,
+          "numerator": 976562499999999999999999999
+        },
+        "upper": {
+          "denominator": 62500000000000000000000000000,
+          "numerator": 976562500000000000000000001
+        }
+      },
+      "common_quantum_code_distance_used": false,
+      "coupling_premise": "the actual timed trace equals the ideal trace outside the reserved history-conditional fault-event union",
+      "failure_union_upper": {
+        "denominator": 62500000000000000000000000000,
+        "numerator": 1
+      },
+      "fixed_q_policies": {
+        "0": {
+          "lower": {
+            "denominator": 62500000000000000000000000000,
+            "numerator": 976562499999999999999999999
+          },
+          "upper": {
+            "denominator": 62500000000000000000000000000,
+            "numerator": 976562500000000000000000001
+          }
+        }
+      },
+      "hardware_calibration_or_network_security_claimed": false
+    },
+    "epsilon": {
+      "denominator": 62500000000000000000000000000,
+      "numerator": 1
+    },
+    "epsilon_decimal_approx": "1.6e-29",
+    "execution_kind": "classical-uniform-q0",
+    "hardware_reservation": {
+      "host_events": {
+        "host_calls_including_proofs": 14,
+        "nonce_generation_and_candidate_check_calls": 8,
+        "proofs_reserved": 2,
+        "propagations": 2,
+        "quantum_events": 0,
+        "task_and_template_setup_calls": 4
+      },
+      "physical_qubits_all_processors": 0
+    },
+    "ideal_census_advised_envelope": {
+      "denominator": 64,
+      "numerator": 1
+    },
+    "ideal_fixed_policy_risks": {
+      "0": {
+        "denominator": 64,
+        "numerator": 1
+      }
+    },
+    "positive_advice_path_present": true,
+    "positive_advice_path_probability": {
+      "denominator": 64,
+      "numerator": 1
+    },
+    "scope": {
+      "attacker_minimum_cost_proved": false,
+      "cache": "single resident exact template; reuse only after completed setup",
+      "classical_workers": 1,
+      "clock_model": "classical host calls, no QPU",
+      "coherent_state_carried_between_attempts": false,
+      "exact_probability_scope": "independent fresh classical uniform samples on the literal domain",
+      "fixed_q_policy_precommitment_attested": false,
+      "fixed_q_policy_reads_census": false,
+      "machine_coupling": "conditional on declared history-dependent event bounds and exact ideal timed trace outside their union; not calibrated hardware",
+      "maximum_value_policy": "observer-census-aware envelope over the closed declared action class",
+      "mixed_quantum_classical_consensus_security_proved": false,
+      "native_prefix_validation": "external native fixture observation; prefix metadata arithmetic independently checked here",
+      "native_winner_validation": "literal complete PNW1 scalar replay; online Node execution belongs to external bridge",
+      "nonce_observation": "after the declared classical RNG host call",
+      "nonzero_witness": "observer-selected positive-probability path, not a sampled attack",
+      "physical_clock_calibrated": false,
+      "private_actions": "fresh classical uniform nonce, full candidate check, serial proof, private extension, publication, wait, stop",
+      "production_activation": false,
+      "public_classical_history": "fixed already generated one-block competing extension; no further honest mining",
+      "publication": "serial propagation charge for every withheld block, then native future-clock deferral",
+      "quantum_hardware_executed": false,
+      "quantum_mining_qualified": false,
+      "quantum_processors": 0,
+      "unlisted_timestamp_search_algorithms_or_network_strategies_covered": false,
+      "whole_machine_error_bound_composed": true
+    },
+    "states": 7,
+    "transition_edges": 35
+  },
+  "classical_independent_two_success_count": {
+    "accepted_depth_two_nonce_pairs": 1,
+    "possible_ordered_nonce_pairs": 64,
+    "probability": {
+      "denominator": 64,
+      "numerator": 1
+    }
+  },
+  "command_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/scratch/c9b48df754d6/validation-four-gates/finite-native-review/review_native.py",
+    "--repo",
+    "/workspace/scratch/c9b48df754d6/chain-quantum-next",
+    "--evidence",
+    "/workspace/scratch/c9b48df754d6/validation-four-gates/rog-native-ec3a939/native-evidence-ec3a939",
+    "--output",
+    "/workspace/scratch/c9b48df754d6/validation-four-gates/finite-native-review/review.json",
+    "--expected-head",
+    "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+    "--expected-tree",
+    "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+  ],
+  "driver_sha256": "dfed3c59e24d24461891cc177a7bdf81e7896d0b280a9849bc1cc3dfe847639d",
+  "evidence_unchanged_during_review": true,
+  "fixture_summary": {
+    "contexts": [
+      {
+        "M_full": 1,
+        "N": 8,
+        "chainwork": 37,
+        "context_id": "private-h16",
+        "full_accepted_nonces": [
+          6
+        ],
+        "height": 16,
+        "offline_native_proofs_generated": 8,
+        "offline_native_winners_admitted": 1,
+        "parent_id": "2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad",
+        "required_work": 7,
+        "target_hex": "206d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06c"
+      },
+      {
+        "M_full": 1,
+        "N": 8,
+        "chainwork": 44,
+        "context_id": "private-h17-d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986",
+        "full_accepted_nonces": [
+          1
+        ],
+        "height": 17,
+        "offline_native_proofs_generated": 8,
+        "offline_native_winners_admitted": 1,
+        "parent_id": "d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986",
+        "required_work": 7,
+        "target_hex": "206d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06d3a06c"
+      }
+    ],
+    "count_scope": "offline full native census; initial history/census preparation is outside the modeled horizon",
+    "initial_resources": {
+      "all_classical_costs_and_hardware_clocks_are_separate_premises": true,
+      "coherent_quantum_state_supplied": false,
+      "cost_scope": "conditional preexisting classical history and public input bytes; offline generation is not included in the four-second modeled quantum horizon",
+      "observer_has_full_census": true,
+      "offline_census_elapsed_ns": 40149513,
+      "prefix_generation_elapsed_ns": 172774390,
+      "prefix_public_tip_and_complete_dag": "offline native generation with receipts below",
+      "public_tip_generation_elapsed_ns": 14152244,
+      "winner_advice_available_to_fixed_policy_sampler": false
+    },
+    "native_negative_controls": {
+      "mathematically-valid-future-time": "TIME_DEFERRED",
+      "mathematically-valid-unknown-parent": "UNKNOWN_PARENT",
+      "mathematically-valid-wrong-target": "TARGET"
+    },
+    "prefix_blocks": 15,
+    "prefix_chainwork": 30,
+    "prefix_classical_proof_attempts": 34,
+    "public_blocks": 1,
+    "public_chainwork": 37,
+    "public_classical_proof_attempts": 5
+  },
+  "independence": {
+    "bridge_sampler_called": false,
+    "finite_optimizer_called": false,
+    "finite_verifier_called": false,
+    "full_W1_scalar_recomputation_performed_by_this_driver": false,
+    "native_execution_reperformed_by_this_driver": false,
+    "probability_method": "independent dense rational state vector",
+    "production_interval_kernel_called": false,
+    "value_method": "raw certificate Bellman arithmetic and independent policy forward flow"
+  },
+  "input_file_sha256": {
+    "bridge-samples.json": "516696642a026779d595e1d4a329e8a1af12ba7115c2e60eea50001c1f1fe21b",
+    "classical-certificate.json": "1e5b416bc58925a28107fb24e9744282fc5896b2d2e48f749c7b86a00f0d4a63",
+    "finite-certificate.json": "f9b22040c860f60dd7c5a78c3d218d8fab99f4dfdaec1b3a91ca112c109563db",
+    "native-fixture.json": "b4779dee435faf6748657d0780450f697b81fcb1fd5001d91ee54f06fe806e65",
+    "native-replay.json": "d4ca9788fe56ba6b193d8a9a40fa1e8668619545b82e6e6531cd433005dc0179",
+    "native-source-before.json": "f97501be23cdf6486fcf9480d75b27693b9a9a1daf018b331e17f6f428583400",
+    "packets/0843a97974f648b427230969cf54b3b82f146833e32b2f39527b10b42096442b.pnk": "f62e081fdec2ff4557e3831b23ec148c68ee4fa7340f8e4bb0ff454ce40b7cc6",
+    "packets/0f4e851cc186a414293a0d1372d7ad702147c062db76c6867ef361fb73649a34.pnk": "25820d8b7f8d4a0fde2c432fd3e2ff99ed96c0cce5aa928a85f886ae5b1f83d1",
+    "packets/13479567872b7843c76df33fe4a383933668acf18ea8dae84b4d303543bdcfeb.pnk": "0d2907dcf3973d0f99782ee2a204bed45ffa3d1ce338ea7de3ec1d02fb4836b4",
+    "packets/1a62625729d92a6b97b1ab0fd93f0b4028adcbf0390a8465c71d763593c4d2b1.pnk": "990ccb656e561f9e63b3644715a4c4006e5257990eb9dedd86f837a7e418d522",
+    "packets/2dcb92c8ed9998af5932365fefbc86dc5a0ed2088af9c4daa9f0aa2e2451cfb9.pnk": "1132a720973777bcd9d8a687d657ea802eb45d742765e545e85ce822be69f85b",
+    "packets/2ee6f153a16b5917c6008e7db93ba88dbde77b003ce25b7c8746bc27d8622c34.pnk": "4aae9cc7af9a858bf8cb30b63827ac0e3ec51b01de1a88d3da2643c3cbd73569",
+    "packets/2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad.pnk": "3cd7f7ef2a03bd45e247e2d7e88f3b63c0348c16dcaacc38070973744ba42c68",
+    "packets/3e529b00037e98c35dcfbf439a502ea3e1586a4e55bd6a9bfcabace5ac4de574.pnk": "18199ef0e4ce5f4240b203021393fce8df5f023823605f3ecce7a8447543d928",
+    "packets/53a74e70ff5564996e95a4e9ccf32f68593c04c337732b09c3e4cb8ae4e02ee6.pnk": "2c29002fef30de515b7f0c40d7fcd2a9a2f69c32e2a4b4ac2a0d897e2b2b2f26",
+    "packets/56dec70ac65ea34bf47610f64ea7dc3e26eacd23178c575b687fae6549d3b971.pnk": "0f02166e8eb4ace6f7f4e4eb65c1e7f9db5eed0c00c0ecf5cdb19c03069c6865",
+    "packets/635235e5b36614dd63ad498b99425c37aefd5019ccb1ba13888c152cfd5b4875.pnk": "97ce086d05b84cc87db00e4641880a4d88ff951720393a1cf3c92ab0fe6c20ef",
+    "packets/65b1355dcb26355a802570f0bb751f54799a409b8d2eb04cc333a01d675ba9a7.pnk": "428abb7e1c17dcf39cd09525c6d5111649113b5a6259d9d7f84497d8b8078217",
+    "packets/67f2787dc3db4145753c687fe05acdb95beefef39fdd8a706f6c7d929820bf56.pnk": "37bbda5eebee0b0862c7ac2f185078bb5ce19ef12b3c40611b7b110acbf73d6c",
+    "packets/69839ea3b9789d0b6171036c59486ae14dd962412d7e22581745146d61ce0d09.pnk": "24906be9813e14aa530d343668d4a4b9464f8e437ec8726ad85a68c496121b3e",
+    "packets/6dc41aaa3dc2e685cf9185d3cd83a176062f5c8331f922405ccc853061ae6fad.pnk": "fee41768b9a7989344ac02b2cc96545cde85d05792185f1e6d3ee526bfae4669",
+    "packets/6e9f1130c9fa90f11e52861bd307cc91a36389e904b5709171d15f0494eaa4ba.pnk": "401a8963a35e1afb4f746a0c544a8cbfa543a28daf29319488e858a74ab14115",
+    "packets/74f90487c90eea783b9381f75ed8288c1ace2c173074bfc3bb39d075da3493b4.pnk": "7bc65fa78ceec698df6f6da0e67a6f500c04542aaf7adc518bbcd1ec6fa6b39a",
+    "packets/873eeb5f527dd3d82a6fe9670a586afe9d10b08661644eb620266ef397b9c229.pnk": "747e2bc6ec3134225dab2d6d67aedb40d623d9f32230427ed11ce9ac2af9f405",
+    "packets/96519dddb45ba1f46d244747fd7f48b62cc93ccdeca03bd38d83eaca61a9bc9c.pnk": "175aa0470a14f35098f1e478c13c934795a079463631980c5aade7aba46cbdc3",
+    "packets/983816877211f919546c10116b5c88c388199e0545dbcff378f0e8d4921bd1cf.pnk": "01313f691e4f20b2e3a4fa6aed1545e4eee2ddab9a57a45a459492ae2c6d5cb4",
+    "packets/a1aed287d315a1fcdd3cb76f08ea751cbe4588071488b09201d965cd1b78c6a2.pnk": "286cac02bf2bbcd7eeb2cc4009a49f56ff1cc54ffcb76e3a56fbbaed1a1289d0",
+    "packets/a9747b579209ee9d01dcb9bee274093a08ffd00a3c2dfd2af1db303e18feac3a.pnk": "2eb55ab9fad3ef99c0685759dd26159794d92157dc4fcd182f9491687ec2567b",
+    "packets/b463a6e5737c3d3730f1054f38070b1b6239c3a98bf2d5150e6934030cc78ad0.pnk": "953c796ee2c17ac12ce40147a6505cfbb1cbce32ece8c194577440cac8ef8cf8",
+    "packets/b6210c24cda12acb4ce25dd401322b68b9ff50b0cd2341c0f2caf83a100dc7d9.pnk": "4ad5a38b0e5d3402908ebdc4c9312035c813a3c54dcaecd2de90a71ca722e2f0",
+    "packets/bb72ef91a4e65c94509ff474b6656a1b58810bea5a69c56cac6867a230cdd324.pnk": "1c2e4d3d04914f712dbc359f0430ae4a87a5e73500f6ae78db893b05b9bffc20",
+    "packets/bdfe7a7ef61794645db119ff1b871d67c18e6ed67c04ff472cac19159cd48b2f.pnk": "274e4dde8b86cad7d28b8298ea4a9be998f4319203402eec9bb18143b2db06ea",
+    "packets/c151ede45c0e48950cdb517254e0a806005145676808e0a8d344561b0c8f7247.pnk": "5b75098aeb424eceec8b4920fe6e84c5267478366606be50aa75151a268bc842",
+    "packets/cdb9aefa0866d5ece8f4d2062aad8dbff90238523031eb84dd6f1bdd7f14e6af.pnk": "5c0de902437bda7e3bb344213cc5ca5528f75dd71df50d44b9dfe14df1880963",
+    "packets/d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986.pnk": "904c8fda95615a1344d163afecd45fe5a53ecdc0b3983a7b45bbf29f74daa528",
+    "packets/df458f6ce26e92fe5ab62c0be53b0765cd36d0649e759abf1a68f745f3968d95.pnk": "74b6cbd63d0a6fb9b3a2ac6ec9aa072059b422a009ee27f193f0708faba67d44",
+    "packets/e7749b52042370e2c1ca14b23265e7d6a6cac4936c5ae08328e8610e07561516.pnk": "52601d4ab982f30848a8d0265d1471d125806d717fbac521b4ffb88226f8410d",
+    "packets/e7770d0ed009feaa19baab15e41b98e3090679ad9194c50109c23d658b6a03bf.pnk": "19d2911539e24db29dc8b1d01ff70584f8a3f6fe73bfd401ce158bb779dbf1c5",
+    "packets/eb99d621e67575d358973d21804d00d28c900ec4d88e4069ec11a6ddb4728bcb.pnk": "7f5f706788992088f75e4c98efc25f434aea18242fccaf69d2b9198cbf309ed3",
+    "packets/f603fe9897485039155d7f238fabec4598f49b2a1196bbd1262a812d588441ed.pnk": "0da5acfa980a569fd65037f4255dd6acdd6149fb66775c5eed8b53ca476861be",
+    "packets/ff0fa2c5d22b234d2857f7966cc335af601c789a63a843394955cce86158bc25.pnk": "4241a391e7f4f2c41cf1fa7af619343e116598831eda3c10842e3a227e463211"
+  },
+  "native_run_inventory_totals": {
+    "authenticated_reopen_equal": 4,
+    "completed_candidate_checks": 4,
+    "completed_checked_misses": 2,
+    "completed_checked_winners": 2,
+    "count_scope": "inventory across separate fresh replay runs; not cumulative trials of one attack or one probability estimate",
+    "fixed_policy_runs": 3,
+    "fresh_cpu_probe_proofs_generated_including_misses": 4,
+    "modeled_winner_proofs_complete": 2,
+    "observer_advice_runs": 1,
+    "private_producer_admissions": 2,
+    "publication_complete": 1,
+    "quantum_measurements_complete": 0,
+    "receiver_admissions": 2,
+    "reorganized": 1,
+    "runs": 4,
+    "search_attempts": 6
+  },
+  "quantum_certificate": {
+    "conditional_risk_intervals": {
+      "all_paths_covered_by_reserved_events": true,
+      "census_advised_action_envelope": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+        }
+      },
+      "common_quantum_code_distance_used": true,
+      "coupling_premise": "the actual timed trace equals the ideal trace outside the reserved history-conditional fault-event union",
+      "failure_union_upper": {
+        "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+        "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+      },
+      "fixed_q_policies": {
+        "0": {
+          "lower": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+          }
+        },
+        "1": {
+          "lower": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+          }
+        }
+      },
+      "hardware_calibration_or_network_security_claimed": false
+    },
+    "epsilon": {
+      "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+      "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+    },
+    "epsilon_decimal_approx": "0.00274527357349",
+    "execution_kind": "constructed-quantum",
+    "hardware_reservation": {
+      "code_distance_for_whole_schedule": 47,
+      "logical_patches_reserved_and_initialized_per_processor": 22253112,
+      "physical_qubits_all_processors": 98314690616
+    },
+    "ideal_census_advised_envelope": {
+      "denominator": 1,
+      "numerator": 0
+    },
+    "ideal_fixed_policy_risks": {
+      "0": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "1": {
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    "positive_advice_path_present": false,
+    "positive_advice_path_probability": null,
+    "scope": {
+      "attacker_minimum_cost_proved": false,
+      "cache": "single resident exact template; reuse only after completed setup",
+      "classical_workers": 1,
+      "clock_model": "full conditional machine lifecycle",
+      "coherent_state_carried_between_attempts": false,
+      "exact_probability_scope": "ideal finite literal-predicate Grover process, independent fresh attempts",
+      "fixed_q_policy_precommitment_attested": false,
+      "fixed_q_policy_reads_census": false,
+      "machine_coupling": "conditional on declared history-dependent event bounds and exact ideal timed trace outside their union; not calibrated hardware",
+      "maximum_value_policy": "observer-census-aware envelope over the closed declared action class",
+      "mixed_quantum_classical_consensus_security_proved": false,
+      "native_prefix_validation": "external native fixture observation; prefix metadata arithmetic independently checked here",
+      "native_winner_validation": "literal complete PNW1 scalar replay; online Node execution belongs to external bridge",
+      "nonce_observation": "only after complete readout, host turnaround and output transfer in the lifecycle model",
+      "nonzero_witness": "observer-selected positive-probability path, not a sampled attack",
+      "physical_clock_calibrated": false,
+      "private_actions": "declared fresh uniform Grover q, full candidate check, serial proof, private extension, publication, wait, stop",
+      "production_activation": false,
+      "public_classical_history": "fixed already generated one-block competing extension; no further honest mining",
+      "publication": "serial propagation charge for every withheld block, then native future-clock deferral",
+      "quantum_hardware_executed": false,
+      "quantum_mining_qualified": false,
+      "quantum_processors": 1,
+      "unlisted_timestamp_search_algorithms_or_network_strategies_covered": false,
+      "whole_machine_error_bound_composed": true
+    },
+    "states": 1,
+    "transition_edges": 3
+  },
+  "result": "PASS",
+  "reviewed_at_utc": "2026-11-07T12:48:57.419422+00:00",
+  "runs": [
+    {
+      "advice_selected": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks": 0,
+      "completed_checked_misses": 0,
+      "completed_checked_winners": 0,
+      "cpu_probe_elapsed_ns_sums": {
+        "actual_candidate_verification_elapsed_ns": 0,
+        "actual_prepare_elapsed_ns": 0,
+        "actual_proof_elapsed_ns": 0
+      },
+      "first_partial_phase": {
+        "complete": false,
+        "paid": {
+          "denominator": 1000000000,
+          "numerator": 3998966067
+        },
+        "phase": "initialize",
+        "planned": {
+          "denominator": 125000,
+          "numerator": 130737033
+        }
+      },
+      "fresh_cpu_probe_proofs_generated_including_misses": 0,
+      "logical_elapsed_seconds": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "modeled_winner_proofs_complete": 0,
+      "name": "fixed-q0-seed9",
+      "native_after_chainwork": 37,
+      "native_after_height": 16,
+      "native_before_height": 16,
+      "native_candidate_costs_are_clock_calibration": false,
+      "observation_kind": "seeded-no-Grover-baseline",
+      "path_probability": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "private_producer_admissions": 0,
+      "publication_complete": false,
+      "quantum_measurements_complete": 0,
+      "receiver_admissions": 0,
+      "reorganized": false,
+      "search_attempts": 1,
+      "selected_nonces": []
+    },
+    {
+      "advice_selected": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks": 0,
+      "completed_checked_misses": 0,
+      "completed_checked_winners": 0,
+      "cpu_probe_elapsed_ns_sums": {
+        "actual_candidate_verification_elapsed_ns": 0,
+        "actual_prepare_elapsed_ns": 0,
+        "actual_proof_elapsed_ns": 0
+      },
+      "first_partial_phase": {
+        "complete": false,
+        "paid": {
+          "denominator": 1000000000,
+          "numerator": 3998966067
+        },
+        "phase": "initialize",
+        "planned": {
+          "denominator": 125000,
+          "numerator": 130737033
+        }
+      },
+      "fresh_cpu_probe_proofs_generated_including_misses": 0,
+      "logical_elapsed_seconds": {
+        "denominator": 1,
+        "numerator": 4
+      },
+      "modeled_winner_proofs_complete": 0,
+      "name": "fixed-q1-seed9",
+      "native_after_chainwork": 37,
+      "native_after_height": 16,
+      "native_before_height": 16,
+      "native_candidate_costs_are_clock_calibration": false,
+      "observation_kind": "seeded-conditional-Grover-model",
+      "path_probability": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "private_producer_admissions": 0,
+      "publication_complete": false,
+      "quantum_measurements_complete": 0,
+      "receiver_admissions": 0,
+      "reorganized": false,
+      "search_attempts": 1,
+      "selected_nonces": []
+    },
+    {
+      "advice_selected": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks": 2,
+      "completed_checked_misses": 2,
+      "completed_checked_winners": 0,
+      "cpu_probe_elapsed_ns_sums": {
+        "actual_candidate_verification_elapsed_ns": 31699,
+        "actual_prepare_elapsed_ns": 1524593,
+        "actual_proof_elapsed_ns": 484867
+      },
+      "first_partial_phase": null,
+      "fresh_cpu_probe_proofs_generated_including_misses": 2,
+      "logical_elapsed_seconds": {
+        "denominator": 250000,
+        "numerator": 263
+      },
+      "modeled_winner_proofs_complete": 0,
+      "name": "classical-q0-seed9",
+      "native_after_chainwork": 37,
+      "native_after_height": 16,
+      "native_before_height": 16,
+      "native_candidate_costs_are_clock_calibration": false,
+      "observation_kind": "seeded-classical-uniform-nonce-baseline",
+      "path_probability": {
+        "denominator": 64,
+        "numerator": 1
+      },
+      "private_producer_admissions": 0,
+      "publication_complete": false,
+      "quantum_measurements_complete": 0,
+      "receiver_admissions": 0,
+      "reorganized": false,
+      "search_attempts": 2,
+      "selected_nonces": [
+        {
+          "context_id": "private-h16",
+          "nonce": 7,
+          "parent_id": "2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad",
+          "winner": false
+        },
+        {
+          "context_id": "private-h16",
+          "nonce": 5,
+          "parent_id": "2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad",
+          "winner": false
+        }
+      ]
+    },
+    {
+      "advice_selected": true,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks": 2,
+      "completed_checked_misses": 0,
+      "completed_checked_winners": 2,
+      "cpu_probe_elapsed_ns_sums": {
+        "actual_candidate_verification_elapsed_ns": 604812,
+        "actual_prepare_elapsed_ns": 1546624,
+        "actual_proof_elapsed_ns": 477032
+      },
+      "first_partial_phase": null,
+      "fresh_cpu_probe_proofs_generated_including_misses": 2,
+      "logical_elapsed_seconds": {
+        "denominator": 500000,
+        "numerator": 1101031
+      },
+      "modeled_winner_proofs_complete": 2,
+      "name": "observer-advice-classical-positive-path",
+      "native_after_chainwork": 44,
+      "native_after_height": 17,
+      "native_before_height": 16,
+      "native_candidate_costs_are_clock_calibration": false,
+      "observation_kind": "advice-selected-classical-existential-witness",
+      "path_probability": {
+        "denominator": 64,
+        "numerator": 1
+      },
+      "private_producer_admissions": 2,
+      "publication_complete": true,
+      "quantum_measurements_complete": 0,
+      "receiver_admissions": 2,
+      "reorganized": true,
+      "search_attempts": 2,
+      "selected_nonces": [
+        {
+          "context_id": "private-h16",
+          "nonce": 6,
+          "parent_id": "2f6d281e521c060566bab14241cb78fcad58909592c214ad46edbcc39fbefcad",
+          "winner": true
+        },
+        {
+          "context_id": "private-h17-d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986",
+          "nonce": 1,
+          "parent_id": "d5a4a33524828d59c7e4243f80bee6700d7007c10f4514527737c0189c2e7986",
+          "winner": true
+        }
+      ]
+    }
+  ],
+  "schema": "trnm-independent-native-finite-review-v1",
+  "scope": [
+    "fixed existing h15 prefix and h16 public tip; no further honest mining",
+    "complete bounded nonce DAG at native W1 matrix/noise shape; finite policy class only",
+    "full-native proof validation relies on separately source-bound scalar and Rust replay receipts",
+    "cost/fault premises remain uncalibrated; initial prefix/census costs recorded separately",
+    "fixed samples and observer-selected existential witnesses are distinct runs",
+    "fresh CPU probe proof generation includes misses and is not a quantum timing calibration",
+    "no hardware, whole-network security, attacker-minimum-cost, profitability, or production qualification"
+  ],
+  "source_after": {
+    "git_head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+    "git_tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a",
+    "worktree_status": ""
+  },
+  "source_before": {
+    "git_head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+    "git_tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a",
+    "worktree_status": ""
+  },
+  "unique_packet_files_checked": 35
+}

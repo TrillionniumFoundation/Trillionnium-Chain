@@ -1,0 +1,1558 @@
+{
+  "archive": {
+    "path": "raw.tar.gz",
+    "sha256": "54a4bc51a0dee6262514d8cd13251eb0ebccf457735a3bc158b4cb041ef09b47",
+    "size": 9286245
+  },
+  "archive_encoding": {
+    "gid": 0,
+    "gname": "",
+    "gzip_compresslevel": 9,
+    "gzip_filename": "",
+    "gzip_mtime": 0,
+    "member_order": "lexicographic Unicode codepoint",
+    "mode": "0644",
+    "mtime": 0,
+    "tar_format": "POSIX PAX",
+    "uid": 0,
+    "uname": ""
+  },
+  "bindings": {
+    "frozen_scientific_implementation": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+    "head_under_triage": "a490d3b971997e927de3aece19864497d65d5984",
+    "inputs": [
+      {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_bytes": 5411,
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "declared_file_count": 13,
+        "declared_total_bytes": 1188504,
+        "namespace": "economics"
+      },
+      {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_bytes": 4642,
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "declared_file_count": 10,
+        "declared_total_bytes": 1173163,
+        "namespace": "protocol"
+      },
+      {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_bytes": 4875,
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "declared_file_count": 24,
+        "declared_total_bytes": 2251594,
+        "namespace": "w1"
+      },
+      {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_bytes": 3792,
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "declared_file_count": 20,
+        "declared_total_bytes": 201776,
+        "declared_verification_scope": [
+          "authentication and transport stderr",
+          "raw PR/user account records",
+          "ZIP transfer binary",
+          "private profile state"
+        ],
+        "kind": "pinned-public-allowlist",
+        "namespace": "export"
+      },
+      {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_bytes": 3253,
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "declared_file_count": 9,
+        "declared_total_bytes": 6211286,
+        "declared_verification_scope": "full/partial ZIPs, range bodies, transport stderr, auth, private state; full archive not verified",
+        "kind": "pinned-public-allowlist",
+        "namespace": "native"
+      },
+      {
+        "bytes": 4181,
+        "kind": "explicit-prepinned-file",
+        "member": "snapshot/CI-summary.json",
+        "namespace": "snapshot",
+        "pin_origin": "separate read-only runtime operation before staging",
+        "sha256": "cb0d814dd02baa7eaf19927f571aa53b963127b69c6c0f1398ec5ca570870645",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-live-ci-v3/CI-summary.json"
+      },
+      {
+        "bytes": 503137,
+        "kind": "explicit-prepinned-file",
+        "member": "snapshot/CI-all-runs.json",
+        "namespace": "snapshot",
+        "pin_origin": "separate read-only runtime operation before staging",
+        "sha256": "bf6c21af4cc6efc486fd2c224ccc359abc2016040c98e1c3ab4df78a265bd7a3",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-live-ci-v3/CI-all-runs.json"
+      },
+      {
+        "bytes": 1149,
+        "kind": "explicit-root-pinned-file",
+        "member": "native/source-comparison.json",
+        "namespace": "native",
+        "sha256": "688cffae96f744111a2c2027c3502b89b74e5563ea05bd1fcf9222e52402107a",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-rog-public/original-native-source-comparison.json"
+      },
+      {
+        "bytes": 288,
+        "kind": "explicit-root-pinned-file",
+        "member": "allocation/latest-readonly-absence.json",
+        "namespace": "allocation",
+        "sha256": "c920af8c35112d800c54f8498b8608a2b652e1639a60d37d232383b27f94fead",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-rog-public/allocation-absence.json"
+      },
+      {
+        "absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "bytes": 5568,
+        "data_file_bytes": 7787809,
+        "data_file_count": 15,
+        "kind": "root-pinned-public-allowlist",
+        "namespace": "priorities",
+        "sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8"
+      }
+    ],
+    "previous_stage_manifest_sha256": "0219c0d53990613ad25fee05b44764cb0fc2d21eaebbfc8cc59f04de4f01bc28"
+  },
+  "files": [
+    {
+      "kind": "explicit-root-pinned-file",
+      "origin": {
+        "namespace": "allocation",
+        "root_supplied_sha256": "c920af8c35112d800c54f8498b8608a2b652e1639a60d37d232383b27f94fead",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-rog-public/allocation-absence.json",
+        "source_relative_path": "postpublish-rog-public/allocation-absence.json"
+      },
+      "path": "allocation/latest-readonly-absence.json",
+      "sha256": "c920af8c35112d800c54f8498b8608a2b652e1639a60d37d232383b27f94fead",
+      "size": 288
+    },
+    {
+      "kind": "original-allowlist",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "source_relative_path": "public-allowlist.json"
+      },
+      "path": "economics/_audit/original-public-allowlist.json",
+      "sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+      "size": 5411
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/cost-arm64-13599069208/from-zero-native/manifest.json",
+        "source_relative_path": "cost-arm64-13599069208/from-zero-native/manifest.json"
+      },
+      "path": "economics/cost-arm64-13599069208/from-zero-native/manifest.json",
+      "sha256": "0f3afb4b65ad4adce6071b9aae1652f776243fa56c3d091231bb2c8f2770f821",
+      "size": 65841
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/cost-x64-13599378485/from-zero-native/manifest.json",
+        "source_relative_path": "cost-x64-13599378485/from-zero-native/manifest.json"
+      },
+      "path": "economics/cost-x64-13599378485/from-zero-native/manifest.json",
+      "sha256": "34d9951b15ba5551fc853aa01406d573589c3631f6ea96381fdca7d53ae9e97f",
+      "size": 65864
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/job-128593173105.log",
+        "source_relative_path": "job-128593173105.log"
+      },
+      "path": "economics/job-128593173105.log",
+      "sha256": "f5676c3349c3368aaad450940fc413f4b6d29dc617b066890282cb86d7ca360f",
+      "size": 4110
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/job-128593173563.log",
+        "source_relative_path": "job-128593173563.log"
+      },
+      "path": "economics/job-128593173563.log",
+      "sha256": "249b45b304ad86df1a8463ebd5b02f4750bc12cfd25d1bcb9603b57776d64d62",
+      "size": 156867
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/job-128593173791.log",
+        "source_relative_path": "job-128593173791.log"
+      },
+      "path": "economics/job-128593173791.log",
+      "sha256": "69fb6a2b2761c8946ea09bdd9b678aa544e27eff8def153eaf5e35c6be7b0899",
+      "size": 157074
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-evidence/arm64-confirmation-report.json.gz",
+        "source_relative_path": "public-evidence/arm64-confirmation-report.json.gz"
+      },
+      "path": "economics/public-evidence/arm64-confirmation-report.json.gz",
+      "sha256": "36379afadd132b90ee391a5a9f906e832d95cbca427a3fb6cad1702fea796680",
+      "size": 374339
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-evidence/confirmation-report-bindings.json",
+        "source_relative_path": "public-evidence/confirmation-report-bindings.json"
+      },
+      "path": "economics/public-evidence/confirmation-report-bindings.json",
+      "sha256": "df44d2b6b4a3e0f27dce6d054a6e036c11052be322c9e479d2fa4e5997f59e01",
+      "size": 1557
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-evidence/x64-confirmation-report.json.gz",
+        "source_relative_path": "public-evidence/x64-confirmation-report.json.gz"
+      },
+      "path": "economics/public-evidence/x64-confirmation-report.json.gz",
+      "sha256": "4fda82eadf07dcbb0932562697e43dc4d581e5a31be3693c301a816a5f02a850",
+      "size": 300144
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/source-comparison.json",
+        "source_relative_path": "source-comparison.json"
+      },
+      "path": "economics/source-comparison.json",
+      "sha256": "8fa8013c6a666f9535d1646f0eee8be01146885f60924cc60be35972369e9533",
+      "size": 5025
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/source-semantics-excerpts.json",
+        "source_relative_path": "source-semantics-excerpts.json"
+      },
+      "path": "economics/source-semantics-excerpts.json",
+      "sha256": "c37facdb533a50372a52ac8bc637a23ced69e43e28a2c55b47e5016215efd271",
+      "size": 15885
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/triage-summary.json",
+        "source_relative_path": "triage-summary.json"
+      },
+      "path": "economics/triage-summary.json",
+      "sha256": "9f4159af5729a71cef2cf0119dec89c31a885aae09d5f25e7f167f05fa3d44ca",
+      "size": 11473
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/verified-confirmation-diagnostics.json",
+        "source_relative_path": "verified-confirmation-diagnostics.json"
+      },
+      "path": "economics/verified-confirmation-diagnostics.json",
+      "sha256": "3844214ed5a8a47c52348df720504a5c1ff3602739c9b2332b64226bdd1d9ba6",
+      "size": 25681
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/public-allowlist.json",
+        "allowlist_sha256": "54ceb73e89fe50f108e8bceaa8ed48aa497bd9e6f950720e1192d0571495b524",
+        "namespace": "economics",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-economics/verified-history-replay-details.json",
+        "source_relative_path": "verified-history-replay-details.json"
+      },
+      "path": "economics/verified-history-replay-details.json",
+      "sha256": "bfceb956db00cb1b3ce9871b0eca6a72c0084feb6390d7959e1ebaa5f9f3a2b4",
+      "size": 4644
+    },
+    {
+      "kind": "original-allowlist",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "source_relative_path": "public-allowlist.json"
+      },
+      "path": "export/_audit/original-public-allowlist.json",
+      "sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+      "size": 3792
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/artifact-integrity.json",
+        "source_relative_path": "public-safe/artifact-integrity.json"
+      },
+      "path": "export/public-safe/artifact-integrity.json",
+      "sha256": "f39924ae6fadcdb668808923d6de0031ce1d4d84badd3047cca4b16241074f57",
+      "size": 671
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/export-result.json",
+        "source_relative_path": "public-safe/export-result.json"
+      },
+      "path": "export/public-safe/export-result.json",
+      "sha256": "c86199a4f3d9cceb43d3472de9c8d18341753ab738f30fb6885fb625ec8d7542",
+      "size": 1088
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/export-target.json",
+        "source_relative_path": "public-safe/export-target.json"
+      },
+      "path": "export/public-safe/export-target.json",
+      "sha256": "c123262070f6e24b9fc7142d622d4690c12dcfc649ee37e181afe776d48aca46",
+      "size": 274
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/exporter-offline-tests.log",
+        "source_relative_path": "public-safe/exporter-offline-tests.log"
+      },
+      "path": "export/public-safe/exporter-offline-tests.log",
+      "sha256": "0c97aac87ddef371b50f7e072d095e585c61a50ffd6bc330764143054e0a4a53",
+      "size": 2519
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/exporter-source-after.json",
+        "source_relative_path": "public-safe/exporter-source-after.json"
+      },
+      "path": "export/public-safe/exporter-source-after.json",
+      "sha256": "2f9fd78dc5cc4fb880dde7ba568daa38c821bf210eac5ffef539b71a932e8d4a",
+      "size": 423
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/exporter-source-before.json",
+        "source_relative_path": "public-safe/exporter-source-before.json"
+      },
+      "path": "export/public-safe/exporter-source-before.json",
+      "sha256": "2f9fd78dc5cc4fb880dde7ba568daa38c821bf210eac5ffef539b71a932e8d4a",
+      "size": 423
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/github-console-job-128593173220.log",
+        "source_relative_path": "public-safe/github-console-job-128593173220.log"
+      },
+      "path": "export/public-safe/github-console-job-128593173220.log",
+      "sha256": "bb3f8b0c9e32433f20fb46169ccefbba7f4a3d4afd4fdf7e7c584c58106e05dc",
+      "size": 146633
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/github-job-metadata.json",
+        "source_relative_path": "public-safe/github-job-metadata.json"
+      },
+      "path": "export/public-safe/github-job-metadata.json",
+      "sha256": "7acea0442af23365182e479ad1da3405bda63dea3a7ee45bd777de94de1f7388",
+      "size": 2835
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-001/analyses-1.json",
+        "source_relative_path": "public-safe/poll-001/analyses-1.json"
+      },
+      "path": "export/public-safe/poll-001/analyses-1.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "size": 2
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-001/checks-249f5d30689f989b3e6368e78c5161fb1b00aa57-1.json",
+        "source_relative_path": "public-safe/poll-001/checks-249f5d30689f989b3e6368e78c5161fb1b00aa57-1.json"
+      },
+      "path": "export/public-safe/poll-001/checks-249f5d30689f989b3e6368e78c5161fb1b00aa57-1.json",
+      "sha256": "e83cfac35507982a40cfeb776ce85aa0367e7646f81fe857df4a6c841ea8a170",
+      "size": 33
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-001/checks-a490d3b971997e927de3aece19864497d65d5984-1.json",
+        "source_relative_path": "public-safe/poll-001/checks-a490d3b971997e927de3aece19864497d65d5984-1.json"
+      },
+      "path": "export/public-safe/poll-001/checks-a490d3b971997e927de3aece19864497d65d5984-1.json",
+      "sha256": "e83cfac35507982a40cfeb776ce85aa0367e7646f81fe857df4a6c841ea8a170",
+      "size": 33
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-001/selection.json",
+        "source_relative_path": "public-safe/poll-001/selection.json"
+      },
+      "path": "export/public-safe/poll-001/selection.json",
+      "sha256": "e1a403f703c813c6c29b9b4eab99e1af14e0f344d1939834527ee75e1ff90593",
+      "size": 55
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-039/analyses-1.json",
+        "source_relative_path": "public-safe/poll-039/analyses-1.json"
+      },
+      "path": "export/public-safe/poll-039/analyses-1.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "size": 2
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-039/checks-249f5d30689f989b3e6368e78c5161fb1b00aa57-1.json",
+        "source_relative_path": "public-safe/poll-039/checks-249f5d30689f989b3e6368e78c5161fb1b00aa57-1.json"
+      },
+      "path": "export/public-safe/poll-039/checks-249f5d30689f989b3e6368e78c5161fb1b00aa57-1.json",
+      "sha256": "e83cfac35507982a40cfeb776ce85aa0367e7646f81fe857df4a6c841ea8a170",
+      "size": 33
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-039/checks-a490d3b971997e927de3aece19864497d65d5984-1.json",
+        "source_relative_path": "public-safe/poll-039/checks-a490d3b971997e927de3aece19864497d65d5984-1.json"
+      },
+      "path": "export/public-safe/poll-039/checks-a490d3b971997e927de3aece19864497d65d5984-1.json",
+      "sha256": "e83cfac35507982a40cfeb776ce85aa0367e7646f81fe857df4a6c841ea8a170",
+      "size": 33
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-039/selection.json",
+        "source_relative_path": "public-safe/poll-039/selection.json"
+      },
+      "path": "export/public-safe/poll-039/selection.json",
+      "sha256": "e1a403f703c813c6c29b9b4eab99e1af14e0f344d1939834527ee75e1ff90593",
+      "size": 55
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/poll-coverage.json",
+        "source_relative_path": "public-safe/poll-coverage.json"
+      },
+      "path": "export/public-safe/poll-coverage.json",
+      "sha256": "79e00b91cd7ce1ec27648e186c3f02eb4afb600c6466dc150a3c065ba5fc1be0",
+      "size": 40602
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/preflight.log",
+        "source_relative_path": "public-safe/preflight.log"
+      },
+      "path": "export/public-safe/preflight.log",
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "size": 133
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/source-attribution.json",
+        "source_relative_path": "public-safe/source-attribution.json"
+      },
+      "path": "export/public-safe/source-attribution.json",
+      "sha256": "199c69607c0b5cb204adfc5f55fea9d31e0709e19882e0d804b92cd41f9cfa99",
+      "size": 1054
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-allowlist.json",
+        "allowlist_sha256": "69daccf92bd07fc77f8da45dedef3434bb2be08d717cd0fc5565cc251849ddea",
+        "namespace": "export",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-export/public-safe/triage-audit.json",
+        "source_relative_path": "public-safe/triage-audit.json"
+      },
+      "path": "export/public-safe/triage-audit.json",
+      "sha256": "424cbd7fb44a3bb9ee854beb463ff61a2da963c769a62b584f52eeab03876da3",
+      "size": 4875
+    },
+    {
+      "kind": "original-allowlist",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "source_relative_path": "public-allowlist.json"
+      },
+      "path": "native/_audit/original-public-allowlist.json",
+      "sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+      "size": 3253
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/controller-observation.json",
+        "source_relative_path": "public-safe/controller-observation.json"
+      },
+      "path": "native/controller-observation.json",
+      "sha256": "871501037aba304080bb16657dafdb3a18c8151ad0dea9910ba57f52c62dfb4c",
+      "size": 8560
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/github-console.log",
+        "source_relative_path": "public-safe/github-console.log"
+      },
+      "path": "native/github-console.log",
+      "sha256": "eaa0ddcec37086cd163079ea0b0d5510702859eb9b78ec95f820f2ca5944d85e",
+      "size": 198949
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/native-ci-audit.json",
+        "source_relative_path": "public-safe/native-ci-audit.json"
+      },
+      "path": "native/native-ci-audit.json",
+      "sha256": "3b35a5620c9f77d10b40cb8bcb3795f37248783750f29a00f0cec840205f21fa",
+      "size": 9962
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/run-1-report.json.gz",
+        "source_relative_path": "public-safe/run-1-report.json.gz"
+      },
+      "path": "native/run-1-report.json.gz",
+      "sha256": "fec44dd9ca5e6804e1cec578ade6eea4b99b614915897b036348cd4b952ea75c",
+      "size": 1993674
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/run-1.stderr.log",
+        "source_relative_path": "public-safe/run-1.stderr.log"
+      },
+      "path": "native/run-1.stderr.log",
+      "sha256": "d55d25fbf79ee092c6dedf81898129bb031331259ac083b74c8f023ab0f11c89",
+      "size": 1615
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/run-2-report.json.gz",
+        "source_relative_path": "public-safe/run-2-report.json.gz"
+      },
+      "path": "native/run-2-report.json.gz",
+      "sha256": "bf5bb4b5a35556cba34eef24f70137da2777dda6f118bd1b43b37bf75d2f66c8",
+      "size": 1988322
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/run-2.stderr.log",
+        "source_relative_path": "public-safe/run-2.stderr.log"
+      },
+      "path": "native/run-2.stderr.log",
+      "sha256": "921452c20c1e2a009fa192d942ae01a05d10233d09d652c66056d8c7ff55bc97",
+      "size": 1615
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/run-3-report.json.gz",
+        "source_relative_path": "public-safe/run-3-report.json.gz"
+      },
+      "path": "native/run-3-report.json.gz",
+      "sha256": "9f1ff67ad257b64b210abadd7cf59d8e32beeb9be37ea88d5bc412cd155e5444",
+      "size": 2006974
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-allowlist.json",
+        "allowlist_sha256": "68f182dfdc505d3f108ffe76c310fcb922509136574acb21ca3d536cc0911bc0",
+        "namespace": "native",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-native/public-safe/run-3.stderr.log",
+        "source_relative_path": "public-safe/run-3.stderr.log"
+      },
+      "path": "native/run-3.stderr.log",
+      "sha256": "a637ecb1f3843e5540cc1e3b8ee2f2a92027889dcb714ef1d05c40fdbfa14ea7",
+      "size": 1615
+    },
+    {
+      "kind": "explicit-root-pinned-file",
+      "origin": {
+        "namespace": "native",
+        "root_supplied_sha256": "688cffae96f744111a2c2027c3502b89b74e5563ea05bd1fcf9222e52402107a",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-rog-public/original-native-source-comparison.json",
+        "source_relative_path": "postpublish-rog-public/original-native-source-comparison.json"
+      },
+      "path": "native/source-comparison.json",
+      "sha256": "688cffae96f744111a2c2027c3502b89b74e5563ea05bd1fcf9222e52402107a",
+      "size": 1149
+    },
+    {
+      "kind": "original-allowlist",
+      "origin": {
+        "namespace": "priorities",
+        "root_supplied_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "source_relative_path": "public-allowlist.json"
+      },
+      "path": "priorities/_audit/original-public-allowlist.json",
+      "sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+      "size": 5568
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/arm-head-native-manifest.json",
+        "source_relative_path": "public/arm-head-native-manifest.json"
+      },
+      "path": "priorities/arm-head-native-manifest.json",
+      "sha256": "56c69dcc9b202f15c1820803bdb42353d9cdf6de7af37bea4c8cb2dea131ec57",
+      "size": 65755
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/arm-head-service-model.log",
+        "source_relative_path": "public/arm-head-service-model.log"
+      },
+      "path": "priorities/arm-head-service-model.log",
+      "sha256": "fa92cfb80cb8d3e4d3a0b5459e48be5394a4bfb55901e536673205166d681aa3",
+      "size": 1865274
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/arm-head-systemd-run.log",
+        "source_relative_path": "public/arm-head-systemd-run.log"
+      },
+      "path": "priorities/arm-head-systemd-run.log",
+      "sha256": "e6bb64f8d4e3f730de76f32d692ffb84a1e03c92ccf29a476d473493519149d4",
+      "size": 6875
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/arm-merge-native-manifest.json",
+        "source_relative_path": "public/arm-merge-native-manifest.json"
+      },
+      "path": "priorities/arm-merge-native-manifest.json",
+      "sha256": "e0447cd51069a28a944288bb38799d506f83df636963f0ee1ec6f786f18f7d3d",
+      "size": 65726
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/arm-merge-service-model.log",
+        "source_relative_path": "public/arm-merge-service-model.log"
+      },
+      "path": "priorities/arm-merge-service-model.log",
+      "sha256": "1d512bc091f58986f3eede38a699e84fb164849b2db42398fed5703d0ddb7668",
+      "size": 1865936
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/arm-merge-systemd-run.log",
+        "source_relative_path": "public/arm-merge-systemd-run.log"
+      },
+      "path": "priorities/arm-merge-systemd-run.log",
+      "sha256": "a68b15ccd33ad662229049a6aa4774916bacd8de176066f584e8006cbcc0cf86",
+      "size": 6869
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/priorities-confirmation-gate-audit.json",
+        "source_relative_path": "public/priorities-confirmation-gate-audit.json"
+      },
+      "path": "priorities/priorities-confirmation-gate-audit.json",
+      "sha256": "c77bad94d205d66cf1d06164ef83d876d3e03277ccddf6bf1b6bb33377940520",
+      "size": 21386
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/selective-readback.json",
+        "source_relative_path": "public/selective-readback.json"
+      },
+      "path": "priorities/selective-readback.json",
+      "sha256": "6c15ecac9c93b6e416155bf5cb5b6cb4d6ccc7cff43efd611c5f876be1cd8bce",
+      "size": 8893
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/source-comparison-priorities.json",
+        "source_relative_path": "public/source-comparison-priorities.json"
+      },
+      "path": "priorities/source-comparison-priorities.json",
+      "sha256": "4bfe8f1b5d1766ab41ff5a4b228edd0ba28b74f5d21447058128ada9c7efbe6a",
+      "size": 4606
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/x64-head-native-manifest.json",
+        "source_relative_path": "public/x64-head-native-manifest.json"
+      },
+      "path": "priorities/x64-head-native-manifest.json",
+      "sha256": "802a7d39d83d12bb7bc65a0a436a859a916e092dfff49b18b60fa20f77ddda77",
+      "size": 65759
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/x64-head-service-model.log",
+        "source_relative_path": "public/x64-head-service-model.log"
+      },
+      "path": "priorities/x64-head-service-model.log",
+      "sha256": "7595db968d3df2dd0ff321eadab9d23b0f3dd93f0bdaeaa094d551a18911ca75",
+      "size": 1865534
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/x64-head-systemd-run.log",
+        "source_relative_path": "public/x64-head-systemd-run.log"
+      },
+      "path": "priorities/x64-head-systemd-run.log",
+      "sha256": "bcc412bd7a13ca0843027aded7af57b63cc332d9c6c55d7a771654c583cd8532",
+      "size": 6869
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/x64-merge-native-manifest.json",
+        "source_relative_path": "public/x64-merge-native-manifest.json"
+      },
+      "path": "priorities/x64-merge-native-manifest.json",
+      "sha256": "fb18bf84ec31c405aa86f244ef56d77d5cc5030735b7edcac39803216a1c25df",
+      "size": 65695
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/x64-merge-service-model.log",
+        "source_relative_path": "public/x64-merge-service-model.log"
+      },
+      "path": "priorities/x64-merge-service-model.log",
+      "sha256": "cf0caf71cfd8f241b339c38fad42d2b570e65391c56ecc58ffe2466a33f413d4",
+      "size": 1865764
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public-allowlist.json",
+        "allowlist_sha256": "90407d972bfaca172134eab5071eedebca2cff220e0ab5141e332cb6ad8ebfa8",
+        "namespace": "priorities",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-priorities/public/x64-merge-systemd-run.log",
+        "source_relative_path": "public/x64-merge-systemd-run.log"
+      },
+      "path": "priorities/x64-merge-systemd-run.log",
+      "sha256": "4e0a448f52926653cc2e9fc6d849646b6f2e9c8ce51a4d3adfd74a658580d08c",
+      "size": 6868
+    },
+    {
+      "kind": "original-allowlist",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "source_relative_path": "public-allowlist.json"
+      },
+      "path": "protocol/_audit/original-public-allowlist.json",
+      "sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+      "size": 4642
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/head-confirmation-report.json.gz",
+        "source_relative_path": "public/head-confirmation-report.json.gz"
+      },
+      "path": "protocol/head-confirmation-report.json.gz",
+      "sha256": "cfb70d6484575d029d7058ab72585c4262db38ba059b24dfb385735de9d61fb6",
+      "size": 378403
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/head-native-manifest.json",
+        "source_relative_path": "public/head-native-manifest.json"
+      },
+      "path": "protocol/head-native-manifest.json",
+      "sha256": "854a94c11dca0d700aa4f3f1e387a3ecec2697dd85ecae6543c6c0a416353c08",
+      "size": 65696
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/head-protocol-contract.log",
+        "source_relative_path": "public/head-protocol-contract.log"
+      },
+      "path": "protocol/head-protocol-contract.log",
+      "sha256": "356d990f325d3a8209a6f4df03feb2776e234ccfdeac32f657a3b4f18c7f88c2",
+      "size": 154967
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/head-systemd-run.log",
+        "source_relative_path": "public/head-systemd-run.log"
+      },
+      "path": "protocol/head-systemd-run.log",
+      "sha256": "bc28cac7bf4c5b0ca1a72ad3f17b02b9017b3ef87cdb6f4342af97e055c54d9d",
+      "size": 6908
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/merge-confirmation-report.json.gz",
+        "source_relative_path": "public/merge-confirmation-report.json.gz"
+      },
+      "path": "protocol/merge-confirmation-report.json.gz",
+      "sha256": "ff09f909f22b60cfad87f7f78238ed400d79355d76775b0bcd9c156d33e1317e",
+      "size": 295419
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/merge-native-manifest.json",
+        "source_relative_path": "public/merge-native-manifest.json"
+      },
+      "path": "protocol/merge-native-manifest.json",
+      "sha256": "911a99cc3dd7f6799985f1b4a22216bfa5059d7fdc5e0d5b78dfeaf62d92f01c",
+      "size": 65763
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/merge-protocol-contract.log",
+        "source_relative_path": "public/merge-protocol-contract.log"
+      },
+      "path": "protocol/merge-protocol-contract.log",
+      "sha256": "421f1a8a89dabd5f24d58580a45e769211a1249286168bc50a719fb6b77aad9d",
+      "size": 157936
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/merge-systemd-run.log",
+        "source_relative_path": "public/merge-systemd-run.log"
+      },
+      "path": "protocol/merge-systemd-run.log",
+      "sha256": "1cd64bb98d607fa35f8d36702c1184c28b596cebe8d4e999e16d5fa1cc24efc6",
+      "size": 6917
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/protocol-confirmation-gate-audit.json",
+        "source_relative_path": "public/protocol-confirmation-gate-audit.json"
+      },
+      "path": "protocol/protocol-confirmation-gate-audit.json",
+      "sha256": "8a401eec66407505504fe24d1f905fbc7b088b2aeaf82d038215fb6a3c9d28ac",
+      "size": 20274
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public-allowlist.json",
+        "allowlist_sha256": "b662c61724f9136685605c1841ccc6d2b88dc63aedc01975d94ec4b3053ad37b",
+        "namespace": "protocol",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-protocol/public/source-comparison.json",
+        "source_relative_path": "public/source-comparison.json"
+      },
+      "path": "protocol/source-comparison.json",
+      "sha256": "69b78db72880727e08fc618e4cea4aecde2d3e4650fa2ef1b7f4418289483f68",
+      "size": 20880
+    },
+    {
+      "kind": "explicit-snapshot",
+      "origin": {
+        "namespace": "snapshot",
+        "prepin_runtime_job": "1a1b8fda1de-12894-1170",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-live-ci-v3/CI-all-runs.json",
+        "source_relative_path": "postpublish-live-ci-v3/CI-all-runs.json",
+        "source_sha256_fixed_before_copy": "bf6c21af4cc6efc486fd2c224ccc359abc2016040c98e1c3ab4df78a265bd7a3"
+      },
+      "path": "snapshot/CI-all-runs.json",
+      "sha256": "bf6c21af4cc6efc486fd2c224ccc359abc2016040c98e1c3ab4df78a265bd7a3",
+      "size": 503137
+    },
+    {
+      "kind": "explicit-snapshot",
+      "origin": {
+        "namespace": "snapshot",
+        "prepin_runtime_job": "1a1b8fda1de-12894-1170",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-live-ci-v3/CI-summary.json",
+        "source_relative_path": "postpublish-live-ci-v3/CI-summary.json",
+        "source_sha256_fixed_before_copy": "cb0d814dd02baa7eaf19927f571aa53b963127b69c6c0f1398ec5ca570870645"
+      },
+      "path": "snapshot/CI-summary.json",
+      "sha256": "cb0d814dd02baa7eaf19927f571aa53b963127b69c6c0f1398ec5ca570870645",
+      "size": 4181
+    },
+    {
+      "kind": "original-allowlist",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "source_relative_path": "public-allowlist.json"
+      },
+      "path": "w1/_audit/original-public-allowlist.json",
+      "sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+      "size": 4875
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/artifact-integrity.json",
+        "source_relative_path": "public-safe/artifact-integrity.json"
+      },
+      "path": "w1/public-safe/artifact-integrity.json",
+      "sha256": "530c4170c2b1e5d881e4945b99b67a48896e1a35f013ae909e9fe3bfeba9007d",
+      "size": 941
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/fresh-confirmation-report.json.gz",
+        "source_relative_path": "public-safe/fresh-service-head/fresh-confirmation-report.json.gz"
+      },
+      "path": "w1/public-safe/fresh-service-head/fresh-confirmation-report.json.gz",
+      "sha256": "31f9794a79d69b56697b07382dca46f5298d829e712d3cdbb68949990fb25c50",
+      "size": 363485
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/fresh-native.log",
+        "source_relative_path": "public-safe/fresh-service-head/fresh-native.log"
+      },
+      "path": "w1/public-safe/fresh-service-head/fresh-native.log",
+      "sha256": "ece20450ac705d4e23ac80736aebfa787478fa67877ee708de424f94665cd91d",
+      "size": 914
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/host-child-result.json",
+        "source_relative_path": "public-safe/fresh-service-head/host-child-result.json"
+      },
+      "path": "w1/public-safe/fresh-service-head/host-child-result.json",
+      "sha256": "16671624cbc048913da44f522181d7adc0e9f24d0b5f0c83fda22911be86219c",
+      "size": 353
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/host-controller-result.json",
+        "source_relative_path": "public-safe/fresh-service-head/host-controller-result.json"
+      },
+      "path": "w1/public-safe/fresh-service-head/host-controller-result.json",
+      "sha256": "557072f7b95cf66c5597c5c8b334ca666b6934e8faad5364573d35cca9b58bdf",
+      "size": 7701
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/manifest.json",
+        "source_relative_path": "public-safe/fresh-service-head/manifest.json"
+      },
+      "path": "w1/public-safe/fresh-service-head/manifest.json",
+      "sha256": "d4c6f412630c47ca927313901b579bdbe5786339a53b66840dccfcfc3a32a6e0",
+      "size": 8897
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/original-confirmation-report.json.gz",
+        "source_relative_path": "public-safe/fresh-service-head/original-confirmation-report.json.gz"
+      },
+      "path": "w1/public-safe/fresh-service-head/original-confirmation-report.json.gz",
+      "sha256": "a5e7a0e9a365c6d112dc286366611510212b4e0e1d77e6b9ed926893b1aefaec",
+      "size": 331218
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/original-native.log",
+        "source_relative_path": "public-safe/fresh-service-head/original-native.log"
+      },
+      "path": "w1/public-safe/fresh-service-head/original-native.log",
+      "sha256": "a2b88a5bfc6c175db48ae7ca04c1a11a14bcec343d7dcd173e5db463d85d2c40",
+      "size": 420
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/source-after.json",
+        "source_relative_path": "public-safe/fresh-service-head/source-after.json"
+      },
+      "path": "w1/public-safe/fresh-service-head/source-after.json",
+      "sha256": "2f9fd78dc5cc4fb880dde7ba568daa38c821bf210eac5ffef539b71a932e8d4a",
+      "size": 423
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-head/source-before.json",
+        "source_relative_path": "public-safe/fresh-service-head/source-before.json"
+      },
+      "path": "w1/public-safe/fresh-service-head/source-before.json",
+      "sha256": "2f9fd78dc5cc4fb880dde7ba568daa38c821bf210eac5ffef539b71a932e8d4a",
+      "size": 423
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/fresh-confirmation-report.json.gz",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/fresh-confirmation-report.json.gz"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/fresh-confirmation-report.json.gz",
+      "sha256": "d6fd08fae1303017f39dcaa21dd434e6047d5bccb9661235a99bc38ac2b6b41f",
+      "size": 308916
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/fresh-native.log",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/fresh-native.log"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/fresh-native.log",
+      "sha256": "59571efe4e9c04d4c0e7cd95606d41fd2cac256f5f10843c32ec75d5a209742b",
+      "size": 927
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/host-child-result.json",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/host-child-result.json"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/host-child-result.json",
+      "sha256": "d7f9be1600ac793bcb0db225a164250c4ba8ad8d8501ebc416bfe06a2b641b62",
+      "size": 366
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/host-controller-result.json",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/host-controller-result.json"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/host-controller-result.json",
+      "sha256": "751081d7936fdb6419d713616a64d789c1fa7e667a3e0a0f054c1d5e47af87ee",
+      "size": 7714
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/manifest.json",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/manifest.json"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/manifest.json",
+      "sha256": "53be9c29d6329a5e1cb5b59a38c507141ba5ba3a3a1d142df5c11888a9b61bdc",
+      "size": 8919
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/original-confirmation-report.json.gz",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/original-confirmation-report.json.gz"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/original-confirmation-report.json.gz",
+      "sha256": "790b9e24c02f6c4a4cd77749434c34b7b1fd303adeaa3e9082d2565291b71a3b",
+      "size": 293706
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/original-native.log",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/original-native.log"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/original-native.log",
+      "sha256": "3be43fdca7bd4d755a1221b2018b42e152a1f1248053d10ad430b94615c8f0ce",
+      "size": 433
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/source-after.json",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/source-after.json"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/source-after.json",
+      "sha256": "c4356305d4e2e55c347aabfaa411141e2df7533c5fe0b242845ec1c842f0bc47",
+      "size": 512
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/fresh-service-prospective-merge/source-before.json",
+        "source_relative_path": "public-safe/fresh-service-prospective-merge/source-before.json"
+      },
+      "path": "w1/public-safe/fresh-service-prospective-merge/source-before.json",
+      "sha256": "c4356305d4e2e55c347aabfaa411141e2df7533c5fe0b242845ec1c842f0bc47",
+      "size": 512
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/github-console/job-128593173334.log",
+        "source_relative_path": "public-safe/github-console/job-128593173334.log"
+      },
+      "path": "w1/public-safe/github-console/job-128593173334.log",
+      "sha256": "255f511c2dd0a2614931694b69ae318516745ea0d9ed67c0df97bb127ebd208e",
+      "size": 504805
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/github-console/job-128593173416.log",
+        "source_relative_path": "public-safe/github-console/job-128593173416.log"
+      },
+      "path": "w1/public-safe/github-console/job-128593173416.log",
+      "sha256": "6c4f4bef5377c03aafb33cbea494bba7a8cf13bae96b21f2c90c39a75356727d",
+      "size": 180293
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/github-console/job-128593173626.log",
+        "source_relative_path": "public-safe/github-console/job-128593173626.log"
+      },
+      "path": "w1/public-safe/github-console/job-128593173626.log",
+      "sha256": "1d5a234b4b56ecc03ae7b33c4ea98d0cec7ab5f13026cdbcb7ddf31971315839",
+      "size": 181043
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/source-attribution.json",
+        "source_relative_path": "public-safe/source-attribution.json"
+      },
+      "path": "w1/public-safe/source-attribution.json",
+      "sha256": "bc0f4be13c2d5a58ce32db04443de06c7987da1029c49b5c7ee6596061d92c0f",
+      "size": 4220
+    },
+    {
+      "kind": "allowlisted-data",
+      "origin": {
+        "allowlist_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-allowlist.json",
+        "allowlist_sha256": "a9108a8fe0ed1e4b3e14e7046e30f9ee12a6603f1097624898b8454dcbcccea0",
+        "namespace": "w1",
+        "source_absolute_path": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-responsive-20261107/postpublish-ci-triage-w1/public-safe/triage-summary.json",
+        "source_relative_path": "public-safe/triage-summary.json"
+      },
+      "path": "w1/public-safe/triage-summary.json",
+      "sha256": "a35c0646704ef7267cd5480f5d8648c67ea47724daf9baf6648f44efffa20009",
+      "size": 44453
+    }
+  ],
+  "member_bytes": 19350428,
+  "member_count": 101,
+  "readable_audits": [
+    {
+      "path": "readable-audits/allocation/latest-readonly-absence.json",
+      "same_bytes_as_member": "allocation/latest-readonly-absence.json",
+      "sha256": "c920af8c35112d800c54f8498b8608a2b652e1639a60d37d232383b27f94fead",
+      "size": 288
+    },
+    {
+      "path": "readable-audits/economics/source-comparison.json",
+      "same_bytes_as_member": "economics/source-comparison.json",
+      "sha256": "8fa8013c6a666f9535d1646f0eee8be01146885f60924cc60be35972369e9533",
+      "size": 5025
+    },
+    {
+      "path": "readable-audits/economics/triage-summary.json",
+      "same_bytes_as_member": "economics/triage-summary.json",
+      "sha256": "9f4159af5729a71cef2cf0119dec89c31a885aae09d5f25e7f167f05fa3d44ca",
+      "size": 11473
+    },
+    {
+      "path": "readable-audits/export/source-attribution.json",
+      "same_bytes_as_member": "export/public-safe/source-attribution.json",
+      "sha256": "199c69607c0b5cb204adfc5f55fea9d31e0709e19882e0d804b92cd41f9cfa99",
+      "size": 1054
+    },
+    {
+      "path": "readable-audits/export/triage-audit.json",
+      "same_bytes_as_member": "export/public-safe/triage-audit.json",
+      "sha256": "424cbd7fb44a3bb9ee854beb463ff61a2da963c769a62b584f52eeab03876da3",
+      "size": 4875
+    },
+    {
+      "path": "readable-audits/native/native-ci-audit.json",
+      "same_bytes_as_member": "native/native-ci-audit.json",
+      "sha256": "3b35a5620c9f77d10b40cb8bcb3795f37248783750f29a00f0cec840205f21fa",
+      "size": 9962
+    },
+    {
+      "path": "readable-audits/native/source-comparison.json",
+      "same_bytes_as_member": "native/source-comparison.json",
+      "sha256": "688cffae96f744111a2c2027c3502b89b74e5563ea05bd1fcf9222e52402107a",
+      "size": 1149
+    },
+    {
+      "path": "readable-audits/priorities/priorities-confirmation-gate-audit.json",
+      "same_bytes_as_member": "priorities/priorities-confirmation-gate-audit.json",
+      "sha256": "c77bad94d205d66cf1d06164ef83d876d3e03277ccddf6bf1b6bb33377940520",
+      "size": 21386
+    },
+    {
+      "path": "readable-audits/priorities/selective-readback.json",
+      "same_bytes_as_member": "priorities/selective-readback.json",
+      "sha256": "6c15ecac9c93b6e416155bf5cb5b6cb4d6ccc7cff43efd611c5f876be1cd8bce",
+      "size": 8893
+    },
+    {
+      "path": "readable-audits/priorities/source-comparison-priorities.json",
+      "same_bytes_as_member": "priorities/source-comparison-priorities.json",
+      "sha256": "4bfe8f1b5d1766ab41ff5a4b228edd0ba28b74f5d21447058128ada9c7efbe6a",
+      "size": 4606
+    },
+    {
+      "path": "readable-audits/protocol/protocol-confirmation-gate-audit.json",
+      "same_bytes_as_member": "protocol/protocol-confirmation-gate-audit.json",
+      "sha256": "8a401eec66407505504fe24d1f905fbc7b088b2aeaf82d038215fb6a3c9d28ac",
+      "size": 20274
+    },
+    {
+      "path": "readable-audits/protocol/source-comparison.json",
+      "same_bytes_as_member": "protocol/source-comparison.json",
+      "sha256": "69b78db72880727e08fc618e4cea4aecde2d3e4650fa2ef1b7f4418289483f68",
+      "size": 20880
+    },
+    {
+      "path": "readable-audits/snapshot/CI-all-runs.json",
+      "same_bytes_as_member": "snapshot/CI-all-runs.json",
+      "sha256": "bf6c21af4cc6efc486fd2c224ccc359abc2016040c98e1c3ab4df78a265bd7a3",
+      "size": 503137
+    },
+    {
+      "path": "readable-audits/snapshot/CI-summary.json",
+      "same_bytes_as_member": "snapshot/CI-summary.json",
+      "sha256": "cb0d814dd02baa7eaf19927f571aa53b963127b69c6c0f1398ec5ca570870645",
+      "size": 4181
+    },
+    {
+      "path": "readable-audits/w1/artifact-integrity.json",
+      "same_bytes_as_member": "w1/public-safe/artifact-integrity.json",
+      "sha256": "530c4170c2b1e5d881e4945b99b67a48896e1a35f013ae909e9fe3bfeba9007d",
+      "size": 941
+    },
+    {
+      "path": "readable-audits/w1/source-attribution.json",
+      "same_bytes_as_member": "w1/public-safe/source-attribution.json",
+      "sha256": "bc0f4be13c2d5a58ce32db04443de06c7987da1029c49b5c7ee6596061d92c0f",
+      "size": 4220
+    },
+    {
+      "path": "readable-audits/w1/triage-summary.json",
+      "same_bytes_as_member": "w1/public-safe/triage-summary.json",
+      "sha256": "a35c0646704ef7267cd5480f5d8648c67ea47724daf9baf6648f44efffa20009",
+      "size": 44453
+    }
+  ],
+  "schema": "trnm-responsive-CI-archive-v1",
+  "scope": {
+    "all_inputs_explicitly_allowlisted_or_root_pinned": true,
+    "ci_reruns": false,
+    "github_mutations": false,
+    "native_and_priorities_artifacts_scope": "Selected retained members and their supplied pins; original complete ZIP archives were not recomputed.",
+    "native_failure_inference": "All three native runs fail finite criteria, and all nine phases including the three baselines have all_signed_rounds_confirmed_in_window=false. This does not establish attack-caused degradation.",
+    "original_native_archive_full_sha256_verified": false,
+    "original_priorities_archives_full_sha256_verified": false,
+    "package_archive_scope": "This newly created raw.tar.gz is fully hashed and every packaged member is verified.",
+    "priorities_failure_inference": "All four priority jobs fail CONFIRMATION_TARGET; ARM/head366 retains empty verification_errors. See the complete priority audit for distinct causes and observation limits.",
+    "source_repository_modified": false
+  },
+  "verification": {
+    "all_member_hashes_and_sizes_verified": true,
+    "all_regular_unique_safe_members": true,
+    "canonical_metadata_and_order_verified": true,
+    "deterministic_reserialization_same_sha256": true,
+    "exact_member_count": 101,
+    "member_bytes": 19350428
+  }
+}

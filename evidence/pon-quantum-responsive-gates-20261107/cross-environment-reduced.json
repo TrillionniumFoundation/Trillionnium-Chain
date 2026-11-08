@@ -1,0 +1,365 @@
+{
+  "Colab_directory_relative_to_machine_lane": "colab-source-bab8376/downloads/extracted/reduced-model",
+  "ROG_directory_relative_to_project": "validation-responsive-bab8376/reduced-responsive",
+  "ancillary_check_and_forward_files": 14,
+  "certificates": 2,
+  "frozen_implementation_commit": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "method": "Read existing immutable files only; SHA256 and byte equality; no model, certificate or sample was regenerated",
+  "rows": [
+    {
+      "body_id_colab": "357dbe3bd26c1375670d68ab7ebdfb1ea233b33e35e7cf0c60789c6f2a96af2a",
+      "body_id_rog": "357dbe3bd26c1375670d68ab7ebdfb1ea233b33e35e7cf0c60789c6f2a96af2a",
+      "bytes_identical": true,
+      "colab_bytes": 17324769,
+      "colab_sha256": "bfb9c320cd7f32d27b61384755794bac764985b0ddfd56fc77ab20dd72052651",
+      "file": "proof-4-certificate.json",
+      "kind": "certificate",
+      "maximum_risks": {
+        "ever_private_replacement": {
+          "denominator": 32768,
+          "numerator": 343
+        },
+        "initial_public_block_orphaned_at_horizon": {
+          "denominator": 32768,
+          "numerator": 343
+        },
+        "private_ancestor_at_horizon": {
+          "denominator": 32768,
+          "numerator": 343
+        },
+        "private_tip_at_horizon": {
+          "denominator": 32768,
+          "numerator": 343
+        }
+      },
+      "maximum_risks_equal": true,
+      "rog_bytes": 17324769,
+      "rog_sha256": "bfb9c320cd7f32d27b61384755794bac764985b0ddfd56fc77ab20dd72052651"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 172,
+      "colab_sha256": "6c221363242405618b6c51ad297c0446d91130ff4a4e647d183ed6c4561e8630",
+      "file": "proof-4-independent-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 172,
+      "rog_sha256": "6c221363242405618b6c51ad297c0446d91130ff4a4e647d183ed6c4561e8630"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 834,
+      "colab_sha256": "6e040c2847cc65f9207c68c2c57d5a05111051cc7fec6e3832acb8735b8f018e",
+      "file": "proof-4-forward-probabilities.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 834,
+      "rog_sha256": "6e040c2847cc65f9207c68c2c57d5a05111051cc7fec6e3832acb8735b8f018e"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 56311,
+      "colab_sha256": "0389b8caab4e4c8a752581ece4fa826c4382e1e21059650b6f5b9ce871991507",
+      "file": "proof-4-seed-9.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 56311,
+      "rog_sha256": "0389b8caab4e4c8a752581ece4fa826c4382e1e21059650b6f5b9ce871991507"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-4-seed-9-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 50386,
+      "colab_sha256": "28a45a55a11a72db6641470ca5b00686d40e2a65fddd538fc37a5bcb57dc7887",
+      "file": "proof-4-seed-17.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 50386,
+      "rog_sha256": "28a45a55a11a72db6641470ca5b00686d40e2a65fddd538fc37a5bcb57dc7887"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-4-seed-17-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 52328,
+      "colab_sha256": "f844b8217bb747388d3a823f5da85b0b4997cadc4b2ad41ec8d448c6e006debb",
+      "file": "proof-4-seed-41.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 52328,
+      "rog_sha256": "f844b8217bb747388d3a823f5da85b0b4997cadc4b2ad41ec8d448c6e006debb"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-4-seed-41-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 57334,
+      "colab_sha256": "7ddfb614132f73af605f56d279c4cf409a74c48118d51cd28583aec63cf88e33",
+      "file": "proof-4-seed-73.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 57334,
+      "rog_sha256": "7ddfb614132f73af605f56d279c4cf409a74c48118d51cd28583aec63cf88e33"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-4-seed-73-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 59527,
+      "colab_sha256": "6a504349ea6b61bcfcd086b32627ba6c68149fd763e3aacf3b033783934fbcb2",
+      "file": "proof-4-seed-401.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 59527,
+      "rog_sha256": "6a504349ea6b61bcfcd086b32627ba6c68149fd763e3aacf3b033783934fbcb2"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-4-seed-401-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "body_id_colab": "6d0b78ef85a0531d167376eb663abda73440e0c8fc63d140c94f1e915c49ec01",
+      "body_id_rog": "6d0b78ef85a0531d167376eb663abda73440e0c8fc63d140c94f1e915c49ec01",
+      "bytes_identical": true,
+      "colab_bytes": 15852942,
+      "colab_sha256": "aaf7f093df34cf37263b9289fddf3ca49e137ae7a2319f9a6744ab81c124201a",
+      "file": "proof-1-certificate.json",
+      "kind": "certificate",
+      "maximum_risks": {
+        "ever_private_replacement": {
+          "denominator": 512,
+          "numerator": 7
+        },
+        "initial_public_block_orphaned_at_horizon": {
+          "denominator": 512,
+          "numerator": 7
+        },
+        "private_ancestor_at_horizon": {
+          "denominator": 512,
+          "numerator": 7
+        },
+        "private_tip_at_horizon": {
+          "denominator": 32768,
+          "numerator": 343
+        }
+      },
+      "maximum_risks_equal": true,
+      "rog_bytes": 15852942,
+      "rog_sha256": "aaf7f093df34cf37263b9289fddf3ca49e137ae7a2319f9a6744ab81c124201a"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 172,
+      "colab_sha256": "6ab5d4862e1d17735b7608fabfb28ff4896e17e813a811a6bb4acb521a0eb7a0",
+      "file": "proof-1-independent-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 172,
+      "rog_sha256": "6ab5d4862e1d17735b7608fabfb28ff4896e17e813a811a6bb4acb521a0eb7a0"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 822,
+      "colab_sha256": "ca8906566fc344a83af6fa59b9114eac017cc0a547f76aa12592bf05ff66bdf0",
+      "file": "proof-1-forward-probabilities.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 822,
+      "rog_sha256": "ca8906566fc344a83af6fa59b9114eac017cc0a547f76aa12592bf05ff66bdf0"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 56371,
+      "colab_sha256": "6bb5af6fdfd2e5325ab17f851d395ad0077ae520cc7f2bb3755c08e246d87009",
+      "file": "proof-1-seed-9.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 56371,
+      "rog_sha256": "6bb5af6fdfd2e5325ab17f851d395ad0077ae520cc7f2bb3755c08e246d87009"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-1-seed-9-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 50386,
+      "colab_sha256": "be32f07fac48401d81ab90bac48e23a67960756ac4fdce5918f803d8c6d36008",
+      "file": "proof-1-seed-17.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 50386,
+      "rog_sha256": "be32f07fac48401d81ab90bac48e23a67960756ac4fdce5918f803d8c6d36008"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-1-seed-17-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 52328,
+      "colab_sha256": "bc46515fef3e7ea880f678db25c207c35da792a48b6ceec9edb34c5fc486a98b",
+      "file": "proof-1-seed-41.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 52328,
+      "rog_sha256": "bc46515fef3e7ea880f678db25c207c35da792a48b6ceec9edb34c5fc486a98b"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-1-seed-41-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 57334,
+      "colab_sha256": "c1df8a0b9fce2ed8c4522db377e7cc41db72a026ac343b9d7fef81bec3297641",
+      "file": "proof-1-seed-73.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 0,
+        "initial_public_block_orphaned_at_horizon": 0,
+        "private_ancestor_at_horizon": 0,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 57334,
+      "rog_sha256": "c1df8a0b9fce2ed8c4522db377e7cc41db72a026ac343b9d7fef81bec3297641"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7",
+      "file": "proof-1-seed-73-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "2276c9c78c55d31ca22cb2132fdac2438d0e73c728fa008517ba5cf1a08abda7"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 66927,
+      "colab_sha256": "e0f2719526c5dd9a3679cede1ec11c71e8aabb3ad9352f884e0d86adf7997401",
+      "file": "proof-1-seed-401.json",
+      "kind": "sample",
+      "outcomes": {
+        "ever_private_replacement": 1,
+        "initial_public_block_orphaned_at_horizon": 1,
+        "private_ancestor_at_horizon": 1,
+        "private_tip_at_horizon": 0
+      },
+      "outcomes_equal": true,
+      "rog_bytes": 66927,
+      "rog_sha256": "e0f2719526c5dd9a3679cede1ec11c71e8aabb3ad9352f884e0d86adf7997401"
+    },
+    {
+      "bytes_identical": true,
+      "colab_bytes": 266,
+      "colab_sha256": "3262c61284d4b00fab2388ef69c59c0c5a1a481e48ddb417e87fd04730ee6f4f",
+      "file": "proof-1-seed-401-check.json",
+      "kind": "independent-check-or-forward-probabilities",
+      "rog_bytes": 266,
+      "rog_sha256": "3262c61284d4b00fab2388ef69c59c0c5a1a481e48ddb417e87fd04730ee6f4f"
+    }
+  ],
+  "samples": 10,
+  "schema": "trnm-pon-reduced-cross-host-payload-comparison-v1",
+  "scope": {
+    "CPU_measurement_summaries_compared_for_equality": false,
+    "QPU_executed": false,
+    "native_W1_probabilities_calibrated": false,
+    "quantum_mining_qualified": false
+  },
+  "status": "MATCH"
+}

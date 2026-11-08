@@ -1,0 +1,92 @@
+{
+  "claims": {
+    "deadline_extended": false,
+    "failure_fixed": false,
+    "flakiness_proved": false,
+    "prior_ci_pass": false,
+    "prior_failure_retained": true,
+    "production_activation": false,
+    "source_changed": false,
+    "test_rerun": false
+  },
+  "conclusion": "No deterministic consensus, signature or replay-contract defect is established by this log. The failure remains unresolved; source review identifies a resource-sensitive fixture/transport path but does not prove flakiness, a repair or success. A successful run elsewhere does not erase this failed CI run.",
+  "hypotheses": [
+    {
+      "description": "A witness idle-read timeout during packet preparation or scheduler contention can leave the Node's persistent Unix channel unusable before the first TCP durable ingress charge. Early server refusal with unread TCP request bytes can surface as client connection reset.",
+      "status": "PLAUSIBLE_NOT_PROVED"
+    },
+    {
+      "description": "Another request-path timeout or transport refusal could produce the same client error. The retained job log lacks the server/witness phase records needed to select a unique path.",
+      "status": "NOT_EXCLUDED"
+    }
+  ],
+  "observed_failure": {
+    "cleanup": {
+      "child_cleanup_error": null,
+      "child_exit_observed": true,
+      "child_exit_success": true,
+      "cleanup_complete": true,
+      "primary_error_preserved": true,
+      "worker_cleanup_error": null,
+      "worker_join_observed": true
+    },
+    "error_code": null,
+    "error_kind": "Transport",
+    "line": 586,
+    "message": "IO: Connection reset by peer",
+    "os_error": 104,
+    "phase_observation_records_present_in_retained_job_log": 0,
+    "source": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+    "stage": "first valid TCP submit; replay and restart assertions not reached",
+    "suite": {
+      "elapsed_seconds": "1042.27",
+      "exit_code": 101,
+      "failed": 1,
+      "filtered_out": 0,
+      "ignored": 37,
+      "measured": 0,
+      "passed": 1249
+    },
+    "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart"
+  },
+  "prior_ci_head": "bef17d632d1e40014167dba2a1089b85366b67b8",
+  "prior_source_comparison": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": {
+      "byte_identical_to_reviewed_source": true,
+      "prior_sha256": "8146d8bc6a759246098d3c67040839364248b95ba54309f21d72805b31019617"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": {
+      "byte_identical_to_reviewed_source": true,
+      "prior_sha256": "0737e0313830dbf647545b580c8884910c661cf0413ee28a085c186a73ab21f9"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": {
+      "byte_identical_to_reviewed_source": true,
+      "prior_sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+    }
+  },
+  "retained_log": {
+    "artifact": "ci-triage/pq-network.log.stdout",
+    "bytes": 713015,
+    "failure_render_timestamp_utc": "2026-11-07T16:15:58.241Z",
+    "lines": 2488,
+    "readonly_extraction_job": "1a1b86ed593-12894-f53",
+    "sha256": "1bec153169c02ef487b566d1d45e969a5d7f14c65cfc27d00ab436edba512f27",
+    "timestamp_is_actual_failure_instant_proved": false
+  },
+  "review_kind": "read-only retained log and source triage; no rerun and no deadline change",
+  "reviewed_git_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "schema": "trnm-prior-ci-pq-transport-triage-v1",
+  "source_facts": [
+    "The test creates its independent witness and Node before generating a complete maintenance/W1 packet and sending the first valid TCP request.",
+    "The witness child services a persistent Unix connection with serve_one deadline min(fixture_end, now+10s); after a service error it closes that connection. Its fixture lifetime is60s.",
+    "The TCP service lifetime is30s and each accepted request has at most10s; the client uses a10s budget.",
+    "The TCP service performs durable ingress accounting before consuming the request body and drops the connection on a request-path error.",
+    "The test uses a private temporary directory, ephemeral loopback TCP port and a child-specific witness socket; source review found no shared fixed path or port collision explaining this failure."
+  ],
+  "source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "8146d8bc6a759246098d3c67040839364248b95ba54309f21d72805b31019617",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "0737e0313830dbf647545b580c8884910c661cf0413ee28a085c186a73ab21f9",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+  },
+  "status": "UNRESOLVED_PRIOR_CI_TRANSPORT_FAILURE"
+}

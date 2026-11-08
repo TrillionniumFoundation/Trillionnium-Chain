@@ -1,0 +1,101 @@
+{
+  "transport_sha256": "7f3b45b6be6984abebc953eef9e96a90f7137cf5021515c2c576dfd163393de6",
+  "transport_size": 10065920,
+  "members": [
+    {
+      "path": "raw-manifest.json",
+      "bytes": 92703,
+      "sha256": "83c1e95b04210de8afff1cdd275ecaa2c0629a993aef62a4fffd0e995610e4f6"
+    },
+    {
+      "path": "raw.tar.gz",
+      "bytes": 9286245,
+      "sha256": "54a4bc51a0dee6262514d8cd13251eb0ebccf457735a3bc158b4cb041ef09b47"
+    },
+    {
+      "path": "readable-audits/allocation/latest-readonly-absence.json",
+      "bytes": 288,
+      "sha256": "c920af8c35112d800c54f8498b8608a2b652e1639a60d37d232383b27f94fead"
+    },
+    {
+      "path": "readable-audits/economics/source-comparison.json",
+      "bytes": 5025,
+      "sha256": "8fa8013c6a666f9535d1646f0eee8be01146885f60924cc60be35972369e9533"
+    },
+    {
+      "path": "readable-audits/economics/triage-summary.json",
+      "bytes": 11473,
+      "sha256": "9f4159af5729a71cef2cf0119dec89c31a885aae09d5f25e7f167f05fa3d44ca"
+    },
+    {
+      "path": "readable-audits/export/source-attribution.json",
+      "bytes": 1054,
+      "sha256": "199c69607c0b5cb204adfc5f55fea9d31e0709e19882e0d804b92cd41f9cfa99"
+    },
+    {
+      "path": "readable-audits/export/triage-audit.json",
+      "bytes": 4875,
+      "sha256": "424cbd7fb44a3bb9ee854beb463ff61a2da963c769a62b584f52eeab03876da3"
+    },
+    {
+      "path": "readable-audits/native/native-ci-audit.json",
+      "bytes": 9962,
+      "sha256": "3b35a5620c9f77d10b40cb8bcb3795f37248783750f29a00f0cec840205f21fa"
+    },
+    {
+      "path": "readable-audits/native/source-comparison.json",
+      "bytes": 1149,
+      "sha256": "688cffae96f744111a2c2027c3502b89b74e5563ea05bd1fcf9222e52402107a"
+    },
+    {
+      "path": "readable-audits/priorities/priorities-confirmation-gate-audit.json",
+      "bytes": 21386,
+      "sha256": "c77bad94d205d66cf1d06164ef83d876d3e03277ccddf6bf1b6bb33377940520"
+    },
+    {
+      "path": "readable-audits/priorities/selective-readback.json",
+      "bytes": 8893,
+      "sha256": "6c15ecac9c93b6e416155bf5cb5b6cb4d6ccc7cff43efd611c5f876be1cd8bce"
+    },
+    {
+      "path": "readable-audits/priorities/source-comparison-priorities.json",
+      "bytes": 4606,
+      "sha256": "4bfe8f1b5d1766ab41ff5a4b228edd0ba28b74f5d21447058128ada9c7efbe6a"
+    },
+    {
+      "path": "readable-audits/protocol/protocol-confirmation-gate-audit.json",
+      "bytes": 20274,
+      "sha256": "8a401eec66407505504fe24d1f905fbc7b088b2aeaf82d038215fb6a3c9d28ac"
+    },
+    {
+      "path": "readable-audits/protocol/source-comparison.json",
+      "bytes": 20880,
+      "sha256": "69b78db72880727e08fc618e4cea4aecde2d3e4650fa2ef1b7f4418289483f68"
+    },
+    {
+      "path": "readable-audits/snapshot/CI-all-runs.json",
+      "bytes": 503137,
+      "sha256": "bf6c21af4cc6efc486fd2c224ccc359abc2016040c98e1c3ab4df78a265bd7a3"
+    },
+    {
+      "path": "readable-audits/snapshot/CI-summary.json",
+      "bytes": 4181,
+      "sha256": "cb0d814dd02baa7eaf19927f571aa53b963127b69c6c0f1398ec5ca570870645"
+    },
+    {
+      "path": "readable-audits/w1/artifact-integrity.json",
+      "bytes": 941,
+      "sha256": "530c4170c2b1e5d881e4945b99b67a48896e1a35f013ae909e9fe3bfeba9007d"
+    },
+    {
+      "path": "readable-audits/w1/source-attribution.json",
+      "bytes": 4220,
+      "sha256": "bc0f4be13c2d5a58ce32db04443de06c7987da1029c49b5c7ee6596061d92c0f"
+    },
+    {
+      "path": "readable-audits/w1/triage-summary.json",
+      "bytes": 44453,
+      "sha256": "a35c0646704ef7267cd5480f5d8648c67ea47724daf9baf6648f44efffa20009"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "archive_member_paths_relative_to_extraction_root": true,
+  "archive_sha256": "ee5ea64823c0c72fd10960c4c0c9886ed3e64800c7abcdc4922d4fcde3ec1d37",
+  "archive_size_bytes": 13798073,
+  "manifest_sha256": "ff105d1de4f95326e05a2eb2ddfe1efc6134f08ebf4fa996f449e9960c7b288b",
+  "original_bytes_rechecked_before_during_and_after_archive": true,
+  "parts": [
+    {
+      "path": "raw/raw-evidence.tar.gz.part-000",
+      "sha256": "51a3b77c45b9c3e42f91d3eb5c6c4de735a8c0bacd8fce197bb81fff6059d6ed",
+      "size_bytes": 8388608
+    },
+    {
+      "path": "raw/raw-evidence.tar.gz.part-001",
+      "sha256": "e412b8b57fa05a511d72712b5feffc24b788a6c097a6dc18b86c42309b842bf3",
+      "size_bytes": 5409465
+    }
+  ],
+  "regular_file_count": 877,
+  "schema": "trnm-responsive-public-raw-index-v1",
+  "source_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "uncompressed_file_bytes": 110890223
+}

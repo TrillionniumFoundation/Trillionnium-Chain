@@ -1,0 +1,362 @@
+{
+  "all_general_quantum_gates": "HOLD",
+  "archives": [
+    {
+      "archive": "frozen-validation.tar.xz",
+      "archive_sha256": "88e4dd15ce7b2c9f73e06c7704648903ffaca0ba4aa8c3538c87eca31c4ad510",
+      "archive_size_bytes": 1187116,
+      "index_file": "frozen-validation.tar.xz.index.json",
+      "index_sha256": "177a83a86ceba26d0f5336c0181b6fc0f6c537c8c886830bcc4350e57402e35d",
+      "member_count": 285,
+      "parts": [
+        {
+          "file": "frozen-validation.tar.xz",
+          "sha256": "88e4dd15ce7b2c9f73e06c7704648903ffaca0ba4aa8c3538c87eca31c4ad510",
+          "size_bytes": 1187116
+        }
+      ],
+      "single_file": true,
+      "uncompressed_file_bytes": 15871739
+    },
+    {
+      "archive": "supplemental-validation.tar.xz",
+      "archive_sha256": "d4db7e2e5d3d8e3d5e9fb8d6991be5318ae6c1554b302684348398032922036f",
+      "archive_size_bytes": 304712,
+      "index_file": "supplemental-validation.tar.xz.index.json",
+      "index_sha256": "4d1154d417bb186e444c7afef43759e15dd8dfdc289ef386c4883092b6921215",
+      "member_count": 76,
+      "parts": [
+        {
+          "file": "supplemental-validation.tar.xz",
+          "sha256": "d4db7e2e5d3d8e3d5e9fb8d6991be5318ae6c1554b302684348398032922036f",
+          "size_bytes": 304712
+        }
+      ],
+      "single_file": true,
+      "uncompressed_file_bytes": 3867708
+    }
+  ],
+  "direct_copies": [
+    {
+      "file": "original-driver-result.json",
+      "sha256": "40d02e34cad7c283d5a4eff0446dc9f3dc0f130b04239c8db0e2aababc020771",
+      "size_bytes": 11096,
+      "source": "validation-competing-a56889a/result.json"
+    },
+    {
+      "file": "fuzz-graph-result.json",
+      "sha256": "6259caf4988c0a737a1158fbb58eab5489addf6d81fc6b7623c9ba098340f066",
+      "size_bytes": 5033,
+      "source": "fuzz-validation-a56889a-20261107/result.json"
+    },
+    {
+      "file": "whole-node-inventory-result.json",
+      "sha256": "e4d5d7ac05f470599494b4b12fd141275cfc87f153095e4a9a1f5fca6e4bc3cd",
+      "size_bytes": 2214,
+      "source": "supplemental-validation/whole-node-a56889a-20261107/result.json"
+    },
+    {
+      "file": "native-test-elf.json",
+      "sha256": "d23a01eef6887ae9b6835ebb4d0ddfcac038a51ef28aa96bc947e9398331ab31",
+      "size_bytes": 2342,
+      "source": "validation-competing-a56889a/native-test-elf.json"
+    },
+    {
+      "file": "full-source-identity.json",
+      "sha256": "dc04515d3d6040de1991d685f7370ee89c5f775f8730b9b3fdb0855ee4a2e86e",
+      "size_bytes": 640,
+      "source": "validation-competing-a56889a/sources/final-retained.json"
+    },
+    {
+      "file": "native-competition-summary.json",
+      "sha256": "35688363f214fe560e7669053264a5aa7f371a1b595c947e9bc7df0183d1f8da",
+      "size_bytes": 274851,
+      "source": "readback-competing-a56889a-v2/native-competition-summary.json"
+    },
+    {
+      "file": "machine-cache-summary.json",
+      "sha256": "d3d465fa35a8cd4ed2ae582737c332cb6b6844fc4d8cae7f4a2ea6650b64f4f2",
+      "size_bytes": 807548,
+      "source": "readback-competing-a56889a-v2/machine-cache-summary.json"
+    }
+  ],
+  "explicit_ignored_native_tests": {
+    "executed": 4,
+    "failed": 0,
+    "passed": 4,
+    "tests": [
+      {
+        "command": "native-base-export",
+        "explicit_ignored_selection": true,
+        "failed": 0,
+        "log_sha256": "addba7ecafe3216b744629704ff115392ffd9ca865f701deaba5dc0245af4f26",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::export_source_bound_native_dag_fixture"
+      },
+      {
+        "command": "native-base-replay",
+        "explicit_ignored_selection": true,
+        "failed": 0,
+        "log_sha256": "6420fe270dc327bca2fd29354ad0c42965bf61d19b9d08061d1bb8e5239163fd",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::replay_source_bound_native_search_samples"
+      },
+      {
+        "command": "native-competition-export",
+        "explicit_ignored_selection": true,
+        "failed": 0,
+        "log_sha256": "0ae80ccd3b17380754a462b9053ea27384ed13129158f40c973fc4da1d76da23",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture"
+      },
+      {
+        "command": "native-competition-replay",
+        "explicit_ignored_selection": true,
+        "failed": 0,
+        "log_sha256": "1d3cfe18718a8a59b4d052348e46f395a50ae8d921239523e97a4bf84fc85f7b",
+        "passed": 1,
+        "test": "quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples"
+      }
+    ]
+  },
+  "general_quantum_gates": {
+    "complete_machine_cost_and_error_accounting": {
+      "remaining": "Real hardware calibration, compiled physical layout and service measurements, energy and capital costs are missing.",
+      "status": "HOLD"
+    },
+    "minimum_legal_implementation_and_amortization": {
+      "remaining": "Finite constructed implementations and cache observations do not prove a minimum over all legal algorithms or equal complete resources.",
+      "status": "HOLD"
+    },
+    "mixed_quantum_classical_consensus_security": {
+      "remaining": "Finite conditional actions and fixed public arrival schedules do not establish arbitrary-algorithm or long-term settlement security.",
+      "status": "HOLD"
+    },
+    "native_quantum_adversarial_execution": {
+      "remaining": "Actual Node/CPU admission is observed; quantum execution clocks remain modeled and no QPU execution is present.",
+      "status": "HOLD"
+    }
+  },
+  "git_commit_created_by_preparation": false,
+  "github_publication_performed_by_preparation": false,
+  "native_and_machine_readback": {
+    "commands": [
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-review-materials/summarize_native_competition.py",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/native"
+        ],
+        "exit_code": 0,
+        "name": "native-competition-summary",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "35688363f214fe560e7669053264a5aa7f371a1b595c947e9bc7df0183d1f8da"
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/continuation-review-materials/summarize_machine_results.py",
+          "--original-frontier",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/original-eighteen-frontier.json",
+          "--service-frontier",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/new-fifty-four-service-frontier.json",
+          "--cache-observation",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/preprocessing-cache-observation.json",
+          "--cache-journal",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/preprocessing-cache-observation.json.stages.jsonl",
+          "--source-inventory",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/source-inventory.json",
+          "--expected-head",
+          "a56889a54aac5f14141bb45fb602141dd6a37645",
+          "--native-fixture",
+          "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/validation-competing-a56889a/native/native-fixture.json"
+        ],
+        "exit_code": 0,
+        "name": "machine-cache-summary",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "d3d465fa35a8cd4ed2ae582737c332cb6b6844fc4d8cae7f4a2ea6650b64f4f2"
+      }
+    ],
+    "machine_summary_file": "machine-cache-summary.json",
+    "model_clock_and_actual_CPU_receipts_remain_distinct": true,
+    "native_summary_file": "native-competition-summary.json",
+    "readback_result_sha256": "46d14455475c6305c0f9d2b78808192b18914d2d1b74ccec5793b254fe8166bf",
+    "status": "READBACK_COMMANDS_PASSED"
+  },
+  "original_driver": {
+    "commands": 47,
+    "failed_required_commands": [
+      "whole-node-lib"
+    ],
+    "incomplete_optional_commands": [
+      "fuzz-offline-full-metadata"
+    ],
+    "original_results_logs_and_failure_flags_preserved": true,
+    "result_sha256": "40d02e34cad7c283d5a4eff0446dc9f3dc0f130b04239c8db0e2aababc020771",
+    "status": "FAIL"
+  },
+  "original_evidence_modified_by_preparation": false,
+  "physical_hardware_calibrated": false,
+  "production_activation": false,
+  "python": {
+    "all_selected_suites_passed": true,
+    "counts_are_execution_totals_not_unique_test_definitions": true,
+    "executed_test_count": 696,
+    "groups": [
+      {
+        "count": 153,
+        "exit_code": 0,
+        "name": "quantum-python",
+        "pass": true
+      },
+      {
+        "count": 195,
+        "exit_code": 0,
+        "name": "w1-python",
+        "pass": true
+      },
+      {
+        "count": 17,
+        "exit_code": 0,
+        "name": "reversible-python",
+        "pass": true
+      },
+      {
+        "count": 11,
+        "exit_code": 0,
+        "name": "fast-daa-python",
+        "pass": true
+      },
+      {
+        "count": 36,
+        "exit_code": 0,
+        "name": "parallel-ohie-python",
+        "pass": true
+      },
+      {
+        "count": 77,
+        "exit_code": 0,
+        "name": "experiment-w1-python",
+        "pass": true
+      },
+      {
+        "count": 18,
+        "exit_code": 0,
+        "name": "economics-unit",
+        "pass": true
+      },
+      {
+        "count": 43,
+        "exit_code": 0,
+        "name": "source-integrity-unit",
+        "pass": true
+      },
+      {
+        "count": 108,
+        "exit_code": 0,
+        "name": "ci-contract-unit",
+        "pass": true
+      },
+      {
+        "count": 38,
+        "exit_code": 0,
+        "name": "pq-integration-unit",
+        "pass": true
+      }
+    ]
+  },
+  "quantum_hardware_executed": false,
+  "quantum_mining_qualified": false,
+  "repository_source_modified_by_preparation": false,
+  "resolved_original_failures": [
+    {
+      "cause": "Wrapper demanded exactly one Rust summary although successful nested subprocesses produced three additional summaries.",
+      "command": "whole-node-lib",
+      "original_driver_pass": false,
+      "original_process_exit_code": 0,
+      "resolution": "Same-ELF --list and --ignored --list, full original outer inventory and exact source-aware nested-output recognition passed; full suite was not rerun.",
+      "supplement_file": "whole-node-inventory-result.json",
+      "supplement_sha256": "e4d5d7ac05f470599494b4b12fd141275cfc87f153095e4a9a1f5fca6e4bc3cd"
+    },
+    {
+      "cause": "Original Cargo cache lacked locked arbitrary 1.4.2, jobserver 0.1.35 and libfuzzer-sys 0.4.10 dependencies.",
+      "command": "fuzz-offline-full-metadata",
+      "full_metadata_canonical_sha256": "a6b8c1703cc39c6b711df43378809d760fb879e6daaf0a5c0202428342b9011b",
+      "full_metadata_raw_sha256": "23b657df105e61da8535390ff9a5659be1313027148345a56796788bdcfd68de",
+      "original_process_exit_code": 101,
+      "packages": 149,
+      "registry_packages": 136,
+      "resolution": "Copied checksum-verified existing public archives into a separate Cargo home; locked online metadata and then offline full metadata returned identical bytes, all 136 registry checksums verified.",
+      "resolve_nodes": 149,
+      "supplement_file": "fuzz-graph-result.json",
+      "supplement_sha256": "6259caf4988c0a737a1158fbb58eab5489addf6d81fc6b7623c9ba098340f066"
+    }
+  ],
+  "schema": "trnm-competing-gates-combined-validation-v1",
+  "source": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "source_guard_after": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "source_guard_before": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "status": "PASS_WITH_RETAINED_ORIGINAL_FAILURES",
+  "target_ELF_cache_or_credentials_included": false,
+  "targeted_release_owner": {
+    "release-owner-root-six": [
+      {
+        "failed": 0,
+        "filtered_out": 1281,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 6
+      }
+    ],
+    "release-owner-sealed-seven": [
+      {
+        "failed": 0,
+        "filtered_out": 1280,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 7
+      }
+    ]
+  },
+  "validation_scope": "Frozen-source execution receipts plus independently checked supplemental resolution; not general quantum security",
+  "whole_node_outer": {
+    "elf_identity": {
+      "elf_machine": 62,
+      "elf_magic": true,
+      "mode": "0o700",
+      "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader/debug/deps/trnm_pon_node-87c69d7ef5166336",
+      "resolved_path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader/debug/deps/trnm_pon_node-87c69d7ef5166336",
+      "sha256": "dd00fb09345d78f28d45a8f431355c2eb5503f2729a3dd88409eb6356d8206dd",
+      "size_bytes": 105447528
+    },
+    "nested_invocations": 13,
+    "nested_success_summaries": 3,
+    "original_log_sha256": "bdebbc877e2ce0e98a05fab84a3a409dc06fc64bd6864b1ac1b674cfde0d0a75",
+    "original_row_sha256": "cc2e42119a0cfe0b5117d38d9819f74ac811cacbfba57c7e1ddee9928db63247",
+    "outer_failed": 0,
+    "outer_filtered_out": 0,
+    "outer_ignored": 37,
+    "outer_measured": 0,
+    "outer_passed": 1250,
+    "outer_total": 1287
+  }
+}

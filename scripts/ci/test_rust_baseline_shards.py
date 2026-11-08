@@ -68,8 +68,23 @@ class RustShardTests(unittest.TestCase):
         full = re.search(r'(?ms)^  rust-baseline\)\n(.*?)(?=^    ;;$)', self.full)[1]
         actual = [line for script in self.scripts.values() for line in code_lines(script)[2:]]
         self.assertEqual(Counter(actual), Counter(code_lines(full)))
-        self.assertEqual(sum(re.search(r'(?:^| )cargo test ', line) is not None for line in actual), 6)
-        self.assertEqual(sum('--exact --ignored --nocapture --test-threads=1' in line for line in actual), 4)
+        cargo_tests = [line for line in actual if re.search(r'(?:^| )cargo test ', line)]
+        self.assertEqual(len(cargo_tests), 12)
+        # Preserve each required ignored selector, not only a stale aggregate count.
+        selectors = [re.search(r' ([A-Za-z][A-Za-z0-9_:]+) -- --exact --ignored --nocapture --test-threads=1', line)[1]
+                     for line in cargo_tests if '--exact --ignored --nocapture --test-threads=1' in line]
+        self.assertEqual(Counter(selectors), Counter((
+            'quantum_native_bridge_tests::export_source_bound_native_dag_fixture',
+            'quantum_native_bridge_tests::replay_source_bound_native_search_samples',
+            'quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture',
+            'quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples',
+            'quantum_native_bridge_tests::responsive::execute_source_bound_native_responsive_miners',
+            'quantum_native_bridge_tests::responsive::replay_source_bound_native_responsive_miners',
+            'account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover',
+            'store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen',
+            'store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen',
+            'account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost',
+        )))
         self.assertIn('cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings', actual)
         for before, after in [('cargo fmt ', 'true # cargo fmt '),
                               ('cargo test --locked ', 'cargo test --unlocked '),

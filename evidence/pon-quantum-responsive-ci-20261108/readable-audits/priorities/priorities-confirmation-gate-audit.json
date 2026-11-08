@@ -1,0 +1,521 @@
+{
+  "candidate": "a490d3b971997e927de3aece19864497d65d5984",
+  "comparison_predecessor": "bef17d632d1e40014167dba2a1089b85366b67b8",
+  "conclusion": {
+    "all_five_original_native_tests_recorded_passing_each_job": true,
+    "baseline_confirmation_count_each_job": 1,
+    "confirmation_acceptance_fails_each_job": true,
+    "exact_inner_failure_in_all_four": "CONFIRMATION_TARGET",
+    "no_new_distinct_native_test_failure_identified": true,
+    "only_failed_step_in_each_job": "Execute original release from-zero controls",
+    "pressure_PUBLIC_REQUEST_DEADLINE_recorded_job_ids": [
+      128593173499,
+      128593173489,
+      128593173423
+    ],
+    "pressure_confirmation_count_each_job": 0,
+    "pressure_empty_verification_error_list_job_ids": [
+      128593173366
+    ],
+    "same_original_four_second_sixteen_worker_pressure_scope": true,
+    "service_and_sustained_acceptance_pass_each_job": true
+  },
+  "interpretation": {
+    "business_gate": "The unchanged original validator explicitly requires finite_target_met at run_from_zero_native.py:760-762 and raises CONFIRMATION_TARGET through flags() at line426; native safety/accounting test success has narrower scope.",
+    "downstream_diagnostics": "The workflow allows later service-model diagnostics when source/toolchain checks passed and the job was not cancelled; their success does not erase the earlier failed release acceptance.",
+    "expected_panics": "Poisoning/unwind diagnostics occur in successful libtest output. All23 visible libtest summary records in each complete console are non-failing; they are not deduplicated unique-test counts.",
+    "fix_scope": "No new continuation-specific source repair is established. Preserve the original failure and conditions; do not remove the finite target or treat a rerun as replacement evidence.",
+    "selective_evidence_limit": "The full artifact archive hashes are recorded from upload logs and NOT recomputed. Eight selected members were retrieved by immutable artifact ID; size, ZIP CRC and SHA256 were verified. Original per-test stdout, ELF and raw confirmation reports were not fetched by this selective reader.",
+    "summary_limit": "Phase business counts and verification errors are reported by each retained manifest's confirmation_observation; this audit does not perform new raw-report or native execution verification."
+  },
+  "jobs": [
+    {
+      "acceptance_stages": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "manifest_reported_retained_report_sha256": "b00d53f10effa780d03c36a4e1c7f56f60ef6f75d812de24f189dfa3bf351160",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "162c5fa55d4308812ca31cc4dc51b871b2d024cb30f411ebb20911be3a38fe79",
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "7585ee3027fa814e118b789a0a973ddf01090cac5f02535f852e0b3dfa8716ee",
+          "status": "passed"
+        }
+      },
+      "conclusion": "failure",
+      "confirmation_phase_summary_source": "native manifest confirmation_observation; raw confirmation report was not fetched or independently revalidated in this selective readback",
+      "console": {
+        "bytes": 1865534,
+        "name": "x64-head-service-model.log",
+        "sha256": "7595db968d3df2dd0ff321eadab9d23b0f3dd93f0bdaeaa094d551a18911ca75"
+      },
+      "console_error_marker": {
+        "line": 1204,
+        "text": "2026-11-08T01:49:17.3453284Z ##[error]Process completed with exit code 1."
+      },
+      "console_line_count": 3250,
+      "driver_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "intentional_panic_diagnostics_are_not_additional_test_failures": true,
+      "job_id": 128593173499,
+      "label": "x64-head",
+      "later_steps_7_through_14_and_final_source_recheck_pass": true,
+      "manifest_and_systemd_recorded_native_passes": 5,
+      "manifest_and_systemd_recorded_native_tests": 5,
+      "manifest_binary_before_after_claims_agree": true,
+      "manifest_source_snapshots_agree": true,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "native_manifest_failure_line": 230,
+      "native_timeouts": 0,
+      "only_failed_step": {
+        "completed_at": "2026-11-08T01:49:17Z",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T01:44:30Z"
+      },
+      "original_native_fixture_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "outer_controller_line": 1203,
+      "phase_summaries": [
+        {
+          "business": {
+            "business_start_delay_ns": 144290,
+            "observed_success_latency_ns": 3192926055,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "mode": "attack-free-baseline",
+          "verification_errors": [],
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business": {
+            "business_start_delay_ns": 160542628,
+            "observed_success_latency_ns": null,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3839457372,
+            "unknown": 0
+          },
+          "mode": "from-zero-pressure",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "systemd_failure_line": 7,
+      "systemd_rows_equal_manifest_runs": true,
+      "tested_commit": "a490d3b971997e927de3aece19864497d65d5984",
+      "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9",
+      "visible_failed_libtest_summaries": 0,
+      "visible_libtest_summary_records": 23
+    },
+    {
+      "acceptance_stages": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "manifest_reported_retained_report_sha256": "712c96417b17e0b67f5e0ab95daeb1146a33de777ad4e6518898149a9901e518",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "962f1d57334e89b018cdac1e09c20375cdb8ff5fedaf6d7a66e6cc7aa3c1298b",
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "3af67f77b9990c1de3384e1e1bf243d1280055f6a59d097edae2e755257d77b6",
+          "status": "passed"
+        }
+      },
+      "conclusion": "failure",
+      "confirmation_phase_summary_source": "native manifest confirmation_observation; raw confirmation report was not fetched or independently revalidated in this selective readback",
+      "console": {
+        "bytes": 1865936,
+        "name": "arm-merge-service-model.log",
+        "sha256": "1d512bc091f58986f3eede38a699e84fb164849b2db42398fed5703d0ddb7668"
+      },
+      "console_error_marker": {
+        "line": 1200,
+        "text": "2026-11-08T01:48:53.4139933Z ##[error]Process completed with exit code 1."
+      },
+      "console_line_count": 3246,
+      "driver_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "intentional_panic_diagnostics_are_not_additional_test_failures": true,
+      "job_id": 128593173489,
+      "label": "arm-merge",
+      "later_steps_7_through_14_and_final_source_recheck_pass": true,
+      "manifest_and_systemd_recorded_native_passes": 5,
+      "manifest_and_systemd_recorded_native_tests": 5,
+      "manifest_binary_before_after_claims_agree": true,
+      "manifest_source_snapshots_agree": true,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "native_manifest_failure_line": 230,
+      "native_timeouts": 0,
+      "only_failed_step": {
+        "completed_at": "2026-11-08T01:48:53Z",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T01:44:18Z"
+      },
+      "original_native_fixture_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "outer_controller_line": 1199,
+      "phase_summaries": [
+        {
+          "business": {
+            "business_start_delay_ns": 155365,
+            "observed_success_latency_ns": 1704222768,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "mode": "attack-free-baseline",
+          "verification_errors": [],
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business": {
+            "business_start_delay_ns": 59527986,
+            "observed_success_latency_ns": null,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3940472014,
+            "unknown": 0
+          },
+          "mode": "from-zero-pressure",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "systemd_failure_line": 7,
+      "systemd_rows_equal_manifest_runs": true,
+      "tested_commit": "249f5d30689f989b3e6368e78c5161fb1b00aa57",
+      "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9",
+      "visible_failed_libtest_summaries": 0,
+      "visible_libtest_summary_records": 23
+    },
+    {
+      "acceptance_stages": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "manifest_reported_retained_report_sha256": "29162bf53ac27fb5ed5344397efbd09770b24a6296c5e21a68d217bc6d371a2f",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "272d0c43d14aed797a68f2b39fb6ae8ca5f69b9aa0ab2bf66717d299fcec45b6",
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "330ba2377e33cf76e5904d4cba119aa05888f4a87429ce5a6e931e9b05b4a0fe",
+          "status": "passed"
+        }
+      },
+      "conclusion": "failure",
+      "confirmation_phase_summary_source": "native manifest confirmation_observation; raw confirmation report was not fetched or independently revalidated in this selective readback",
+      "console": {
+        "bytes": 1865764,
+        "name": "x64-merge-service-model.log",
+        "sha256": "cf0caf71cfd8f241b339c38fad42d2b570e65391c56ecc58ffe2466a33f413d4"
+      },
+      "console_error_marker": {
+        "line": 1201,
+        "text": "2026-11-08T01:47:41.8147988Z ##[error]Process completed with exit code 1."
+      },
+      "console_line_count": 3247,
+      "driver_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "intentional_panic_diagnostics_are_not_additional_test_failures": true,
+      "job_id": 128593173423,
+      "label": "x64-merge",
+      "later_steps_7_through_14_and_final_source_recheck_pass": true,
+      "manifest_and_systemd_recorded_native_passes": 5,
+      "manifest_and_systemd_recorded_native_tests": 5,
+      "manifest_binary_before_after_claims_agree": true,
+      "manifest_source_snapshots_agree": true,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "native_manifest_failure_line": 230,
+      "native_timeouts": 0,
+      "only_failed_step": {
+        "completed_at": "2026-11-08T01:47:41Z",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T01:43:57Z"
+      },
+      "original_native_fixture_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "outer_controller_line": 1200,
+      "phase_summaries": [
+        {
+          "business": {
+            "business_start_delay_ns": 115222,
+            "observed_success_latency_ns": 2501460247,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "mode": "attack-free-baseline",
+          "verification_errors": [],
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business": {
+            "business_start_delay_ns": 68276022,
+            "observed_success_latency_ns": null,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3931723978,
+            "unknown": 0
+          },
+          "mode": "from-zero-pressure",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "systemd_failure_line": 7,
+      "systemd_rows_equal_manifest_runs": true,
+      "tested_commit": "249f5d30689f989b3e6368e78c5161fb1b00aa57",
+      "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9",
+      "visible_failed_libtest_summaries": 0,
+      "visible_libtest_summary_records": 23
+    },
+    {
+      "acceptance_stages": {
+        "confirmation_report": {
+          "error": "CONFIRMATION_TARGET",
+          "manifest_reported_retained_report_sha256": "339ea48e164d92ab28331705ac9fcbb6539bc90d5444cf6f54acb8fb0729bced",
+          "status": "failed"
+        },
+        "service_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "39a19a8cbba40b33fc66cd1f6113301f2dfd5586a58ff245ff900bdae127e4c4",
+          "status": "passed"
+        },
+        "sustained_report": {
+          "error": null,
+          "manifest_reported_retained_report_sha256": "98d1ebc0759a232064256049df04451c0466b5cc52151d77cded9bd0fa5ccb01",
+          "status": "passed"
+        }
+      },
+      "conclusion": "failure",
+      "confirmation_phase_summary_source": "native manifest confirmation_observation; raw confirmation report was not fetched or independently revalidated in this selective readback",
+      "console": {
+        "bytes": 1865274,
+        "name": "arm-head-service-model.log",
+        "sha256": "fa92cfb80cb8d3e4d3a0b5459e48be5394a4bfb55901e536673205166d681aa3"
+      },
+      "console_error_marker": {
+        "line": 1199,
+        "text": "2026-11-08T01:48:52.6575498Z ##[error]Process completed with exit code 1."
+      },
+      "console_line_count": 3245,
+      "driver_failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "intentional_panic_diagnostics_are_not_additional_test_failures": true,
+      "job_id": 128593173366,
+      "label": "arm-head",
+      "later_steps_7_through_14_and_final_source_recheck_pass": true,
+      "manifest_and_systemd_recorded_native_passes": 5,
+      "manifest_and_systemd_recorded_native_tests": 5,
+      "manifest_binary_before_after_claims_agree": true,
+      "manifest_source_snapshots_agree": true,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "native_manifest_failure_line": 230,
+      "native_timeouts": 0,
+      "only_failed_step": {
+        "completed_at": "2026-11-08T01:48:52Z",
+        "name": "Execute original release from-zero controls",
+        "number": 6,
+        "started_at": "2026-11-08T01:44:05Z"
+      },
+      "original_native_fixture_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "outer_controller_line": 1198,
+      "phase_summaries": [
+        {
+          "business": {
+            "business_start_delay_ns": 192958,
+            "observed_success_latency_ns": 1878837292,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "mode": "attack-free-baseline",
+          "verification_errors": [],
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business": {
+            "business_start_delay_ns": 54515518,
+            "observed_success_latency_ns": null,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3945484482,
+            "unknown": 0
+          },
+          "mode": "from-zero-pressure",
+          "verification_errors": [],
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ],
+      "systemd_failure_line": 7,
+      "systemd_rows_equal_manifest_runs": true,
+      "tested_commit": "a490d3b971997e927de3aece19864497d65d5984",
+      "tested_tree": "a591a9608687a870aaecf3109064640a864d10e9",
+      "visible_failed_libtest_summaries": 0,
+      "visible_libtest_summary_records": 23
+    }
+  ],
+  "observed_utc": "2026-11-08T02:34:18.813642+00:00",
+  "public_files_excluding_this_audit": [
+    {
+      "bytes": 1865534,
+      "name": "x64-head-service-model.log",
+      "sha256": "7595db968d3df2dd0ff321eadab9d23b0f3dd93f0bdaeaa094d551a18911ca75"
+    },
+    {
+      "bytes": 65759,
+      "name": "x64-head-native-manifest.json",
+      "sha256": "802a7d39d83d12bb7bc65a0a436a859a916e092dfff49b18b60fa20f77ddda77"
+    },
+    {
+      "bytes": 6869,
+      "name": "x64-head-systemd-run.log",
+      "sha256": "bcc412bd7a13ca0843027aded7af57b63cc332d9c6c55d7a771654c583cd8532"
+    },
+    {
+      "bytes": 1865936,
+      "name": "arm-merge-service-model.log",
+      "sha256": "1d512bc091f58986f3eede38a699e84fb164849b2db42398fed5703d0ddb7668"
+    },
+    {
+      "bytes": 65726,
+      "name": "arm-merge-native-manifest.json",
+      "sha256": "e0447cd51069a28a944288bb38799d506f83df636963f0ee1ec6f786f18f7d3d"
+    },
+    {
+      "bytes": 6869,
+      "name": "arm-merge-systemd-run.log",
+      "sha256": "a68b15ccd33ad662229049a6aa4774916bacd8de176066f584e8006cbcc0cf86"
+    },
+    {
+      "bytes": 1865764,
+      "name": "x64-merge-service-model.log",
+      "sha256": "cf0caf71cfd8f241b339c38fad42d2b570e65391c56ecc58ffe2466a33f413d4"
+    },
+    {
+      "bytes": 65695,
+      "name": "x64-merge-native-manifest.json",
+      "sha256": "fb18bf84ec31c405aa86f244ef56d77d5cc5030735b7edcac39803216a1c25df"
+    },
+    {
+      "bytes": 6868,
+      "name": "x64-merge-systemd-run.log",
+      "sha256": "4e0a448f52926653cc2e9fc6d849646b6f2e9c8ce51a4d3adfd74a658580d08c"
+    },
+    {
+      "bytes": 1865274,
+      "name": "arm-head-service-model.log",
+      "sha256": "fa92cfb80cb8d3e4d3a0b5459e48be5394a4bfb55901e536673205166d681aa3"
+    },
+    {
+      "bytes": 65755,
+      "name": "arm-head-native-manifest.json",
+      "sha256": "56c69dcc9b202f15c1820803bdb42353d9cdf6de7af37bea4c8cb2dea131ec57"
+    },
+    {
+      "bytes": 6875,
+      "name": "arm-head-systemd-run.log",
+      "sha256": "e6bb64f8d4e3f730de76f32d692ffb84a1e03c92ccf29a476d473493519149d4"
+    },
+    {
+      "bytes": 4606,
+      "name": "source-comparison-priorities.json",
+      "sha256": "4bfe8f1b5d1766ab41ff5a4b228edd0ba28b74f5d21447058128ada9c7efbe6a"
+    },
+    {
+      "bytes": 8893,
+      "name": "selective-readback.json",
+      "sha256": "6c15ecac9c93b6e416155bf5cb5b6cb4d6ccc7cff43efd611c5f876be1cd8bce"
+    }
+  ],
+  "run_id": 42435447257,
+  "schema": "trnm-native-priorities-confirmation-triage-v1",
+  "scope": {
+    "native_or_ci_reruns": false,
+    "only_job_ids": [
+      128593173499,
+      128593173489,
+      128593173423,
+      128593173366
+    ],
+    "prior_protocol_allowlist_modified": false,
+    "publication_performed": false,
+    "source_edits": false,
+    "timeouts_or_resource_conditions_relaxed": false
+  },
+  "selective_readback": {
+    "bytes": 8893,
+    "name": "selective-readback.json",
+    "sha256": "6c15ecac9c93b6e416155bf5cb5b6cb4d6ccc7cff43efd611c5f876be1cd8bce"
+  },
+  "source_attribution": {
+    "complete_latency_causal_attribution_established": false,
+    "no_changed_direct_execution_source_cause_identified": true,
+    "original_release_command_line": 117,
+    "original_workflow": ".github/workflows/pon-priority-acceptance.yml",
+    "source_comparison": {
+      "bytes": 4606,
+      "name": "source-comparison-priorities.json",
+      "sha256": "4bfe8f1b5d1766ab41ff5a4b228edd0ba28b74f5d21447058128ada9c7efbe6a"
+    },
+    "workflow_host_driver_native_driver_and_fixture_byte_identical_to_predecessor": true
+  },
+  "status": "CONFIRMED_ORIGINAL_CONFIRMATION_GATE_FAILURE_IN_FOUR_JOBS"
+}

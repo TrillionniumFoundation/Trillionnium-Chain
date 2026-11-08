@@ -1,0 +1,102 @@
+{
+  "completed_read_only_github_queries": 7,
+  "get_user_profile_collected_or_packaged": false,
+  "intended_base": "fix/chain-quantum-cost-closure-20261106-c201",
+  "matching_pull_requests_observed": 0,
+  "network_failures": 1,
+  "new_post_or_mutation_performed": false,
+  "prior_creation_response": {
+    "existing_evidence_file": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/pr-a568-reconciliation/4-response.json",
+    "http_status": 422,
+    "message": "A pull request already exists for TrillionniumFoundation:fix/chain-quantum-closure-api-20261107-c9b4.",
+    "response_sha256": "ca45c18cce3ffffc9912f0f4f10e71eda5cd5fe8e2840c8cfb429cb8f9a3e062"
+  },
+  "queries": [
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b684dbcb-12894-4c1",
+      "exit_code": 0,
+      "job_id": "1a1b684dbcb-12894-4c1",
+      "label": "gh-pr-list-all-exact-head",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "stderr_bytes": 0,
+      "stdout_bytes": 3
+    },
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b685e6f1-12894-4cb",
+      "exit_code": 0,
+      "job_id": "1a1b685e6f1-12894-4cb",
+      "label": "rest-all-unencoded-head",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "stderr_bytes": 0,
+      "stdout_bytes": 3
+    },
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b686170e-12894-4ce",
+      "exit_code": 0,
+      "job_id": "1a1b686170e-12894-4ce",
+      "label": "rest-known-commit-pulls",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "stderr_bytes": 0,
+      "stdout_bytes": 3
+    },
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b68595a2-12894-4c8",
+      "exit_code": 0,
+      "job_id": "1a1b68595a2-12894-4c8",
+      "label": "graphql-exact-head-and-commit",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "stderr_bytes": 0,
+      "stdout_bytes": 292
+    },
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6876d46-12894-4d7",
+      "exit_code": 0,
+      "job_id": "1a1b6876d46-12894-4d7",
+      "label": "graphql-latest100-and-head-search",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "stderr_bytes": 0,
+      "stdout_bytes": 6272
+    },
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b68a0436-12894-4e4",
+      "exit_code": 0,
+      "job_id": "1a1b68a0436-12894-4e4",
+      "label": "graphql-exact-ref-base-title",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "stderr_bytes": 0,
+      "stdout_bytes": 302
+    },
+    {
+      "durable_job_directory": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1b689b1e4-12894-4e2",
+      "exit_code": 1,
+      "job_id": "1a1b689b1e4-12894-4e2",
+      "label": "rest-pull-refs-known-oid",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "failed",
+      "stderr_bytes": 142,
+      "stdout_bytes": 0
+    }
+  ],
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_or_gh_config_modified": false,
+  "resolved_pull_request": null,
+  "schema": "trnm-readonly-pr-reconciliation-v1",
+  "scope": "Successful head/ref/commit/base/title queries found no readable matching PR. Latest-100 inspection is bounded. Empty results do not prove the prior 422 incorrect or identify a hidden PR. No PR number or URL is inferred.",
+  "status": "UNRESOLVED_API_INCONSISTENCY",
+  "successful_queries": 6,
+  "verified_head_branch": "fix/chain-quantum-closure-api-20261107-c9b4",
+  "verified_head_oid": "a56889a54aac5f14141bb45fb602141dd6a37645"
+}

@@ -24,7 +24,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
-                               GSC2_SYNTHETIC_ORACLE,
+                               GSC2_SYNTHETIC_ORACLE, NATIVE_QUANTUM_BRIDGE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
@@ -133,6 +133,69 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_bounded_w1_controls_cannot_be_removed_duplicated_bypassed_or_moved(self):
+        # Independent inventory keeps deleting a checker requirement visible.
+        entries = (
+            ("formal/pon-nakamoto-v1", "test_w1_bounded_search.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_constructed_search.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_bounded_search_campaign.py"),
+        )
+        for directory, filename in entries:
+            command = f"    python3 -m unittest discover -s {directory} -p '{filename}' -v\n"
+            self.assertEqual(self.script.count(command), 1)
+            changes = (
+                self.script.replace(command, ''),
+                self.script.replace(command, command * 2),
+                self.script.replace(command, '    # ' + command.lstrip()),
+                self.script.replace(command, command.replace('python3 ', 'true # python3 ')),
+                self.script.replace(command, command.rstrip() + ' || true\n'),
+                self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            )
+            for changed in changes:
+                with self.subTest(filename=filename), self.assertRaisesRegex(ValueError, 'bounded W1'):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_four_gate_w1_controls_cannot_be_removed_bypassed_duplicated_or_moved(self):
+        entries = (
+            ("formal/pon-nakamoto-v1", "test_w1_search_probability.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_machine_envelope.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_finite_consensus.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_native_bridge.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_machine_frontier.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_competing_consensus.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_machine_architecture.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_preprocessing_cache.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_native_competition.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_service_architecture_frontier.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_preprocessing_cache_campaign.py"),
+        )
+        commands = [f"    python3 -m unittest discover -s {directory} -p '{name}' -v\n"
+                    for directory, name in entries]
+        commands.append("    python3 scripts/ci/test_pon_w1_observed_economics_v1.py\n")
+        for command in commands:
+            self.assertEqual(self.script.count(command), 1)
+            changes = (self.script.replace(command, ''), self.script.replace(command, command * 2),
+                self.script.replace(command, '    # ' + command.lstrip()),
+                self.script.replace(command, command.replace('python3 ', 'true # python3 ')),
+                self.script.replace(command, command.rstrip() + ' || true\n'),
+                self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))
+            for changed in changes:
+                with self.subTest(command=command), self.assertRaisesRegex(ValueError, 'four-gate W1'):
+                    check_independent_conformance(changed, self.lanes)
+
+    def test_native_quantum_bridge_must_run_and_check_all_four_ignored_native_tests(self):
+        self.assertEqual(self.script.count(NATIVE_QUANTUM_BRIDGE), 1)
+        for line in NATIVE_QUANTUM_BRIDGE.splitlines(keepends=True):
+            with self.subTest(line=line):
+                for replacement in ('', line * 2, '      # ' + line.lstrip(),
+                                    line.rstrip() + ' || true\n'):
+                    with self.assertRaisesRegex(ValueError, 'native quantum bridge'):
+                        check_independent_conformance(self.script.replace(line, replacement), self.lanes)
+        changed = self.script.replace(NATIVE_QUANTUM_BRIDGE, '').replace('  fuzz-smoke)\n',
+                    '  fuzz-smoke)\n' + NATIVE_QUANTUM_BRIDGE)
+        with self.assertRaisesRegex(ValueError, 'native quantum bridge'):
+            check_independent_conformance(changed, self.lanes)
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (

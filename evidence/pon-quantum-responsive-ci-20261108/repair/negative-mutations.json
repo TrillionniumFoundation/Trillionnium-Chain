@@ -1,0 +1,38 @@
+{
+  "production_file": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo/formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+  "production_source_unchanged": true,
+  "scoped_test_file_sha256": "763acbdb380da2784038aaceaa579571305e57b2919375a21b9a1688db28e5b6",
+  "all_negative_mutations_rejected": true,
+  "cases": [
+    {
+      "mutation": "remove-prelaunch-budget-guard",
+      "production_source_sha256": "704349676bfd812c9788440f9d41d866de9305d9283c34b4e5342ba57bcf52ab",
+      "in_memory_mutated_source_sha256": "fd29307d99033cb87777326f9f3c7e3b03b0d4d6818233949b49d217528da05f",
+      "replacement_before": "require(remaining() > 0, \"declared cumulative wall budget exhausted\")",
+      "replacement_after": "require(True, \"declared cumulative wall budget exhausted\")",
+      "test": "test_prelaunch_budget_expiry_never_spawns_or_claims_a_proof",
+      "tests_run": 1,
+      "failures": 2,
+      "errors": 0,
+      "negative_mutation_rejected": true,
+      "log_sha256": "e7da7d66a0fa2ac91a1200e7611412fd900b28b50acb38aee51222353e0a2bcf",
+      "wall_ns": 5273372
+    },
+    {
+      "mutation": "renew-absolute-deadline-at-preparation",
+      "production_source_sha256": "704349676bfd812c9788440f9d41d866de9305d9283c34b4e5342ba57bcf52ab",
+      "in_memory_mutated_source_sha256": "94f0e1fd066db9e940bfdf42f3299092887553cdff0d323145bae95456e32247",
+      "replacement_before": "deadline=deadline)",
+      "replacement_after": "deadline=time.monotonic() + min(cap, 7200))",
+      "test": "test_preparation_consumes_same_cumulative_budget",
+      "tests_run": 1,
+      "failures": 1,
+      "errors": 0,
+      "negative_mutation_rejected": true,
+      "log_sha256": "562a88b9c38c778a91c9ade3fb8ef86367b688409e1f8130b07d811454ded79b",
+      "wall_ns": 1686337
+    }
+  ],
+  "actual_scientific_execution": false,
+  "workflow_rerun_requested": false
+}

@@ -455,16 +455,92 @@ class CoordinatorFailureTests(unittest.TestCase):
             self.assertIn("FileNotFoundError", result["error"])
 
     def test_preparation_consumes_same_cumulative_budget(self):
+        # Coordinator control only: a failed lifecycle double produces no child,
+        # manifest, receipt or proof. Real timeout/cleanup coverage remains in
+        # ProcessLifecycleTests; host scheduling must not choose this branch.
         with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
             temp = Path(temp)
-            self.assertEqual(coordinator.main(self.invocation(temp, "import time;time.sleep(60)", .2)), 1)
+            write_new = coordinator.write_new
+
+            def include_initialization_cost(path, row):
+                write_new(path, row)
+                if path.name == "declaration.json":
+                    clock.monotonic.return_value = 100.05
+
+            def expired_preparation(command, output, cap, *, deadline):
+                self.assertEqual(command[1:3], ["--r0vm", str(temp / "control-only")])
+                self.assertEqual(command[3], "prepare")
+                self.assertEqual(output, temp / "result/prepare-full-execution")
+                self.assertEqual(cap, 180)
+                self.assertAlmostEqual(deadline, 100.2)
+                self.assertAlmostEqual(deadline - clock.monotonic(), .15)
+                clock.monotonic.return_value = deadline
+                return {"returncode": None, "wall_seconds": .15, "timed_out": True,
+                        "termination_reasons": ["TIMEOUT"], "stage_process_complete": False,
+                        "complete_proof_claim": False,
+                        "rusage": {"user_seconds": None, "system_seconds": None}}
+
+            # Replace only the coordinator's module reference. The real time
+            # module and the subprocess supervisor's clock remain untouched.
+            with patch.object(coordinator, "time", wraps=time) as clock, \
+                    patch.object(coordinator, "write_new", side_effect=include_initialization_cost), \
+                    patch.object(coordinator, "measure", side_effect=expired_preparation) as measured, \
+                    patch.object(coordinator, "checked_manifest") as manifest:
+                clock.monotonic.return_value = 100.0
+                self.assertEqual(coordinator.main(self.invocation(
+                    temp, "raise AssertionError('control must not spawn')", .2)), 1)
+                measured.assert_called_once()
+                manifest.assert_not_called()
             result = json.loads((temp / "result/result.json").read_text())
             self.assertFalse(result["complete_proof_claim"])
+            self.assertFalse(result["end_to_end_observation_complete"])
+            self.assertEqual(len(result["stages"]), 1)
             self.assertEqual(result["stages"][0]["stage"], "prepare-full-execution")
             self.assertTrue(result["stages"][0]["result"]["timed_out"])
-            self.assertLess(result["new_controller_wall_seconds"], 2)
+            self.assertIn("actual stage failed: prepare-full-execution", result["error"])
+            self.assertEqual(result["total_wall_budget_seconds"], .2)
+            self.assertAlmostEqual(result["new_controller_wall_seconds"], .2)
+            self.assertAlmostEqual(result["cumulative_bounded_wall_seconds"], .2)
             self.assertEqual(result["proof_randomness_tickets"], 0)
+            self.assertEqual(result["independent_full_proof_trials_observed"], 0)
             self.assertIsNone(result["post_find_publish_seconds"])
+
+    def test_prelaunch_budget_expiry_never_spawns_or_claims_a_proof(self):
+        # Expiry exactly at the boundary and after it must both fail before
+        # prepare is launched. Initialization consumes the original .2s budget.
+        for overrun in (0.0, .05):
+            with self.subTest(overrun=overrun), tempfile.TemporaryDirectory() as temp, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                temp = Path(temp)
+                write_new = coordinator.write_new
+
+                def expire_during_initialization(path, row):
+                    write_new(path, row)
+                    if path.name == "declaration.json":
+                        clock.monotonic.return_value = row["deadline_monotonic"] + overrun
+
+                with patch.object(coordinator, "time", wraps=time) as clock, \
+                        patch.object(coordinator, "write_new", side_effect=expire_during_initialization), \
+                        patch.object(coordinator, "measure", side_effect=AssertionError(
+                            "expired controller must not invoke a subprocess supervisor")) as measured, \
+                        patch.object(coordinator, "checked_manifest") as manifest:
+                    clock.monotonic.return_value = 100.0
+                    self.assertEqual(coordinator.main(self.invocation(
+                        temp, "raise AssertionError('control must not spawn')", .2)), 1)
+                    measured.assert_not_called()
+                    manifest.assert_not_called()
+                result = json.loads((temp / "result/result.json").read_text())
+                self.assertEqual(result["error"], "ValueError: declared cumulative wall budget exhausted")
+                self.assertEqual(result["stages"], [])
+                self.assertFalse((temp / "result/events.jsonl").exists())
+                self.assertFalse((temp / "result/prepare-full-execution").exists())
+                self.assertFalse(result["complete_proof_claim"])
+                self.assertFalse(result["end_to_end_observation_complete"])
+                self.assertEqual(result["total_wall_budget_seconds"], .2)
+                self.assertAlmostEqual(result["new_controller_wall_seconds"], .2 + overrun)
+                self.assertEqual(result["proof_randomness_tickets"], 0)
+                self.assertEqual(result["independent_full_proof_trials_observed"], 0)
+                self.assertIsNone(result["post_find_publish_seconds"])
 
     def test_same_prior_observation_is_not_counted_twice(self):
         with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):

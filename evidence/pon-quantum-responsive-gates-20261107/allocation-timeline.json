@@ -1,0 +1,75 @@
+{
+  "actual_release_time_utc": null,
+  "allocation_lifetime_complete": false,
+  "allocation_management_request_created_at_utc": "2026-11-07T23:20:30.195367+00:00",
+  "claims": {
+    "QPU_executed": false,
+    "complete_allocation_cost_measured": false,
+    "provider_billing_or_energy_calibrated": false,
+    "quantum_mining_qualified": false,
+    "runtime_release_confirmed": false
+  },
+  "frozen_implementation_commit": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "jobs": [
+    {
+      "cloud_execution_stopped": true,
+      "code_sha256": "7ad52a0cd0a6add8d69e468fc7e064569a68abaab6adfb4b2280332c8dab8c70",
+      "finished_unix_seconds": "1794094095.8205624",
+      "job_id": "9d96c65b-d844-4df5-aba8-4ac130844295",
+      "label": "hardware-availability-probe",
+      "observed_execution_window_seconds": "0.1174958",
+      "started_unix_seconds": "1794094095.7030666",
+      "submit_attempts": 1
+    },
+    {
+      "cloud_execution_stopped": true,
+      "code_sha256": "fd4e41b0b07e47d16d5cd8ba9f7acac14da12d915ba7cf3b64b7377a2bd4b1af",
+      "finished_unix_seconds": "1794095710.2679405",
+      "job_id": "eaa9c0b4-7d7c-40f7-8f97-acc4a61d57f8",
+      "label": "frozen-source-tests-and-reduced-model",
+      "observed_execution_window_seconds": "49.7722995",
+      "started_unix_seconds": "1794095660.495641",
+      "submit_attempts": 1
+    },
+    {
+      "cloud_execution_stopped": true,
+      "code_sha256": "ce99022789089f64c18d410183a05b528bc058357fe3de522253ac6a567a40e4",
+      "finished_unix_seconds": "1794097768.9722474",
+      "job_id": "fcbd519a-3473-45bf-8381-a464b2624246",
+      "label": "native-input-observation",
+      "observed_execution_window_seconds": "262.7541361",
+      "started_unix_seconds": "1794097506.2181113",
+      "submit_attempts": 1
+    },
+    {
+      "cloud_execution_stopped": true,
+      "code_sha256": "5bf62f7c7e9c18ef07247aeab73063035214e13e89e33c261e2a35bd801cf0df",
+      "finished_unix_seconds": "1794098210.0438702",
+      "job_id": "95220023-f53e-4e6e-a4af-f1eeb05a58ff",
+      "label": "independent-calibration-and-portfolio-replay",
+      "observed_execution_window_seconds": "188.1847868",
+      "started_unix_seconds": "1794098021.8590834",
+      "submit_attempts": 1
+    }
+  ],
+  "last_confirmed_assignment_observation_utc": "2026-11-08T00:55:36.835049+00:00",
+  "management_window_outside_recorded_task_execution_seconds": "5205.8109638",
+  "observed_management_window_seconds": "5706.639682",
+  "owned_endpoint_present_at_last_observation": true,
+  "recorded_cloud_task_execution_seconds_sum": "500.8287182",
+  "release_refusals": {
+    "count": 2,
+    "error_code": "RELEASE_BLOCKED_BY_FOREIGN_OR_BUSY_KERNEL",
+    "foreign_or_busy_cause_not_resolved_to_a_specific_kernel": true,
+    "unassign_reached": false
+  },
+  "schema": "trnm-pon-owned-colab-allocation-timeline-v1",
+  "scope": [
+    "The window begins at manager request creation and ends at the last successful assignment observation, not at a release.",
+    "Provider initialization, source transfer, preparation, polling, verification transport, idle waiting and unmeasured services are not assigned zero cost.",
+    "The remainder outside recorded task execution is not a measured idle-power integral or a provider billing statement.",
+    "Cross-host clock synchronization, exclusive physical CPU allocation, actual energy, capital and billing costs are not independently calibrated.",
+    "The allocation remains present at the cutoff; its later lifetime and eventual release are unknown in this artifact."
+  ],
+  "status": "ACTIVE_RELEASE_BLOCKED"
+}

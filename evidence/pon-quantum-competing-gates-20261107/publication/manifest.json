@@ -1,0 +1,47 @@
+[
+  {
+    "path": "b455-result.json",
+    "bytes": 324,
+    "sha256": "543811cfd9cc4d8aec150c2569705bd5d58acd7314b35549a7c0442af7acc2d3"
+  },
+  {
+    "path": "a568-result.json",
+    "bytes": 324,
+    "sha256": "182bb5e25fef393bc9020e0a1638a97016e0c621e934e4330535ddb637c430a4"
+  },
+  {
+    "path": "a568-requests.json",
+    "bytes": 13757,
+    "sha256": "85c8833c93a1f91c8bb099bbcd962b0684f3281ec445d6fd44ae9e2b54532714"
+  },
+  {
+    "path": "a568-manifest.json",
+    "bytes": 8532,
+    "sha256": "9bc5d497f21dd91fd644f5187ee0c0d8654bec78d512dc0f848a9efd36bc82c7"
+  },
+  {
+    "path": "a568-import-anchor.json",
+    "bytes": 951,
+    "sha256": "0ab51c03125e7621b7a8da312163909690c1c840a081a394e281e3db65076837"
+  },
+  {
+    "path": "pr-422-response.json",
+    "bytes": 299,
+    "sha256": "ca45c18cce3ffffc9912f0f4f10e71eda5cd5fe8e2840c8cfb429cb8f9a3e062"
+  },
+  {
+    "path": "pr-422-stderr.txt",
+    "bytes": 33,
+    "sha256": "b4a43287dd4aee34e1c1b599ee91ebfe652708a7302c81693023797eb6ca766d"
+  },
+  {
+    "path": "pr-readonly-summary.json",
+    "bytes": 3935,
+    "sha256": "17a34c2c1384792e7dd94bb5572017f17190a7e5895f48410ad97ee36eb0b042"
+  },
+  {
+    "path": "pr-readonly-README.md",
+    "bytes": 1170,
+    "sha256": "2b3b351230024fd1f9af94ca3db2462152654dd0d8eb7e41f0009bf101625750"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "alternate_account_or_credential_attempted": false,
+  "delivery": "An incremental Git bundle preserving the exact local implementation and later evidence commits; requires the published parent.",
+  "github_connector_response": {
+    "message": "Sorry. Your account was suspended",
+    "status": 403
+  },
+  "implementation_commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+  "implementation_tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a",
+  "parent_commit": "5d7ca0f5e260b65f5a2b8ab09dfd038718129346",
+  "production_activation": false,
+  "publication_channel_available": false,
+  "remote_ci_result_for_this_new_source": null,
+  "remote_publication_completed": false,
+  "schema": "trnm-w1-four-gates-publication-v1"
+}

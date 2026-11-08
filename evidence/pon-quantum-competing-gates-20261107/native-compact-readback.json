@@ -1,0 +1,858 @@
+{
+  "schema": "trnm-competing-native-compact-readback-v1",
+  "status": "READBACK_ONLY",
+  "source_head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+  "summary_sha256": "35688363f214fe560e7669053264a5aa7f371a1b595c947e9bc7df0183d1f8da",
+  "native_replay_sha256": "59ae2444326152eb8d85969b28aa477f115ad0ea32e3ab8093e4005227ae577e",
+  "named_execution_receipt": {
+    "executed_tests": 1,
+    "result": "PASS",
+    "scope": "named-libtest-execution-only",
+    "test": "quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples"
+  },
+  "named_execution_receipt_sha256": "f2fef846fd831c499bd71bc70e706b8a98cf5415f876c39fc66b649812ae4637",
+  "claims": {
+    "all_completed_private_checks_replayed": true,
+    "all_honest_attempts_freshly_replayed": true,
+    "authenticated_reopens_equal": true,
+    "conditional_receiver_schedule_only": true,
+    "fresh_receiver_and_two_producers_per_run": true,
+    "honest_arrivals_continue_after_private_termination": true,
+    "native_library_node_executed": true,
+    "production_activation": false,
+    "public_ingress_executed": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "real_time_search_budget_verified": false,
+    "stochastic_continuing_honest_mining_covered": false,
+    "verified_raw_inputs_unchanged_through_replay": true
+  },
+  "runs": [
+    {
+      "name": "honest-before-private-publication/quantum-q0-seed9",
+      "scenario_id": "honest-before-private-publication",
+      "execution_kind": "constructed-quantum",
+      "observation_kind": "fixed-seed-conditional-competition-sample",
+      "seed": 9,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 0,
+      "private_candidate_misses": 0,
+      "private_proofs_held": 0,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "4",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "horizon",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "1",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "3",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "1/1000",
+          "phase": "task_preprocessing",
+          "planned_exact": "1/1000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/100000",
+          "phase": "processor_setup",
+          "planned_exact": "1/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "23933/1000000000",
+          "phase": "input_transfer",
+          "planned_exact": "23933/1000000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": false,
+          "paid_exact": "3998966067/1000000000",
+          "phase": "initialize",
+          "planned_exact": "130737033/125000",
+          "trajectory_index": 0
+        }
+      ]
+    },
+    {
+      "name": "honest-before-private-publication/quantum-q1-seed9",
+      "scenario_id": "honest-before-private-publication",
+      "execution_kind": "constructed-quantum",
+      "observation_kind": "fixed-seed-conditional-competition-sample",
+      "seed": 9,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 0,
+      "private_candidate_misses": 0,
+      "private_proofs_held": 0,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "4",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "horizon",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "1",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "3",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "1/1000",
+          "phase": "task_preprocessing",
+          "planned_exact": "1/1000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/100000",
+          "phase": "processor_setup",
+          "planned_exact": "1/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "23933/1000000000",
+          "phase": "input_transfer",
+          "planned_exact": "23933/1000000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": false,
+          "paid_exact": "3998966067/1000000000",
+          "phase": "initialize",
+          "planned_exact": "130737033/125000",
+          "trajectory_index": 0
+        }
+      ]
+    },
+    {
+      "name": "honest-before-private-publication/classical-q0-seed9",
+      "scenario_id": "honest-before-private-publication",
+      "execution_kind": "classical-uniform-q0",
+      "observation_kind": "fixed-seed-conditional-competition-sample",
+      "seed": 9,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 2,
+      "private_candidate_misses": 2,
+      "private_proofs_held": 0,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "263/250000",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "stopped",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [
+        7,
+        5
+      ],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "1",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "3",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "101/100000",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "101/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "0",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "0",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 1
+        }
+      ]
+    },
+    {
+      "name": "honest-before-private-publication/observer-advice-classical-path",
+      "scenario_id": "honest-before-private-publication",
+      "execution_kind": "classical-uniform-q0",
+      "observation_kind": "observer-selected-classical-path-control-not-random-sample",
+      "seed": null,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 2,
+      "private_candidate_misses": 0,
+      "private_proofs_held": 2,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "1101031/500000",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "published",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [
+        6,
+        1
+      ],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "1",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "private",
+          "height": 16,
+          "declared_arrival_seconds_exact": "1101031/500000",
+          "block_chainwork": 37,
+          "selected_chainwork": 44,
+          "selection_changed": false,
+          "private_replacement": false
+        },
+        {
+          "owner": "private",
+          "height": 17,
+          "declared_arrival_seconds_exact": "1101031/500000",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": false,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "3",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "101/100000",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "101/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1",
+          "phase": "proof",
+          "planned_exact": "1",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "101/100000",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "101/100000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1",
+          "phase": "proof",
+          "planned_exact": "1",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/5",
+          "phase": "serial_bundle_propagation",
+          "planned_exact": "1/5",
+          "trajectory_index": 2
+        },
+        {
+          "complete": true,
+          "paid_exact": "0",
+          "phase": "future_admission_wait",
+          "planned_exact": "0",
+          "trajectory_index": 2
+        }
+      ]
+    },
+    {
+      "name": "honest-after-private-publication/quantum-q0-seed9",
+      "scenario_id": "honest-after-private-publication",
+      "execution_kind": "constructed-quantum",
+      "observation_kind": "fixed-seed-conditional-competition-sample",
+      "seed": 9,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 0,
+      "private_candidate_misses": 0,
+      "private_proofs_held": 0,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "4",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "horizon",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "5/2",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "7/2",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "1/1000",
+          "phase": "task_preprocessing",
+          "planned_exact": "1/1000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/100000",
+          "phase": "processor_setup",
+          "planned_exact": "1/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "23933/1000000000",
+          "phase": "input_transfer",
+          "planned_exact": "23933/1000000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": false,
+          "paid_exact": "3998966067/1000000000",
+          "phase": "initialize",
+          "planned_exact": "130737033/125000",
+          "trajectory_index": 0
+        }
+      ]
+    },
+    {
+      "name": "honest-after-private-publication/quantum-q1-seed9",
+      "scenario_id": "honest-after-private-publication",
+      "execution_kind": "constructed-quantum",
+      "observation_kind": "fixed-seed-conditional-competition-sample",
+      "seed": 9,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 0,
+      "private_candidate_misses": 0,
+      "private_proofs_held": 0,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "4",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "horizon",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "5/2",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "7/2",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "1/1000",
+          "phase": "task_preprocessing",
+          "planned_exact": "1/1000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/100000",
+          "phase": "processor_setup",
+          "planned_exact": "1/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "23933/1000000000",
+          "phase": "input_transfer",
+          "planned_exact": "23933/1000000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": false,
+          "paid_exact": "3998966067/1000000000",
+          "phase": "initialize",
+          "planned_exact": "130737033/125000",
+          "trajectory_index": 0
+        }
+      ]
+    },
+    {
+      "name": "honest-after-private-publication/classical-q0-seed9",
+      "scenario_id": "honest-after-private-publication",
+      "execution_kind": "classical-uniform-q0",
+      "observation_kind": "fixed-seed-conditional-competition-sample",
+      "seed": 9,
+      "ever_private_replacement": false,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 2,
+      "private_candidate_misses": 2,
+      "private_proofs_held": 0,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "263/250000",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "stopped",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [
+        7,
+        5
+      ],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "5/2",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "7/2",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "101/100000",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "101/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "0",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "0",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 1
+        }
+      ]
+    },
+    {
+      "name": "honest-after-private-publication/observer-advice-classical-path",
+      "scenario_id": "honest-after-private-publication",
+      "execution_kind": "classical-uniform-q0",
+      "observation_kind": "observer-selected-classical-path-control-not-random-sample",
+      "seed": null,
+      "ever_private_replacement": true,
+      "private_active_at_horizon": false,
+      "authenticated_reopen_equal": true,
+      "completed_candidate_checks_replayed": 2,
+      "private_candidate_misses": 0,
+      "private_proofs_held": 2,
+      "private_proofs_not_published": 0,
+      "modeled_private_elapsed_exact": "1101031/500000",
+      "declared_receiver_horizon_exact": "4",
+      "private_terminal_result": "published",
+      "final_selected_chainwork": 51,
+      "observed_private_nonces": [
+        6,
+        1
+      ],
+      "honest_attempts": 9,
+      "honest_misses": 7,
+      "honest_blocks": 2,
+      "events": [
+        {
+          "owner": "private",
+          "height": 16,
+          "declared_arrival_seconds_exact": "1101031/500000",
+          "block_chainwork": 37,
+          "selected_chainwork": 37,
+          "selection_changed": false,
+          "private_replacement": false
+        },
+        {
+          "owner": "private",
+          "height": 17,
+          "declared_arrival_seconds_exact": "1101031/500000",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": true,
+          "private_replacement": true
+        },
+        {
+          "owner": "honest",
+          "height": 17,
+          "declared_arrival_seconds_exact": "5/2",
+          "block_chainwork": 44,
+          "selected_chainwork": 44,
+          "selection_changed": false,
+          "private_replacement": false
+        },
+        {
+          "owner": "honest",
+          "height": 18,
+          "declared_arrival_seconds_exact": "7/2",
+          "block_chainwork": 51,
+          "selected_chainwork": 51,
+          "selection_changed": true,
+          "private_replacement": false
+        }
+      ],
+      "paid_phases": [
+        {
+          "complete": true,
+          "paid_exact": "101/100000",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "101/100000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "1",
+          "phase": "proof",
+          "planned_exact": "1",
+          "trajectory_index": 0
+        },
+        {
+          "complete": true,
+          "paid_exact": "101/100000",
+          "phase": "classical_task_and_template_setup",
+          "planned_exact": "101/100000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/1000000",
+          "phase": "classical_nonce_generation",
+          "planned_exact": "1/1000000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/50000",
+          "phase": "candidate_check",
+          "planned_exact": "1/50000",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1",
+          "phase": "proof",
+          "planned_exact": "1",
+          "trajectory_index": 1
+        },
+        {
+          "complete": true,
+          "paid_exact": "1/5",
+          "phase": "serial_bundle_propagation",
+          "planned_exact": "1/5",
+          "trajectory_index": 2
+        },
+        {
+          "complete": true,
+          "paid_exact": "0",
+          "phase": "future_admission_wait",
+          "planned_exact": "0",
+          "trajectory_index": 2
+        }
+      ]
+    }
+  ],
+  "certificates": [
+    {
+      "key": "honest-after-private-publication/classical-uniform-q0/ever-private-replacement",
+      "status": "COMPLETE",
+      "state_count": 34,
+      "risk_upper_exact": "1/64",
+      "fixed_policy_risks_exact": {
+        "0": "1/64"
+      }
+    },
+    {
+      "key": "honest-after-private-publication/classical-uniform-q0/private-active-at-horizon",
+      "status": "COMPLETE",
+      "state_count": 34,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0"
+      }
+    },
+    {
+      "key": "honest-after-private-publication/constructed-quantum/ever-private-replacement",
+      "status": "COMPLETE",
+      "state_count": 3,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0",
+        "1": "0"
+      }
+    },
+    {
+      "key": "honest-after-private-publication/constructed-quantum/private-active-at-horizon",
+      "status": "COMPLETE",
+      "state_count": 3,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0",
+        "1": "0"
+      }
+    },
+    {
+      "key": "honest-before-private-publication/classical-uniform-q0/ever-private-replacement",
+      "status": "COMPLETE",
+      "state_count": 29,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0"
+      }
+    },
+    {
+      "key": "honest-before-private-publication/classical-uniform-q0/private-active-at-horizon",
+      "status": "COMPLETE",
+      "state_count": 29,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0"
+      }
+    },
+    {
+      "key": "honest-before-private-publication/constructed-quantum/ever-private-replacement",
+      "status": "COMPLETE",
+      "state_count": 3,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0",
+        "1": "0"
+      }
+    },
+    {
+      "key": "honest-before-private-publication/constructed-quantum/private-active-at-horizon",
+      "status": "COMPLETE",
+      "state_count": 3,
+      "risk_upper_exact": "0",
+      "fixed_policy_risks_exact": {
+        "0": "0",
+        "1": "0"
+      }
+    }
+  ],
+  "totals": {
+    "runs": 8,
+    "seeded_runs": 6,
+    "ever_private_replacements": 1,
+    "private_active_at_horizon": 0,
+    "authenticated_reopens": 8,
+    "completed_private_candidate_checks": 8,
+    "private_misses": 4,
+    "fresh_honest_blocks": 16,
+    "fresh_honest_attempts": 72,
+    "fresh_honest_misses": 56
+  }
+}

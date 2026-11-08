@@ -1,0 +1,14 @@
+{
+  "artifact_inventory_sha256": "9c2bac335f5d3f9e11db6d39ad24cba1fe9b36ccf2cb21d69de6a5dd33906272",
+  "completed_utc": "2026-11-08T00:23:16.985566+00:00",
+  "elapsed_wall_seconds_through_report_and_artifact_inventory": 1868.0710495599778,
+  "exclusive_calibration": false,
+  "physical_hardware_calibrated": false,
+  "production_activation": false,
+  "quantum_hardware_executed": false,
+  "quantum_mining_qualified": false,
+  "result_sha256": "8a4cedc51cbd4e9900a015060efefe9fe6a43d36d11a5227e9271fb90b24e3f4",
+  "scope_excludes_only_this_final_completion_record_and_interpreter_exit": true,
+  "status": "PASS",
+  "whole_chain_qualified": false
+}

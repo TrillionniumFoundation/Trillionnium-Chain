@@ -1,0 +1,329 @@
+{
+  "allocation_status": "ACTIVE_RELEASE_BLOCKED",
+  "allocation_window": {
+    "actual_release_time_utc": null,
+    "begin_utc": "2026-11-07T23:20:30.195367+00:00",
+    "complete_lifetime": false,
+    "last_confirmed_cutoff_utc": "2026-11-08T00:55:36.835049+00:00",
+    "observed_management_window_seconds": "5706.639682",
+    "observed_task_execution_seconds_sum": "500.8287182",
+    "release_error_code": "RELEASE_BLOCKED_BY_FOREIGN_OR_BUSY_KERNEL",
+    "release_receipt_sha256": "d5c495656ed7c9455697539d390d931b4ce5f7ea3142f4be09e68604d3ef268c",
+    "window_outside_recorded_execution_seconds": "5205.8109638"
+  },
+  "calibration": {
+    "active_event_classes": 9,
+    "admitted_physical_sample_artifacts": 0,
+    "alternative_route": "Verified error-correction/decoder transformations could derive logical bounds from measured physical rates under stated correlation and layout assumptions; the needed proofs, physical calibration and compiled layout are absent.",
+    "combined_risk_upper": {
+      "denominator": 1,
+      "numerator": 1
+    },
+    "components": [
+      {
+        "component": "initialization",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 44768640,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "initialized-patch"
+      },
+      {
+        "component": "readout",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 6,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "measured-bit"
+      },
+      {
+        "component": "transfer",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 22935,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "transferred-byte"
+      },
+      {
+        "component": "controller",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 1222578735854,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "controller-command"
+      },
+      {
+        "component": "accepted_magic_state_service",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 74196418856,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "accepted-magic-state-service"
+      },
+      {
+        "component": "factory_attempts_exhausted",
+        "declared_per_event_fault_bound": {
+          "denominator": 39402006196394479212279040100143613805079739270465446667948293404245721771497210611414266254884915640806627990306816,
+          "numerator": 394020061963944792122790401001436138050797392704654466679482934042457217714972106115
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 74196418856,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 1100000000000000000000000000000000,
+        "unit": "complete-finite-factory-service"
+      },
+      {
+        "component": "host_calls",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 7,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "complete-host-call-including-proofs"
+      },
+      {
+        "component": "propagation",
+        "declared_per_event_fault_bound": {
+          "denominator": 1000000000000000000000000000000,
+          "numerator": 1
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 1,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 11000000000000000000000000000000,
+        "unit": "complete-propagation"
+      },
+      {
+        "component": "live_data_patch_cycles",
+        "declared_per_event_fault_bound": {
+          "denominator": 78804012392788958424558080200287227610159478540930893335896586808491443542994421222828532509769831281613255980613632,
+          "numerator": 7880401239278895842455808020028722761015947854093089333589658680849144354299442122282853251
+        },
+        "hypothetical_confidence_failure_allocation": {
+          "denominator": 1800,
+          "numerator": 1
+        },
+        "physical_evidence_status": "MISSING_PHYSICAL_EVENT_SAMPLES",
+        "reserved_events_in_declared_allocation": 13807252965989157843840,
+        "sufficient_zero_fault_trials_for_this_conservative_iid_bound": 110000000000000000000000000,
+        "unit": "live-data-patch-code-cycle"
+      }
+    ],
+    "iid_to_adaptive_execution_transfer_proved": false,
+    "missing_components": [
+      "initialization",
+      "readout",
+      "transfer",
+      "controller",
+      "accepted_magic_state_service",
+      "factory_attempts_exhausted",
+      "host_calls",
+      "propagation",
+      "live_data_patch_cycles"
+    ],
+    "numerical_budget_comparison_passes": false,
+    "original_declared_machine_failure_budget": {
+      "denominator": 100,
+      "numerator": 1
+    },
+    "raw_report_file_sha256": "f88d15b7421f7475f1275d2571292da7b26ee4ec4d21313f60d74ec550a2d50d",
+    "record_sha256": "8f76b334fc6d83ed357a71ba0c114a584952b73973320f021795c83e02b61b61",
+    "remaining_external_coverage": [
+      "compiled_physical_layout_and_allocation",
+      "history_conditional_physical_noise_bounds",
+      "initialization_service_and_overrun_bound",
+      "terminal_readout_service_and_overrun_bound",
+      "input_and_output_transfer_service",
+      "controller_decoder_and_feedforward_service",
+      "factory_retries_storage_delivery_and_injection",
+      "host_preprocessing_setup_and_candidate_checks",
+      "proof_generation_service",
+      "propagation_service",
+      "full_machine_fault_coupling",
+      "complete_machine_energy_metering",
+      "capital_and_operating_cost_allocation"
+    ],
+    "risk_upper_interpretation": "The value 1 is an uninformative worst-case upper bound from missing physical evidence, not an observed failure probability.",
+    "sampling_scope": "With a fixed, predeclared iid zero-fault experiment and alpha=1/1800, m=ceil(log2(1800))=11. The chosen conservative sufficient n=m/r gives 1.1e31 for r=1e-30, 1.1e33 for r=1e-32, and 1.1e26 for r=1e-25. These are hypothetical sufficient counts for this bound, not actual samples or lower bounds on all calibration methods.",
+    "status": "VERIFIED_HOLD"
+  },
+  "claims": {
+    "arbitrary_quantum_algorithm_lower_bound_proved": false,
+    "complete_machine_cost_closed": false,
+    "general_settlement_security_proved": false,
+    "physical_hardware_calibrated": false,
+    "physical_quantum_execution": false,
+    "production_activation": false,
+    "quantum_mining_qualified": false,
+    "runtime_release_confirmed": false,
+    "same_total_physical_resource_budget_proved": false
+  },
+  "cost_caveat": "CPU timings and the partial management window are observations, not calibrated billable full-machine cost. Initialization, idle, control/decoder services, energy, capital and operating costs are not closed. The runtime remains assigned at the final cutoff; no later lifetime is claimed.",
+  "frozen_implementation_commit": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "hardware_observation": {
+    "GPU_executed": false,
+    "Rust_toolchain_present": false,
+    "affinity_cpus": 2,
+    "cpu_model": "AMD EPYC 7B12",
+    "evidence_path": "colab-hardware-observation-v1.json",
+    "evidence_sha256": "22189c6f688f748b3da9d6cb123ab3369cd9da1d097ec218dffd9cd6319cb9c3",
+    "logical_cpus": 2,
+    "powercap_energy_counters_available": false,
+    "python": "3.13.18"
+  },
+  "native_calibration_input_sha256": "a706b3d9318b923a8184c8010bd9aa68a73cb8764c87ebea81eb61542afd9539",
+  "native_fixture_sha256": "e7b3c108c3a0985f67806d986620d090ea467e15446071fbf6d9bc2e6b7c3fcd",
+  "native_portfolio_input_sha256": "403e708cc68c418d4dd161e0a833bb81c9f094348c6a4d6b7c44402116fd7899",
+  "native_provenance": {
+    "binary_sha256": "32b7931f7dfc93fe785a0228f7245919807ea648a07b2f655597c5697ed2b4ba",
+    "git_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+    "source_inventory_sha256": "5d775ce00568c18ac1024590c8b02f399db0ef6c0a967ad0d750c63c4135f1d1"
+  },
+  "portfolio": {
+    "attempts_per_run": 28,
+    "derived_relation_only_attempt_slots": 384,
+    "independent_reexecution_passed": true,
+    "limitations": [
+      "Derived task eligibility is not established by relation-only checks.",
+      "Fixed-order single observations are not an unbiased speedup estimate.",
+      "Cache payload budgets are not total process memory.",
+      "No all-legal-algorithm minimum or quantum/classical equal total-resource budget is proved.",
+      "Observed timing values are not independently attested by replay."
+    ],
+    "lowest_single_observed_full_run_CPU_by_capacity": [
+      {
+        "capacity_payload_bytes": 0,
+        "scope": "lowest single observed full-run CPU among these four legal implementations; includes checker/startup/serialization; not an unbiased estimate or all-algorithm lower bound",
+        "strategy": "trace-correction-ab",
+        "whole_child_cpu_ns": 8910238000
+      },
+      {
+        "capacity_payload_bytes": 4096,
+        "scope": "lowest single observed full-run CPU among these four legal implementations; includes checker/startup/serialization; not an unbiased estimate or all-algorithm lower bound",
+        "strategy": "trace-correction-ab",
+        "whole_child_cpu_ns": 8790328000
+      },
+      {
+        "capacity_payload_bytes": 65536,
+        "scope": "lowest single observed full-run CPU among these four legal implementations; includes checker/startup/serialization; not an unbiased estimate or all-algorithm lower bound",
+        "strategy": "trace-correction-ab",
+        "whole_child_cpu_ns": 8318015000
+      },
+      {
+        "capacity_payload_bytes": 262144,
+        "scope": "lowest single observed full-run CPU among these four legal implementations; includes checker/startup/serialization; not an unbiased estimate or all-algorithm lower bound",
+        "strategy": "rank-aware-ab",
+        "whole_child_cpu_ns": 8109524000
+      }
+    ],
+    "observation_summary_sha256": "d8b57583b5ed3bf84fecdfb63c77d2881ce75dd1bfc7f198678fb80641cad6cc",
+    "original_native_attempt_slots": 512,
+    "planned_slots": 896,
+    "proof_scope": "Complete proof bytes are materialized and consumed by the full relation checker during execution and replay; records retain proof SHA256/length/trace/ticket, not a raw proof binary for every portfolio slot. Original native packets are separately retained by the producer.",
+    "replay_summary_sha256": "59f060745e1398375ba6a0584aeef916f81a5271308c50565651d5b35bf84c86",
+    "runs": 32,
+    "status": "PASS",
+    "totals": {
+      "noise_exhaustions": 0,
+      "not_started_attempts": 292,
+      "partial_attempts": 10,
+      "target_hits": 48,
+      "target_misses": 546,
+      "timely_verified_attempts": 588,
+      "verified_after_deadline": 6,
+      "verified_attempts": 594,
+      "whole_child_cpu_ns": 193081908000,
+      "whole_child_wall_ns": 254106675344
+    }
+  },
+  "reduced_model": {
+    "certificates": 2,
+    "comparison_reexecuted_model": false,
+    "comparison_sha256": "c779491d9ccb7b27c5dd18c9f4da16c67b1d516b09fbc3204bb8dc282642d077",
+    "existing_ROG_Colab_payload_files_identical": 26,
+    "general_settlement_theorem": false,
+    "native_W1_probabilities_calibrated": false,
+    "samples": 10
+  },
+  "schema": "trnm-pon-machine-colab-final-summary-v1",
+  "scientific_validation": "PASS",
+  "source_manifest_sha256": "f4fab3e3d77d59c0a50a7fce6aafb684be8dca938492d6913c3d46f5214a02c4",
+  "status": "HOLD",
+  "task_CPU_observations": {
+    "observation": {
+      "child_cpu_seconds_from_rusage_rounded_to_microseconds": "200.683792",
+      "measurement_scope": "task process CPU since launch sampled before receipt serialization/manifest/tar packing; child CPU separately recorded; provider/idle cost unmeasured",
+      "status": "SUCCEEDED",
+      "task_process_cpu_ns_before_final_collection": 359287092,
+      "task_wall_ns_before_final_collection": 261976978466
+    },
+    "source": {
+      "child_cpu_seconds_from_rusage_rounded_to_microseconds": "48.213752",
+      "measurement_scope": "task process CPU since process launch, sampled before final receipt serialization and tar packing; includes imports; child CPU recorded separately; adapter/provider initialization and idle reservation remain external",
+      "status": "SUCCEEDED",
+      "task_process_cpu_ns_before_final_collection": 127402562,
+      "task_wall_ns_before_final_collection": 48676112447
+    },
+    "verification": {
+      "child_cpu_seconds_from_rusage_rounded_to_microseconds": "187.062771",
+      "measurement_scope": "task process CPU since launch sampled before receipt serialization/manifest/tar packing; child CPU separately recorded; provider/idle cost unmeasured",
+      "status": "SUCCEEDED",
+      "task_process_cpu_ns_before_final_collection": 303448228,
+      "task_wall_ns_before_final_collection": 188014438047
+    }
+  },
+  "tests": {
+    "Colab_executed": 85,
+    "all_passed": true,
+    "campaign_and_native_reader_unit_controls": 32,
+    "core": 53,
+    "native_reader_unit_fixtures_are_not_native_Node_executions": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "status": "EXACT_OBJECTS_PUBLISHED",
+  "head": "b45545e241c16ebc9ea0b22d8169d78123d8d166",
+  "tree": "075685457cba333ac8f01fccf31149c0716990d8",
+  "branch": "fix/chain-quantum-closure-api-20261107-c9b4",
+  "account": "ProfHepta",
+  "force": false,
+  "production_activation": false,
+  "quantum_mining_qualified": false
+}

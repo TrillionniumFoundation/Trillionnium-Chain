@@ -160,6 +160,74 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
 )
+BOUNDED_W1_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_bounded_search.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_constructed_search.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_bounded_search_campaign.py' -v",
+)
+FOUR_GATE_W1_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_search_probability.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_machine_envelope.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_finite_consensus.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_native_bridge.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_machine_frontier.py' -v",
+    "python3 scripts/ci/test_pon_w1_observed_economics_v1.py",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_competing_consensus.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_machine_architecture.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_preprocessing_cache.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_native_competition.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_service_architecture_frontier.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_preprocessing_cache_campaign.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_machine_calibration.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_preprocessing_portfolio.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_responsive_consensus.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_machine_calibration_campaign.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_preprocessing_portfolio_campaign.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_native_responsive.py' -v",
+)
+NATIVE_QUANTUM_BRIDGE = '''      export TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR="$trnm_model_receipt_root/w1-quantum-native-bridge"
+      test ! -e "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -L "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-native-export.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-native-export.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::export_source_bound_native_dag_fixture -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-native-export.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-native-export.log" --test quantum_native_bridge_tests::export_source_bound_native_dag_fixture
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_bridge.py --observe "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-native-replay.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-native-replay.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::replay_source_bound_native_search_samples -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-native-replay.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-native-replay.log" --test quantum_native_bridge_tests::replay_source_bound_native_search_samples
+      test ! -e "$trnm_model_receipt_root/w1-quantum-competition-export.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-competition-export.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-competition-export.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-competition-export.log" --test quantum_native_bridge_tests::competition::export_source_bound_native_competition_fixture
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_competition.py --observe "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-competition-replay.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-competition-replay.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-competition-replay.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-competition-replay.log" --test quantum_native_bridge_tests::competition::replay_source_bound_native_competition_samples
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_competition.py --verify "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      python3 formal/pon-nakamoto-v1/experiments/w1_service_architecture_frontier.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --output "$trnm_model_receipt_root/w1-service-architecture-frontier.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_cache_campaign.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --observe "$trnm_model_receipt_root/w1-preprocessing-cache-campaign.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_cache_campaign.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --verify "$trnm_model_receipt_root/w1-preprocessing-cache-campaign.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_responsive.py --plan "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-responsive-execute.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-responsive-execute.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::responsive::execute_source_bound_native_responsive_miners -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-responsive-execute.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-responsive-execute.log" --test quantum_native_bridge_tests::responsive::execute_source_bound_native_responsive_miners
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_responsive.py --verify "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-responsive-replay.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-responsive-replay.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::responsive::replay_source_bound_native_responsive_miners -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-responsive-replay.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-responsive-replay.log" --test quantum_native_bridge_tests::responsive::replay_source_bound_native_responsive_miners
+      python3 formal/pon-nakamoto-v1/experiments/w1_machine_calibration_campaign.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --export-input "$trnm_model_receipt_root/w1-calibration-portable-input.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_machine_calibration_campaign.py --input-plan "$trnm_model_receipt_root/w1-calibration-portable-input.json" --input-plan-sha256 "$(sha256sum "$trnm_model_receipt_root/w1-calibration-portable-input.json" | cut -d ' ' -f 1)" --output "$trnm_model_receipt_root/w1-calibration-gap.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_machine_calibration_campaign.py --input-plan "$trnm_model_receipt_root/w1-calibration-portable-input.json" --input-plan-sha256 "$(sha256sum "$trnm_model_receipt_root/w1-calibration-portable-input.json" | cut -d ' ' -f 1)" --verify-report "$trnm_model_receipt_root/w1-calibration-gap.json" --report-sha256 "$(sha256sum "$trnm_model_receipt_root/w1-calibration-gap.json" | cut -d ' ' -f 1)"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_portfolio_campaign.py --native-directory "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR" --export-plan "$trnm_model_receipt_root/w1-portfolio-portable-input.json"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_portfolio_campaign.py --input-plan "$trnm_model_receipt_root/w1-portfolio-portable-input.json" --input-plan-sha256 "$(sha256sum "$trnm_model_receipt_root/w1-portfolio-portable-input.json" | cut -d ' ' -f 1)" --observe-matrix "$trnm_model_receipt_root/w1-portfolio-matrix"
+      python3 formal/pon-nakamoto-v1/experiments/w1_preprocessing_portfolio_campaign.py --input-plan "$trnm_model_receipt_root/w1-portfolio-portable-input.json" --input-plan-sha256 "$(sha256sum "$trnm_model_receipt_root/w1-portfolio-portable-input.json" | cut -d ' ' -f 1)" --verify-matrix "$trnm_model_receipt_root/w1-portfolio-matrix"
+      unset TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR
+'''
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'
     '    python3 scripts/test_llm_runtime_exit_observation.py\n'
@@ -243,7 +311,7 @@ MODEL_OBSERVATION_BLOCK = '''    (
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
-      unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
+''' + NATIVE_QUANTUM_BRIDGE + '''      unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
       python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
       unset TRNM_DAA_EVIDENCE_DIR
@@ -382,6 +450,19 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    for command in BOUNDED_W1_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'bounded W1 cost and campaign controls must execute exactly once in repository-truth')
+    for command in FOUR_GATE_W1_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'four-gate W1 controls must execute exactly once in repository-truth')
+    require(NATIVE_QUANTUM_BRIDGE in lanes['rust-baseline']
+            and script.count(NATIVE_QUANTUM_BRIDGE) == 1
+            and all(code_lines(script).count(command) == 1
+                    for command in code_lines(NATIVE_QUANTUM_BRIDGE)),
+            'native quantum bridge must explicitly execute all four ignored controls and check their exact names')
     runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1

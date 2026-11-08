@@ -5,6 +5,84 @@ use super::proof_wire::{self, Publication};
 use trnm_release_bundle::pq_release::{PqReleaseAuthorityV1, PqReleaseRoleV1};
 
 #[test]
+fn canonical_root_role_keys_round_trip_through_both_tagged_envelopes() {
+    let (root, _) = fixture::root(1, 1, 30, [0; 32]);
+    let root_raw = super::codec::encode(&root, super::records::MAX_RECORD_BYTES).unwrap();
+    let decoded: proof_wire::Root =
+        super::codec::decode(&root_raw, super::records::MAX_RECORD_BYTES).unwrap();
+    assert_eq!(
+        decoded.kernel().unwrap().digest().unwrap(),
+        root.kernel().unwrap().digest().unwrap()
+    );
+    let publication = Publication::RootRotation {
+        root,
+        // This tests the wire codec; the cold replay test below supplies the
+        // actual two PQ quorums. Decoding alone conveys no publication right.
+        old_signatures: vec![],
+        new_signatures: vec![],
+    };
+    let publication_raw =
+        super::codec::encode(&publication, super::records::MAX_RECORD_BYTES).unwrap();
+    let decoded: Publication =
+        super::codec::decode(&publication_raw, super::records::MAX_RECORD_BYTES).unwrap();
+    let record = super::records::Record::Publication(proof_wire::ObservedPublication {
+        schema_version: 1,
+        publication: decoded,
+        observed_at: 10,
+        resulting_checkpoint: [9; 32],
+    });
+    let raw = record.encode().unwrap();
+    let decoded: super::records::Record =
+        super::codec::decode(&raw, super::records::MAX_RECORD_BYTES).unwrap();
+    assert_eq!(decoded.encode().unwrap(), raw);
+    assert_eq!(decoded.digest().unwrap(), record.digest().unwrap());
+    let super::records::Record::Publication(decoded) = decoded else {
+        panic!("wrong record kind");
+    };
+    assert_eq!(
+        super::codec::encode(&decoded.publication, super::records::MAX_RECORD_BYTES).unwrap(),
+        publication_raw
+    );
+    let Publication::RootRotation { root, .. } = decoded.publication else {
+        panic!("wrong publication kind");
+    };
+    assert_eq!(
+        super::codec::encode(&root, super::records::MAX_RECORD_BYTES).unwrap(),
+        root_raw
+    );
+}
+
+#[test]
+fn tagged_root_role_keys_reject_duplicates_aliases_and_unknown_roles() {
+    let (root, _) = fixture::root(1, 1, 30, [0; 32]);
+    let first = serde_json::to_string(root.roles.get(&1).unwrap()).unwrap();
+    let record = super::records::Record::Publication(proof_wire::ObservedPublication {
+        schema_version: 1,
+        publication: Publication::RootRotation {
+            root,
+            old_signatures: vec![],
+            new_signatures: vec![],
+        },
+        observed_at: 10,
+        resulting_checkpoint: [9; 32],
+    });
+    let raw = String::from_utf8(record.encode().unwrap()).unwrap();
+    let marker = "\"roles\":{\"1\":";
+    assert_eq!(raw.matches(marker).count(), 1);
+    for name in ["01", "+1", "-1", "0", "5", "256", "1.0", " 1", "1 ", ""] {
+        let changed = raw.replacen(marker, &format!("\"roles\":{{\"{name}\":"), 1);
+        assert!(serde_json::from_str::<super::records::Record>(&changed).is_err());
+    }
+    let duplicate = raw.replacen(marker, &format!("\"roles\":{{\"1\":{first},\"1\":"), 1);
+    assert!(serde_json::from_str::<super::records::Record>(&duplicate).is_err());
+    assert!(super::codec::decode::<super::records::Record>(
+        duplicate.as_bytes(),
+        super::records::MAX_RECORD_BYTES
+    )
+    .is_err());
+}
+
+#[test]
 fn all_three_service_keys_are_excluded_from_offline_root_and_every_online_role() {
     let (root, _) = fixture::root(1, 1, 30, [0; 32]);
     let services = [fixture::key(80), fixture::key(81), fixture::key(82)];

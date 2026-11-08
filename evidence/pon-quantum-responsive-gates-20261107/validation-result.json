@@ -1,0 +1,633 @@
+{
+  "abort": null,
+  "all_toolchain_and_loaded_library_dependencies_inventoried": false,
+  "commands": 62,
+  "driver_elapsed_wall_seconds_through_summary": 1868.0154327949858,
+  "exclusive_calibration": false,
+  "expected_head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+  "external_cargo_configurations": [
+    {
+      "exists": false,
+      "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/cargo-home/config"
+    },
+    {
+      "exists": false,
+      "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/cargo-home/config.toml"
+    },
+    {
+      "exists": false,
+      "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/fuzz-cache-a56889a-20261107/config"
+    },
+    {
+      "exists": false,
+      "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/fuzz-cache-a56889a-20261107/config.toml"
+    }
+  ],
+  "failed_required_commands": [],
+  "incomplete_optional_commands": [],
+  "physical_hardware_calibrated": false,
+  "production_activation": false,
+  "quantum_hardware_executed": false,
+  "quantum_mining_qualified": false,
+  "schema": "trnm-responsive-gates-validation-result-v1",
+  "skipped": [],
+  "source_after": {
+    "head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+    "inventory_sha256": "32df826245ec145f0b70f5421f70451a3e71c3b0bfb06ef9aa981bb9dd483f0b",
+    "tracked_files": 11073,
+    "tree": "21afda717e4f6aaf6a119bbcdeee6f3c397d0d7e"
+  },
+  "source_before": {
+    "head": "bab83768b7c794b0127dc63d633f3e37a1be025a",
+    "inventory_sha256": "32df826245ec145f0b70f5421f70451a3e71c3b0bfb06ef9aa981bb9dd483f0b",
+    "tracked_files": 11073,
+    "tree": "21afda717e4f6aaf6a119bbcdeee6f3c397d0d7e"
+  },
+  "status": "PASS",
+  "target_cache": {
+    "cache_contents_are_not_a_reproducible_build_attestation": true,
+    "clean_rebuild_requested": false,
+    "current_test_elf_must_come_from_current_successful_cargo_json": true,
+    "exists_at_driver_start": true,
+    "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/target-normal-loader",
+    "reuse_existing_target_cache": true
+  },
+  "tests": [
+    {
+      "exit_code": 0,
+      "name": "preflight",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "python-version",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "cargo-version",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "rustc-version",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "rustfmt-version",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "clippy-version",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "openssl-version",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "host-uname",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "quantum-python",
+      "pass": true,
+      "python_ran_tests": [
+        153
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "w1-python",
+      "pass": true,
+      "python_ran_tests": [
+        248
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "reversible-python",
+      "pass": true,
+      "python_ran_tests": [
+        17
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "fast-daa-python",
+      "pass": true,
+      "python_ran_tests": [
+        11
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "parallel-ohie-python",
+      "pass": true,
+      "python_ran_tests": [
+        36
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "experiment-w1-python",
+      "pass": true,
+      "python_ran_tests": [
+        109
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "economics-unit",
+      "pass": true,
+      "python_ran_tests": [
+        18
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "source-integrity-unit",
+      "pass": true,
+      "python_ran_tests": [
+        43
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "ci-contract-unit",
+      "pass": true,
+      "python_ran_tests": [
+        108
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "pq-integration-unit",
+      "pass": true,
+      "python_ran_tests": [
+        38
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "rust-shard-unit",
+      "pass": true,
+      "python_ran_tests": [
+        8
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "public-readiness-unit",
+      "pass": true,
+      "python_ran_tests": [
+        72
+      ],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "pq-integration-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "repository-links",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "distributed-source-inventory",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "tracked-diff-whitespace",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "economics-full-ledger",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "fuzz-offline-full-metadata",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "main-offline-full-metadata",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "rustfmt-all-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "strict-workspace-clippy",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "node-lib-test-build-json",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "release-owner-root-six",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1284,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 6
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "release-owner-sealed-seven",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1283,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 7
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "node-test-inventory",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "node-ignored-inventory",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "native-base-export",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "native-base-export-named-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "base-python-observe",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "native-base-replay",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "native-base-replay-named-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "base-python-verify",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "native-competition-export",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "native-competition-export-named-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "competition-python-observe",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "native-competition-replay",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "native-competition-replay-named-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "competition-python-verify",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "responsive-python-plan",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "native-responsive-execute",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "native-responsive-execute-named-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "responsive-python-verify",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "native-responsive-replay",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "native-responsive-replay-named-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "calibration-portable-export",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "portfolio-portable-export",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "original-eighteen-frontier",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "new-fifty-four-service-frontier",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "preprocessing-cache-observe",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "preprocessing-cache-verify",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "whole-node-lib",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        },
+        {
+          "failed": 0,
+          "filtered_out": 1289,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 39,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1251
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "whole-node-exact-outer-check",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    },
+    {
+      "exit_code": 0,
+      "name": "pq-cli-negative",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered_out": 4,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ]
+    },
+    {
+      "exit_code": 0,
+      "name": "reduced-responsive-certificates",
+      "pass": true,
+      "python_ran_tests": [],
+      "rust_summaries": []
+    }
+  ],
+  "timing_is_exclusive_or_calibrated": false,
+  "toolchain_dependencies_calibrated": false,
+  "untracked_and_ignored_repository_files_permitted": false,
+  "whole_chain_qualified": false
+}

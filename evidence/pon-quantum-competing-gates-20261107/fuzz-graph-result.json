@@ -1,0 +1,122 @@
+{
+  "all_resolved_archives_match_lockfile_checksums": true,
+  "commands": [
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "canonical_full_metadata_sha256": "a6b8c1703cc39c6b711df43378809d760fb879e6daaf0a5c0202428342b9011b",
+      "cwd": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo",
+      "elapsed_seconds": 9.505224952998105,
+      "ended_utc": "2026-11-07T14:48:01.237023+00:00",
+      "exit_code": 0,
+      "name": "online-locked-full-metadata",
+      "offline": false,
+      "packages": 149,
+      "registry_packages": 136,
+      "resolve_nodes": 149,
+      "source_after": {
+        "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+        "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+        "tracked_files": 11030,
+        "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+      },
+      "source_before": {
+        "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+        "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+        "tracked_files": 11030,
+        "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+      },
+      "started_utc": "2026-11-07T14:47:41.732982+00:00",
+      "stderr": "online-locked-full-metadata.stderr",
+      "stderr_sha256": "8999d3f2942a8c99c7d54c052a41c5f48634eca9f04e89344345bc51503b5af6",
+      "stdout": "online-locked-full-metadata.json",
+      "stdout_sha256": "23b657df105e61da8535390ff9a5659be1313027148345a56796788bdcfd68de",
+      "timed_out": false,
+      "timeout_seconds": 240
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "canonical_full_metadata_sha256": "a6b8c1703cc39c6b711df43378809d760fb879e6daaf0a5c0202428342b9011b",
+      "cwd": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/repo",
+      "elapsed_seconds": 0.3173338579945266,
+      "ended_utc": "2026-11-07T14:48:11.544624+00:00",
+      "exit_code": 0,
+      "name": "offline-locked-full-metadata",
+      "offline": true,
+      "packages": 149,
+      "registry_packages": 136,
+      "resolve_nodes": 149,
+      "source_after": {
+        "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+        "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+        "tracked_files": 11030,
+        "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+      },
+      "source_before": {
+        "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+        "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+        "tracked_files": 11030,
+        "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+      },
+      "started_utc": "2026-11-07T14:48:01.320110+00:00",
+      "stderr": "offline-locked-full-metadata.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "offline-locked-full-metadata.json",
+      "stdout_sha256": "23b657df105e61da8535390ff9a5659be1313027148345a56796788bdcfd68de",
+      "timed_out": false,
+      "timeout_seconds": 240
+    }
+  ],
+  "completed_utc": "2026-11-07T14:48:16.835536+00:00",
+  "created_utc": "2026-11-07T14:47:26.126537+00:00",
+  "fuzz_binary_executed": false,
+  "graph_canonical_sha256": "a6b8c1703cc39c6b711df43378809d760fb879e6daaf0a5c0202428342b9011b",
+  "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+  "independent_cargo_home": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/fuzz-cache-a56889a-20261107",
+  "native_build_performed": false,
+  "native_main_job_modified": false,
+  "online_offline_full_metadata_equal": true,
+  "original_main_result_rewritten": false,
+  "original_run_failure_preserved": true,
+  "output_directory": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/fuzz-validation-a56889a-20261107",
+  "packages": 149,
+  "physical_hardware_calibrated": false,
+  "prelaunch_diagnostics": [
+    {
+      "detail": "h_process_start requires absolute executable; initial python3 request did not launch",
+      "kind": "tool_argument_rejection"
+    },
+    {
+      "detail": "local scratch file write failed ENOSPC before remote script upload; direct tool byte upload used",
+      "kind": "local_staging_failure"
+    }
+  ],
+  "quantum_hardware_executed": false,
+  "registry_packages": 136,
+  "resolve_nodes": 149,
+  "source_final": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "status": "PASS"
+}

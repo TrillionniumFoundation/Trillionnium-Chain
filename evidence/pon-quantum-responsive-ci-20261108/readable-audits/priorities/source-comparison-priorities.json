@@ -1,0 +1,123 @@
+{
+  "candidate": "a490d3b971997e927de3aece19864497d65d5984",
+  "files": [
+    {
+      "base_sha256": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053",
+      "byte_identical": true,
+      "bytes": 21445,
+      "head_sha256": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053",
+      "path": ".github/workflows/pon-priority-acceptance.yml"
+    },
+    {
+      "base_sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+      "byte_identical": true,
+      "bytes": 102985,
+      "head_sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+      "path": "scripts/ci/run_from_zero_native.py"
+    },
+    {
+      "base_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "byte_identical": true,
+      "bytes": 24743,
+      "head_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "path": "scripts/ci/run_from_zero_host.py"
+    },
+    {
+      "base_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "byte_identical": true,
+      "bytes": 79067,
+      "head_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    }
+  ],
+  "original_release_step_context": [
+    {
+      "lines": [
+        {
+          "number": 113,
+          "text": "          \"$RUNNER_TEMP/model-context-env/bin/python\" formal/pon-nakamoto-v1/test_model_generation_sequence_context.py -v 2>&1 | tee \"$TRNM_CI_RECEIPT_DIR/model-generation-context.log\""
+        },
+        {
+          "number": 114,
+          "text": "          grep -E '^Ran 8 tests in ' \"$TRNM_CI_RECEIPT_DIR/model-generation-context.log\""
+        },
+        {
+          "number": 115,
+          "text": "      - name: Execute original release from-zero controls"
+        },
+        {
+          "number": 116,
+          "text": "        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}"
+        },
+        {
+          "number": 117,
+          "text": "        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "number": 118,
+          "text": "      - name: Execute actual CLI observation boundaries and retain every child result"
+        },
+        {
+          "number": 119,
+          "text": "        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}"
+        },
+        {
+          "number": 120,
+          "text": "        shell: bash"
+        },
+        {
+          "number": 121,
+          "text": "        run: |"
+        },
+        {
+          "number": 122,
+          "text": "          set -euo pipefail"
+        },
+        {
+          "number": 123,
+          "text": "          export PUBLIC_REQUEST_OBSERVATION_CLI_EVIDENCE_DIR=\"$TRNM_CI_RECEIPT_DIR/observation-cli\""
+        },
+        {
+          "number": 124,
+          "text": "          mkdir -p \"$PUBLIC_REQUEST_OBSERVATION_CLI_EVIDENCE_DIR\""
+        },
+        {
+          "number": 125,
+          "text": "          for selector in \\"
+        },
+        {
+          "number": 126,
+          "text": "            actual_opt_in_capture_and_default_output_keep_the_same_public_context \\"
+        },
+        {
+          "number": 127,
+          "text": "            retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion \\"
+        },
+        {
+          "number": 128,
+          "text": "            option_and_create_new_nofollow_refusals_precede_node_open \\"
+        },
+        {
+          "number": 129,
+          "text": "            configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum \\"
+        },
+        {
+          "number": 130,
+          "text": "            post_join_output_failure_preserves_service_facts_and_native_store \\"
+        },
+        {
+          "number": 131,
+          "text": "            joined_miner_failure_still_exports_facts_before_error_propagation; do"
+        },
+        {
+          "number": 132,
+          "text": "            log=\"$TRNM_CI_RECEIPT_DIR/observation-$selector.log\""
+        }
+      ],
+      "path": ".github/workflows/pon-priority-acceptance.yml"
+    }
+  ],
+  "predecessor": "bef17d632d1e40014167dba2a1089b85366b67b8",
+  "schema": "trnm-native-priorities-source-comparison-v1",
+  "source_edited_or_executed": false
+}
