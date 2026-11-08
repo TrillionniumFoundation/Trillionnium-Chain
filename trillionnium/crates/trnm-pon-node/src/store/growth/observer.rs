@@ -9,7 +9,7 @@ use std::io::{Read, Write};
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::path::{Component, Path, PathBuf};
 
-pub(super) const DEFAULT_SNAPSHOT_BYTE_LIMIT: u64 = 8 * 1024 * 1024 * 1024;
+pub(in crate::store) const DEFAULT_SNAPSHOT_BYTE_LIMIT: u64 = 8 * 1024 * 1024 * 1024;
 
 const DIRECTORY_FLAGS: OFlags = OFlags::RDONLY
     .union(OFlags::DIRECTORY)
