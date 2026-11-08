@@ -1,0 +1,288 @@
+name: PoN next architecture exact-source observations
+
+on:
+  pull_request:
+    paths:
+      - formal/next-architecture-security/**
+      - config/**
+      - docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+      - docs/development/specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md
+      - docs/development/specs/pon/NEXT_CONSENSUS_PQ_RESEARCH_V1.md
+      - docs/development/specs/pon/NEXT_HEPTA_OWNER_BINDINGS_V1.md
+      - docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md
+      - docs/development/specs/pon/CELL_BEP52_BINDING_V1.md
+      - docs/development/specs/pon/CELL_RS46_CHUNK_V1.md
+      - trillionnium/crates/trnm-data-availability/**
+      - trillionnium/crates/trnm-pon-node/**
+      - trillionnium/crates/trnm-crypto-primitives/**
+      - trillionnium/crates/trnm-protocol/**
+      - trillionnium/crates/trnm-research-protocol/**
+      - trillionnium/Cargo.toml
+      - trillionnium/Cargo.lock
+      - .cargo/**
+      - rust-toolchain.toml
+      - scripts/project-preflight.sh
+      - scripts/ci/**
+      - .github/workflows/pon-next-architecture-security.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pon-next-architecture-${{ github.event.pull_request.number }}
+  # Preserve earlier failed and partial source observations when a successor arrives.
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  next-architecture:
+    name: next architecture (${{ matrix.runner }}, ${{ matrix.source }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - name: Reserve isolated logs without changing source
+        id: reserve
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/next-architecture-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-next-architecture\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-next-architecture\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          cat > "$out/SCOPE.txt" <<'SCOPE'
+          Exact-source component observations under the default Cargo features.
+          Head and prospective merge, x86_64 and ARM64, remain separate records.
+          Synthetic Cell bytes are not models. Local recovery and packet reads
+          do not qualify WAN throughput, DHT, independent custody, Hepta FinalUse,
+          useful-work hardness, QROM/PQ128, sustainable rewards or production.
+          Original required gates remain unchanged. Qualification: HOLD_NO_GO.
+          SCOPE
+          cat > "$out/run-command.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          label="$1"
+          shift
+          status=0
+          "$@" 2>&1 | tee "$OUT/$label.log" || status=$?
+          printf '%s\n' "$status" > "$OUT/$label.exit"
+          exit "$status"
+          SH
+      - name: Checkout the immutable event source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source and ordered prospective merge
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          bash "$OUT/run-command.sh" source-before python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-before.json"
+      - name: Retain original project preflight
+        id: preflight
+        shell: bash
+        run: bash "$OUT/run-command.sh" preflight bash scripts/project-preflight.sh --audit
+      - name: Install pinned compiler and lint tools
+        id: toolchain
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$OUT/run-command.sh" toolchain rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustc +1.95.0 -Vv > "$OUT/rustc.txt"
+          cargo +1.95.0 -V > "$OUT/cargo.txt"
+          uname -m > "$OUT/architecture.txt"
+      - name: Preserve repository truth and source-integrity negative controls
+        id: repository
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" repository python3 -B scripts/ci/check_repository.py || status=1
+          bash "$OUT/run-command.sh" source-negative-controls python3 -B scripts/ci/test_ci_source_integrity.py || status=1
+          exit "$status"
+      - name: Run all next-architecture Python controls and retained exact fixture
+        id: python
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" next-python python3 -B -m unittest discover -s formal/next-architecture-security -p 'test_*.py' -v || status=1
+          bash "$OUT/run-command.sh" counterexample-fixture python3 -B formal/next-architecture-security/counterexamples.py --check-fixture || status=1
+          exit "$status"
+      - name: Verify locked graph and unchanged all-source formatting
+        id: graph_format
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json" 2> "$OUT/cargo-graph.log" || status=1
+          bash "$OUT/run-command.sh" all-source-format cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check || status=1
+          exit "$status"
+      - name: Run the complete default-feature P2P crate
+        id: p2p
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$OUT/run-command.sh" p2p-complete cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability -- --test-threads=1
+      - name: Run the new packet observer and retained native packet-status controls
+        id: native_packet
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" native-packet-observer cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_packet_observer -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" native-node-packet-status cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node packet_status -- --test-threads=1 || status=1
+          for selector in test_every_reorg_process_cut_and_admission_gap_recovers_once test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner test_confirmed_transfer_is_removed_by_a_real_heavier_fork; do
+            bash "$OUT/run-command.sh" "$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_node "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$selector.log" --test "$selector" || status=1
+          done
+          exit "$status"
+      - name: Verify original Hepta receivers and accepted-task binding
+        id: hepta_receivers
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" hepta-classical-receiver cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test protocol_v1 hepta_ -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" hepta-pq-receiver cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test hepta_handoff_pq -- --test-threads=1 || status=1
+          bash "$OUT/run-command.sh" native-accepted-task cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::task_observation::tests:: -- --test-threads=1 || status=1
+          exit "$status"
+      - name: Preserve existing growth packet and cold-observer controls
+        id: growth_observers
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for selector in native_growth_v2_exact_packet_observation native_growth_v2_packet_observer native_growth_v2_cold_observer; do
+            bash "$OUT/run-command.sh" "$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --test-threads=1 || status=1
+          done
+          bash "$OUT/run-command.sh" growth-cli-packet-cold cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_growth_cli native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot -- --exact --test-threads=1 || status=1
+          python3 -B scripts/ci/check_required_native_test.py "$OUT/growth-cli-packet-cold.log" --test native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot || status=1
+          exit "$status"
+      - name: Require nonempty filtered native executions without freezing test counts
+        id: native_execution
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path
+          import re, sys
+          root = Path(sys.argv[1])
+          names = ["native-packet-observer", "native-node-packet-status",
+                   "hepta-classical-receiver", "hepta-pq-receiver", "native-accepted-task",
+                   "native_growth_v2_exact_packet_observation",
+                   "native_growth_v2_packet_observer", "native_growth_v2_cold_observer"]
+          for name in names:
+              text = (root / (name + ".log")).read_text()
+              rows = re.findall(r"^test result: ok\. ([0-9]+) passed; 0 failed;", text, re.M)
+              if len(rows) != 1 or int(rows[0]) == 0:
+                  raise SystemExit("no successful nonempty native execution: " + name)
+          PY
+      - name: Run strict default-feature lint for both affected crates and all targets
+        id: clippy
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for package in trnm-data-availability trnm-pon-node; do
+            bash "$OUT/run-command.sh" "clippy-$package" cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p "$package" --all-targets -- -D warnings || status=1
+          done
+          exit "$status"
+      - name: Retain both release Cell examples as bounded local observations
+        id: examples
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for example in cell_bep52_cost_v1 cell_rs46_cost_v1; do
+            command_status=0
+            timeout --signal=TERM --kill-after=10s 600 cargo +1.95.0 run --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --example "$example" > "$OUT/$example.json" 2> "$OUT/$example.log" || command_status=$?
+            printf '%s\n' "$command_status" > "$OUT/$example.exit"
+            if test "$command_status" != 0; then status=1; fi
+          done
+          exit "$status"
+      - name: Reverify the complete measured source after all attempts
+        id: source_after
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          bash "$OUT/run-command.sh" source-after python3 -B scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+          cmp "$OUT/source-before.json" "$OUT/source-after.json"
+      - name: Retain stage outcomes and artifact digests
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        env:
+          STAGE_OUTCOMES: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path
+          import hashlib, json, os, sys
+          root = Path(sys.argv[1])
+          (root / "stage-outcomes.json").write_text(json.dumps({
+              "steps": json.loads(os.environ["STAGE_OUTCOMES"]),
+              "expected_source": os.environ["EXPECTED_SOURCE"],
+              "source_kind": os.environ["SOURCE_KIND"],
+              "runner": os.environ["TRNM_COST_RUNNER_LABEL"],
+              "qualification": "HOLD_NO_GO",
+              "production_qualified": False,
+              "performance_or_economics_qualified": False,
+              "optional_pq_features_tested": False,
+          }, sort_keys=True, indent=2) + "\n")
+          records = []
+          for path in sorted(root.iterdir()):
+              if path.is_file() and not path.is_symlink() and path.name != "sha256sums.txt":
+                  records.append(hashlib.sha256(path.read_bytes()).hexdigest() + "  " + path.name)
+          (root / "sha256sums.txt").write_text("\n".join(records) + "\n")
+          PY
+      - name: Retain logs and failed or partial observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: next-architecture-${{ matrix.runner }}-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
