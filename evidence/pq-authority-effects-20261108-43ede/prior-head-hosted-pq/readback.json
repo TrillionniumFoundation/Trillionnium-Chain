@@ -1,0 +1,38 @@
+{
+  "artifact_id": 13612169408,
+  "artifact_zip_bytes": 17939,
+  "artifact_zip_sha256": "d44be35d77bc4a5053eb5c6a7005ca706173a830f516942e0a86c28828024a3d",
+  "files": {
+    "build-and-smoke.log": {
+      "bytes": 1996,
+      "sha256": "1f14b0c42ebe4b860bbd3ecc44df789f9dad1f85798864497ac13402424a16b3",
+      "stored_as": "build-and-smoke.log.gz",
+      "stored_bytes": 299,
+      "stored_sha256": "755e3b05d5717706ad1f93f01e6ab93ca3f6cae8394f4fe854dad88d9ce11a47"
+    },
+    "pq-system-01e2c4c-x64-head.zip": {
+      "bytes": 17939,
+      "sha256": "d44be35d77bc4a5053eb5c6a7005ca706173a830f516942e0a86c28828024a3d"
+    },
+    "provider.json": {
+      "bytes": 2156,
+      "sha256": "3a7251b0e1619c5eb450e3fdb6bf8cfa3b1d1de0d22a0f6c748a17fce009c204"
+    }
+  },
+  "native_rust_pq_tests_run": false,
+  "observed_http_statuses": [
+    504,
+    504,
+    504,
+    504
+  ],
+  "provider_exit_code": 22,
+  "provider_last_stage": "download",
+  "provider_result": "FAILED",
+  "schema": "trnm-prior-pq-provider-download-readback-v1",
+  "source_commit": "01e2c4c010c3cf65d1cf094368961efc1abab445",
+  "source_digest_verified": false,
+  "whole_chain_pq_qualified": false,
+  "workflow_job_id": 128693038187,
+  "workflow_run_id": 42468358532
+}

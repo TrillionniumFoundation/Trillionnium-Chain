@@ -64,6 +64,29 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**PQ authority effect tracing and exact-expiry continuation, 2026-11-08 America/New_York:**
+Continue the exact #796 delivery `01e2c4c010c3cf65d1cf094368961efc1abab445`
+without promoting its recorded 31/32 command result into a pass. Bind the entire
+Rust inventory and checked-in Cargo/toolchain inputs to six selected source-trace
+records. Preserve the distinction between 23 mapped role hints, source anchors,
+actual execution and completed authority review; retain all untraced surfaces
+and whole-chain HOLD. Add the current account-profile refusal independently at
+the final classical listener boundary, with a test-only inconsistent-backend
+counterexample and actual no-accept/no-state-effect checks. Review all 120 original
+indicator files without relabelling source-context review as completed authority
+tracing. Refuse PQ accounts at the start of both classical local owner constructors,
+before their policy journals, reservations or required-owner markers can change;
+require two real signed-policy refusal controls and two classic positive controls.
+Retain the first source's 37-command observation separately and require all 45
+commands on the later owner-effect source. Synchronize the real
+clock fixture and wait for the original signed expiry, retaining the original
+two-second request deadline, exact refusal and durable-state assertions. Keep
+the original failed Node observations and the separately recovered hosted HTTP
+504 provider-download failure. The [effect review](../security/PQ_AUTHORITY_EFFECTS_20261108.md)
+and [trace contract](../security/PQ_AUTHORITY_TRACE_V1.md) define the scope;
+the [execution record](../../evidence/pq-authority-effects-20261108-43ede/README.md)
+must report fresh source-bound native results independently of prior runs.
+
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
 Complete bounded signer-set checks before release signature mathematics, and

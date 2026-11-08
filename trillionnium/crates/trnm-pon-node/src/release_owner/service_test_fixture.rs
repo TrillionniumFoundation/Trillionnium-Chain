@@ -12,7 +12,7 @@ use std::os::unix::fs::OpenOptionsExt;
 use std::os::unix::net::UnixListener;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
-use std::sync::Arc;
+use std::sync::{mpsc, Arc};
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
 use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
@@ -27,6 +27,8 @@ pub(super) struct Time {
     start: u128,
     pub mode: AtomicUsize,
     signed_seconds: AtomicU64,
+    exchanges_started: AtomicUsize,
+    exchanges_finished: AtomicUsize,
     stop: AtomicBool,
 }
 impl Time {
@@ -139,10 +141,14 @@ impl Fixture {
             start: boottime_ns(),
             mode: AtomicUsize::new(0),
             signed_seconds: AtomicU64::new(0),
+            exchanges_started: AtomicUsize::new(0),
+            exchanges_finished: AtomicUsize::new(0),
             stop: AtomicBool::new(false),
         });
         let clock_time = time.clone();
+        let (ready, clock_ready) = mpsc::sync_channel(0);
         let clock = std::thread::spawn(move || {
+            ready.send(()).unwrap();
             while !clock_time.stop.load(Ordering::SeqCst) {
                 let (mut stream, _) = match listener.accept() {
                     Ok(v) => v,
@@ -152,6 +158,7 @@ impl Fixture {
                     }
                     Err(e) => panic!("fixture clock accept: {e}"),
                 };
+                clock_time.exchanges_started.fetch_add(1, Ordering::SeqCst);
                 stream.set_nonblocking(true).unwrap();
                 let until = Instant::now() + Duration::from_secs(2);
                 let raw = super::unix_transport::receive(&mut stream, until).unwrap();
@@ -188,8 +195,15 @@ impl Fixture {
                     .store(reply.now_seconds, Ordering::SeqCst);
                 let answer = wire::sign(wire::CLOCK_REPLY, reply, &clock_key).unwrap();
                 super::unix_transport::send(&mut stream, &answer, until).unwrap();
+                clock_time.exchanges_finished.fetch_add(1, Ordering::SeqCst);
             }
         });
+        // Start the production Service::open only after the real clock worker
+        // has entered its serve path. This does not refresh either two-second
+        // production deadline, replace the clock, or retry a failed exchange.
+        clock_ready
+            .recv_timeout(Duration::from_secs(2))
+            .expect("fixture clock worker did not become ready");
         Self {
             _temp: temp,
             configuration,
@@ -212,10 +226,30 @@ impl Fixture {
     pub fn initialized(&mut self) -> Service {
         let path = self.root_file.clone();
         super::service_faults::with_provisioning(path, || {
-            let initialized = Service::open(true).unwrap().initialization().unwrap();
+            let initialized = self.open_service(true).initialization().unwrap();
             self.configuration.expected_time_floor = initialized["time_floor"].as_u64().unwrap();
             self.persist_config();
-            Service::open(false).unwrap()
+            self.open_service(false)
+        })
+    }
+    fn open_service(&self, initialize: bool) -> Service {
+        let started = Instant::now();
+        let before = (
+            self.time.exchanges_started.load(Ordering::SeqCst),
+            self.time.exchanges_finished.load(Ordering::SeqCst),
+        );
+        Service::open(initialize).unwrap_or_else(|error| {
+            panic!(
+                "fixture Service::open({initialize}) failed after {:?}: {error:?}; \
+                 clock exchanges started/completed before={before:?}, after={:?}; \
+                 last signed floor={}",
+                started.elapsed(),
+                (
+                    self.time.exchanges_started.load(Ordering::SeqCst),
+                    self.time.exchanges_finished.load(Ordering::SeqCst),
+                ),
+                self.time.last_signed(),
+            )
         })
     }
     pub fn request(

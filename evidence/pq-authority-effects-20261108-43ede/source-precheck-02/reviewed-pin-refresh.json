@@ -1,0 +1,91 @@
+{
+  "schema": "trnm-reviewed-source-pin-refresh-v1",
+  "source_parent": "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+  "reason": "Reviewed early PQ profile refusals before durable local owner effects, four real signed-policy controls, exact CI/runner gates and matching inventory/trace documentation. No historical failed result or activation flags changed.",
+  "inline_pin_changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old_blob": "56261e7e4879516edea749fea3fddc8b3bd69801",
+      "new_blob": "87eade67931f34793ec15a27238a9643902eec57"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "old_blob": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+      "new_blob": "fd703bd98def2d8f1350236f36d8f9bfb34ffcf0"
+    }
+  ],
+  "changes": [
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "old_blob": "48065473cb3597b9672219b7f9d1717b5935e0fd",
+      "new_blob": "ddfd7f3cb8674f8f68ff32a212ed50ec6bff83f8"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "old_blob": "2be7f31931afe3aab4dc8d2cc09cec6a7ad9800a",
+      "new_blob": "2ae4e0f3745f85236ed323481c806871898b4eef"
+    },
+    {
+      "path": "config/pon/pq-authority-traces-v1.json",
+      "old_blob": "cb1189fcc66a089c6a343653fa245367fd527884",
+      "new_blob": "358866c070ba0f9fab537c4deadc59c6aa453332"
+    },
+    {
+      "path": "docs/security/PQ_AUTHORITY_EFFECTS_20261108.md",
+      "old_blob": "8898be9a9957e059f8534ef0178ae53e29d5f392",
+      "new_blob": "af41bb03d6d85d4befc5f9d672edba58a8d73692"
+    },
+    {
+      "path": "docs/security/PQ_AUTHORITY_TRACE_V1.md",
+      "old_blob": "6a5be2bcb8ffd5753f8838cc36d49bb5cd9ffe27",
+      "new_blob": "d33761fff17d6884178d6551d637daa54fff3182"
+    },
+    {
+      "path": "evidence/pq-authority-effects-20261108-43ede/authority-effects-validation-runner.py",
+      "old_blob": "7978a2999961b0580efebe2b0853e0d632b0bd0e",
+      "new_blob": "1842387efa500bb7d8eed02cb389ebc4e8aa9ab5"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "old_blob": "eb9c0140f640dec74c33e42a289342dc6922be7d",
+      "new_blob": "f303c0deb274adec02555d077e49a7c679b7bd6e"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "old_blob": "58dca7876e4c79cf6de56cd309b9a4193bb3ad01",
+      "new_blob": "3efa8246ebe988cdd06cd9efb36fd1970814f086"
+    },
+    {
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "old_blob": "2b9dfea31a3feae90b579394fbdf24dd27a3c9a3",
+      "new_blob": "a13777a5220b9adc7903b54ac0d3bf0a875e1dd3"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "old_blob": "6a81550c228703ffee75d8a913d44ae19a2f6ac0",
+      "new_blob": "66e001ce925f3c9cdfa3149b3707485a73ad98e0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "old_blob": "f8e3cd978534af89853c86c769f06fb03e545fee",
+      "new_blob": "03a6cd2bef1beb530df46187e95aedae9e9737e6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old_blob": "56261e7e4879516edea749fea3fddc8b3bd69801",
+      "new_blob": "87eade67931f34793ec15a27238a9643902eec57"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "old_blob": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+      "new_blob": "fd703bd98def2d8f1350236f36d8f9bfb34ffcf0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs",
+      "old_blob": null,
+      "new_blob": "15ff137b27c407726292f3706d0ee858589970dc"
+    }
+  ],
+  "runtime_tests_executed": 0,
+  "whole_chain_pq_qualified": false
+}

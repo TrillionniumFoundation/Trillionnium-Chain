@@ -1,12 +1,16 @@
 """Positive HOLD and adversarial refusal for the Rust source surface scanner."""
 import os
+import json
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-from pq_authority_surface_scan import CRITICAL, MAX_SOURCE_BYTES, AuditError, inspect, read_source
+from pq_authority_surface_scan import (
+    CRITICAL, MAX_SOURCE_BYTES, AuditError, inspect, read_source,
+    source_inventory_sha256,
+)
 
 
 class TestPqAuthoritySurfaceScan(unittest.TestCase):
@@ -28,7 +32,63 @@ class TestPqAuthoritySurfaceScan(unittest.TestCase):
         self.assertEqual(r['status'], 'HOLD_INCOMPLETE_AUTHORITY_TRACING')
         self.assertFalse(r['whole_chain_pq_qualified'])
         self.assertEqual(r['reviewed_roles_mapped'], len(CRITICAL))
+        self.assertEqual(r['mapped_role_hints'], len(CRITICAL))
+        self.assertEqual(r['completed_authority_traces'], 0)
         self.assertEqual(r['unreviewed_indicator_files'], 0)
+
+    def test_full_identity_covers_changed_non_indicator_source_bytes(self):
+        path = self.put('trillionnium/crates/new-owner/src/effect.rs',
+                        'pub fn apply() { debit(); }\n')
+        before = inspect(self.root)
+        path.write_text('pub fn apply() { grant(); }\n')
+        after = inspect(self.root)
+        self.assertEqual(before['source_files_read'], after['source_files_read'])
+        self.assertEqual(before['findings'], after['findings'])
+        self.assertNotEqual(before['source_inventory_sha256'],
+                            after['source_inventory_sha256'])
+        self.assertEqual(len(after['source_inventory']), after['source_files_read'])
+        self.assertEqual(after['completed_authority_traces'], 0)
+
+    def test_full_identity_binds_paths_even_when_bytes_and_count_match(self):
+        path = self.put('trillionnium/crates/new-owner/src/support.rs',
+                        'pub fn apply() { grant(); }\n')
+        before = inspect(self.root)
+        path.rename(path.with_name('owner.rs'))
+        after = inspect(self.root)
+        self.assertEqual(before['source_files_read'], after['source_files_read'])
+        self.assertNotEqual(before['source_inventory_sha256'],
+                            after['source_inventory_sha256'])
+
+    def test_disappearing_indicator_changes_identity_and_never_closes_trace(self):
+        path = self.put('trillionnium/crates/new-owner/src/effect.rs',
+                        'verify_strict(message);\n')
+        before = inspect(self.root)
+        path.write_text('verify_through_alias(message);\n')
+        after = inspect(self.root)
+        self.assertEqual(before['unreviewed_indicator_files'], 1)
+        self.assertEqual(after['unreviewed_indicator_files'], 0)
+        self.assertNotEqual(before['source_inventory_sha256'],
+                            after['source_inventory_sha256'])
+        self.assertEqual(after['status'], 'HOLD_INCOMPLETE_AUTHORITY_TRACING')
+        self.assertFalse(after['whole_chain_pq_qualified'])
+
+    def test_source_inventory_identity_is_independent_of_walk_order(self):
+        report = inspect(self.root)
+        self.assertEqual(source_inventory_sha256(report['source_inventory'][::-1]),
+                         report['source_inventory_sha256'])
+
+    def test_summary_retains_full_corpus_identity_and_honest_role_counts(self):
+        child = subprocess.run(
+            [sys.executable, str(Path(__file__).with_name('pq_authority_surface_scan.py')),
+             '--root', str(self.root), '--summary-only'],
+            capture_output=True, text=True, check=True)
+        report = json.loads(child.stdout)
+        self.assertNotIn('source_inventory', report)
+        self.assertNotIn('findings', report)
+        self.assertEqual(report['source_inventory_sha256'],
+                         inspect(self.root)['source_inventory_sha256'])
+        self.assertEqual(report['reviewed_roles_mapped'], report['mapped_role_hints'])
+        self.assertEqual(report['completed_authority_traces'], 0)
 
     def test_unknown_classic_and_pq_sources_remain_visible(self):
         self.put('trillionnium/crates/new-owner/src/effect.rs',

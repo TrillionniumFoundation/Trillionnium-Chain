@@ -204,6 +204,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-authority-traces-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-authority-traces-v1.json"
+        )),
+    ),
+    (
         "config/pon/pq-cross-branch-corpus-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6445,6 +6452,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_network.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs"
         )),
     ),
     (

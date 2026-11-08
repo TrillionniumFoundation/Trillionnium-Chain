@@ -11,6 +11,8 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pq_chain_claim_guard.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 scripts/ci/test_pq_authority_trace.py -v
+    python3 scripts/ci/pq_authority_trace.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
     python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
     # Public-input framing only: no seed proof or signature qualification.

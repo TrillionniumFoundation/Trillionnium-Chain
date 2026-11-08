@@ -1,0 +1,12 @@
+{
+  "added_path": "config/pon/pq-authority-traces-v1.json",
+  "after_authority_corpus_sha256": "4a3df8a756057317e89e0cd6d1c63237fab50379854e30be2bfa3d7c25142613",
+  "after_check_exit": 0,
+  "after_sha256": "ca34958edda1f3f82e005c27f1c5ea0b230f7a469a361d16dc112bb2b04deb21",
+  "before_authority_corpus_sha256": "703cf8799a694e86b8f494f69d55b957eb83bfc76737bd4f0d07cc32a039de29",
+  "before_check_exit": 1,
+  "before_check_passed": false,
+  "before_sha256": "36a8bb4a6d77a3b212c88de2f8af66cb1def7fac4a0db9638d1e64167b6e8c5b",
+  "schema": "trnm-distributed-inventory-refresh-v1",
+  "source_guards_are_not_runtime_qualification": true
+}

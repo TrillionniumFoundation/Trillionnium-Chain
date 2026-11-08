@@ -1,0 +1,155 @@
+{
+  "schema": "trnm-restricted-policy-pq-reachability-v1",
+  "source_commit": "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+  "source_tree": "520e8d4ae51585599edcea1b3b159073a553d9b7",
+  "source_corpus_sha256": "4a3df8a756057317e89e0cd6d1c63237fab50379854e30be2bfa3d7c25142613",
+  "status": "HOLD_INCOMPLETE_AUTHORITY_TRACING",
+  "runtime_tests_executed": 0,
+  "whole_chain_pq_qualified": false,
+  "observations": [
+    {
+      "surface": "legacy task and nested pool owner",
+      "conclusion": "No successful NPQ6 Node owner attachment found. open_with_operator_task_policy fixes Legacy backend; central account-profile and owner-combination checks refuse it. Refresh requires existing private owner. Pool path is nested in this owner and cannot independently attach.",
+      "pre_refusal_effect": "Valid Ed-signed externally pinned policy matching supplied NPQ6 network/parameters can verify the full six-file catalog, open/create/advance its local policy journal, and create the owner-task-policy.required marker before final PQ-account refusal. No packet admission, pool reservation or chain state mutation demonstrated.",
+      "test_gap": "Existing task store tests inject private owner. No existing actual-opener+NPQ6 state-preservation test located."
+    },
+    {
+      "surface": "legacy finite mining owner",
+      "conclusion": "No successful NPQ6 Node owner attachment found. Settings-taking public opener ends in Legacy backend; central account-profile and owner-combination checks refuse it. Checkpoint-only controller constructs development checkpoint Settings. Refresh requires existing private mining owner.",
+      "pre_refusal_effect": "prepare_mining_owner authenticates two Ed roles, opens the journal and durably reserves StartupCatalog before validating external Settings. With a matching NPQ6 network/parameters, full catalog and ParentReconcile grant, finish_mining_open also reserves ParentReconcile and creates marker before central refusal. This is failed-open side effects, not successful signature downgrade.",
+      "test_gap": "Existing private mining-owner tests inject owner. Real signed-catalog regression can use policy fixture view/sign helper plus fixed six files."
+    },
+    {
+      "surface": "selected NPQ6 continuous owner",
+      "conclusion": "Separate continuous identity PqV3 uses ML-DSA-65, selected by independently pinned schema. NPQ6 startup creates PqContinuousV3 with policy/mining None. is_pq_startup_owner plus immutable identity on refresh prevents selecting classical view as the NPQ6 continuous owner in traced constructors. Reuse of mining SearchIntent/hash helpers is not reuse of Ed signature authority."
+    }
+  ],
+  "scope_limits": [
+    "Source-only tracing; no native execution claimed.",
+    "No conclusion about all other authority classes or deployment trust.",
+    "Transport PQ with classical account Settings is not considered an account downgrade.",
+    "Early-refusal correction authorized after this frozen-source observation; future edited-source evidence must use new hashes."
+  ],
+  "anchors": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 1623,
+      "anchor": "    pub fn open_with_operator_task_policy("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 1665,
+      "anchor": "        let journal = crate::operator_task_policy::Journal::open("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 1730,
+      "anchor": "        Self::open_inner(path, settings, workers, None, Some(owner), None, None)"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 1855,
+      "anchor": "            !settings.app.is_pq_account_profile() || pq_selected,"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 1874,
+      "anchor": "            \"PQ_NETWORK_OWNER_COMBINATION\","
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 4441,
+      "anchor": "    pub fn refresh_operator_task_policy("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "e6245b03c1d5ec5acbafbeae52826300d30a7bd201b143b7e7a81a63511f4c78",
+      "line": 4545,
+      "anchor": "    fn begin_owner_pool("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+      "line": 381,
+      "anchor": "    pub fn open_with_operator_mining_task_view("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+      "line": 220,
+      "anchor": "    fn prepare_mining_owner("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+      "line": 261,
+      "anchor": "        let permit = owner.permission(\n            Purpose::StartupCatalog,"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+      "line": 319,
+      "anchor": "        let reconcile_permit = owner.permission("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+      "line": 336,
+      "anchor": "        let result = Self::open_inner(path, settings, workers, None, None, Some(owner), None);"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+      "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+      "line": 534,
+      "anchor": "    pub fn refresh_operator_mining_task_view("
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_task_policy.rs",
+      "sha256": "22b62eff76e4bf13b61fbbc9d8bd40da564e62e897650686cac2e97a0598f63b",
+      "line": 1073,
+      "anchor": "        owner.advance(policy)?;"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_mining_policy.rs",
+      "sha256": "2052d669e8fa1a1386d2393a100af0911349a2ea3af94ef0ff79254b46ee25a2",
+      "line": 467,
+      "anchor": "pub(crate) fn authenticate(raw: &[u8], e: &ExternalAuthority, now: u64)"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_pq_auth.rs",
+      "sha256": "4e149c4bb95f039edc73d09c3f04da0434f6d561d158c9de5a5295b6863fb3a9",
+      "line": 90,
+      "anchor": "            Self::PqV3 => {\n                let key = exact_lower_hex(pinned_key, ML_DSA_65_SPKI_BYTES)?;"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
+      "sha256": "104c539fc9c5d5a15c8ea7d8df6d780671d91382154666b51ad71bd6640c0df8",
+      "line": 431,
+      "anchor": "        self.body.identity == old.body.identity"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "sha256": "10a435cf83dbf1a7bc8596eaf858046526b55ed69f3c476309e752a7d457fb53",
+      "line": 155,
+      "anchor": "    pub(super) fn is_pq_startup_owner(&self) -> bool {"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "sha256": "10a435cf83dbf1a7bc8596eaf858046526b55ed69f3c476309e752a7d457fb53",
+      "line": 902,
+      "anchor": "                    StateBackend::PqContinuousV3,"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_pq_auth_tests.rs",
+      "sha256": "bc88abaad26af9a24ebde4163d9c13cc1eac844c64d1cb957e93e327fd7fe85f",
+      "line": 60,
+      "anchor": "fn pq_continuous_two_roles_have_no_classical_or_other_domain_fallback() {"
+    }
+  ]
+}
