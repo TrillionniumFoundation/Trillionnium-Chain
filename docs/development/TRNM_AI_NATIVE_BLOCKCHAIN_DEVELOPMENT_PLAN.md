@@ -7937,6 +7937,12 @@ version. All probes share a nonrefundable aggregate payload/probe budget. Renewa
 and repair plans retain the original terms and responsible owners. Contactability
 is not prepaid funding; sponsor disappearance requests a replacement without
 lowering replica requirements, extending an old lease or granting deletion.
+The complete-version continuation plan pairs model and environment actions at
+the same original store/slot, retaining both payers and both sets of original
+terms. Model health cannot hide environment repair or sponsor loss. A missing
+component observation or an expired observation deadline cannot produce a
+healthy complete-version plan. Unique version payload size remains distinct
+from component probe reservations.
 
 Residency checks incremental RAM/reference demand after complete metadata but
 before payload download inside the original network session. A task-local

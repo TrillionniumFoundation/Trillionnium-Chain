@@ -43,6 +43,14 @@ impl Fixture {
     }
 
     fn with_runtime(acknowledge: bool, runtime: CellDigestV1) -> Self {
+        Self::with_runtime_and_replicas(acknowledge, runtime, 3)
+    }
+
+    fn with_runtime_and_replicas(
+        acknowledge: bool,
+        runtime: CellDigestV1,
+        required_replicas: u16,
+    ) -> Self {
         let directory = tempfile::tempdir().unwrap();
         let inputs = directory.path().join("inputs");
         fs::create_dir(&inputs).unwrap();
@@ -92,7 +100,7 @@ impl Fixture {
         let mut stores = Vec::new();
         let mut contracts = Vec::new();
         let mut replicas = Vec::new();
-        for slot in 0..3 {
+        for slot in 0..usize::from(required_replicas) {
             let mut objects: Vec<_> = manifests
                 .iter()
                 .enumerate()
@@ -113,7 +121,7 @@ impl Fixture {
                 responsible_owner: [131 + slot as u8; 32],
                 failure_domain: [141 + slot as u8; 32],
                 replica_index: slot as u16,
-                required_replicas: 3,
+                required_replicas,
                 retain_from_height: 10,
                 retain_until_height: 50,
                 repair_deadline_height: 40,
@@ -153,7 +161,7 @@ impl Fixture {
             contracts,
             policy: CellReleaseCustodyPolicyV1 {
                 root,
-                required_replicas: 3,
+                required_replicas,
                 renewal_lead_blocks: 8,
                 replicas,
             },
@@ -161,7 +169,11 @@ impl Fixture {
     }
 
     fn probe_budget(&self) -> CellCustodyProbeBudgetV1 {
-        CellCustodyProbeBudgetV1::new(deadline(), 3, 3 * self.policy.payload_bytes().unwrap())
+        CellCustodyProbeBudgetV1::new(
+            deadline(),
+            u32::from(self.policy.required_replicas),
+            u64::from(self.policy.required_replicas) * self.policy.payload_bytes().unwrap(),
+        )
     }
 
     fn observe(
@@ -262,7 +274,7 @@ fn origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache() {
         CellCustodyRecoveryActionV1::ReconcileThenRestore
     );
     assert_eq!(plan[2].last_new_repair_height, 40);
-    assert_eq!(plan[2].complete_version_payload_bytes, 651);
+    assert_eq!(plan[2].component_payload_bytes, 651);
 }
 
 #[test]
@@ -621,6 +633,14 @@ fn cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report() {
 fn version_fixture(
     acknowledge_environment: bool,
 ) -> (Fixture, CellVersionManifestV1, CellReleaseCustodyPolicyV1) {
+    version_fixture_with_terms(acknowledge_environment, 3, (10, 50, 40))
+}
+
+fn version_fixture_with_terms(
+    acknowledge_environment: bool,
+    required_replicas: u16,
+    environment_service: (u64, u64, u64),
+) -> (Fixture, CellVersionManifestV1, CellReleaseCustodyPolicyV1) {
     let environment_context = CellContextV1 {
         family: "custody-observation-test-v1".into(),
         base: [1; 32],
@@ -658,7 +678,7 @@ fn version_fixture(
     let environment =
         CellReleaseClosureV1::new(environment_context.clone(), 1, [12; 32], vec![1], files)
             .unwrap();
-    let mut fixture = Fixture::with_runtime(true, environment.id());
+    let mut fixture = Fixture::with_runtime_and_replicas(true, environment.id(), required_replicas);
     for (name, payload, expected) in &material {
         let input = fixture.directory.path().join("inputs").join(name);
         fs::write(&input, payload).unwrap();
@@ -672,7 +692,7 @@ fn version_fixture(
     }
     let environment_root = CellModelReleaseRootV1::new(environment.clone(), vec![]).unwrap();
     let mut environment_pins = Vec::new();
-    for slot in 0..3 {
+    for slot in 0..usize::from(required_replicas) {
         let mut objects: Vec<_> = material
             .iter()
             .enumerate()
@@ -690,6 +710,9 @@ fn version_fixture(
         let contract = CellReleaseRetentionContractV2 {
             operation: [34 + slot as u8; 32],
             funding_operation: [44 + slot as u8; 32],
+            retain_from_height: environment_service.0,
+            retain_until_height: environment_service.1,
+            repair_deadline_height: environment_service.2,
             root: environment_root.clone(),
             objects,
             ..fixture.contracts[slot].clone()
@@ -721,7 +744,7 @@ fn version_fixture(
     }
     let environment_policy = CellReleaseCustodyPolicyV1 {
         root: environment_root,
-        required_replicas: 3,
+        required_replicas,
         renewal_lead_blocks: 8,
         replicas: environment_pins,
     };
@@ -939,4 +962,326 @@ fn complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans()
         .replicas()
         .iter()
         .all(|entry| matches!(entry.state, CellCustodyReplicaStateV1::ProbeRefused(_))));
+}
+
+#[test]
+fn version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor() {
+    let (mut fixture, version, mut environment) =
+        version_fixture_with_terms(false, 3, (10, 50, 47));
+    for pin in &mut environment.replicas {
+        pin.renewal_owner = [202; 32];
+        pin.repair_owner = [221 + pin.replica_index as u8; 32];
+    }
+    fixture.remove_source();
+    let mut budget = CellCustodyProbeBudgetV1::new(deadline(), 6, 3 * (651 + 217));
+    let report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        43,
+        &mut budget,
+    )
+    .unwrap();
+    assert!(report.model().unwrap().complete_byte_coverage_observed());
+    assert_eq!(report.complete_replicas_observed(), 0);
+    let plan = report
+        .plan_continuation(&[
+            CellCustodySponsorObservationV1 {
+                owner: [201; 32],
+                state: CellCustodySponsorStateV1::Contactable,
+            },
+            CellCustodySponsorObservationV1 {
+                owner: [202; 32],
+                state: CellCustodySponsorStateV1::Unavailable,
+            },
+        ])
+        .unwrap();
+    assert_eq!(plan.version(), version.commitment());
+    assert_eq!(plan.model_policy(), fixture.policy.id().unwrap());
+    assert_eq!(plan.environment_policy(), environment.id().unwrap());
+    assert_eq!(plan.replicas().len(), 3);
+    for (slot, pair) in plan.replicas().iter().enumerate() {
+        assert_eq!(pair.replica_index(), slot as u16);
+        assert_eq!(pair.store_id(), fixture.stores[slot].store_id());
+        assert_eq!(pair.model().recovery, CellCustodyRecoveryActionV1::None);
+        assert_eq!(
+            pair.model().renewal,
+            CellCustodyRenewalActionV1::FundingRequired
+        );
+        assert_eq!(
+            pair.environment().recovery,
+            CellCustodyRecoveryActionV1::ReconcileThenRestore
+        );
+        assert_eq!(
+            pair.environment().renewal,
+            CellCustodyRenewalActionV1::ReplacementSponsorRequired
+        );
+        assert_eq!(pair.environment().renewal_owner, [202; 32]);
+        assert_eq!(pair.environment().repair_owner, [221 + slot as u8; 32]);
+        assert!(matches!(
+            &pair.environment_observation().state,
+            CellCustodyReplicaStateV1::ReadbackRefused(_)
+        ));
+    }
+    assert!(!plan.observation().complete_byte_coverage_observed());
+    assert_eq!(plan.observation().required_replicas(), 3);
+    assert_eq!(budget.usage(), report.usage_after());
+}
+
+#[test]
+fn version_continuation_retains_each_original_term_owner_and_component_size() {
+    let (mut fixture, version, mut environment) = version_fixture_with_terms(true, 3, (12, 48, 44));
+    for pin in &mut environment.replicas {
+        pin.renewal_owner = [202; 32];
+        pin.repair_owner = [221 + pin.replica_index as u8; 32];
+    }
+    fixture.remove_source();
+    let mut budget = CellCustodyProbeBudgetV1::new(deadline(), 6, 3 * (651 + 217));
+    let report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        43,
+        &mut budget,
+    )
+    .unwrap();
+    let sponsors: Vec<_> = [201, 202]
+        .into_iter()
+        .map(|identity| CellCustodySponsorObservationV1 {
+            owner: [identity; 32],
+            state: CellCustodySponsorStateV1::Contactable,
+        })
+        .collect();
+    let plan = report.plan_continuation(&sponsors).unwrap();
+    assert!(plan.observation().complete_byte_coverage_observed());
+    assert_eq!(plan.unique_complete_version_payload_bytes(), 651 + 217);
+    assert_eq!(plan.observation().observed_height(), 43);
+    assert_eq!(
+        plan.observation().usage_after().payload_bytes_committed,
+        3 * (651 + 217)
+    );
+    for (slot, pair) in plan.replicas().iter().enumerate() {
+        assert_eq!(pair.model_observation().pin, fixture.policy.replicas[slot]);
+        assert_eq!(
+            pair.environment_observation().pin,
+            environment.replicas[slot]
+        );
+        assert_eq!(pair.model().component_payload_bytes, 651);
+        assert_eq!(pair.environment().component_payload_bytes, 217);
+        assert_eq!(pair.model().renewal_owner, [201; 32]);
+        assert_eq!(pair.environment().renewal_owner, [202; 32]);
+        assert_eq!(pair.model().repair_owner, [211 + slot as u8; 32]);
+        assert_eq!(pair.environment().repair_owner, [221 + slot as u8; 32]);
+        assert_eq!(pair.model().successor_required_before_height, 50);
+        assert_eq!(pair.environment().successor_required_before_height, 48);
+        assert_eq!(pair.model().last_new_repair_height, 40);
+        assert_eq!(pair.environment().last_new_repair_height, 44);
+        assert_eq!(pair.model_observation().pin.retain_from_height, 10);
+        assert_eq!(pair.environment_observation().pin.retain_from_height, 12);
+        for component in [pair.model(), pair.environment()] {
+            assert_eq!(
+                component.renewal,
+                CellCustodyRenewalActionV1::FundingRequired
+            );
+            assert_eq!(component.recovery, CellCustodyRecoveryActionV1::None);
+        }
+        let original = fixture.stores[slot]
+            .contract(pair.environment().operation, deadline())
+            .unwrap();
+        assert_eq!(original.retain_until_height, 48);
+        assert_eq!(original.repair_deadline_height, 44);
+    }
+    assert_eq!(plan, report.plan_continuation(&sponsors).unwrap());
+    assert_eq!(budget.usage(), report.usage_after());
+}
+
+#[test]
+fn version_continuation_validates_one_bounded_sponsor_union_before_component_plans() {
+    let (mut fixture, version, mut environment) =
+        version_fixture_with_terms(true, 16, (10, 50, 47));
+    for (slot, (model, environment)) in fixture
+        .policy
+        .replicas
+        .iter_mut()
+        .zip(&mut environment.replicas)
+        .enumerate()
+    {
+        model.renewal_owner = [1 + slot as u8; 32];
+        environment.renewal_owner = [33 + slot as u8; 32];
+    }
+    let sponsors: Vec<_> = fixture
+        .policy
+        .replicas
+        .iter()
+        .chain(&environment.replicas)
+        .map(|pin| CellCustodySponsorObservationV1 {
+            owner: pin.renewal_owner,
+            state: CellCustodySponsorStateV1::Contactable,
+        })
+        .collect();
+    assert_eq!(sponsors.len(), 32);
+    fixture.remove_source();
+    let mut budget = CellCustodyProbeBudgetV1::new(deadline(), 32, 16 * (651 + 217));
+    let report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        43,
+        &mut budget,
+    )
+    .unwrap();
+    let plan = report.plan_continuation(&sponsors).unwrap();
+    assert_eq!(plan.replicas().len(), 16);
+    assert!(plan.replicas().iter().all(|pair| {
+        pair.model().renewal == CellCustodyRenewalActionV1::FundingRequired
+            && pair.environment().renewal == CellCustodyRenewalActionV1::FundingRequired
+    }));
+    let conflicting = CellCustodySponsorObservationV1 {
+        state: CellCustodySponsorStateV1::Unavailable,
+        ..sponsors[0]
+    };
+    assert!(matches!(
+        report.plan_continuation(&[sponsors[0], conflicting]),
+        Err(CellErrorV1::Invalid(
+            "custody unexpected or duplicate sponsor"
+        ))
+    ));
+    assert!(matches!(
+        report.plan_continuation(&[CellCustodySponsorObservationV1 {
+            owner: [250; 32],
+            state: CellCustodySponsorStateV1::Contactable,
+        }]),
+        Err(CellErrorV1::Invalid(
+            "custody unexpected or duplicate sponsor"
+        ))
+    ));
+    assert!(matches!(
+        report.plan_continuation(&[sponsors[0]; 33]),
+        Err(CellErrorV1::Invalid("custody version sponsor budget"))
+    ));
+
+    // A shared sponsor receives one state, under newly pinned declarations,
+    // and both components are physically re-observed with a new admission.
+    environment.replicas[0].renewal_owner = fixture.policy.replicas[0].renewal_owner;
+    let mut next_budget = CellCustodyProbeBudgetV1::new(deadline(), 32, 16 * (651 + 217));
+    let next_report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        43,
+        &mut next_budget,
+    )
+    .unwrap();
+    let shared_plan = next_report.plan_continuation(&[conflicting]).unwrap();
+    assert_eq!(
+        shared_plan.replicas()[0].model().renewal,
+        CellCustodyRenewalActionV1::ReplacementSponsorRequired
+    );
+    assert_eq!(
+        shared_plan.replicas()[0].environment().renewal,
+        CellCustodyRenewalActionV1::ReplacementSponsorRequired
+    );
+}
+
+#[test]
+fn version_continuation_refuses_either_missing_component_observation() {
+    let (mut fixture, version, environment) = version_fixture(true);
+    let mut budget = CellCustodyProbeBudgetV1::new(deadline(), 6, 3 * (651 + 217));
+    let report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        20,
+        &mut budget,
+    )
+    .unwrap();
+    let mut expired =
+        CellCustodyProbeBudgetV1::new(Instant::now() - Duration::from_secs(1), 3, 3 * 651);
+    let refusal = observe_release_custody(
+        &fixture.policy,
+        fixture.policy.id().unwrap(),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        20,
+        &mut expired,
+    )
+    .unwrap_err()
+    .to_string();
+    assert_eq!(expired.usage().store_probes_committed, 0);
+    // These are composition-refusal controls using actual observer outcomes,
+    // not claims that a physical archive failed or a timed race was measured.
+    let mut missing_model = report.clone();
+    missing_model.model = Err(refusal.clone());
+    assert!(matches!(
+        missing_model.plan_continuation(&[]),
+        Err(CellErrorV1::Invalid("custody model observation required"))
+    ));
+    assert_eq!(missing_model.model(), Err(refusal.as_str()));
+    assert!(missing_model.environment().is_ok());
+    let mut missing_environment = report.clone();
+    missing_environment.environment = Err(refusal.clone());
+    assert!(matches!(
+        missing_environment.plan_continuation(&[]),
+        Err(CellErrorV1::Invalid(
+            "custody environment observation required"
+        ))
+    ));
+    assert_eq!(missing_environment.environment(), Err(refusal.as_str()));
+    assert!(missing_environment.model().is_ok());
+    let mut late_composition = report;
+    late_composition.finished_before_deadline = false;
+    assert!(matches!(
+        late_composition.plan_continuation(&[]),
+        Err(CellErrorV1::Invalid(
+            "custody complete version observation required"
+        ))
+    ));
+    assert_eq!(late_composition.usage_after(), budget.usage());
+}
+
+#[test]
+fn version_continuation_preserves_environment_probe_refusal_and_actual_reservations() {
+    let (mut fixture, version, environment) = version_fixture(true);
+    let mut budget = CellCustodyProbeBudgetV1::new(deadline(), 3, 3 * 651);
+    let report = observe_version_custody(
+        &version,
+        version.commitment(),
+        policy_pin(&fixture.policy),
+        policy_pin(&environment),
+        &mut fixture.stores.iter_mut().collect::<Vec<_>>(),
+        20,
+        &mut budget,
+    )
+    .unwrap();
+    let plan = report.plan_continuation(&[]).unwrap();
+    assert_eq!(plan.unique_complete_version_payload_bytes(), 651 + 217);
+    assert_eq!(plan.observation().usage_after().store_probes_committed, 3);
+    assert_eq!(
+        plan.observation().usage_after().payload_bytes_committed,
+        3 * 651
+    );
+    assert!(!plan.observation().complete_byte_coverage_observed());
+    for pair in plan.replicas() {
+        assert_eq!(pair.model().component_payload_bytes, 651);
+        assert_eq!(pair.environment().component_payload_bytes, 217);
+        assert_eq!(pair.model().recovery, CellCustodyRecoveryActionV1::None);
+        assert_eq!(
+            pair.environment().recovery,
+            CellCustodyRecoveryActionV1::ObservationRequired
+        );
+        assert!(matches!(
+            &pair.environment_observation().state,
+            CellCustodyReplicaStateV1::ProbeRefused(_)
+        ));
+    }
+    assert_eq!(budget.usage(), report.usage_after());
 }

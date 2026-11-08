@@ -113,8 +113,9 @@ anchor. The API is not an alternate native funding or finality path.
 
 `CellCustodyProbeBudgetV1` contains one absolute deadline, a maximum number of
 store probes and a maximum potential payload-read byte reservation. Before a
-store attempt, the observer commits one probe and the complete version's unique
-payload bytes. Early refusal, corruption or deadline exhaustion does not refund
+store attempt, the observer commits one probe and that component root's unique
+payload bytes. The model and environment are separate attempts under the same
+reservation. Early refusal, corruption or deadline exhaustion does not refund
 that reservation. A retry using the same budget retains the previous debits.
 Missing, not-started and expired stores do not trigger payload scans. Reported
 reserved bytes are conservative admissions, not measurements of actual I/O.
@@ -136,15 +137,16 @@ no new service, money, retirement or CURRENT/FinalUse capability.
 
 ## Finite renewal and repair work items
 
-`plan_continuation` derives bounded work items from that observation. It does not
-dispatch them. Sponsor information describes only owner-reported contactability:
+`CellReleaseCustodyReportV1::plan_continuation` derives bounded work items for
+one observed component root. It does not dispatch them. Sponsor information
+describes only owner-reported contactability:
 `Unobserved`, `Contactable` or `Unavailable`. Unknown/duplicate sponsor identities
 are refused. A reachable sponsor is never treated as available coins or proof
 of a paid successor.
 
 | Condition | Required next work |
 | --- | --- |
-| Healthy version outside the renewal lead interval | Keep the original promise and scheduled observation duties. |
+| Healthy component outside the renewal lead interval | Keep the original promise and scheduled observation duties. |
 | Renewal due, sponsor unobserved | Reconcile the named renewal owner before the original expiry. |
 | Renewal due, sponsor contactable | Obtain a separately admitted native-funded successor; funding remains required. |
 | Renewal due, sponsor unavailable | Obtain a replacement sponsor or explicitly lose the next promise at expiry. |
@@ -154,10 +156,44 @@ of a paid successor.
 | Original service interval ended | Report `PromiseExpired`; this does not permit deletion, reset accounting or create a refund. |
 
 Each item carries the exact store/operation, named renewal/repair owners,
-original expiry, original inclusive repair-dispatch deadline and complete
-version payload size. Repeated planning cannot slide these deadlines. A repair
-item is a full-version recovery objective, not an assertion that every byte
-needs to be rewritten or that a funded repair has run.
+original expiry, original inclusive repair-dispatch deadline and
+`component_payload_bytes`. Repeated planning cannot slide these deadlines.
+A component repair item targets the complete component root; its payload size
+does not describe the full TCV1 union or assert that every byte must be rewritten.
+
+`CellVersionCustodyReportV1::plan_continuation` composes both components into a
+`CellVersionCustodyContinuationV1`. For every original store and replica slot it
+returns a `CellVersionCustodyReplicaContinuationV1` with separate model and
+environment actions, plus read-only references to both original slot
+observations. Each component retains its exact contract, responsible owner,
+renewal/repair owners, service start, expiry and repair deadline. No later
+component expiry or repair deadline replaces the other component's earlier
+term. An available model cannot hide an environment readback refusal, missing
+renewal sponsor or exhausted probe allowance.
+
+The complete plan borrows its private original report. The original TCV1
+commitment, both independently pinned policy IDs, sampled height and all
+reservation counters remain available without copying an 8 MiB manifest or
+making an alternative observation. `unique_complete_version_payload_bytes`
+is the declared TCV1 manifest union, distinct from each action's
+`component_payload_bytes` and the report's committed scan reservations.
+
+Both component reports must exist, and the complete observation must have
+finished within its original deadline. A component-level observation error or
+late complete report refuses the whole planning call and explicitly requires
+a new admitted observation. The underlying error and previous debits remain
+on the original report. Per-slot `ReadbackRefused` and `ProbeRefused` outcomes
+in an otherwise returned report remain explicit recovery or re-observation
+work; they do not disappear when the other component is healthy.
+
+The complete planner accepts one finite sponsor list for the union of both
+components' renewal owners, with at most thirty-two distinct identities.
+Unknown or repeated owners are rejected before either component planner runs.
+The same declared state is then supplied to both components when they share
+an owner; the caller cannot describe that owner as available for one component
+and missing for the other. A successful planning call means only that these
+finite work items were derived. It establishes no complete byte coverage,
+available funds, successor admission, completed repair or execution permission.
 
 The original TCA2 and physical member contracts remain immutable. Existing
 shared references may cover a new release only while their original physical
@@ -181,6 +217,18 @@ store and exhaustion of the original budget before environment scans. They run
 on a local test host with synthetic
 payloads; they do not establish independent operators, a funded long-term market
 or a real model's availability.
+
+Five continuation controls cover a missing environment with its unavailable
+sponsor, distinct original component terms and owners, the thirty-two-owner
+union and conflicting/shared sponsor states, incomplete component reports and
+late completion, and environment probe refusal after model scans consumed the
+original budget. The incomplete-report cases deliberately compose actual
+successful readbacks with an actual expired-budget refusal, and separately
+exercise the late-completion flag, as negative composition controls. They are
+not measurements of physical corruption or a timed deadline race. The payload
+controls compare unique declared version bytes with separate component sizes
+and actual reservations; they do not claim a cross-context shared-manifest
+fixture.
 
 An implementation run is attributed only to its recorded exact source and
 retained command outcome:

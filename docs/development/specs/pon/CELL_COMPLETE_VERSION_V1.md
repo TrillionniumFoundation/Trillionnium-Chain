@@ -72,10 +72,20 @@ there is no magic rewrite, downgrade negotiation or legacy fallback.
 
 Verification requires the actual owner's independently supplied network,
 parameters, signer pin, key generation, release sequence, version commitment,
-both loader contexts and current time. Key revocation, changed sequence,
-generation, loader profile, model scope, version pin, tighter chunk budget,
-withdrawal, expiry and backwards time all refuse. A cached publisher observation
-rechecks that view on every `version_at` call.
+both loader contexts and current time. Initial validation refuses a withdrawn
+statement. A retained observation refuses current key revocation, changed
+sequence, generation, loader profile, model scope, version pin, tighter chunk
+budget, expiry and times before the original `verified_at`. A
+cached publisher observation rechecks that view on every `version_at` call. The
+observation retains its original verification lower bound; it is not a durable
+last-observed-time ledger. The actual owner must supply a fresh view and keep
+its time and revocation history from rewinding.
+
+A later withdrawal must reach the real owner and change its current sequence or
+key-revocation view. Signing another withdrawn statement at the same sequence
+does not notify or invalidate a previously retained observation by itself. This
+API is not a publisher high-water ledger; the ordinary owner must enforce
+non-reused sequences and hold its current authority guard.
 
 `version_at` is a metadata observation. A copied old owner view is not fresh,
 and a returned ordinary reference is not an execution capability. The real

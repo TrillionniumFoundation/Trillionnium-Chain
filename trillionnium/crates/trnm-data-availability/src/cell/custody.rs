@@ -690,7 +690,161 @@ pub struct CellCustodyContinuationV1 {
     pub successor_required_before_height: u64,
     /// Original inclusive dispatch deadline; no sliding repair window.
     pub last_new_repair_height: u64,
-    pub complete_version_payload_bytes: u64,
+    /// Complete bytes for this TMR1 component, not the complete TCV1 union or
+    /// the amount of payload that a later repair will actually write.
+    pub component_payload_bytes: u64,
+}
+
+/// Paired work for the same original target. Both observations retain their
+/// exact independent contracts, owners, service terms and refusal reasons.
+/// A healthy model component never cancels environment work, or vice versa.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellVersionCustodyReplicaContinuationV1<'a> {
+    model_observation: &'a CellCustodyReplicaObservationV1,
+    environment_observation: &'a CellCustodyReplicaObservationV1,
+    model: CellCustodyContinuationV1,
+    environment: CellCustodyContinuationV1,
+}
+
+impl CellVersionCustodyReplicaContinuationV1<'_> {
+    pub fn store_id(&self) -> CellDigestV1 {
+        self.model_observation.pin.store_id
+    }
+
+    pub fn replica_index(&self) -> u16 {
+        self.model_observation.pin.replica_index
+    }
+
+    pub fn model_observation(&self) -> &CellCustodyReplicaObservationV1 {
+        self.model_observation
+    }
+
+    pub fn environment_observation(&self) -> &CellCustodyReplicaObservationV1 {
+        self.environment_observation
+    }
+
+    pub fn model(&self) -> &CellCustodyContinuationV1 {
+        &self.model
+    }
+
+    pub fn environment(&self) -> &CellCustodyContinuationV1 {
+        &self.environment
+    }
+}
+
+/// Bounded TCV1 work derived from both actual component reports. This borrows
+/// the original evidence and pins; it does not clone the potentially large
+/// version manifest, acquire a new allowance, pay, repair or extend a term.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellVersionCustodyContinuationV1<'a> {
+    observation: &'a CellVersionCustodyReportV1,
+    replicas: Vec<CellVersionCustodyReplicaContinuationV1<'a>>,
+}
+
+impl CellVersionCustodyContinuationV1<'_> {
+    pub fn observation(&self) -> &CellVersionCustodyReportV1 {
+        self.observation
+    }
+
+    pub fn version(&self) -> CellVersionCommitmentV1 {
+        self.observation.version
+    }
+
+    pub fn model_policy(&self) -> CellDigestV1 {
+        self.observation.model_policy
+    }
+
+    pub fn environment_policy(&self) -> CellDigestV1 {
+        self.observation.environment_policy
+    }
+
+    /// Unique declared TCM1 payload bytes in this version. Actual component
+    /// probe reservations remain separately visible on the original report.
+    pub fn unique_complete_version_payload_bytes(&self) -> u64 {
+        self.observation.payload_bytes_per_complete_replica
+    }
+
+    pub fn replicas(&self) -> &[CellVersionCustodyReplicaContinuationV1<'_>] {
+        &self.replicas
+    }
+}
+
+impl CellVersionCustodyReportV1 {
+    /// Pair the two complete component plans by the already verified target
+    /// topology. A missing component report or late complete observation needs
+    /// a new admitted observation, not a model-only plan labelled as TCV1.
+    /// One sponsor union prevents different states for the same owner; no
+    /// contactability state authenticates funds or a funded successor.
+    pub fn plan_continuation(
+        &self,
+        sponsors: &[CellCustodySponsorObservationV1],
+    ) -> CellResultV1<CellVersionCustodyContinuationV1<'_>> {
+        let model = self
+            .model
+            .as_ref()
+            .map_err(|_| CellErrorV1::Invalid("custody model observation required"))?;
+        let environment = self
+            .environment
+            .as_ref()
+            .map_err(|_| CellErrorV1::Invalid("custody environment observation required"))?;
+        require(
+            self.finished_before_deadline,
+            "custody complete version observation required",
+        )?;
+        require(
+            sponsors.len() <= 2 * MAX_CELL_CUSTODY_REPLICAS_V1,
+            "custody version sponsor budget",
+        )?;
+        let model_owners: BTreeSet<_> = model
+            .replicas
+            .iter()
+            .map(|entry| entry.pin.renewal_owner)
+            .collect();
+        let environment_owners: BTreeSet<_> = environment
+            .replicas
+            .iter()
+            .map(|entry| entry.pin.renewal_owner)
+            .collect();
+        let mut declared = BTreeSet::new();
+        for sponsor in sponsors {
+            require(
+                (model_owners.contains(&sponsor.owner)
+                    || environment_owners.contains(&sponsor.owner))
+                    && declared.insert(sponsor.owner),
+                "custody unexpected or duplicate sponsor",
+            )?;
+        }
+        let for_component = |owners: &BTreeSet<_>| {
+            sponsors
+                .iter()
+                .filter(|sponsor| owners.contains(&sponsor.owner))
+                .copied()
+                .collect::<Vec<_>>()
+        };
+        let model_actions = model.plan_continuation(&for_component(&model_owners))?;
+        let environment_actions =
+            environment.plan_continuation(&for_component(&environment_owners))?;
+        let replicas = model
+            .replicas
+            .iter()
+            .zip(&environment.replicas)
+            .zip(model_actions.into_iter().zip(environment_actions))
+            .map(
+                |((model_observation, environment_observation), (model, environment))| {
+                    CellVersionCustodyReplicaContinuationV1 {
+                        model_observation,
+                        environment_observation,
+                        model,
+                        environment,
+                    }
+                },
+            )
+            .collect();
+        Ok(CellVersionCustodyContinuationV1 {
+            observation: self,
+            replicas,
+        })
+    }
 }
 
 impl CellReleaseCustodyReportV1 {
@@ -775,7 +929,7 @@ impl CellReleaseCustodyReportV1 {
                     recovery,
                     successor_required_before_height: pin.retain_until_height,
                     last_new_repair_height: pin.repair_deadline_height,
-                    complete_version_payload_bytes: self.payload_bytes_per_complete_replica,
+                    component_payload_bytes: self.payload_bytes_per_complete_replica,
                 }
             })
             .collect())

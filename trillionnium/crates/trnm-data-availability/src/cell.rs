@@ -48,6 +48,7 @@ pub use custody::{
     CellCustodyRecoveryActionV1, CellCustodyRenewalActionV1, CellCustodyReplicaObservationV1,
     CellCustodyReplicaPinV1, CellCustodyReplicaStateV1, CellCustodySponsorObservationV1,
     CellCustodySponsorStateV1, CellReleaseCustodyPolicyV1, CellReleaseCustodyReportV1,
+    CellVersionCustodyContinuationV1, CellVersionCustodyReplicaContinuationV1,
     CellVersionCustodyReportV1, MAX_CELL_CUSTODY_REPLICAS_V1,
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
