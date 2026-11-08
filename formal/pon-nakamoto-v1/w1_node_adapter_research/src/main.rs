@@ -11,8 +11,12 @@ use w1_full_public_stark_research::proof_wire::{Component, limits};
 use w1_full_public_stark_research::public::{PUBLIC_BYTES, PublicStatement};
 use w1_full_public_stark_research::sha_plan::{HEADER_BYTES, INPUT_BYTES, PREFIX_BYTES};
 use w1_node_adapter_research::{
-    OperatorPlan, PROFILE, PreparedBundle, Result, Stage, WorkStartBudget, admit, digest, err,
-    observe_verified, read_bounded, verify_bundle, write_new,
+    OperatorPlan, PROFILE, PreparedBundle, Result, Stage, admit, digest, err, observe_verified,
+    read_bounded, verify_reserved_bundle, write_new,
+};
+
+use w1_node_adapter_research::proof_start_owner::{
+    ProofStartOwner, ProofStartPolicy, ProofStartPurpose,
 };
 
 pub const GENESIS_TIME: u64 = 1_800_000_000;
@@ -156,10 +160,43 @@ fn checkpoint(name: &str, stage: Stage) -> Result<()> {
     }
 }
 
-fn exercise(fixture: &Path, proof: &Path, output: &Path, cancellation: &str) -> Result<Value> {
+fn load_owner_policy(path: &Path) -> Result<ProofStartPolicy> {
+    let policy: ProofStartPolicy =
+        serde_json::from_slice(&read_bounded(path, 4096, None)?).map_err(err)?;
+    policy.validate()?;
+    Ok(policy)
+}
+
+fn owner_init(policy_path: &Path, owner_path: &Path) -> Result<Value> {
+    let owner = ProofStartOwner::create(owner_path, load_owner_policy(policy_path)?)?;
+    Ok(
+        json!({"owner":owner.snapshot()?,"qualification":"HOLD_NO_GO","production_activation":false}),
+    )
+}
+
+fn owner_status(policy_path: &Path, owner_path: &Path) -> Result<Value> {
+    let owner = ProofStartOwner::open(owner_path, load_owner_policy(policy_path)?)?;
+    Ok(
+        json!({"owner":owner.snapshot()?,"qualification":"HOLD_NO_GO","production_activation":false}),
+    )
+}
+
+fn exercise(
+    fixture: &Path,
+    proof: &Path,
+    output: &Path,
+    cancellation: &str,
+    owner_path: &Path,
+    policy_path: &Path,
+) -> Result<Value> {
+    let budget = ProofStartOwner::open(owner_path, load_owner_policy(policy_path)?)?;
+    let reservation = budget.reserve(ProofStartPurpose::Admission)?;
+    let proof_start = reservation.record().clone();
+    println!(
+        "{}",
+        json!({"event":"proof_start_reserved","proof_start":proof_start})
+    );
     fs::create_dir(output).map_err(err)?;
-    let mut budget = WorkStartBudget::new(1)?;
-    budget.reserve()?;
     let bundle = load_bundle(fixture, proof)?;
     let operation = bundle.persist(&output.join("bundles"))?;
     let mut node_opened = false;
@@ -168,7 +205,8 @@ fn exercise(fixture: &Path, proof: &Path, output: &Path, cancellation: &str) -> 
     let mut native_observation = None;
     let mut native_observation_error = None;
     // Verify first: a rejected certificate never opens or recovers a Node store.
-    let result = match verify_bundle(&bundle, |s| checkpoint(cancellation, s)) {
+    let result = match verify_reserved_bundle(&bundle, reservation, |s| checkpoint(cancellation, s))
+    {
         Ok(verified) => {
             let mut node =
                 Node::open(&output.join("receiver-node"), settings()?, 1).map_err(err)?;
@@ -187,18 +225,31 @@ fn exercise(fixture: &Path, proof: &Path, output: &Path, cancellation: &str) -> 
         }
         Err(error) => Err(error),
     };
-    let record = json!({"schema":"trnm-w1-node-adapter-exercise-v1","operation_directory":operation,
+    let owner_snapshot = budget.snapshot();
+    let record = json!({"schema":"trnm-w1-node-adapter-exercise-v2","operation_directory":operation,
         "requested_cancellation":cancellation,"outcome":result.as_ref().ok(),"error":result.as_ref().err(),
         "node_opened":node_opened,"active_before":active_before,"generation_before":generation_before,
-        "native_observation":native_observation,"native_observation_error":native_observation_error,"work_starts_spent":budget.spent(),
-        "next_work_start_refused":budget.reserve().is_err(),"qualification":"HOLD_NO_GO","production_activation":false});
+        "native_observation":native_observation,"native_observation_error":native_observation_error,
+        "proof_start":proof_start,"proof_start_owner_snapshot":owner_snapshot.as_ref().ok(),"proof_start_owner_snapshot_error":owner_snapshot.as_ref().err(),"qualification":"HOLD_NO_GO","production_activation":false});
     save_json(&output.join("exercise.json"), &record)?;
     Ok(record)
 }
 
-fn reopen(fixture: &Path, output: &Path, operation: &Path) -> Result<Value> {
+fn reopen(
+    fixture: &Path,
+    output: &Path,
+    operation: &Path,
+    owner_path: &Path,
+    policy_path: &Path,
+) -> Result<Value> {
+    let budget = ProofStartOwner::open(owner_path, load_owner_policy(policy_path)?)?;
+    let reservation = budget.reserve(ProofStartPurpose::ReopenObservation)?;
+    println!(
+        "{}",
+        json!({"event":"proof_start_reserved","proof_start":reservation.record()})
+    );
     let bundle = PreparedBundle::reload(operation, load_plan(fixture)?)?;
-    let verified = verify_bundle(&bundle, |_| Ok(()))?;
+    let verified = verify_reserved_bundle(&bundle, reservation, |_| Ok(()))?;
     // Original Node::open performs real recovery; only open after proof success.
     let node = Node::open(&output.join("receiver-node"), settings()?, 1).map_err(err)?;
     observe_verified(&node, verified)
@@ -238,10 +289,12 @@ fn run() -> Result<Value> {
     let a: Vec<String> = std::env::args().skip(1).collect();
     match a.first().map(String::as_str) {
         Some("fixture") if a.len() == 2 => fixture(Path::new(&a[1])),
-        Some("exercise") if a.len() == 5 => exercise(Path::new(&a[1]), Path::new(&a[2]), Path::new(&a[3]), &a[4]),
-        Some("reopen") if a.len() == 4 => reopen(Path::new(&a[1]), Path::new(&a[2]), Path::new(&a[3])),
+        Some("owner-init") if a.len() == 3 => owner_init(Path::new(&a[1]), Path::new(&a[2])),
+        Some("owner-status") if a.len() == 3 => owner_status(Path::new(&a[1]), Path::new(&a[2])),
+        Some("exercise") if a.len() == 7 => exercise(Path::new(&a[1]), Path::new(&a[2]), Path::new(&a[3]), &a[4], Path::new(&a[5]), Path::new(&a[6])),
+        Some("reopen") if a.len() == 6 => reopen(Path::new(&a[1]), Path::new(&a[2]), Path::new(&a[3]), Path::new(&a[4]), Path::new(&a[5])),
         Some("native") if a.len() == 4 => native(Path::new(&a[1]), Path::new(&a[2]), a[3].parse().map_err(err)?),
-        _ => Err("usage: fixture NEW_DIR | exercise FIXTURE PROOF NEW_OUTPUT CANCEL_STAGE_OR_none | reopen FIXTURE OUTPUT OPERATION_DIR | native RAW EXPECTED_HEADER REPEATS".into()),
+        _ => Err("usage: fixture NEW_DIR | owner-init EXPECTED_POLICY NEW_OWNER_DIR | owner-status EXPECTED_POLICY OWNER_DIR | exercise FIXTURE PROOF NEW_OUTPUT CANCEL_STAGE_OR_none OWNER_DIR EXPECTED_POLICY | reopen FIXTURE OUTPUT OPERATION_DIR OWNER_DIR EXPECTED_POLICY | native RAW EXPECTED_HEADER REPEATS".into()),
     }
 }
 

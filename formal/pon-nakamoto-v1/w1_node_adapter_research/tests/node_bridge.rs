@@ -49,7 +49,7 @@ fn complete_two_proofs_real_admission_duplicate_and_cold_reopen() {
     let verified = verify_bundle(&bundle, |_| Ok(())).unwrap();
     let first = admit(&mut n, verified, TIME + 100, true, |_| Ok(())).unwrap();
     assert_eq!(first["native_admitted"], true);
-    assert_eq!(first["schema"], "trnm-w1-node-adapter-admission-v2");
+    assert_eq!(first["schema"], "trnm-w1-node-adapter-admission-v3");
     assert_eq!(first["native_admission_path_invoked"], true);
     assert!(first.get("native_full_replay_required").is_none());
     assert_eq!(first["native_observation"]["stored_exact"], true);
@@ -315,12 +315,25 @@ fn real_cli_refusal_and_early_cancel_never_open_node() {
             fs::write(inputs.join("statement.bin"), public).unwrap();
         }
         let output = dir.path().join("exercise");
+        let policy = w1_node_adapter_research::proof_start_owner::ProofStartPolicy::for_plan(
+            "42".repeat(32),
+            1,
+            &plan(),
+        )
+        .unwrap();
+        let policy_path = dir.path().join("expected-policy.json");
+        fs::write(&policy_path, serde_json::to_vec(&policy).unwrap()).unwrap();
+        let owner_path = fs::canonicalize(dir.path()).unwrap().join("proof-owner");
+        w1_node_adapter_research::proof_start_owner::ProofStartOwner::create(&owner_path, policy)
+            .unwrap();
         let result = std::process::Command::new(env!("CARGO_BIN_EXE_w1-node-adapter-research"))
             .arg("exercise")
             .arg(&inputs)
             .arg(&fixture)
             .arg(&output)
             .arg(cancellation)
+            .arg(&owner_path)
+            .arg(&policy_path)
             .output()
             .unwrap();
         assert!(
@@ -333,7 +346,8 @@ fn real_cli_refusal_and_early_cancel_never_open_node() {
         assert!(record["outcome"].is_null() && record["error"].is_string());
         assert_eq!(record["node_opened"], false);
         assert!(record["native_observation"].is_null());
-        assert_eq!(record["work_starts_spent"], 1);
+        assert_eq!(record["proof_start_owner_snapshot"]["occupied_slots"], 1);
+        assert_eq!(record["proof_start_owner_snapshot"]["exhausted"], true);
         assert!(!output.join("receiver-node").exists());
     }
 }
