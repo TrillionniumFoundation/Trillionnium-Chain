@@ -1,0 +1,12 @@
+{
+  "base_source": "8d5389748873dad6e296d17f2ff20483b5afa5bc",
+  "command": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "distributed native source inventory differs; refresh before freezing source\n",
+  "missing_existing_path": "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+}

@@ -1,3 +1,40 @@
+**Lifecycle legal-cost accounting and service separation, 2026-11-08 America/New_York — HOLD:**
+
+Continue the existing integration lineage from
+`8d5389748873dad6e296d17f2ff20483b5afa5bc`. The
+[finite lifecycle game](../../formal/pon-nakamoto-v1/LIFECYCLE_COST_GAME_V1.md)
+checks exact rational drift for every declared state/action, independently caps
+initial expected potential under the declared initial law, retains deferred nonce
+selectors, unused wins, cache state,
+failed/discarded attempts and already redeemed credit across restart/context
+aliases. Bellman truncation is not a certificate; independently replayed
+finite-policy, cycle and stationary-flow witnesses expose missing credit. An
+additional checked exponential envelope gives only a finite-model bounded-time
+tail, never a native-chain security probability or quantum cost theorem.
+
+The [Cell cost conformance audit](specs/pon/CELL_LOTTERY_COST_AUDIT_V1.md) runs the
+unchanged complete V2 relation at two fixed nonces. It distinguishes equal
+complete useful outputs from fresh nonce-dependent transcripts, original
+canonical/context refusals and the still-open six all-algorithm cost obligations.
+The [service settlement adapter](specs/pon/SERVICE_WORK_SETTLEMENT_V1.md) reuses
+the original five-lane budget planner: a fully replayed evaluation service can
+earn its agreed base fee when the correct decision is NoUpdate; measured
+improvement requires its separate frozen comparisons and retention condition.
+Unknown retains reservations, failures do not become NoUpdate, and all adapter
+outcomes have zero additional consensus credit. This is conditional process-local
+accounting, not native escrow, independent customers or external payment.
+
+Run the [combined reproduction](../../formal/pon-nakamoto-v1/experiments/lifecycle_cost_game_v1.py)
+against one clean committed source and retain its original whole-tree source
+checks. New test commands join the existing mandatory protocol-contract lane
+and its refusal controls; no old test or qualification requirement is removed.
+Repair the inherited embedded source-inventory omission of the already tracked
+`history_stage_diagnostic.rs`; the original inventory checker is unchanged.
+Actual classical/quantum resource reduction, durable native owner integration,
+real Hepta numerical/quality/retention/adoption evidence and long-run useful-task
+supply remain open. `work_profile_qualified`, public reward and production
+activation remain false.
+
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
 > Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.

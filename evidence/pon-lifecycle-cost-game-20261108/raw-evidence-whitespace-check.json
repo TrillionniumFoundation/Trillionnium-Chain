@@ -1,0 +1,16 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "raw_logs_normalized": false,
+  "reason": "Preserve original test logs: one unittest subtest line has trailing space and two Cargo test logs end in a blank line. Executable source whitespace check passed before evidence was added.",
+  "schema": "pon-lifecycle-raw-evidence-whitespace-observation-v1",
+  "source_check_relaxed": false,
+  "staged_tree": "fbbab1c32d7c71f7e3a993e650d01cada69ce9bb",
+  "stderr": "",
+  "stdout": "evidence/pon-lifecycle-cost-game-20261108/development-observations/service-maturity-before-fix.log:22: trailing whitespace.\n+test_each_budget_must_mature_before_the_entire_service_window (test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window) ... \nevidence/pon-lifecycle-cost-game-20261108/validation/cell-native.log:53: new blank line at EOF.\nevidence/pon-lifecycle-cost-game-20261108/validation/crypto-native.log:208: new blank line at EOF.\n"
+}

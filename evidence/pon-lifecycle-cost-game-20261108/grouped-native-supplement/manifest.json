@@ -1,0 +1,139 @@
+{
+  "artifacts": [
+    {
+      "bytes": 411,
+      "path": "grouped-native-build.log",
+      "sha256": "50cc73b86bb82d669ce1112895cee400803a8163a9f8c02a02b71028373322c9"
+    },
+    {
+      "bytes": 2061,
+      "path": "grouped-native-complete-suite.log",
+      "sha256": "f2b47a05c88486ba7741f97e2d51ee25322456bf2975600cfa456f269c66a4a6"
+    },
+    {
+      "bytes": 169,
+      "path": "preflight.log",
+      "sha256": "c2cd868e08e3c72d99d38c84c11142565d5a3b7ae0118afa72f9b6501bb8a03f"
+    },
+    {
+      "bytes": 423,
+      "path": "source-after.json",
+      "sha256": "15714004e92f112f3374bf410c18391252aa4daee17ad45576e2530906d00010"
+    },
+    {
+      "bytes": 423,
+      "path": "source-after.log",
+      "sha256": "15714004e92f112f3374bf410c18391252aa4daee17ad45576e2530906d00010"
+    },
+    {
+      "bytes": 423,
+      "path": "source-before.json",
+      "sha256": "15714004e92f112f3374bf410c18391252aa4daee17ad45576e2530906d00010"
+    },
+    {
+      "bytes": 423,
+      "path": "source-before.log",
+      "sha256": "15714004e92f112f3374bf410c18391252aa4daee17ad45576e2530906d00010"
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+        "--output",
+        "/workspace/scratch/68dd104c2e6a/lifecycle-grouped-2d71bd9/source-before.json"
+      ],
+      "cwd_relative_to_source": ".",
+      "duration_seconds": 2.9846367835998535,
+      "exit_code": 0,
+      "log": "source-before.log",
+      "name": "source-before",
+      "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "started_unix_seconds": 1794140568.6622674
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd_relative_to_source": ".",
+      "duration_seconds": 0.07729578018188477,
+      "exit_code": 0,
+      "log": "preflight.log",
+      "name": "preflight",
+      "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "started_unix_seconds": 1794140571.6469808
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_routed_int257_grouped"
+      ],
+      "cwd_relative_to_source": "trillionnium",
+      "duration_seconds": 3.1268301010131836,
+      "exit_code": 0,
+      "log": "grouped-native-build.log",
+      "name": "grouped-native-build",
+      "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "started_unix_seconds": 1794140571.7243338
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py",
+        "-v"
+      ],
+      "cwd_relative_to_source": ".",
+      "duration_seconds": 0.4729595184326172,
+      "exit_code": 0,
+      "log": "grouped-native-complete-suite.log",
+      "name": "grouped-native-complete-suite",
+      "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "started_unix_seconds": 1794140574.8544621
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+        "--output",
+        "/workspace/scratch/68dd104c2e6a/lifecycle-grouped-2d71bd9/source-after.json"
+      ],
+      "cwd_relative_to_source": ".",
+      "duration_seconds": 1.7531325817108154,
+      "exit_code": 0,
+      "log": "source-after.log",
+      "name": "source-after",
+      "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+      "started_unix_seconds": 1794140575.330039
+    }
+  ],
+  "initial_two_skips_preserved": true,
+  "native_binary": {
+    "bytes": 1770888,
+    "path": "/workspace/scratch/68dd104c2e6a/cargo-target/debug/examples/pon_routed_int257_grouped",
+    "sha256_after": "9ef496b72a282198d8c3645e87f668c885aacb926d28858fe40ac51f2bb23e61",
+    "sha256_before": "9ef496b72a282198d8c3645e87f668c885aacb926d28858fe40ac51f2bb23e61",
+    "unchanged": true
+  },
+  "performance_comparison_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "pon-grouped-native-supplement-v1",
+  "source_commit": "2d71bd943e88fb25d19c2d86feb09b86657a87d3",
+  "status": "PASS",
+  "work_profile_qualified": false
+}
