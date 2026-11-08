@@ -1,0 +1,7 @@
+{"result": "PASS", "mode": "--push", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pon-joint-state-risk-ledger-20261107", "remote_policy_mutated": false}
+remote: 
+remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+remote: 
+To https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
+   6615ffa..b66e66d  HEAD -> fix/chain-pon-joint-state-risk-ledger-20261107

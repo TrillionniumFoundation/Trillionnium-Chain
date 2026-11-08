@@ -1,0 +1,515 @@
+{
+  "arguments": {
+    "clippy": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--profile",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--test",
+      "native_owner_observation",
+      "--example",
+      "native_owner_observation_v1",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "format": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "graph": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "native_run": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "run",
+      "--profile",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--example",
+      "native_owner_observation_v1",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "--",
+      "evidence/pon-actual-certificates-20261107/native_owner/actual_native_owner_run.json"
+    ],
+    "pq_oracle_build": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "build",
+      "--release",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--example",
+      "pq_message_oracle"
+    ],
+    "test": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_owner_observation",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0",
+      "--",
+      "--test-threads=1"
+    ]
+  },
+  "binary_bindings": [
+    {
+      "bytes": 14617632,
+      "path": "/workspace/scratch/b9454e263603/native_w1_target/debug/examples/native_owner_observation_v1",
+      "sha256": "83be115cd94733c490bc30fbea0e0664f0b031b9eb62ed438fc6c4cf7293d993"
+    },
+    {
+      "bytes": 728616,
+      "path": "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pq_message_oracle",
+      "sha256": "6b09f07b94b03099bedea5b55c48e6fefa1ea7af3f0092a207980deb03372ae1"
+    }
+  ],
+  "cargo_graph": {
+    "packages": 175,
+    "resolve_nodes": 175,
+    "workspace_members": 26
+  },
+  "checks": {
+    "actual_native_run": "PASS",
+    "diff_whitespace_check": "PASS",
+    "existing_pq_oracle_build": "PASS",
+    "locked_offline_complete_cargo_graph": "PASS",
+    "native_integration_tests": {
+      "failed": 0,
+      "passed": 10,
+      "status": "PASS",
+      "test_names": [
+        "actual_legacy_and_authenticated_census_replays_full_native_relation_without_persistence",
+        "actual_two_owner_execution_covers_hidden_inventory_six_successors_ties_reorg_and_time_maturity",
+        "block_byte_limits_and_native_work_cancellation_never_return_a_partial_census",
+        "callback_error_text_never_acquires_retained_data_stop_authority",
+        "corrupted_retained_product_is_reverified_instead_of_trusting_admitted_metadata",
+        "foreign_state_changing_commit_during_read_snapshot_is_detected_after_release",
+        "local_view_digest_stable_but_owner_incarnation_and_observation_attempt_are_not_reused",
+        "pnp2_growth_is_explicitly_unsupported_without_a_pnp1_fallback",
+        "prior_filtering_sql_view_cannot_hide_an_admitted_fork_from_a_complete_census",
+        "retained_chainwork_or_missing_packet_cannot_be_certified"
+      ]
+    },
+    "strict_clippy": "PASS",
+    "workspace_format_check": "PASS"
+  },
+  "documentation": {
+    "path": "README.md",
+    "sha256": "de0a3a368aa50829344e3b596b8eb60250d97b06c9ca687dfa6846679f4dc5b9"
+  },
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_HOME": "/workspace/scratch/b9454e263603/native_w1_cargo_home",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/b9454e263603/native_w1_target",
+    "LD_LIBRARY_PATH": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "PATH": "managed toolchain bin prepended to existing PATH",
+    "RUSTC": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+  },
+  "native_run": {
+    "actual_calls": 82,
+    "all_produced_valid_block_weights": [
+      2
+    ],
+    "bytes": 455281,
+    "comparison_pairs": 3,
+    "confirmation_outputs": 2,
+    "hidden_before_after_same_logical_view_commitment": "42946fcc136903cf7c2d07669f10e0f3a1a9a9895b973837d3e07427e45377fc",
+    "packet_artifacts": 20,
+    "packet_kinds": {
+      "invalid_product_control": 1,
+      "native_produced_packet": 19
+    },
+    "path": "actual_native_owner_run.json",
+    "same_timestamped_json_claimed": false,
+    "sha256": "44576d021d365c803f6f7406447d4e53674205f861206924e680282db409b920",
+    "snapshots": 11
+  },
+  "native_snapshot_scores": [
+    {
+      "eligible_maximum": 14,
+      "name": "alice_confirmed_a7",
+      "node": "alice",
+      "raw_selection_deficit": 0,
+      "rows": 8,
+      "selected": 14
+    },
+    {
+      "eligible_maximum": 0,
+      "name": "bob_unseen_a1",
+      "node": "bob",
+      "raw_selection_deficit": 0,
+      "rows": 1,
+      "selected": 0
+    },
+    {
+      "eligible_maximum": 14,
+      "name": "alice_before_hidden_branch",
+      "node": "alice",
+      "raw_selection_deficit": 0,
+      "rows": 8,
+      "selected": 14
+    },
+    {
+      "eligible_maximum": 16,
+      "name": "bob_hidden_b8",
+      "node": "bob",
+      "raw_selection_deficit": 0,
+      "rows": 9,
+      "selected": 16
+    },
+    {
+      "eligible_maximum": 14,
+      "name": "alice_after_hidden_branch",
+      "node": "alice",
+      "raw_selection_deficit": 0,
+      "rows": 8,
+      "selected": 14
+    },
+    {
+      "eligible_maximum": 18,
+      "name": "alice_a9_admitted_not_active",
+      "node": "alice",
+      "raw_selection_deficit": 4,
+      "rows": 10,
+      "selected": 14
+    },
+    {
+      "eligible_maximum": 18,
+      "name": "alice_future_ancestor_deferred",
+      "node": "alice",
+      "raw_selection_deficit": 4,
+      "rows": 12,
+      "selected": 14
+    },
+    {
+      "eligible_maximum": 18,
+      "name": "alice_after_b8_admitted",
+      "node": "alice",
+      "raw_selection_deficit": 4,
+      "rows": 20,
+      "selected": 14
+    },
+    {
+      "eligible_maximum": 18,
+      "name": "alice_after_strict_reorg_b8",
+      "node": "alice",
+      "raw_selection_deficit": 2,
+      "rows": 20,
+      "selected": 16
+    },
+    {
+      "eligible_maximum": 22,
+      "name": "alice_future_mature_pending",
+      "node": "alice",
+      "raw_selection_deficit": 6,
+      "rows": 20,
+      "selected": 16
+    },
+    {
+      "eligible_maximum": 22,
+      "name": "alice_after_select_mature",
+      "node": "alice",
+      "raw_selection_deficit": 0,
+      "rows": 20,
+      "selected": 22
+    }
+  ],
+  "packet_readback": [
+    {
+      "bytes": 49709,
+      "kind": "native_produced_packet",
+      "native_id": "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554",
+      "path": "packets/3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554.2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de.pnp1",
+      "readback_matches": true,
+      "sha256": "2d4868329e2a4ef4a76bfd86d00ed43a9db0ac4772957af24390b0277f0178de"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "241555bae47ef937aeff8350171d6dd01c92a149ef0707f4f2ecdb39e117430e",
+      "path": "packets/241555bae47ef937aeff8350171d6dd01c92a149ef0707f4f2ecdb39e117430e.a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63.pnp1",
+      "readback_matches": true,
+      "sha256": "a87e881dea297719ff996dc533465e75809eb151a61ba5297d378614e8277e63"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "f4b62ff23e6feebae0a606bd32d5f2c7951e3007dc4c877e763839f03238d7a3",
+      "path": "packets/f4b62ff23e6feebae0a606bd32d5f2c7951e3007dc4c877e763839f03238d7a3.412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54.pnp1",
+      "readback_matches": true,
+      "sha256": "412c750326721e6ec5d9e5952038dc045e8603683aed6ecd1859e1f067633e54"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "09848eabb34694565c0c2dfd4939337bae8c313e49afc43119355391b0c3b0aa",
+      "path": "packets/09848eabb34694565c0c2dfd4939337bae8c313e49afc43119355391b0c3b0aa.c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389.pnp1",
+      "readback_matches": true,
+      "sha256": "c66a1aed9fe347af0b812c54b08906caac84f33f53e04c40231eddcfbcf4a389"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "f495a17ce1eecb7136572b60cb1e90723eb1d8968c8933aa453e84528683d6d4",
+      "path": "packets/f495a17ce1eecb7136572b60cb1e90723eb1d8968c8933aa453e84528683d6d4.a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f.pnp1",
+      "readback_matches": true,
+      "sha256": "a2e0494fa79cc78255f5dbe4dcf5ed8ae7d6be53806a2da193efe3c09747104f"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "824b11ffff1b308cbb47754a58ded4de11097c2e138608ec3ba061779afcac0c",
+      "path": "packets/824b11ffff1b308cbb47754a58ded4de11097c2e138608ec3ba061779afcac0c.0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab.pnp1",
+      "readback_matches": true,
+      "sha256": "0911acca8ac8c87868b5f08de9d8183b85820f991d1e9395ece71e7776d083ab"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502",
+      "path": "packets/9d78eb57342d078a5a6f2e9217c396fadd465f5531353365295b4539f2af0502.23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d.pnp1",
+      "readback_matches": true,
+      "sha256": "23a22bc54331b6c4f6f291921478703b12adea793a7077f7ab280628e23ef29d"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "5dbf4d8d668cf65fe7ffce9a68a595694ad145ebcb007713dd2a52b9eb83c901",
+      "path": "packets/5dbf4d8d668cf65fe7ffce9a68a595694ad145ebcb007713dd2a52b9eb83c901.776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5.pnp1",
+      "readback_matches": true,
+      "sha256": "776dc990e3543a9c4e9957c796a88b2c7901aa3d23816490efe19ce4b0c7b3c5"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "f725e672e999c4f93a7b2b2a7036691ac75d8c6edeb4eeb7d74ccc858c9f5a18",
+      "path": "packets/f725e672e999c4f93a7b2b2a7036691ac75d8c6edeb4eeb7d74ccc858c9f5a18.bf2ec604f1eb1d6b326074f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee.pnp1",
+      "readback_matches": true,
+      "sha256": "bf2ec604f1eb1d6b326074f5184a657730e7b1c846f99dcccdd4ac0063f0f9ee"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "6ae2fc7f3f7a3486d34fce895ad4d857ba05c4bb8cca59bb823607c73888e5d2",
+      "path": "packets/6ae2fc7f3f7a3486d34fce895ad4d857ba05c4bb8cca59bb823607c73888e5d2.83e5904ac17b2c3f58cd8243de4220d2b5fe324e8a640cca48dbb7f04bde3e14.pnp1",
+      "readback_matches": true,
+      "sha256": "83e5904ac17b2c3f58cd8243de4220d2b5fe324e8a640cca48dbb7f04bde3e14"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "5f3e502a5dc3fdbd4f19bc35eb29bfabc85601220a93ed5c2e03e0e72e037db3",
+      "path": "packets/5f3e502a5dc3fdbd4f19bc35eb29bfabc85601220a93ed5c2e03e0e72e037db3.4b2a10c6cb264552378c8fec99f40d200816fc558ca2c05ae423268d1a1f4e78.pnp1",
+      "readback_matches": true,
+      "sha256": "4b2a10c6cb264552378c8fec99f40d200816fc558ca2c05ae423268d1a1f4e78"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "3665ff92264f78916060a7c9ec55b4458e5515ef5387de42213a16a295c6e67a",
+      "path": "packets/3665ff92264f78916060a7c9ec55b4458e5515ef5387de42213a16a295c6e67a.89ec206947d46e4280541b8eafc72250763b315cdde2457398f6b796c6656cb7.pnp1",
+      "readback_matches": true,
+      "sha256": "89ec206947d46e4280541b8eafc72250763b315cdde2457398f6b796c6656cb7"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "fd99b2a96bb38250fa91c2703d971565c27810a3af12a9957ac4656946a7b411",
+      "path": "packets/fd99b2a96bb38250fa91c2703d971565c27810a3af12a9957ac4656946a7b411.2fb14f1b46b51aa45fe54f2824738d2b2becf69384dc046e14dbc29fe7ea8f6e.pnp1",
+      "readback_matches": true,
+      "sha256": "2fb14f1b46b51aa45fe54f2824738d2b2becf69384dc046e14dbc29fe7ea8f6e"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "4586e0294407f02fc803e22c4b07e2f650e7fab8d372e5a4424e4d16f00ac6e3",
+      "path": "packets/4586e0294407f02fc803e22c4b07e2f650e7fab8d372e5a4424e4d16f00ac6e3.4376d1102a405753673dbcd2b59523e23d50493779b7cf2d00b725c85fb185bd.pnp1",
+      "readback_matches": true,
+      "sha256": "4376d1102a405753673dbcd2b59523e23d50493779b7cf2d00b725c85fb185bd"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "88dcf691d0af78f2a9204d4eb164946ca68211e024294d643c1d344ceeaf1c11",
+      "path": "packets/88dcf691d0af78f2a9204d4eb164946ca68211e024294d643c1d344ceeaf1c11.ae71245e9159ae093183ff7011370d167ecdfbdb32041ec9a19ca6fafe33cd06.pnp1",
+      "readback_matches": true,
+      "sha256": "ae71245e9159ae093183ff7011370d167ecdfbdb32041ec9a19ca6fafe33cd06"
+    },
+    {
+      "bytes": 49508,
+      "kind": "invalid_product_control",
+      "native_id": "5dbf4d8d668cf65fe7ffce9a68a595694ad145ebcb007713dd2a52b9eb83c901",
+      "path": "packets/5dbf4d8d668cf65fe7ffce9a68a595694ad145ebcb007713dd2a52b9eb83c901.d42cd500b7cf949fc2075ed868145f70c54fd0a11f5c3f1f2fc58af6f785260e.pnp1",
+      "readback_matches": true,
+      "sha256": "d42cd500b7cf949fc2075ed868145f70c54fd0a11f5c3f1f2fc58af6f785260e"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "4534e2a4d9664f141359c6742654a2f54a7a7da3d7b794f0784928fc7bd65e82",
+      "path": "packets/4534e2a4d9664f141359c6742654a2f54a7a7da3d7b794f0784928fc7bd65e82.16b76c3f1e567abed89066f07aabee48fbf8036d6a1437e95c4a691ee3dc8f09.pnp1",
+      "readback_matches": true,
+      "sha256": "16b76c3f1e567abed89066f07aabee48fbf8036d6a1437e95c4a691ee3dc8f09"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "07831eff35e5533aa75dc8fbe8fd5885ed155d60ff98c74a06fb261825e705e7",
+      "path": "packets/07831eff35e5533aa75dc8fbe8fd5885ed155d60ff98c74a06fb261825e705e7.a5cb39f8bfb11d03d960c7414a7ca9a635f94e144d8c97b97407406b81fe53e0.pnp1",
+      "readback_matches": true,
+      "sha256": "a5cb39f8bfb11d03d960c7414a7ca9a635f94e144d8c97b97407406b81fe53e0"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "f51203d0c67920aaba510a8ce670991ae57f73cc4af8c73ecd36aa6c6ed83a9e",
+      "path": "packets/f51203d0c67920aaba510a8ce670991ae57f73cc4af8c73ecd36aa6c6ed83a9e.4a978ab260bf253182e098f050b6d62a91257dc3777f36be0fe62d6dd3b907b7.pnp1",
+      "readback_matches": true,
+      "sha256": "4a978ab260bf253182e098f050b6d62a91257dc3777f36be0fe62d6dd3b907b7"
+    },
+    {
+      "bytes": 49508,
+      "kind": "native_produced_packet",
+      "native_id": "2666c16905e88baf1c5ef3a515736bd46353a1b44abe911b4eae31943ad5b062",
+      "path": "packets/2666c16905e88baf1c5ef3a515736bd46353a1b44abe911b4eae31943ad5b062.8c54fa5ba8958229d49a6c5750f75ae846b3bc15c61dd882b446df5aa3e2c691.pnp1",
+      "readback_matches": true,
+      "sha256": "8c54fa5ba8958229d49a6c5750f75ae846b3bc15c61dd882b446df5aa3e2c691"
+    }
+  ],
+  "preserved_failures": [
+    {
+      "path": "build-attempt-01.log",
+      "reason": "Missing observer initializer in secondary Node literal; initial direct Cargo environment also exposed host SQLite qualification warning, fixed by normal managed LD_LIBRARY_PATH."
+    },
+    {
+      "path": "build-attempt-02.log",
+      "reason": "Private import visibility and explicit test error conversion."
+    },
+    {
+      "failed": 2,
+      "passed": 8,
+      "path": "test-attempt-01.log",
+      "reason": "No-op SQLite commit is not guaranteed to alter data_version; growth test needed native growth namespace before testing refusal."
+    }
+  ],
+  "qualification": {
+    "exported_artifact_authenticated": false,
+    "global_ready_attested": false,
+    "native_execution_exercised": true,
+    "native_runtime_attested": false,
+    "performance_or_cost_lower_bound_claimed": false,
+    "physical_clock_authenticated": false,
+    "probabilistic_environment_bound": false,
+    "probability_bound": null,
+    "remote_ci_all_gates_claimed": false,
+    "six_successor_risk_qualified": false,
+    "trusted_exporter_supplied": false,
+    "world_coverage_attested": false,
+    "world_ready_time_inferred_from_local_admission": false
+  },
+  "recorded_date_utc": "2026-11-07",
+  "retained_files": [
+    {
+      "bytes": 5146,
+      "path": "build-attempt-01.log",
+      "sha256": "6e97178b6ab96fbaf13601b0c80ab5824d70fe35a2d0cda8a1588e9374214851"
+    },
+    {
+      "bytes": 4425,
+      "path": "build-attempt-02.log",
+      "sha256": "bf47ba48b3832efbed6b74cb3576527cc3990d98cb1cf220d267042f63a2b081"
+    },
+    {
+      "bytes": 6655,
+      "path": "test-attempt-01.log",
+      "sha256": "299244f423e924590504322aff86ed4ecdd4f481172ab15ee8878dde46684fb9"
+    },
+    {
+      "bytes": 1329,
+      "path": "test-attempt-02.log",
+      "sha256": "1524c7722f1c7fe7e32b300a33462145c5c7dc7f86c626d18d12284672c7ff8c"
+    },
+    {
+      "bytes": 589,
+      "path": "native-run-attempt-01.log",
+      "sha256": "4e8b5fdcb7c8e915c1763b4e98275c04b7c4aad463d7ddde5eec9001a482f18b"
+    },
+    {
+      "bytes": 3127,
+      "path": "clippy-attempt-01.log",
+      "sha256": "02207511503c182174dbe892b25e895dbd0961cfe3151605fef6900d2bc2dc55"
+    },
+    {
+      "bytes": 0,
+      "path": "format-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 846393,
+      "path": "cargo-graph.json",
+      "sha256": "28809c3773eec73aa038ee7cebca62296f4095e74dc668a764fa0ffd0bddb9d2"
+    },
+    {
+      "bytes": 0,
+      "path": "cargo-graph.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 200,
+      "path": "pq-message-oracle-build.log",
+      "sha256": "d6c54766776e7f4556b4f471447541a0b1ce2d5cd90de73f348bff7b435cfa60"
+    }
+  ],
+  "schema": "pon-native-owner-observation-verification-v1",
+  "source_binding_scope": "Focused observation implementation and native work/identity/state/configuration source; not a complete compiler provenance attestation.",
+  "source_bindings": {
+    "path": "source_bindings.json",
+    "sha256": "2fcfc65f78ba0d54a3b84d65f93c371d784ac68c7c7e6929191ff539e71f7063"
+  },
+  "starting_source_commit": "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+  "toolchain": {
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Debian 13.0.0 [64-bit]",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2"
+  },
+  "working_directory": "/workspace/scratch/b9454e263603/chain_obligations"
+}

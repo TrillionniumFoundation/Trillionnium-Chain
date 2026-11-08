@@ -1,0 +1,82 @@
+{
+  "actual_sha_independent_uniform_tickets_proved": false,
+  "all_failed_and_nonwinning_attempts_retained": true,
+  "baseline_git_anchor_not_a_claim_all_new_files_are_committed": "88bce414d7ba7f7f6a60dba03943ee20dc501ed7",
+  "complete_candidates": 9,
+  "controls_passed": 10,
+  "empirical_hit_rate_is_not_p_or_a_risk_estimate": true,
+  "finite_test_errors": 0,
+  "finite_test_failures": 0,
+  "finite_tests_run": 26,
+  "full_frozen_MU1_bytes_unchanged": true,
+  "hash_samples_are_not_execution_attestation": true,
+  "hidden_inventory_output_extraction_and_cap_attested": false,
+  "input_parameters_attest_complete_joint_initial_state": false,
+  "input_parameters_attest_full_lifetime_query_coverage": false,
+  "losing_candidates_retained": 7,
+  "mandatory_u_minimum_gate_cost_proved": false,
+  "native_binaries": {
+    "LQC_NATIVE_PREPARED": {
+      "path": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/target/release/examples/pon_zero_io",
+      "sha256": "acc13f0bc5b611995390fb0fc5a3ca53576f2f1a01e210d7c35a97cdf1e3f515"
+    },
+    "LQC_NATIVE_WORK": {
+      "path": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/target/release/examples/pon_work_io",
+      "sha256": "19f636669306827814872f267c1a9aeaa55e9917217746c7a567a80da86cd365"
+    }
+  },
+  "native_binary_hashes_before_after_match": true,
+  "native_calls": 21,
+  "native_expected_invalid_calls": 1,
+  "native_identity_and_weight_bridge_proved": false,
+  "native_modes": {
+    "generic": 9,
+    "prove": 1,
+    "verify": 11
+  },
+  "native_six_successor_risk_certified": false,
+  "native_successes": 20,
+  "physical_resource_tail_proved": false,
+  "production_qualified": false,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "reference_report": {
+    "actor_labels_authenticated": false,
+    "actual_quantum_query_observed": false,
+    "actual_sha_independent_uniform_tickets_proved": false,
+    "checkpoint": {
+      "head_hash": "357620a40f1bf4f5985dd5c3f6bffed17e5f3c02d85749f289e32b15f1204c7d",
+      "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+      "sequence": 43
+    },
+    "complete_emissions_including_duplicates": 10,
+    "declared_caps": {
+      "C": 8,
+      "M": 10,
+      "Q": 1
+    },
+    "global_first_coherent_query_attested": false,
+    "hidden_inventory_output_extraction_and_cap_attested": false,
+    "input_parameters_attest_complete_joint_initial_state": false,
+    "input_parameters_attest_full_lifetime_query_coverage": false,
+    "mandatory_u_minimum_gate_cost_proved": false,
+    "native_identity_and_weight_bridge_proved": false,
+    "native_six_successor_risk_certified": false,
+    "phase": "post-prefix",
+    "physical_resource_tail_proved": false,
+    "production_qualified": false,
+    "records_execution_attested": false,
+    "reference_cache_reads": 11,
+    "reference_cap_checks_pass": true,
+    "reference_post_prefix_calls": 1,
+    "reference_prefix_distinct_calls": 8,
+    "reference_sha256_evaluations": 9,
+    "schema": "pon-lifecycle-query-reference-report-v1",
+    "scope": "lqc1-fixed-mu1-native-prefix-cache-example",
+    "unique_research_credit": 32
+  },
+  "result": "PASS",
+  "schema": "pon-lifecycle-query-native-evidence-v1",
+  "source_hashes_before_after_match": true,
+  "source_manifest_sha256": "661e73fae157f1802a3cc055d1bdb792fbb353ab3e96221376f362d21f719983",
+  "winning_candidates": 2
+}

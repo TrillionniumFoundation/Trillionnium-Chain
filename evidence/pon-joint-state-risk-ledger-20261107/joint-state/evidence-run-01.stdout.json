@@ -1,0 +1,145 @@
+{
+  "actual_initial_joint_state_attested": false,
+  "actual_quantum_hardware_executed": false,
+  "actual_register_and_environment_coverage_attested": false,
+  "actual_sha_or_poseidon_idealization_proved": false,
+  "all_algorithm_physical_resource_loss_proved": false,
+  "all_future_oracle_correlated_channels_covered": false,
+  "examples": [
+    {
+      "bound": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "multiplier": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "name": "independent-singular",
+      "weighted_positive_excess_trace": {
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "bound": {
+        "denominator": 128,
+        "numerator": 11
+      },
+      "exact_success_of_explicit_zero_query_measurement": {
+        "denominator": 524288,
+        "numerator": 43583
+      },
+      "multiplier": {
+        "denominator": 8,
+        "numerator": 11
+      },
+      "name": "noisy-first-winner",
+      "weighted_positive_excess_trace": {
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "bound": {
+        "denominator": 256,
+        "numerator": 31
+      },
+      "exact_success_of_explicit_zero_query_measurement": {
+        "denominator": 256,
+        "numerator": 31
+      },
+      "multiplier": {
+        "denominator": 1,
+        "numerator": 2
+      },
+      "name": "coherent-first-bit",
+      "weighted_positive_excess_trace": {
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "bound": {
+        "denominator": 65536,
+        "numerator": 14911
+      },
+      "exact_success_of_explicit_zero_query_measurement": {
+        "denominator": 65536,
+        "numerator": 14911
+      },
+      "multiplier": {
+        "denominator": 1,
+        "numerator": 16
+      },
+      "name": "full-truth-table-advice",
+      "weighted_positive_excess_trace": {
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    {
+      "bound": {
+        "denominator": 256,
+        "numerator": 31
+      },
+      "exact_success_of_explicit_zero_query_measurement": {
+        "denominator": 256,
+        "numerator": 31
+      },
+      "multiplier": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "name": "rare-positive-excess",
+      "weighted_positive_excess_trace": {
+        "denominator": 256,
+        "numerator": 15
+      }
+    }
+  ],
+  "native_identity_and_weight_bridge_proved": false,
+  "native_six_successor_risk_certified": false,
+  "negative_controls": [
+    {
+      "name": "coherent-advice-falsely-fresh",
+      "refusal": "JOINT_STATE_DOMINATION_PSD"
+    },
+    {
+      "name": "incomplete-oracle-law",
+      "refusal": "COMPLETE_ORACLE_TABLE_COVERAGE"
+    },
+    {
+      "name": "unpaid-positive-excess",
+      "refusal": "POSITIVE_EXCESS_ALLOWANCE_EXCEEDED"
+    },
+    {
+      "name": "selected-start-scope-substitution",
+      "refusal": "GLOBAL_SCOPE_REQUIRED"
+    }
+  ],
+  "production_qualified": false,
+  "result": "PASS",
+  "schema": "pon-finite-cq-state-evidence-v1",
+  "scope": "exact-explicit-finite-mathematical-models",
+  "source_bindings": [
+    {
+      "path": "formal/pon-nakamoto-v1/finite_joint_state_certificate.py",
+      "sha256": "4b5cd35fbe5bbc48c6c7811b329c063c1adfb3b37c86b84f70462f0c219a74be"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+      "sha256": "574011fbf2f4ef87ca2f6eaa81de6cdbe8983379026ee3ba81a579bb27cf9565"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/FINITE_JOINT_STATE_CERTIFICATE_V1.md",
+      "sha256": "1c70ae1ea8c7ba68107e7b385bb7ea7774cd871c740ef8f44b53d4d89f663d13"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/mandatory_units_query.py",
+      "sha256": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e"
+    }
+  ],
+  "started_at_utc": "2026-11-07T23:17:05.178828+00:00",
+  "uniform_counterfactual_query_output_caps_attested": false
+}

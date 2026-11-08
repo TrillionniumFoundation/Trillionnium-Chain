@@ -1,0 +1,124 @@
+[
+  {
+    "name": "trailing-byte",
+    "native_refusal": "PACKET_LENGTH",
+    "packet_sha256": "f938d6a88a253b0f40ac6d5f90094a1791709f2415ff3bc2613bd26c5ad0f588",
+    "scalar_refusal": "PACKET_LENGTH"
+  },
+  {
+    "name": "missing-byte",
+    "native_refusal": "PACKET_LENGTH",
+    "packet_sha256": "2bacde0ce15069e9e32a5566ee3d4b371384eef1d9c42bbe81f2f0035b202fb9",
+    "scalar_refusal": "PACKET_LENGTH"
+  },
+  {
+    "name": "wrong-packet-domain",
+    "native_refusal": "PACKET_VERSION",
+    "packet_sha256": "4c41a73a750b581044a7d913c980d74b7c82554911ff6e81ee2e73348610fd1a",
+    "scalar_refusal": "PACKET_VERSION"
+  },
+  {
+    "name": "nonce-rebind",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "65025f14bb0ffc33758688334bd396aec22b72746501d84251c477758b7f6f08",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "parent-rebind",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "baa98d69a9ae13c16f669dc562688f2988491af9a80277551d915f6317f6b218",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "reward-owner-rebind",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "e6afe1be65b39cec913974bf9f2f7b4f9baa35d1a94a588a8c0f089f7aeb98d5",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "window-anchor-rebind",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "43a6b0da855bd32f33b5c9c0fd3db8d1003e90954bde568e94025e3940c55f32",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "state-root-rebind",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "f27508c74d15505f37a86238a5efe7bdf56f489719fb40486095165ceee7891c",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "noncanonical-A-field",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "27878fad626e01f8b296de67f8399d434c94f3d0eed5355644c1f17fbbbcff96",
+    "scalar_refusal": "W1_FIELD"
+  },
+  {
+    "name": "correct-trace-wrong-product",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "cd683875f33bc4dfc182710b9b0d8d038647ccd373cec076e6975f08406cbfa9",
+    "scalar_refusal": "W1_PRODUCT"
+  },
+  {
+    "name": "correct-product-wrong-trace",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "93eee6068e3baac5f2912bf0ad66048aed684c9b1da7a5284f98f0ebbc6112d9",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "duplicate-unit-proof",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "652274e59e197adf6c0a5b98086b6fd8f7348272870956cfd65ba5d8a3d44335",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "reordered-proofs-renumbered",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "8aaeb5e040da2bb072d199f7a516eb3312ffcf76434b5ea62aeed93a23735a12",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "duplicate-wire-index",
+    "native_refusal": "UNIT_ORDER",
+    "packet_sha256": "ebb1579d23dc2c6f5f369aa2b48ac44c1a9afe71fce187d02e923e044403dc86",
+    "scalar_refusal": "UNIT_ORDER"
+  },
+  {
+    "name": "missing-unit",
+    "native_refusal": "PACKET_LENGTH",
+    "packet_sha256": "e3b86d68f1395be963e306db9679bdd818e79ca72588bfe7d9262baa10064530",
+    "scalar_refusal": "PACKET_LENGTH"
+  },
+  {
+    "name": "reused-prefix-smaller-u",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "6dad0a9672663eefcf601297f51bbfec2ba6b993af8fa76518af4f10687f8795",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "u8-prefix-rebound-as-u4",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "d60964759b39b936598b39ecb542f94b746382436751fe6b92944d66c6329df0",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "task-order-rebound",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "packet_sha256": "5b200895d199eab0e7c56a36b4fbc20b1af25a4d397803cd0f818ed1d9ff80e0",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "name": "outer-winning-false-transcript",
+    "native_refusal": "NATIVE_W1_INVALID",
+    "outer_ticket_passes": true,
+    "packet_sha256": "a960441920c972b9c109bb5238027befdad5be2e1845b0b78ba2650664931065",
+    "scalar_refusal": "W1_TRANSCRIPT"
+  },
+  {
+    "all_units_verified_before_aggregate_refusal": true,
+    "name": "complete-units-losing-aggregate",
+    "native_refusal": "AGGREGATE_TARGET",
+    "packet_sha256": "f5eb859cf7c5c79c8a40ddad6ad25bb9dbd799e95f6f80c2dc1e61bf88d7fd26",
+    "scalar_refusal": "AGGREGATE_TARGET"
+  }
+]

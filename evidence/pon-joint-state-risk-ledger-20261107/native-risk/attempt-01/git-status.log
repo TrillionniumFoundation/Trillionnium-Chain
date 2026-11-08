@@ -1,0 +1,25 @@
+ M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+ M trillionnium/crates/trnm-pon-node/src/lib.rs
+?? formal/pon-nakamoto-v1/CERTIFICATE_COMPOSITION_V1.md
+?? formal/pon-nakamoto-v1/NATIVE_OWNER_JOURNAL_V1.md
+?? formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md
+?? formal/pon-nakamoto-v1/certificate_composition.py
+?? formal/pon-nakamoto-v1/certificate_composition_evidence.py
+?? formal/pon-nakamoto-v1/certificate_composition_tests.py
+?? formal/pon-nakamoto-v1/lifecycle_query_bound.py
+?? formal/pon-nakamoto-v1/lifecycle_query_charging_v1.md
+?? formal/pon-nakamoto-v1/lifecycle_query_evidence.py
+?? formal/pon-nakamoto-v1/lifecycle_query_runtime.py
+?? formal/pon-nakamoto-v1/lifecycle_query_tests.py
+?? formal/pon-nakamoto-v1/native_owner_journal.py
+?? formal/pon-nakamoto-v1/native_risk_ledger.py
+?? formal/pon-nakamoto-v1/test_native_owner_journal.py
+?? formal/pon-nakamoto-v1/test_native_risk_ledger.py
+?? trillionnium/crates/trnm-pon-node/examples/native_owner_journal_v1.rs
+?? trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs
+?? trillionnium/crates/trnm-pon-node/examples/support/native_journal_scenario.rs
+?? trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs
+?? trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs
+?? trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs
+?? trillionnium/crates/trnm-pon-node/tests/native_owner_journal.rs
+?? trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs

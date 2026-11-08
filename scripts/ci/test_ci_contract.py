@@ -18,6 +18,9 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
+                               WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE,
+                               LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL, CERTIFICATE_COMPOSITION_TESTS, NATIVE_RISK_LEDGER,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
@@ -467,6 +470,58 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                       'printf stale-prior-report')
         with self.assertRaises(ValueError):
             check_independent_conformance(changed, self.lanes)
+
+    def test_joint_consensus_arithmetic_controls_cannot_be_removed_skipped_or_swallowed(self):
+        command = '    python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v\n'
+        self.assertEqual(self.script.count(command), 1)
+        replacements = ('', command * 2, '    true # omitted joint consensus controls\n',
+                        '    if false; then\n' + command + '    fi\n',
+                        command.rstrip() + ' || true\n',
+                        '    if\n' + command + '    then :; fi\n')
+        for replacement in replacements:
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        moved = self.script.replace(command, '').replace(
+            '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(moved, self.lanes)
+
+    def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+        lines = [line + '\n' for line in self.script.splitlines()
+                 if 'TRNM_JOINT_DAA_EVIDENCE_DIR' in line]
+        self.assertEqual(len(lines), 8)
+        for command in lines:
+            for replacement in ('', command * 2):
+                with self.subTest(command=command, replacement=replacement), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        for profile, other in [('pnh1-authenticated', 'pgh2-growth'),
+                               ('pgh2-growth', 'pnh1-authenticated')]:
+            raw_argument = '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile + '"'
+            commands = [line for line in lines if 'python3 ' in line and raw_argument in line]
+            self.assertEqual(len(commands), 2)
+            for command in commands:
+                replacements = (
+                    command.replace('python3 ', 'true # python3 '),
+                    '      if false; then\n' + command + '      fi\n',
+                    command.rstrip() + ' || true\n',
+                    command.replace(raw_argument, '--raw-dir "/tmp/stale-other-run"'),
+                    command.replace(raw_argument, '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR"'),
+                    command.replace(raw_argument, raw_argument.replace(profile, other)),
+                )
+                for replacement in replacements:
+                    with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+            reader = next(command for command in commands if '--expected-report-sha256' in command)
+            digest = ('$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile
+                      + '/joint-daa.json" | cut -d \' \' -f 1)')
+            self.assertIn(digest, reader)
+            replacements = [reader.replace(digest, value)
+                            for value in ('0' * 64, '$(printf stale-prior-report)',
+                                          digest.replace(profile, other))]
+            replacements.append(reader.replace('--expected-report-sha256 "' + digest + '" ', ''))
+            for replacement in replacements:
+                with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(reader, replacement), self.lanes)
 
     def test_cost_counterexamples_require_their_real_input_arguments(self):
         for command in [COST_BOUNDARY_READERS.splitlines(keepends=True)[0],
@@ -939,6 +994,100 @@ class CiContractTests(unittest.TestCase):
         self.rejected('scripts/ci/ci_job.sh', original, changed)
         self.rejected('scripts/ci/ci_job.sh', PAIRED_WORK_ORACLE + ZERO_WORK_ORACLE,
                       ZERO_WORK_ORACLE + PAIRED_WORK_ORACLE)
+
+    def test_mandatory_units_requires_complete_current_native_execution(self):
+        for replacement in ['', '    true # omitted complete MU1 checks\n',
+                            MANDATORY_UNITS_NATIVE.replace('realpath -e', 'printf %s'),
+                            MANDATORY_UNITS_NATIVE.replace('MU1_NATIVE_WORK=', 'OMITTED_WORK='),
+                            MANDATORY_UNITS_NATIVE.replace('MU1_NATIVE_PREPARED=', 'OMITTED_PREPARED='),
+                            MANDATORY_UNITS_NATIVE.replace('mandatory_units_tests.py -v',
+                                                          'mandatory_units_tests.py QueryCertificateTests -v'),
+                            MANDATORY_UNITS_NATIVE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', MANDATORY_UNITS_NATIVE, replacement)
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        changed = original.replace(MANDATORY_UNITS_NATIVE, '').replace(
+            '  repository-truth)\n', '  repository-truth)\n' + MANDATORY_UNITS_NATIVE)
+        self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_work_native_model_controls_cannot_be_omitted_or_moved(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for command in WORK_NATIVE_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            for replacement in ['', '    true # omitted work/native model\n', line * 2]:
+                with self.subTest(command=command, replacement=replacement):
+                    self.rejected('scripts/ci/ci_job.sh', line, replacement)
+            changed = original.replace(line, '').replace('  protocol-contract)\n',
+                                                        '  protocol-contract)\n' + line)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_actual_certificates_require_current_binaries_fresh_outputs_and_full_controls(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for block in (WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE):
+            for replacement in ('', '    true # omitted actual certificate execution\n',
+                                block.replace('realpath -e', 'printf %s'),
+                                block.splitlines(keepends=True)[0], block * 2,
+                                block.replace('/native-owner-score-bridge', '/historical-native-owner')
+                                if block == NATIVE_OWNER_SCORE_BRIDGE else
+                                block.replace('/work-lifecycle"', '/historical-lifecycle"')):
+                with self.subTest(block=block[:70], replacement=replacement[:100]):
+                    self.rejected('scripts/ci/ci_job.sh', block, replacement)
+            changed = original.replace(block, '').replace('  repository-truth)\n',
+                                                          '  repository-truth)\n' + block)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_lifecycle_closure_requires_current_native_execution_and_complete_journals(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for block in (LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL):
+            mutations = ['', '    true # omitted lifecycle closure\n', block * 2,
+                         block.replace('realpath -e', 'printf %s'),
+                         block.replace('/lifecycle-query"', '/historical-query"')
+                         if block == LIFECYCLE_QUERY_NATIVE else
+                         block.replace('/native-owner-journal', '/historical-journal')]
+            if block == NATIVE_OWNER_JOURNAL:
+                mutations.extend([block.replace('--test native_owner_journal\n',
+                                                '--test native_owner_journal -- --ignored\n'),
+                                  ''.join(block.splitlines(keepends=True)[1:]),
+                                  ''.join(block.splitlines(keepends=True)[:-1])])
+            for replacement in mutations:
+                with self.subTest(block=block[:70], replacement=replacement[:100]):
+                    self.rejected('scripts/ci/ci_job.sh', block, replacement)
+            changed = original.replace(block, '').replace('  repository-truth)\n',
+                                                          '  repository-truth)\n' + block)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+        # CC1 verifies real ML-DSA signatures. The protocol-contract head and
+        # merge lanes install the pinned wheel; repository-truth does not.
+        command = CERTIFICATE_COMPOSITION_TESTS
+        for replacement in ('', command * 2, '    true # omitted real CC1 signatures\n',
+                            command.rstrip('\n') + ' || true\n'):
+            self.rejected('scripts/ci/ci_job.sh', command, replacement)
+        moved = original.replace(command, '').replace('  repository-truth)\n',
+                                                       '  repository-truth)\n' + command)
+        self.rejected('scripts/ci/ci_job.sh', original, moved)
+
+    def test_native_risk_bank_requires_current_execution_and_all_raw_reconciliation(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        block = NATIVE_RISK_LEDGER
+        lines = block.splitlines(keepends=True)
+        mutations = ['', '    true # omitted native risk bank\n', block * 2,
+                     block.replace('realpath -e', 'printf %s'),
+                     block.replace('/native-risk-ledger', '/historical-risk-ledger'),
+                     block.replace('NATIVE_RISK_LEDGER_RUN=', 'OMITTED_RISK_RUN='),
+                     block.replace('--test native_risk_ledger\n',
+                                   '--test native_risk_ledger -- --ignored\n'),
+                     block.replace("test_native_risk_ledger.py' -v",
+                                   "test_native_risk_ledger.py' -v || true")]
+        mutations.extend(''.join(lines[:i] + lines[i + 1:]) for i in range(len(lines)))
+        for replacement in mutations:
+            with self.subTest(replacement=replacement[:100]):
+                self.rejected('scripts/ci/ci_job.sh', block, replacement)
+        moved_lane = original.replace(block, '').replace('  repository-truth)\n',
+                                                        '  repository-truth)\n' + block)
+        self.rejected('scripts/ci/ci_job.sh', original, moved_lane)
+        before_build = original.replace(block, '').replace(NODE_EXAMPLE_BUILD,
+                                                           block + NODE_EXAMPLE_BUILD)
+        self.rejected('scripts/ci/ci_job.sh', original, before_build)
 
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()

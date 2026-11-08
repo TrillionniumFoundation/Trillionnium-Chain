@@ -9,6 +9,10 @@ mod error;
 pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
+/// Opt-in durable local owner observations; grants no global execution authority.
+pub mod native_owner_journal;
+/// Persistent declared risk expenditure; grants no probability-law authority.
+pub mod native_risk_ledger;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;
@@ -53,6 +57,10 @@ pub use store::mempool::{
 pub use store::native_budget::{
     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+};
+pub use store::native_owner_observation::{
+    OwnerCensus, OwnerCensusBlock, OwnerCensusLimits, OwnerCensusProgress, MAX_CENSUS_BLOCKS,
+    MAX_CENSUS_PACKET_BYTES,
 };
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{

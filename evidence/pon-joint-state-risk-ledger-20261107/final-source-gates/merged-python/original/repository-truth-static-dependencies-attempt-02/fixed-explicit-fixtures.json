@@ -1,0 +1,272 @@
+[
+  {
+    "reference": {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54",
+      "reason": "literal command-line fixture input",
+      "source": "scripts/ci/ci_job.sh"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 35,
+      "cached_blob_paths": 2,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 21,
+      "missing_worktree_known_cached_bytes": 35,
+      "tracked_blob_paths": 21,
+      "uncached_blob_paths_with_unknown_size": 19,
+      "unique_uncached_blob_oids": 19
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963",
+      "reason": "literal command-line fixture input",
+      "source": "scripts/ci/ci_job.sh"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 4627,
+      "cached_blob_paths": 2,
+      "materialized_blob_paths": 0,
+      "materialized_bytes": 0,
+      "missing_worktree_blob_paths": 54,
+      "missing_worktree_known_cached_bytes": 4627,
+      "tracked_blob_paths": 54,
+      "uncached_blob_paths_with_unknown_size": 52,
+      "unique_uncached_blob_oids": 43
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-v1/manifest.json",
+      "reason": "validate_contract required manifest for v1",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 109837,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 109837,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-v3/manifest.json",
+      "reason": "validate_contract required manifest for v3",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 8008,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 8008,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-v3/qualification/report.json",
+      "reason": "validate_contract required qualification for v3",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 122812,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 122812,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-v4/manifest.json",
+      "reason": "validate_contract required manifest for v4",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 4902,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 4902,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-v4/qualification/report.json",
+      "reason": "validate_contract required qualification for v4",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 127183,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 127183,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-evaluation-bundle-v1/manifest.json",
+      "reason": "validate_contract required manifest for e3",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 12456,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 12456,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-evaluation-bundle-v1/qualification.json",
+      "reason": "validate_contract required qualification for e3",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 125965,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 125965,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-client-confirmation-v1/manifest.json",
+      "reason": "validate_contract required manifest for client_confirmation",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 7929,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 7929,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-client-confirmation-v1/qualification.json",
+      "reason": "validate_contract required qualification for client_confirmation",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 127917,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 127917,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-native-session-v1/manifest.json",
+      "reason": "validate_contract required manifest for native_session",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 25244,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 25244,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-native-session-v1/qualification.json",
+      "reason": "validate_contract required qualification for native_session",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 135370,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 135370,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-native-node-v1/manifest.json",
+      "reason": "validate_contract required manifest for native_node",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 19020,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 19020,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  },
+  {
+    "reference": {
+      "path": "evidence/pon-native-node-v1/qualification.json",
+      "reason": "validate_contract required qualification for native_node",
+      "source": "config/pon/module-maturity-v1.json"
+    },
+    "stats": {
+      "cached_blob_bytes_by_path": 138401,
+      "cached_blob_paths": 1,
+      "materialized_blob_paths": 1,
+      "materialized_bytes": 138401,
+      "missing_worktree_blob_paths": 0,
+      "missing_worktree_known_cached_bytes": 0,
+      "tracked_blob_paths": 1,
+      "uncached_blob_paths_with_unknown_size": 0,
+      "unique_uncached_blob_oids": 0
+    }
+  }
+]

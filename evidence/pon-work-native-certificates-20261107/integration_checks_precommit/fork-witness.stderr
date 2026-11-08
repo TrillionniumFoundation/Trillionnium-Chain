@@ -1,0 +1,22 @@
+test_all_honest_partition_or_burst_is_real_algebraic_failure (test_native_fork_witness.ForkWitnessTests.test_all_honest_partition_or_burst_is_real_algebraic_failure) ... ok
+test_block_weight_cap_does_not_cap_a_release_batch (test_native_fork_witness.ForkWitnessTests.test_block_weight_cap_does_not_cap_a_release_batch) ... ok
+test_complete_hidden_inventory_allows_zero_new_attack_work (test_native_fork_witness.ForkWitnessTests.test_complete_hidden_inventory_allows_zero_new_attack_work) ... ok
+test_early_cross_node_cp_failure_has_no_score_witness (test_native_fork_witness.ForkWitnessTests.test_early_cross_node_cp_failure_has_no_score_witness) ... ok
+test_equal_cross_node_tips_need_nonstrict_witness (test_native_fork_witness.ForkWitnessTests.test_equal_cross_node_tips_need_nonstrict_witness) ... ok
+test_first_removal_preconditions_refuse_invalid_paths (test_native_fork_witness.ForkWitnessTests.test_first_removal_preconditions_refuse_invalid_paths) ... ok
+test_inclusion_adds_exact_seventh_unit_at_equal_weights (test_native_fork_witness.ForkWitnessTests.test_inclusion_adds_exact_seventh_unit_at_equal_weights) ... ok
+test_inventory_and_honest_competing_blocks_cannot_be_omitted (test_native_fork_witness.ForkWitnessTests.test_inventory_and_honest_competing_blocks_cannot_be_omitted) ... ok
+test_older_fork_adds_preinclusion_cut (test_native_fork_witness.ForkWitnessTests.test_older_fork_adds_preinclusion_cut) ... ok
+test_pacer_final_publication_slack_at_most_one_block (test_native_fork_witness.ForkWitnessTests.test_pacer_final_publication_slack_at_most_one_block) ... ok
+test_positive_weight_and_causal_identity_refusals (test_native_fork_witness.ForkWitnessTests.test_positive_weight_and_causal_identity_refusals) ... ok
+test_same_b_reorganization_preserves_score_not_old_suffix (test_native_fork_witness.ForkWitnessTests.test_same_b_reorganization_preserves_score_not_old_suffix) ... ok
+test_six_descendants_and_sixfold_work_gates_both_required (test_native_fork_witness.ForkWitnessTests.test_six_descendants_and_sixfold_work_gates_both_required) ... ok
+test_small_tree_exhaustive_branch_algebra (test_native_fork_witness.ForkWitnessTests.test_small_tree_exhaustive_branch_algebra) ... ok
+test_trace_selects_first_removal_and_preserves_ties (test_native_fork_witness.ForkWitnessTests.test_trace_selects_first_removal_and_preserves_ties) ... ok
+test_unavailable_heavier_header_cannot_activate (test_native_fork_witness.ForkWitnessTests.test_unavailable_heavier_header_cannot_activate) ... ok
+test_unbounded_stale_parent_pipeline_requires_separate_assumption (test_native_fork_witness.ForkWitnessTests.test_unbounded_stale_parent_pipeline_requires_separate_assumption) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 4.070s
+
+OK

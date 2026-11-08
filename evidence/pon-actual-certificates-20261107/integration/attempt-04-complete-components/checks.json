@@ -1,0 +1,473 @@
+{
+  "schema": "pon-actual-certificates-component-checks-v1",
+  "head": "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+  "tree": "bfb0fb6b7f3c555e871f4279f48bcac0ea9b3bb6",
+  "started_on_clean_commit": false,
+  "initial_status": "M .github/workflows/pon-recent-batch-acceptance.yml\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/README.md\n M scripts/ci/check_ci_contract.py\n M scripts/ci/ci_job.sh\n M scripts/ci/test_ci_contract.py\n M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\n?? evidence/pon-actual-certificates-20261107/\n?? formal/pon-nakamoto-v1/CERTIFICATE_OBSERVABILITY_V1.md\n?? formal/pon-nakamoto-v1/NATIVE_OWNER_OBSERVATION_V1.md\n?? formal/pon-nakamoto-v1/NATIVE_OWNER_SCORE_BRIDGE_V1.md\n?? formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md\n?? formal/pon-nakamoto-v1/certificate_observability_evidence.py\n?? formal/pon-nakamoto-v1/certificate_observability_models.py\n?? formal/pon-nakamoto-v1/certificate_observability_tests.py\n?? formal/pon-nakamoto-v1/native_owner_score_bridge.py\n?? formal/pon-nakamoto-v1/test_native_owner_score_bridge.py\n?? formal/pon-nakamoto-v1/work_lifecycle_certificate.py\n?? formal/pon-nakamoto-v1/work_lifecycle_help.py\n?? formal/pon-nakamoto-v1/work_lifecycle_observe.py\n?? formal/pon-nakamoto-v1/work_lifecycle_tests.py\n?? trillionnium/crates/trnm-pon-node/examples/native_owner_observation_v1.rs\n?? trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs\n?? trillionnium/crates/trnm-pon-node/src/store/native_owner_observation.rs\n?? trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs",
+  "scope": "listed local component checks, not all remote CI, production capacity or physical security",
+  "rust_profile": "test; node opt-level=0; test debug=0; one build job; no incremental; not a service performance measurement",
+  "environment": {
+    "RUSTC": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "LD_LIBRARY_PATH": "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "CARGO_HOME": "/workspace/scratch/b9454e263603/native_w1_cargo_home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/b9454e263603/native_w1_target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1"
+  },
+  "checks": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.07425881600283901,
+      "stdout": {
+        "archive": "preflight.stdout.gz",
+        "raw_bytes": 175,
+        "raw_sha256": "4125287482d9c28ba19497fb36f2f51524f5bee0f0f896690c1d2527cf1b86ae"
+      },
+      "stderr": {
+        "archive": "preflight.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "retained-work-scale",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_work_scale_contract.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.578609742999106,
+      "stdout": {
+        "archive": "retained-work-scale.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "retained-work-scale.stderr.gz",
+        "raw_bytes": 3681,
+        "raw_sha256": "78de112d17c01dfc3fdfbccd7cf2aa06161e3305e269978f83b165bd37b272ae"
+      }
+    },
+    {
+      "name": "retained-stateful-tail",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/stateful_tail.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.047789329000807,
+      "stdout": {
+        "archive": "retained-stateful-tail.stdout.gz",
+        "raw_bytes": 3815,
+        "raw_sha256": "f0616c0e6927738b59fe8270998349e78ccfdf4fd02773b17ca0f0666193cba0"
+      },
+      "stderr": {
+        "archive": "retained-stateful-tail.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "retained-grover-residual",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/residual_grover.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.062472710000292864,
+      "stdout": {
+        "archive": "retained-grover-residual.stdout.gz",
+        "raw_bytes": 2282,
+        "raw_sha256": "0ec51a14d1e112cb5e2af421bc112300df48ea6644537f7e837f3b5a4234682f"
+      },
+      "stderr": {
+        "archive": "retained-grover-residual.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "retained-fork-witness",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_native_fork_witness.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.0778525059977255,
+      "stdout": {
+        "archive": "retained-fork-witness.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "retained-fork-witness.stderr.gz",
+        "raw_bytes": 2516,
+        "raw_sha256": "37744215c1e491cb2035db9510ead20c8541f7947c9139115f8bd3ad153c5125"
+      }
+    },
+    {
+      "name": "retained-native-execution-model",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_native_execution_certificate.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4895830109999224,
+      "stdout": {
+        "archive": "retained-native-execution-model.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "retained-native-execution-model.stderr.gz",
+        "raw_bytes": 5700,
+        "raw_sha256": "4b8f35ee070d6fecde64c8e151ae65685f4946eb2d748c4291f9642a97b0d60d"
+      }
+    },
+    {
+      "name": "retained-complete-native-mu1",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/mandatory_units_tests.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.79814655500013,
+      "stdout": {
+        "archive": "retained-complete-native-mu1.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "retained-complete-native-mu1.stderr.gz",
+        "raw_bytes": 4886,
+        "raw_sha256": "eda2486bbd15e67e8d454f43fbc2a7819139939a112d2a663da42c6a71c29328"
+      }
+    },
+    {
+      "name": "actual-native-score-bridge",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_native_owner_score_bridge.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.5975674529981916,
+      "stdout": {
+        "archive": "actual-native-score-bridge.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "actual-native-score-bridge.stderr.gz",
+        "raw_bytes": 4419,
+        "raw_sha256": "09815c0eb0d8797f034310debea13b7d79965b5bd4691328d538af0e5b160f52"
+      }
+    },
+    {
+      "name": "work-lifecycle",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/work_lifecycle_tests.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.401043566998851,
+      "stdout": {
+        "archive": "work-lifecycle.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "work-lifecycle.stderr.gz",
+        "raw_bytes": 4664,
+        "raw_sha256": "c6d529b81f926c4c9e19033763a46f94990c00cd3d18b147abcf8068acf4bf01"
+      }
+    },
+    {
+      "name": "actual-work-lifecycle-observation",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/work_lifecycle_observe.py",
+        "--native-work",
+        "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pon_work_io",
+        "--native-pq",
+        "/workspace/scratch/b9454e263603/native_w1_target/release/examples/pq_message_oracle",
+        "--out",
+        "/workspace/scratch/b9454e263603/chain_obligations/evidence/pon-actual-certificates-20261107/integration/attempt-04-complete-components/work-lifecycle"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.8085286160021496,
+      "stdout": {
+        "archive": "actual-work-lifecycle-observation.stdout.gz",
+        "raw_bytes": 136,
+        "raw_sha256": "42855a9cfdb0389f0ba0d917f4cf7e4c453c7696abd9638a34e66f8b05382d0f"
+      },
+      "stderr": {
+        "archive": "actual-work-lifecycle-observation.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "observability-models",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/certificate_observability_tests.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.13289792700015823,
+      "stdout": {
+        "archive": "observability-models.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "observability-models.stderr.gz",
+        "raw_bytes": 3200,
+        "raw_sha256": "581fcac6a4ccf6731790db4dae5cf107a1816eb3c17723968205fcc89ec98765"
+      }
+    },
+    {
+      "name": "actual-observability-binding",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/certificate_observability_evidence.py",
+        "--native-owner-json",
+        "/workspace/scratch/b9454e263603/chain_obligations/evidence/pon-actual-certificates-20261107/integration/attempt-04-complete-components/native-owner-score-bridge/native.json",
+        "--out",
+        "/workspace/scratch/b9454e263603/chain_obligations/evidence/pon-actual-certificates-20261107/integration/attempt-04-complete-components/observability.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0958762320005917,
+      "stdout": {
+        "archive": "actual-observability-binding.stdout.gz",
+        "raw_bytes": 425,
+        "raw_sha256": "b4deb69b2f20e5612e59f0566213e0582615764236f7e130ef7d4a054366dceb"
+      },
+      "stderr": {
+        "archive": "actual-observability-binding.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "repository-and-markdown",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 63.027332130001014,
+      "stdout": {
+        "archive": "repository-and-markdown.stdout.gz",
+        "raw_bytes": 307,
+        "raw_sha256": "17d4f3ca030ba5879e07a73bda31e375b80b671212c02481ea38726b5914b985"
+      },
+      "stderr": {
+        "archive": "repository-and-markdown.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "source-integrity-negatives",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.448133567999321,
+      "stdout": {
+        "archive": "source-integrity-negatives.stdout.gz",
+        "raw_bytes": 484,
+        "raw_sha256": "328dfba9e1df11bea31856a9236df5a42ec06f9999ed217409f7321fadccc117"
+      },
+      "stderr": {
+        "archive": "source-integrity-negatives.stderr.gz",
+        "raw_bytes": 6414,
+        "raw_sha256": "ef9c8560e61fa50eab7e353a95286d215e525989820cabb761141df7b1378235"
+      }
+    },
+    {
+      "name": "ci-contract-negatives",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.270368745001178,
+      "stdout": {
+        "archive": "ci-contract-negatives.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "ci-contract-negatives.stderr.gz",
+        "raw_bytes": 17343,
+        "raw_sha256": "92f049671dc5f3d00fe786fab994e8c7aab68d52d3d3537d55e7642785b90531"
+      }
+    },
+    {
+      "name": "ci-execution-negatives",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 25.117945770001825,
+      "stdout": {
+        "archive": "ci-execution-negatives.stdout.gz",
+        "raw_bytes": 484,
+        "raw_sha256": "7bae9df8aefb7b3a635459b3387b8d601c44306808cdaa1a5d08ada9b2feccb2"
+      },
+      "stderr": {
+        "archive": "ci-execution-negatives.stderr.gz",
+        "raw_bytes": 12414,
+        "raw_sha256": "bf502c2954391463faecd5797d9a4f2643c950b937ca0ae5cb072a6cd4296f39"
+      }
+    },
+    {
+      "name": "project-boundary",
+      "argv": [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.129630561998056,
+      "stdout": {
+        "archive": "project-boundary.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "archive": "project-boundary.stderr.gz",
+        "raw_bytes": 2425,
+        "raw_sha256": "e4b10230453410eb90c628a7fa7e5eb2d3a4eb8de7adfb9ccbf90ed35fa79be4"
+      }
+    },
+    {
+      "name": "distributed-source-inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.08884154300176306,
+      "stdout": {
+        "archive": "distributed-source-inventory.stdout.gz",
+        "raw_bytes": 35,
+        "raw_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      "stderr": {
+        "archive": "distributed-source-inventory.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "locked-cargo-graph",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.15869254299832392,
+      "stdout": {
+        "archive": "locked-cargo-graph.stdout.gz",
+        "raw_bytes": 846393,
+        "raw_sha256": "28809c3773eec73aa038ee7cebca62296f4095e74dc668a764fa0ffd0bddb9d2"
+      },
+      "stderr": {
+        "archive": "locked-cargo-graph.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "retained-native-crypto",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 124.7080477069976,
+      "stdout": {
+        "archive": "retained-native-crypto.stdout.gz",
+        "raw_bytes": 16673,
+        "raw_sha256": "d1e324997a618c7b183d797685abdc3bab3aaf8f029b2a2c5345367021f67edf"
+      },
+      "stderr": {
+        "archive": "retained-native-crypto.stderr.gz",
+        "raw_bytes": 789,
+        "raw_sha256": "a56841dd60066e6c32435dda17633d2df4923f82e99a46f4777882c818669d10"
+      }
+    },
+    {
+      "name": "retained-native-node-and-work",
+      "argv": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_node",
+        "--test",
+        "work_header_binding",
+        "--test",
+        "continuity_authenticated",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0"
+      ],
+      "exit_code": 101,
+      "elapsed_seconds": 24.47251822099861,
+      "stdout": {
+        "archive": "retained-native-node-and-work.stdout.gz",
+        "raw_bytes": 3234,
+        "raw_sha256": "2f19001a5ad7e0fe15819165ad0ad10d99693f877cb67ebfc0811008b3f2196c"
+      },
+      "stderr": {
+        "archive": "retained-native-node-and-work.stderr.gz",
+        "raw_bytes": 529,
+        "raw_sha256": "3cfcfdbe70c5e0fd4592ce65c129633051ef62259f2cb725f5336670c1247838"
+      }
+    }
+  ]
+}
