@@ -17,6 +17,23 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Actual new-candidate native adoption and retained-parent regression, 2026-11-08 UTC:**
+The [explicit research adoption evidence](../../evidence/hepta-real-native-adoption-20261108/README.md)
+records two fresh operations on exact Hepta `edf03ecb8a814a0f5e86b1d6a752aeac80b1a978`:
+NoUpdate passes in 44.440 seconds and positive new-candidate adoption in 51.138
+seconds, both under the original 60-second watchdog and zero retries. Each freezes
+its own profile, native coordinator and real budget before ten-step training.
+The new `ResearchExternalTrainedArtifactV1` test-only concrete owner checks actual
+complete training/evaluation/material bytes and its durable anchored proposal;
+the original updated selection, CURRENT, cutover, ACK and cold owner recovery then
+use that same new candidate. Two real material faults refuse without advancing
+the native owners. The unchanged Chain reader consumes original 0/5/6 and 0/6/7
+checkpoints, preserving all authority flags false. The finite adopted comparison
+is only 1/4 to 2/4: the candidate answers all four exposed questions `no`, and its
+next task is incorrect. General learning benefit, original Parameter V3/Product
+OPE admission, independent custody, production FinalUse, payment and activation
+remain unqualified. All earlier failures and the v8 NoUpdate namespace remain.
+
 **Actual native NoUpdate iteration and recovery, 2026-11-08 UTC:**
 The [same-iteration native model evidence](../../evidence/hepta-real-native-learning-20261108/README.md)
 now records original Hepta source `27849cbdcfc0d4afc69764d6c1742af22c41c293`

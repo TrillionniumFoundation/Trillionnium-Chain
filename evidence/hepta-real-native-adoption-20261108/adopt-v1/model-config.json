@@ -1,0 +1,8 @@
+{
+  "operation": "learning-d9fb-native-adopt-v1",
+  "output": "/home/qq/hepta-learning-native-edf03ec-d9fb-20261108/native-adopt-v1/model",
+  "previous_run": "/home/qq/chain-learning-d9fb-20261108",
+  "research_profile": "external-trained-artifact-v1",
+  "research_root": "/home/qq/hepta-smollm2-weight-research-20261103",
+  "worker_helper": "/home/qq/chain-learning-d9fb-20261108-readback-runner.py"
+}

@@ -1,0 +1,59 @@
+{
+  "actual_model_execution_accepted": false,
+  "after": {
+    "head": "6e0f0c8d1a7bd94a396a1532a537b32dd1843cf6",
+    "tracked_entries_verified": 11212,
+    "tree": "ce0e1e40dee9fb2563d379697cc23812e0d5fa34"
+  },
+  "before": {
+    "head": "6e0f0c8d1a7bd94a396a1532a537b32dd1843cf6",
+    "tracked_entries_verified": 11212,
+    "tree": "ce0e1e40dee9fb2563d379697cc23812e0d5fa34"
+  },
+  "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bcebe32f-138b0-522.service\n",
+  "command": [
+    "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+    "test",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "--locked",
+    "--offline",
+    "--no-capture",
+    "--retries",
+    "0",
+    "-E",
+    "test(ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution) | test(updated_candidate_uses_original_actor_and_recovers_without_another_reset) | test(running_actor_refuses_current_withdrawal_and_revocation) | test(updated_actor_rechecks_current_withdrawal_and_revocation) | test(unpublished_actor_refuses_learning_readback_and_keeps_transport_errors) | test(research_material_rejects_duplicate_json_keys_at_any_depth) | test(research_material_canonicalization_sorts_every_object_level) | test(research_material_tensors_reject_overlap_holes_trailing_and_nonfinite) | test(research_material_reads_reject_leaf_ancestor_and_hardlink_aliases) | test(research_material_size_reference_and_mutation_checks_use_actual_bytes) | test(research_owner_publication_is_create_only_and_detects_directory_replacement) | test(research_owner_concurrent_handles_cas_has_exactly_one_retained_winner) | test(research_owner_partial_entries_are_observable_and_never_replaced) | test(research_owner_initial_freeze_rejects_existing_training_or_evaluation)"
+  ],
+  "elapsed_seconds": 40.16932980000274,
+  "end_unix_ns": 1794170990600775440,
+  "engineering_controls_only": true,
+  "error": "AssertionError('native command failed; preserve original log')",
+  "exit_code": 101,
+  "log_bytes": 8724,
+  "log_sha256": "9a5a99dce2236813c6afbe38be100558ceb6e3da35507c21246bfceb417d2b24",
+  "new_empty_target": false,
+  "process_id": 889420,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "FAIL",
+  "schema": "hepta-real-model-external-adoption-controls-v1",
+  "selectors": [
+    "ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+    "updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+    "running_actor_refuses_current_withdrawal_and_revocation",
+    "updated_actor_rechecks_current_withdrawal_and_revocation",
+    "unpublished_actor_refuses_learning_readback_and_keeps_transport_errors",
+    "research_material_rejects_duplicate_json_keys_at_any_depth",
+    "research_material_canonicalization_sorts_every_object_level",
+    "research_material_tensors_reject_overlap_holes_trailing_and_nonfinite",
+    "research_material_reads_reject_leaf_ancestor_and_hardlink_aliases",
+    "research_material_size_reference_and_mutation_checks_use_actual_bytes",
+    "research_owner_publication_is_create_only_and_detects_directory_replacement",
+    "research_owner_concurrent_handles_cas_has_exactly_one_retained_winner",
+    "research_owner_partial_entries_are_observable_and_never_replaced",
+    "research_owner_initial_freeze_rejects_existing_training_or_evaluation"
+  ],
+  "source": "6e0f0c8d1a7bd94a396a1532a537b32dd1843cf6",
+  "start_unix_ns": 1794170950430222594
+}
