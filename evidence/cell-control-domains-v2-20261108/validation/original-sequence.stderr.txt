@@ -1,0 +1,12 @@
+test_consistently_resigned_candidate_alias_cannot_replace_actual_plan (__main__.GenerationSequenceTests.test_consistently_resigned_candidate_alias_cannot_replace_actual_plan) ... ok
+test_initial_owner_pin_cannot_be_taken_from_a_submitted_lineage (__main__.GenerationSequenceTests.test_initial_owner_pin_cannot_be_taken_from_a_submitted_lineage) ... ok
+test_no_gain_and_positive_gain_owner_hold_remain_valid_no_update (__main__.GenerationSequenceTests.test_no_gain_and_positive_gain_owner_hold_remain_valid_no_update) ... ok
+test_rehashed_plan_substitution_and_missing_plan_refuse (__main__.GenerationSequenceTests.test_rehashed_plan_substitution_and_missing_plan_refuse) ... ok
+test_resigned_late_and_equal_use_do_not_qualify_next_generation (__main__.GenerationSequenceTests.test_resigned_late_and_equal_use_do_not_qualify_next_generation) ... ok
+test_signature_failure_cannot_be_hidden_by_correct_chronology (__main__.GenerationSequenceTests.test_signature_failure_cannot_be_hidden_by_correct_chronology) ... ok
+test_signed_sequence_preserves_inputs_and_unaccepted_physical_claims (__main__.GenerationSequenceTests.test_signed_sequence_preserves_inputs_and_unaccepted_physical_claims) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.087s
+
+OK

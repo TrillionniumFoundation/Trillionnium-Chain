@@ -1,0 +1,58 @@
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+root = Path('/workspace/scratch/10366560c781/chain-control')
+out = Path('/workspace/scratch/10366560c781/control-validation')
+out.mkdir(exist_ok=False)
+expected = 'ca8ca808ee636cc282dfee9558e419ab1225820f'
+environment = dict(os.environ)
+environment['PATH'] = '/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:' + environment['PATH']
+environment['CARGO_HOME'] = '/workspace/scratch/10366560c781/control-cargo-home'
+environment['CARGO_TARGET_DIR'] = '/workspace/scratch/10366560c781/control-cargo-target'
+environment['CARGO_BUILD_JOBS'] = '2'
+environment['CARGO_INCREMENTAL'] = '0'
+environment['PYTHONDONTWRITEBYTECODE'] = '1'
+py = sys.executable
+source = [py, '-B', 'scripts/ci/verify_ci_source.py', '--kind', 'head', '--expected-head', expected]
+commands = [
+ ('preflight', ['bash', 'scripts/project-preflight.sh'], 60),
+ ('source-before', source + ['--output', str(out/'source-before.json')], 300),
+ ('reference-conformance', [py, '-B', 'formal/release-finality-v2/run_conformance.py', '--out', str(out/'reference')], 180),
+ ('original-sequence', [py, '-B', 'formal/pon-nakamoto-v1/test_model_generation_sequence.py', '-v'], 120),
+ ('original-context', [py, '-B', 'formal/pon-nakamoto-v1/test_model_generation_sequence_context.py', '-v'], 120),
+ ('original-parent', [py, '-B', 'formal/pon-nakamoto-v1/test_model_generation_sequence_parent.py', '-v'], 120),
+ ('original-learning-owner', [py, '-B', 'formal/release-finality-v2/check_existing_learning_owner.py'], 120),
+ ('source-integrity-negatives', [py, '-B', 'scripts/ci/test_ci_source_integrity.py', '-v'], 180),
+ ('project-boundary', [py, '-B', 'scripts/ci/test_project_boundary.py', '-v'], 120),
+ ('ci-contract', [py, '-B', 'scripts/ci/test_ci_contract.py', '-v'], 240),
+ ('repository-contract', [py, '-B', 'scripts/ci/check_repository.py'], 300),
+ ('cargo-graph', ['cargo', 'metadata', '--locked', '--manifest-path', 'trillionnium/Cargo.toml', '--format-version', '1'], 300),
+ ('rust-format', ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'], 180),
+ ('strict-clippy', ['cargo', 'clippy', '--locked', '--manifest-path', 'trillionnium/Cargo.toml', '--workspace', '--all-targets', '--all-features', '--', '-D', 'warnings'], 900),
+ ('source-after', source + ['--output', str(out/'source-after.json')], 300),
+]
+(out/'plan.json').write_text(json.dumps(dict(source=expected, commands=commands, scope='controlled local qualification; no external independence or activation'), indent=2)+'\n')
+results = []
+for name, argv, limit in commands:
+    started = time.time()
+    with (out/(name+'.stdout.txt')).open('wb') as stdout, (out/(name+'.stderr.txt')).open('wb') as stderr:
+        try:
+            completed = subprocess.run(argv, cwd=root, env=environment, stdout=stdout, stderr=stderr, timeout=limit)
+            code, status = completed.returncode, 'completed'
+        except subprocess.TimeoutExpired:
+            code, status = None, 'timeout'
+    record = dict(name=name, argv=argv, timeout_seconds=limit, started_unix=started,
+                  ended_unix=time.time(), exit_code=code, status=status, expected_source=expected)
+    for stream in ('stdout','stderr'):
+        raw=(out/(name+'.'+stream+'.txt')).read_bytes()
+        record[stream]=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+    (out/(name+'.json')).write_text(json.dumps(record,indent=2)+'\n')
+    results.append(record)
+    (out/'results.json').write_text(json.dumps(results,indent=2)+'\n')
+    print(json.dumps(dict(name=name,exit_code=code,status=status,elapsed=round(record['ended_unix']-started,3))),flush=True)
+print(json.dumps(dict(completed=len(results),all_commands_passed=all(r['exit_code']==0 for r in results))),flush=True)
