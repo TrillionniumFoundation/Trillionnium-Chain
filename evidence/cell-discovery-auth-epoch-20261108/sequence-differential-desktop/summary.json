@@ -1,0 +1,172 @@
+{
+  "schema": "cell-auth-sequence-timing-differential-v1",
+  "parent_commit": "d4a0643a29ed1a35576a36d88189cadd28929c65",
+  "normal_priority": true,
+  "nice": 0,
+  "cpu_quota_percent": 200,
+  "memory_max_bytes": 12884901888,
+  "temporary_directory": "/tmp",
+  "native_storage_remains_persistent_ext4": true,
+  "provider": {
+    "scope": "new isolated static optional-backend preparation only; not Rust runtime or whole-chain qualification",
+    "exports": {
+      "OPENSSL_DIR": "/home/qian-qi/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.z92m9WwI/install",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.z92m9WwI/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "a658fe342e227356bce83e5e2dedda5e2e1aea47b8b76c35f0b470d6b624be97",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_MODULES": "/home/qian-qi/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.z92m9WwI/install/lib/ossl-modules"
+    },
+    "provider_receipt_sha256": "ddef0f59cdf4642c3276b02e74a24af8a519de0cd8f5363605217e81633db630",
+    "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "result": "PASS"
+  },
+  "commands": [
+    {
+      "label": "retained-classic-normal-priority",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::sequence_tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "auth_sha256": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690",
+      "tests_sha256": "b9b09ea5d969da23b4b6e841790940d1f8639983a702f91fd3bed0c531e73980",
+      "stats_before": {
+        "host_cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=9596605446\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "host_io": "some avg10=33.99 avg60=32.84 avg300=29.14 total=54890920128\nfull avg10=31.51 avg60=30.57 avg300=27.13 total=51672424405\n",
+        "host_memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1721697198\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1652839261\n",
+        "task_cpu.stat": "usage_usec 749949\nuser_usec 405292\nsystem_usec 344657\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 476\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0\n",
+        "task_cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=11286\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=11286\n",
+        "task_io.pressure": "some avg10=35.95 avg60=22.19 avg300=6.26 total=20451875\nfull avg10=35.95 avg60=22.19 avg300=6.26 total=20448568\n",
+        "task_memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+        "task_memory.current": "29470720\n"
+      },
+      "exit_code": 101,
+      "elapsed_seconds": 42.64489057101309,
+      "stats_after": {
+        "host_cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=9596709121\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "host_io": "some avg10=36.69 avg60=34.83 avg300=30.17 total=54906726924\nfull avg10=33.90 avg60=32.38 avg300=28.08 total=51687157818\n",
+        "host_memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1721723520\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1652865290\n",
+        "task_cpu.stat": "usage_usec 1775559\nuser_usec 931113\nsystem_usec 844446\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 859\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0\n",
+        "task_cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=21001\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=20992\n",
+        "task_io.pressure": "some avg10=8.53 avg60=18.04 avg300=7.60 total=27565997\nfull avg10=8.53 avg60=18.04 avg300=7.60 total=27559202\n",
+        "task_memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+        "task_memory.current": "53137408\n"
+      },
+      "result_lines": [
+        "test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 464 filtered out; finished in 24.31s"
+      ],
+      "stdout_sha256": "81f5926e3982918b7148c55b1ff22d6f8840cff4d6016d4b33b7f671c28ddf33",
+      "stderr_sha256": "abd29f88da78603d6d891f326a7b1b730e25ba5f3e1dfe404c0a05f66d6f6331"
+    },
+    {
+      "label": "observed-timing-old-implementation-red",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "authenticated_v3_newest_verified_",
+        "--",
+        "--test-threads=1"
+      ],
+      "auth_sha256": "7214ea4e588a95cb0043d750123d7ad657ed7cba275ba54f1d4e62535ce7a30b",
+      "tests_sha256": "7e46e97d7756f9fd5648ff43833ef9c35433366ae49a632ddf01bd414409ab43",
+      "stats_before": {
+        "host_cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=9596709466\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "host_io": "some avg10=36.69 avg60=34.83 avg300=30.17 total=54906781152\nfull avg10=33.90 avg60=32.38 avg300=28.08 total=51687208687\n",
+        "host_memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1721723611\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1652865381\n",
+        "task_cpu.stat": "usage_usec 1874953\nuser_usec 1009335\nsystem_usec 865618\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 861\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0\n",
+        "task_cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=21123\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=21113\n",
+        "task_io.pressure": "some avg10=8.53 avg60=18.04 avg300=7.60 total=27584344\nfull avg10=8.53 avg60=18.04 avg300=7.60 total=27577550\n",
+        "task_memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+        "task_memory.current": "52674560\n"
+      },
+      "exit_code": 101,
+      "elapsed_seconds": 118.01406388101168,
+      "stats_after": {
+        "host_cpu": "some avg10=0.00 avg60=0.01 avg300=0.00 total=9597070207\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "host_io": "some avg10=27.52 avg60=31.87 avg300=30.89 total=54945630436\nfull avg10=25.94 avg60=29.83 avg300=28.76 total=51723414712\n",
+        "host_memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=1721851548\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=1652991679\n",
+        "task_cpu.stat": "usage_usec 21057273\nuser_usec 17447163\nsystem_usec 3610109\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1864\nnr_throttled 2\nthrottled_usec 313293\nnr_bursts 0\nburst_usec 0\n",
+        "task_cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=52149\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=52139\n",
+        "task_io.pressure": "some avg10=6.48 avg60=17.03 avg300=12.14 total=54431036\nfull avg10=6.48 avg60=17.01 avg300=12.13 total=54420807\n",
+        "task_memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+        "task_memory.current": "612782080\n"
+      },
+      "result_lines": [
+        "test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 465 filtered out; finished in 37.47s"
+      ],
+      "stdout_sha256": "0bed475c78b2a948f8077b871eb4a8bb790eea71c6ec7fbed66387e7c80d81a5",
+      "stderr_sha256": "2a2ae16ef0ae327aa42f64fa3417be324e1535b5c978aaf1f921c8b6dac89674"
+    },
+    {
+      "label": "observed-timing-fixed-implementation-green",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "authenticated_v3_newest_verified_",
+        "--",
+        "--test-threads=1"
+      ],
+      "auth_sha256": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690",
+      "tests_sha256": "7e46e97d7756f9fd5648ff43833ef9c35433366ae49a632ddf01bd414409ab43",
+      "stats_before": {
+        "host_cpu": "some avg10=0.00 avg60=0.01 avg300=0.00 total=9597070438\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "host_io": "some avg10=27.52 avg60=31.87 avg300=30.89 total=54945676695\nfull avg10=25.94 avg60=29.83 avg300=28.76 total=51723458759\n",
+        "host_memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=1721851582\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=1652991712\n",
+        "task_cpu.stat": "usage_usec 21063105\nuser_usec 17450831\nsystem_usec 3612274\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1865\nnr_throttled 2\nthrottled_usec 313293\nnr_bursts 0\nburst_usec 0\n",
+        "task_cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=52171\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=52161\n",
+        "task_io.pressure": "some avg10=6.48 avg60=17.03 avg300=12.14 total=54518043\nfull avg10=6.48 avg60=17.01 avg300=12.13 total=54507813\n",
+        "task_memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+        "task_memory.current": "613044224\n"
+      },
+      "exit_code": 101,
+      "elapsed_seconds": 61.68407393898815,
+      "stats_after": {
+        "host_cpu": "some avg10=0.09 avg60=0.09 avg300=0.02 total=9597320866\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "host_io": "some avg10=38.89 avg60=34.06 avg300=31.54 total=54967032133\nfull avg10=35.85 avg60=31.59 avg300=29.32 total=51743261728\n",
+        "host_memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1721895584\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1653035270\n",
+        "task_cpu.stat": "usage_usec 31913903\nuser_usec 26333669\nsystem_usec 5580234\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 2442\nnr_throttled 11\nthrottled_usec 4599497\nnr_bursts 0\nburst_usec 0\n",
+        "task_cpu.pressure": "some avg10=0.32 avg60=0.26 avg300=0.06 total=295561\nfull avg10=0.32 avg60=0.26 avg300=0.06 total=295517\n",
+        "task_io.pressure": "some avg10=11.37 avg60=20.43 avg300=14.66 total=70808086\nfull avg10=11.37 avg60=20.42 avg300=14.66 total=70795379\n",
+        "task_memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+        "task_memory.current": "637730816\n"
+      },
+      "result_lines": [
+        "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 465 filtered out; finished in 20.84s"
+      ],
+      "stdout_sha256": "2864ffc1fa6bda4e6e1287d82abf1864e970a883a87c5169ca86b77e19ea92f8",
+      "stderr_sha256": "8f2a9276af990d0d7f8b0ef8a8569c8c8304d3ad6d886733e117426ee6d812cf"
+    }
+  ],
+  "red_target_reproduced": false,
+  "green_three_passed": false,
+  "retained_classic_passed": false,
+  "auth_restored": true,
+  "only_test_source_changed": true,
+  "finished_unix": 1794163582.3411765,
+  "passed": false
+}

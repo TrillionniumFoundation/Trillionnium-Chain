@@ -1,0 +1,37 @@
+{
+  "schema": "cell-ai395-source-setup-v1",
+  "expected_commit": "939aa069af41d31d41082272d7ae7367ef08f812",
+  "host": "ai395",
+  "started_unix": 1794164502.0353625,
+  "commands": [
+    {
+      "label": "clone",
+      "command": [
+        "git",
+        "clone",
+        "--depth",
+        "3",
+        "--single-branch",
+        "--branch",
+        "fix/chain-cell-storage-discovery-f2568-20261108",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "/home/qq/work/chain-cell-storage-discovery-f2568-20261108"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 54.82000922691077,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3259e45493faa6c34ba4cc2c0a4d310ab4cacfaf4393f8c4f5ee5b16b28c0370"
+    },
+    {
+      "label": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.028931597946211696,
+      "stdout_sha256": "85270f1a7a88943bee16803a32da2e58cd3bffa999070da943f4c3d58d9f35d8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

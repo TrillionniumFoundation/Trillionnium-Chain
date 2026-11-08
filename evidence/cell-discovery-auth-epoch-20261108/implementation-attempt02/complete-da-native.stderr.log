@@ -1,0 +1,15 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.98s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-2640c265b42f8e43)
+     Running unittests src/bin/trnm-cell.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_cell-56c367a132fcf112)
+     Running unittests src/bin/trnm-cell-discovery.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_cell_discovery-2dc0f689483cdf6c)
+     Running tests/cell_cache_wal_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_cache_wal_cli-6d4815722cff0d6c)
+     Running tests/cell_closure_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_closure_cli-a5b2539692377996)
+     Running tests/cell_discovery_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_discovery_cli-87379d3313d4994e)
+     Running tests/cell_fetch_deadline_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_fetch_deadline_cli-ea8fb94b9459d191)
+     Running tests/cell_persistent_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_persistent_cli-0d0a16896e2c8022)
+     Running tests/cell_provider_ready_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_provider_ready_cli-91c317068e42915f)
+     Running tests/cell_release_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_release_cli-172aca3df21cc236)
+     Running tests/cell_tensor_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/cell_tensor_cli-4ef3489d9479c089)
+     Running tests/pq_cell_cli.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/pq_cell_cli-43994d6744be4a3e)
+   Doc-tests trnm_data_availability

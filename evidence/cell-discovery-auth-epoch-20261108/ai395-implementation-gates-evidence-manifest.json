@@ -1,0 +1,595 @@
+{
+  "schema": "cell-ai395-evidence-transfer-v1",
+  "host": "ai395",
+  "tested_commit": "d27619a725a6e2969a5bd25d45d5c8514631c320",
+  "tested_tree": "389581c6668982bf7a2a20835d2028ea5a149d99",
+  "scope": "Linux x86_64; default-feature native runtime; all-feature graph/lint only; HOLD_NO_GO",
+  "files": [
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "all-features-locked-graph.stderr.log",
+      "stored_name": "implementation-gates/all-features-locked-graph.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "all-features-locked-graph.stdout.log",
+      "stored_name": "implementation-gates/all-features-locked-graph.stdout.log.gz",
+      "compression": "gzip",
+      "original_bytes": 839909,
+      "original_sha256": "8114f3345783295b351deaf8f6e3b707402723523a976cbfb3ca01bf5e747eb2",
+      "stored_sha256": "e5c90d144a7147b9234b812e07d5cb503b6a05f7826395d74361c8ac01ff1155"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls-blocked-native-tools/cargo",
+      "stored_name": "implementation-gates/ci-contract-controls-blocked-native-tools/cargo",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls-blocked-native-tools/cargo-clippy",
+      "stored_name": "implementation-gates/ci-contract-controls-blocked-native-tools/cargo-clippy",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls-blocked-native-tools/cargo-fmt",
+      "stored_name": "implementation-gates/ci-contract-controls-blocked-native-tools/cargo-fmt",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls-blocked-native-tools/rustc",
+      "stored_name": "implementation-gates/ci-contract-controls-blocked-native-tools/rustc",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls-blocked-native-tools/rustdoc",
+      "stored_name": "implementation-gates/ci-contract-controls-blocked-native-tools/rustdoc",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls-blocked-native-tools/rustup",
+      "stored_name": "implementation-gates/ci-contract-controls-blocked-native-tools/rustup",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls.blocked-native-tools.log",
+      "stored_name": "implementation-gates/ci-contract-controls.blocked-native-tools.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls.native-tool-guard-probe.log",
+      "stored_name": "implementation-gates/ci-contract-controls.native-tool-guard-probe.log",
+      "compression": null,
+      "original_bytes": 644,
+      "original_sha256": "8a0a00c678f29d8b3bde66dce288e9d720ff345c4e6db385705dd11ae57645b2",
+      "stored_sha256": "8a0a00c678f29d8b3bde66dce288e9d720ff345c4e6db385705dd11ae57645b2"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls.stderr.log",
+      "stored_name": "implementation-gates/ci-contract-controls.stderr.log",
+      "compression": null,
+      "original_bytes": 18070,
+      "original_sha256": "7f590b0c5c76ecd8b072ff556cfd5afdf1ebd6cc490d471bebd7a20c3c31900d",
+      "stored_sha256": "7f590b0c5c76ecd8b072ff556cfd5afdf1ebd6cc490d471bebd7a20c3c31900d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "ci-contract-controls.stdout.log",
+      "stored_name": "implementation-gates/ci-contract-controls.stdout.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "complete-da-native.stderr.log",
+      "stored_name": "implementation-gates/complete-da-native.stderr.log",
+      "compression": null,
+      "original_bytes": 2006,
+      "original_sha256": "372e0180aeb50da7b984dff4e4acb5c32eb2e25b3d513dd98f6f35ddb5ef1e1b",
+      "stored_sha256": "372e0180aeb50da7b984dff4e4acb5c32eb2e25b3d513dd98f6f35ddb5ef1e1b"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "complete-da-native.stdout.log",
+      "stored_name": "implementation-gates/complete-da-native.stdout.log",
+      "compression": null,
+      "original_bytes": 57101,
+      "original_sha256": "c4fbf7181010cf5b1c574ba8c2848c6463e7201de5417ac06ffa0a15572cee78",
+      "stored_sha256": "c4fbf7181010cf5b1c574ba8c2848c6463e7201de5417ac06ffa0a15572cee78"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "complete-version-vector.stderr.log",
+      "stored_name": "implementation-gates/complete-version-vector.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "complete-version-vector.stdout.log",
+      "stored_name": "implementation-gates/complete-version-vector.stdout.log",
+      "compression": null,
+      "original_bytes": 43,
+      "original_sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d",
+      "stored_sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "discovery-ci-controls.stderr.log",
+      "stored_name": "implementation-gates/discovery-ci-controls.stderr.log",
+      "compression": null,
+      "original_bytes": 103,
+      "original_sha256": "6273232de4d3ef7acd4ecafa5c86beeeb974f56586b21089a2990b3f72facbe6",
+      "stored_sha256": "6273232de4d3ef7acd4ecafa5c86beeeb974f56586b21089a2990b3f72facbe6"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "discovery-ci-controls.stdout.log",
+      "stored_name": "implementation-gates/discovery-ci-controls.stdout.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "discovery-epoch-vector.stderr.log",
+      "stored_name": "implementation-gates/discovery-epoch-vector.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "discovery-epoch-vector.stdout.log",
+      "stored_name": "implementation-gates/discovery-epoch-vector.stdout.log",
+      "compression": null,
+      "original_bytes": 73,
+      "original_sha256": "a6ca19954096c6a820b444e3179152046c13d8ab82d50dfc53d6dd225d1d2f19",
+      "stored_sha256": "a6ca19954096c6a820b444e3179152046c13d8ab82d50dfc53d6dd225d1d2f19"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "format.stderr.log",
+      "stored_name": "implementation-gates/format.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "format.stdout.log",
+      "stored_name": "implementation-gates/format.stdout.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "fuzz-locked-graph.stderr.log",
+      "stored_name": "implementation-gates/fuzz-locked-graph.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "fuzz-locked-graph.stdout.log",
+      "stored_name": "implementation-gates/fuzz-locked-graph.stdout.log.gz",
+      "compression": "gzip",
+      "original_bytes": 708339,
+      "original_sha256": "1da40e5a5eade5b48316cd040ed726ca6de168cfa16277a6c2c0bb728771697e",
+      "stored_sha256": "614dcb982f5ecab40ccb373ffe618d4cf5d311f8d06f2595944d50a6e055ccaa"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "locked-graph.stderr.log",
+      "stored_name": "implementation-gates/locked-graph.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "locked-graph.stdout.log",
+      "stored_name": "implementation-gates/locked-graph.stdout.log.gz",
+      "compression": "gzip",
+      "original_bytes": 825175,
+      "original_sha256": "32b7e1116dfe275faec0e622d9a704edd2f76a2b8a8423de75bb98d08d03abd9",
+      "stored_sha256": "8398b8fb41367224a8fc08025097be56ca52c830223be9c68755207321c80c11"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "no-tracked-changes.stderr.log",
+      "stored_name": "implementation-gates/no-tracked-changes.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "no-tracked-changes.stdout.log",
+      "stored_name": "implementation-gates/no-tracked-changes.stdout.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls-blocked-native-tools/cargo",
+      "stored_name": "implementation-gates/pq-negative-controls-blocked-native-tools/cargo",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls-blocked-native-tools/cargo-clippy",
+      "stored_name": "implementation-gates/pq-negative-controls-blocked-native-tools/cargo-clippy",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls-blocked-native-tools/cargo-fmt",
+      "stored_name": "implementation-gates/pq-negative-controls-blocked-native-tools/cargo-fmt",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls-blocked-native-tools/rustc",
+      "stored_name": "implementation-gates/pq-negative-controls-blocked-native-tools/rustc",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls-blocked-native-tools/rustdoc",
+      "stored_name": "implementation-gates/pq-negative-controls-blocked-native-tools/rustdoc",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls-blocked-native-tools/rustup",
+      "stored_name": "implementation-gates/pq-negative-controls-blocked-native-tools/rustup",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls.blocked-native-tools.log",
+      "stored_name": "implementation-gates/pq-negative-controls.blocked-native-tools.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls.native-tool-guard-probe.log",
+      "stored_name": "implementation-gates/pq-negative-controls.native-tool-guard-probe.log",
+      "compression": null,
+      "original_bytes": 644,
+      "original_sha256": "5710e8ede25a0b680b0dc1120ec0388fdd50534e1f6175a69749fdecd2ae07e8",
+      "stored_sha256": "5710e8ede25a0b680b0dc1120ec0388fdd50534e1f6175a69749fdecd2ae07e8"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls.stderr.log",
+      "stored_name": "implementation-gates/pq-negative-controls.stderr.log",
+      "compression": null,
+      "original_bytes": 136,
+      "original_sha256": "e2660b6b007ea7a3dd6226768aeb2b0e98dd2f8acc24c060466350682fa03fb6",
+      "stored_sha256": "e2660b6b007ea7a3dd6226768aeb2b0e98dd2f8acc24c060466350682fa03fb6"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-negative-controls.stdout.log",
+      "stored_name": "implementation-gates/pq-negative-controls.stdout.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-source-pins.stderr.log",
+      "stored_name": "implementation-gates/pq-source-pins.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "pq-source-pins.stdout.log",
+      "stored_name": "implementation-gates/pq-source-pins.stdout.log",
+      "compression": null,
+      "original_bytes": 557,
+      "original_sha256": "8264cda3ed611a1475bec747b953c4e7ae384c5247cb3c5ade31d3084570e471",
+      "stored_sha256": "8264cda3ed611a1475bec747b953c4e7ae384c5247cb3c5ade31d3084570e471"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "preflight.stderr.log",
+      "stored_name": "implementation-gates/preflight.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "preflight.stdout.log",
+      "stored_name": "implementation-gates/preflight.stdout.log",
+      "compression": null,
+      "original_bytes": 180,
+      "original_sha256": "b5b68445459c2fe3a4e0be7ab3872d38e25d8645498038c56777444f140cd217",
+      "stored_sha256": "b5b68445459c2fe3a4e0be7ab3872d38e25d8645498038c56777444f140cd217"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "repository-links.stderr.log",
+      "stored_name": "implementation-gates/repository-links.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "repository-links.stdout.log",
+      "stored_name": "implementation-gates/repository-links.stdout.log",
+      "compression": null,
+      "original_bytes": 307,
+      "original_sha256": "3365945f7fc0b47864f7ae12f70852c740228e4e748a5f9a27509d32865a0bb9",
+      "stored_sha256": "3365945f7fc0b47864f7ae12f70852c740228e4e748a5f9a27509d32865a0bb9"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-after.json",
+      "stored_name": "implementation-gates/source-after.json",
+      "compression": null,
+      "original_bytes": 423,
+      "original_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1",
+      "stored_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-after.stderr.log",
+      "stored_name": "implementation-gates/source-after.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-after.stdout.log",
+      "stored_name": "implementation-gates/source-after.stdout.log",
+      "compression": null,
+      "original_bytes": 423,
+      "original_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1",
+      "stored_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-before.json",
+      "stored_name": "implementation-gates/source-before.json",
+      "compression": null,
+      "original_bytes": 423,
+      "original_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1",
+      "stored_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-before.stderr.log",
+      "stored_name": "implementation-gates/source-before.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-before.stdout.log",
+      "stored_name": "implementation-gates/source-before.stdout.log",
+      "compression": null,
+      "original_bytes": 423,
+      "original_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1",
+      "stored_sha256": "b464e7c1067887416baa8674fbda2af3b24af08abc3011eac99ec7084ee087f1"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-inventory.stderr.log",
+      "stored_name": "implementation-gates/source-inventory.stderr.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-inventory.stdout.log",
+      "stored_name": "implementation-gates/source-inventory.stdout.log",
+      "compression": null,
+      "original_bytes": 35,
+      "original_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stored_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls-blocked-native-tools/cargo",
+      "stored_name": "implementation-gates/source-negative-controls-blocked-native-tools/cargo",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls-blocked-native-tools/cargo-clippy",
+      "stored_name": "implementation-gates/source-negative-controls-blocked-native-tools/cargo-clippy",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls-blocked-native-tools/cargo-fmt",
+      "stored_name": "implementation-gates/source-negative-controls-blocked-native-tools/cargo-fmt",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls-blocked-native-tools/rustc",
+      "stored_name": "implementation-gates/source-negative-controls-blocked-native-tools/rustc",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls-blocked-native-tools/rustdoc",
+      "stored_name": "implementation-gates/source-negative-controls-blocked-native-tools/rustdoc",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls-blocked-native-tools/rustup",
+      "stored_name": "implementation-gates/source-negative-controls-blocked-native-tools/rustup",
+      "compression": null,
+      "original_bytes": 144,
+      "original_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d",
+      "stored_sha256": "214d73d045c9b55d62a4c917396abb11da90aff86cfa33b23b433f8b63c3d19d"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls.blocked-native-tools.log",
+      "stored_name": "implementation-gates/source-negative-controls.blocked-native-tools.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls.native-tool-guard-probe.log",
+      "stored_name": "implementation-gates/source-negative-controls.native-tool-guard-probe.log",
+      "compression": null,
+      "original_bytes": 668,
+      "original_sha256": "e50d18e5b87b31c90e643db1e55e876a985ba0a4a1ad2387118f10141760e795",
+      "stored_sha256": "e50d18e5b87b31c90e643db1e55e876a985ba0a4a1ad2387118f10141760e795"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls.stderr.log",
+      "stored_name": "implementation-gates/source-negative-controls.stderr.log",
+      "compression": null,
+      "original_bytes": 6414,
+      "original_sha256": "eb20e36b0860e5dff795e13ca0f4a2051a7e3bebbeb1588b9842b61abcfdc306",
+      "stored_sha256": "eb20e36b0860e5dff795e13ca0f4a2051a7e3bebbeb1588b9842b61abcfdc306"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "source-negative-controls.stdout.log",
+      "stored_name": "implementation-gates/source-negative-controls.stdout.log",
+      "compression": null,
+      "original_bytes": 844,
+      "original_sha256": "f01b88def87f048e4b73d06e9e7ed1e833f6f901ad8768294be756f69a311129",
+      "stored_sha256": "f01b88def87f048e4b73d06e9e7ed1e833f6f901ad8768294be756f69a311129"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "strict-clippy.stderr.log",
+      "stored_name": "implementation-gates/strict-clippy.stderr.log",
+      "compression": null,
+      "original_bytes": 2198,
+      "original_sha256": "c1eee321ba27b5b57121348a74fc4dbeee9bf482f427420db9a631a79494d473",
+      "stored_sha256": "c1eee321ba27b5b57121348a74fc4dbeee9bf482f427420db9a631a79494d473"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "strict-clippy.stdout.log",
+      "stored_name": "implementation-gates/strict-clippy.stdout.log",
+      "compression": null,
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_directory": "/home/qq/work/chain-cell-storage-discovery-f2568-gates03",
+      "original_name": "summary.json",
+      "stored_name": "implementation-gates/summary.json",
+      "compression": null,
+      "original_bytes": 75075,
+      "original_sha256": "7a0f3fa8f2e4f8c477b08a12082f10822fefd1975f62a29c1908cd39b89f9c13",
+      "stored_sha256": "7a0f3fa8f2e4f8c477b08a12082f10822fefd1975f62a29c1908cd39b89f9c13"
+    }
+  ],
+  "provider_files": []
+}

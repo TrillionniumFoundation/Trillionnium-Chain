@@ -1,0 +1,15 @@
+{
+  "scope": "new isolated static optional-backend preparation only; not Rust runtime or whole-chain qualification",
+  "exports": {
+    "OPENSSL_DIR": "/home/qian-qi/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.z92m9WwI/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.z92m9WwI/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "a658fe342e227356bce83e5e2dedda5e2e1aea47b8b76c35f0b470d6b624be97",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.z92m9WwI/install/lib/ossl-modules"
+  },
+  "provider_receipt_sha256": "ddef0f59cdf4642c3276b02e74a24af8a519de0cd8f5363605217e81633db630",
+  "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "result": "PASS"
+}

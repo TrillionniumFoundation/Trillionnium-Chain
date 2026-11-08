@@ -1,0 +1,8 @@
+
+running 3 tests
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence ... ok
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 465 filtered out; finished in 4.10s
+
