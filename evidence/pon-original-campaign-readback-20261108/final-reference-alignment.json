@@ -1,0 +1,10 @@
+{
+  "old_local_evidence_commit": "c6129f79dd79871a75912a0218df8f742a09ea34",
+  "published_evidence_commit": "f63890781e21f65e3779f3a6f1ce27aaaa804b94",
+  "identical_tree": "4b2cdd9f302e15303d4637a34f1d87dfbc336390",
+  "guarded_update_ref": true,
+  "worktree_clean_before_after": true,
+  "reset_used": false,
+  "force_push_used": false,
+  "build_or_ci_triggered": false
+}
