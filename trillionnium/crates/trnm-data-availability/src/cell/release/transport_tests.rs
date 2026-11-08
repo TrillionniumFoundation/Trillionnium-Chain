@@ -448,7 +448,7 @@ fn persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payl
                     &[server.address],
                     options,
                     None,
-                    None,
+                    ClosureReadiness::None,
                 )
                 .map(|_| ()),
             };

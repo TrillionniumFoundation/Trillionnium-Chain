@@ -13,6 +13,12 @@ use trnm_protocol::pq_frame::{
     ml_dsa_65_key_id_from_spki, ML_DSA_65_SIGNATURE_BYTES, ML_DSA_65_SPKI_BYTES,
 };
 
+mod version;
+pub use version::{
+    CellPqVersionAuthorizationV3, CellPqVersionExpectationV3, CellPqVersionStatementV3,
+    VerifiedCellPqVersionV3, CELL_PQ_VERSION_BYTES_V3,
+};
+
 pub const CELL_PQ_PROFILE_V2: &str = "cell-pq-v2";
 pub const CELL_PQ_RELEASE_BYTES_V2: usize = 200 + ML_DSA_65_SIGNATURE_BYTES;
 const RELEASE_DOMAIN: &[u8] = b"TRNM/Cell/Release/ML-DSA-65/v2\0";
