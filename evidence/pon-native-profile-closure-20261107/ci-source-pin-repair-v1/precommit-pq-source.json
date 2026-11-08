@@ -1,0 +1,7 @@
+{
+  "exit_code": 0,
+  "precommit": true,
+  "qualification_run": false,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e5fedf04aea60464aafe2e63692a15234e6eb065d1ee3a874cdf185e51b1137f"
+}

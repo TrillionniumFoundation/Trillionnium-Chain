@@ -1,0 +1,34 @@
+{
+  "archives": [
+    {
+      "archive_bytes": 1288352,
+      "archive_sha256": "21b784d4cc3222450fcc21edf1c9881bee61e5747f3c9ff48e0504d108c6973d",
+      "historical_failure_reclassified": false,
+      "manifest_sha256": "f2b70159b528bfbe6eb7758dafc7d530d9c7c3424c609e403ecbe598e2a08142",
+      "members": 43,
+      "name": "ci-pq-head-failure-v1",
+      "readback_verified": true
+    },
+    {
+      "archive_bytes": 202534,
+      "archive_sha256": "c1bf87a1a7a2fe3030e5e25f88ebbe016f58c7c86e798187bf8dc7471cf5f3b7",
+      "historical_failure_reclassified": false,
+      "manifest_sha256": "a19ed78d8bbce41c3fbffd991f9086540e09d6c5a6d3a2ec9a7aac82b9aedfad",
+      "members": 54,
+      "name": "ci-pq-prospective-failure-v1",
+      "readback_verified": true
+    },
+    {
+      "archive_bytes": 35795,
+      "archive_sha256": "8a6e8dcbccbe7b53c3f11f6725e44e26f9801f79279971707157573ecbd13226",
+      "historical_failure_reclassified": false,
+      "manifest_sha256": "434d843efd492b5761d58a7aa6081089de894434dce1e3c2d88ffe635d9be7bb",
+      "members": 52,
+      "name": "ci-retained-pressure-unavailable-v1",
+      "readback_verified": true
+    }
+  ],
+  "complete_preparation_cost": "UNKNOWN",
+  "not_test_acceptance": true,
+  "schema": "pon-pr785-ci-evidence-readback-v1"
+}

@@ -275,3 +275,7 @@ The [precise correction](collector-layout-correction-v1.json) instead requires
 the actual primary file inside that directory, as shown by the original
 retention manifest. Corrected collection uses new output paths; it neither
 modifies the original files nor reruns the native validation.
+
+## Post-publication PQ source pin correction
+
+The first published source passed its selected 33-command plan but four additional hosted PQ jobs correctly rejected stale source pins. [The complete failure records and eight-pin review](ci-source-pin-repair-v1/README.md) distinguish this integration omission from the independently inherited unavailable historical pressure artifact. Only the reviewed source pins are synchronized; old measurements, strict guards and HOLD/zero-weight qualification remain unchanged. The corrected committed source has its own validation receipts in the publication PR.
