@@ -1300,11 +1300,6 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'PQ authority effect and root recovery controls must execute exactly once in repository-truth')
-    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
-    expected_repository_commands = code_lines(
-        re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
-    require(repository_commands == expected_repository_commands,
-            'repository-truth controls must retain a straight-line command sequence')
     require(MODEL_WINDOW_ORACLE in lanes['protocol-contract'] and script.count(MODEL_WINDOW_ORACLE) == 1,
             'model-window history arithmetic and frozen evidence checks must execute once in protocol-contract')
     require(MODEL_WINDOW_ORACLE + EVALUATION_QUORUM_ORACLE in lanes['protocol-contract'] and
@@ -1359,6 +1354,11 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     # required command is moved into this prefix.
     require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
             'credit model prefix must execute immediately after preflight without shell control flow')
+    repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
+    expected_repository_commands = code_lines(
+        re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
+    require(repository_commands == expected_repository_commands,
+            'repository-truth controls must retain a straight-line command sequence')
     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
     require(code_lines(lanes['repository-truth']) == code_lines(REPOSITORY_TRUTH_BLOCK),
