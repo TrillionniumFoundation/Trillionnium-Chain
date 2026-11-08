@@ -1,0 +1,23 @@
+{
+  "name": "source-integrity-negatives",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "timeout_seconds": 180,
+  "started_unix": 1794137018.455525,
+  "ended_unix": 1794137025.8097496,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 484,
+    "sha256": "ce09030e0f23353d79c72bef9a36acd6400048137a74a909e6ef579dbafe65f0"
+  },
+  "stderr": {
+    "bytes": 6414,
+    "sha256": "42b1a531c5d40bf4c7d705e3b30a6dd4d4989f420c9385a66293a639501316b2"
+  }
+}

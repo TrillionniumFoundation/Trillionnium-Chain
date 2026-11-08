@@ -1,0 +1,23 @@
+{
+  "name": "original-sequence",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "formal/pon-nakamoto-v1/test_model_generation_sequence.py",
+    "-v"
+  ],
+  "timeout_seconds": 120,
+  "started_unix": 1794137013.8844032,
+  "ended_unix": 1794137015.3669977,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 1292,
+    "sha256": "de98f932236f587075ff1eb3990535e7154f2ff023380f9ea5e7c3b976e1936e"
+  }
+}

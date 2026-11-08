@@ -1,0 +1,24 @@
+{
+  "name": "reference-conformance",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "formal/release-finality-v2/run_conformance.py",
+    "--out",
+    "/workspace/scratch/10366560c781/control-validation/reference"
+  ],
+  "timeout_seconds": 180,
+  "started_unix": 1794137009.6616125,
+  "ended_unix": 1794137013.883794,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 2483,
+    "sha256": "e265c0bc88c246a2078ea1b2fcf54fe2a909b42e86742ed64c51e45b98d80973"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

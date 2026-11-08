@@ -1,0 +1,22 @@
+{
+  "archive_reference_normalized_after_execution": true,
+  "created_utc": "2026-11-08T12:00:48.181202+00:00",
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/workspace/scratch/10366560c781/control-cargo-home",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/10366560c781/control-cargo-target",
+    "LD_LIBRARY_PATH": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "PATH": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+    "RUSTC": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTFLAGS": null,
+    "RUSTUP_HOME": "/workspace/scratch/d95a703b8dd6/toolchain/rustup",
+    "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu"
+  },
+  "observed_prior_warning": "trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute",
+  "prior_command_exit_code": 0,
+  "source_commit": "6f1eb8da8c2ce4ce1b689417865631f48cc8282f",
+  "warning_preserved_at": "evidence/cell-control-domains-v2-20261108/validation/strict-clippy.stderr.txt"
+}

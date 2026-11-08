@@ -1,0 +1,26 @@
+{
+  "name": "rust-format",
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "timeout_seconds": 180,
+  "started_unix": 1794137117.411346,
+  "ended_unix": 1794137131.545685,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

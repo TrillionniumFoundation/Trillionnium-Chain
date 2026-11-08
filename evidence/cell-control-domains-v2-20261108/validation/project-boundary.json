@@ -1,0 +1,23 @@
+{
+  "name": "project-boundary",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "scripts/ci/test_project_boundary.py",
+    "-v"
+  ],
+  "timeout_seconds": 120,
+  "started_unix": 1794137025.811078,
+  "ended_unix": 1794137030.071402,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 2425,
+    "sha256": "3e40083d4bfb4e43b6bccabbc24359e181e442cfed8c43075531c3abfcc434c1"
+  }
+}
