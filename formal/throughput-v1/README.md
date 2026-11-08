@@ -36,6 +36,15 @@ It rethrows the original timeout; it does not grant another budget. CPU, RSS and
 process-family cleanup stay unknown unless independently observed. A normal
 command return is not by itself a successfully completed negative control.
 
+## Native execution continuation
+
+The [execution profile](EXECUTION_PROFILE_V1.md) keeps the original four-second
+service contract separate from the thirty-second 0/24/24 campaign. Its
+[execution report](execution_report.py) preserves both planned denominators,
+native error/owner times, queues and available CPU/I/O coverage. The independent
+[SQLite syscall reader](sqlite_syscall_profile.py) retains instrumented WAL
+write/sync attempts without claiming physical I/O or either throughput gate.
+
 ## Confirmation, forks and uncertainty
 
 The native confirmation rule requires at least six successors and descendant

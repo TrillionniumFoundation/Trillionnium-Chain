@@ -105,6 +105,39 @@ impl Default for RequestErrorDiagnostics {
     }
 }
 
+/// First actual Err at each owner, bound to its original typed cause and phase.
+/// A later transport/shutdown error must not move an earlier refusal's clock.
+/// None is no captured event; a present event with no clock remains unknown.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+pub struct RequestErrorMoment {
+    pub observed_ns: Option<u64>,
+    pub phase: &'static str,
+    pub error_code: Option<&'static str>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct RequestErrorTiming {
+    schema: &'static str,
+    pub first_dispatch_error: Option<RequestErrorMoment>,
+    pub first_terminal_error: Option<RequestErrorMoment>,
+    /// Conservative: any lost request observation can hide an earlier event.
+    pub observation_failed: bool,
+    clock_is_observer_local: bool,
+    has_control_authority: bool,
+}
+impl Default for RequestErrorTiming {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-request-error-timing-v1",
+            first_dispatch_error: None,
+            first_terminal_error: None,
+            observation_failed: false,
+            clock_is_observer_local: true,
+            has_control_authority: false,
+        }
+    }
+}
+
 /// Additive, local settlement facts. The existing CpuSettle span measures the
 /// actual call through the original budget/journal result, including refusal.
 /// It overlaps the end of the existing dispatch CPU sample; never add the two.
@@ -285,6 +318,129 @@ pub struct ApplicationFrameBytes {
     pub complete: bool,
 }
 
+/// Returned frame-wrapper calls only, not syscall counts or physical network
+/// measurements. No-progress includes WouldBlock, Interrupted and an already
+/// complete read. Known subtotals never stand in for complete clock coverage.
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct ReactorFrameIoObservation {
+    pub phase: ApplicationFramePhase,
+    pub calls_returned: u64,
+    pub progressed_calls: u64,
+    pub no_progress_calls: u64,
+    pub failed_calls: u64,
+    pub wall_ns: Option<u64>,
+    pub wall_ns_known_sum: u64,
+    pub wall_unknown_calls: u64,
+    pub thread_cpu_ns: Option<u64>,
+    pub thread_cpu_ns_known_sum: u64,
+    pub thread_cpu_unknown_calls: u64,
+}
+impl ReactorFrameIoObservation {
+    fn new(phase: ApplicationFramePhase) -> Self {
+        Self {
+            phase,
+            calls_returned: 0,
+            progressed_calls: 0,
+            no_progress_calls: 0,
+            failed_calls: 0,
+            wall_ns: None,
+            wall_ns_known_sum: 0,
+            wall_unknown_calls: 0,
+            thread_cpu_ns: None,
+            thread_cpu_ns_known_sum: 0,
+            thread_cpu_unknown_calls: 0,
+        }
+    }
+    fn record(mut self, sample: ReactorIoSample, progressed: bool) -> Option<Self> {
+        self.calls_returned = self.calls_returned.checked_add(1)?;
+        let outcome = if sample.failed {
+            &mut self.failed_calls
+        } else if progressed {
+            &mut self.progressed_calls
+        } else {
+            &mut self.no_progress_calls
+        };
+        *outcome = outcome.checked_add(1)?;
+        self.wall_ns_known_sum = self
+            .wall_ns_known_sum
+            .checked_add(sample.wall_ns.unwrap_or(0))?;
+        self.wall_unknown_calls = self
+            .wall_unknown_calls
+            .checked_add(u64::from(sample.wall_ns.is_none()))?;
+        self.wall_ns = (self.wall_unknown_calls == 0).then_some(self.wall_ns_known_sum);
+        self.thread_cpu_ns_known_sum = self
+            .thread_cpu_ns_known_sum
+            .checked_add(sample.thread_cpu_ns.unwrap_or(0))?;
+        self.thread_cpu_unknown_calls = self
+            .thread_cpu_unknown_calls
+            .checked_add(u64::from(sample.thread_cpu_ns.is_none()))?;
+        self.thread_cpu_ns =
+            (self.thread_cpu_unknown_calls == 0).then_some(self.thread_cpu_ns_known_sum);
+        Some(self)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct ReactorIoObservation {
+    schema: &'static str,
+    pub frames: [ReactorFrameIoObservation; 6],
+    pub observation_failed: bool,
+    calls_are_wrapper_returns: bool,
+    includes_read_buffer_preparation: bool,
+    cpu_is_reactor_thread_only: bool,
+    includes_wait_between_calls: bool,
+    has_control_authority: bool,
+}
+impl Default for ReactorIoObservation {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-reactor-frame-io-observation-v1",
+            frames: [
+                ApplicationFramePhase::Hello,
+                ApplicationFramePhase::Challenge,
+                ApplicationFramePhase::Solution,
+                ApplicationFramePhase::Ready,
+                ApplicationFramePhase::Body,
+                ApplicationFramePhase::Response,
+            ]
+            .map(ReactorFrameIoObservation::new),
+            observation_failed: false,
+            calls_are_wrapper_returns: true,
+            includes_read_buffer_preparation: true,
+            cpu_is_reactor_thread_only: true,
+            includes_wait_between_calls: false,
+            has_control_authority: false,
+        }
+    }
+}
+
+pub(super) struct ReactorIoStamp {
+    started: Instant,
+    cpu: Option<ThreadCpuStamp>,
+}
+pub(super) struct ReactorIoSample {
+    wall_ns: Option<u64>,
+    thread_cpu_ns: Option<u64>,
+    failed: bool,
+}
+impl ReactorIoStamp {
+    pub(super) fn start() -> Self {
+        Self {
+            started: Instant::now(),
+            cpu: ThreadCpuStamp::start(),
+        }
+    }
+    pub(super) fn finish(self, failed: bool) -> ReactorIoSample {
+        ReactorIoSample {
+            wall_ns: Instant::now()
+                .checked_duration_since(self.started)
+                .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok()),
+            thread_cpu_ns: self.cpu.and_then(ThreadCpuStamp::finish),
+            failed,
+        }
+    }
+}
+
 /// Cross-thread/async wait: wall time only, never fabricated thread CPU. The
 /// queue interval starts when the paid body is complete and ends at dequeue.
 #[derive(Clone, Copy, Debug, Serialize, Default)]
@@ -344,6 +500,7 @@ pub struct PublicRequestObservation {
     /// This is a local diagnostic clock, not a remote confirmation or authority.
     pub lifecycle: PublicRequestLifecycleObservation,
     pub frames: [ApplicationFrameBytes; 6],
+    pub reactor_io: ReactorIoObservation,
     pub application_bytes_read: Option<u64>,
     pub application_bytes_written: Option<u64>,
     pub physical_network_bytes: Option<u64>,
@@ -364,6 +521,7 @@ pub struct PublicRequestObservation {
     pub dispatch_accepted: Option<bool>,
     pub dispatch_error_code: Option<&'static str>,
     pub error_diagnostics: RequestErrorDiagnostics,
+    pub error_timing: RequestErrorTiming,
     pub dispatch_thread_cpu_ns: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cpu_settlement: Option<PublicCpuSettlementObservation>,
@@ -410,6 +568,7 @@ impl PublicRequestObservation {
                 bytes_written: 0,
                 complete: false,
             }),
+            reactor_io: ReactorIoObservation::default(),
             application_bytes_read: None,
             application_bytes_written: None,
             physical_network_bytes: None,
@@ -422,6 +581,7 @@ impl PublicRequestObservation {
             dispatch_accepted: None,
             dispatch_error_code: None,
             error_diagnostics: RequestErrorDiagnostics::default(),
+            error_timing: RequestErrorTiming::default(),
             dispatch_thread_cpu_ns: None,
             cpu_settlement: None,
             submit_phases: submit_phases(),
@@ -455,6 +615,7 @@ struct TaskProgress {
     dispatch_accepted: Option<bool>,
     dispatch_error_code: Option<&'static str>,
     dispatch_error_diagnostic: Option<ObservedErrorDiagnostic>,
+    first_dispatch_error: Option<RequestErrorMoment>,
     dispatch_thread_cpu_ns: Option<u64>,
     cpu_settlement: Option<PublicCpuSettlementObservation>,
     paid_task_queue_wait: RequestWaitObservation,
@@ -586,6 +747,7 @@ impl PublicRequestObserver {
                         value.dispatch_accepted = task.dispatch_accepted;
                         value.dispatch_error_code = task.dispatch_error_code;
                         value.error_diagnostics.dispatch = task.dispatch_error_diagnostic;
+                        value.error_timing.first_dispatch_error = task.first_dispatch_error;
                         value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
                         value.cpu_settlement = task.cpu_settlement;
                         value.paid_task_queue_wait = task.paid_task_queue_wait;
@@ -616,6 +778,8 @@ impl PublicRequestObserver {
                     .flatten();
                 value.observation_failed =
                     cell.failed.load(Ordering::Acquire) || phase_failures != 0;
+                value.error_timing.observation_failed = value.observation_failed;
+                value.reactor_io.observation_failed = value.observation_failed;
                 value.complete = value.connection_closed
                     && (!value.task_created || value.task_closed)
                     && !value.observation_failed;
@@ -768,8 +932,38 @@ impl ConnectionObservation {
             true
         });
     }
+    #[cfg(test)]
     pub(super) fn frame(&self, phase: usize, read: usize, written: usize, complete: bool) {
+        self.record_frame(phase, read, written, complete, None);
+    }
+    pub(super) fn frame_attempt(
+        &self,
+        phase: usize,
+        read: usize,
+        written: usize,
+        complete: bool,
+        sample: ReactorIoSample,
+    ) {
+        self.record_frame(phase, read, written, complete, Some(sample));
+    }
+    fn record_frame(
+        &self,
+        phase: usize,
+        read: usize,
+        written: usize,
+        complete: bool,
+        sample: Option<ReactorIoSample>,
+    ) {
         self.handle().update(|r| {
+            let io = match sample {
+                Some(sample) => {
+                    match r.reactor_io.frames[phase].record(sample, read != 0 || written != 0) {
+                        Some(io) => Some(io),
+                        None => return false,
+                    }
+                }
+                None => None,
+            };
             let f = &mut r.frames[phase];
             let Some(rx) = f.bytes_read.checked_add(read as u64) else {
                 return false;
@@ -780,6 +974,9 @@ impl ConnectionObservation {
             f.bytes_read = rx;
             f.bytes_written = tx;
             f.complete |= complete;
+            if let Some(io) = io {
+                r.reactor_io.frames[phase] = io;
+            }
             if phase == 5 && complete {
                 r.response_frame_complete = true;
                 r.response_write
@@ -796,10 +993,16 @@ impl ConnectionObservation {
     }
     pub(super) fn terminal_error(&self, phase: &'static str, error: &crate::Error) {
         let code = error.code().map(crate::ErrorCode::as_str);
+        let moment = RequestErrorMoment {
+            observed_ns: self.inner.timestamp_ns(Instant::now()),
+            phase,
+            error_code: code,
+        };
         self.handle().update(|r| {
             r.terminal_phase = Some(phase);
             r.terminal_error_code = code;
             r.error_diagnostics.terminal = Some(ObservedErrorDiagnostic::capture(error));
+            r.error_timing.first_terminal_error.get_or_insert(moment);
             r.challenge_wait
                 .finish(self.inner.epoch, Some((false, code)));
             r.grant_wait.finish(self.inner.epoch, Some((false, code)));
@@ -941,10 +1144,18 @@ impl TaskObservation {
         });
     }
     pub(super) fn dispatch_error(&self, error: &crate::Error) {
-        self.update_task(|r| {
-            r.dispatch_error_code = error.code().map(crate::ErrorCode::as_str);
-            r.dispatch_error_diagnostic = Some(ObservedErrorDiagnostic::capture(error));
-        });
+        if let Some(network) = &self.network {
+            let moment = RequestErrorMoment {
+                observed_ns: network.inner.timestamp_ns(Instant::now()),
+                phase: "dispatch",
+                error_code: error.code().map(crate::ErrorCode::as_str),
+            };
+            network.update_task(|r| {
+                r.dispatch_error_code = moment.error_code;
+                r.dispatch_error_diagnostic = Some(ObservedErrorDiagnostic::capture(error));
+                r.first_dispatch_error.get_or_insert(moment);
+            });
+        }
     }
     pub(super) fn work_started(&self) {
         self.update_task(|r| {
@@ -1428,6 +1639,164 @@ mod tests {
         assert!(snapshot.records[0].observation_failed);
         assert!(!snapshot.records[0].complete);
         assert!(snapshot.records[0].error_diagnostics.dispatch.is_none());
+        assert!(snapshot.records[0].error_timing.observation_failed);
+        assert!(snapshot.records[0]
+            .error_timing
+            .first_dispatch_error
+            .is_none());
+        assert!(snapshot.records[0].reactor_io.observation_failed);
+    }
+
+    #[test]
+    fn first_error_time_keeps_original_cause_phase_and_owner_clock() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        task.dispatch_error(&"PUBLIC_REQUEST_CANCELLED".into());
+        let first_dispatch = observer.snapshot().records[0]
+            .error_timing
+            .first_dispatch_error
+            .unwrap();
+        task.dispatch_error(&"ROOT".into());
+        connection.terminal_error("queue", &"PUBLIC_REQUEST_DEADLINE".into());
+        let first_terminal = observer.snapshot().records[0]
+            .error_timing
+            .first_terminal_error
+            .unwrap();
+        connection.terminal_error("shutdown", &"PUBLIC_EOF".into());
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        let row = &snapshot.records[0];
+        let timing = row.error_timing;
+        assert_eq!(timing.schema, "public-v3-request-error-timing-v1");
+        assert!(timing.clock_is_observer_local && !timing.has_control_authority);
+        assert!(!timing.observation_failed);
+        assert_eq!(timing.first_dispatch_error, Some(first_dispatch));
+        assert_eq!(timing.first_terminal_error, Some(first_terminal));
+        assert_eq!(first_dispatch.phase, "dispatch");
+        assert_eq!(first_dispatch.error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+        assert_eq!(first_terminal.phase, "queue");
+        assert_eq!(first_terminal.error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+        assert_eq!(row.dispatch_error_code, None); // The existing last Err remains ROOT.
+        assert_eq!(row.terminal_error_code, Some("PUBLIC_EOF"));
+        assert_eq!(row.terminal_phase, Some("shutdown"));
+        for (event, closed) in [
+            (first_dispatch, row.lifecycle.task_closed_ns),
+            (first_terminal, row.lifecycle.connection_closed_ns),
+        ] {
+            let stamp = event.observed_ns.unwrap();
+            assert!(row.lifecycle.accepted_ns.unwrap() <= stamp && stamp <= closed.unwrap());
+        }
+    }
+
+    #[test]
+    fn terminal_error_contention_marks_first_event_coverage_unknown() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let held = connection.cell.row.lock().unwrap();
+        connection.terminal_error("hello", &"PUBLIC_EOF".into());
+        drop(held);
+        connection.terminal_error("shutdown", &"PUBLIC_REQUEST_CANCELLED".into());
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 1);
+        let timing = snapshot.records[0].error_timing;
+        assert!(timing.observation_failed);
+        // This later captured event cannot be presented as complete first-error coverage.
+        assert_eq!(timing.first_terminal_error.unwrap().phase, "shutdown");
+        assert!(!snapshot.records[0].complete);
+    }
+
+    #[test]
+    fn reactor_io_keeps_unknown_clocks_and_error_attempts_in_their_denominators() {
+        // Counterexample values exercise the recorder; they are not I/O evidence.
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        for (read, wall_ns, thread_cpu_ns, failed) in [
+            (4, Some(10), Some(7), false),
+            (0, Some(20), None, false),
+            (0, None, Some(2), true),
+        ] {
+            connection.frame_attempt(
+                0,
+                read,
+                0,
+                false,
+                ReactorIoSample {
+                    wall_ns,
+                    thread_cpu_ns,
+                    failed,
+                },
+            );
+        }
+        drop(connection);
+        let snapshot = observer.snapshot();
+        let row = &snapshot.records[0];
+        assert!(row.complete && !row.reactor_io.observation_failed);
+        let frame = row.reactor_io.frames[0];
+        assert_eq!(frame.calls_returned, 3);
+        assert_eq!(frame.progressed_calls, 1);
+        assert_eq!(frame.no_progress_calls, 1);
+        assert_eq!(frame.failed_calls, 1);
+        assert_eq!(
+            (
+                frame.wall_ns,
+                frame.wall_ns_known_sum,
+                frame.wall_unknown_calls
+            ),
+            (None, 30, 1)
+        );
+        assert_eq!(
+            (
+                frame.thread_cpu_ns,
+                frame.thread_cpu_ns_known_sum,
+                frame.thread_cpu_unknown_calls
+            ),
+            (None, 9, 1)
+        );
+        assert_eq!(row.application_bytes_read, Some(4));
+        let unentered = row.reactor_io.frames[5];
+        assert_eq!(unentered.calls_returned, 0);
+        assert_eq!(unentered.wall_ns, None);
+        assert_eq!(unentered.thread_cpu_ns, None);
+    }
+
+    #[test]
+    fn reactor_io_capture_contention_and_overflow_do_not_block_or_manufacture_zero_cost() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let connection = observer.connection().unwrap();
+        let held = connection.cell.row.lock().unwrap();
+        connection.frame_attempt(0, 1, 0, false, ReactorIoStamp::start().finish(false));
+        drop(held);
+        drop(connection);
+        let overflow = observer.connection().unwrap();
+        overflow.cell.row.lock().unwrap().reactor_io.frames[0].calls_returned = u64::MAX;
+        overflow.frame_attempt(0, 1, 0, false, ReactorIoStamp::start().finish(false));
+        drop(overflow);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 2);
+        assert_eq!(snapshot.records[0].reactor_io.frames[0].calls_returned, 0);
+        assert_eq!(
+            snapshot.records[1].reactor_io.frames[0].calls_returned,
+            u64::MAX
+        );
+        for row in &snapshot.records {
+            assert!(row.observation_failed && row.reactor_io.observation_failed);
+            assert_eq!(row.application_bytes_read, None);
+            assert_eq!(row.reactor_io.frames[0].wall_ns, None);
+            assert_eq!(row.frames[0].bytes_read, 0);
+            assert!(!row.complete);
+        }
+    }
+
+    #[test]
+    fn reactor_io_cpu_clock_cannot_migrate_between_threads() {
+        let stamp = ReactorIoStamp::start();
+        let sample = thread::spawn(move || stamp.finish(false)).join().unwrap();
+        assert!(sample.wall_ns.is_some());
+        assert_eq!(sample.thread_cpu_ns, None);
     }
 
     #[test]

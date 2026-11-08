@@ -7,6 +7,13 @@ on:
       - formal/pon-native-fullpath-v1/**
       - scripts/run_smollm_cell_replica_research.py
       - scripts/ci/test_smollm_command_receipts.py
+      - scripts/pon_public_v3_phase_read.py
+      - scripts/ci/test_pon_public_v3_phase_read.py
+      - trillionnium/crates/trnm-mvcc-fee/**
+      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/**
+      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+      - trillionnium/crates/trnm-pon-node/src/peer_polling.rs
+      - evidence/pon-throughput-engineering-20261108/**
       - evidence/pon-throughput-20261108/**
       - config/pon/pq-cross-branch-corpus-v1.json
   workflow_dispatch:
@@ -42,6 +49,9 @@ jobs:
           python3 formal/throughput-v1/test_proof_cpu_metrics.py -v
           python3 formal/throughput-v1/test_cell_model_metrics.py -v
           python3 formal/throughput-v1/test_reproduce_reports.py -v
+          python3 formal/throughput-v1/test_execution_report.py -v
+          python3 formal/throughput-v1/test_sqlite_syscall_profile.py -v
+          python3 scripts/ci/test_pon_public_v3_phase_read.py -v
           python3 scripts/ci/test_smollm_command_receipts.py -v
       - name: Reproduce original records without granting throughput qualification
         run: python3 formal/throughput-v1/reproduce_reports.py --output "$RUNNER_TEMP/throughput-evidence/reproduced"

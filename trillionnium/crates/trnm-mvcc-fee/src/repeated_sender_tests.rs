@@ -43,7 +43,7 @@ fn fixture(senders: usize) -> (State, Config, Vec<Vec<u8>>) {
         .collect();
     (state, cfg, raws)
 }
-fn full_speculation_reference<E: Send>(
+pub(super) fn full_speculation_reference<E: Send>(
     state: &State,
     block: BlockExecution<'_>,
     cfg: &Config,
@@ -56,12 +56,12 @@ fn full_speculation_reference<E: Send>(
         |_, next| root(next),
         control,
         StateInputs {
-            force_repeated_sender_speculation: true,
+            force_account_conflict_speculation: true,
             ..StateInputs::default()
         },
     )
 }
-fn request(raws: &[Vec<u8>], workers: usize) -> BlockExecution<'_> {
+pub(super) fn request(raws: &[Vec<u8>], workers: usize) -> BlockExecution<'_> {
     BlockExecution {
         timestamp: None,
         transactions: raws,
@@ -71,7 +71,7 @@ fn request(raws: &[Vec<u8>], workers: usize) -> BlockExecution<'_> {
         workers,
     }
 }
-fn parity(a: &Output, b: &Output) {
+pub(super) fn parity(a: &Output, b: &Output) {
     assert_eq!(a.state, b.state);
     assert_eq!(a.root, b.root);
     assert_eq!(a.receipts, b.receipts);
@@ -103,9 +103,11 @@ fn repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_si
             assert_eq!(actual.root, serial.root);
             assert_eq!(actual.metrics.signature_verifications, 256);
             assert_eq!(state, preserved);
-            if workers > 1 && (2..256).contains(&senders) {
-                assert_eq!(actual.metrics.speculative, senders);
-                assert!(actual.metrics.reexecuted < reference.metrics.reexecuted);
+            if workers > 1 && senders > 1 {
+                // The common recipient conflicts even when all senders differ.
+                assert_eq!(actual.metrics.speculative, 1);
+                assert_eq!(actual.metrics.reexecuted, 0);
+                assert_eq!(reference.metrics.reexecuted, 255);
                 assert_eq!(reference.metrics.speculative, 256);
                 assert_eq!(actual.metrics.serial_conflict_batches, 1);
             } else {
@@ -257,7 +259,8 @@ fn repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relati
         parity(&actual, &reference);
         assert_eq!(actual.metrics.signature_verifications, 256);
         if workers > 1 {
-            assert!(actual.metrics.reexecuted > 0);
+            assert_eq!(actual.metrics.reexecuted, 0);
+            assert!(reference.metrics.reexecuted > 0);
         }
     }
 }
@@ -409,7 +412,7 @@ fn repeated_sender_complete_block_cost_observation() {
                         "implementation": if full_speculation {
                             "full-speculation-reference"
                         } else {
-                            "repeated-sender-hint"
+                            "account-conflict-hint"
                         },
                         "wall_ns": wall_ns,
                         "signature_verifications": actual.metrics.signature_verifications,

@@ -1,0 +1,83 @@
+{
+  "collector_sha256": "70fe4d09dc6e6e8a32bd04b3277fd45ff67cc91d995547ebf0284ef56d638603",
+  "cryptographic_refusals": null,
+  "native_pressure_campaign_started": false,
+  "native_pressure_campaign_status": "NOT_RUN",
+  "observed_parent_prerequisites_match": false,
+  "original_observation": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+    "consensus_or_model_authority": false,
+    "counters": {
+      "cgroup.events": null,
+      "cpu.stat": null,
+      "memory.current": null,
+      "memory.events": null,
+      "pids.current": null
+    },
+    "cwd": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93",
+    "gid": 1000,
+    "host_readiness_only": true,
+    "installed_unit_sha256": null,
+    "limits": {
+      "cpu.max": null,
+      "cpu.max.burst": null,
+      "memory.max": null,
+      "memory.swap.max": null,
+      "pids.max": null
+    },
+    "observed_utc": "2026-11-08T17:17:02.837457+00:00",
+    "parent": null,
+    "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "phase": "outside-before-throughput-campaign",
+    "pid": 990570,
+    "read_errors": {
+      "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+      "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'"
+    },
+    "schema": "trnm-ci-original-public-host-observation-v1",
+    "service": "not-started",
+    "thread_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-terminal-dpty-068e03fbf6dc32c7a6fafc7940242148c56271e1fb2ea058e65346bff3139be1.service",
+    "thread_privileges": {
+      "CapBnd": "000001ffffffffff",
+      "NoNewPrivs": "0"
+    },
+    "uid": 1000
+  },
+  "original_observer_sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+  "original_resource_contract_enforced": false,
+  "prerequisite_violations": [
+    "FIXED_PARENT_IDENTITY",
+    "KERNEL_OBSERVATION_UNAVAILABLE",
+    "ORIGINAL_FINITE_LIMITS",
+    "REVIEWED_UNIT_BYTES"
+  ],
+  "production_activation": false,
+  "qualification": "HOLD",
+  "qualified_confirmed_tps": null,
+  "qualified_wan_tps": null,
+  "required_contract": {
+    "cpu_cores": "0.25",
+    "deadline_comparison": "strictly_before",
+    "deadline_ns": 4000000000,
+    "hostile_inputs": 16,
+    "memory_bytes": 2147483648,
+    "pids": 256,
+    "required_depth": 6,
+    "required_work_multiplier": 6,
+    "swap_bytes": 0
+  },
+  "schema": "trnm-throughput-original-host-prerequisites-v1",
+  "scope": "read-only prerequisites, not a pressure campaign or enforcement certificate",
+  "valid_admissions": null
+}
