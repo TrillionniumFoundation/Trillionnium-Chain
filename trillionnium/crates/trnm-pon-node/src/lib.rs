@@ -34,6 +34,8 @@ pub mod pq_rollback_witness;
 pub mod public_submit;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;
+/// Opt-in bounded work-schedule checks; never selected by native admission.
+pub mod research_work_schedule;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
