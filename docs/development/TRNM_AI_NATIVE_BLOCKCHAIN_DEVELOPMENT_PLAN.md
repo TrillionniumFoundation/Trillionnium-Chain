@@ -7975,3 +7975,45 @@ negative source/CI-contract controls and repository links. These are default
 feature component runtime tests on shared Linux x86_64, not all-feature runtime,
 independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
 not change those source identities or close the six operational qualifications.
+
+### 2026-11-08 Cell storage continuation: reclaimable discovery and complete task bytes
+
+Continue the exact six-capability candidate #807 at
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` on a separate stacked branch.
+The unified #812 candidate and other concurrent source heads are not silently
+treated as this branch's ancestors or as evidence for its changed bytes.
+
+The [PQ-v3 discovery contract](specs/pon/CELL_PROVIDER_DISCOVERY_PQ_V3.md)
+adds a fresh CDP3 / SQLite-v3 namespace. Provider signatures bind fixed
+300-second lease epochs. Expiry/withdrawal releases active quota while bounded
+current-epoch tombstones preserve sequence high water; a monotonic atomic
+epoch transition retires the whole old signed scope. A previous long-lived
+signature cannot revive after a newer short-lived record expires. The 512-row
+and 16-MiB main-database bounds remain explicit. A full current epoch can still
+refuse; this is bounded recovery of capacity, not open-network Sybil fairness.
+
+Native ML-DSA-65 bootstrap responses bind the exact query, OS-random nonce,
+configured endpoint/key/generation, result and expiry. Bootstrap keys are
+pinned independently of provider keys. Unsigned, replayed or mixed-query
+responses cannot manufacture discovery candidates or successful announcements.
+The existing multi-source scheduling, original connection/byte/deadline
+reservation and verification budget continue to apply, including unsuccessful
+requests. Cross-epoch sequence comparisons use the epoch as part of identity.
+The earlier v1/v2 profiles keep their documented limits and are not migrated.
+
+The [complete-version loader contract](specs/pon/CELL_COMPLETE_VERSION_V1.md)
+now also has native `admit_local_version` / `CellResidentVersionV1` composition.
+The actual immutable model and environment closures must both be resident and
+match the complete TCV1 before one task's aggregate RAM/reference admission.
+Both current component pins are rechecked before either byte view is delivered;
+original deadline and latched cancellation remain attached to the same task.
+A complete disk cache or model-only residency cannot substitute for this join.
+
+TCX1 already requires a complete base and complete target manifest with one
+bounded reconstruction step. No update assumes a fine-tune preserves chunks.
+Long-term retained version sets still need funded leases and capacity; declared
+replica/domain IDs are not evidence of independent operators. Real paid renewal,
+repair dispatch, independently administered WAN recovery, measured device use
+and the same-iteration Hepta next-task/FinalUse loop remain acceptance gates.
+Source-bound native results are recorded separately from those operational
+qualifications; all six end-to-end capability gates remain **HOLD_NO_GO**.

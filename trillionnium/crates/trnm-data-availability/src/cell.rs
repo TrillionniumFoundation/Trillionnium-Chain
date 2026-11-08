@@ -85,7 +85,8 @@ pub use release::{
 pub use residency::{
     CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
     CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
-    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
+    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentVersionV1,
+    CellResidentVersionViewV1, CellResidentViewV1, CellResidentWorkingSetV1,
 };
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
