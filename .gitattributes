@@ -37,3 +37,6 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # Preserve byte-exact successful and failed proof-chain observations.
 /evidence/pon-w1-qrom-proof-chain-20261108/*.log -text -whitespace
+
+# Preserve successful and failed algebra-continuation command output exactly.
+/evidence/pon-w1-fri-algebra-20261108/**/*.log -text -whitespace

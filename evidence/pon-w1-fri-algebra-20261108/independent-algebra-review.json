@@ -1,0 +1,144 @@
+{
+  "artifact_records": {
+    "review/comparison-negative-after-fix.json": {
+      "bytes": 2730,
+      "sha256": "ef76f0bcd204db8801941a15477d635c41f88dd41c99ee99bd843803ac53c86a"
+    },
+    "review/comparison-negative-before-fix.json": {
+      "bytes": 6156,
+      "sha256": "12b695e3669004067d1f1b9c5ff945b9136461e383ce8781381630ac0cd8f908"
+    },
+    "review/comparison-order-review.json": {
+      "bytes": 1243,
+      "sha256": "74280d959096e036b45ab1bbbfafcd3f87c313eeaafc58610d31e6d3134287ec"
+    },
+    "review/invocation.json": {
+      "bytes": 968,
+      "sha256": "09a7d65152331974acf84ebeebbdd457ca1fdcde1a38533084594045df1e6a1a"
+    },
+    "review/result.json": {
+      "bytes": 81499,
+      "sha256": "f2f5b12bb98f17076371bb6b1ea34c97a638ef595055985b9239233f8129816e"
+    }
+  },
+  "independent_method": {
+    "air": "Independent reviewer computes check-polynomial RHS with remap[0,2,1,3] and ((3z)^(2^18)-1); generated AIR interpreter is separately inspected against pinned adapter.rs and compared through its returned total. Reviewer does not independently execute generated AIR LHS.",
+    "deep": "Each of 163 registers contributes separately with one mix power per register; common symbolic denominators are cached only for inversion, not by forming combo-U coefficient batches.",
+    "field": "Ordinary integer convolution reduced by X^4+11 over modulus 2013265921; inverses exponentiated and product-checked.",
+    "fold": "Direct inverse DFT16 with ROU_REV[4] and 1/16 normalization; independently reviewed upstream reverse-butterfly plus bit_reverse equivalence.",
+    "imports_new_algebra_module_in_reviewer": false,
+    "montgomery": "Every receipt field word converted by (2^32)^-1 modulo p. Root literals and AIR constants interpreted in ordinary form.",
+    "terminal": "Coordinate-major 64 coefficients, Horner evaluation at ROU_FWD[8]^position."
+  },
+  "observed_equalities": {
+    "air_total_vs_independent_rhs": [
+      890055781,
+      1976276683,
+      312542502,
+      1945752035
+    ],
+    "deep_goals": 50,
+    "fold_results": 150,
+    "named_denominator_digests": 300,
+    "terminal_values": 50,
+    "zero_denominators_seen": 0
+  },
+  "preliminary_order_mismatch": "review/comparison-order-review.json retains the failed initial numerical-order-versus-register-order comparison and correction to named identities.",
+  "qualification": {
+    "closed_full_security_obligations": 0,
+    "complete_receipt_verified": false,
+    "full_security_bound": null,
+    "production_qualified": false,
+    "qrom_instantiated": false,
+    "security_bits_quantum": null,
+    "source_guest_vm_air_semantics_proved": false,
+    "whole_chain_pq_qualified": false
+  },
+  "repaired_report_validation_defect": {
+    "after": {
+      "exact_sources_unchanged": true,
+      "exit_code": 0,
+      "record": "review/comparison-negative-after-fix.json",
+      "test_methods": 5
+    },
+    "before": {
+      "exit_code": 1,
+      "failed_subtests": 4,
+      "record": "review/comparison-negative-before-fix.json",
+      "test_methods": 5
+    },
+    "correction": "Require strict integer query identities 0..49 and integer combo 0..4 or exact string check; also check canonical field arrays and strict query indices on both reports.",
+    "issue": "Python bool/int key equality accepted false/true in place of denominator query/combo identities 0/1.",
+    "scope": "Report-validation defect; no accepted native malformed receipt or W1 forgery was demonstrated."
+  },
+  "review_scope": "Independent arithmetic implementation, pinned upstream source reading, report validation controls and static workflow review; not independent institution or cryptographic certification.",
+  "schema": "TRNM-W1-INDEPENDENT-ALGEBRA-REVIEW1",
+  "source_files_at_review": {
+    ".github/workflows/pon-w1-fri-algebra.yml": {
+      "bytes": 11390,
+      "sha256": "87b467bcc58aa5e8ccf908d59fc4a7b1a90b41959e9d7dfc0221248c7e8122f3"
+    },
+    "evidence/pon-w1-fri-algebra-20261108/algebra-source-supplement.json.gz": {
+      "bytes": 70636,
+      "sha256": "f649c85ff3775c275d3b7f891e4866ecea13a17ac5225eae8b359ec464051f86"
+    },
+    "evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py": {
+      "bytes": 14207,
+      "sha256": "41a19c201d805469a35c3a6a3200ad174f613a5ef4a578a0997abf041ccf0699"
+    },
+    "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz": {
+      "bytes": 69332,
+      "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+    },
+    "scripts/ci/test_w1_fri_algebra_review_compare.py": {
+      "bytes": 7649,
+      "sha256": "0654b860970ad85258cae50076dfff87300ffa881060cb1ee78085feb64014b7"
+    },
+    "scripts/ci/w1_fri_algebra_report_check.py": {
+      "bytes": 9800,
+      "sha256": "a35aa167b232dd0ee50becc85938491c3fb191392ef660fed1cc04354f6be9e4"
+    },
+    "scripts/w1_fri_algebra_replay.py": {
+      "bytes": 28450,
+      "sha256": "9d535ac59b21372565deb416eeeabd2929010d0af97ccd2fd075ccd401e159df"
+    },
+    "scripts/w1_fri_query_replay.py": {
+      "bytes": 29357,
+      "sha256": "4a6a4f96baea59d5ff872d65ce9ba4f77eaf97306b97446442d5584369453b0f"
+    }
+  },
+  "source_review_findings": [
+    "U coefficients use contiguous extension quadruples; FRI leaf rows and terminal coefficients use coordinate-major layouts.",
+    "Tap register iterator advances by skip; batching mix powers advance 163 times, followed by 16 check powers.",
+    "AndCond applies field arithmetic condition*inner.total*chain.multiplier and preserves the independent mix-register bank.",
+    "The SDK defines inverse(0)=0; this audit instead refuses zero DEEP divisors. This difference is explicit and does not affect the fixed receipt, whose 300 denominators are nonzero.",
+    "No arithmetic/ordering defect was found in the reviewed replay."
+  ],
+  "status": "FIXED_NUMERICAL_REPLAY_REVIEWED_FULL_SECURITY_HOLD",
+  "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "workflow_static_review": {
+    "hosted_execution_reviewed_here": false,
+    "missing_or_skipped_stage_can_be_replaced_by_old_report": false,
+    "observations": [
+      "Exclusive fresh per-source/run/attempt output directory.",
+      "Exact head or prospective merge source checked before and after execution.",
+      "Named tests must be registered, started and successful; skipped/expected-failure/missing completion refused.",
+      "Actual replay and independent reviewer execute even if control stage failed; final completion requires all stages successful.",
+      "Report and review digests must match freshly captured files.",
+      "Artifact retention runs on failure."
+    ],
+    "required_stage_ids": [
+      "observations",
+      "checkout",
+      "source_before",
+      "preflight",
+      "controls",
+      "completion",
+      "replay",
+      "review",
+      "scope",
+      "source_after"
+    ],
+    "workflow_source_hash_is_prepublication_snapshot": true
+  }
+}

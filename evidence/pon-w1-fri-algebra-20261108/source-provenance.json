@@ -1,0 +1,42 @@
+{
+  "acquisition": "GitHub connector fetch_file at exact VCS commit; content retained verbatim UTF-8",
+  "cargo_build_run": false,
+  "commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "fresh_complete_archive_downloaded": false,
+  "historical_archive_member_comparison": {
+    "archive": "risc0-circuit-recursion-4.0.5",
+    "archive_sha256": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+    "is_fresh_archive_verification": false,
+    "matches_new_vcs_source": true,
+    "member": {
+      "bytes": 922857,
+      "path": "src/poly_ext.rs",
+      "sha256": "176f99041c0d3867ecd100b7292adbeb29294a0abe7a8f1f0a05807278da43b3"
+    },
+    "observation_path": "evidence/pon-w1-qrom-semantics-20261107/report.json",
+    "observation_sha256": "66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221"
+  },
+  "license": "Apache-2.0",
+  "license_path": "evidence/pon-w1-qrom-semantics-20261107/LICENSE-RISC0",
+  "new_source_retrieval": true,
+  "repository": "risc0/risc0",
+  "schema": "TRNM-W1-FRI-ALGEBRA-SOURCE-PROVENANCE1",
+  "scope": "Content/identity evidence, not compilation, semantics, or QROM correctness.",
+  "source_files": [
+    {
+      "bytes": 922857,
+      "git_blob_sha1": "07b0b8e95f60ef6ba52f76247f5435c75af56f73",
+      "path": "risc0/circuit/recursion/src/poly_ext.rs",
+      "sha256": "176f99041c0d3867ecd100b7292adbeb29294a0abe7a8f1f0a05807278da43b3",
+      "source_url": "https://github.com/risc0/risc0/blob/8c215e2f4ccdd935f0517bf05d90f1ae032840a9/risc0/circuit/recursion/src/poly_ext.rs"
+    },
+    {
+      "bytes": 14765,
+      "git_blob_sha1": "51ebaeda83dfe94c8da7ea3e4899ad9693376d0d",
+      "path": "risc0/zkp/src/core/ntt.rs",
+      "sha256": "5e363e48f97bbeb17642fa1829e56488747921cf5923c010ef533d2130b2cb1f",
+      "source_url": "https://github.com/risc0/risc0/blob/8c215e2f4ccdd935f0517bf05d90f1ae032840a9/risc0/zkp/src/core/ntt.rs"
+    }
+  ],
+  "upstream_source_executed": false
+}

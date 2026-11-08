@@ -1,0 +1,59 @@
+{
+  "cargo_native_tests_run_for_this_python_increment": false,
+  "complete_bound": null,
+  "complete_local_tracked_worktree_verified": false,
+  "full_security_obligation_count_discharged": 0,
+  "historical_failed_observations_preserved": true,
+  "hosted_head_and_merge": "PENDING_AT_LOCAL_RECORD_CREATION",
+  "independent_register_expansion": {
+    "deep_values": 50,
+    "exit_code": 0,
+    "fold_values": 150,
+    "nonzero_divisors": 300,
+    "terminal_values": 50
+  },
+  "live_algebra_replay": {
+    "deep_values": 50,
+    "distinct_compared_equalities": 201,
+    "exit_code": 0,
+    "fri_incoming_equalities_including_deep": 150,
+    "mixed_air_equalities": 1,
+    "mixed_air_operations": 12359,
+    "terminal_equalities": 50
+  },
+  "new_named_controls": {
+    "errors": 0,
+    "failures": 0,
+    "registered": 47,
+    "skipped": 0,
+    "started": 47,
+    "successful": 47
+  },
+  "observed_utc": "2026-11-08T11:25:13.073094+00:00",
+  "prior_792_named_controls": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "successful": 69
+  },
+  "production_qualified": false,
+  "project_boundary_tests": {
+    "exit_code": 0,
+    "successful": 16
+  },
+  "project_preflight": {
+    "exit_code": 0
+  },
+  "schema": "TRNM-W1-FRI-ALGEBRA-LOCAL-VALIDATION1",
+  "source_integrity_negative_tests": {
+    "exit_code": 0,
+    "successful": 43
+  },
+  "unconditional_project_security_bits": null,
+  "whole_local_repository_check": {
+    "exit_code": 2,
+    "raw_log": "local/repository-check.log",
+    "reason": "Historical evidence target not materialized in this partial local source: evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz",
+    "result": "FAIL"
+  }
+}

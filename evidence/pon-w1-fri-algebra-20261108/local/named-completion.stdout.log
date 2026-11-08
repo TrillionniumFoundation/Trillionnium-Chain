@@ -1,0 +1,1 @@
+{"actual_successful_tests": 47, "qualification": {"complete_w1_soundness_qualified": false, "post_quantum_soundness_qualified": false, "production_qualified": false, "quantum_work_qualified": false, "unconditional_project_security_bits": null}, "result": "PASS", "roster_sha256": "656cc0c0e6dcacd725435cc6bb996e0035fb378dd99de3c4887bed634d8ec483"}

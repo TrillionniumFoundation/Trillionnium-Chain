@@ -1,0 +1,89 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/ci/w1_fri_algebra_controls.py",
+      "check",
+      "--output",
+      "/workspace/scratch/dded70360575/validation/final-algebra-v1"
+    ],
+    "exit_code": 0,
+    "finished_utc": "2026-11-08T11:24:00.729541+00:00",
+    "name": "named-completion",
+    "started_utc": "2026-11-08T11:24:00.571256+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "5499526543a72b79d7d49fa1a854b0ab93bc3ab62972ef027ea0267fc2cf2fd7"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/w1_fri_algebra_replay.py",
+      "--output",
+      "/workspace/scratch/dded70360575/validation/final-algebra-v1/algebra-replay.json"
+    ],
+    "exit_code": 0,
+    "finished_utc": "2026-11-08T11:24:04.911441+00:00",
+    "name": "algebra-replay",
+    "started_utc": "2026-11-08T11:24:00.729849+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "command": [
+      "python3",
+      "evidence/pon-w1-fri-algebra-20261108/review/recompute_register_deep.py",
+      "--output",
+      "/workspace/scratch/dded70360575/validation/final-algebra-v1/independent-review.json"
+    ],
+    "exit_code": 0,
+    "finished_utc": "2026-11-08T11:24:07.853539+00:00",
+    "name": "independent-review",
+    "started_utc": "2026-11-08T11:24:04.911694+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/w1_fri_algebra_report_check.py",
+      "/workspace/scratch/dded70360575/validation/final-algebra-v1/algebra-replay.json",
+      "--review",
+      "/workspace/scratch/dded70360575/validation/final-algebra-v1/independent-review.json",
+      "--output",
+      "/workspace/scratch/dded70360575/validation/final-algebra-v1/report-scope.json"
+    ],
+    "exit_code": 0,
+    "finished_utc": "2026-11-08T11:24:07.970412+00:00",
+    "name": "report-scope",
+    "started_utc": "2026-11-08T11:24:07.853598+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "118044e84ef5f5cc855b540bd18a1344963e2e2bcf0cafe7526a648ae0f9cbd7"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/w1_qrom_proof_chain_controls.py",
+      "check",
+      "--output",
+      "/workspace/scratch/dded70360575/validation/prior-792-v1"
+    ],
+    "exit_code": 0,
+    "finished_utc": "2026-11-08T11:24:08.180645+00:00",
+    "name": "prior-named-completion",
+    "started_utc": "2026-11-08T11:24:07.970480+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "c3e48d60f3ab01a62abe9142c6c69afc5cb049c5210a6174e4f7602df16b4abb"
+  },
+  {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "finished_utc": "2026-11-08T11:24:08.327420+00:00",
+    "name": "project-preflight",
+    "started_utc": "2026-11-08T11:24:08.180724+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "fd28870703445c683ad87d74cfcde306c6f6e4dba0ab6ebaa9ab360a1583e12a"
+  }
+]
