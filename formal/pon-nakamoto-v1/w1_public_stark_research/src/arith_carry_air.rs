@@ -24,7 +24,7 @@ const LOW_CARRY_OFFSET: usize = QUOTIENT_BITS;
 const HIGH_CARRY_OFFSET: usize = QUOTIENT_BITS + LOW_CARRY_BITS;
 
 #[derive(Clone, Debug)]
-pub struct Dot8CarryAir {
+pub struct CarryAir<const LANES: usize> {
     rows: Vec<Dot8Row>,
     height: usize,
 }
@@ -33,15 +33,22 @@ fn limbs(value: u32) -> (u64, u64) {
     (u64::from(value) & (LIMB_BASE - 1), u64::from(value) >> 16)
 }
 
-impl Dot8CarryAir {
+pub type Dot8CarryAir = CarryAir<1>;
+/// Five lanes remove padding for the full 81,920-row W1 relation.
+pub type Dot8PackedCarryAir = CarryAir<5>;
+
+impl<const LANES: usize> CarryAir<LANES> {
     pub fn new(rows: Vec<Dot8Row>) -> Result<Self, &'static str> {
+        if !matches!(LANES, 1 | 5) {
+            return Err("unsupported carry lane count");
+        }
         if rows.is_empty() || rows.len() > FULL_REAL_ROWS {
             return Err("arithmetic row count");
         }
         if rows.iter().any(|row| !row.canonical()) {
             return Err("noncanonical public arithmetic word");
         }
-        let height = rows.len().next_power_of_two().max(4);
+        let height = rows.len().div_ceil(LANES).next_power_of_two().max(4);
         Ok(Self { rows, height })
     }
 
@@ -56,7 +63,7 @@ impl Dot8CarryAir {
     }
 
     pub fn generate_trace(&self) -> RowMajorMatrix<Goldilocks> {
-        let mut values = vec![Goldilocks::ZERO; self.height * CARRY_WIDTH];
+        let mut values = vec![Goldilocks::ZERO; self.height * CARRY_WIDTH * LANES];
         for (row_index, row) in self.rows.iter().enumerate() {
             let total = row
                 .left
@@ -94,19 +101,19 @@ impl Dot8CarryAir {
                 }
             }
         }
-        RowMajorMatrix::new(values, CARRY_WIDTH)
+        RowMajorMatrix::new(values, CARRY_WIDTH * LANES)
     }
 }
 
-impl BaseAir<Goldilocks> for Dot8CarryAir {
+impl<const LANES: usize> BaseAir<Goldilocks> for CarryAir<LANES> {
     fn width(&self) -> usize {
-        CARRY_WIDTH
+        CARRY_WIDTH * LANES
     }
     fn preprocessed_width(&self) -> usize {
-        CARRY_PREPROCESSED_WIDTH
+        CARRY_PREPROCESSED_WIDTH * LANES
     }
     fn preprocessed_trace(&self) -> Option<RowMajorMatrix<Goldilocks>> {
-        let mut values = vec![Goldilocks::ZERO; self.height * CARRY_PREPROCESSED_WIDTH];
+        let mut values = vec![Goldilocks::ZERO; self.height * CARRY_PREPROCESSED_WIDTH * LANES];
         for (i, row) in self.rows.iter().enumerate() {
             let out = &mut values[i * CARRY_PREPROCESSED_WIDTH..(i + 1) * CARRY_PREPROCESSED_WIDTH];
             for j in 0..8 {
@@ -122,7 +129,10 @@ impl BaseAir<Goldilocks> for Dot8CarryAir {
                 out[32 + offset] = Goldilocks::from_u64(value);
             }
         }
-        Some(RowMajorMatrix::new(values, CARRY_PREPROCESSED_WIDTH))
+        Some(RowMajorMatrix::new(
+            values,
+            CARRY_PREPROCESSED_WIDTH * LANES,
+        ))
     }
     fn main_next_row_columns(&self) -> Vec<usize> {
         Vec::new()
@@ -138,41 +148,46 @@ impl BaseAir<Goldilocks> for Dot8CarryAir {
     }
 }
 
-impl<AB: AirBuilder<F = Goldilocks>> Air<AB> for Dot8CarryAir {
+impl<AB: AirBuilder<F = Goldilocks>, const LANES: usize> Air<AB> for CarryAir<LANES> {
     fn eval(&self, builder: &mut AB) {
         let main = builder.main();
-        let bits = main.current_slice();
-        let public = builder.preprocessed().current_slice().to_vec();
-        for &bit in bits {
-            builder.assert_bool(bit);
+        let all_bits = main.current_slice();
+        let all_public = builder.preprocessed().current_slice().to_vec();
+        for lane in 0..LANES {
+            let bits = &all_bits[lane * CARRY_WIDTH..(lane + 1) * CARRY_WIDTH];
+            let public =
+                &all_public[lane * CARRY_PREPROCESSED_WIDTH..(lane + 1) * CARRY_PREPROCESSED_WIDTH];
+            for &bit in bits {
+                builder.assert_bool(bit);
+            }
+            let q0 = pack_bits_le::<AB::Expr, _, _>(bits[..16].iter().copied());
+            let q1 = pack_bits_le::<AB::Expr, _, _>(bits[16..32].iter().copied());
+            let q2 = pack_bits_le::<AB::Expr, _, _>(bits[32..QUOTIENT_BITS].iter().copied());
+            let c0 = pack_bits_le::<AB::Expr, _, _>(
+                bits[LOW_CARRY_OFFSET..HIGH_CARRY_OFFSET].iter().copied(),
+            );
+            let c1 = pack_bits_le::<AB::Expr, _, _>(bits[HIGH_CARRY_OFFSET..].iter().copied());
+            let base = Goldilocks::from_u64(LIMB_BASE);
+            let five = Goldilocks::from_u8(5);
+            let mut low = AB::Expr::from(public[32]) + q0.clone() * five;
+            let mut middle = AB::Expr::from(public[33]) + q1.clone() * five + c0.clone();
+            let mut high = q2.clone() * five + c1.clone();
+            for j in 0..8 {
+                let al = AB::Expr::from(public[4 * j]);
+                let ah = AB::Expr::from(public[4 * j + 1]);
+                let bl = AB::Expr::from(public[4 * j + 2]);
+                let bh = AB::Expr::from(public[4 * j + 3]);
+                low += al.clone() * bl.clone();
+                middle += al * bh.clone() + ah.clone() * bl;
+                high += ah * bh;
+            }
+            builder.assert_eq(low, AB::Expr::from(public[34]) + c0 * base);
+            builder.assert_eq(middle, AB::Expr::from(public[35]) + c1 * base);
+            builder.assert_eq(
+                high,
+                q0 + q1 * base + q2 * Goldilocks::from_u64(LIMB_BASE * LIMB_BASE),
+            );
         }
-        let q0 = pack_bits_le::<AB::Expr, _, _>(bits[..16].iter().copied());
-        let q1 = pack_bits_le::<AB::Expr, _, _>(bits[16..32].iter().copied());
-        let q2 = pack_bits_le::<AB::Expr, _, _>(bits[32..QUOTIENT_BITS].iter().copied());
-        let c0 = pack_bits_le::<AB::Expr, _, _>(
-            bits[LOW_CARRY_OFFSET..HIGH_CARRY_OFFSET].iter().copied(),
-        );
-        let c1 = pack_bits_le::<AB::Expr, _, _>(bits[HIGH_CARRY_OFFSET..].iter().copied());
-        let base = Goldilocks::from_u64(LIMB_BASE);
-        let five = Goldilocks::from_u8(5);
-        let mut low = AB::Expr::from(public[32]) + q0.clone() * five;
-        let mut middle = AB::Expr::from(public[33]) + q1.clone() * five + c0.clone();
-        let mut high = q2.clone() * five + c1.clone();
-        for j in 0..8 {
-            let al = AB::Expr::from(public[4 * j]);
-            let ah = AB::Expr::from(public[4 * j + 1]);
-            let bl = AB::Expr::from(public[4 * j + 2]);
-            let bh = AB::Expr::from(public[4 * j + 3]);
-            low += al.clone() * bl.clone();
-            middle += al * bh.clone() + ah.clone() * bl;
-            high += ah * bh;
-        }
-        builder.assert_eq(low, AB::Expr::from(public[34]) + c0 * base);
-        builder.assert_eq(middle, AB::Expr::from(public[35]) + c1 * base);
-        builder.assert_eq(
-            high,
-            q0 + q1 * base + q2 * Goldilocks::from_u64(LIMB_BASE * LIMB_BASE),
-        );
     }
 }
 
@@ -242,6 +257,33 @@ mod tests {
         rejects(&air, &air.generate_trace());
         assert!(Dot8CarryAir::new(vec![Dot8Row::addition(Q as u32, 0, 0)]).is_err());
         assert!(Dot8CarryAir::new(vec![Dot8Row::addition(0, 0, Q as u32)]).is_err());
+    }
+
+    #[test]
+    fn packed_lanes_preserve_order_and_constrain_final_lane() {
+        let rows: Vec<_> = (0..5)
+            .map(|i| Dot8Row::addition(i, 65_535, i + 65_535))
+            .collect();
+        let air = Dot8PackedCarryAir::new(rows.clone()).unwrap();
+        assert_eq!(air.rows(), rows);
+        assert_eq!(air.width(), 5 * CARRY_WIDTH);
+        assert_eq!(air.preprocessed_width(), 5 * CARRY_PREPROCESSED_WIDTH);
+        let trace = air.generate_trace();
+        check_constraints(&air, &trace, &[]);
+        let mut altered = trace;
+        altered.values[5 * CARRY_WIDTH - 1] = Goldilocks::ONE;
+        assert!(std::panic::catch_unwind(|| check_constraints(&air, &altered, &[])).is_err());
+        let mut false_rows = rows;
+        false_rows[4].goal += 1;
+        let false_air = Dot8PackedCarryAir::new(false_rows).unwrap();
+        assert!(
+            std::panic::catch_unwind(|| check_constraints(
+                &false_air,
+                &false_air.generate_trace(),
+                &[]
+            ))
+            .is_err()
+        );
     }
 
     #[test]

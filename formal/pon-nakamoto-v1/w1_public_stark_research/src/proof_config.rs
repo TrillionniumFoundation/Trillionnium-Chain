@@ -25,7 +25,7 @@ use p3_uni_stark::{
 use serde_json::{Value, json};
 
 use crate::arith_air::Dot8Air;
-use crate::arith_carry_air::Dot8CarryAir;
+use crate::arith_carry_air::{Dot8CarryAir, Dot8PackedCarryAir};
 use crate::sha_air::W1ShaAir;
 
 pub type Val = Goldilocks;
@@ -46,6 +46,8 @@ pub const SHA_COMPONENT: u32 = 1;
 pub const ARITH_COMPONENT: u32 = 2;
 /// New transcript component for the carry AIR; original proofs retain domain 2.
 pub const CARRY_COMPONENT: u32 = 3;
+/// Five-lane carry packing has its own fixed transcript component.
+pub const PACKED_CARRY_COMPONENT: u32 = 4;
 pub const RESEARCH_DOMAIN: &[u8] = b"TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1\0";
 pub const LOG_BLOWUP: usize = 2;
 pub const LOG_FINAL_POLY_LEN: usize = 0;
@@ -69,13 +71,13 @@ fn fri_regime() -> FriRegime {
     }
 }
 
-/// Construct the sole research parameter profile. Only the three fixed
+/// Construct the sole research parameter profile. Only the four fixed
 /// components are admitted; component selection changes domain separation,
 /// never the field, hash, query count, blowup, or grinding settings.
 pub fn config(component: u32) -> Config {
     assert!(matches!(
         component,
-        SHA_COMPONENT | ARITH_COMPONENT | CARRY_COMPONENT
+        SHA_COMPONENT | ARITH_COMPONENT | CARRY_COMPONENT | PACKED_CARRY_COMPONENT
     ));
     let perm = default_goldilocks_poseidon2_8();
     let hash = Hasher::new(perm.clone());
@@ -228,5 +230,14 @@ pub fn security_metadata(sha: &W1ShaAir, arith: &Dot8Air) -> Value {
 pub fn carry_security_metadata(sha: &W1ShaAir, arith: &Dot8CarryAir) -> Value {
     let mut report = metadata(sha, arith, arith.trace_height(), CARRY_COMPONENT);
     report["schema"] = "w1-p3-0.8.0-conditional-rbr-carry-metadata-v2".into();
+    report
+}
+
+/// Five-lane packing retains every relation row and changes the fixed PCS shape.
+pub fn packed_carry_security_metadata(sha: &W1ShaAir, arith: &Dot8PackedCarryAir) -> Value {
+    let mut report = metadata(sha, arith, arith.trace_height(), PACKED_CARRY_COMPONENT);
+    report["schema"] = "w1-p3-0.8.0-conditional-rbr-packed-carry-metadata-v3".into();
+    report["arithmetic"]["lanes_per_row"] = 5.into();
+    report["arithmetic"]["real_dot8_rows"] = arith.real_rows().into();
     report
 }
