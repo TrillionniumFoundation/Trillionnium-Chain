@@ -1,0 +1,16 @@
+   Compiling generic-array v0.14.7
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling syn v2.0.117
+   Compiling serde_json v1.0.149
+   Compiling serde_derive v1.0.228
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/3a200666069f/hepta_cell/chain-native/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking bitflags v2.11.0
+    Checking rusqlite v0.39.0
+    Checking serde v1.0.228
+    Checking libc v0.2.184
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.51s

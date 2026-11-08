@@ -1,0 +1,90 @@
+test_actual_zero_exit_child_source_mutation_retains_record_failure (__main__.CommandBindingTests.test_actual_zero_exit_child_source_mutation_retains_record_failure) ... FAIL
+test_boolean_native_exit_is_not_integer_success (__main__.CommandBindingTests.test_boolean_native_exit_is_not_integer_success) ... FAIL
+test_command_requires_both_source_observations (__main__.CommandBindingTests.test_command_requires_both_source_observations) ... FAIL
+test_command_retains_changed_source_even_if_status_claims_success (__main__.CommandBindingTests.test_command_retains_changed_source_even_if_status_claims_success) ... FAIL
+test_command_source_cannot_borrow_normalized_source_pair (__main__.CommandBindingTests.test_command_source_cannot_borrow_normalized_source_pair) ... FAIL
+test_consistent_command_remains_an_unverified_outcome_and_hold (__main__.CommandBindingTests.test_consistent_command_remains_an_unverified_outcome_and_hold) ... ok
+test_failed_command_cannot_complete_a_learning_stage (__main__.CommandBindingTests.test_failed_command_cannot_complete_a_learning_stage) ... FAIL
+test_failed_command_cannot_resolve_unknown_external_effect (__main__.CommandBindingTests.test_failed_command_cannot_resolve_unknown_external_effect) ... FAIL
+test_failed_status_is_not_hidden_by_zero_native_exit (__main__.CommandBindingTests.test_failed_status_is_not_hidden_by_zero_native_exit) ... FAIL
+test_running_receipt_cannot_supply_a_completed_result (__main__.CommandBindingTests.test_running_receipt_cannot_supply_a_completed_result) ... FAIL
+
+======================================================================
+FAIL: test_actual_zero_exit_child_source_mutation_retains_record_failure (__main__.CommandBindingTests.test_actual_zero_exit_child_source_mutation_retains_record_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 70, in test_actual_zero_exit_child_source_mutation_retains_record_failure
+    self.assertIn("RAW_COMMAND_NOT_SUCCEEDED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_NOT_SUCCEEDED' not found in []
+
+======================================================================
+FAIL: test_boolean_native_exit_is_not_integer_success (__main__.CommandBindingTests.test_boolean_native_exit_is_not_integer_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 87, in test_boolean_native_exit_is_not_integer_success
+    self.assertIn("RAW_NATIVE_EXIT_UNOBSERVED", row["raw_result_conflicts"])
+AssertionError: 'RAW_NATIVE_EXIT_UNOBSERVED' not found in []
+
+======================================================================
+FAIL: test_command_requires_both_source_observations (__main__.CommandBindingTests.test_command_requires_both_source_observations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 101, in test_command_requires_both_source_observations
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_command_retains_changed_source_even_if_status_claims_success (__main__.CommandBindingTests.test_command_retains_changed_source_even_if_status_claims_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 108, in test_command_retains_changed_source_even_if_status_claims_success
+    self.assertIn("RAW_COMMAND_SOURCE_CHANGED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_CHANGED' not found in []
+
+======================================================================
+FAIL: test_command_source_cannot_borrow_normalized_source_pair (__main__.CommandBindingTests.test_command_source_cannot_borrow_normalized_source_pair)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 96, in test_command_source_cannot_borrow_normalized_source_pair
+    self.assertIn("RAW_COMMAND_SOURCE_MISMATCH", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_MISMATCH' not found in []
+
+======================================================================
+FAIL: test_failed_command_cannot_complete_a_learning_stage (__main__.CommandBindingTests.test_failed_command_cannot_complete_a_learning_stage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 135, in test_failed_command_cannot_complete_a_learning_stage
+    self.assertIn("UNQUALIFIED_STAGE_RECORD:training", self.control.run_review()["learning_blockers"])
+AssertionError: 'UNQUALIFIED_STAGE_RECORD:training' not found in []
+
+======================================================================
+FAIL: test_failed_command_cannot_resolve_unknown_external_effect (__main__.CommandBindingTests.test_failed_command_cannot_resolve_unknown_external_effect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 126, in test_failed_command_cannot_resolve_unknown_external_effect
+    self.assertEqual(result["reported_terminal_state"], "UNKNOWN")
+AssertionError: 'COMMITTED' != 'UNKNOWN'
+- COMMITTED
++ UNKNOWN
+
+
+======================================================================
+FAIL: test_failed_status_is_not_hidden_by_zero_native_exit (__main__.CommandBindingTests.test_failed_status_is_not_hidden_by_zero_native_exit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 82, in test_failed_status_is_not_hidden_by_zero_native_exit
+    self.assertIn("RAW_COMMAND_NOT_SUCCEEDED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_NOT_SUCCEEDED' not found in []
+
+======================================================================
+FAIL: test_running_receipt_cannot_supply_a_completed_result (__main__.CommandBindingTests.test_running_receipt_cannot_supply_a_completed_result)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 76, in test_running_receipt_cannot_supply_a_completed_result
+    self.assertIn("RAW_COMMAND_NOT_SUCCEEDED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_NOT_SUCCEEDED' not found in []
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.096s
+
+FAILED (failures=9)
