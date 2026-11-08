@@ -1,0 +1,85 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling borsh-derive v1.8.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling borsh v1.8.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 41s
+     Running unittests src/lib.rs (/workspace/scratch/3a200666069f/effects_performance/target/debug/deps/trnm_service_settlement-b287584320d37ce9)
+
+running 70 tests
+test native_budget::tests::an_in_window_anchor_cannot_override_its_cancelled_native_funding_row ... ok
+test native_budget::task_operation_v2::tests::stale_native_anchor_capacity_and_resource_overrun_fail_closed ... ok
+test native_budget::evidence::tests::evidence_snapshot_preserves_binding_and_checks_exact_prefix ... ok
+test native_budget::task_operation_v2::tests::second_journal_and_lost_owner_acknowledgement_never_receive_a_second_new ... ok
+test native_budget::task_operation_v2::tests::exact_binding_and_fresh_namespace_reject_old_journals ... ok
+test native_budget::tests::closed_source_and_unknown_cost_cannot_be_reallocated_after_reorg ... ok
+test native_budget::task_operation_v2::tests::unknown_output_is_bound_once_after_durable_intent_costs_and_actual_delivery ... ok
+test native_budget::evidence::tests::evidence_export_rechecks_live_journal_instead_of_trusting_a_cached_report ... ok
+test native_budget::tests::composition_preflight_checks_late_funding_failure_without_changing_the_journal ... ok
+test native_budget::tests::composition_preflight_is_not_authority_and_exact_recovery_keeps_original_context ... ok
+test native_budget::task_operation_v2::tests::checkpoints_detect_local_rollback_and_owner_fence_still_blocks_redispatch ... ok
+test native_budget::tests::completed_effect_readback_rejects_stale_or_changed_owner_after_restart ... ok
+test native_budget::tests::journal_namespace_and_length_framing_have_an_exact_independent_vector ... ok
+test native_budget::tests::effect_window_replay_survives_reorg_and_restart_only_for_reconciliation ... ok
+test native_budget::tests::expiry_charges_unknown_jobs_without_removing_pending_target_intents ... ok
+test native_budget::tests::global_operation_binding_cannot_be_reused_for_another_claim ... ok
+test native_budget::tests::journal_replay_rechecks_the_recorded_window_against_its_own_anchor ... ok
+test native_budget::tests::journal_write_fence_committed_readback_requires_exact_prefix_and_allows_valid_append ... ok
+test native_budget::tests::journal_damage_foreign_store_and_policy_repin_are_fail_closed ... ok
+test native_budget::tests::effect_window_refusal_does_not_consume_an_intent_or_change_its_exact_binding ... ok
+test native_budget::tests::journal_write_fence_rechecks_live_namespace_for_same_id_replay_and_report ... ok
+test native_budget::tests::journal_write_fence_does_not_hide_user_objects_behind_sql_like_underscore ... ok
+test native_budget::tests::journal_write_fence_refuses_suppressed_intent_before_new_dispatch ... ok
+test native_budget::tests::native_reward_budget_and_claim_cannot_invent_fractional_maturation ... ok
+test native_budget::tests::native_reward_payment_requires_original_reward_identity_and_entire_amount ... ok
+test native_budget::tests::native_quota_payment_preserves_zero_credit_when_actual_fee_consumes_gross ... ok
+test native_budget::tests::journal_write_fence_same_id_replay_never_uses_an_old_memory_state ... ok
+test native_budget::tests::journal_write_fence_refuses_successful_statements_that_rewind_the_intent ... ok
+test native_budget::tests::completed_effect_readback_requires_exact_history_and_original_chain ... ok
+test native_budget::tests::native_task_and_quota_cannot_reserve_an_impossible_zero_output ... ok
+test native_budget::tests::payment_requires_exact_source_beneficiary_operation_and_real_fee_split ... ok
+test native_budget::tests::release_claim_is_rechecked_before_the_first_external_intent ... ok
+test native_budget::tests::native_payment_readback_rechecks_exact_current_owner_and_never_changes_history ... ok
+test native_budget::tests::old_owner_generation_and_context_cannot_authorize_new_jobs ... ok
+test native_budget::tests::source_is_rechecked_before_each_new_effect_and_cannot_be_reassigned_across_lanes ... ok
+test native_budget::tests::reward_same_id_with_changed_sibling_fees_cannot_fund_new_physical_work ... ok
+test native_budget::tests::task_existing_receipt_must_bind_subject_before_reservation_and_intent ... ok
+test native_budget::tests::unknown_cost_is_full_and_repair_dimensions_are_independently_bounded ... ok
+test native_generation_budget_v2::tests::actual_resource_overrun_is_retained_without_clipping_or_positive ... ok
+test native_budget::tests::all_six_lanes_bind_actual_row_shapes_and_payment_stays_an_owner_proof ... ok
+test native_generation_budget_v2::tests::a_second_generation_journal_cannot_claim_the_same_task_or_reset_its_deadline ... ok
+test native_generation_budget_v2::tests::cancel_before_dispatch_is_terminal_after_cold_reopen_without_repinning_funds ... ok
+test native_budget::tests::reorg_and_restart_preserve_pending_and_completed_effects_without_redispatch ... ok
+test native_budget::tests::completed_no_gain_service_cannot_record_payment_without_resource_outcome ... ok
+test native_budget::tests::no_gain_contract_fee_requires_completed_effect_and_exact_native_payment ... ok
+test native_generation_budget_v2::tests::cancellation_committed_while_verifier_runs_is_sticky_and_blocks_settlement ... ok
+test native_budget::tests::two_store_handles_cannot_double_reserve_the_same_native_funds ... ok
+test native_generation_budget_v2::tests::cancel_after_verified_preserves_cost_and_cancel_after_settlement_intent_is_too_late ... ok
+test native_generation_budget_v2::tests::generation_namespace_refuses_v1_without_migration_or_writes ... ok
+test native_generation_budget_v2::tests::committed_intent_after_cold_restart_never_reissues_new_even_without_funding ... ok
+test native_generation_budget_v2::tests::generation_prepare_write_failure_keeps_original_claim_for_same_journal_retry ... ok
+test native_generation_budget_v2::tests::generation_prepare_rejects_full_journal_before_claiming_a_fresh_task ... ok
+test native_generation_budget_v2::tests::original_deadline_and_clock_domain_never_renew_on_replay ... ok
+test tests::canonical_command_bytes_reject_trailing_and_truncation ... ok
+test native_generation_budget_v2::tests::provider_identity_and_ack_never_substitute_for_full_verifier ... ok
+test native_generation_budget_v2::tests::one_of_two_handles_gets_new_and_unknown_consumes_the_original_reservation ... ok
+test native_generation_budget_v2::tests::historical_payment_survives_reorg_and_reobservation_never_mints_a_replacement ... ok
+test native_generation_budget_v2::tests::generation_prepare_rejects_invalid_or_stale_anchor_before_claiming_a_fresh_task ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::execution_preview_checks_bilateral_receipt_and_preserves_durable_rows ... ok
+test tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_closed ... ok
+test tests::receipt_signatures_sequence_prices_and_cumulative_roots_fail_closed ... ok
+test tests::vector_inventory_matches_candidate_assertions ... ok
+test tests::committed_block_journal_covers_empty_same_block_and_tamper_boundaries ... ok
+test tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence ... ok
+test tests::rollup_requires_complete_exact_unassigned_receipt_interval ... ok
+test tests::receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved ... ok
+test tests::settlement_maturity_versions_replay_and_one_shot_are_exact ... ok
+test native_budget::tests::reports_read_one_snapshot_while_another_handle_appends ... ok
+test native_budget::tests::no_gain_cannot_unlock_rewards_or_reclassify_failed_contracts ... ok
+
+test result: ok. 70 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+

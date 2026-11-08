@@ -1,0 +1,9 @@
+{
+  "operation": "remove_only_own_rebuildable_incremental_cache",
+  "path": "/workspace/scratch/3a200666069f/effects_performance/target/debug/incremental",
+  "files": 7482,
+  "bytes": 3470047366,
+  "service_binary_retained": "/workspace/scratch/3a200666069f/effects_performance/target/debug/deps/trnm_service_settlement-b287584320d37ce9",
+  "service_binary_sha256": "36be53a6578dc58152cb0dc0ed600952ea72d40763c7ed918e2ae29700dad8d2",
+  "removed_utc": "2026-11-08T17:35:15Z"
+}
