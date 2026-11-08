@@ -1,0 +1,14 @@
+{
+  "schema": "trnm-w1-node-independent-process-controls-v1",
+  "result": "PASS",
+  "subprocesses": 9,
+  "exercise_cases": 5,
+  "cold_reopen_cases": 4,
+  "new_complete_proofs": 0,
+  "harness_input_binary_unchanged": true,
+  "production_resource_profile": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "plan_sha256": "8bfffdbd5b9a4658833b832c3996d4e2663e130a03ef019f65742887ecaaccf8",
+  "observations_sha256": "a16fb3398a0e4c221f0425da5f6db2a0e03b61e8efab969f99cf9764524cc697"
+}

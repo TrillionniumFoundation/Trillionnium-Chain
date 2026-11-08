@@ -1,0 +1,58 @@
+{
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+  "code_commit": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+  "runtime_source_matches_measured": true,
+  "stable_binary_receipt": {
+    "packed_carry_backend": {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-release-20261108-f16ac-r4/packed_carry_backend",
+      "bytes": 2228752,
+      "sha256": "63d72ff21c35d565912134587ea7c045c102e4c23c9e9e2b9d1c01b353fec4f5",
+      "source_commit": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+      "exact_abba_binary": true
+    },
+    "scheduled_sha_backend": {
+      "path": "/home/qian-qi/work/chain-w1-scheduled-sha-release-20261108-f16ac-r4/scheduled_sha_backend",
+      "bytes": 2208608,
+      "sha256": "3c497ff52e42f5904d3aeadd013ae7b6f1f7d43493d5d19f2722ea4d9dde24d1",
+      "source_commit": "eb944645cc3e30af5955edf9dbbcb43488fa38c1",
+      "exact_abba_binary": true
+    }
+  },
+  "preserved_attempts": [
+    {
+      "job": "1a1b974ae62-12894-1466",
+      "stage": "first new checkout",
+      "state": "timed_out",
+      "exit_code": 124
+    },
+    {
+      "job": "1a1b978543d-12894-1480",
+      "stage": "checkout retry",
+      "state": "succeeded",
+      "exit_code": 0
+    },
+    {
+      "job": "1a1b97db695-12894-14a3",
+      "stage": "first Rust build",
+      "cargo_test_exit_code": 101,
+      "launcher_exit_code": 0,
+      "note": "compiler failure retained; not a test pass"
+    },
+    {
+      "job": "1a1b98f30ca-12894-1521",
+      "stage": "first commit precheck",
+      "git_diff_cached_check_exit_code": 2,
+      "note": "raw stdout trailing whitespace; preserved byte-exact by gzip before commit retry"
+    },
+    {
+      "job": "1a1b9906355-12894-152b",
+      "stage": "successful code commit"
+    },
+    {
+      "job": "1a1b992800f-12894-153e",
+      "stage": "exact-code gates",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.45
+   Compiling serde_core v1.0.228
+   Compiling zmij v1.0.21
+   Compiling serde_json v1.0.149
+   Compiling serde v1.0.228
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.0
+   Compiling cfg-if v1.0.4
+   Compiling itoa v1.0.18
+   Compiling generic-array v0.14.7
+   Compiling syn v2.0.117
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.228
+   Compiling selected-event-native-research v0.1.0 (/home/qian-qi/work/chain-selected-bank-r4-f16ac5/formal/pon-nakamoto-v1/selected_nonce_bank_research/native_selected)
+    Finished `release` profile [optimized] target(s) in 8.32s

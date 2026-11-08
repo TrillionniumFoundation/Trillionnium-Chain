@@ -1,0 +1,14 @@
+{
+  "A": {
+    "path": "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/packed_carry_backend",
+    "sha256": "e6528d4a10e7f6585f23994c0d4d4bb17653c893114bfd57bfea9afb5147904f"
+  },
+  "B": {
+    "path": "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_backend",
+    "sha256": "ddc5b9d20e9c2463690e0b3a1aff2ed781b685efa687501096340b85ded58fe5"
+  },
+  "wire": {
+    "path": "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_wire_controls",
+    "sha256": "5d90b3108e00ca47a6c3c28534b6b358b94610e65ae228a984ad29b5f218157b"
+  }
+}

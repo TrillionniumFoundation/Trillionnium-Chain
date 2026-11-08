@@ -21,7 +21,10 @@ fn run(args: &[String]) -> Result<serde_json::Value, String> {
         "arithmetic" => Component::Arithmetic,
         "carry" => Component::Carry,
         "packed" => Component::PackedCarry,
-        _ => return Err("component must be sha, arithmetic, carry or packed".into()),
+        "scheduled-sha" => Component::ScheduledSha,
+        _ => {
+            return Err("component must be sha, arithmetic, carry, packed or scheduled-sha".into());
+        }
     };
     let file = File::open(&args[2]).map_err(|e| e.to_string())?;
     let mut input = Vec::new();

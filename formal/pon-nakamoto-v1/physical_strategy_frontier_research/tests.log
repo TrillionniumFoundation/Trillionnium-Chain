@@ -1,0 +1,29 @@
+test_all_512_original_affine_products_match_dense (__main__.ExactArithmeticTests.test_all_512_original_affine_products_match_dense) ... ok
+test_exact_recognition_and_compilation_cost (__main__.ExactArithmeticTests.test_exact_recognition_and_compilation_cost) ... ok
+test_frozen_upstream_digests (__main__.ExactArithmeticTests.test_frozen_upstream_digests) ... ok
+test_general_affine_products_wrap_modulus (__main__.ExactArithmeticTests.test_general_affine_products_wrap_modulus) ... ok
+test_lazy_capacity_and_every_miss_charged (__main__.ExactArithmeticTests.test_lazy_capacity_and_every_miss_charged) ... ok
+test_nonaffine_word_is_refused (__main__.ExactArithmeticTests.test_nonaffine_word_is_refused) ... ok
+test_noncanonical_field_is_refused (__main__.ExactArithmeticTests.test_noncanonical_field_is_refused) ... ok
+test_original_witness_and_full_verifier_unchanged (__main__.ExactArithmeticTests.test_original_witness_and_full_verifier_unchanged) ... ok
+test_producers_match_original_unprepared_reference (__main__.ExactArithmeticTests.test_producers_match_original_unprepared_reference) ... ok
+test_unbounded_lazy_computes_each_observed_coordinate_once (__main__.ExactArithmeticTests.test_unbounded_lazy_computes_each_observed_coordinate_once) ... ok
+test_wrong_task_root_is_refused (__main__.ExactArithmeticTests.test_wrong_task_root_is_refused) ... ok
+test_zero_and_constant_affine_inputs_are_exact (__main__.ExactArithmeticTests.test_zero_and_constant_affine_inputs_are_exact) ... ok
+test_cached_bellman_matches_exhaustive_stationary_policies (__main__.PolicyTests.test_cached_bellman_matches_exhaustive_stationary_policies) ... ok
+test_declared_512_coordinate_optimum_threshold (__main__.PolicyTests.test_declared_512_coordinate_optimum_threshold) ... ok
+test_excessive_insertion_avoids_storage (__main__.PolicyTests.test_excessive_insertion_avoids_storage) ... ok
+test_expected_distinct_formula_by_enumeration (__main__.PolicyTests.test_expected_distinct_formula_by_enumeration) ... ok
+test_finite_dp_matches_coordinate_level_history_search (__main__.PolicyTests.test_finite_dp_matches_coordinate_level_history_search) ... ok
+test_finite_objective_keeps_failure_separate (__main__.PolicyTests.test_finite_objective_keeps_failure_separate) ... ok
+test_finite_success_dual_is_sharp_in_two_trial_case (__main__.PolicyTests.test_finite_success_dual_is_sharp_in_two_trial_case) ... ok
+test_first_hit_cache_formula_edge_cases (__main__.PolicyTests.test_first_hit_cache_formula_edge_cases) ... ok
+test_invalid_models_refused (__main__.PolicyTests.test_invalid_models_refused) ... ok
+test_no_useful_cost_needs_no_filter (__main__.PolicyTests.test_no_useful_cost_needs_no_filter) ... ok
+test_resource_budget_monotonicity (__main__.PolicyTests.test_resource_budget_monotonicity) ... ok
+test_static_filter_matches_all_nonempty_subsets (__main__.PolicyTests.test_static_filter_matches_all_nonempty_subsets) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.186s
+
+OK

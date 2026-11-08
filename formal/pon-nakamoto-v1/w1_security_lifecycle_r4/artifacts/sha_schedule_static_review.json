@@ -1,0 +1,29 @@
+{
+  "schema": "trnm-w1-public-schedule-independent-static-review-v1",
+  "reviewed_source_sha256": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64",
+  "upstream_air_sha256": "42a079d9cc36a10162e42c73f6b816bb97ae67aa7f998be2a89f789d1882f88d",
+  "normalized_helper_token_equality": {
+    "eval_initial_state": true,
+    "eval_finalization": true,
+    "pack_word": true,
+    "assert_packed_equals_bits": true,
+    "add3": true,
+    "add2_expr_out": true,
+    "add3_expr_out": true,
+    "assert_ch_matches": true,
+    "assert_maj_matches": true
+  },
+  "normalization": "remove line comments/whitespace; ScheduledShaCols renamed to Sha256Cols; brace-delimited complete helper bodies",
+  "public_inputs": {
+    "public.rs": "ae08f54eda74f1ffc7f3ae4c10185d101e10b511bf9ce32a0bc2fe65a3e9dd3d",
+    "sha_plan.rs": "5a629d7bcc630ebe3de2f86cb5c6877572d980e8563431ee9c0d128ce1477377"
+  },
+  "rust_tests_rerun_by_reviewer": false,
+  "performance_rerun_by_reviewer": false,
+  "full_ni_security_proved": false,
+  "blocking_math_issue_found": false,
+  "public_parser_planner_only_final_blank_line_changed": {
+    "public.rs": true,
+    "sha_plan.rs": true
+  }
+}

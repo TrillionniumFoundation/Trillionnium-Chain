@@ -21,7 +21,7 @@ valid finding and is not relabelled a Merkle or W1 forgery.
 | Retained ordinary tree | New classical ideal-permutation binding proposition, allowing arbitrary siblings and shared forward/inverse calls | Fixed ordinary shape/index; no concrete Poseidon2, quantum, pruned multiproof or PCS/FS theorem |
 | Full-hash path extraction | Deterministic extraction from two already available conflicting ordinary openings | Toy executable framing; not the actual P3 multi-matrix adapter or a quantum extractor |
 | New commitment/transcript profile | Full SHA3-512, framed roles, typed statement context, raw 512-bit digests, separate wire magic | Same concrete primitive in all roles; no independent-oracle claim |
-| New complete W1 execution | Eight fresh complete proofs independently verified across old/new variants and two inputs | Research processes; no mining/search, recursive verifier, Node or production service measurement |
+| New complete W1 execution | Two separate campaigns of eight fresh complete W1 executions, independently verified across old/new variants and two inputs | Research processes; no mining/search, recursive verifier, Node or production service measurement |
 | Independent byte reference | 31 fixed Python `hashlib` vectors exercised by native role APIs | Finite interoperability evidence |
 | Ideal-sponge arithmetic | Exact rational evaluation of the cited 2026 theorem, with advice/query restrictions | Caller assumptions remain assumptions; `qualified=false` in every output |
 | Model-assisted source review | Locked upstream source identities, encoding, sampling and inherited state aliases documented | Internal source review; not an independent external security audit |
@@ -71,7 +71,7 @@ be promoted to a quantum knowledge extractor. Its executable uses toy local
 tags, so it does not claim implementation equivalence with the new profile.
 The actual P3 pruned/mixed-height multi-opening extension remains uncompleted.
 
-## Complete W1 comparison
+## Initial complete W1 comparison
 
 Both arms use the same existing SHA AIR and packed carry AIR. The old arm is
 the retained `packed_carry_backend`; the new arm is `tagged_sha3_backend`.
@@ -99,14 +99,32 @@ freshly generated with this package's baseline and profile.
 | Dense: transmitted statement + proofs | 5,186,804 B | 5,444,148 B |
 | Dense: median peak process RSS | 2,037,060 KiB | 2,042,930 KiB |
 
-All planned executions succeeded. These are small-sample observed medians,
+All eight initial executions succeeded. These are small-sample observed medians,
 not confidence intervals or a claim about all inputs or isolated hosts.
-The second new dense verifier took 1.240611 seconds and is included, not
+The second new dense verifier in this initial campaign took 1.240611 seconds and is included, not
 discarded as an outlier. Median phase sums need not equal median pipeline
 time. The pipeline scope excludes nonce search, native candidate generation,
 production queues, WAN transfer, energy and recursion. The larger payloads
 remain over 100 times the 49,506-byte native candidate. No native-backend or
 production benefit follows from a comparison between these two STARK arms.
+
+## Integration with the advanced research branch
+
+Before publication, PR #783 advanced to
+`09fbc0f45151a68a1bf205641171840fbf309882`. The candidate preserves those ten
+parallel commits and both append-only plan/module changes. Its tagged profile
+keeps the same exact frame, components 1/4, AIRs and wire representation.
+The [base integration report](BASE_INTEGRATION.md) records the source review,
+original exact-commit gate archive and a new eight-execution ABBA campaign on
+the resolved integrated code.
+
+The integrated campaign passed all eight fresh complete W1 executions, 68
+Rust tests, strict release Clippy, 71 structural controls and 11 receiver
+controls. Its observed pipeline medians are 19.158297 -> 8.386623 seconds for
+the retained input and 19.481059 -> 9.607534 seconds for the dense input.
+The two campaigns remain separate observations, with 16 full W1 executions
+in total. Historical receipts retain their actual source/binary identities;
+post-commit checks bind the final integrated candidate independently.
 
 ## Quantum and preprocessing model
 
@@ -136,7 +154,7 @@ distinctions and source references.
 
 ## Validation and reproduction
 
-The [native evidence store](evidence/native-v1/README.md) retains every raw
+The [initial native evidence store](evidence/native-v1/README.md) retains every raw
 observation, proof and mutated control byte through a content-indexed gzip
 store. Its materializer recovered all 239 indexed files, totaling 74,307,487
 original bytes, with exact size/hash checks. The retained
@@ -179,7 +197,7 @@ A successful focused runner is not the complete repository CI lane. Raw
 observations, failed development attempts and source/binary identities must
 remain distinguishable from the final exact-commit verification receipt.
 
-The native implementation campaign passed 56 Rust tests: 24 library,
+The initial native implementation campaign passed 56 Rust tests: 24 library,
 three carry-proof, three original proof-smoke, 11 new-profile and 15 retained
 wire-admission tests. One new-profile test exercises all 31 independent
 reference vectors. The full-proof structural harness passed 71 controls,

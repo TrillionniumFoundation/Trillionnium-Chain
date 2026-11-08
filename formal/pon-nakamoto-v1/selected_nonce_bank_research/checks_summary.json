@@ -1,0 +1,55 @@
+{
+  "schema": "selected-nonce-bank-checks-r4-v1",
+  "generated_utc": "2026-11-08T05:15:29.481441+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "published_baseline": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "new_python_tests": 17,
+  "independent_batch_schedules_and_capacity_cases": 243,
+  "dense_equality_products": 2048,
+  "read_only_artifact_consistency": {
+    "status": "PASS",
+    "read_only_artifact_consistency_checks": 682,
+    "new_nonce_or_pressure_experiment": false,
+    "universal_physical_lower_bound_claim": false
+  },
+  "original_frozen_rust_tests": 8,
+  "native_build_checks": {
+    "durable_job": "1a1b9840551-12894-14d2",
+    "release_build_locked_offline": 0,
+    "test_locked_offline": 0,
+    "clippy_all_targets_D_warnings": 0,
+    "cargo_fmt_check": 0,
+    "cargo_tree_locked_offline": 0
+  },
+  "native_acceptance_job": "1a1b98fbcc0-12894-1526",
+  "native_accepted_invocations": 18,
+  "native_unique_accepted_witnesses": 13,
+  "native_negative_controls": 2,
+  "native_binary_sha256": "0942ffba3591a20bd3822dc67a4755304aa8a017357ee74aaf559c676d2515ad",
+  "source_and_readme_sha256": {
+    "README.md": "3cc4cec05dc9667070f98044a3db609f4af35f78a3abd2b1160515ecc4601d20",
+    "THEOREMS.md": "7f5c42668d5ee097b283e4deb9b10b23ad38cbcf8495a2bcbf4c174aa083bb87",
+    "bank_policy.py": "fae13a8a62fa11bd6507de69b4081cba3efd5d402425b1f2d3532434ff6997b6",
+    "prepare_native_inputs.py": "21e420de63c4f9b3d241b7240fa3303fa0cfec885b7fb4bdad6a08bad2e28ca9",
+    "research_core.py": "d9224d8e1c943a348f6b5077f3cb704d9fa8faf3649bb992f005b88f88fed82b",
+    "run_campaign.py": "3491d267115596dd732d41b9eabefaed0567f488c1e409226f7153804ae1f2a1",
+    "run_native.py": "10dd7ec65d22db0d29de8da26712851311cc8676cb9f9d7797a93fbb2d39b4de",
+    "test_research.py": "5bd1da62d6cc9d068835a36717e21a2328458bbb583c6794a6456217b428d151",
+    "verify_evidence.py": "aa2342a3eef07274d0d6b18bdb4f4168aaa91ca137cde90202048dc16b4d36b6"
+  },
+  "new_pressure_experiment": false,
+  "full_W1_or_STARK_or_Node_acceptance_claim": false,
+  "universal_physical_lower_bound_claim": false,
+  "qualification": "RESEARCH_ONLY_HOLD_NO_GO",
+  "documentation_followup": {
+    "generated_utc": "2026-11-08T05:33:07.646205+00:00",
+    "change": "explicit empty useful-result cache assumption and paid/amortized pre-bank acquisition boundary",
+    "experiment_rerun": false,
+    "read_only_artifact_consistency": {
+      "status": "PASS",
+      "read_only_artifact_consistency_checks": 682,
+      "new_nonce_or_pressure_experiment": false,
+      "universal_physical_lower_bound_claim": false
+    }
+  }
+}

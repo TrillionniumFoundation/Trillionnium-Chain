@@ -54,6 +54,9 @@ fn fixture(component: Component) -> &'static [u8] {
         Component::PackedCarry => {
             include_bytes!("../results/round3-carry-wire-fixtures/packed.arith.proof.bin")
         }
+        Component::ScheduledSha => {
+            include_bytes!("../results/round4-schedule-wire-fixture/sha.proof.bin")
+        }
     }
 }
 
@@ -88,6 +91,7 @@ fn actual_complete_proofs_match_the_frozen_codec_and_scan_without_allocations() 
         Component::Arithmetic,
         Component::Carry,
         Component::PackedCarry,
+        Component::ScheduledSha,
     ] {
         let bytes = fixture(component);
         assert!(zero_allocation_scan(bytes, component));
@@ -109,6 +113,7 @@ fn huge_cap_and_trace_length_words_reject_before_any_allocation() {
         Component::Arithmetic,
         Component::Carry,
         Component::PackedCarry,
+        Component::ScheduledSha,
     ] {
         for offset in [8, 48, 89] {
             let mut bytes = fixture(component).to_vec();
@@ -125,6 +130,7 @@ fn noncanonical_field_and_option_tags_are_rejected() {
         Component::Arithmetic,
         Component::Carry,
         Component::PackedCarry,
+        Component::ScheduledSha,
     ] {
         let mut bytes = fixture(component).to_vec();
         bytes[16..24].copy_from_slice(&u64::MAX.to_le_bytes());
@@ -144,6 +150,7 @@ fn component_confusion_truncation_and_trailing_data_are_rejected() {
         Component::Arithmetic,
         Component::Carry,
         Component::PackedCarry,
+        Component::ScheduledSha,
     ] {
         let original = fixture(component);
         let mut bytes = original.to_vec();
@@ -278,6 +285,7 @@ fn carry_profiles_have_separate_envelopes_and_fixed_bounds() {
         Component::Arithmetic,
         Component::Carry,
         Component::PackedCarry,
+        Component::ScheduledSha,
     ];
     for source in profiles {
         for target in profiles {
@@ -344,4 +352,38 @@ fn carry_profile_opening_shapes_are_checked_before_decode() {
         canonical_wrong_value[16..24].copy_from_slice(&0u64.to_le_bytes());
         assert!(zero_allocation_scan(&canonical_wrong_value, component));
     }
+}
+
+#[test]
+fn scheduled_sha_profile_bounds_and_openings_are_fixed() {
+    let component = Component::ScheduledSha;
+    let bound = limits(component);
+    assert_eq!(
+        (
+            bound.minimum_bytes,
+            bound.maximum_bytes,
+            bound.maximum_field_elements,
+            bound.vector_headers,
+            bound.maximum_merkle_siblings
+        ),
+        (3033413, 3338565, 415980, 1338, 9536)
+    );
+    typed_mutation(component, |p| {
+        p.opened_values.trace_next = None;
+    });
+    typed_mutation(component, |p| {
+        p.opened_values.trace_local.pop();
+    });
+    typed_mutation(component, |p| {
+        p.opened_values.preprocessed.as_mut().unwrap().local.pop();
+    });
+    typed_mutation(component, |p| {
+        p.opening_proof.input_openings[2].opened_values[63][0].pop();
+    });
+    typed_mutation(component, |p| {
+        p.opening_proof.final_poly.push(Challenge::ZERO);
+    });
+    typed_mutation(component, |p| {
+        p.degree_bits = 14;
+    });
 }

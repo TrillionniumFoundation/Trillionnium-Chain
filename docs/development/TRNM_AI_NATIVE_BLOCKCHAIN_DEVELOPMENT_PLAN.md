@@ -7418,6 +7418,96 @@ Complete details, scripts, reviews and immutable evidence are linked from
 `formal/pon-nakamoto-v1/physical_strategy_frontier_research/README.md`.
 All five substantive production gates remain **HOLD_NO_GO**.
 
+## W1 successor R4: public schedules, lifecycle accounting and actual development Node admission
+
+Starting from published PR783 head `cc836dfc13ef0006eb0878abd8cb5eca9a76bec0`,
+this successor retains **HOLD_NO_GO for all five substantive production gates**.
+The original four-second, 0.25-CPU, 2-GiB, zero-swap, 256-PID, sixteen-hostile,
+seven-honest service contract, request/history rules and independent administrator
+and WAN acceptance requirements remain unchanged.
+
+Component 5 independently reconstructs public SHA schedules and proves all
+original compression rounds, with 5,392 main and 139 preprocessing columns.
+The existing public parser, message planner and original SHA AIR are unchanged.
+Two task inputs received ABBA blocks, eight fresh complete proving executions.
+Aggregate medians are full pipeline 14.519395 -> 11.862382 seconds, peak RSS
+2,035,728 -> 1,463,658 KiB, and statement-plus-proof payload 5,187,028 -> 3,978,068
+bytes. Independent verification **regresses** 0.972321 -> 1.068500 seconds on
+aggregate, with both input families regressing. The enlarged preprocessing cost
+is paid and reported. A separate six-process/600-call current native reference
+has inner medians about 1.7933/1.7988 ms, with different timing scope and no Node
+admission; it is not folded into ABBA. Payload remains about 80.36 native
+candidates. Production benefit is unproved.
+
+A new classical ideal-permutation lemma bounds collision probability for the
+actual restricted four-field FRI leaf, including adaptive forward/inverse
+queries. It does not prove raw-compressor collision resistance, Merkle/vector
+extraction, complete PCS/Fiat--Shamir or a quantum/concrete instantiation.
+Source-bound native counters measure 113,961 shared Poseidon2 evaluations for
+one new-profile pair verification and 4,308,287 including fresh preprocessing
+and initialization. These are exact retained workloads, not malicious maxima.
+The lifecycle accountant merges roles/versions and requires explicit offline
+budgets. Conditional RBR remains about 63.95 bits; NI, lifetime and quantum
+security fields remain null and PQ128 remains false. Twenty-four new Python
+checks, 57 source pins, four native receipts and eleven scenario calculations
+are retained, including the falsified arbitrary-zero-PoW-witness hypothesis.
+
+A separate research Cargo workspace now connects both real P3 proofs to actual
+`trnm-pon-node` development admission. It binds independent expected inputs,
+checks both proof frames before allocation, verifies before opening/recovering
+the receiver Node, rechecks live context and invokes the original admission.
+Fresh packets retain native W1 checks; exact duplicates reuse original admitted
+state. Twelve real integration tests cover admission, duplicate state, cold
+recovery, reorg, cancellation, independent input binding and archive integrity.
+A new actual Node-generated candidate received one fresh complete proof, separate
+from the eight ABBA proofs. Postcommit cancellation remains true admission;
+original cold recovery can activate the committed packet. Receipt v2 corrects
+an early duplicate-replay label. The native-target build's actual owned-I/O
+UNQUALIFIED warning is retained. Production runtime/config/qualification,
+PNH1/PNW1 dispatch and PGH2/growth behavior are unchanged; production ingress and
+qualification are still open.
+
+The original two limited sixteen-request studies remain negative evidence, not
+cryptographic rejections. A separately labeled successor shared-cgroup study
+uses sixteen typed bad proofs plus seven replays of one valid Node fixture,
+with controller and setup outside the quota; this is not one production Node
+serving seven independent honest submissions. Its exact outcomes and process
+cleanup remain in the research report. Local start/archive limits and phase
+cancellation do not establish a global malicious-work bound.
+
+The selected-local relation successor implements paid nonce banking and an
+exact global-affine compiler. A finite positive-price example achieves success
+3/4 at expected cost 104.5, strictly below the old online-class lower certificate
+109.625; the old theorem is not generalized to the larger class. The new compiler
+checks all 8,192 input fields, charges 26M+8,533A setup and retains 1,316 field
+bytes; each useful block uses 0M+73A. The fixed 512--1023 nonce campaign charges
+all 512 selectors, including 505 unattempted ones. Full hashlib compression work
+increases, while a separate prefix-reuse replay decreases; the two are not
+conflated. Seventeen new tests, 243 scheduling comparisons, 2,048 dense-product
+comparisons and eighteen fresh full selected-local native accepts plus two
+rejections are retained. None is full W1/STARK/production Node qualification or
+a universal physical lower bound.
+
+Details and immutable evidence are linked from
+`formal/pon-nakamoto-v1/w1_public_stark_research/ROUND4_REPORT.md`,
+`formal/pon-nakamoto-v1/w1_security_lifecycle_r4/README.md`,
+`formal/pon-nakamoto-v1/w1_node_adapter_research/README.md` and
+`formal/pon-nakamoto-v1/selected_nonce_bank_research/README.md`.
+No production activation, self-approval, main-branch merge or acceptance-budget
+relaxation is performed by this entry.
+
+### R4 final-check historical fixture correction
+
+The first R4 final-commit check reached the retained physical-strategy Python
+suite and failed because seven original `.log` fixtures were absent from the
+tracked tree. Restore their original proposal-archive bytes, including three
+originally empty budget logs, and retain the failed gate attempt. The existing
+53-file hash manifest and 37-entry upstream source manifest remain unchanged;
+no historical measurement or expected result is regenerated. Repeat the focused
+final-source gate set on the repair commit before the ordinary draft-PR push.
+All five production gates remain HOLD_NO_GO. See the R4 report and
+`formal/pon-nakamoto-v1/physical_strategy_frontier_research/R4_FIXTURE_REPAIR.json`.
+
 
 ## 2026-11-08 P3 shared primitive model and tagged SHA3 profile
 
@@ -7491,3 +7581,30 @@ noninteractive knowledge soundness, quantum/advice/lifecycle security,
 recursive cost and globally bounded hostile receiver cost remain open.
 Existing production service, native admission and qualification gates remain
 **HOLD_NO_GO**. No activation, release or main-branch merge is performed.
+
+
+### P3 follow-up: preserve the concurrent PR #783 advance
+
+Before publication, the target research branch advanced through ten commits
+to `09fbc0f45151a68a1bf205641171840fbf309882`. The P3 candidate preserves that
+history and both append-only development-plan/module conflicts. The original
+`cfef87ff6e09f998cb8fc5d3165fce8ac9eb2da1` exact-commit checks are archived
+without relabelling. A two-file source review confirms that the new legacy
+scheduled-SHA selector leaves components 1/4 intact; the independent tagged
+profile and its frame, AIR choice and wire parameters remain unchanged.
+
+A fresh frozen campaign on the resolved integrated code passed eight more
+complete W1 executions, 68 Rust tests, strict release Clippy, 71 structural
+controls and 11 independent receiver controls. Retained-input pipeline and
+verifier medians are 19.158297 -> 8.386623 seconds and
+1.270538 -> 0.544260 seconds. Dense-input medians are
+19.481059 -> 9.607534 seconds and 1.093916 -> 0.616325 seconds.
+Payloads remain 5,435,252 / 5,444,148 bytes for the tagged arm. CPU affinity,
+Rayon, independent preprocessing and full pipeline scope match the original
+campaign. Both campaigns retain all samples separately, for 16 fresh full
+W1 executions total; no statistical or production qualification is inferred.
+
+The [base integration report](../../formal/pon-nakamoto-v1/p3_shared_primitive_qualification/BASE_INTEGRATION.md)
+records the merge snapshot, exact executable hashes and the requirement for
+post-commit source/test/replay checks. Existing security and production gates
+remain **HOLD_NO_GO**.

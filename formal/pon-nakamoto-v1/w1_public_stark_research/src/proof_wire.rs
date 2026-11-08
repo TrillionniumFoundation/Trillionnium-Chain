@@ -11,12 +11,14 @@ use crate::arith_air::{DOT8_PREPROCESSED_WIDTH, DOT8_WIDTH};
 use crate::arith_carry_air::{CARRY_PREPROCESSED_WIDTH, CARRY_WIDTH};
 use crate::proof_config::{GOLDILOCKS_ORDER, LOG_BLOWUP, NUM_QUERIES};
 use crate::sha_air::PREPROCESSED_WIDTH;
+use crate::sha_schedule_air::{SCHEDULE_PREPROCESSED_WIDTH, SCHEDULE_SHA_WIDTH};
 use p3_sha256_air::NUM_SHA256_COLS;
 
 pub const SHA_MAGIC: &[u8; 8] = b"W1P3SHA1";
 pub const ARITH_MAGIC: &[u8; 8] = b"W1P3ARI1";
 pub const CARRY_MAGIC: &[u8; 8] = b"W1P3ACR2";
 pub const PACKED_CARRY_MAGIC: &[u8; 8] = b"W1P3APC3";
+pub const SCHEDULE_SHA_MAGIC: &[u8; 8] = b"W1P3SCS4";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Component {
@@ -24,6 +26,7 @@ pub enum Component {
     Arithmetic,
     Carry,
     PackedCarry,
+    ScheduledSha,
 }
 
 impl Component {
@@ -33,12 +36,13 @@ impl Component {
             Self::Arithmetic => ARITH_MAGIC,
             Self::Carry => CARRY_MAGIC,
             Self::PackedCarry => PACKED_CARRY_MAGIC,
+            Self::ScheduledSha => SCHEDULE_SHA_MAGIC,
         }
     }
 
     pub const fn degree_bits(self) -> usize {
         match self {
-            Self::Sha => 13,
+            Self::Sha | Self::ScheduledSha => 13,
             Self::Arithmetic | Self::Carry => 17,
             Self::PackedCarry => 14,
         }
@@ -50,6 +54,7 @@ impl Component {
             Self::Arithmetic => DOT8_WIDTH,
             Self::Carry => CARRY_WIDTH,
             Self::PackedCarry => 5 * CARRY_WIDTH,
+            Self::ScheduledSha => SCHEDULE_SHA_WIDTH,
         }
     }
 
@@ -59,18 +64,19 @@ impl Component {
             Self::Arithmetic => DOT8_PREPROCESSED_WIDTH,
             Self::Carry => CARRY_PREPROCESSED_WIDTH,
             Self::PackedCarry => 5 * CARRY_PREPROCESSED_WIDTH,
+            Self::ScheduledSha => SCHEDULE_PREPROCESSED_WIDTH,
         }
     }
 
     const fn quotient_chunks(self) -> usize {
         match self {
-            Self::Sha => 2,
+            Self::Sha | Self::ScheduledSha => 2,
             Self::Arithmetic | Self::Carry | Self::PackedCarry => 1,
         }
     }
 
     const fn reads_next(self) -> bool {
-        matches!(self, Self::Sha)
+        matches!(self, Self::Sha | Self::ScheduledSha)
     }
 }
 
