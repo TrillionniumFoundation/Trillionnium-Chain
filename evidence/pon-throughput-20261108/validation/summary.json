@@ -1,6 +1,80 @@
 {
+  "command_receipts": "final-commands.json",
+  "hosted_full_checkout_ci": "PENDING_AT_EVIDENCE_PUBLICATION",
+  "native_validation": {
+    "all_features_locked_graph": "PASS",
+    "corrected_existing_fuzz_manifest_exit_code": 0,
+    "default_locked_graph": "PASS",
+    "focused_strict_clippy": "PASS",
+    "format": "PASS",
+    "full_tracked_tree_verified": false,
+    "initial_wrong_fuzz_manifest_exit_code": 101,
+    "release_build": "PASS",
+    "rust_implementation_changed_by_this_delivery": false,
+    "selected_tests_passed": 4,
+    "source_commit": "812589d9bb189b6abbf33b916a424121199dee75"
+  },
+  "new_test_methods": 126,
+  "original_full_source_check": {
+    "exit_code": 1,
+    "guard_relaxed": false,
+    "passed": false,
+    "reason": "index hides tracked worktree entries (sparse historical evidence)"
+  },
+  "original_repository_check": {
+    "exit_code": 2,
+    "first_missing_target": "evidence/pon-v1/README.md",
+    "full_gate_replaced_by_scoped_diagnostic": false,
+    "historical_missing_link_occurrences": 233,
+    "leftover_out_of_base_document_link_occurrences": 19,
+    "new_throughput_broken_links_in_scoped_diagnostic": 0,
+    "passed": false
+  },
+  "original_resource_campaign": "NOT_RUN",
   "production_activation": false,
+  "publication_rule": "the following publication commit adds or updates evidence paths only",
+  "python_tests_passed": 440,
   "qualified_confirmed_tps": null,
+  "raw_source_scope": {
+    "after_sha256": "3e80bb48d9e065fc7c6a74b852355a829570f1b425d62bc7f2a219d2cbad2dcb",
+    "before_after_identical": true,
+    "before_sha256": "3e80bb48d9e065fc7c6a74b852355a829570f1b425d62bc7f2a219d2cbad2dcb",
+    "entries": 2528,
+    "full_tracked_tree_verified": false,
+    "scope": "all non-evidence tracked files plus all 166 code-publication paths",
+    "verified": true
+  },
+  "reproduction": {
+    "fresh_native_executions_by_reproducer": 0,
+    "historical_record_readbacks": 3,
+    "new_native_record_readbacks": 1,
+    "original_pressure_gate": "NOT_RUN",
+    "production_activation": false,
+    "qualification": "HOLD_NO_GO",
+    "qualified_confirmed_tps": null,
+    "qualified_wan_tps": null,
+    "reports_match_retained_bytes": true,
+    "reproductions": 4,
+    "schema": "trnm-throughput-reproduction-v1"
+  },
+  "retained_archive": {
+    "bytes": 273577,
+    "path": "exact-source-validation.tar.gz",
+    "sha256": "cd00f977ff047cb86234a7577d06a5763bef2b692e526292533bd0a02a8efe3b"
+  },
   "schema": "trnm-throughput-validation-v1",
-  "status": "PENDING_FINAL_EXACT_SOURCE_VALIDATION"
+  "status": "LOCAL_COMPONENT_CONTROLS_COMPLETE_QUALIFICATION_HOLD",
+  "test_groups": {
+    "cell-model-tests": 32,
+    "ci-contract-tests": 103,
+    "command-receipt-tests": 8,
+    "native-reader-tests": 109,
+    "original-host-control-tests": 79,
+    "pq-source-guard-tests": 37,
+    "proof-cpu-tests": 26,
+    "reproducer-path-tests": 3,
+    "source-integrity-tests": 43
+  },
+  "tested_code_commit": "f4c7137e63bdcc8a2a06f9c78789390ce0d87997",
+  "tested_code_tree": "e0f3c0f1913d483918911a5c3357b8e097053bf2"
 }

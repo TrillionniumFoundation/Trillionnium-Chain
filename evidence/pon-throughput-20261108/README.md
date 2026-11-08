@@ -19,9 +19,11 @@ define each observation's numerator, interval and qualification limits.
    retention cut before aggregating eligibility observations.
 2. Reuse the original Host confirmation owner. Contradictory zero summaries and
    earlier native-positive receipts produce unknown, not an invented zero rate.
-3. Preserve command receipts and exact partial output for timeouts, nonzero
-   exits, launch errors, interruption and decoding failure. Original timeout
-   and exception behavior remain; no fresh time or CPU allowance is supplied.
+3. Preserve exact returned or timeout output bytes and monotonic outcome
+   receipts. Launch errors, interruption and decoding failure also retain
+   receipts; interrupted subprocess output is not guaranteed recoverable and
+   remains explicitly incomplete. Original timeout and exception behavior
+   remain; no fresh time or CPU allowance is supplied.
 4. Project complete-release transport, loading substages, action-scoring
    forwards, training stages and NoUpdate from their original raw records.
    Unsupported generated-token, GPU, complete cold-start and adoption rates stay
@@ -153,7 +155,7 @@ subprocess timeout behavior. Initial fixture/test mistakes remain in their
 original logs alongside corrected-source runs.
 
 Native build, default/all-feature locked dependency graphs, the correctly
-located fuzz graph, formatting, focused strict Clippy and the retained ten
+located fuzz graph, formatting, focused strict Clippy and the retained four
 native context/header/cancellation tests are separate source controls. The first
 fuzz metadata command mistakenly used a nonexistent `trillionnium/fuzz` path;
 that actual exit 101 is retained, with the correct `tests/fuzz/Cargo.toml`
