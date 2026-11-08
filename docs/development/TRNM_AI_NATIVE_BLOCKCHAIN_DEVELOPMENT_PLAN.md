@@ -10193,3 +10193,31 @@ no original-budget native campaign ran under that absence. Keep the original
 0.25 CPU, 2 GiB, zero-swap, 256-PID, four-second and sixteen-hostile contract.
 Refresh only the five changed current corpus blob pins; preserve all historical
 source inputs, upstream heads, required-path membership and false claim flags.
+
+#### Current-source lifetime survey follow-up
+
+The first combined-source run at 18ad3b752b22513901242737be20141137f41961
+passed the snapshot, fullpath, CI-contract and raw-source negative controls,
+with matching before/after tracked-byte receipts. Its all-feature Rust tests
+and Clippy failed at the OpenSSL ML-DSA seed API; the separately observed build
+output selected the system 3.0 headers. The unchanged repository prerequisite
+is the pinned static 3.5.9 provider. Retain that failed lane and use explicitly
+verified provider bytes plus fresh positive/negative smoke for a new full lane.
+An earlier Python controller hit its accidental sixty-second outer timeout;
+the complete recorded recovery changes no original four-second native gate.
+
+The hosted W1 closure guard also rejected a stale independent source-survey
+pin for the changed PQ executor. Reviewing all twenty selected inputs found
+one additional store.rs pin already stale in the unified 7e044 baseline.
+Refresh these two raw SHA-256 values and the survey's native-input snapshot
+to 18ad3b, after checking the current proof verification, required-work credit
+and per-signature charging anchors. Preserve the dated 2026-11-07 report.
+
+The [fresh current-source survey](../../evidence/pon-w1-lifetime-20261108/current-source-18ad3b-report.json)
+changes only selected_source_survey relative to that historical report.
+Inputs, ledger arithmetic, counterexamples, resource bounds and false security
+qualifications are unchanged. The closure workflow compares against the new
+dated report. This is a reviewed static source survey, not a new execution,
+quantum-work, clock or security certificate. Current corpus pin membership and
+the native inventory remain unchanged; the plan's current blob pin follows
+this continuation. All qualification and activation gates remain HOLD.

@@ -95,7 +95,7 @@ jobs:
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"
           cmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"
-          cmp evidence/pon-w1-lifetime-20261107/project-report.json "$W1_CLOSURE_OUT/lifetime.json"
+          cmp evidence/pon-w1-lifetime-20261108/current-source-18ad3b-report.json "$W1_CLOSURE_OUT/lifetime.json"
           for name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do
             cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"
           done
