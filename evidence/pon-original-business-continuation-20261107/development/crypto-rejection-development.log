@@ -1,0 +1,73 @@
+   Compiling typenum v1.20.1
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling zeroize v1.8.2
+   Compiling syn v2.0.117
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling cfg-if v1.0.4
+   Compiling cc v1.2.59
+   Compiling hybrid-array v0.4.15
+   Compiling sha2-asm v0.6.4
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling semver v1.0.27
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling rustc_version v0.4.1
+   Compiling digest v0.10.7
+   Compiling crypto-common v0.2.2
+   Compiling cpufeatures v0.2.17
+   Compiling digest v0.11.3
+   Compiling curve25519-dalek v4.1.3
+   Compiling thiserror v1.0.69
+   Compiling serde v1.0.228
+   Compiling zmij v1.0.21
+   Compiling sha2 v0.10.9
+   Compiling keccak v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling anyhow v1.0.103
+   Compiling rustix v1.1.4
+   Compiling sponge-cursor v0.1.0
+   Compiling signature v2.2.0
+   Compiling serde_json v1.0.149
+   Compiling subtle v2.6.1
+   Compiling ed25519 v2.2.3
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling hex v0.4.3
+   Compiling bitflags v2.11.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/ae364bcbabfb/publication-check/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized] target(s) in 1m 30s
+     Running unittests src/lib.rs (/workspace/scratch/ae364bcbabfb/continuation-target/debug/deps/trnm_crypto_primitives-5b110403ffa0e73e)
+
+running 11 tests
+test pon_work::rejection_cache::observation_tests::complete_key_expiry_collision_and_restart_keep_current_native_verification ... ok
+test pon_work::rejection_cache::observation_tests::observation_distinguishes_replayed_refusal_hit_cancellation_and_valid_work ... ok
+test pon_work::rejection_cache::observation_tests::retained_owner_bounds_count_allocated_slot_capacity ... ok
+test pon_work::rejection_cache::tests::cheap_structural_refusals_never_hash_the_whole_proof_for_optional_reuse ... ok
+test pon_work::rejection_cache::tests::contended_cache_retains_caller_cancellation_and_cheap_errors ... ok
+test pon_work::rejection_cache::tests::contended_lookup_and_publication_keep_complete_native_replay ... ok
+test pon_work::rejection_cache::tests::false_transcript_replay_is_skipped_but_real_proof_still_passes ... ok
+test pon_work::rejection_cache::tests::four_distinct_from_zero_false_traces_each_owe_first_full_replay ... ok
+test pon_work::rejection_cache::tests::local_cancellation_cannot_use_a_cached_fact_as_a_verdict ... ok
+test pon_work::rejection_cache::tests::malformed_width_has_no_cache_key_and_retains_native_length_precedence ... ok
+test pon_work::rejection_cache::tests::poisoned_cache_keeps_native_math_and_caller_cancellation ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 0.03s
+

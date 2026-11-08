@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_from_zero_host_ci.py"
+  ],
+  "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 1418466221,
+  "tests": 78,
+  "unittest_success": true,
+  "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_from_zero_host_ci.log",
+  "log_bytes": 177,
+  "log_sha256": "07f741e4276b061106ed45799fcd38e240cb2c540c0509bf5ef283c93e224c65",
+  "test_source_before": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3"
+}

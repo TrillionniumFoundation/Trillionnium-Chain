@@ -1,0 +1,71 @@
+    Finished `release` profile [optimized] target(s) in 0.07s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-priority/release/deps/trnm_pon_node-10ac2862d4ea8e0a)
+
+running 40 tests
+test store::authenticated_migration::growth_rehearsal::snapshot::receipt_copy_tests::receipt_copy_rejects_digest_mismatch_and_concurrent_extension ... ok
+test store::authenticated_migration::growth_rehearsal::snapshot::receipt_copy_tests::receipt_copy_retains_complete_bytes_without_a_new_size_limit ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_readback_binds_original_files_even_when_replacements_have_equal_bytes ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_readback_rejects_equal_byte_directory_replacement ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_ancestor_symlink_before_any_target_write ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_parent_substitution_after_open_without_writing_decoy ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_real_directory_substitution_before_chmod_or_file_creation ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_refuses_target_symlink_before_chmod_or_file_creation ... ok
+test store::authenticated_migration::growth_reservation_io::tests::creation_writes_only_held_target_after_target_or_ancestor_replacement ... ok
+test store::authenticated_migration::growth_reservation_io::tests::late_ancestor_symlink_cannot_preserve_path_acceptance ... ok
+test store::authenticated_migration::growth_reservation_io::tests::late_path_policy_and_object_changes_cannot_pass_readback ... ok
+test store::authenticated_migration::growth_reservation_io::tests::readback_is_bounded_and_rejects_symlink_fifo_alias_and_permissions ... ok
+test store::authenticated_migration::growth_reservation_io::tests::special_permission_bits_refuse_at_open_and_final_readback ... ok
+test store::authenticated_migration::tests::authenticated_migration_atomic_target_creation_never_overwrites_a_racing_destination ... ok
+test store::authenticated_migration::tests::authenticated_migration_cancellation_never_publishes_partial_destination ... ok
+test store::authenticated_migration::tests::authenticated_migration_last_callback_cannot_hide_raw_file_or_receipt_changes ... ok
+test store::authenticated_migration::tests::authenticated_migration_preserves_signed_branches_and_irreversible_local_facts ... ok
+test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... 
+running 1 test
+test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... 
+running 1 test
+test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... 
+running 1 test
+test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... 
+running 1 test
+test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... 
+running 1 test
+test store::authenticated_migration::tests::authenticated_migration_process_exit_leaves_pending_and_source_reopens ... ok
+test store::authenticated_migration::tests::authenticated_migration_rechecks_retained_authority_including_inactive_branches ... ok
+test store::authenticated_migration::tests::authenticated_migration_refuses_source_descendants_and_existing_destinations ... ok
+test store::authenticated_migration::tests::authenticated_migration_rejects_external_owner_journal_and_required_marker ... ok
+test store::authenticated_migration::tests::authenticated_migration_retains_partial_reorganization_then_target_recovers_once ... ok
+test store::authenticated_migration::tests::authenticated_migration_snapshot_blocks_source_sql_writer_and_rejects_changed_target ... ok
+test store::authenticated_migration::tests::growth_rehearsal_cancel_and_late_disk_tamper_preserve_failed_stages_and_source ... ok
+test store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_budget_is_aggregate_and_cleans_success ... ok
+test store::authenticated_migration::tests::growth_rehearsal_cold_snapshot_replays_copies_and_rejects_replaced_wal_paths ... ok
+test store::authenticated_migration::tests::growth_rehearsal_cold_verifier_refuses_wal_archives_without_writes ... ok
+test store::authenticated_migration::tests::growth_rehearsal_cold_verifier_rejects_resealed_source_and_activation_claim ... ok
+test store::authenticated_migration::tests::growth_rehearsal_file_hash_bounds_append_without_hiding_corruption ... ok
+test store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open ... 
+running 1 test
+test store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s
+
+
+running 1 test
+test store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.00s
+
+ok
+test store::authenticated_migration::tests::growth_rehearsal_file_receipt_retains_one_mib_limit ... ok
+test store::authenticated_migration::tests::growth_rehearsal_late_destination_collision_keeps_pending_and_does_not_replace ... ok
+test store::authenticated_migration::tests::growth_rehearsal_preserves_all_native_facts_nonce_liabilities_and_cold_checkpoint ... ok
+test store::authenticated_migration::tests::growth_rehearsal_preserves_reference_budget_history_and_rejects_resealed_corruption ... ok
+test store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens ... 
+running 1 test
+test store::authenticated_migration::tests::growth_rehearsal_process_exit_retains_pending_and_source_reopens ... ok
+test store::authenticated_migration::tests::growth_rehearsal_rejects_complete_state_reference_before_creating_a_candidate ... ok
+test store::authenticated_migration::tests::growth_rehearsal_rejects_inactive_source_corruption_without_publication ... ok
+test store::authenticated_migration::tests::migration_block_id_copy_preserves_complete_fixed_width_refusals ... ok
+test store::authenticated_migration::tests::migration_genesis_packet_copy_keeps_null_and_type_semantics ... ok
+test store::reorg_cancellation::tests::cancelled_lifecycle_survives_explicit_authenticated_migration_without_rewriting_source ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 1146 filtered out; finished in 5.06s
+

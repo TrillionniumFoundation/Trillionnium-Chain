@@ -44,9 +44,12 @@ def parent_lock():
     path = RUN / 'trnmponpublic-ci-owner.lock'
     # The unique parent has one stable root-owned lock, independent of output
     # directories. O_EXCL never replaces/truncates another owner's lock inode.
+    # Fix the mode only on the new fd: creation is subject to the caller's umask.
+    # Existing files are never chmodded or adopted by this creator.
     creator = ('import os, sys\ntry:\n'
                ' fd = os.open(sys.argv[1], os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o444)\n'
-               'except FileExistsError:\n pass\nelse:\n os.close(fd)\n')
+               'except FileExistsError:\n pass\nelse:\n'
+               ' try:\n  os.fchmod(fd, 0o444)\n finally:\n  os.close(fd)\n')
     created = subprocess.run(['sudo', '-n', '/usr/bin/python3', '-I', '-S', '-c', creator, str(path)],
                              stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                              stderr=subprocess.PIPE, timeout=30)

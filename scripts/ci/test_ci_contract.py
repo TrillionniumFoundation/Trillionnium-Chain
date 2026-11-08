@@ -403,9 +403,12 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 check_independent_conformance(changed, self.lanes)
 
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
-        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py'):
-            command = ("    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p '"
-                       + name + "' -v\n")
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
+                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                     'test_useful_cell_multimodal_execution_v3.py',
+                     'test_useful_cell_multimodal_relation_v3.py'):
+            command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
             self.assertEqual(self.script.count(command), 1)
             variants = {
                 'removed': self.script.replace(command, ''),
@@ -419,6 +422,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for label, script in variants.items():
                 with self.subTest(test=name, mutation=label), self.assertRaises(ValueError):
                     check_independent_conformance(script, self.lanes)
+
+    def test_native_cell_suite_cannot_disappear_from_mandatory_conformance(self):
+        selector = ' --test cell_native_v1'
+        self.assertEqual(self.script.count(selector), 1)
+        command = next(line for line in self.script.splitlines(keepends=True)
+                       if selector in line)
+        for replacement in (command.replace(selector, ''),
+                            command.replace(selector, selector * 2),
+                            '    if false; then\n' + command + '    fi\n',
+                            command.rstrip() + ' || true\n'):
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
 
     def test_original_campaign_reader_keeps_original_pins_and_lane(self):
         for replacement in ['', ORIGINAL_CAMPAIGN_READER * 2,
@@ -614,6 +629,31 @@ class CiContractTests(unittest.TestCase):
     def test_current_execution_contract(self):
         self.assertEqual(validate(self.root)['merge_lanes'], 5)
         current_validate(self.root)
+
+    def test_missing_useful_cell_sources_fail_contract_and_actual_ci_command(self):
+        script = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
+                     'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
+                     'test_useful_cell_multimodal_execution_v3.py',
+                     'test_useful_cell_multimodal_relation_v3.py'):
+            path = self.root / 'formal/pon-nakamoto-v1' / name
+            command = next(line.strip() for line in script.splitlines()
+                           if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')
+            raw = path.read_bytes()
+            try:
+                path.unlink()
+                with self.subTest(test=name), self.assertRaisesRegex(
+                        ValueError, 'required useful Cell test source is missing'):
+                    validate(self.root)
+                result = subprocess.run(['bash', '-euo', 'pipefail', '-c', command],
+                                        cwd=self.root, text=True, capture_output=True)
+                with self.subTest(test=name, actual_command=command):
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn(name, result.stderr)
+                    self.assertNotIn('Ran 0 tests', result.stderr)
+            finally:
+                path.write_bytes(raw)
 
     def test_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
         for replacement in ['', ZERO_RUN_STEP.replace('        if: always()\n', ''),

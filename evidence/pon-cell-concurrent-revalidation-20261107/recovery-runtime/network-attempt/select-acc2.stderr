@@ -1,0 +1,6 @@
+error: RPC 失败。curl 56 Recv failure: 连接被对方重置
+error: 预期仍然需要 7555 个字节的正文
+fetch-pack: unexpected disconnect while reading sideband packet
+fatal: 过早的文件结束符（EOF）
+fatal: fetch-pack：无效的 index-pack 输出
+fatal: could not fetch 2a2488b7210ac7368ec6d6cc729d82980329557b from promisor remote

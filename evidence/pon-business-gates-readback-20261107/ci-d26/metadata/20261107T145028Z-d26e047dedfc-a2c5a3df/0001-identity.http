@@ -1,0 +1,30 @@
+HTTP/2.0 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+Cache-Control: private, max-age=60, s-maxage=60
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json; charset=utf-8
+Date: Sat, 07 Nov 2026 14:50:34 GMT
+Etag: W/"e6b406cd4fc0a5c99acd759478cff923f2c9b3609c182a186324e42d70c6b6fa"
+Last-Modified: Sat, 07 Nov 2026 12:39:48 GMT
+Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin
+Server: github.com
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+Vary: Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With
+X-Accepted-Oauth-Scopes: 
+X-Content-Type-Options: nosniff
+X-Frame-Options: deny
+X-Github-Api-Version-Selected: 2022-11-28
+X-Github-Edge-Region: westus3
+X-Github-Media-Type: github.v3; format=json
+X-Github-Request-Id: AFA0:29B527:5F2E9C:695D22:6AEF3ABA
+X-Oauth-Client-Id: 178c6fc778ccc68e1d6a
+X-Oauth-Scopes: delete_repo, gist, read:org, repo, workflow
+X-Ratelimit-Limit: 5000
+X-Ratelimit-Remaining: 4806
+X-Ratelimit-Reset: 1794063518
+X-Ratelimit-Resource: core
+X-Ratelimit-Used: 194
+X-Xss-Protection: 0
+
+{"login":"ProfHepta","id":102159240,"node_id":"U_kgDOBhbTiA","avatar_url":"https://avatars.githubusercontent.com/u/102159240?v=4","gravatar_id":"","url":"https://api.github.com/users/ProfHepta","html_url":"https://github.com/ProfHepta","followers_url":"https://api.github.com/users/ProfHepta/followers","following_url":"https://api.github.com/users/ProfHepta/following{/other_user}","gists_url":"https://api.github.com/users/ProfHepta/gists{/gist_id}","starred_url":"https://api.github.com/users/ProfHepta/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/ProfHepta/subscriptions","organizations_url":"https://api.github.com/users/ProfHepta/orgs","repos_url":"https://api.github.com/users/ProfHepta/repos","events_url":"https://api.github.com/users/ProfHepta/events{/privacy}","received_events_url":"https://api.github.com/users/ProfHepta/received_events","type":"User","user_view_type":"public","site_admin":false,"name":"Qian QI","company":null,"blog":"","location":null,"email":null,"hireable":null,"bio":null,"twitter_username":null,"notification_email":null,"public_repos":0,"public_gists":0,"followers":1,"following":1,"created_at":"2022-03-22T12:41:42Z","updated_at":"2026-11-07T12:39:48Z"}

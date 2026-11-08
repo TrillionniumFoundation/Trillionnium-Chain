@@ -1,0 +1,18 @@
+{
+  "schema": "trnm-external-native-driver-preparation-v1",
+  "prepared_only": true,
+  "native_commands_executed": false,
+  "source_tests_executed": false,
+  "driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/run-targeted-native-v1.py",
+    "bytes": 15971,
+    "sha256": "3003297f420146295f1291b3c2706ee85cc17f82afa239e1a83b8c5dde7eb88a"
+  },
+  "requirements": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/requirements.json",
+    "bytes": 11545,
+    "sha256": "0316ec3eae0ebccde65e09d3c5f81c2df0538110fe3b809a271e8fc0e20c23e2"
+  },
+  "syntax_check": "ast.parse only; no driver import or main execution",
+  "original_full_package_untouched": true
+}

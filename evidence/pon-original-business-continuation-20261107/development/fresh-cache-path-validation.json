@@ -1,0 +1,45 @@
+{
+  "schema": "fresh-cache-path-validation-v1",
+  "observed_at": "2026-11-07T13:08:26.203507+00:00",
+  "parent_head": "96e1eede091153199894532c91430bfc0f8e4572",
+  "prior_receipt": "fresh-cache-metadata-validation.json",
+  "authorized_paths": {
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs": "2e21912f6c285e79e36ccaf995b451613313bfbc6993a510df4307fb2a47f0e9",
+    "scripts/ci/run_w1_fresh_service_v1.py": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324",
+    "scripts/ci/test_run_w1_fresh_service_v1.py": "4bcad9c87197e3334d912ecfe3257439959c4a04658ef7c762d98070d8334f62"
+  },
+  "preflight": {
+    "result": "PASS",
+    "log": "fresh-cache-path-preflight.log"
+  },
+  "negative_control": {
+    "tests": 29,
+    "failures": 4,
+    "scope": "Two new test methods demonstrate the two impossible paths, including three keyed-miss branches, before the reader fix",
+    "log": "fresh-cache-path-negative-controls.log"
+  },
+  "after_fix": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "command": "python3 -B scripts/ci/test_run_w1_fresh_service_v1.py",
+    "log": "fresh-cache-path-reader-tests.log"
+  },
+  "constraints_added": [
+    "completed full_replay_started implies key_hashed",
+    "completed keyed cache miss implies native_verifier_started; existing started/returned equality remains"
+  ],
+  "preserved_controls": [
+    "unkeyed field cheap error without native entry",
+    "unkeyed native cheap error without full replay",
+    "incomplete observation remains unknown",
+    "historical false without extension",
+    "fresh facts never reused",
+    "original business/workload predicates"
+  ],
+  "rust_file_changed_in_this_revision": false,
+  "native_tests_executed": false,
+  "original_gate_executed": false,
+  "source_pins_updated": false,
+  "commit_or_push_performed": false
+}

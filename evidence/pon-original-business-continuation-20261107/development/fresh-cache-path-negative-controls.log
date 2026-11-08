@@ -1,0 +1,41 @@
+.............FFFF..............
+======================================================================
+FAIL: test_completed_full_replay_requires_a_hashed_statement (__main__.FreshRefusalControls.test_completed_full_replay_requires_a_hashed_statement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 254, in test_completed_full_replay_requires_a_hashed_statement
+    with self.assertRaisesRegex(ValueError, 'FRESH_CACHE_PATH_CONTRADICTION'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid (__main__.FreshRefusalControls.test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid) (lookup='miss')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 266, in test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid
+    with self.subTest(lookup=lookup), self.assertRaisesRegex(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid (__main__.FreshRefusalControls.test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid) (lookup='contended')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 266, in test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid
+    with self.subTest(lookup=lookup), self.assertRaisesRegex(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid (__main__.FreshRefusalControls.test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid) (lookup='poisoned')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 266, in test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid
+    with self.subTest(lookup=lookup), self.assertRaisesRegex(
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 29 tests in 3.815s
+
+FAILED (failures=4)

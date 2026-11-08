@@ -1,0 +1,66 @@
+[
+  {
+    "kind": "pinned-reader-dependency-missing",
+    "job_id": "1a1b6944c9a-12894-52c",
+    "scope": "observer import before native artifact reading",
+    "resolution": "Exact six missing configuration blobs were retained in receipt-config-addendum.json; no native rerun."
+  },
+  {
+    "kind": "single-line-source-json-assumption",
+    "job_id": "1a1b697848c-12894-541",
+    "scope": "observer parser",
+    "resolution": "Multiline original verifier output parsed independently; prior failure readback retained."
+  },
+  {
+    "kind": "artifact-get-timeout",
+    "job_id": "1a1b69b070f-12894-559",
+    "artifact_id": 13578932781,
+    "scope": "observer GET",
+    "resolution": "Same artifact ID GET retry independently matched original provider digest; original failed attempt retained."
+  },
+  {
+    "kind": "migration-single-summary-assumption",
+    "job_id": "1a1b6acf17a-12894-5cd",
+    "scope": "observer reader",
+    "resolution": "Two FIFO child summaries and one40-test main summary retained distinctly; original CI successful, addendum-v2 preserves initial reader error."
+  },
+  {
+    "kind": "wrong-core-identity-key",
+    "job_id": "1a1b6bc322e-12894-651",
+    "error": "KeyError: artifact_id",
+    "scope": "observer core correction attempt",
+    "resolution": "No core-v2 written by failed attempt; corrected run uses actual core artifact key."
+  },
+  {
+    "kind": "core-original-cache-subcheck-default-false",
+    "scope": "derived core-v1, not original report",
+    "resolution": "core-v2 uses null + not_applicable_original_retained_proof; original business0/1 is unchanged."
+  },
+  {
+    "kind": "w1-wrong-source-filename",
+    "scope": "observer reader",
+    "resolution": "Original nonfresh W1 path is source-before.json. Initial errors remain in each readback; addendum independently binds actual source-before/after."
+  },
+  {
+    "kind": "w1-network-get-failures",
+    "scope": "observer GET only",
+    "resolution": "All initial partial downloads/timeout/reset receipts retained at original Desktop paths. Bounded retry/range readbacks are separate; missing readbacks remain UNKNOWN."
+  },
+  {
+    "kind": "hepta-small-file-read-rejections",
+    "error_code": "INVALID_ARGUMENT",
+    "scope": "observer file retrieval",
+    "resolution": "No CI or file change. Exact smaller derived cores were created. Original85,282B History inspection exceeds64KiB tool per-file cap; other rejected batches retain unknown provider reason."
+  },
+  {
+    "kind": "orchestration-read-terminated",
+    "cell_id": "g3:217",
+    "scope": "pending observer stdout read only",
+    "resolution": "No CI/native or durable process cancellation. x64state files and authoritative succeeded exit0 were independently read afterward."
+  },
+  {
+    "kind": "broad-source-name-selection",
+    "scope": "derived source roster-v1",
+    "resolution": "v2 selects exact before/after/materialize/context names; business resources and campaign-specific migration steps are not source guards."
+  }
+]

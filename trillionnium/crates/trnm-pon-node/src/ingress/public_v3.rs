@@ -4,19 +4,24 @@
 //! V2 retains separate signed domains; both select the current derived-index resource bound.
 //! Work and bounded M06 transaction boundaries check cancellation; deep State/root/history/SQLite are not preempted.
 use super::{
-    digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
-    Request as NativeRequest, Result, Settings, WorkCheckedPacket,
+    digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node, Result, Settings,
+    WorkCheckedPacket,
 };
+#[cfg(test)]
+mod input_decode_tests;
 mod intake;
 mod pq_identity;
 use intake::{ConnectionLease, ListenerIntake};
 pub use pq_identity::{call_public_history_pq_v4, PqPublicIdentity, PQ_HISTORY_PROFILE};
 use pq_identity::{Caller, ServerPin, SigningIdentity};
+mod canonical_packet;
 mod growth;
 mod history_response;
 pub(super) mod request_observation;
 pub mod scalar_cpu;
 mod work_arithmetic;
+mod work_rejection;
+use canonical_packet::{CanonicalPacketText, DecodedTaskBody, SubmitPacketText};
 use growth::ClientProfile;
 pub use growth::{call_public_protected_growth_v1, GROWTH_PROFILE};
 pub use request_observation::{
@@ -60,6 +65,7 @@ pub use work_arithmetic::{
     call_public_protected_v3_with_arithmetic_facts, PublicArithmeticFactObservation,
     PublicArithmeticWorkObservation,
 };
+pub use work_rejection::{PublicRejectionFactObservation, PublicRejectionWorkObservation};
 
 /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -782,10 +788,11 @@ impl PublicServer {
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
     }
-    /// Opt-in exact invalid-math suppression for a single bounded V3 service.
+    /// Explicit exact invalid-math suppression settings for one V3 service.
     /// Does not alter W1 validity, signed profile, caller admission budgets or
     /// the complete verifier; NEW bogus traces still consume one full replay.
-    /// Future public rollout requires a separately reviewed resource profile.
+    /// Ordinary classical service startup otherwise installs the fixed bounded
+    /// default. Explicit settings and the separate arithmetic profile are exclusive.
     pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
         ensure(
             self.arithmetic_facts.is_none() && self.w1_rejection_cache.is_none(),
@@ -1055,13 +1062,23 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
             .and_then(|b| b.strip_suffix(br#""}"#))
             .ok_or("PUBLIC_REQUEST_CANONICAL")?;
         ensure(
-            text.len() <= 2 * MAX_PACKET
-                && text.len().is_multiple_of(2)
-                && text
-                    .iter()
-                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
+            text.len() <= 2 * MAX_PACKET && text.len().is_multiple_of(2) && lower_hex(text),
             "PUBLIC_PACKET_TEXT",
         )?;
+        // The exact envelope and complete lowercase ASCII grammar already
+        // establish the same serde representation. Avoid a second JSON parse
+        // and streaming re-serialization of this potentially 2-MiB string.
+        // Nothing has established Packet, Work, current owner or State validity;
+        // those original checks still execute after this transport-only decode.
+        let packet = std::str::from_utf8(text)
+            .map_err(|_| "PUBLIC_PACKET_TEXT")?
+            .to_owned();
+        return Ok(match op {
+            1 => Request::Submit { packet },
+            6 => Request::GrowthSubmitV1 { packet },
+            7 => Request::GrowthPacketStatusV1 { packet },
+            _ => unreachable!(),
+        });
     }
     let request: Request = serde_json::from_slice(bytes)?;
     let mut writer = ExactCanonical { bytes, cursor: 0 };
@@ -1500,13 +1517,20 @@ fn read_available(socket: &mut TcpStream, bytes: &mut Vec<u8>, expected: usize) 
     if remaining == 0 {
         return Ok(true);
     }
-    let mut buffer = [0; IO_QUANTUM];
-    match socket.read(&mut buffer[..remaining.min(IO_QUANTUM)]) {
+    // Hello/Solution and paid Body already own their bounded capacity. Read
+    // into that initialized storage instead of zeroing a 64-KiB temporary for
+    // every small/idle frame and then copying each received byte a second time.
+    // Truncate on every outcome: unreceived padding never becomes input and
+    // observation counters continue to report only actual received bytes.
+    let before = bytes.len();
+    let limit = remaining.min(IO_QUANTUM);
+    bytes.resize(before + limit, 0);
+    let result = socket.read(&mut bytes[before..]);
+    let received = result.as_ref().copied().unwrap_or(0);
+    bytes.truncate(before + received);
+    match result {
         Ok(0) => Err("PUBLIC_EOF".into()),
-        Ok(n) => {
-            bytes.extend(&buffer[..n]);
-            Ok(bytes.len() == expected)
-        }
+        Ok(_) => Ok(bytes.len() == expected),
         Err(e)
             if matches!(
                 e.kind(),
@@ -1643,12 +1667,12 @@ fn pending_alive(conn: &Connection, stop: &AtomicBool) -> Result<()> {
     }
     Ok(())
 }
-fn decode_task_body(
-    task: &Task,
+fn decode_task_body<'a>(
+    task: &'a Task,
     server: &PublicServer,
     settings: &Settings,
     mutation_cpu: Option<&MutationCpuMeasurement>,
-) -> Result<Request> {
+) -> Result<DecodedTaskBody<'a>> {
     let stamp = mutation_cpu.and_then(|_| ThreadCpuStamp::start());
     if let Some(cpu) = mutation_cpu {
         if stamp.is_none() {
@@ -1666,7 +1690,14 @@ fn decode_task_body(
                 == hex::encode(hash(b"public-request-body-v3", &[&task.raw_body])),
             "PUBLIC_BODY_DIGEST",
         )?;
-        let request = canonical_request(&task.raw_body, task.cookie.op)?;
+        let request = if task.cookie.op == 1 && !server.identity.is_pq() && !server.native_growth {
+            // This borrow cannot outlive or mutate the original paid body.
+            // It proves transport grammar only; Packet decoding stays after
+            // the original cookie checks, inside the original Decode phase.
+            DecodedTaskBody::CanonicalSubmit(CanonicalPacketText::from_body(&task.raw_body)?)
+        } else {
+            DecodedTaskBody::Owned(canonical_request(&task.raw_body, task.cookie.op)?)
+        };
         server.validate(&task.cookie, settings, false)?;
         Ok(request)
     })();
@@ -1684,9 +1715,9 @@ struct PublicDispatchObservation<'a> {
     w1_rejection_cache:
         Option<&'a trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
 }
-fn public_dispatch(
+fn public_dispatch_submit(
     node: &Mutex<Node>,
-    request: Request,
+    packet: SubmitPacketText<'_>,
     deadline: Instant,
     stop: &AtomicBool,
     cancelled: &AtomicBool,
@@ -1698,6 +1729,189 @@ fn public_dispatch(
         mutation_cpu,
         arithmetic_facts,
         w1_rejection_cache,
+    } = observation;
+    let live_cpu = mutation_cpu.map(|cpu| &cpu.workers);
+    let mut progress = |steps: u64| {
+        task_alive(deadline, stop, cancelled)?;
+        if let Some(cpu) = live_cpu {
+            cpu.checkpoint()?;
+        }
+        ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
+    };
+    let continuous_progress = {
+        let owner = lock_owner(node, &mut progress)?;
+        if owner.is_continuous() {
+            let measurement =
+                mutation_cpu.ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+            let live = measurement
+                .workers
+                .live
+                .as_ref()
+                .ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
+            let decoded = packet.decode()?;
+            let scope = owner.begin_continuous_public_scope(
+                &decoded,
+                ServiceMutationCpuCheckpoint::from_actual_live(live.clone()),
+            )?;
+            let checkpoint = scope.as_ref().map(|scope| scope.checkpoint()).transpose()?;
+            let has_scope = scope.is_some();
+            *measurement.continuous_scope.borrow_mut() = scope;
+            if has_scope {
+                owner.check_continuous_public_packet_binding(&decoded)?;
+            }
+            checkpoint
+        } else {
+            None
+        }
+    };
+    super::dispatch_shared_submit_with_execution_observation(
+        node,
+        || packet.decode(),
+        &mut progress,
+        |packet| {
+            // The context check may have waited for the only Node owner.
+            // An abandoned caller must not start a fresh full work replay.
+            task_alive(deadline, stop, cancelled)?;
+            if let Some(checkpoint) = &continuous_progress {
+                checkpoint.check()?;
+            }
+            if let Some(cpu) = live_cpu {
+                cpu.checkpoint()?;
+            }
+            let cpu = (observation.is_some() || mutation_cpu.is_some())
+                .then(ThreadCpuStamp::start)
+                .flatten();
+            if let Some(charge) = mutation_cpu {
+                if cpu.is_none() {
+                    charge.unavailable.set(true);
+                    charge.workers.unknown();
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                }
+            }
+            let start = Instant::now();
+            metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
+            if let Some(record) = observation {
+                record.work_started();
+            }
+            let mut checkpoint = |_| {
+                task_alive(deadline, stop, cancelled)?;
+                if let Some(checkpoint) = &continuous_progress {
+                    checkpoint.check()?;
+                }
+                live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+            };
+            let result = match arithmetic_facts {
+                None => match w1_rejection_cache {
+                    Some(cache) => {
+                        work_rejection::verify(packet, cache, &mut checkpoint, observation)
+                    }
+                    None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                },
+                Some(facts) => {
+                    if let Some(record) = observation {
+                        record.work_arithmetic(PublicArithmeticWorkObservation::started(facts));
+                    }
+                    let mut actual = trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticObservation::default();
+                    let result = WorkCheckedPacket::verify_with_arithmetic_facts(
+                        packet,
+                        facts,
+                        &mut checkpoint,
+                        &mut actual,
+                    );
+                    if let Some(record) = observation {
+                        record.work_arithmetic(PublicArithmeticWorkObservation::finished(
+                            facts, actual,
+                        ));
+                    }
+                    result
+                }
+            };
+            let cpu = cpu.and_then(ThreadCpuStamp::finish);
+            if let Some(charge) = mutation_cpu {
+                charge.full_work_ns.set(cpu);
+                charge
+                    .unavailable
+                    .set(charge.unavailable.get() || cpu.is_none());
+                if cpu.is_none() {
+                    charge.workers.unknown();
+                }
+            }
+            if let Some(record) = observation {
+                record.work_finished(cpu, result.is_ok());
+            }
+            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+            m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
+            m.work_finished += 1;
+            if result.is_err() {
+                m.work_failed += 1;
+            }
+            drop(m);
+            let checked = result?;
+            if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
+                live.work_verified(&checked)?;
+            }
+            Ok(checked)
+        },
+        &ExecutionControl::new(
+            &|_| {
+                task_alive(deadline, stop, cancelled)?;
+                if let Some(checkpoint) = &continuous_progress {
+                    checkpoint.check()?;
+                }
+                live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
+            },
+            mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
+        ),
+        super::SubmitDispatchContext {
+            observation,
+            packet_settings: None,
+            public_proof_before_unowned_task: true,
+            termination_cpu: live_cpu
+                .and_then(|cpu| cpu.live.as_ref())
+                .map(|live| ServiceMutationCpuCheckpoint::from_actual_live(live.clone()))
+                .as_ref(),
+        },
+    )
+}
+
+fn public_dispatch<'a>(
+    node: &Mutex<Node>,
+    request: impl Into<DecodedTaskBody<'a>>,
+    deadline: Instant,
+    stop: &AtomicBool,
+    cancelled: &AtomicBool,
+    metrics: &Mutex<PublicMetrics>,
+    observation: PublicDispatchObservation<'_>,
+) -> Result<Value> {
+    let request = match request.into() {
+        DecodedTaskBody::CanonicalSubmit(packet) => {
+            return public_dispatch_submit(
+                node,
+                SubmitPacketText::Canonical(packet),
+                deadline,
+                stop,
+                cancelled,
+                metrics,
+                observation,
+            );
+        }
+        DecodedTaskBody::Owned(Request::Submit { packet }) => {
+            return public_dispatch_submit(
+                node,
+                SubmitPacketText::Owned(packet),
+                deadline,
+                stop,
+                cancelled,
+                metrics,
+                observation,
+            );
+        }
+        DecodedTaskBody::Owned(request) => request,
+    };
+    let PublicDispatchObservation {
+        observation,
+        mutation_cpu,
+        ..
     } = observation;
     if matches!(
         &request,
@@ -1725,148 +1939,7 @@ fn public_dispatch(
         ensure(steps <= MAX_HISTORY_STEPS, "PUBLIC_HISTORY_STEPS")
     };
     match request {
-        Request::Submit { packet } => {
-            let continuous_progress = {
-                let owner = lock_owner(node, &mut progress)?;
-                if owner.is_continuous() {
-                    let measurement =
-                        mutation_cpu.ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
-                    let live = measurement
-                        .workers
-                        .live
-                        .as_ref()
-                        .ok_or("OWNER_CONTINUOUS_ORIGINAL_PUBLIC_CPU_REQUIRED")?;
-                    let decoded = super::hex_packet(&packet)?;
-                    let scope = owner.begin_continuous_public_scope(
-                        &decoded,
-                        ServiceMutationCpuCheckpoint::from_actual_live(live.clone()),
-                    )?;
-                    let checkpoint = scope.as_ref().map(|scope| scope.checkpoint()).transpose()?;
-                    let has_scope = scope.is_some();
-                    *measurement.continuous_scope.borrow_mut() = scope;
-                    if has_scope {
-                        owner.check_continuous_public_packet_binding(&decoded)?;
-                    }
-                    checkpoint
-                } else {
-                    None
-                }
-            };
-            super::dispatch_shared_with_execution_observation(
-                node,
-                NativeRequest::Submit { packet },
-                &mut progress,
-                |packet| {
-                    // The context check may have waited for the only Node owner.
-                    // An abandoned caller must not start a fresh full work replay.
-                    task_alive(deadline, stop, cancelled)?;
-                    if let Some(checkpoint) = &continuous_progress {
-                        checkpoint.check()?;
-                    }
-                    if let Some(cpu) = live_cpu {
-                        cpu.checkpoint()?;
-                    }
-                    let cpu = (observation.is_some() || mutation_cpu.is_some())
-                        .then(ThreadCpuStamp::start)
-                        .flatten();
-                    if let Some(charge) = mutation_cpu {
-                        if cpu.is_none() {
-                            charge.unavailable.set(true);
-                            charge.workers.unknown();
-                            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
-                        }
-                    }
-                    let start = Instant::now();
-                    metrics.lock().map_err(|_| "PUBLIC_METRICS")?.work_started += 1;
-                    if let Some(record) = observation {
-                        record.work_started();
-                    }
-                    let mut checkpoint = |_| {
-                        task_alive(deadline, stop, cancelled)?;
-                        if let Some(checkpoint) = &continuous_progress {
-                            checkpoint.check()?;
-                        }
-                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
-                    };
-                    let result = match arithmetic_facts {
-                        None => match w1_rejection_cache {
-                            Some(cache) => WorkCheckedPacket::verify_with_rejection_cache(
-                                packet,
-                                cache,
-                                &mut checkpoint,
-                            ),
-                            None => {
-                                WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint)
-                            }
-                        },
-                        Some(facts) => {
-                            if let Some(record) = observation {
-                                record.work_arithmetic(PublicArithmeticWorkObservation::started(
-                                    facts,
-                                ));
-                            }
-                            let mut actual = trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticObservation::default();
-                            let result = WorkCheckedPacket::verify_with_arithmetic_facts(
-                                packet,
-                                facts,
-                                &mut checkpoint,
-                                &mut actual,
-                            );
-                            if let Some(record) = observation {
-                                record.work_arithmetic(PublicArithmeticWorkObservation::finished(
-                                    facts, actual,
-                                ));
-                            }
-                            result
-                        }
-                    };
-                    let cpu = cpu.and_then(ThreadCpuStamp::finish);
-                    if let Some(charge) = mutation_cpu {
-                        charge.full_work_ns.set(cpu);
-                        charge
-                            .unavailable
-                            .set(charge.unavailable.get() || cpu.is_none());
-                        if cpu.is_none() {
-                            charge.workers.unknown();
-                        }
-                    }
-                    if let Some(record) = observation {
-                        record.work_finished(cpu, result.is_ok());
-                    }
-                    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                    m.work_ns = m.work_ns.saturating_add(elapsed_ns(start));
-                    m.work_finished += 1;
-                    if result.is_err() {
-                        m.work_failed += 1;
-                    }
-                    drop(m);
-                    let checked = result?;
-                    if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
-                        live.work_verified(&checked)?;
-                    }
-                    Ok(checked)
-                },
-                &ExecutionControl::new(
-                    &|_| {
-                        task_alive(deadline, stop, cancelled)?;
-                        if let Some(checkpoint) = &continuous_progress {
-                            checkpoint.check()?;
-                        }
-                        live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
-                    },
-                    mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
-                ),
-                super::SubmitDispatchContext {
-                    observation,
-                    packet_settings: None,
-                    public_proof_before_unowned_task: true,
-                    termination_cpu: live_cpu
-                        .and_then(|cpu| cpu.live.as_ref())
-                        .map(|live| ServiceMutationCpuCheckpoint::from_actual_live(live.clone()))
-                        .as_ref(),
-                },
-            )
-        }
+        Request::Submit { .. } => unreachable!("Submit dispatched above"),
         Request::GrowthSubmitV1 { .. }
         | Request::GrowthPacketStatusV1 { .. }
         | Request::GrowthHeadV1 => unreachable!("growth dispatched above"),
@@ -2099,7 +2172,7 @@ fn serve_public_protected_v3_inner(
     node: Arc<Mutex<Node>>,
     lifetime: Duration,
     stop: Arc<AtomicBool>,
-    server: PublicServer,
+    mut server: PublicServer,
     observations: (Arc<Mutex<PublicMetrics>>, Option<PublicRequestObserver>),
 ) -> Result<PublicMetrics> {
     let (metrics, observer) = observations;
@@ -2144,6 +2217,7 @@ fn serve_public_protected_v3_inner(
         owner.bind_public_service_cpu_domain(&server.mutation_cpu_domain())?;
         owner.settings().clone()
     };
+    server.install_default_w1_rejection_cache()?;
     let end = Instant::now() + lifetime;
     let (proof_tx, proof_rx) = mpsc::sync_channel::<Task>(2);
     let (read_tx, read_rx) = mpsc::sync_channel::<Task>(2);
@@ -3776,7 +3850,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
+    fn w1_negative_cache_explicit_settings_are_bounded_before_service_startup() {
         let make = || {
             PublicServer::new(
                 DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),

@@ -1,6 +1,53 @@
+**Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
+
+> Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.
+
+
+> Frozen candidate fa6388d completed 666/666 named controls but its overall source check failed on one stale workflow blob binding. The full failed attempt and source-before/after are retained in [the final evidence record](../../evidence/pon-business-gates-819309-final-20261107/README.md#8-first-frozen-candidate-source-control-failure-retained). The follow-up fixes that one corpus pin without changing the checker, workflow or production Rust. Native validation starts only on the corrected frozen commit; original business gates remain HOLD.
+
+
+> Final 819 evidence readback: all 14 core lanes and 20/20 original W1 artifacts are independently retained and verified (24 native manifests, 632 campaigns). Transport v1/v2 failures and Range v3 recovery remain separate. Business qualification is still HOLD. The ordinary Legacy final admission-root candidate requires its own frozen-source 666 controls and 16 library plus one independent History exact run; no earlier result certifies this candidate. See [complete final evidence](../../evidence/pon-business-gates-819309-final-20261107/README.md).
+
+The [complete 819 record](../../evidence/pon-business-gates-819309-final-20261107/README.md)
+binds real push 819309fd312298e099642e1253b1d4ba07113e98 and its original H/M
+matrix through ProfHepta and the HeptaRuntime local GitHub channel. All 666 source
+controls, strict workspace Clippy and linked inventory passed. One complete Node
+package then finished with 1,504 native passes, 12 failures and 57 ignored tests
+across all 67 harnesses; doc-tests separately passed four. Full source and binaries
+matched before/after. Three failures directly report CPU-budget refusal, eight
+report PUBLIC_HOST_KERNEL_PARENT, and one retains a thread panic/Disconnected
+without a confirmed Host cause. Preserve every original failure and denominator.
+
+Real CI closed 37 jobs at 26 success / 11 failure and 34 native lanes at
+24 success / 10 failure; all 136 source steps passed. Four service and both fresh
+jobs still failed pressure confirmation. History returned x64 H/M 2,791 / 3,386
+of 4,105 imports; ARM H/M returned 4,104, stored all packets and cancelled
+activation at cursors 3,782 / 3,701. Every confirmer remained active at genesis.
+These are separate observations from e70 and d26, not paired speed comparisons.
+
+The follow-up connects complete-input arithmetic only to classical Legacy
+ordinary admission's final current-active-State root fence. Keep every actual
+SQL/claim, writer/schema, callback, CPU and commit obligation. Require the new
+warm-corruption/rollback/cold-open regression, retained exact controls and the
+separately declared affected Legacy History test on the new frozen source.
+PQ/Growth/Authenticated semantics and original business gates are unchanged;
+touched-set/COW migration remains a distinct unclosed requirement.
+
+**Prior combined-source control attempt (93277), 2026-11-07 UTC — retained failure:** The frozen
+93277a001f4f8a42be65166f6513177b46cddf5b source completed all 665 controls:
+663 passed, one failure and one error in the exact Host lock controls. Cell's
+202 controls passed; strict Clippy and the complete 1,573-test linked inventory
+also passed preparation, with no native bodies executed. Preserve
+[the complete attempt and reviewed lock-construction correction](../../evidence/pon-business-gates-readback-20261107/README.md).
+Canonicalize only a newly O_EXCL-created lock descriptor to the already required
+0444 mode; never repair existing locks or relax Host checks. One real-child
+umask regression raised the source roster to 666. The later 819 execution and
+real CI outcomes are retained above; no previous pressure, History, CPU-budget,
+missing-artifact or qualification failure is discarded.
+
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 22).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 23).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -16,6 +63,177 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 [applicability](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
 
 ## 0. One authority and explicit retirement
+
+**Original business readback and component follow-up, 2026-11-07 UTC — HOLD:**
+The [retained business readback](../../evidence/pon-business-gates-readback-20261107/README.md)
+records real push head `d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89`,
+resolver-observed main `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`
+and ordered-parent merge `7805f1445aec6a31152b50c3d28f5eb6db63305c`.
+Both workflows used those same identities: 37 jobs ended 22 success / 15 failure;
+34 native lanes ended 20 success / 14 failure. All 136 source-control steps
+passed, without converting any business failure into success.
+
+All four original 4-second/16-worker service lanes and both fresh-challenge jobs
+still failed confirmation under the original Host budgets. Every cohort retained
+7/7 successful honest submissions but only 0/1 pressure confirmations.
+All four State lanes passed six named controls and 40 main migration tests each;
+the two one-test FIFO subprocess summaries are not extra main tests.
+History x64 H/M returned 3,917/4,105 imports before the original server lifetime
+expired. ARM H/M returned 4,104/4,105, stored all 4,105 packets, and cancelled
+activation at cursors 3,916 / 3,923. All four confirmer active states remained
+genesis. Rows, RPC returns and activated state remain separate obligations.
+
+Preserve local d26's 1,161 pass / three failure / 31 ignored result. Two later
+one-attempt PQ passes do not erase its failures. The 619 lexical-scope lint fix
+has exact native and strict-Clippy evidence, including the rejected zero-test
+selector. The 205 borrowed-packet component passed 22 exact tests and strict
+Clippy; its 768-trial observation retained 384 expected codec errors and about
+13% component CPU savings. The 5fdf adjacent-Cell scan memo passed seven exact
+tests and strict Clippy plus four predeclared criteria across 128 ABBA trials.
+Its original >8 MiB test nevertheless failed the paid-CPU gate at
+3,376,700,755 ns. Original History offers little adjacent-value reuse.
+Neither component establishes service TPS, complete touched-set state or COW.
+
+CodeQL execution passed with Rust 568 findings, Python two, an internal Rust
+extraction error and 19 extraction warnings retained. Historical artifact
+`11531476198` remains unavailable/UNKNOWN; its cause is not inferred.
+Preserve acc2's concurrent Cell work and all original failures. Final combined
+202 formal tests, 103 CI contract controls, 12 native Cell tests, retained
+readers, exact source/graph checks, native/Clippy suites and the real H/M
+business matrix remain pending. Later remote changes require their own review.
+Publication uses the user-designated ProfHepta administrator through the
+HeptaRuntime local GitHub channel, preserving the existing integration branch
+and normal protections; no local result authorizes runtime activation.
+
+**Finite multimodal computation and native Cell consumers, 2026-11-07:**
+Continue the same integration candidate with two separately named profiles.
+The [multimodal V3 relation](specs/pon/USEFUL_CELL_MULTIMODAL_V3.md) reexecutes raw
+UTF-8/RGB8/PCM16 preprocessing, parameterized encoders, a residual MLP, routed
+rank-two adapters, the head and an explicit integer training surrogate. Every
+forward dense operator has its own complete W1 proof bound to its actual
+intermediate tensor. The [native Cell profile](specs/pon/USEFUL_CELL_NATIVE_V1.md)
+adds real Rust Node/CLI verification of the bounded stateful source router;
+expected task bytes come from the owner channel and parent state/time from
+verified Node history. Preserve native historical UNIX-second consensus
+semantics and V3's declared millisecond lane separately from current use and
+Hepta monotonic-microsecond owner effects.
+These profiles do not silently share proof domains or constitute arbitrary
+multimodal runtime support. Ordinary runtime owner-context wiring, genuine
+FinalUse/checkpoint composition and later model use require their own actual
+consumer evidence. External delivery, production adoption, independent quality
+and cheapest-legal-work qualification remain open. No local pass activates a
+new consensus rule or lifts these distinct gates.
+The [multimodal evidence](../../evidence/pon-useful-cell-multimodal-v3-20261107/README.md)
+retains the finite controls and complete proof material without promoting
+generated arithmetic labels into task-quality evidence.
+The [native evidence](../../evidence/pon-native-cell-v1-20261107/README.md)
+retains full owner inputs, claims and verified-parent packets plus fresh-process
+historical replay. The separate private Hepta owner path does not consume this
+public native proof; proof-to-owner composition remains an explicit open gate.
+The [integration record](../../evidence/pon-cell-integration-v1-20261107/README.md)
+retains original-source preparation, the unchanged V1/V2 replay, mandatory CI
+controls, raw source checks and failed observations without changing qualification.
+The [recovered concurrent record](../../evidence/pon-cell-concurrent-revalidation-20261107/README.md)
+pins combined source `acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030`, retains its
+affected native/CI controls and actual non-force candidate publication, and
+separates sparse build inputs from complete-tree checks. Its recovery disclosure
+distinguishes restored original archives from new checks and unavailable local
+sidecars. Native cold replay covers two claims/ten proofs across six verifier
+invocations and three stores; repeats change none of the open gates above.
+
+**Original business gates, continued 2026-11-07 America/New_York:**
+Continue the same integration branch after published
+`96e1eede091153199894532c91430bfc0f8e4572`. ProfHepta is the project
+administrator and the designated local GitHub publication identity. Ordinary
+classical V3 service startup installs a bounded exact mathematical refusal
+cache (256 slots, 30 seconds, at most 32 KiB retained Rust objects); a prior
+explicit positive configuration wins. Only completed Transcript/Product failures
+may be reused. Full proof bytes, profile, challenge, task and target identify a
+fact; new proofs and valid work retain native verification. Original caller,
+current context, cancellation, deadline and actual CPU ownership still apply.
+PQ, Growth and the separate arithmetic profile do not acquire this default.
+Per-request observations distinguish a found fact, a returned cached refusal,
+native-verifier entry and actual replay, including incomplete observations.
+The fresh-challenge reader must refuse every exact-fact hit and inconsistent
+path; it preserves the original business requirement and legacy records.
+
+Classical Legacy admission may lend a fully read-back historical parent State
+once to its child's readback in the same original writer transaction, after
+all intended writes. This excludes active-parent KV reads, all PQ/Growth/
+Authenticated profiles, and a child's actual snapshot path. Actual SQL linkage,
+delta values, roots, complete parent equality, closed schema, no-write epoch,
+transaction identity and final callback checks remain required. Failure to
+qualify the closed schema retains both original reads; changed transaction
+identity remains an integrity error. See [State recovery](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md)
+and the [business continuation record](../../evidence/pon-original-business-continuation-20261107/README.md).
+These changes do not complete touched-set migration or close the original
+4-second/16-worker service or 4,105-block History gates. Preserve the e70
+baseline 1/1 at 3.098539910 seconds, pressure 0/1, x64 2,362/4,105 and ARM
+4,104/4,105 with all rows but active genesis and cancelled cursor 3,404.
+
+Preserve the existing PR path and add a separate real push source entry only
+for the same integration branch. Freeze the pushed head and resolver-observed
+main, reproduce the canonical ordered-parent merge in every worker, and retain
+both success and attempted/unverified failure contexts. The original complete
+source verifier, 54 native command scripts and all 34 original priority/W1
+matrix lanes remain required. The two workflows may contribute to one merged
+result only when their head, base and merge identities all agree. These source
+controls do not substitute for original-resource business observations.
+
+**Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
+Continue the existing #688 candidate from
+`e70f13448aad715286fb8eb56fc802b09db643a3`. Strict packet envelopes may construct
+the identical request after complete lowercase-hex/framing checks; bounded
+socket reads use the already reserved initialized buffer. Preserve every ticket,
+signature, work replay, live Host check, original deadline and resource ceiling.
+Classical mixed-sender execution skips speculative state work whose sender nonce
+already has an earlier transaction; every signature and canonical state effect
+still executes, with the old complete-speculation path retained as a test oracle.
+PQ and Growth keep their existing serial state-owner semantics.
+
+Classical Legacy reorganization and ordinary admission's final current-active
+State fence may reuse the existing bounded full-input root arithmetic. Actual SQL rows, canonical grammar, untouched corruption,
+current stored roots, atomic owner/cursor checks and cancellation remain checked;
+PQ, Growth and Authenticated profiles retain their original root validation.
+This still traverses complete State and is not touched-set/COW completion.
+The [continuation record](../../evidence/pon-throughput-closure-20261107/README.md)
+separates exact-source component controls, paired cost observations and the
+unchanged original 4-second/16-worker and 4,105-block business gates. Failed
+confirmation summaries retain all available hostile attempts, late/error returns,
+repeated inputs, missing observations and nested CPU ownership. Review existing
+SQLite source pins, actual accept-loop readiness and local CodeQL SARIF ownership
+without importing sibling-branch qualification. No parameter, consensus choice,
+production activation or original failed result is promoted by this work.
+
+Frozen native tree `807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7` completed eight
+512-block Legacy observations with identical final and cold-reopened State.
+Activation wall median decreased about 25.3%, while complete-process cost stayed
+approximately unchanged; repeated-sender reexecution decreases likewise do not
+establish confirmed throughput. Full Node lib execution retains three
+environment-denied Unix-socket startup failures alongside 1,150 passes and 31
+ignored tests. Preserve the concurrent `271a87f...` and `3d1b650...` source/evidence
+changes and the strict CodeQL source guard; separately index the later historical
+crypto scan lock rather than rewriting its original capture. Exact outcomes,
+all failed setup attempts and remaining original-resource gates are in the
+continuation record above.
+
+**Stateful useful-Cell computation, 2026-11-07 America/New_York:** Continue
+the existing #688 candidate with the separately named
+[V2 reference relation](specs/pon/USEFUL_CELL_RELATION_V2.md). Replay actual
+source preprocessing, feature/expert masks, all five W1 products, recurrent
+memory, sampling state, STOP/abstention/tool proposals and an optional exact
+masked/clipped momentum update. Bind actual intermediate values to one task
+and reject independently valid segments from another task. Separate historical
+parent/protocol-time verification from current-clock verification; neither
+pure result grants owner authority. Integrate consumer expected context with
+the existing Hepta guarded generation journal, CURRENT and FinalUse boundaries,
+not a second operation/checkpoint store. Preserve V1 source and semantics.
+The finite integer source-router profile is not ordinary multimodal Hepta,
+a native Node work entry, a succinct proof, a training-quality result or work
+hardness qualification. Existing service, History, recovery and PQ gates remain
+independent and their failed evidence remains retained.
+The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
+contains the complete local replay, counterexample/repair and source-pinned gates.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from

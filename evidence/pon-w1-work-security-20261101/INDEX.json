@@ -64,6 +64,13 @@
       "sha256": "a22fc89e5a26a1e5379fad4afde15a06efa2c48ed32fb5e453b1720c6c526fd5"
     },
     {
+      "bytes": 2611,
+      "kind": "subsequent-codeql-scan-lock-preparation-20261107",
+      "original_capture_artifact": false,
+      "path": "matching-direct-deps/harness/crypto/Cargo.lock",
+      "sha256": "a5282de5bdb579a886a8ca579aa89a419280548a4ff93e04791dc670d9d4da60"
+    },
+    {
       "bytes": 189,
       "kind": "byte-preserved-original-artifact",
       "path": "matching-direct-deps/harness/crypto/Cargo.toml",

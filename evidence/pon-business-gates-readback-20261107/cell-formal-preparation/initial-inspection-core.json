@@ -1,0 +1,93 @@
+{
+  "schema": "trnm-cell-formal-preparation-inspection-v1",
+  "at": "2026-11-07T16:59:46.841388+00:00",
+  "root": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "head": "9b70db69b5a7a7cdd0b73b273f189211d507dfe2",
+  "tree": "2195b7d2e091a06c819554e82a335d354ce0d93a",
+  "historical_source": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "git_flags": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1"
+  },
+  "preflight_exit": 0,
+  "runtime": {
+    "executable": "/usr/bin/python3",
+    "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "implementation": "cpython",
+    "optimize": 0,
+    "numpy": "1.26.4",
+    "cryptography": "41.0.7"
+  },
+  "selector": {
+    "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+    "bytes": 15358,
+    "sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+    "equals_HEAD": true
+  },
+  "class_definition_lines": [
+    {
+      "line": 9,
+      "text": "from ledger import FAMILY,require"
+    },
+    {
+      "line": 10,
+      "text": "DIM=257;CLASSES=['M00','M04','M10'];SCALE=1024"
+    },
+    {
+      "line": 22,
+      "text": "    require(model['feature']=='signed-token-hash-256-clipped8-plus-bias-v1'and model['classes']==CLASSES,'FEATURES')"
+    },
+    {
+      "line": 23,
+      "text": "    require(model['schema']=='hepta-source-owner-linear-256-v1'and model['family']==FAMILY.hex()and model['scale']==SCALE,'FAMILY')"
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/model.json",
+      "head_blob_read_exit": 0,
+      "worktree_present": true,
+      "worktree_symlink": false,
+      "expected_bytes": 14174,
+      "expected_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+      "expected_git_blob": "16894c31cefe5e5edda80e7b4b42ed60a23769f6",
+      "actual_bytes": 14174,
+      "actual_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+      "bytes_equal_HEAD": true,
+      "model_source": "9fedf7ecbbe07177069c030592b4e03dcffebb81"
+    },
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/consumer.json",
+      "head_blob_read_exit": 0,
+      "worktree_present": true,
+      "worktree_symlink": false,
+      "expected_bytes": 227036,
+      "expected_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+      "expected_git_blob": "02ea421b7b14cd5198af6bc20d0a9188da2279cb",
+      "actual_bytes": 227036,
+      "actual_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+      "bytes_equal_HEAD": true
+    },
+    {
+      "path": "evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json",
+      "head_blob_read_exit": 0,
+      "worktree_present": true,
+      "worktree_symlink": false,
+      "expected_bytes": 80283,
+      "expected_sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+      "expected_git_blob": "c2a1cc28844ec5f7e68f88fb481935b3489a6b30",
+      "actual_bytes": 80283,
+      "actual_sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+      "bytes_equal_HEAD": true
+    }
+  ],
+  "historical_queries": {
+    "commit_exit": 0,
+    "tree_exit": 0,
+    "inventory_exit": 128
+  },
+  "dirty_porcelain_bytes": 85714,
+  "dirty_porcelain_sha256": "7d9f192a21410c48542988f3c972cf3252943efa860f046215f28714a0a2be0e",
+  "dirty_line_count": 717,
+  "full_tree_clean_claim": false
+}

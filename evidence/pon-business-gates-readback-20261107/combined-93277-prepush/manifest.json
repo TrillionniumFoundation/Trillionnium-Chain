@@ -1,0 +1,400 @@
+{
+  "schema": "trnm-final-native-validation-v1",
+  "phase": "prepush",
+  "commit": "93277a001f4f8a42be65166f6513177b46cddf5b",
+  "started_utc": "2026-11-07T18:05:30.259536+00:00",
+  "started_unix": 1794074730.2595687,
+  "result": "PREPUSH_NATIVE_CHECKS_PASS",
+  "current_step": null,
+  "steps": [
+    {
+      "label": "preflight",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.11568498704582453,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/preflight.log",
+        "bytes": 170,
+        "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "source-before",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "93277a001f4f8a42be65166f6513177b46cddf5b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/source-before.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 3.0236839049030095,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/source-before.log",
+        "bytes": 423,
+        "sha256": "95071e4511a81893dcbb9f8f64e3baa6b04ed43d3978b48b8db19ca8bac3ed05"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "toolchain",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.01688920590095222,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/toolchain.log",
+        "bytes": 36,
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "rustc",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustc",
+        "+1.95.0",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.03261893009766936,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/rustc.log",
+        "bytes": 196,
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "rustdoc",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustdoc",
+        "+1.95.0",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.03298576199449599,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/rustdoc.log",
+        "bytes": 38,
+        "sha256": "84ab52888eabc8158cbebaffa261763e982a8b32b8d7d791117447013a0ab4fb"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "workspace-strict-clippy",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "93277a001f4f8a42be65166f6513177b46cddf5b",
+        "--tested",
+        "93277a001f4f8a42be65166f6513177b46cddf5b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/records",
+        "--label",
+        "workspace-strict-clippy",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 71.7566541149281,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/workspace-strict-clippy.log",
+        "bytes": 238,
+        "sha256": "5f3368048d714f796d34586d903f0ecc3657a49a0c4cc18e4e6ec9660a4e4f8f"
+      },
+      "source_command_receipt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/records/workspace-strict-clippy.json",
+        "bytes": 2562,
+        "sha256": "097adc241da28872025923c928d7402c40a2a841988a7134ad9f701336ead67a"
+      },
+      "native_status": "command_succeeded",
+      "native_exit_code": 0,
+      "source_unchanged": true,
+      "native_log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/records/workspace-strict-clippy.log",
+        "bytes": 7447,
+        "sha256": "c1def95a1e901c138e9e9434655d3010f69c48289752c598a7ea0b4b31c03f12"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "node-no-run",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "93277a001f4f8a42be65166f6513177b46cddf5b",
+        "--tested",
+        "93277a001f4f8a42be65166f6513177b46cddf5b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/records",
+        "--label",
+        "node-no-run",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 269.15284341597,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/node-no-run.log",
+        "bytes": 226,
+        "sha256": "dde7b79c32dfe91b3b5579bae9d70c7db944c4d21a8ea145f9a81b3bd559f9a2"
+      },
+      "source_command_receipt": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/records/node-no-run.json",
+        "bytes": 2551,
+        "sha256": "13c88347183bd78ce90b58f815f771390908f57c2f09804c93665d0f395601e3"
+      },
+      "native_status": "command_succeeded",
+      "native_exit_code": 0,
+      "source_unchanged": true,
+      "native_log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/records/node-no-run.log",
+        "bytes": 224303,
+        "sha256": "2f3999ce97b554d7098e9df8da100dbb770d1c6c8b949aacacb03dc9f8a01f54"
+      },
+      "effective_exit_code": 0
+    },
+    {
+      "label": "source-after",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "93277a001f4f8a42be65166f6513177b46cddf5b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/source-after.json"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 3.07364667695947,
+      "log": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/source-after.log",
+        "bytes": 423,
+        "sha256": "95071e4511a81893dcbb9f8f64e3baa6b04ed43d3978b48b8db19ca8bac3ed05"
+      },
+      "effective_exit_code": 0
+    }
+  ],
+  "source_root": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "target_directory": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target",
+  "driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/run-final-native-v2.py",
+    "bytes": 36640,
+    "sha256": "22e1e8df08ca0d9417586ad333c06b2a09e652d11ade204bab732af0b156cdff"
+  },
+  "requirements": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/requirements.json",
+    "bytes": 3871,
+    "sha256": "1b4193b9ee9d718b25e858303341fb5f412e63222c6b308e5c4d32f47792bbcb"
+  },
+  "disk_before": {
+    "time_utc": "2026-11-07T18:05:30.260609+00:00",
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107",
+    "total_bytes": 982240026624,
+    "used_bytes": 828003426304,
+    "available_bytes": 134238326784,
+    "f_bavail": 32773029,
+    "f_bfree": 37655420,
+    "f_frsize": 4096
+  },
+  "runner_pid": 1243850,
+  "provider_exports": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider.exports",
+    "bytes": 585,
+    "sha256": "a7459f95527deeab783662483a6f203913fd05ac7fabf4608d00cf2e52479dc4"
+  },
+  "provider_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "provider_binary": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+    "bytes": 8933408,
+    "sha256": "79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437"
+  },
+  "removed_inherited_build_override_names": [],
+  "environment": {
+    "CARGO_HOME": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "OPENSSL_DIR": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install",
+    "OPENSSL_STATIC": "1",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/lib/ossl-modules",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider-temp/trnm-pq-provider-3.5.9.XwCOxz9W/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "RUSTFLAGS": null,
+    "RUSTDOCFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "CARGO_TERM_COLOR": "never",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "CELL_NATIVE_V1_EVIDENCE_DIR": null,
+    "GITHUB_ACTIONS": null,
+    "GITHUB_RUN_ID": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "RUNNER_ARCH": null
+  },
+  "phase_rules": {
+    "prepush_test_bodies": false,
+    "full_node_package_attempts": 1,
+    "full_node_command_timeout_seconds": 21600,
+    "recommended_hepta_supervisor_timeout_seconds": 22200,
+    "outer_timeout_changes_internal_test_deadlines": false,
+    "native_ignored_benchmarks_enabled": false,
+    "favorable_reruns": false
+  },
+  "qualification": {
+    "original_business_gates": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "throughput": false,
+    "whole_chain_quantum_security": false
+  },
+  "current_step_started_utc": "2026-11-07T18:11:29.059902+00:00",
+  "current_step_started_unix": 1794075089.0599196,
+  "current_step_timeout_seconds": 600,
+  "tree": "3e6cdf8a7532145069c9282f9b59d2fc8a8cd081",
+  "inventory_targets_completed": 67,
+  "inventory_targets_total": 67,
+  "inventory": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/inventory.json",
+    "bytes": 407162,
+    "sha256": "d6af58d9fc47d4e0323036a7e19e155d120d0a860492528ce9bfd6d79f2d6533"
+  },
+  "inventory_summary": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/inventory-summary.json",
+    "bytes": 15270,
+    "sha256": "0496a0108c2167c923dc4f31b468a7eafaaffaec9c3c24450de76a926663eed4"
+  },
+  "expected_counts": {
+    "integration_targets": 65,
+    "cell_tests": 12,
+    "library_tests": 1204,
+    "library_ignored": 33,
+    "all_native_test_targets": 67,
+    "native_test_inventory_total": 1573,
+    "native_default_body_count": 1516,
+    "native_ignored_total": 57
+  },
+  "preserved_primary_binaries": [
+    {
+      "label": "node-lib",
+      "actual_source": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/deps/trnm_pon_node-3d075b189916f208",
+        "bytes": 78551656,
+        "sha256": "2fc3c302902558304845b47b9a52fac7f84a1a1264347307cbb14b24779edb12"
+      },
+      "preserved": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/preserved-binaries/node-lib",
+        "bytes": 78551656,
+        "sha256": "2fc3c302902558304845b47b9a52fac7f84a1a1264347307cbb14b24779edb12"
+      }
+    },
+    {
+      "label": "cell-native-v1",
+      "actual_source": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/deps/cell_native_v1-106f596f24b9bbcf",
+        "bytes": 19359232,
+        "sha256": "ea89609fe6e680b6cd10eb1733ae324c7a5d0e6f44b0ea109d767b67d1caca82"
+      },
+      "preserved": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/preserved-binaries/cell-native-v1",
+        "bytes": 19359232,
+        "sha256": "ea89609fe6e680b6cd10eb1733ae324c7a5d0e6f44b0ea109d767b67d1caca82"
+      }
+    },
+    {
+      "label": "native-cli",
+      "actual_source": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/final-target/debug/trnm-pon-node",
+        "bytes": 25829776,
+        "sha256": "f0b42004446e4f1b86aa47000a85eaaa2e3f0717071b923a0b9842ed8859c46a"
+      },
+      "preserved": {
+        "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/preserved-binaries/native-cli",
+        "bytes": 25829776,
+        "sha256": "f0b42004446e4f1b86aa47000a85eaaa2e3f0717071b923a0b9842ed8859c46a"
+      }
+    }
+  ],
+  "source_receipts": {
+    "before": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/source-before.json",
+      "bytes": 423,
+      "sha256": "95071e4511a81893dcbb9f8f64e3baa6b04ed43d3978b48b8db19ca8bac3ed05"
+    },
+    "after": {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/93277a001f4f8a42be65166f6513177b46cddf5b/prepush/source-after.json",
+      "bytes": 423,
+      "sha256": "95071e4511a81893dcbb9f8f64e3baa6b04ed43d3978b48b8db19ca8bac3ed05"
+    },
+    "byte_identical": true
+  },
+  "disk_after": {
+    "time_utc": "2026-11-07T18:11:32.147410+00:00",
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107",
+    "total_bytes": 982240026624,
+    "used_bytes": 829956866048,
+    "available_bytes": 132284887040,
+    "f_bavail": 32296115,
+    "f_bfree": 37178506,
+    "f_frsize": 4096
+  },
+  "failed_step": null,
+  "finished_utc": "2026-11-07T18:11:32.147433+00:00",
+  "finished_unix": 1794075092.1474402
+}

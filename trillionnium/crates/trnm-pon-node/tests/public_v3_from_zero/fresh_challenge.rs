@@ -112,6 +112,28 @@ fn construction_coverage(phase: &Value, settings: &Settings, target: Hash) -> Va
     })
 }
 
+// Read only the completed traffic observations. Missing observations mean
+// unknown, not a disabled cache; this adds no work or time to either phase.
+fn observed_negative_cache_enabled(phases: [&Value; 2]) -> Option<bool> {
+    for phase in phases {
+        let records = phase.get("observations")?.get("records")?.as_array()?;
+        let mut observed = false;
+        for record in records {
+            if record.get("full_work_started")?.as_bool()? {
+                let cache = record.get("work_rejection")?;
+                if cache.get("schema")?.as_str()? != "public-v3-work-rejection-observation-v1" {
+                    return None;
+                }
+                observed = true;
+            }
+        }
+        if !observed {
+            return None;
+        }
+    }
+    Some(true)
+}
+
 #[test]
 #[ignore = "explicit native four-second/16-worker business acceptance; retains failures and asserts the actual six-depth target"]
 fn fresh_challenge_signed_confirmation_keeps_original_pressure_budget() {
@@ -187,6 +209,7 @@ fn fresh_challenge_signed_confirmation_keeps_original_pressure_budget() {
         && baseline["finite_business_target_met"] == true
         && pressure["invariant_target_met"] == true
         && pressure["finite_business_target_met"] == true;
+    let negative_cache_enabled = observed_negative_cache_enabled([&baseline, &pressure]);
     let report = json!({
         "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
         "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
@@ -202,7 +225,8 @@ fn fresh_challenge_signed_confirmation_keeps_original_pressure_budget() {
         "honest_chain_process_cpu_scope": "entire process during seven-block acquisition before service; not isolated W1 or exclusive producer CPU",
         "signed_honest_packets": packets.iter().map(|packet| hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),
         "construction_coverage": coverage, "phases": [baseline, pressure],
-        "same_signed_business_packets": true, "negative_cache_enabled": false,
+        "same_signed_business_packets": true, "negative_cache_enabled": negative_cache_enabled,
+        "negative_cache_observation_source": "actual-request-work-rejection-observations-v1",
         "finite_target_met": passed,
         "scope": "explicit diagnostic with actual business assertion; separate from unchanged retained-packet original gate; one host/operator, no WAN fairness or cheapest-work claim",
         "public_network_ready": false, "work_profile_qualified": false,

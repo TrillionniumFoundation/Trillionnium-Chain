@@ -1,0 +1,2 @@
+explicit_cli_choice_is_required_and_old_profiles_never_change: test
+local_capacity_command_binds_the_checked_state_and_rejects_old_profiles_before_open: test

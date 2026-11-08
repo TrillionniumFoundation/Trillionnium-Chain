@@ -1,0 +1,42 @@
+{
+  "command_record": "commands/03-test_integration_push_source.json",
+  "duplicate_test_names": {},
+  "expected_tests": 13,
+  "missing_expected_test_names": [],
+  "observed_full_test_ids": [
+    "__main__.PushSourceControls.test_cli_refusal_retains_attempted_context_and_independent_workflow_inputs",
+    "__main__.PushSourceControls.test_conflicts_refuse_without_a_merge_or_candidate_repair",
+    "__main__.PushSourceControls.test_context_corruption_and_independent_expected_values_are_refused",
+    "__main__.PushSourceControls.test_dirty_or_wrong_candidate_cannot_select_source",
+    "__main__.PushSourceControls.test_fast_forward_tree_still_has_two_ordered_parents",
+    "__main__.PushSourceControls.test_independent_head_and_merge_workers_reproduce_one_frozen_source",
+    "__main__.PushSourceControls.test_local_merge_driver_cannot_supply_the_selected_tree",
+    "__main__.PushSourceControls.test_real_diverged_merge_imports_tree_and_blob_closure",
+    "__main__.PushSourceControls.test_real_event_ref_after_repository_and_run_are_not_optional",
+    "__main__.PushSourceControls.test_workers_do_not_resolve_a_later_main",
+    "__main__.PushSourceControls.test_wrong_tree_and_reversed_parent_commit_cannot_borrow_correct_inputs",
+    "__main__.PushWorkflowControls.test_original_matrices_commands_and_pr_sources_keep_the_push_owner",
+    "__main__.PushWorkflowControls.test_trigger_resolver_source_and_retention_cannot_be_silently_removed"
+  ],
+  "observed_ran_tests": 13,
+  "observed_verbose_test_starts": 13,
+  "original_final_status_rows": [
+    "OK"
+  ],
+  "original_summary_rows": [
+    [
+      "13",
+      "3.500"
+    ]
+  ],
+  "passed": true,
+  "path": "scripts/ci/test_integration_push_source.py",
+  "process_exit_code": 0,
+  "process_timed_out": false,
+  "raw_log_bytes": 2176,
+  "raw_log_sha256": "7ddbd6861b45a9b17fe56768597e259a39f7756f5ba5026bd92d60a6530d76d8",
+  "scope": "Original unittest CLI output; counts are test methods, not subtests.",
+  "source_sha256": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4",
+  "strict_zero_failure_skip_expected_failure_success": true,
+  "unexpected_test_names": []
+}

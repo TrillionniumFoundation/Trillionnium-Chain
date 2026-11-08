@@ -1,0 +1,110 @@
+[
+  {
+    "artifact_id": 13572306286,
+    "zip_sha256": "d728c5ceb246f9ffb5efda9ae0ae8a160654618e969672680868bc496f93a71c",
+    "zip_bytes": 125680,
+    "members": [
+      {
+        "name": "codeql-results/rust/head/rust.sarif",
+        "bytes": 4128195
+      },
+      {
+        "name": "codeql-identity/rust/head/source-before.json",
+        "bytes": 423
+      },
+      {
+        "name": "codeql-identity/rust/head/worktree-diff-names.z",
+        "bytes": 0
+      },
+      {
+        "name": "codeql-identity/rust/head/worktree-diff-stat.txt",
+        "bytes": 0
+      },
+      {
+        "name": "codeql-identity/rust/head/worktree-status.z",
+        "bytes": 89
+      }
+    ],
+    "diagnostics": {
+      "source-before.json": {
+        "bytes": 423,
+        "sha256": "4ca97487d17cf6de13c749f6a9ec5c5aebd80f17a0f0bfb9abdf95379ded1a94",
+        "content": "{\n  \"base\": null,\n  \"candidate\": \"3d1b6507671ec694ce58e86d4063a125c8deeb66\",\n  \"kind\": \"head\",\n  \"prospective_merge\": null,\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"3d1b6507671ec694ce58e86d4063a125c8deeb66\",\n  \"tested_tree\": \"88337d7d8e3c164f3367a1d4739b92f498943c32\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 1026805524,\n  \"tracked_entries\": 10680,\n  \"tracked_worktree_verified\": true\n}\n"
+      },
+      "worktree-diff-names.z": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "content": [
+          ""
+        ]
+      },
+      "worktree-diff-stat.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "content": ""
+      },
+      "worktree-status.z": {
+        "bytes": 89,
+        "sha256": "e3de06fa9dca7fad8f48ce973212249f0098deb531896d8944e2182541d05b0a",
+        "content": [
+          "?? evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock",
+          ""
+        ]
+      }
+    }
+  },
+  {
+    "artifact_id": 13572306317,
+    "zip_sha256": "173cd98134e684cf3f297eb1363ab607db4277351f688a594af157e429064c33",
+    "zip_bytes": 125767,
+    "members": [
+      {
+        "name": "codeql-results/rust/prospective-merge/rust.sarif",
+        "bytes": 4128213
+      },
+      {
+        "name": "codeql-identity/rust/prospective-merge/source-before.json",
+        "bytes": 512
+      },
+      {
+        "name": "codeql-identity/rust/prospective-merge/worktree-diff-names.z",
+        "bytes": 0
+      },
+      {
+        "name": "codeql-identity/rust/prospective-merge/worktree-diff-stat.txt",
+        "bytes": 0
+      },
+      {
+        "name": "codeql-identity/rust/prospective-merge/worktree-status.z",
+        "bytes": 89
+      }
+    ],
+    "diagnostics": {
+      "source-before.json": {
+        "bytes": 512,
+        "sha256": "fb6f987760336e976c131b7019144acd5066e72c82da3b8ab4aadbc728ad4b77",
+        "content": "{\n  \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\",\n  \"candidate\": \"3d1b6507671ec694ce58e86d4063a125c8deeb66\",\n  \"kind\": \"prospective-merge\",\n  \"prospective_merge\": \"6afd57e4ac9aadc515a5f4bd2393cb85edad99f5\",\n  \"schema\": \"trnm-ci-source-v1\",\n  \"tested_commit\": \"6afd57e4ac9aadc515a5f4bd2393cb85edad99f5\",\n  \"tested_tree\": \"88337d7d8e3c164f3367a1d4739b92f498943c32\",\n  \"tests_executed_by_identity_check\": false,\n  \"tracked_bytes\": 1026805524,\n  \"tracked_entries\": 10680,\n  \"tracked_worktree_verified\": true\n}\n"
+      },
+      "worktree-diff-names.z": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "content": [
+          ""
+        ]
+      },
+      "worktree-diff-stat.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "content": ""
+      },
+      "worktree-status.z": {
+        "bytes": 89,
+        "sha256": "e3de06fa9dca7fad8f48ce973212249f0098deb531896d8944e2182541d05b0a",
+        "content": [
+          "?? evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock",
+          ""
+        ]
+      }
+    }
+  }
+]

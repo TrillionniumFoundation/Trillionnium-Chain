@@ -1,0 +1,41 @@
+{
+  "artifact_id": 13578922475,
+  "metadata": {
+    "id": 13578922475,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODkyMjQ3NQ==",
+    "name": "w1-legal-strategy-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+    "size_in_bytes": 35956683,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475/zip",
+    "expired": false,
+    "digest": "sha256:bddfba898cbb65140c16d3e906788d78dd0aa7b9c93b76039b23d1fa6553c097",
+    "created_at": "2026-11-07T14:58:02Z",
+    "updated_at": "2026-11-07T14:58:02Z",
+    "expires_at": "2026-12-07T14:57:59Z",
+    "workflow_run": {
+      "id": 42383368504,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "started_utc": "2026-11-07T16:20:31.124905+00:00",
+  "errors": [
+    "ValueError: ZIP metadata digest mismatch"
+  ],
+  "native_gate_validated": false,
+  "download_argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578922475/zip"
+  ],
+  "download_exit": 1,
+  "zip_bytes": 5079040,
+  "zip_sha256": "5372e0e0ed92f0efdcf905a55b16d2f17bbb4ca1e2568aaaa8cd42ca0ea4ed36",
+  "finished_utc": "2026-11-07T16:22:01.204036+00:00"
+}

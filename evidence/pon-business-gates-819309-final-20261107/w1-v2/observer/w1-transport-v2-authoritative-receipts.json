@@ -1,0 +1,411 @@
+{
+  "schema": "trnm-final819-w1-transport-v2-authoritative-receipts",
+  "all_original_ci_and_native_execution_unchanged": true,
+  "only_original_timeout_ids_requested": true,
+  "no_more_than_one_v2_get_per_id": true,
+  "v1_and_core14_unchanged": true,
+  "observed_qualifier": "Observer success means all six observations retained; five complete original artifacts/readers, one transfer UNKNOWN.",
+  "package_command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_transport_v2_package_b.py"
+  ],
+  "records": {
+    "final819_w1_transport_v2_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794083299992,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7b2a298-12894-bef",
+        "idempotency_key": "acceptance-final819-prepare-authorized-transport-v2",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7b2a298-12894-bef",
+        "request_digest": "050817cb947390d3308ff2df8c3186c793b846cfbf54f244490190e169e6066d",
+        "request_fingerprint": 362565933139726500,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7b2a298-12894-bef"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7b2a298-12894-bef"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_transport_v2_prep_status": {
+      "at_unix_ms": 1794083301360,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7b2a298-12894-bef",
+      "launch_nonce": "07391ae154fe132ec30688c2ba13d862",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 391,
+          "stored": 391
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_transportPrepRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7b2a298-12894-bef",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 391,
+        "offset": 0,
+        "size": 391,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_artifacts_transport_v2_819.py\", \"bytes\": 11297, \"sha256\": \"4f2ae33947d6ad05a3dabac276f81d5a8a6ba63c0a5be2003fd3fd92b3b048c0\"}\n{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/run_w1_pure_transport_v2_819.py\", \"bytes\": 5125, \"sha256\": \"feb9923de4af4df75d30745f1d1adfca570843a4c929b664096cbe25c204e3f9\"}\n"
+      }
+    },
+    "final819_w1_transport_v2_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_artifacts_transport_v2_819.py"
+        ],
+        "created_unix_ms": 1794083356372,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7b37ed4-12894-bf2",
+        "idempotency_key": "acceptance-final819-authorized-six-timeout-only-transport-v2",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7b37ed4-12894-bf2",
+        "request_digest": "fa50cb60784b1add09743f51596608cbb50c23499606a5ff30656de91e40f22d",
+        "request_fingerprint": 18037140122814323000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7b37ed4-12894-bf2"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7b37ed4-12894-bf2"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_transport_v2_pure_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "/home/qian-qi/throughput-final-ci-observation-20261107/run_w1_pure_transport_v2_819.py"
+        ],
+        "created_unix_ms": 1794083443938,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7b4d4e2-12894-bf4",
+        "idempotency_key": "acceptance-final819-once-pure-read-new-transport-v2-originals",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7b4d4e2-12894-bf4",
+        "request_digest": "00cea0695b4f9155ea2eae8bcd49fa436f98609d6eca92e76630e62cf0dc7d72",
+        "request_fingerprint": 58160219566346584,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7b4d4e2-12894-bf4"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7b4d4e2-12894-bf4"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_v2_final_transportStatus": {
+      "at_unix_ms": 1794085311462,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7b37ed4-12894-bf2",
+      "launch_nonce": "84c724db8a783f44bb8392cfc1055a33",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 2724,
+          "stored": 2724
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_v2_final_transportRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7b37ed4-12894-bf2",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 2724,
+        "offset": 0,
+        "size": 2724,
+        "text": "{\"artifact_id\": 13586253351, \"family\": \"legal-v2\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 140620167, \"manifest_count\": 1}\n{\"artifact_id\": 13586791050, \"family\": \"legal-v2\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 140676243, \"manifest_count\": 1}\n{\"artifact_id\": 13587135201, \"family\": \"factorial\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 174174768, \"manifest_count\": 1}\n{\"artifact_id\": 13586509176, \"family\": \"factorial\", \"status\": \"UNKNOWN\", \"errors\": [\"TransportTimeout: original artifact GET exceeded independent transport-v2 900s bound; no further retry\"], \"zip_bytes\": 170967040, \"manifest_count\": 0}\n{\"artifact_id\": 13586134600, \"family\": \"factorial\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 174217622, \"manifest_count\": 1}\n{\"artifact_id\": 13586459476, \"family\": \"factorial\", \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": [], \"zip_bytes\": 174292907, \"manifest_count\": 1}\n{\"schema\": \"trnm-final819-w1-transport-v2-stage1-readback\", \"candidate\": \"819309fd312298e099642e1253b1d4ba07113e98\", \"native_job_success_denominator\": 20, \"artifact_denominator\": 6, \"attempted\": 6, \"v1_original_artifact_denominator\": 20, \"v1_unknown_retained\": 6, \"stop_on_non_timeout_error_triggered\": false, \"plan\": {\"schema\": \"trnm-final819-w1-transport-v2-plan\", \"candidate\": \"819309fd312298e099642e1253b1d4ba07113e98\", \"original_run\": 42402618462, \"artifact_ids\": [13586134600, 13586253351, 13586459476, 13586509176, 13586791050, 13587135201], \"per_archive_get_seconds\": 900, \"maximum_parallel_downloads\": 2, \"get_attempts_per_selected_artifact\": 1, \"other_integrity_or_identity_error_stops_new_GETs\": true, \"already_inflight_GETs_preserved\": true, \"v1_seal_sha256\": \"c44f24f7f219a41d9a613b06e84a322ab052bd1a091e9d9c9bb8202ab94bd215\", \"original_v1_unknown_preserved\": 6, \"no_ci_or_native_execution\": true, \"original_business_limits_unchanged\": true}, \"verified_archive_source_manifest\": 5, \"unknown\": 1, \"identity_before\": {\"argv\": [\"/usr/bin/gh\", \"api\", \"--hostname\", \"github.com\", \"--method\", \"GET\", \"user\"], \"exit_code\": 0, \"timed_out\": false, \"error\": null, \"bytes\": 1221, \"sha256\": \"fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3\"}, \"identity_after\": {\"argv\": [\"/usr/bin/gh\", \"api\", \"--hostname\", \"github.com\", \"--method\", \"GET\", \"user\"], \"exit_code\": 0, \"timed_out\": false, \"error\": null, \"bytes\": 1221, \"sha256\": \"fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3\"}, \"identity_unchanged\": true, \"pure_readers_executed\": false, \"business_qualification\": false}\n"
+      }
+    },
+    "final819_w1_v2_final_pureStatus": {
+      "at_unix_ms": 1794085421237,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b7b4d4e2-12894-bf4",
+      "launch_nonce": "3913716e20f609741165df28f4d4292c",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 1645,
+          "stored": 1645
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "final819_w1_v2_final_pureRead": {
+      "audit_recorded": true,
+      "job_id": "1a1b7b4d4e2-12894-bf4",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 1645,
+        "offset": 0,
+        "size": 1645,
+        "text": "{\"artifact_id\": 13586253351, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586791050, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586509176, \"status\": \"UNKNOWN\", \"attempted\": false, \"exit_code\": null, \"native_campaign_commands\": null, \"errors\": [\"archive/source/manifest not authenticated; pure reader not attempted\"]}\n{\"artifact_id\": 13587135201, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586134600, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"artifact_id\": 13586459476, \"status\": \"COMPONENT_READBACK_COMPLETE\", \"attempted\": true, \"exit_code\": 0, \"native_campaign_commands\": 30, \"errors\": []}\n{\"schema\": \"trnm-final819-w1-transport-v2-pure-reader-coverage\", \"head\": \"819309fd312298e099642e1253b1d4ba07113e98\", \"github_jobs_success\": 20, \"artifact_denominator\": 6, \"original_v1_artifact_denominator\": 20, \"v1_failures_retained\": true, \"started_utc\": \"2026-11-07T20:30:51.185284+00:00\", \"finished_utc\": \"2026-11-07T21:03:41.156459+00:00\", \"script_sha256\": \"d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca\", \"observer_timeout_seconds_per_artifact\": 240, \"no_native_executed\": true, \"no_retry\": true, \"business_qualification\": false, \"complete_component_readbacks\": 5, \"unknown\": 1, \"original_native_campaigns_verified\": 150, \"original_native_manifest_count\": 5}\n"
+      }
+    },
+    "final819_w1_v2_package_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794083719932,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7b90afc-12894-c08",
+        "idempotency_key": "acceptance-final819-prepare-transport-v2-metadata-seal",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7b90afc-12894-c08",
+        "request_digest": "6d15a9bd9077d20100f4c486016929ed53152c384f40fd63eaf8eec440f3fe0b",
+        "request_fingerprint": 7860375356282754000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7b90afc-12894-c08"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7b90afc-12894-c08"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_v2_second_packagePrep": {
+      "audit_recorded": true,
+      "job_id": "1a1b7b90afc-12894-c08",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 194,
+        "offset": 0,
+        "size": 194,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_transport_v2_package.py\", \"bytes\": 12643, \"sha256\": \"3b86a258bad39a724766214e2c8e981673bc9147572e3371ae2adf91f7d788f5\"}\n"
+      }
+    },
+    "final819_w1_v2_package_b_prep_start": {
+      "audit_recorded": true,
+      "job": {
+        "args": [
+          "-"
+        ],
+        "created_unix_ms": 1794084361641,
+        "cwd": "/home/qian-qi/throughput-final-ci-observation-20261107",
+        "env_keys": [],
+        "executable": "/usr/bin/python3",
+        "execution_mode": "operator",
+        "host": "desktop",
+        "id": "1a1b7c2d5a9-12894-c2e",
+        "idempotency_key": "acceptance-final819-prepare-v2-package-frozen-source-binding",
+        "launch_error": null,
+        "launch_state": "launched",
+        "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b7c2d5a9-12894-c2e",
+        "request_digest": "e4dd32b1bdd22e9544d60ac7422881c8fa5bcfff1df90cc98e9fb8bcbc89e35b",
+        "request_fingerprint": 16491393149475893000,
+        "ssh_target": "desktop-ts",
+        "system_jobctl": false,
+        "unit": "hepta-runtime-job-1a1b7c2d5a9-12894-c2e"
+      },
+      "launch": {
+        "backend": "systemd",
+        "launcher_pid": null,
+        "ok": true,
+        "unit": "hepta-runtime-job-1a1b7c2d5a9-12894-c2e"
+      },
+      "local_record_pending": false,
+      "reused": false
+    },
+    "final819_w1_v2_progress5_builder": {
+      "audit_recorded": true,
+      "job_id": "1a1b7c2d5a9-12894-c2e",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 196,
+        "offset": 0,
+        "size": 196,
+        "text": "{\"path\": \"/home/qian-qi/throughput-final-ci-observation-20261107/build_w1_transport_v2_package_b.py\", \"bytes\": 14084, \"sha256\": \"119a9cc151c41ecbf84c1273a5c5d7f04ed329b892f907c1bf9773794dcc6c56\"}\n"
+      }
+    },
+    "final819_w1_v2_second_statFirst": {
+      "audit_recorded": true,
+      "job_id": "1a1b7b97e6c-12894-c0a",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 962,
+        "offset": 0,
+        "size": 962,
+        "text": "{\"utc\": \"2026-11-07T20:35:50.780867+00:00\", \"scope\": \"incomplete transfer byte progress only; no digest or native outcome inferred\", \"rows\": [{\"artifact_id\": 13586134600, \"zip_exists\": false, \"observed_zip_bytes\": null, \"stage1_complete\": false}, {\"artifact_id\": 13586253351, \"zip_exists\": true, \"observed_zip_bytes\": 140620167, \"stage1_complete\": true, \"coverage_status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": []}, {\"artifact_id\": 13586459476, \"zip_exists\": false, \"observed_zip_bytes\": null, \"stage1_complete\": false}, {\"artifact_id\": 13586509176, \"zip_exists\": true, \"observed_zip_bytes\": 8552448, \"stage1_complete\": false}, {\"artifact_id\": 13586791050, \"zip_exists\": true, \"observed_zip_bytes\": 140676243, \"stage1_complete\": true, \"coverage_status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": []}, {\"artifact_id\": 13587135201, \"zip_exists\": true, \"observed_zip_bytes\": 16482304, \"stage1_complete\": false}]}\n"
+      }
+    },
+    "final819_w1_v2_progress6_stat": {
+      "audit_recorded": true,
+      "job_id": "1a1b7c49507-12894-c3a",
+      "stderr": {
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "eof": true,
+        "next_offset": 1041,
+        "offset": 0,
+        "size": 1041,
+        "text": "{\"utc\": \"2026-11-07T20:48:06.534167+00:00\", \"scope\": \"interim file stat only, no inferred digest or native outcome\", \"rows\": [{\"artifact_id\": 13586134600, \"zip_bytes_so_far\": null, \"members_directory_exists\": false, \"stage1_receipt_exists\": false}, {\"artifact_id\": 13586253351, \"zip_bytes_so_far\": 140620167, \"members_directory_exists\": true, \"stage1_receipt_exists\": true, \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": []}, {\"artifact_id\": 13586459476, \"zip_bytes_so_far\": null, \"members_directory_exists\": false, \"stage1_receipt_exists\": false}, {\"artifact_id\": 13586509176, \"zip_bytes_so_far\": 127762432, \"members_directory_exists\": false, \"stage1_receipt_exists\": false}, {\"artifact_id\": 13586791050, \"zip_bytes_so_far\": 140676243, \"members_directory_exists\": true, \"stage1_receipt_exists\": true, \"status\": \"ARCHIVE_SOURCE_MANIFEST_VERIFIED_PURE_READER_PENDING\", \"errors\": []}, {\"artifact_id\": 13587135201, \"zip_bytes_so_far\": 158171136, \"members_directory_exists\": false, \"stage1_receipt_exists\": false}]}\n"
+      }
+    }
+  }
+}

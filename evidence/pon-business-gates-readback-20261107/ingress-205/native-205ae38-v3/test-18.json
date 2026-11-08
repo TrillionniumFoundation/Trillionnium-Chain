@@ -1,0 +1,27 @@
+{
+  "name": "test-18",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::tests::paid_envelope_malformed_body_is_accounted_before_signed_refusal",
+    "--",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "started_unix_ns": 1794068934596069917,
+  "ended_unix_ns": 1794068935191887852,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-18.log",
+  "log_bytes": 428,
+  "log_sha256": "6bcb61892b9c2ef512f0c9c62f125a77391ecf35a788ad6dd016e3e1140a1e3d"
+}

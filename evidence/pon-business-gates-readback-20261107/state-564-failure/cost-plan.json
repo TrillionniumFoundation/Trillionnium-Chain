@@ -1,0 +1,69 @@
+{
+  "schema": "trnm-same-scan-cost-execution-plan-v1",
+  "declared_before_measurement": true,
+  "declared_unix": 1794070145.8791013,
+  "commit": "564bd23a656061e272c4af22029a4829d71b4f64",
+  "tree": "0ad0ea567056ee523c8e28e09ed32af813aa0dc2",
+  "adoption_contract": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/state-cell-native-validation-fixed-20261107/adoption-contract-v2.json",
+    "sha256": "270d029283f07152da8feff2ceba6f23208289e820c9eb5d77eb5a7fc819279c"
+  },
+  "required_prior_controls": "All seven exact tests plus original named readers, strict workspace Clippy, byte-identical complete source receipts",
+  "execution_state": "NOT_STARTED_WAITING_FOR_ROOT_EXCLUSIVE_WINDOW",
+  "selectors": [
+    {
+      "label": "slot-scan-abba",
+      "test": "store::canonical_row_reuse_tests::complete_slot_scan_abba_records_adjacent_and_all_miss_inputs",
+      "libtest_args": [
+        "--exact",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "expected_samples": 128,
+      "case_order": [
+        "small_adjacent",
+        "small_all_miss",
+        "large_adjacent",
+        "large_all_miss"
+      ],
+      "rounds_per_case": 8,
+      "path_order": [
+        "literal_original",
+        "same_scan_decoding",
+        "same_scan_decoding",
+        "literal_original"
+      ],
+      "samples_per_path_per_case": 16
+    },
+    {
+      "label": "original-large-parent",
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "libtest_args": [
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "original_budget_unchanged": true,
+      "original_full_suite_failure_retained": true
+    }
+  ],
+  "analysis": {
+    "primary_cpu_ratio": "median(candidate thread_cpu_ns) / median(reference thread_cpu_ns) within each case",
+    "wall_ratio": "median(candidate wall_ns) / median(reference wall_ns)",
+    "p95_method": "nearest rank: sorted values[ceil(0.95*n)-1]",
+    "discarded_samples": 0,
+    "warmup_discarded": 0,
+    "all_errors_retained": true,
+    "also_report": [
+      "all 128 raw rows",
+      "per-path CPU/wall median",
+      "per-path CPU/wall p95",
+      "per-round means and candidate/reference CPU ratios"
+    ],
+    "adoption_conditions_unchanged": true
+  },
+  "benchmark_executed": false,
+  "business_qualification": false,
+  "performance_claimed": false
+}

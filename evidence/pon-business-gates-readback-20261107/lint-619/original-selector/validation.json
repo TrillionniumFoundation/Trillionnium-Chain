@@ -1,0 +1,168 @@
+{
+  "schema": "trnm-lexical-scope-source-validation-v1",
+  "base": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "original_failed_ci_job": 128435635972,
+  "production_source_changed": false,
+  "business_gate_pass_claimed": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.09975481033325195,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/preflight.log",
+      "bytes": 173,
+      "sha256": "b65db88dd47125c8ea2f185d059283ae1245afaad7460bd9d547ca3a1ec38b5e"
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.054416656494140625,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "stage",
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.10488009452819824,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/stage.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "commit",
+      "argv": [
+        "/usr/bin/git",
+        "-c",
+        "user.name=ProfHepta",
+        "-c",
+        "user.email=102159240+ProfHepta@users.noreply.github.com",
+        "commit",
+        "-m",
+        "test(pon): end readback transaction borrow with lexical scope"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.25064706802368164,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/commit.log",
+      "bytes": 260,
+      "sha256": "d01dda288c44a243eb34b297da9ebc9452be06d182ea7f078261bfd5f85b758e"
+    },
+    {
+      "name": "full-source",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/source-before.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.099056959152222,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/full-source.log",
+      "bytes": 423,
+      "sha256": "553374e9e9a617e7118b38252becae5470cc7941762cee66ef9d6e0db84e65a2"
+    },
+    {
+      "name": "workspace-clippy",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--tested",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/records",
+        "--label",
+        "workspace-clippy-allfeatures",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 78.79199957847595,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/workspace-clippy.log",
+      "bytes": 190,
+      "sha256": "8c3ed54bb2076c5249b70aa56942e5ef2037e9dc1fa3de4991e52322f16b26fe"
+    },
+    {
+      "name": "lexical-scope-regression",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--tested",
+        "6193489c2fb2a1bdab1128ebed2296f19176401b",
+        "--output",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/records",
+        "--label",
+        "legacy-transaction-scope-regression",
+        "--",
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_write",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 215.6020963191986,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/followup-lint-validation-20261107/lexical-scope-regression.log",
+      "bytes": 197,
+      "sha256": "611be56aa84ed927f1fbd3543308f76932425f57f5f49b144269782cba47243c"
+    }
+  ],
+  "started_unix": 1794065936.5123796,
+  "concurrent_observation": "Original d26 all-feature Node suite continues separately on local-build/target; local elapsed times are not controlled A/B or fixed-Host observations.",
+  "commit": "6193489c2fb2a1bdab1128ebed2296f19176401b",
+  "tree": "c14c42ff6fbb749175233038a1a3855c16d0f444",
+  "strict_clippy_exit": 0,
+  "focused_test_exit": 0,
+  "finished_unix": 1794066246.8235102,
+  "all_commands_passed": true
+}

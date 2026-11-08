@@ -1,0 +1,12 @@
+{
+  "ActiveState": "inactive",
+  "ControlGroup": "",
+  "DropInPaths": "",
+  "FragmentPath": "",
+  "Id": "trnmponpublic.slice",
+  "Job": "",
+  "LoadState": "loaded",
+  "SourcePath": "",
+  "SubState": "dead",
+  "Transient": "no"
+}

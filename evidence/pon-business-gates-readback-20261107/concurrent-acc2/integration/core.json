@@ -1,0 +1,20 @@
+{
+  "head": "43e3584925c959f00cf90e44278dcf66b06e28c0",
+  "tree": "a2cf341b3f288c060df9a0a80f5c15fa126e426b",
+  "parents": [
+    "6193489c2fb2a1bdab1128ebed2296f19176401b",
+    "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030"
+  ],
+  "author": "ProfHepta",
+  "pushed": false,
+  "concurrent_code_preserved": true,
+  "original_whitespace_warning": {
+    "path": "evidence/pon-native-cell-v1-20261107/cold_replay.py",
+    "blob": "3a6adf65b3a595d7b0b820f20d18de6dbd1950e6",
+    "same_as_concurrent_source": true,
+    "raw_current_and_original_warnings_equal": true,
+    "outside_preserved_original_scope_passed": true
+  },
+  "source_patch_bytes": 15857,
+  "source_patch_sha256": "2d5063330081b5b196ff87c0552a4ac0f8193e02e58047770ffdaac3745d955f"
+}

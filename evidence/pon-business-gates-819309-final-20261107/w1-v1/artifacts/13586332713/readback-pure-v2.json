@@ -1,0 +1,100 @@
+{
+  "schema": "trnm-final819-w1-pure-and-native-record-readback-v2",
+  "artifact_id": 13586332713,
+  "family": "false-trace",
+  "arch": "x64",
+  "source_kind": "head",
+  "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "errors": [],
+  "manifests": [
+    {
+      "schema": "trnm-w1-false-trace-reuse-execution-v1",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/w1-false-trace-reuse-v1/manifest.json",
+      "reader_module": "pon_w1_false_trace_reuse_reader_v1",
+      "original_result": "PASS",
+      "native_commands": [
+        {
+          "command": [
+            "/home/runner/work/_temp/target-w1-security/x86_64-unknown-linux-gnu/release/examples/pon_w1_false_trace_reuse_v1",
+            "--false-trace-actual-reuse-v1"
+          ],
+          "exit_code": 0,
+          "process_exit_code": null,
+          "timed_out": false,
+          "elapsed_ns": 614977111,
+          "timeout_seconds": 300,
+          "stdout": "campaign.stdout",
+          "stderr": "campaign.stderr",
+          "wait4_cpu_ns": null,
+          "wait4_maxrss_kib": null
+        }
+      ],
+      "complete_native_command_denominator": 1,
+      "original_total_processes": 5,
+      "retained_binary_sha256": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+      "retained_binary_elf_machine": 62,
+      "independent_reader_equal": true,
+      "reader_result_path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/independent-v2-w1-false-trace-reuse-v1.json",
+      "reader_result_sha256": "fadcb79f49bb24ecd33dde8278aafcf14dc726ade85707e13d7638ba6be6a1d5",
+      "reader_scope_flags": {
+        "valid_proof_acquisition_used": false,
+        "hardness_accepted": false,
+        "work_profile_qualified": false,
+        "resource_fairness_qualified": false,
+        "independent_hardware_qualified": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "production_activation": false
+      },
+      "qualification_status": null,
+      "policy_sample_count_satisfied": null
+    },
+    {
+      "schema": "trnm-w1-full-limb-reuse-execution-v1",
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/members/w1-full-limb-reuse-v1/manifest.json",
+      "reader_module": "pon_w1_false_trace_reuse_reader_v1",
+      "original_result": "PASS",
+      "native_commands": [
+        {
+          "command": [
+            "/home/runner/work/_temp/target-w1-security/x86_64-unknown-linux-gnu/release/examples/pon_w1_false_trace_reuse_v1",
+            "--false-trace-full-limb-v1"
+          ],
+          "exit_code": 0,
+          "process_exit_code": null,
+          "timed_out": false,
+          "elapsed_ns": 715454876,
+          "timeout_seconds": 300,
+          "stdout": "campaign.stdout",
+          "stderr": "campaign.stderr",
+          "wait4_cpu_ns": null,
+          "wait4_maxrss_kib": null
+        }
+      ],
+      "complete_native_command_denominator": 1,
+      "original_total_processes": 5,
+      "retained_binary_sha256": "6710c4e478105a15144e9f64d28387feab28871e6a62888352516e074b6b9ceb",
+      "retained_binary_elf_machine": 62,
+      "independent_reader_equal": true,
+      "reader_result_path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586332713/independent-v2-w1-full-limb-reuse-v1.json",
+      "reader_result_sha256": "8d6795232aefe0a8832dab14784fe3006accb0aad1e2b881772d0d9b9d920b1e",
+      "reader_scope_flags": {
+        "valid_proof_acquisition_used": false,
+        "hardness_accepted": false,
+        "work_profile_qualified": false,
+        "resource_fairness_qualified": false,
+        "independent_hardware_qualified": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "production_activation": false
+      },
+      "qualification_status": null,
+      "policy_sample_count_satisfied": null
+    }
+  ],
+  "complete_component_readback": true,
+  "native_invocations": 2,
+  "source_or_host_recreated": false,
+  "business_qualification": false,
+  "finished_utc": "2026-11-07T20:14:30.180362+00:00"
+}

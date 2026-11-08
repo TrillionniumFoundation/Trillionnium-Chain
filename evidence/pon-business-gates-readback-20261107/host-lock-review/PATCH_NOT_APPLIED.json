@@ -1,0 +1,32 @@
+{
+  "candidate_full_roster_if_executed": 666,
+  "candidate_host_control_count": 79,
+  "child_umasks_in_new_regression": [
+    "0077",
+    "0777"
+  ],
+  "existing_bad_mode_checked": "0400, strict LOCK_OWNER, actual metadata unchanged",
+  "files": {
+    "scripts/ci/public_fixture_host_lease.py": {
+      "before_sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+      "candidate_sha256": "c6abe7ac89aa479917d0d39cac40c7550e37b2dc25f34d02e28f6d19fcfc76cf"
+    },
+    "scripts/ci/test_public_fixture_lease.py": {
+      "before_sha256": "54ad5dc7d20f95986394d19244ff1ce770140e208c9c107c88de756f73cc04cc",
+      "candidate_sha256": "358eab1a5da14c607604461fb62a77a82e4ded3cc68cff053dde0672b36048f8"
+    }
+  },
+  "new_test_methods": [
+    "PublicFixtureLockControls.test_creator_sets_only_new_lock_mode_under_restrictive_child_umask"
+  ],
+  "only_production_AST_change": "parent_lock creator string; fchmod only in successful O_EXCL else, close in finally",
+  "original_full_roster_count": 665,
+  "original_host_control_count": 78,
+  "parent_process_umask_changed": false,
+  "patch_applied": false,
+  "production_checks_budgets_and_original_test_assertions_preserved": true,
+  "real_uid_and_gid_checked_under_synthetic_owner_metadata": true,
+  "schema": "trnm-new-lock-mode-review-only-v1",
+  "source_head": "93277a001f4f8a42be65166f6513177b46cddf5b",
+  "test_suites_or_creator_executed": false
+}

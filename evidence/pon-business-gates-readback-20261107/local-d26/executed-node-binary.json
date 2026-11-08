@@ -1,0 +1,11 @@
+{
+  "source_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "source_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "actual_cargo_running_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208",
+  "bytes": 78064248,
+  "sha256": "b8e65265f02c784f0ee54cf4becdf9d379cdb86b0b9d270e7c8ea057aa2810bf",
+  "preserved_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/failed-node-test-binary",
+  "preserved_sha256": "b8e65265f02c784f0ee54cf4becdf9d379cdb86b0b9d270e7c8ea057aa2810bf",
+  "source_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.log",
+  "source_log_sha256": "15b4a44a2dcbdcaed3c2a8c07fabb884de5577d9daac5b039505b8d1ecb202d5"
+}

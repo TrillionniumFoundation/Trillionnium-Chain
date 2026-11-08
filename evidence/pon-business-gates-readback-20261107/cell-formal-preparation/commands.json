@@ -1,0 +1,195 @@
+[
+  {
+    "name": "project-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "started_ns": 1794070773358477543,
+    "ended_ns": 1794070773542401974,
+    "exit_code": 0,
+    "stdout_bytes": 170,
+    "stdout_sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "head-before",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "rev-parse",
+      "HEAD"
+    ],
+    "started_ns": 1794070773542716162,
+    "ended_ns": 1794070773546175642,
+    "exit_code": 0,
+    "stdout_bytes": 41,
+    "stdout_sha256": "bfdbb83ef2cb2cc2688db59b086905e3e6488d0c58a4cdd57c1ed4b5346306d6",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "tree-before",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "started_ns": 1794070773546556641,
+    "ended_ns": 1794070773575433213,
+    "exit_code": 0,
+    "stdout_bytes": 41,
+    "stdout_sha256": "88ef544478933c01401cbf5da860062e81ea0fdfb6eb0f35d8bf992c6d1dd86e",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "status-before",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "started_ns": 1794070773575881002,
+    "ended_ns": 1794070774550803216,
+    "exit_code": 0,
+    "stdout_bytes": 85714,
+    "stdout_sha256": "7d9f192a21410c48542988f3c972cf3252943efa860f046215f28714a0a2be0e",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "selector-head",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "show",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:formal/pon-nakamoto-v1/experiments/model_loop.py"
+    ],
+    "started_ns": 1794070774552625932,
+    "ended_ns": 1794070774557385342,
+    "exit_code": 0,
+    "stdout_bytes": 15358,
+    "stdout_sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "model-contract-head",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "show",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:formal/pon-nakamoto-v1/model_contract.py"
+    ],
+    "started_ns": 1794070774557813108,
+    "ended_ns": 1794070774563857401,
+    "exit_code": 0,
+    "stdout_bytes": 2416,
+    "stdout_sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "fixture-object-model.json",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "show",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:evidence/pon-native-node-v1/model-current/model/model.json"
+    ],
+    "started_ns": 1794070774564501212,
+    "ended_ns": 1794070774569291266,
+    "exit_code": 0,
+    "stdout_bytes": 14174,
+    "stdout_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "fixture-object-consumer.json",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "show",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:evidence/pon-native-node-v1/model-current/model/consumer.json"
+    ],
+    "started_ns": 1794070774572183850,
+    "ended_ns": 1794070774577839320,
+    "exit_code": 0,
+    "stdout_bytes": 227036,
+    "stdout_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "fixture-object-evaluation-bundle.json",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "show",
+      "9b70db69b5a7a7cdd0b73b273f189211d507dfe2:evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json"
+    ],
+    "started_ns": 1794070774582514779,
+    "ended_ns": 1794070774587032271,
+    "exit_code": 0,
+    "stdout_bytes": 80283,
+    "stdout_sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "historical-commit",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "cat-file",
+      "commit",
+      "9fedf7ecbbe07177069c030592b4e03dcffebb81"
+    ],
+    "started_ns": 1794070774589328727,
+    "ended_ns": 1794070774593293085,
+    "exit_code": 0,
+    "stdout_bytes": 1753,
+    "stdout_sha256": "fb48aff52c0c63adc946b58a580e94cf804b1fdfef607c4fb6ad865c84b3a6ed",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "historical-all-trees-and-blobs",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "ls-tree",
+      "-rtz",
+      "9fedf7ecbbe07177069c030592b4e03dcffebb81"
+    ],
+    "started_ns": 1794070774594068930,
+    "ended_ns": 1794070774601400885,
+    "exit_code": 0,
+    "stdout_bytes": 145070,
+    "stdout_sha256": "429865c8b1104fde35f7bfc9bac6e78b3b843cb918034b7638e05d9fe43ca1f4",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "historical-inventory",
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "show",
+      "9fedf7ecbbe07177069c030592b4e03dcffebb81:config/portability-inventory-v1.json"
+    ],
+    "started_ns": 1794070774602320535,
+    "ended_ns": 1794070786583333638,
+    "exit_code": 128,
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_bytes": 152,
+    "stderr_sha256": "32f9196f299b2e3b04de889673020dafa80bef4ee5b09e89b498e957101b206f"
+  }
+]

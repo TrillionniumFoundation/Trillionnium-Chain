@@ -1,0 +1,100 @@
+{
+  "schema": "ingress-canonical-component-run-v1",
+  "head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "plan_sha256": "82f087389dd27519cb4e1fe2568ba2e1988f200d187d7fd9e922a18d7e63e820",
+  "command_records": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "started_unix_ns": 1794070455575467356,
+      "ended_unix_ns": 1794070455683672002,
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/preflight.log",
+      "log_bytes": 173,
+      "log_sha256": "5b7f93acd60822d8dd80aefe71ae927306835ec4fa601e7e0072e7dc5ef29327"
+    },
+    {
+      "name": "process-sample-before",
+      "argv": [
+        "/usr/bin/ps",
+        "-eo",
+        "pid,ppid,comm,etimes,pcpu,pmem",
+        "--sort=-pcpu"
+      ],
+      "started_unix_ns": 1794070468473189969,
+      "ended_unix_ns": 1794070468531847492,
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-before.log",
+      "log_bytes": 44900,
+      "log_sha256": "8cc0e739216324a8d253436e14fc74f90738343a98abf830fbe937ae6ddc6787"
+    },
+    {
+      "name": "component-abba",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::canonical_packet::tests::body_packet_decode_component_abba_retains_every_trial",
+        "--",
+        "--ignored",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "started_unix_ns": 1794070468532402748,
+      "ended_unix_ns": 1794070470371313082,
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-abba.log",
+      "log_bytes": 282402,
+      "log_sha256": "a765a65ba449b7c356d4763a96fc471b9f902ab32dd88064b0d5720b894392b3"
+    },
+    {
+      "name": "component-exact-denominator",
+      "argv": [
+        "python3",
+        "scripts/ci/check_required_native_test.py",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-abba.log",
+        "--test",
+        "ingress::public_v3::canonical_packet::tests::body_packet_decode_component_abba_retains_every_trial"
+      ],
+      "started_unix_ns": 1794070470373024708,
+      "ended_unix_ns": 1794070470424428369,
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/component-exact-denominator.log",
+      "log_bytes": 191,
+      "log_sha256": "b671cf3b3d4e9b8554a913835cb1f54a64bd2086311ae3131419dbb6d6d9e788"
+    },
+    {
+      "name": "process-sample-after",
+      "argv": [
+        "/usr/bin/ps",
+        "-eo",
+        "pid,ppid,comm,etimes,pcpu,pmem",
+        "--sort=-pcpu"
+      ],
+      "started_unix_ns": 1794070470461552301,
+      "ended_unix_ns": 1794070470518173616,
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-after.log",
+      "log_bytes": 44850,
+      "log_sha256": "bec7fbee88a50206a9842dc0613497616a6aa6c5131522d6a7e053e42bb98e51"
+    }
+  ],
+  "source_equal": true,
+  "same_binary_before_after": true,
+  "failure": null,
+  "records_complete": true,
+  "component_adoption_criteria_passed": true,
+  "whole_node_or_original_service_acceptance": false
+}
