@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-fresh-stark-content-addressed-evidence-5176-v1",
+  "result": "PASS",
+  "archive_path": "/data/chain-six-5176-20261108/w1-fresh-stark-native-5176-20261109.tar.gz",
+  "archive_bytes": 14481336,
+  "archive_sha256": "5c42a370d3c39c0d144047f0c2308c5b113a1e752e51fb90061643aa699f68f8",
+  "manifest_path": "/data/chain-six-5176-20261108/fresh-stark-public-bundle/manifest.json",
+  "manifest_sha256": "c78e2d8a029aecf39e178920721d8752a6b198313551882da1accefb92050e7f",
+  "included_logical_files": 1736,
+  "unique_objects": 1656,
+  "unique_object_bytes": 41314757,
+  "omitted_reconstructible_case_files": 35,
+  "all_omitted_files_reconstructed_and_digest_checked": true,
+  "all_archive_objects_verified": true,
+  "both_current_compiled_binaries_included": true,
+  "first_adapter_build_failure_included": true,
+  "original_public_resource_profile": false,
+  "runtime_source_head": "6f2c5ce28bf39fd4548f6312d2eebe363c77da4b",
+  "new_complete_w1_generation_executions": 1,
+  "independent_new_statements": 0,
+  "qualification": "HOLD_NO_GO"
+}

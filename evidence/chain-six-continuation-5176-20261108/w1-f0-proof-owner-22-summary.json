@@ -1,0 +1,229 @@
+{
+  "all_tracked_source_verified_before_after": true,
+  "compiled_test_and_cli_binaries_identical_before_after": true,
+  "compiler_policy": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_TARGET_DIR": "/data/chain-six-5176-20261108/targets/qrom-stark",
+    "RAYON_NUM_THREADS": "2",
+    "RUSTFLAGS": "-C target-cpu=native",
+    "TMPDIR": "/data/chain-six-5176-20261108/f0-proof-owner-22/temporary"
+  },
+  "compositional_post_quantum_qualified": false,
+  "expected_named_tests": 22,
+  "expected_target_counts": {
+    "node_bridge": 12,
+    "proof_start_owner": 10
+  },
+  "failure": null,
+  "finished_utc": "2026-11-09T03:18:54.024377+00:00",
+  "fresh_generation_from_prior_archive_claimed_for_this_run": false,
+  "historical_F3_execution_relabelled_as_F0": false,
+  "historical_reference_source": "1a446a79700cc093a2b1a7f10367ef4a5ddbd680",
+  "new_complete_proofs_generated": 0,
+  "passed_named_tests": 22,
+  "production_activation": false,
+  "proof_inputs": "two retained complete STARK fixtures read by existing integration tests",
+  "qualification": "HOLD_NO_GO",
+  "resources": {
+    "cpu.max": "800000 100000",
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "cpu_limits_are_original_public_profile": false,
+    "host_exclusive": false,
+    "memory.max": "8589934592",
+    "memory.swap.max": "max"
+  },
+  "same_resource_net_benefit_qualified": false,
+  "schema": "trnm-w1-f0-proof-owner-22-observation-v1",
+  "source_head": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "stages": [
+    {
+      "arguments": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "01-preflight-before",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4e62042b4c405eb7c0101d46ab8ea95af346fabdcb25a17bd80ad150f2e17f0a",
+      "wall_seconds": 0.16492710099555552
+    },
+    {
+      "arguments": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+        "--output",
+        "/data/chain-six-5176-20261108/f0-proof-owner-22/02-source-before.json"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "02-source-before",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "bd7ede55045a44c49f7f9c875b8d6d736ac12d97551b35dc0af82d3d3735bf40",
+      "wall_seconds": 16.310444867936894
+    },
+    {
+      "arguments": [
+        "/home/qian-qi/.cargo/bin/rustc",
+        "+1.95.0",
+        "-Vv"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "03-toolchain",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "wall_seconds": 0.032637327210977674
+    },
+    {
+      "arguments": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "/data/chain-six-5176-20261108/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "04-test-build",
+      "stderr_sha256": "599da6134007c0f797832abd9ea8cbf54a8090222ee61afa33349672e954ea3e",
+      "stdout_sha256": "5f26369aa8eb00a8e389e20a744eb79a1fc5069ccc0c8aae22cb533981fe67b4",
+      "wall_seconds": 92.47530806716532
+    },
+    {
+      "arguments": [
+        "/data/chain-six-5176-20261108/targets/qrom-stark/release/deps/w1_node_adapter_research-2a4b4a65968a31b1",
+        "--list"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "05-roster-w1_node_adapter_research",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+      "wall_seconds": 0.004110042005777359
+    },
+    {
+      "arguments": [
+        "/data/chain-six-5176-20261108/targets/qrom-stark/release/deps/w1_node_adapter_research-021d99d6670e48be",
+        "--list"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "05-roster-w1-node-adapter-research",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+      "wall_seconds": 0.003817297052592039
+    },
+    {
+      "arguments": [
+        "/data/chain-six-5176-20261108/targets/qrom-stark/release/deps/proof_start_owner-789d19cfb90f5e38",
+        "--list"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "05-roster-proof_start_owner",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "049886a377dc1922b234e1a6bc453b6d15dcbf5e1e193ca43a7d8b0c7b11ef6f",
+      "wall_seconds": 0.0038424308877438307
+    },
+    {
+      "arguments": [
+        "/data/chain-six-5176-20261108/targets/qrom-stark/release/deps/node_bridge-aa9d93915266d573",
+        "--list"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "05-roster-node_bridge",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "0c26f843da84abb3aa18f2fc5be147c9e0f189684d69722ef2a0a4ed7b3bc87d",
+      "wall_seconds": 0.003808399895206094
+    },
+    {
+      "arguments": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "/data/chain-six-5176-20261108/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "06-tests",
+      "stderr_sha256": "1c64ebc84ac1850557389ce4ea801a406a22ee9cd4cdb5ac69a25e29aa161b2e",
+      "stdout_sha256": "616a8179849578132b910744b3eefb37487e23ab4927cd8576d0da5f66e4c91d",
+      "wall_seconds": 33.80143403704278
+    },
+    {
+      "arguments": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+        "--output",
+        "/data/chain-six-5176-20261108/f0-proof-owner-22/09-source-after.json"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "09-source-after",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "bd7ede55045a44c49f7f9c875b8d6d736ac12d97551b35dc0af82d3d3735bf40",
+      "wall_seconds": 16.762975455028936
+    },
+    {
+      "arguments": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/data/chain-six-5176-20261108/source",
+      "exit_code": 0,
+      "name": "10-preflight-after",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4e62042b4c405eb7c0101d46ab8ea95af346fabdcb25a17bd80ad150f2e17f0a",
+      "wall_seconds": 0.11541117681190372
+    }
+  ],
+  "status": "PASS",
+  "test_command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "/data/chain-six-5176-20261108/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+    "--release",
+    "--locked",
+    "--offline",
+    "--all-targets",
+    "--",
+    "--test-threads=1"
+  ],
+  "unknown_security_bounds": null
+}

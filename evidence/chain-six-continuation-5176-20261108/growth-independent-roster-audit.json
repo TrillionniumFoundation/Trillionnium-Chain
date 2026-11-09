@@ -1,0 +1,129 @@
+{
+  "schema": "chain-six-growth-independent-audit-bundle-v1",
+  "source_head": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "archive": "growth-independent-roster-audit.tar.gz",
+  "bytes": 15215,
+  "sha256": "1c429235070935f0338930a98acfbf3d85d02feaa91442437e33815ee36806bf",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2359,
+      "sha256": "68e780c55bab8dd2422f65155d19b43f1dbb73cba357cec24d6b8dd283c9c3dc"
+    },
+    {
+      "path": "audit.json",
+      "bytes": 32847,
+      "sha256": "36372bf09d78b7cdbd7993b4b7a1e7e1e83ef5df75b12783d6b2228510c5c248"
+    },
+    {
+      "path": "current-f0-union-v1/README.md",
+      "bytes": 1685,
+      "sha256": "f40148caa8936a104bc85ad8ddf7d372e8d14fcea1ce6606d8c68029d700070d"
+    },
+    {
+      "path": "current-f0-union-v1/audit.json",
+      "bytes": 30265,
+      "sha256": "8bd525ad9e9190694138d647eaa73367704d8e258060233b37223bb236c2602c"
+    },
+    {
+      "path": "current-f0-union-v1/comparison.json",
+      "bytes": 576,
+      "sha256": "10502fb82a01ac8b5636b9be2dc0c3906b2aae87fca93ca57f3a5a7af393bff3"
+    },
+    {
+      "path": "current-f0-union-v1/complement-growth.stderr",
+      "bytes": 194,
+      "sha256": "ce8d0a05c7228925c30041bf9af372592404d00570bf1bf99c021874a66c8f26"
+    },
+    {
+      "path": "current-f0-union-v1/complement-growth.stdout",
+      "bytes": 3352,
+      "sha256": "3860edd8757847188010c6fc351b4468fc536c4652295d836d0c2d39ccb90f66"
+    },
+    {
+      "path": "current-f0-union-v1/complement-run-record.json",
+      "bytes": 3765,
+      "sha256": "998e0460defa321e18f8f1407259a51e32281f199ae4d134e7108f7641370d9e"
+    },
+    {
+      "path": "current-f0-union-v1/current-growth2-ignored.txt",
+      "bytes": 195,
+      "sha256": "d9e3815ea7f0da0e0866c75b72858ee1a00c40fb1bca14c87efabba2775a556c"
+    },
+    {
+      "path": "current-f0-union-v1/current-growth77-passed.txt",
+      "bytes": 7936,
+      "sha256": "ec144929dcf323c192fa8a777115edcee64229f681c75be5f0ed9f6889b75805"
+    },
+    {
+      "path": "current-f0-union-v1/current-growth79-selected.txt",
+      "bytes": 8131,
+      "sha256": "81360c11343e529ef3cdd7c6b54bf09ce03c94a8b603732178c37e87462b769e"
+    },
+    {
+      "path": "current-f0-union-v1/manifest.json",
+      "bytes": 2104,
+      "sha256": "ee616eba92ccf4a8ce63fddf6c79e823b275f1a9ad1af1c465ac89f8f5fa1e6f"
+    },
+    {
+      "path": "current-f0-union-v1/prefix-growth.stderr",
+      "bytes": 303,
+      "sha256": "817c278ce24d9d9a670d5a8f74a4e95d2ffce437adc612475956126907b72f69"
+    },
+    {
+      "path": "current-f0-union-v1/prefix-growth.stdout",
+      "bytes": 6215,
+      "sha256": "2b783624bf21ffe405b083c573e001db7cac45ae9b0a8737affa8c70114cea10"
+    },
+    {
+      "path": "current-f0-union-v1/prefix-run-record.json",
+      "bytes": 533,
+      "sha256": "0bcd108e18481a9af3c943912e50f6d983f6ec64b00f233a9742a31caa42307f"
+    },
+    {
+      "path": "current-f0-union-v1/source-identity-observed.json",
+      "bytes": 2156,
+      "sha256": "f570ca563fe205e83ab58cedd51111c3ca95c22a421bed810ed28a63c426db72"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1512,
+      "sha256": "7c3e4f178c45e7955bc0f23a1de7c47f6e6fbeb716c43d93b32ffb7fa320dd13"
+    },
+    {
+      "path": "original-f3-native-growth-record.json",
+      "bytes": 10367,
+      "sha256": "434f6de99736f424027114174045edf97d3df562ce88bb64a046c33caf44ea02"
+    },
+    {
+      "path": "original-f3-native-growth.log",
+      "bytes": 11053,
+      "sha256": "dd5a40c83d8eb539f9e7f523da9204e6660313e9d0b3f353e3807a2bafd70d27"
+    },
+    {
+      "path": "original-growth2-ignored.txt",
+      "bytes": 195,
+      "sha256": "d9e3815ea7f0da0e0866c75b72858ee1a00c40fb1bca14c87efabba2775a556c"
+    },
+    {
+      "path": "original-growth77-passed.txt",
+      "bytes": 7936,
+      "sha256": "ec144929dcf323c192fa8a777115edcee64229f681c75be5f0ed9f6889b75805"
+    },
+    {
+      "path": "original-growth79-selected.txt",
+      "bytes": 8131,
+      "sha256": "81360c11343e529ef3cdd7c6b54bf09ce03c94a8b603732178c37e87462b769e"
+    },
+    {
+      "path": "prefix51-passed.txt",
+      "bytes": 5015,
+      "sha256": "b85aa520dd430ec26bd4a60c4a77adc5f82e2647b981e201dd024d2e1d86e62a"
+    },
+    {
+      "path": "supplement26-nonprefix.txt",
+      "bytes": 2921,
+      "sha256": "5d8b66aa421dd1f536b982a20938314e65f3022c54d8502f4e9441ca4042e79d"
+    }
+  ]
+}

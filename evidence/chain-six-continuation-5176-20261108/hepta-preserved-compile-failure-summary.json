@@ -1,0 +1,9 @@
+{
+  "kind": "test IPC Digest32 serde trait compilation failure",
+  "log_bytes": 68034,
+  "log_sha256": "187ed26b5fcf1d14ff26f44f36605ddbc366188aed4d6a5811208d63cb526516",
+  "native_tests_started": false,
+  "raw_log_retained_privately": true,
+  "source": "aaec9de151d1a7b2d459e830ed2f105fa83c8c26",
+  "source_snippets_exported": false
+}

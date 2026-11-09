@@ -1,0 +1,98 @@
+{
+  "schema": "trnm-f0-native-proof-supplement-content-addressed-5176-v1",
+  "result": "PASS",
+  "archive_path": "/data/chain-six-5176-20261108/w1-f0-native-proof-supplement-5176-20261109.tar.gz",
+  "archive_bytes": 13331967,
+  "archive_sha256": "87ac846318dc90375b72cdd14e2a1447c962ef256705bfe9aa65ea2d520c554b",
+  "manifest_path": "/data/chain-six-5176-20261108/f0-proof-public-bundle/manifest.json",
+  "manifest_sha256": "a22b94e0e400bfab9db7ae7c56821a5247d103c5044280846e3de7506e25177f",
+  "logical_files": 1644,
+  "unique_objects": 1593,
+  "all_archive_objects_verified": true,
+  "all_logical_files_restored": true,
+  "source_head": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "prior_generation_source_head": "6f2c5ce28bf39fd4548f6312d2eebe363c77da4b",
+  "prior_archive_unchanged": true,
+  "adapter_inputs_compared": 1526,
+  "adapter_input_differences": 3,
+  "all_15_stark_inputs_identical": true,
+  "native_controls": {
+    "cold_reopen_cases": 4,
+    "exercise_cases": 5,
+    "harness_input_binary_unchanged": true,
+    "new_complete_proofs": 0,
+    "observations_sha256": "fc79e7dfb8d8a8d4d405e964c272fdb62bd7ea69d35460134b32eb7d4c1a2fa5",
+    "plan_sha256": "2dc871a70c8a0eb9df57872717d8e0303e3b5675f3341d0471fc0bb0a2a582f8",
+    "production_activation": false,
+    "production_resource_profile": false,
+    "qualification": "HOLD_NO_GO",
+    "result": "PASS",
+    "schema": "trnm-w1-node-independent-process-controls-v2",
+    "shared_owner_exhausted": true,
+    "shared_owner_slots_spent": 9,
+    "subprocesses": 11
+  },
+  "current_f0_binary": {
+    "bytes": 8166888,
+    "path": "/data/chain-six-5176-20261108/f0-proof-supplement/binaries/w1-node-adapter-research",
+    "sha256": "632d09527c5571a2448579fc6d4419ae04ef2392fdb1da35ff8e4d3bf41dda4b"
+  },
+  "records": [
+    {
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/data/chain-six-5176-20261108/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "-j",
+        "2"
+      ],
+      "exit_code": 0,
+      "label": "build",
+      "stderr_sha256": "ecea0cd878888fe8513754faa0c3742747cd01d2fc63e51c2d546334d00f231e",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 302.279174212832
+    },
+    {
+      "command": [
+        "/data/chain-six-5176-20261108/f0-proof-supplement/binaries/w1-node-adapter-research",
+        "fixture",
+        "/data/chain-six-5176-20261108/f0-proof-supplement/fixture"
+      ],
+      "exit_code": 0,
+      "label": "fixture",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "3d8c36586056fde8e254f64b3c7a14f0565d73018ce725d67694ad113ea977e4",
+      "wall_seconds": 0.11507505807094276
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/data/chain-six-5176-20261108/source/formal/pon-nakamoto-v1/w1_node_adapter_research/run_node_controls.py",
+        "--binary",
+        "/data/chain-six-5176-20261108/f0-proof-supplement/binaries/w1-node-adapter-research",
+        "--expected-binary-sha256",
+        "632d09527c5571a2448579fc6d4419ae04ef2392fdb1da35ff8e4d3bf41dda4b",
+        "--fixture",
+        "/data/chain-six-5176-20261108/f0-proof-supplement/fixture",
+        "--proof",
+        "/data/chain-six-5176-20261108/fresh-stark/generation-01/proof",
+        "--output",
+        "/data/chain-six-5176-20261108/f0-proof-supplement/controls"
+      ],
+      "exit_code": 0,
+      "label": "node-controls",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d598dac71427b4a7c21340d8d0c3cf5cc8aba39402582cd7157053a4a1eef544",
+      "wall_seconds": 8.445827572839335
+    }
+  ],
+  "new_complete_proofs_generated": 0,
+  "original_public_resource_profile": false,
+  "qualification": "HOLD_NO_GO"
+}

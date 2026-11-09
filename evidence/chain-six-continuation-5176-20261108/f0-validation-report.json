@@ -1,0 +1,474 @@
+{
+  "source_commit": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "records": [
+    {
+      "name": "preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "seconds": 0.11567577300593257,
+      "timed_out": false
+    },
+    {
+      "name": "source-before",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+        "--output",
+        "/data/chain-six-5176-20261108/evidence/validation-f0/source-before.json"
+      ],
+      "timeout": 600,
+      "exit": 0,
+      "seconds": 15.058572703972459,
+      "timed_out": false
+    },
+    {
+      "name": "cargo-graph",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 0.26568361604586244,
+      "timed_out": false
+    },
+    {
+      "name": "all-format",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "timeout": 180,
+      "exit": 0,
+      "seconds": 20.32039391901344,
+      "timed_out": false
+    },
+    {
+      "name": "check_repository",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 30.947764036944136,
+      "timed_out": false
+    },
+    {
+      "name": "check_pq_research_integration",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 1.1178908729925752,
+      "timed_out": false
+    },
+    {
+      "name": "test_ci_source_integrity",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 4.575065420940518,
+      "timed_out": false
+    },
+    {
+      "name": "settlement-package",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 900,
+      "exit": 0,
+      "seconds": 26.381060236133635,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "70",
+          "0",
+          "0"
+        ],
+        [
+          "2",
+          "0",
+          "0"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "npq6-cli",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--test",
+        "pq_application_local_cli",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 900,
+      "exit": 0,
+      "seconds": 14.199217177927494,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "4",
+          "0",
+          "1"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "test_pq_research_integration",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 221.08400077396072,
+      "timed_out": false
+    },
+    {
+      "name": "test_codeql_retention",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/test_codeql_retention.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 3.573692373931408,
+      "timed_out": false
+    },
+    {
+      "name": "test_public_readiness_evidence",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/test_public_readiness_evidence.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 118.412921047071,
+      "timed_out": false
+    },
+    {
+      "name": "test_w1_current_source_observation",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_current_source_observation.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 2.771908173104748,
+      "timed_out": false
+    },
+    {
+      "name": "test_w1_current_source_mapping",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_current_source_mapping.py"
+      ],
+      "timeout": 300,
+      "exit": 0,
+      "seconds": 7.08356273220852,
+      "timed_out": false
+    },
+    {
+      "name": "growth",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--lib",
+        "native_growth_v2_",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 1800,
+      "exit": 0,
+      "seconds": 674.480947108008,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "51",
+          "0",
+          "2"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "consensus",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--lib",
+        "consensus::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 900,
+      "exit": 0,
+      "seconds": 0.5663169079925865,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "10",
+          "0",
+          "0"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "daa_joint_consensus",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--test",
+        "daa_joint_consensus",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 900,
+      "exit": 0,
+      "seconds": 37.12665312900208,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "2",
+          "0",
+          "0"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "daa_adversarial_schedule",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--test",
+        "daa_adversarial_schedule",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 900,
+      "exit": 0,
+      "seconds": 23.0738944679033,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "2",
+          "0",
+          "0"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "native_task_operation_v2",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--test",
+        "native_task_operation_v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout": 900,
+      "exit": 0,
+      "seconds": 45.53302882821299,
+      "timed_out": false,
+      "native_summaries": [
+        [
+          "4",
+          "0",
+          "0"
+        ]
+      ],
+      "nonempty_native_execution": true
+    },
+    {
+      "name": "strict-clippy-trnm-service-settlement",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "timeout": 1800,
+      "exit": 0,
+      "seconds": 12.198485800996423,
+      "timed_out": false
+    },
+    {
+      "name": "strict-clippy-trnm-pon-node",
+      "args": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "timeout": 1800,
+      "exit": 0,
+      "seconds": 88.51502184104174,
+      "timed_out": false
+    },
+    {
+      "name": "current-mapping-cli",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/w1_current_source_mapping.py",
+        "--root",
+        "/data/chain-six-5176-20261108/source",
+        "--expected-head",
+        "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+        "--output",
+        "/data/chain-six-5176-20261108/evidence/validation-f0/current-mapping.json"
+      ],
+      "exit": 0,
+      "seconds": 0.717155849095434,
+      "timed_out": false
+    },
+    {
+      "name": "source-after",
+      "args": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+        "--output",
+        "/data/chain-six-5176-20261108/evidence/validation-f0/source-after.json"
+      ],
+      "timeout": 600,
+      "exit": 0,
+      "seconds": 12.247847630875185,
+      "timed_out": false
+    }
+  ],
+  "source_unchanged": true,
+  "all_passed": true,
+  "production_activation": false,
+  "security_disposition": "HOLD_NO_GO"
+}

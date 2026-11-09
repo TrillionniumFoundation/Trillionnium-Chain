@@ -1,0 +1,165 @@
+{
+  "schema": "chain-six-publication-files-v1",
+  "frozen_runtime_source": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 14567,
+      "sha256": "0a54acb862f54078a8e383cd5f072a0822c3da04504a5473ab227c3d7221ab42"
+    },
+    {
+      "path": "cell-crosshost/README.md",
+      "bytes": 7659,
+      "sha256": "cf7db0914be599c25c9bbcd99209a9bd49b96ef1b468261456684aa5f1e43a1a"
+    },
+    {
+      "path": "cell-crosshost/SHA256SUMS",
+      "bytes": 671,
+      "sha256": "6d90add2a35d497c583b64df7f183b795dd9147535c400517c6cd49d5441918a"
+    },
+    {
+      "path": "cell-crosshost/ai395-evidence.json.gz",
+      "bytes": 25288,
+      "sha256": "c238bbc47966afcc2a5a51fc6146765461411f8d1982fc400ff254e0bb4a6d97"
+    },
+    {
+      "path": "cell-crosshost/desktop-evidence.json.gz",
+      "bytes": 4308,
+      "sha256": "2364098e40c3b5426dfe22b2a3d824d6a2009da61c4e041efcf3d39580fa239d"
+    },
+    {
+      "path": "cell-crosshost/manifest.json",
+      "bytes": 769,
+      "sha256": "ec83e17ec643e7536b592b38560efa8359c9eefc4b7b6fdfc82c94e325aa6c8f"
+    },
+    {
+      "path": "cell-crosshost/rog-evidence.json.gz",
+      "bytes": 199504,
+      "sha256": "3ce87ee842294d194a0d722d48a8a5509195ca63592eacde171623dac7d19cd2"
+    },
+    {
+      "path": "cell-crosshost/source-correspondence.json",
+      "bytes": 34642,
+      "sha256": "50855795b37e8eb46b6bd90c778d2eaa43aa426c17e2b2a2808ee15c1ad7d708"
+    },
+    {
+      "path": "cell-crosshost/summary.json",
+      "bytes": 11608,
+      "sha256": "2dab7758dfde6a8441a6f4f9eb2284182e7e3bc642a0a095df3001dc97d33781"
+    },
+    {
+      "path": "cell-crosshost/verify.py",
+      "bytes": 10140,
+      "sha256": "0cf90875e93b52f9fa5b039a0a2c80e92e51e92fff2577138d4d925c3b0d031d"
+    },
+    {
+      "path": "f0-launch-source-provenance.json",
+      "bytes": 489,
+      "sha256": "e47e56b4b1451b15b4d7abcd55d916cddb93791fbea8da3e0c89c5a7da524c69"
+    },
+    {
+      "path": "f0-supplement-report.json",
+      "bytes": 59775,
+      "sha256": "b88b72f708f18625655c64089a31ed6e2658ddcb140bc76bbddac637cfd57488"
+    },
+    {
+      "path": "f0-validation-records.json",
+      "bytes": 12833,
+      "sha256": "10bd6f9ad0f19fc3691bdf3ee422c2d1439d8824ebee6e9b43c4698f549fcd76"
+    },
+    {
+      "path": "f0-validation-records.tar.gz",
+      "bytes": 149914,
+      "sha256": "7175be4a579f0f05847612362df2e819f2eac154447bdad2b10f9e6a12a4e885"
+    },
+    {
+      "path": "f0-validation-report.json",
+      "bytes": 10424,
+      "sha256": "f585b7ae3befd41f02fa4ddd223dafa6eb40424f28e78595ec6cd1167797d988"
+    },
+    {
+      "path": "growth-independent-final-source-fence.json",
+      "bytes": 500,
+      "sha256": "83d87c4c11634777dbc77daecdc768b45d3a6153ec031d269e33878af3fe3707"
+    },
+    {
+      "path": "growth-independent-roster-audit.json",
+      "bytes": 4336,
+      "sha256": "d46d5cd4ce77035cd3be1927a3eb24ab9ffd41cee21e91d959355c3f4879e022"
+    },
+    {
+      "path": "growth-independent-roster-audit.tar.gz",
+      "bytes": 15215,
+      "sha256": "1c429235070935f0338930a98acfbf3d85d02feaa91442437e33815ee36806bf"
+    },
+    {
+      "path": "hepta-controls-result.json",
+      "bytes": 5427,
+      "sha256": "0840848b38a97c036c663ae67dc021e6cfca460fa805a9e778500b7b49f335cd"
+    },
+    {
+      "path": "hepta-preserved-compile-failure-summary.json",
+      "bytes": 336,
+      "sha256": "62610c5b6586516d82ecdf2a58300147b7e2583323f2f20e6cc2b8b40ebc4646"
+    },
+    {
+      "path": "hepta-private-ci-initial.json",
+      "bytes": 1372,
+      "sha256": "a30dd99cf27a2aad3c80453a76ae1ddf264fe1343e48549f22fe8096b7809339"
+    },
+    {
+      "path": "hepta-private-pr.json",
+      "bytes": 574,
+      "sha256": "d9a12ac2351182002c67a0ac2ac638bd8dbbcf605fc726a11e2c011e07e19408"
+    },
+    {
+      "path": "hepta-public-evidence-v1.tar.gz",
+      "bytes": 9571,
+      "sha256": "21cfa8319f4e805783f34b5759799d8b310397130887a3e99d75d7a60f9fe46b"
+    },
+    {
+      "path": "hepta-source-relationship.json",
+      "bytes": 3908,
+      "sha256": "ca03a34301b899247ba203c0623c267245e3f1dfafde7aa5c3e03e35582c868c"
+    },
+    {
+      "path": "w1-f0-native-proof-supplement.tar.gz",
+      "bytes": 13331967,
+      "sha256": "87ac846318dc90375b72cdd14e2a1447c962ef256705bfe9aa65ea2d520c554b"
+    },
+    {
+      "path": "w1-f0-proof-bundle-summary.json",
+      "bytes": 3978,
+      "sha256": "d548000f363ce416e0fef7dc093150ce292a5d2a455580f00f354fa0d6b52146"
+    },
+    {
+      "path": "w1-f0-proof-owner-22-bundle-summary.json",
+      "bytes": 1171,
+      "sha256": "106571e0792c7c1cd99ef0647e5aecdde54a9cf100a8dc5b30a4e25e7fbba3ab"
+    },
+    {
+      "path": "w1-f0-proof-owner-22-summary.json",
+      "bytes": 8078,
+      "sha256": "08b1e211b96d74e8d07b6d7d79905ce76b0f1af995776eca1c65359e4ab7c469"
+    },
+    {
+      "path": "w1-f0-proof-owner-22.tar.gz",
+      "bytes": 45515,
+      "sha256": "0a92fe0713bee55a0a61da1825917b5ad4423775d5e3025c4d5bf678e0aceec2"
+    },
+    {
+      "path": "w1-fresh-stark-bundle-summary.json",
+      "bytes": 1050,
+      "sha256": "8ecf4614d72026f29ab8498aed81c861eca2f3a1343d595e5463d5d99b386080"
+    },
+    {
+      "path": "w1-fresh-stark-native.tar.gz",
+      "bytes": 14481336,
+      "sha256": "5c42a370d3c39c0d144047f0c2308c5b113a1e752e51fb90061643aa699f68f8"
+    }
+  ],
+  "publication_scope": "Only evidence/chain-six-continuation-5176-20261108 changes relative to F0; executable source/configuration/CI bytes are unchanged.",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "unknown_security_bounds": null
+}
