@@ -1,0 +1,7 @@
+{
+  "job_id": "1a1be7a3223-5e21-103",
+  "exit_code": 1,
+  "output_complete": true,
+  "failure": "local reference clone could not fetch missing promisor object 45a43d40fcb87760835c0efd4c641a5466c2ab36; source preflight passed; candidate not checked out",
+  "source_changed": false
+}

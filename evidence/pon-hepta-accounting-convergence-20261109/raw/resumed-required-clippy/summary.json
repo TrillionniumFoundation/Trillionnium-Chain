@@ -1,0 +1,259 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2495315152,
+    "tracked_entries": 26132,
+    "tracked_worktree_verified": true
+  },
+  "before": {
+    "base": null,
+    "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2495315152,
+    "tracked_entries": 26132,
+    "tracked_worktree_verified": true
+  },
+  "command_exit_code": 0,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+      "exit_code": 0,
+      "label": "preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 183,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stdout",
+        "sha256": "118d30aadf0b69f8e01a98ce46f2eef79d0a32bbff3663d771d11bbbb3a564c6"
+      },
+      "wall_seconds": 0.02815712196752429
+    },
+    {
+      "argv": [
+        "rustc",
+        "+1.95.0",
+        "-Vv"
+      ],
+      "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+      "exit_code": 0,
+      "label": "rustc-identity",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 196,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stdout",
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      "wall_seconds": 0.013882318045943975
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "-Vv"
+      ],
+      "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+      "exit_code": 0,
+      "label": "cargo-identity",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 339,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stdout",
+        "sha256": "c034ed37e1ee0ec102326f27e9b3b8fe6a481f8c8ad28df58a2e117b241c0f0e"
+      },
+      "wall_seconds": 0.0114442128688097
+    },
+    {
+      "argv": [
+        "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+        "version"
+      ],
+      "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+      "exit_code": 0,
+      "label": "provider-version",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 63,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stdout",
+        "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+      },
+      "wall_seconds": 0.0009749659802764654
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "--tested",
+        "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+        "--label",
+        "strict-clippy",
+        "--output",
+        "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01",
+        "--",
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+      "exit_code": 0,
+      "label": "strict-clippy-recorder",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 137,
+        "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stdout",
+        "sha256": "f3118af02c9fd0e01089c3dc6ef202c991cb6557eaa2e114b0ddff0986a122f8"
+      },
+      "wall_seconds": 141.0969366580248
+    }
+  ],
+  "disk_after": {
+    "free": 565915713536,
+    "total": 1966736678912,
+    "used": 1300840714240
+  },
+  "disk_before": {
+    "free": 571828805632,
+    "total": 1966736678912,
+    "used": 1294927622144
+  },
+  "ended_utc": "2026-11-09T04:46:09.397883+00:00",
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-c1-clippy-target-20261109-cadence-01",
+    "GIT_TERMINAL_PROMPT": "0",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "PATH": "/home/qq/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTUP_HOME": "/home/qq/.rustup",
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 0,
+  "head_after": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "log": {
+    "bytes": 6704,
+    "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy.log",
+    "sha256": "97b46f7ac20867973b519045b4c440f64b72f7dc32c6870aaf4fae046cffae91"
+  },
+  "memory_available_bytes": 97832534016,
+  "model_runs": 0,
+  "native_tests_executed": 0,
+  "provider": {
+    "actual_inputs": [
+      {
+        "bytes": 8985944,
+        "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+        "sha256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12442344,
+        "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/libcrypto.a",
+        "sha256": "8bc23f678b85015007fe5259b1463df1b1c908373d4b364117a78c07788ec154"
+      },
+      {
+        "bytes": 2149026,
+        "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/libssl.a",
+        "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+      }
+    ],
+    "original_environment": {
+      "bytes": 546,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/provider.env",
+      "sha256": "6eb7842501dc1e58325aacbd0c461c5eb8fc1608bd374e14e6fe774066ca7e83"
+    },
+    "original_receipt": {
+      "bytes": 3059,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/pq-provider/provider.json",
+      "sha256": "194fa809eeb74ae99703a64f427eba28d5030063c772c46dcefa13c81ddbb9d9"
+    },
+    "smoke_tests_rerun": false
+  },
+  "qualification": "HOLD_NO_GO",
+  "receipt": {
+    "bytes": 2452,
+    "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy.json",
+    "sha256": "a08f59427ecbac8551d6f9af5ab287b38d0af86f0f503097ab89c022e092a964"
+  },
+  "receipt_status": "command_succeeded",
+  "recorder_exit_code": 0,
+  "runner": {
+    "bytes": 7278,
+    "path": "/home/qq/work/run-chain-c1-gates-resume-20261109-cadence-01.py",
+    "sha256": "d35ffc0074e2e9a8b02985f8a63d378b60581008b178ecbb52edc27477b3a082"
+  },
+  "schema": "chain-c1-resumed-strict-clippy-v1",
+  "source": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "source_root": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+  "started_utc": "2026-11-09T04:43:47.853168+00:00",
+  "status": "strict_clippy_succeeded",
+  "status_after": "",
+  "target": "/home/qq/work/chain-c1-clippy-target-20261109-cadence-01",
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+  "tree_after": "563992ef5bd3db98d95b7e249ea67cbbec2e2978"
+}
