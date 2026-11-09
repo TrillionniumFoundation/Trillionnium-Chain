@@ -26,6 +26,23 @@ the schedule. Neither interface reexecutes application State, authorizes a
 task, validates payments, or grants an atomic storage snapshot capability.
 No new consensus or storage owner is introduced.
 
+## Incremental continuation
+
+The [incremental full-W1 context](INCREMENTAL_WORK_SCHEDULE_RESEARCH_V1.md)
+can extend a checked research prefix by one complete PNH1 or PGH2 packet
+without replaying prior proofs. It starts from this profile's genesis, has no
+untrusted checkpoint constructor, publishes only after all verification and
+cancellation checks, and retains the finite 4096-height scope. The original
+retained-branch adapter below still replays its entire input history.
+
+Candidate-only `clock_eligibility` and whole-branch
+`branch_clock_eligibility` are separate queries. The latter retains the
+maximum ancestor timestamp even when old-policy timestamps are nonmonotone.
+Neither query changes historical target or credit. The
+[time and credit continuation](TIME_CREDIT_CONTINUATION_V1.md) records the
+existing native Growth clock integration, the rejected external quantum
+source bound, and the remaining production qualification gates.
+
 ## Exact finite contract
 
 The independent caller fixes a `Profile` before examining a candidate. Its

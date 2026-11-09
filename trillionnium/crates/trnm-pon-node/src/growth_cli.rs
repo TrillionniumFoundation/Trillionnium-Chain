@@ -128,6 +128,19 @@ fn status(node: &Node) -> Result<Value> {
 }
 
 pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Value> {
+    run_with_clock(command, args, &mut || {
+        Ok(SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|_| Error::from("CLOCK"))?
+            .as_secs())
+    })
+}
+
+fn run_with_clock(
+    command: &str,
+    args: &BTreeMap<String, String>,
+    wall_now: &mut dyn FnMut() -> Result<u64>,
+) -> Result<Value> {
     let extra = match command {
         "growth-status" | "growth-recover" => "",
         "growth-working" => "--key",
@@ -141,7 +154,7 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
         "growth-evaluation-observe" => "--candidate --ancestry-blocks --logical-now",
         "growth-evaluation-round-observe" => "--candidate --round-blocks --logical-now",
         "growth-export" => "--block --output",
-        "growth-activate" => "--block",
+        "growth-activate" => "--block --logical-now",
         _ => return Err("GROWTH_COMMAND".into()),
     };
     let allowed = format!("--development --store --growth-namespace --genesis-time {extra}");
@@ -239,14 +252,15 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
     } else {
         None
     };
-    let now = number(
-        args,
-        "--logical-now",
-        SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map_err(|_| Error::from("CLOCK"))?
-            .as_secs(),
-    )?;
+    let logical_now = args
+        .get("--logical-now")
+        .map(|_| parse_number(args, "--logical-now"))
+        .transpose()?;
+    let mut current_clock = || match logical_now {
+        Some(value) => Ok(value),
+        None => wall_now(),
+    };
+    current_clock()?;
     // Query inputs, including the logical clock, are validated before even the
     // source-store probe. Observation opens only the existing private snapshot
     // path; it must not initialize or recover the source namespace.
@@ -295,8 +309,12 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
         }
         "growth-make" | "growth-mine" => {
             let (transactions, miner, timestamp, attempts) = mining.ok_or("GROWTH_MINING_INPUT")?;
+            let parent = parent.unwrap_or(node.active()?.0);
+            if command == "growth-mine" {
+                node.check_observed_history(parent, current_clock()?)?;
+            }
             let packet = node.make_growth_consensus_maintenance(
-                parent.unwrap_or(node.active()?.0),
+                parent,
                 transactions,
                 miner,
                 timestamp,
@@ -306,16 +324,24 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             write_packet(output.ok_or("GROWTH_OUTPUT_REQUIRED")?, &bytes)?;
             let id = packet.id()?;
             if command == "growth-mine" {
-                node.admit_growth(&packet, now)?;
-                node.activate(id)?;
+                // Proof generation and output may take time. A wall-clock
+                // rollback can defer this branch without discarding its work.
+                let clock = current_clock()?;
+                node.check_observed_history(parent, clock)?;
+                node.admit_growth(&packet, clock)?;
+                node.activate_observed(id, current_clock()?)?;
             }
             json!({"block":hex::encode(id),"packet_bytes":bytes.len(),"account_witness_bytes":packet.accounts.encoded_len().map_err(|e|Error::from(format!("GROWTH_PROOF:{e:?}")))?,
                 "admitted":command=="growth-mine","state":status(&node)?})
         }
         "growth-submit" => {
             let packet = supplied.ok_or("GROWTH_PACKET_REQUIRED")?;
-            let id = node.admit_growth(&packet, now)?;
-            let active = node.activate(id)?;
+            let clock = current_clock()?;
+            node.check_observed_history(packet.header.ledger.parent, clock)?;
+            let id = node.admit_growth(&packet, clock)?;
+            // Admission verifies W1. Reobserve time before current activation;
+            // a deferred result leaves any already admitted packet intact.
+            let active = node.activate_observed(id, current_clock()?)?;
             json!({"block":hex::encode(id),"admitted":true,"active":hex::encode(active),"state":status(&node)?})
         }
         "growth-packet-status" => {
@@ -323,11 +349,19 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
         }
         "growth-evaluation-observe" => {
             let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
-            serde_json::to_value(node.evaluation_observation(candidate, now, bound)?)?
+            serde_json::to_value(node.evaluation_observation(
+                candidate,
+                current_clock()?,
+                bound,
+            )?)?
         }
         "growth-evaluation-round-observe" => {
             let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
-            serde_json::to_value(node.evaluation_round_observation(candidate, now, bound)?)?
+            serde_json::to_value(node.evaluation_round_observation(
+                candidate,
+                current_clock()?,
+                bound,
+            )?)?
         }
         "growth-export" => {
             let packet = node.growth_packet(block.ok_or("GROWTH_BLOCK_REQUIRED")?)?;
@@ -336,10 +370,146 @@ pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Valu
             json!({"block":hex::encode(packet.id()?),"packet_bytes":bytes.len()})
         }
         "growth-activate" => {
-            node.activate(block.ok_or("GROWTH_BLOCK_REQUIRED")?)?;
+            node.activate_observed(block.ok_or("GROWTH_BLOCK_REQUIRED")?, current_clock()?)?;
             status(&node)?
         }
         _ => return Err("GROWTH_COMMAND".into()),
     };
     Ok(json!({"profile":limits::PROFILE,"result":result}))
+}
+
+#[cfg(test)]
+mod clock_tests {
+    use super::*;
+
+    fn at_clocks(command: &str, args: &BTreeMap<String, String>, clocks: &[u64]) -> Result<Value> {
+        let mut clocks = clocks.iter().copied();
+        let result = run_with_clock(command, args, &mut || {
+            Ok(clocks.next().expect("unexpected wall-clock observation"))
+        });
+        assert!(clocks.next().is_none(), "current boundary missed its clock");
+        result
+    }
+
+    #[test]
+    fn native_growth_v2_cli_resamples_wall_clock_after_work_and_keeps_explicit_time_fixed() {
+        let directory = tempfile::tempdir().unwrap();
+        let store = directory.path().join("growth");
+        let namespace = "native-growth-clock-resampling-v2";
+        let settings = Settings::development_with_profiles(
+            Some(1),
+            "native-public-evaluation-dev-v1",
+            continuity_v1::PROFILE,
+        )
+        .unwrap()
+        .with_permanent_account_growth_v2(namespace)
+        .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(&store, settings.clone()).unwrap();
+        let miner = trnm_pon_node::development_public(3).unwrap();
+        let mut parent = settings.genesis();
+        for timestamp in [11, 21, 301, 22, 23] {
+            let packet = node
+                .make_growth_consensus_maintenance(parent, vec![], miner, timestamp, 4096)
+                .unwrap();
+            parent = node.admit_growth(&packet, 100_000).unwrap();
+        }
+        node.activate(parent).unwrap();
+        let active = node.active().unwrap();
+        let candidate = node
+            .make_growth_consensus_maintenance(parent, vec![], miner, 24, 4096)
+            .unwrap();
+        let candidate_id = candidate.id().unwrap();
+        let candidate_raw = candidate.encode().unwrap();
+        let candidate_file = directory.path().join("candidate.pnp2");
+        fs::write(&candidate_file, &candidate_raw).unwrap();
+        drop(node);
+
+        let common = BTreeMap::from([
+            ("--development".into(), "true".into()),
+            ("--genesis-time".into(), "1".into()),
+            ("--growth-namespace".into(), namespace.into()),
+            ("--store".into(), store.to_str().unwrap().into()),
+        ]);
+        let mined_file = directory.path().join("mined.pnp2");
+        let mut mine = common.clone();
+        mine.extend([
+            ("--parent".into(), hex::encode(parent)),
+            ("--timestamp".into(), "24".into()),
+            ("--miner".into(), hex::encode(miner)),
+            ("--output".into(), mined_file.to_str().unwrap().into()),
+        ]);
+        assert_eq!(
+            at_clocks("growth-mine", &mine, &[100_000, 100_000, 24])
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        // Original CLI output precedes admission. Completed proof bytes remain,
+        // but a rollback after that real W1 must not admit the new descendant.
+        let mined = GrowthPacket::decode(&fs::read(&mined_file).unwrap()).unwrap();
+        {
+            let observed = Node::open_growth_packet_observer(&store, settings.clone()).unwrap();
+            assert_eq!(observed.active().unwrap(), active);
+            assert!(observed.parent_height(mined.id().unwrap()).is_err());
+        }
+
+        let mut submit = common.clone();
+        submit.insert("--packet".into(), candidate_file.to_str().unwrap().into());
+        assert_eq!(
+            at_clocks("growth-submit", &submit, &[100_000, 100_000, 24])
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        {
+            let observed = Node::open_growth_packet_observer(&store, settings.clone()).unwrap();
+            assert_eq!(observed.active().unwrap(), active);
+            assert_eq!(
+                observed
+                    .growth_packet(candidate_id)
+                    .unwrap()
+                    .encode()
+                    .unwrap(),
+                candidate_raw
+            );
+        }
+
+        let mut activate = common.clone();
+        activate.insert("--block".into(), hex::encode(candidate_id));
+        assert_eq!(
+            at_clocks("growth-activate", &activate, &[100_000, 24])
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        // Ordinary open performs historical recovery before the command gate.
+        // Refusing current eligibility must not erase that retained history.
+        {
+            let observed = Node::open_growth_packet_observer(&store, settings).unwrap();
+            assert_eq!(observed.active().unwrap().0, candidate_id);
+            assert_eq!(
+                observed
+                    .growth_packet(candidate_id)
+                    .unwrap()
+                    .encode()
+                    .unwrap(),
+                candidate_raw
+            );
+        }
+        activate.insert("--logical-now".into(), "100000".into());
+        run_with_clock("growth-activate", &activate, &mut || {
+            panic!("explicit logical time must not read the wall clock")
+        })
+        .unwrap();
+        activate.insert("--logical-now".into(), "24".into());
+        assert_eq!(
+            run_with_clock("growth-activate", &activate, &mut || {
+                panic!("explicit logical time must not read the wall clock")
+            })
+            .unwrap_err()
+            .to_string(),
+            "TIME_DEFERRED"
+        );
+    }
 }

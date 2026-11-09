@@ -27,6 +27,8 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v
     python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v
+    # Exact source-bound counterexample; passing this audit keeps security qualification false.
+    python3 formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py -v
     python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v
     python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
     python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v

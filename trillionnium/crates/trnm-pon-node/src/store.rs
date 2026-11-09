@@ -6486,13 +6486,16 @@ impl Node {
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
         self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))
     }
-    fn check_observed_history_with_progress(
+    pub(crate) fn check_observed_history_with_progress(
         &self,
         tip: Hash,
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<()> {
         progress()?;
+        if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
+            return self.growth_check_observed_history_with_progress(tip, observed_now, progress);
+        }
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {

@@ -379,6 +379,62 @@ impl Node {
         Ok(id)
     }
 
+    /// Current eligibility of a retained PGH2 branch. Cold audit and admission
+    /// already verified its work in this owner epoch; this walk reads only the
+    /// bounded header/trace projection and never replays W1 or changes credit.
+    /// Every ancestor matters because the historical rule permits a timestamp
+    /// below its parent while still exceeding MTP.
+    pub(in crate::store) fn growth_check_observed_history_with_progress(
+        &self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
+        self.growth_guard()?;
+        let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
+        let mut checkpoint_failed = false;
+        let mut checkpoint = || {
+            let result = progress();
+            checkpoint_failed |= result.is_err();
+            result
+        };
+        let result = (|| {
+            let mut current = tip;
+            while current != self.settings.genesis() {
+                checkpoint()?;
+                // A missing caller tip keeps its original UNKNOWN_PARENT
+                // refusal. Once a row exists, its internal links are retained
+                // local data and must not become a peer-validity decision.
+                let record = self.record(current)?;
+                let header = self
+                    .growth_header(current)
+                    .map_err(Error::local_integrity)?
+                    .ledger;
+                let parent = self.record(header.parent).map_err(Error::local_integrity)?;
+                ensure(
+                    record.parent == Some(header.parent)
+                        && record.height == header.height
+                        && record.root == header.state
+                        && parent.height.checked_add(1) == Some(record.height),
+                    "GROWTH_HEADER_RECORD",
+                )
+                .map_err(Error::local_integrity)?;
+                ensure(header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
+                current = header.parent;
+            }
+            checkpoint()
+        })();
+        // Do not perform more I/O after the original operation's deadline,
+        // cancellation or CPU checkpoint refused continuation.
+        if checkpoint_failed {
+            return result;
+        }
+        // Fence successful and failed clock decisions alike. A foreign writer
+        // cannot change an already-read ancestor into a cached eligible fact.
+        self.growth_guard()?;
+        result
+    }
+
     pub(in crate::store) fn growth_recover(&mut self) -> Result<Hash> {
         self.growth_guard()?;
         let best: Vec<u8> = self.db.query_row(

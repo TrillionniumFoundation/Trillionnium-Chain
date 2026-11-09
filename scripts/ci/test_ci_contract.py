@@ -505,6 +505,21 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check_independent_conformance(moved, self.lanes)
 
+    def test_quantum_source_audit_cannot_be_removed_skipped_or_swallowed(self):
+        command = '    python3 formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py -v\n'
+        self.assertEqual(self.script.count(command), 1)
+        replacements = ('', command * 2, '    true # omitted quantum source audit\n',
+                        '    if false; then\n' + command + '    fi\n',
+                        command.rstrip() + ' || true\n',
+                        '    if\n' + command + '    then :; fi\n')
+        for replacement in replacements:
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        moved = self.script.replace(command, '').replace(
+            '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(moved, self.lanes)
+
     def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
         lines = [line + '\n' for line in self.script.splitlines()
                  if 'TRNM_JOINT_DAA_EVIDENCE_DIR' in line]

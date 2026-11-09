@@ -1,3 +1,15 @@
+<!-- time-credit-source-continuation-v1 -->
+**2026-11-08 time/credit continuation: HOLD_NO_GO.** The
+[continuation contract](../protocol/pon-nakamoto-v1/details/TIME_CREDIT_CONTINUATION_V1.md)
+adds current-clock ancestry checks to the existing Growth path and a bounded
+incremental complete-W1 research prefix. An exact finite counterexample
+rejects the general Bernoulli source bound previously considered for MU1;
+its derived numerical expression is not a chain-security certificate.
+Execution results belong to the exact-source evidence accompanying this
+continuation. C1/MU1 native activation, minimum quantum cost, lifecycle
+credit tails and original-resource hostile-load qualification remain open.
+Prior failed observations and the existing integration candidate are retained.
+
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
 > Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.
