@@ -187,7 +187,15 @@ class ServiceWorkSettlementTests(unittest.TestCase):
         for claim, job in updated._resource_jobs.items():
             original = copy.deepcopy(self.book._resource_jobs[claim])
             original['service_work_last_height_v1'] = 41
-            self.assertEqual(job, original)
+            actual = copy.deepcopy(job)
+            resolution = actual.pop('service_work_resolution_v1')
+            self.assertEqual(resolution['schema'], 'pon-service-work-local-resolution-v1')
+            self.assertEqual(resolution['contract'], self.expected)
+            self.assertEqual(resolution['outcome'], 'unknown')
+            self.assertIsNone(resolution['result_digest'])
+            self.assertIsNone(resolution['base_consumed'])
+            self.assertIsNone(resolution['bonus_consumed'])
+            self.assertEqual(actual, original)
         self.assertEqual(report['status'], 'PENDING_UNKNOWN')
         self.assertTrue(report['original_reservations_retained'])
         self.assertEqual(report['evaluation_lane']['reserved'], 7)
@@ -396,6 +404,226 @@ class ServiceWorkSettlementTests(unittest.TestCase):
         self.assertTrue(all(r['external_payment_executed'] is False
                             for r in report['scenarios'].values()))
         self.assertEqual(report['qualification'], 'HOLD')
+
+
+class ServiceWorkResolutionTests(unittest.TestCase):
+    """Keep local outcome history separate from reversible monetary claims."""
+
+    def setUp(self):
+        self.book, self.raw, self.expected, self.material = demo_case()
+        self.before_reservation = self.book.checkpoint()
+        self.book = reserve_contract(self.book, self.raw, self.expected, height=2)
+        self.after_reservation = self.book.checkpoint()
+
+    def resolve(self, outcome='complete', *, height=3, result=None, base_cpu=30):
+        kwargs = {}
+        if outcome != 'unknown':
+            kwargs.update(base_consumed={'evaluation_cpu_ns': base_cpu,
+                                         'evaluated_examples': 200},
+                          bonus_consumed={'training_cpu_ns': 20, 'parameter_bytes': 100})
+        if outcome == 'complete':
+            kwargs.update(material=self.material, result=result if result is not None
+                          else execute_service(self.raw, self.expected, self.material))
+        return settle_contract(self.book, self.raw, self.expected, height=height,
+                               outcome=outcome, **kwargs)
+
+    def supply(self, height=3):
+        return supply_observation(self.book, [(self.raw, self.expected)], height=height)
+
+    def test_completed_service_cannot_become_cancelled_after_reorg(self):
+        self.book, _ = self.resolve()
+        self.book.reorg(self.after_reservation)
+        original = copy.deepcopy(self.book.__dict__)
+        with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+            self.resolve('cancelled', height=4)
+        self.assertEqual(self.book.__dict__, original)
+
+    def test_cancelled_service_cannot_become_complete_after_reorg(self):
+        self.book, _ = self.resolve('cancelled')
+        self.book.reorg(self.after_reservation)
+        original = copy.deepcopy(self.book.__dict__)
+        with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+            self.resolve(height=4)
+        self.assertEqual(self.book.__dict__, original)
+
+    def test_completed_service_cannot_become_unknown_after_reorg(self):
+        self.book, _ = self.resolve()
+        self.book.reorg(self.after_reservation)
+        original = copy.deepcopy(self.book.__dict__)
+        with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+            self.resolve('unknown', height=4)
+        self.assertEqual(self.book.__dict__, original)
+
+    def test_exact_terminal_reapplication_preserves_costs_and_external_intent(self):
+        self.book, first = self.resolve()
+        claim = next(key for key, value in self.book.branch.claims.items() if value.paid)
+        operation, effect, receipt = key('one-payment'), key('payment-effect'), key('payment-receipt')
+        self.assertEqual(self.book.prepare_external(claim=claim, operation=operation,
+                                                   effect=effect), 'new')
+        self.book.finish_external(lane='evaluation', subject=json.loads(self.raw)['task'],
+                                  operation=operation, receipt=receipt)
+        original_jobs = copy.deepcopy(self.book._resource_jobs)
+        original_effects = copy.deepcopy(self.book._effects)
+        original_costs = self.book.summary()['resource_liabilities']
+        self.book.reorg(self.after_reservation)
+        observed = self.supply()
+        self.assertEqual(observed['pending_contracts'], 1)  # Monetary reservation only.
+        self.assertEqual(observed['recorded_terminal_contracts'], 1)
+        self.assertEqual(observed['reserved_unobserved_contracts'], 0)
+        self.assertEqual(observed['reconciliation_required_contracts'], 1)
+        self.assertFalse(observed['execution_dispatch_authorized'])
+        self.assertFalse(observed['fresh_work_supply_verified'])
+        self.book, replay = self.resolve(height=4)
+        self.assertEqual(replay['schema'], 'pon-service-work-settlement-reference-v2')
+        self.assertTrue(replay['local_resolution_replayed'])
+        self.assertFalse(first['local_resolution_replayed'])
+        self.assertFalse(replay['execution_dispatch_authorized'])
+        self.assertEqual(replay['additional_consensus_credit'], 0)
+        self.assertEqual(self.book.summary()['resource_liabilities'], original_costs)
+        self.assertEqual(self.book._effects, original_effects)
+        for identity, job in original_jobs.items():
+            self.assertEqual(self.book._resource_jobs[identity]['service_work_resolution_v1'],
+                             job['service_work_resolution_v1'])
+        self.assertEqual(self.book.prepare_external(claim=claim, operation=operation,
+                                                   effect=effect), 'done')
+        self.assertEqual(self.book.summary()['lanes']['evaluation']['paid'], 7)
+        self.assertTrue(self.supply(height=4)['observations'][0]['branch_resolution_matches_local'])
+        self.assertEqual(self.supply(height=4)['reconciliation_required_contracts'], 0)
+
+    def test_terminal_result_bytes_and_cost_vector_remain_pinned(self):
+        self.book, _ = self.resolve()
+        self.book.reorg(self.after_reservation)
+        original = copy.deepcopy(self.book.__dict__)
+        with self.assertRaisesRegex(ValueError,
+                'BUDGET_RESOURCE_REPLAY_MISMATCH|SERVICE_ORIGINAL_RESOLUTION'):
+            self.resolve(height=4, base_cpu=31)
+        # Simulate a different verifier revision returning different complete
+        # bytes for the same frozen service. A previous local result is immutable
+        # even if a later accepting implementation would otherwise agree with it.
+        changed = json.loads(execute_service(self.raw, self.expected, self.material))
+        changed['later_diagnostic'] = 'different-result-bytes'
+        changed = canonical(changed)
+        with patch('service_work_settlement_v1.execute_service', return_value=changed):
+            with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+                self.resolve(height=4, result=changed)
+        self.assertEqual(self.book.__dict__, original)
+
+    def test_unknown_is_retained_but_can_reconcile_to_one_terminal_outcome(self):
+        self.book, _ = self.resolve('unknown')
+        self.book, _ = self.resolve('unknown', height=4)
+        self.book.reorg(self.after_reservation)
+        observed = self.supply(height=4)
+        self.assertEqual(observed['recorded_unknown_contracts'], 1)
+        self.assertEqual(observed['reserved_unobserved_contracts'], 0)
+        self.assertEqual(observed['resource_accounted_contracts'], 0)
+        self.assertFalse(observed['execution_dispatch_authorized'])
+        self.book, report = self.resolve(height=5)
+        self.assertEqual(report['decision'], 'NoUpdate')
+        self.assertFalse(report['local_resolution_replayed'])
+        self.assertEqual(self.supply(height=5)['recorded_terminal_contracts'], 1)
+
+    def test_expiry_and_orphaning_do_not_erase_unknown_or_terminal_history(self):
+        for outcome in ('unknown', 'complete', 'invalid', 'cancelled'):
+            with self.subTest(outcome=outcome):
+                self.setUp()
+                self.book, _ = self.resolve(outcome)
+                self.book.reorg(self.before_reservation)
+                original = copy.deepcopy(self.book.__dict__)
+                observed = self.supply(height=40)
+                self.assertEqual(observed['pending_contracts'], 0)
+                self.assertEqual(observed['expired_contracts'], 1)
+                self.assertEqual(observed['orphaned_resource_contracts'], 1)
+                self.assertEqual(observed['reconciliation_required_contracts'], 1)
+                self.assertEqual(observed['observations'][0]['recorded_outcome'], outcome)
+                self.assertFalse(observed['fresh_work_supply_verified'])
+                self.assertFalse(observed['liveness_qualified'])
+                self.assertEqual(self.book.__dict__, original)
+
+    def test_reserve_after_branch_rewind_does_not_reset_terminal_outcome(self):
+        self.book, _ = self.resolve('invalid')
+        original_pins = [copy.deepcopy(j['service_work_resolution_v1'])
+                         for j in self.book._resource_jobs.values()]
+        self.book.reorg(self.before_reservation)
+        self.book = reserve_contract(self.book, self.raw, self.expected, height=4)
+        self.assertEqual([j['service_work_resolution_v1']
+                          for j in self.book._resource_jobs.values()], original_pins)
+        self.assertEqual(self.supply(height=4)['recorded_terminal_contracts'], 1)
+        with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+            self.resolve(height=4)
+
+    def test_generic_close_accounts_resources_without_proving_execution(self):
+        self.book, _ = self.resolve('unknown')
+        contract = json.loads(self.raw)
+        for budget in ('base_budget', 'bonus_budget'):
+            self.book.close(budget=contract[budget], height=50)
+        self.book.reorg(self.after_reservation)
+        observed = self.supply(height=50)
+        self.assertEqual(observed['recorded_unknown_contracts'], 1)
+        self.assertEqual(observed['recorded_terminal_contracts'], 0)
+        self.assertEqual(observed['resource_accounted_contracts'], 1)
+        self.assertEqual(observed['reserved_unobserved_contracts'], 0)
+        self.assertEqual(observed['observations'][0]['local_state'], 'unknown')
+        self.assertFalse(observed['fresh_work_supply_verified'])
+
+    def test_unbound_generic_resolution_is_not_a_service_completion(self):
+        for claim, row in self.book.branch.claims.items():
+            self.book.resolve(claim=claim, height=3, paid=0,
+                              consumed=row.reserved, outcome='invalid')
+        self.book.reorg(self.after_reservation)
+        observed = self.supply()
+        self.assertEqual(observed['resource_accounted_contracts'], 1)
+        self.assertEqual(observed['recorded_terminal_contracts'], 0)
+        self.assertEqual(observed['observations'][0]['local_state'],
+                         'resource-accounted-outcome-unobserved')
+        with self.assertRaisesRegex(ValueError, 'SERVICE_UNBOUND_PRIOR_RESOLUTION'):
+            self.resolve('unknown', height=4)
+
+    def test_two_resolution_pins_must_agree_and_bind_original_charge_vectors(self):
+        self.book, _ = self.resolve()
+        original = copy.deepcopy(self.book)
+        jobs = list(self.book._resource_jobs.values())
+        del jobs[0]['service_work_resolution_v1']
+        with self.assertRaisesRegex(ValueError, 'SERVICE_RESOLUTION_PAIR'):
+            self.supply()
+        self.book = copy.deepcopy(original)
+        for job in self.book._resource_jobs.values():
+            job['service_work_resolution_v1']['base_consumed']['evaluation_cpu_ns'] = 31
+        with self.assertRaisesRegex(ValueError, 'SERVICE_RESOLUTION_RESOURCE_BINDING'):
+            self.supply()
+
+    def test_different_branch_resolution_still_requires_owner_reconciliation(self):
+        self.book, _ = self.resolve()
+        self.book.reorg(self.after_reservation)
+        contract = json.loads(self.raw)
+        for budget in ('base_budget', 'bonus_budget'):
+            self.book.close(budget=contract[budget], height=50)
+        row = self.supply(height=50)['observations'][0]
+        self.assertEqual(row['branch_status'], 'resolved')
+        self.assertEqual(row['recorded_outcome'], 'complete')
+        self.assertFalse(row['branch_resolution_matches_local'])
+        self.assertTrue(row['reconciliation_required'])
+        self.assertFalse(row['execution_dispatch_authorized'])
+        self.setUp()
+        self.book, _ = self.resolve('invalid')
+        self.book.reorg(self.after_reservation)
+        for claim in self.book.branch.claims:
+            self.book.resolve(claim=claim, height=4, paid=0,
+                consumed=self.book._resource_jobs[claim]['consumed'], outcome='cancelled')
+        row = self.supply(height=4)['observations'][0]
+        self.assertFalse(row['branch_resolution_matches_local'])
+        self.assertTrue(row['reconciliation_required'])
+
+    def test_unobserved_reservation_is_not_a_not_dispatched_certificate(self):
+        original = copy.deepcopy(self.book.__dict__)
+        observed = self.supply()
+        self.assertEqual(observed['schema'], 'pon-service-work-supply-observation-v2')
+        self.assertEqual(observed['pending_contracts'], 1)
+        self.assertEqual(observed['reserved_unobserved_contracts'], 1)
+        self.assertEqual(observed['observations'][0]['local_state'], 'unobserved')
+        self.assertFalse(observed['execution_dispatch_authorized'])
+        self.assertFalse(observed['fresh_work_supply_verified'])
+        self.assertEqual(self.supply(height=40)['reserved_unobserved_contracts'], 0)
+        self.assertEqual(self.book.__dict__, original)
 
 
 if __name__ == '__main__':

@@ -10634,3 +10634,29 @@ scoped-learning controls. Record the original payment counterexamples and all
 failed attempts. These engineering properties do not close cheapest legal work,
 joint consensus security, external payment, independent model benefit, WAN or
 whole-state recovery obligations. Production qualification stays **HOLD_NO_GO**.
+
+
+### 2026-11-08 America/New_York — Converge preserved Hepta arithmetic and accounting
+
+Continue #824 at `fd1cf356fcc557dbd2aee2318ffc524d17aa02f0`. Selectively
+reuse the reviewed fixed-packet identity and monotonic service-outcome changes
+from #828 at `3388a6810b5ae8f41f238f878d56bcc5669bc8b9`; the latter is a
+source input, not an ancestor of this continuation. The
+[exact selective-source record](../../evidence/pon-hepta-accounting-convergence-20261109/source-inputs.json)
+binds every reused file and its unchanged #821 input. Keep the #824 native
+factored producer, actual counters, payment-readback fences and operating
+boundaries intact. Native Rust, signed protocol domains, retained evidence,
+Cargo locks and all production activation flags are unchanged.
+
+Bind each fanout packet slot to the original producer identity across receivers.
+Retain local service outcomes and cost observations across monetary-branch
+reorganization, preserve evaluated NoUpdate base fees, and expose reconciliation
+without authorizing dispatch or new payment. All additional consensus credit
+stays zero. Report the converged Python controls and unchanged native source
+separately; earlier PR results do not count as execution of this new commit.
+
+The inherited public-readiness source-contract mismatch and both QROM source
+contract mismatches remain explicit unresolved gates. Do not refresh historical
+evidence pins or loosen a resource contract to hide them. Cheapest legal work,
+independent useful learning, external payment, public-service acceptance and
+whole-chain security remain **HOLD_NO_GO**.
