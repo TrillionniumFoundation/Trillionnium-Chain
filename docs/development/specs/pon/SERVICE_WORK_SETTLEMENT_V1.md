@@ -159,7 +159,8 @@ attempts discard their transition copy, and read-only supply queries do not
 record new height observations. The real owner must separately persist valid
 height observations; this adapter does not certify the physical clock or
 canonical chain. A completed claim cannot be resolved again on
-the same branch; replayed branch accounting is not another external payment.
+the same branch. The local outcome pin described below also survives branch
+rewind; replayed branch accounting is not another external payment.
 An unknown result must not be passed to the generic
 planner's budget-closing/refund path as evidence of `NotDispatched`; actual
 timeout/effect resolution belongs to the original operation and funding owners.
@@ -179,6 +180,64 @@ escrow, active-branch, maturity, original-operation or receipt checks. Real
 settlement, physical worker cost, provider idempotency and cross-node recovery
 remain open integration work.
 
+## Local outcome continuity and V2 reports
+
+The contract, complete evaluation result and original planner remain V1. The
+adapter's settlement and supply reports now use the explicit namespaces
+`pon-service-work-settlement-reference-v2` and
+`pon-service-work-supply-observation-v2`. Historical V1 reports retain their
+original meaning and are not relabeled as observations of the new checks.
+These reports are not native transactions or consensus admission inputs.
+
+Each successful `settle_contract` transition records the same
+`pon-service-work-local-resolution-v1` object under `service_work_resolution_v1`
+in both **existing monotonic resource-job records**. The record binds the exact
+contract, outcome, complete-result digest, model decision, both reported cost
+vectors and both conditional fee amounts. It is private in-memory metadata;
+there is no new durable database, serialized native schema, dispatch owner or
+branch checkpoint field. The caller must retain the returned planner as before.
+
+Both pins must be jointly absent or agree exactly. A one-lane pin, contradictory
+pins, changed contract or disagreement with the original consumed cost vectors
+is refused. Both new pins are published only on the successful private-copy
+transition after both original lane resolutions succeed. A failed base or bonus
+transition leaves the caller's original planner unchanged.
+
+`unknown` remains nonterminal. Repeated Unknown observations and subsequent
+completion, invalidity or cancellation can reconcile the same original task
+within its unchanged height and payment rules. A terminal `complete`, `invalid`
+or `cancelled` record cannot become a different outcome, or revert to Unknown,
+after a branch rewind. The earlier adapter retained costs but not that outcome:
+restoring the reserved branch could relabel a completed service as cancelled or
+Unknown, or a cancelled service as complete, at the same reported charges.
+The retained regression comparisons distinguish this reference-accounting
+defect from any claim about deployed native acceptance.
+
+Exact monetary reapplication after reorganization remains permitted. Its
+outcome, complete-result bytes, decision, charges and conditional fees must
+match the original pin. Height and branch membership are deliberately excluded
+from that immutable pin; the existing separate monotonic-height check still
+applies. The V2 report identifies this case with `local_resolution_replayed`.
+It authorizes no physical re-execution, contributes no additional chainwork and
+does not reset the original external-intent journal. A completed external intent
+still returns `done`. A separate native dispute, refund or compensation decision
+must use its original owner; it cannot be represented by changing this service's
+historical outcome.
+
+The generic planner can conservatively charge a whole reservation when an
+unresolved budget expires. Therefore `consumed != null` establishes resource
+accounting, not physical execution or successful service completion. An existing
+Unknown service pin stays Unknown if the generic close path accounts resources.
+Accounted jobs without a service outcome pin are reported as
+`resource-accounted-outcome-unobserved`; the adapter refuses to invent a prior
+service outcome for them. Their original owner must reconcile the missing fact.
+
+Failed function calls still discard their private transition copy. This module
+does not automatically observe an external settlement refusal, a dispatch or
+worker termination. Its observer cannot infer those missing facts from silence.
+The new outcome pin neither authenticates those events nor supplies durable
+restart, independent rollback protection, physical metering or real demand.
+
 ## Work credit and task supply
 
 No API here accepts a caller's `qualified` flag, proof-system name, nominal MAC
@@ -189,10 +248,37 @@ consensus owner after the actual relation, lifecycle cost, selection distributio
 tail and admission obligations are qualified. A service's legitimate optimization
 can reduce its actual cost without invalidating its contracted value.
 
-`supply_observation` counts only the finite supplied contract set and current
-reference reservations, retaining original identities and windows. It neither
-creates replacement tasks nor calls a random task useful. An empty set reports
-zero pending tasks. A nonempty finite set still reports
+`supply_observation` inspects only the finite supplied contract set, current
+reference reservations and the original local resource jobs. Its retained
+`pending_contracts` and `conditional_base_reservations` fields explicitly count
+**active branch monetary reservations**. They do not count fresh executable
+tasks. A reorganization can restore a monetary reservation while its physical
+job remains Unknown or has a recorded terminal outcome.
+
+The V2 report exposes each task's branch status, original window, recorded
+outcome, resource accounting and reconciliation requirement. It separately
+counts unobserved active reservations, recorded Unknown/terminal outcomes,
+accounted resources, orphaned resource jobs and expired contracts. These are
+different dimensions, not disjoint totals to sum as a task-supply measure.
+Completed or Unknown work remains visible even when the selected branch no
+longer contains its reservation. Expired contracts cannot become active supply
+by keeping, restoring or renaming a monetary claim.
+
+A branch labeled `resolved` need not agree with the original service outcome.
+The observer compares both lane outcomes and fee amounts with the immutable
+local resolution and exposes `branch_resolution_matches_local`. A later generic
+expiry/refund or different branch disposition retains its own facts and remains
+a reconciliation requirement. It neither replaces the recorded service outcome
+nor authorizes another dispatch or payment.
+
+An active reservation with no outcome observation is labeled `unobserved`.
+This is not `NotDispatched`, permission to execute again, or proof that an
+honest worker can obtain a fresh eligible task. Every report retains
+`execution_dispatch_authorized=false` and `fresh_work_supply_verified=false`.
+Only the original dispatch owner can resolve that boundary.
+
+The observer neither creates replacement tasks nor calls a random task useful.
+An empty set reports zero pending reservations. A nonempty finite set still reports
 `actual_demand_verified=false`, `native_funding_verified=false` and
 `liveness_qualified=false`. Sustained task supply, actual external budgets and
 pure useful-work consensus liveness are not closed by an accounting example.
@@ -225,5 +311,11 @@ duplicate/relabelled claims, contract pins across branch rewind, wrong funding
 lanes, maturity in either lane, atomic partial failure, overrun, expiry and
 unknown-result retention. A deterministic copy-boundary control also checks that
 external material mutation cannot change the committed execution snapshot.
+The continuation checks terminal-outcome substitution after both pre-reservation
+and post-reservation branch rewinds, unchanged result bytes and charge vectors,
+Unknown reconciliation, paired-pin consistency, expiry, generic resource closing,
+unobserved execution and exact external-intent reuse. The earlier retained Unknown
+test additionally checks the new private pin while retaining its original
+monetary, resource, height and input-immutability assertions.
 No test is reported as evidence of trained-model efficacy, independent customer
 demand, native payment execution, production adoption or chain security.

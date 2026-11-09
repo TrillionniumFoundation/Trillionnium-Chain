@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "commit": "187b880048e30196407960f48b10c379859d1396",
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "exit_code": 0,
+  "finished_utc": "2026-11-09T02:55:02.995541+00:00",
+  "schema": "pon-evidence-assembly-preflight-v1",
+  "started_utc": "2026-11-09T02:55:02.889761+00:00",
+  "tests_executed": false
+}

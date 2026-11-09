@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+  ],
+  "commit": "187b880048e30196407960f48b10c379859d1396",
+  "exit_code": 0,
+  "output_sha256": "39f65d989fc26767ba4e00b632f7b4b66e9a77de2e26baba279665196b20983e",
+  "observed_utc": "2026-11-09T02:37:01.484113+00:00",
+  "scope": "unchanged actual MU1 binding audit; no new work-cost experiment"
+}

@@ -1,0 +1,80 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-u",
+    "/workspace/scratch/6050776ac4f9/evidence-validation/formal/run_one_suite.py",
+    "/workspace/scratch/6050776ac4f9/chain-src",
+    "test_reward_budget_oracle.py",
+    "/workspace/scratch/6050776ac4f9/evidence-validation/formal/test_reward_budget_oracle.tests.json"
+  ],
+  "counts": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "passed": 23,
+    "skipped": 0,
+    "tests_run": 23,
+    "unexpected_successes": 0
+  },
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "duration_ns": 166112588,
+  "exit_code": 0,
+  "finished_utc": "2026-11-09T02:36:29.971535+00:00",
+  "head": "187b880048e30196407960f48b10c379859d1396",
+  "module_bytes_unchanged": true,
+  "name": "test_reward_budget_oracle",
+  "pid": 14,
+  "process_timeout_seconds": 300,
+  "python": {
+    "effective_selected_env": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": null,
+      "PYTHONPATH": null,
+      "TRNM_PON_EVALUATION_POLICY": null
+    },
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "executable_digest": {
+      "bytes": 30894944,
+      "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+    },
+    "executable_realpath": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "implementation": "cpython",
+    "package_versions": {
+      "cryptography": "50.0.0",
+      "numpy": "2.3.5"
+    },
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "uid": 1000,
+    "uname": [
+      "Linux",
+      "5e0f9cbcef87",
+      "6.18.57",
+      "#1 SMP Tue Oct 20 21:56:04 UTC 2026",
+      "x86_64",
+      ""
+    ],
+    "version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "runner_digest": {
+    "bytes": 3285,
+    "sha256": "01bcd050c78fa9d39e7ac8d833d9ecabfec021e8ef3f447c79353212e44be644"
+  },
+  "schema": "pon-formal-command-receipt-v1",
+  "started_utc": "2026-11-09T02:36:29.805398+00:00",
+  "stderr": {
+    "bytes": 4078,
+    "path": "test_reward_budget_oracle.stderr",
+    "sha256": "ed0827486bc315ea6fda62bcb9cd3a7e246c738d7d98fccd141f8ca06a69b6bb"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "test_reward_budget_oracle.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "test_observation_file": {
+    "bytes": 4681,
+    "path": "test_reward_budget_oracle.tests.json",
+    "sha256": "fbc13e71e1df940a8e0c48275261381479c461bc1f6318dac5c067bb072bd386"
+  },
+  "timed_out": false
+}

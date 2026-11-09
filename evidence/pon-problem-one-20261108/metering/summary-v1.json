@@ -1,0 +1,109 @@
+{
+  "accounting_output_schema": "pon-grouped-fresh-deployment-cost-v1",
+  "actual_consensus_credit": 0,
+  "baseline_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "historical_input_schema": "pon-grouped-fresh-fanout-campaign-v0",
+  "historical_input_sha256": "915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96",
+  "historical_reanalysis_status": "PASS",
+  "historical_topologies": [
+    {
+      "completed_transport_attempts": 6,
+      "distinct_verified_work_ids": 2,
+      "producer_work_ids_bound": true,
+      "receivers": 1,
+      "status": "PASS",
+      "verified_receptions": 3
+    },
+    {
+      "completed_transport_attempts": 12,
+      "distinct_verified_work_ids": 2,
+      "producer_work_ids_bound": true,
+      "receivers": 2,
+      "status": "PASS",
+      "verified_receptions": 6
+    },
+    {
+      "completed_transport_attempts": 24,
+      "distinct_verified_work_ids": 2,
+      "producer_work_ids_bound": true,
+      "receivers": 4,
+      "status": "PASS",
+      "verified_receptions": 12
+    }
+  ],
+  "logs": {
+    "accounting": "accounting-v1-tests.stderr",
+    "green": "fixed-v1-counterexamples.json",
+    "historical": "historical-fanout-reanalysis-v2.json",
+    "reanalysis": "reanalysis-v2-tests.stderr",
+    "red": "legacy-counterexamples.json"
+  },
+  "new_native_workload_executed": false,
+  "originals_modified": false,
+  "preflight_exit": 0,
+  "production_activation": false,
+  "qualification": "HOLD",
+  "reanalysis_output_schema": "pon-grouped-fanout-reanalysis-v2",
+  "same_input_identities": [
+    {
+      "case": "carrier_replay_relabel",
+      "input_sha256": "8f2f3381d3716aa34380dafd1e27b1584f021dcf16d89de287d60f787da8c4b0",
+      "new_status": "FAIL",
+      "old_status": "PASS"
+    },
+    {
+      "case": "cross_receiver_slot_swap",
+      "input_sha256": "6d098f5ac9830417664fb4b68a6fa01a5f3ed203cd59798a8b2d5a76a4c2c6cb",
+      "new_status": "FAIL",
+      "old_status": "PASS"
+    },
+    {
+      "case": "distinct_nonce_alias",
+      "input_sha256": "7b78be4747d0973ebbfc59d6ac166279219f7c9cfb438942424c3ce9104de2fb",
+      "new_status": "FAIL",
+      "old_status": "PASS"
+    },
+    {
+      "case": "one_topology_renamed",
+      "input_sha256": "455fcd6c297a997f2d2158f6335461c94b43c081b2232557f54577f35a54afdb",
+      "new_status": "FAIL",
+      "old_status": "PASS"
+    },
+    {
+      "case": "all_topologies_swapped",
+      "input_sha256": "cedc437bb1ad72647ba73da390f909908a3a4cc16a5997d430260d2accf986ef",
+      "new_status": "FAIL",
+      "old_status": "PASS"
+    },
+    {
+      "case": "producer_roster_missing",
+      "input_sha256": "d0e2ec8f7ed8a626e061604940fb216199d64f580d149d53324f72cbdb34c540",
+      "new_status": "FAIL",
+      "old_status": "PASS"
+    }
+  ],
+  "same_probe_sha256": "3221ddb05d1f5218be368e4bc6dfab66a3d26315dde2feb754fb8a281d84aacf",
+  "schema": "pon-fixed-packet-metering-validation-v1",
+  "scope": "targeted working-tree reader tests and offline historical report reanalysis; no new native workload",
+  "source_sha256": {
+    "docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md": "004ec14765fe815a13f40e443158a8e146e3ff351f1fdfecf98cd1320106fac3",
+    "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py": "aa1aef8264333b91e6df4adb8a3ccf94207d02123ed3301f2d63104693156af3",
+    "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py": "c1663aa6dea82fcd8dace728b8213aa4cb6359f149805b4e80fb38ea02af9b5e",
+    "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db",
+    "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py": "aa5d1a1a1c01e505a07378af9b16b37e666f1e1be5916e9cff94021af9964624",
+    "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py": "af0ca743bd003762ffbabfb4f8d0262ca698a221c5c3189b38e98edfe9438eeb"
+  },
+  "tests": {
+    "accounting": {
+      "failed": 0,
+      "passed": 50,
+      "skipped": 0
+    },
+    "new_named_regressions_in_these_totals": 12,
+    "reanalysis": {
+      "failed": 0,
+      "passed": 21,
+      "skipped": 0
+    }
+  }
+}

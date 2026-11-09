@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/6050776ac4f9/evidence-delivery/build_evidence_draft.py"
+  ],
+  "capture_origin": "Actual exec_command output of the first assembly attempt.",
+  "correction": "Allow the intended final manifest during pre-manifest link validation; final manifest verifier must verify its existence and contents.",
+  "exit_code": 1,
+  "observed_failure": "Relative README link to manifest.json checked before final manifest was written.",
+  "schema": "pon-evidence-assembly-preparation-result-v1",
+  "scope": "Evidence draft assembly only; no repository edits or test execution.",
+  "timestamp_recorded": false
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "native-guarded-storage-v1",
+  "recorded_utc": "2026-11-09T02:58:13.206014+00:00",
+  "paths": {
+    "cargo_target": {
+      "path": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+      "realpath": "/workspace/scratch/6050776ac4f9/native-target-relocated",
+      "device": 27,
+      "mount": "/workspace",
+      "filesystem_type": "overlay",
+      "disk": {
+        "total": 67586535424,
+        "used": 55402647552,
+        "free": 8731140096
+      }
+    },
+    "cargo_home": {
+      "path": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/cargo",
+      "realpath": "/workspace/scratch/6050776ac4f9/native-stage-relocated/cargo",
+      "device": 27,
+      "mount": "/workspace",
+      "filesystem_type": "overlay",
+      "disk": {
+        "total": 67586535424,
+        "used": 55402647552,
+        "free": 8731140096
+      }
+    },
+    "temp": {
+      "path": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/temp",
+      "realpath": "/workspace/scratch/6050776ac4f9/native-stage-relocated/temp",
+      "device": 27,
+      "mount": "/workspace",
+      "filesystem_type": "overlay",
+      "disk": {
+        "total": 67586535424,
+        "used": 55402647552,
+        "free": 8731140096
+      }
+    },
+    "raw_evidence": {
+      "path": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/evidence",
+      "realpath": "/workspace/scratch/6050776ac4f9/native-stage-relocated/evidence",
+      "device": 27,
+      "mount": "/workspace",
+      "filesystem_type": "overlay",
+      "disk": {
+        "total": 67586535424,
+        "used": 55402647552,
+        "free": 8731140096
+      }
+    },
+    "repository": {
+      "path": "/workspace/scratch/6050776ac4f9/chain-src",
+      "realpath": "/workspace/scratch/6050776ac4f9/chain-src",
+      "device": 27,
+      "mount": "/workspace",
+      "filesystem_type": "overlay",
+      "disk": {
+        "total": 67586535424,
+        "used": 55402647552,
+        "free": 8731140096
+      }
+    },
+    "rustup_toolchain": {
+      "path": "/workspace/scratch/6050776ac4f9/toolchain/rustup",
+      "realpath": "/workspace/scratch/6050776ac4f9/toolchain/rustup",
+      "device": 27,
+      "mount": "/workspace",
+      "filesystem_type": "overlay",
+      "disk": {
+        "total": 67586535424,
+        "used": 55402647552,
+        "free": 8731140096
+      }
+    }
+  },
+  "guard": "Third attempt stops its own Cargo process group when the filesystem containing actual target/log/cache writes has less than256MiB available or Linux MemAvailable is below256MiB. Source and Rustup paths are read-only; GIT_OPTIONAL_LOCKS=0.",
+  "aliases_scope": "Only task-created target and temporary stage/cache directories outside the repository were aliased; repository path and Git index are unchanged."
+}

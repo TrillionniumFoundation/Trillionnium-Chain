@@ -1,0 +1,149 @@
+{
+  "binding_validation": "PASS",
+  "contract_sha256": "9902cf90df81ef5e4ffbf7f30c64abc3286bb4e3b3785c2f0a227f12d969cc05",
+  "finite_model_certificate_is_actual_w1_lower_bound": false,
+  "full_execution_identity_verified": false,
+  "ideal_probability": {
+    "denominator": 16,
+    "numerator": 1
+  },
+  "native_admission_policy_changed": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "relation_parameters": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+  "relation_profile": "pon-mandatory-w1-64-research-v1",
+  "research_credit_range": [
+    16,
+    128
+  ],
+  "schema": "pon-fixed-probability-cost-audit-result-v1",
+  "source_binding_scope": "four_relation_source_files_only",
+  "subset_controls": {
+    "classically_dearer_quantum_cheaper": {
+      "actual_w1_quantum_attack_implemented": false,
+      "classical_comparison": "dearer",
+      "classical_winner_cost_ratio": {
+        "denominator": 5,
+        "numerator": 8
+      },
+      "model": "ideal-search-scaling-only",
+      "normalized_probability": {
+        "denominator": 64,
+        "numerator": 1
+      },
+      "normalized_probability_ratio": {
+        "denominator": 4,
+        "numerator": 1
+      },
+      "quantum_comparison": "cheaper",
+      "quantum_winner_cost_ratio_squared": {
+        "denominator": 25,
+        "numerator": 16
+      },
+      "ratio_semantics": "assumed-inverse-p-and-inverse-sqrt-p-cost-laws;not-finite-grover-or-fixed-success-exact-runtime",
+      "setup_and_post_win_tail_included": false
+    },
+    "quarter_domain_quarter_winners_keeps_density": {
+      "actual_w1_quantum_attack_implemented": false,
+      "classical_comparison": "equal",
+      "classical_winner_cost_ratio": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "model": "ideal-search-scaling-only",
+      "normalized_probability": {
+        "denominator": 16,
+        "numerator": 1
+      },
+      "normalized_probability_ratio": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "quantum_comparison": "equal",
+      "quantum_winner_cost_ratio_squared": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "ratio_semantics": "assumed-inverse-p-and-inverse-sqrt-p-cost-laws;not-finite-grover-or-fixed-success-exact-runtime",
+      "setup_and_post_win_tail_included": false
+    }
+  },
+  "unclosed_obligations": [
+    "complete-legal-strategy-simulation",
+    "classical-amortized-cost-lower-bound",
+    "quantum-amortized-cost-lower-bound",
+    "bounded-initial-classical-and-quantum-potential",
+    "cross-scale-and-cross-fork-composition",
+    "actual-hash-to-search-model-reduction",
+    "resource-to-physical-time-and-network-model",
+    "mixed-miner-common-prefix-chain-quality-chain-growth",
+    "native-work-identity-and-weight-bridge",
+    "real-cell-quality-and-owner-adoption"
+  ],
+  "unknown_cost_points": [
+    {
+      "class": "classical",
+      "units": 1
+    },
+    {
+      "class": "classical",
+      "units": 2
+    },
+    {
+      "class": "classical",
+      "units": 3
+    },
+    {
+      "class": "classical",
+      "units": 4
+    },
+    {
+      "class": "classical",
+      "units": 5
+    },
+    {
+      "class": "classical",
+      "units": 6
+    },
+    {
+      "class": "classical",
+      "units": 7
+    },
+    {
+      "class": "classical",
+      "units": 8
+    },
+    {
+      "class": "quantum",
+      "units": 1
+    },
+    {
+      "class": "quantum",
+      "units": 2
+    },
+    {
+      "class": "quantum",
+      "units": 3
+    },
+    {
+      "class": "quantum",
+      "units": 4
+    },
+    {
+      "class": "quantum",
+      "units": 5
+    },
+    {
+      "class": "quantum",
+      "units": 6
+    },
+    {
+      "class": "quantum",
+      "units": 7
+    },
+    {
+      "class": "quantum",
+      "units": 8
+    }
+  ]
+}

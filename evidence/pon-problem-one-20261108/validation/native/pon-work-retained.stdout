@@ -1,0 +1,38 @@
+
+running 33 tests
+test pon_work::tests::bad_proof_never_gains_a_verified_type ... ok
+test pon_work::tests::borrowed_product_bytes_keep_rejection_before_cancellation_and_retry ... ok
+test pon_work::tests::borrowed_product_bytes_reject_first_middle_last_and_noncanonical_cells ... ok
+test pon_work::tests::cancellation_on_last_transcript_tile_never_starts_product_reconstruction ... ok
+test pon_work::tests::canonical_task_byte_reuse_preserves_asymmetric_inputs_and_field_precedence ... ok
+test pon_work::tests::cheap_rejection_precedes_progress_and_noise_cancellation_is_local ... ok
+test pon_work::tests::column_limb_each_prefix_matches_independent_scalar_with_strided_extremes ... ok
+test pon_work::tests::column_limb_full_proofs_keep_exact_statement_and_challenge_binding ... ok
+test pon_work::tests::controlled_verification_preserves_full_success_and_late_relation_errors ... ok
+test pon_work::tests::decoded_output_is_the_real_matrix_product ... ok
+test pon_work::tests::exact_length_and_field_are_required ... ok
+test pon_work::tests::expansion_cannot_exceed_fixed_hash_budget ... ok
+test pon_work::tests::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence ... ok
+test pon_work::tests::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results ... ok
+test pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof ... ok
+test pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes ... ok
+test pon_work::tests::full_limb_matrix_products_match_reference_for_all_w1_shapes ... ok
+test pon_work::tests::full_limb_preserves_every_cancellation_boundary_and_retry_isolation ... ok
+test pon_work::tests::in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh ... ok
+test pon_work::tests::in_place_corrections_match_independent_scalar_for_full_w1_shape ... ok
+test pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields ... ok
+test pon_work::tests::owned_square_transpose_preserves_allocation_and_exact_permutation ... ok
+test pon_work::tests::producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples ... ok
+test pon_work::tests::product_row_and_final_cancellation_never_yield_verified_work ... ok
+test pon_work::tests::proof_encoding_precheck_enforces_exact_wire_and_all_matrix_boundaries ... ok
+test pon_work::tests::proof_encoding_precheck_never_substitutes_for_full_work_or_cancellation ... ok
+test pon_work::tests::proof_encoding_precheck_preserves_full_verifier_zero_target_precedence ... ok
+test pon_work::tests::proof_statement_precheck_never_promotes_a_passing_forgery ... ok
+test pon_work::tests::proof_statement_precheck_rejects_task_and_ticket_without_replay ... ok
+test pon_work::tests::transcript_mismatch_skips_corrections_but_matching_digest_requires_product ... ok
+test pon_work::tests::untrusted_trace_ticket_search_needs_no_producer_and_never_gains_verified_work ... ok
+test pon_work::tests::verifier_error_precedence_is_preserved_before_deferred_product ... ok
+test pon_work::tests::work_binds_challenge_and_inputs ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 146 filtered out; finished in 0.58s
+

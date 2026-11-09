@@ -1,0 +1,288 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 189521788,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_grouped_fanout_reanalysis_v1.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:19.849290+00:00",
+  "imported_repository_modules_after": {
+    "bounded_process": {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "contract_wire": {
+      "bytes": 8924,
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "evaluation": {
+      "bytes": 5485,
+      "path": "formal/pon-nakamoto-v1/evaluation.py",
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842"
+    },
+    "evaluation_bundle": {
+      "bytes": 15573,
+      "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+      "sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f"
+    },
+    "experiments.grouped_cell_operator_v0": {
+      "bytes": 31209,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "sha256": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a"
+    },
+    "experiments.grouped_fresh_fanout_v0": {
+      "bytes": 43417,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py",
+      "sha256": "aa1aef8264333b91e6df4adb8a3ccf94207d02123ed3301f2d63104693156af3"
+    },
+    "experiments.grouped_fresh_work_v0": {
+      "bytes": 40110,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py",
+      "sha256": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7"
+    },
+    "experiments.grouped_legal_strategy_v0": {
+      "bytes": 24152,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py",
+      "sha256": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f"
+    },
+    "experiments.reanalyze_grouped_fanout_v1": {
+      "bytes": 11203,
+      "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+      "sha256": "c1663aa6dea82fcd8dace728b8213aa4cb6359f149805b4e80fb38ea02af9b5e"
+    },
+    "experiments.shared_cell_operator_v1": {
+      "bytes": 50193,
+      "path": "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+      "sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6"
+    },
+    "grouped_fresh_admission_wire_v0": {
+      "bytes": 18651,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py",
+      "sha256": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c"
+    },
+    "grouped_fresh_deployment_cost_v0": {
+      "bytes": 25674,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+      "sha256": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db"
+    },
+    "grouped_fresh_work_v0": {
+      "bytes": 8003,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_work_v0.py",
+      "sha256": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99"
+    },
+    "grouped_legal_strategy_v0": {
+      "bytes": 17789,
+      "path": "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py",
+      "sha256": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4"
+    },
+    "grouped_work_lottery_v0": {
+      "bytes": 18679,
+      "path": "formal/pon-nakamoto-v1/grouped_work_lottery_v0.py",
+      "sha256": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47"
+    },
+    "ledger": {
+      "bytes": 37985,
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e"
+    },
+    "model_contract": {
+      "bytes": 2416,
+      "path": "formal/pon-nakamoto-v1/model_contract.py",
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd"
+    },
+    "strict_signature": {
+      "bytes": 2151,
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+    },
+    "test_grouped_fanout_reanalysis_v1": {
+      "bytes": 19697,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+      "sha256": "aa5d1a1a1c01e505a07378af9b16b37e666f1e1be5916e9cff94021af9964624"
+    },
+    "test_grouped_fresh_deployment_cost_v0": {
+      "bytes": 35737,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+      "sha256": "af0ca743bd003762ffbabfb4f8d0262ca698a221c5c3189b38e98edfe9438eeb"
+    },
+    "work_backend": {
+      "bytes": 1841,
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27"
+    },
+    "work_oracle": {
+      "bytes": 2944,
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    "work_query_bound": {
+      "bytes": 7165,
+      "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909"
+    }
+  },
+  "imported_repository_modules_before": {
+    "bounded_process": {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "contract_wire": {
+      "bytes": 8924,
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "evaluation": {
+      "bytes": 5485,
+      "path": "formal/pon-nakamoto-v1/evaluation.py",
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842"
+    },
+    "evaluation_bundle": {
+      "bytes": 15573,
+      "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+      "sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f"
+    },
+    "experiments.grouped_cell_operator_v0": {
+      "bytes": 31209,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+      "sha256": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a"
+    },
+    "experiments.grouped_fresh_fanout_v0": {
+      "bytes": 43417,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py",
+      "sha256": "aa1aef8264333b91e6df4adb8a3ccf94207d02123ed3301f2d63104693156af3"
+    },
+    "experiments.grouped_fresh_work_v0": {
+      "bytes": 40110,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py",
+      "sha256": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7"
+    },
+    "experiments.grouped_legal_strategy_v0": {
+      "bytes": 24152,
+      "path": "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py",
+      "sha256": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f"
+    },
+    "experiments.reanalyze_grouped_fanout_v1": {
+      "bytes": 11203,
+      "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+      "sha256": "c1663aa6dea82fcd8dace728b8213aa4cb6359f149805b4e80fb38ea02af9b5e"
+    },
+    "experiments.shared_cell_operator_v1": {
+      "bytes": 50193,
+      "path": "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+      "sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6"
+    },
+    "grouped_fresh_admission_wire_v0": {
+      "bytes": 18651,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py",
+      "sha256": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c"
+    },
+    "grouped_fresh_deployment_cost_v0": {
+      "bytes": 25674,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+      "sha256": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db"
+    },
+    "grouped_fresh_work_v0": {
+      "bytes": 8003,
+      "path": "formal/pon-nakamoto-v1/grouped_fresh_work_v0.py",
+      "sha256": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99"
+    },
+    "grouped_legal_strategy_v0": {
+      "bytes": 17789,
+      "path": "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py",
+      "sha256": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4"
+    },
+    "grouped_work_lottery_v0": {
+      "bytes": 18679,
+      "path": "formal/pon-nakamoto-v1/grouped_work_lottery_v0.py",
+      "sha256": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47"
+    },
+    "ledger": {
+      "bytes": 37985,
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e"
+    },
+    "model_contract": {
+      "bytes": 2416,
+      "path": "formal/pon-nakamoto-v1/model_contract.py",
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd"
+    },
+    "strict_signature": {
+      "bytes": 2151,
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+    },
+    "test_grouped_fanout_reanalysis_v1": {
+      "bytes": 19697,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+      "sha256": "aa5d1a1a1c01e505a07378af9b16b37e666f1e1be5916e9cff94021af9964624"
+    },
+    "test_grouped_fresh_deployment_cost_v0": {
+      "bytes": 35737,
+      "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+      "sha256": "af0ca743bd003762ffbabfb4f8d0262ca698a221c5c3189b38e98edfe9438eeb"
+    },
+    "work_backend": {
+      "bytes": 1841,
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27"
+    },
+    "work_oracle": {
+      "bytes": 2944,
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    "work_query_bound": {
+      "bytes": 7165,
+      "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909"
+    }
+  },
+  "passed": 21,
+  "pattern": "test_grouped_fanout_reanalysis_v1.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:19.659764+00:00",
+  "successful_test_ids": [
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_checker_change_during_reanalysis_is_refused",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_cli_new_failure_is_retained_with_exit_one",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_cli_output_is_create_only_and_mismatched_pin_creates_nothing",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_cli_refuses_source_change_before_any_output_creation",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_cli_stdout_is_complete_and_never_writes_originals",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_consistent_topology_renaming_cannot_replace_original_producer_ids",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_duplicate_json_keys_are_rejected_even_with_matching_input_pin",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_duplicate_missing_reordered_extra_and_alias_topologies_are_refused",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_every_topology_cannot_swap_the_two_original_packet_slots",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_external_pin_is_mandatory_and_tampered_input_is_refused",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_input_size_limit_has_an_explicit_inclusive_boundary",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_missing_or_aliased_producer_roster_retains_denominator_and_costs",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_missing_worker_stays_in_fixed_plan_denominator",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_nonfinite_literals_and_overflowing_float_exponents_are_rejected",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_old_pass_and_forged_summary_cannot_hide_missing_raw_work_identity",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_old_pass_cannot_hide_unobserved_transport_cost",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_orchestration_failure_cannot_be_suppressed_by_old_pass",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_original_failure_is_retained_without_automatic_upgrade",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_original_readback_failure_is_not_cleared_by_arithmetic_recheck",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_qualification_promotions_and_integer_boolean_aliases_are_rejected",
+    "test_grouped_fanout_reanalysis_v1.FanoutReanalysisTests.test_raw_workers_recompute_counts_and_preserve_original_source_metadata"
+  ],
+  "tests_run": 21,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}

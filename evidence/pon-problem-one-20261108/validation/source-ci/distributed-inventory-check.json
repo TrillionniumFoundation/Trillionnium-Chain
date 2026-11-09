@@ -1,0 +1,35 @@
+{
+  "name": "distributed-inventory-check",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:36:20.723086+00:00",
+  "source_sha256": {
+    "scripts/refresh_distributed_source_inventory.py": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+  },
+  "pid": 4251,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:36:20.864799+00:00",
+  "wall_seconds": 0.14166349100014486,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/refresh_distributed_source_inventory.py": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+  },
+  "stdout": {
+    "path": "distributed-inventory-check.stdout",
+    "bytes": 35,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  "stderr": {
+    "path": "distributed-inventory-check.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reported_test_count": null,
+  "source_unchanged": true,
+  "passed": true
+}

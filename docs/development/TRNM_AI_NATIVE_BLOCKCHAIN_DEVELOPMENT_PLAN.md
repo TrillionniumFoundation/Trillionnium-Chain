@@ -1,3 +1,33 @@
+**Useful-work identity and service lifecycle continuation, 2026-11-08 America/New_York — HOLD:**
+
+Continue the single integrated #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
+which contains the #810 and #811 cost contracts. The existing fanout accounting
+reader must bind every reception to the original producer's two fixed packet
+identities; whitespace replay and receiver fanout do not create extra work.
+Contradictions retain observed costs and partial identities while withholding a
+complete ticket count. Preserve the historical campaign input and use fresh
+accounting/reanalysis output namespaces.
+
+The existing service adapter records Unknown and exact terminal outcomes in
+the original budget planner's monotonic resource jobs. Reorganization can
+restore branch reservations but cannot erase those outcomes or authorize fresh
+dispatch. Exact same-result monetary reconciliation remains possible; changed
+outcomes, result commitments, fees or physical costs are refused. Supply
+observations distinguish monetary reservations from unobserved, uncertain,
+terminal, resource-accounted, expired and reconciliation-required local facts.
+Generic timeout accounting is not proof of successful execution.
+
+Retain unchanged-input counterexamples against the original source and after
+the fix, original controls, independent identity enumeration, and separately
+labelled historical readback. These are report and process-local accounting
+improvements, not native consensus activation. The
+[actual-work scope requirements](../../formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md#6-required-outer-scope-for-actual-hepta-work)
+keep miner input selection, exact success events, legal caches, quantum-model
+restrictions and resource-unit conversion explicit. Actual lower bounds,
+independent demand, ordinary Hepta encoder/FinalUse integration, complete matched
+application/joint costs and sustained useful-task supply remain unproved. Keep
+zero added chainwork and every original HOLD/NO-GO gate.
+
 **M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
 The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
 adds a separate M12 witness binding, complete-journal checkpoints and transaction

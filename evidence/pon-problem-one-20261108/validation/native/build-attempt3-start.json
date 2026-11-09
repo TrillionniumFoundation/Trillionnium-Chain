@@ -1,0 +1,70 @@
+{
+  "schema": "native-build-run-v1",
+  "started_utc": "2026-11-09T02:57:31.101032+00:00",
+  "commit": "187b880048e30196407960f48b10c379859d1396",
+  "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c",
+  "source_hashes": {
+    "AGENTS.md": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+    "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+    "tests/fuzz/Cargo.lock": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+    "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+    "scripts/ci/ci_job.sh": "691b151d3a5f27dd373516e2cc7a199871af555652001ce34b8bd03fd8571ed4",
+    ".github/workflows/trnm-required-baseline.yml": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d"
+  },
+  "toolchain_binary_hashes": {
+    "cargo": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+    "rustc": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "clippy-driver": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729",
+    "cargo-clippy": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb",
+    "rustfmt": "56b31ad3ec8fe0277a2884a189e243b8f04e9b48e5fd22e547c1516c5f8fd34c"
+  },
+  "env_overrides": {
+    "CARGO_HOME": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/6050776ac4f9/toolchain/rustup",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "TMPDIR": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/temp",
+    "CARGO_TARGET_DIR": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_TERM_COLOR": "never",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CI": "true",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "PATH": "/workspace/scratch/6050776ac4f9/toolchain/cargo/bin:/home/agent/.codex/tmp/arg0-linux/codex-arg0i9fjYg:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+  },
+  "selected_inherited_env": {
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CC": null,
+    "CXX": null,
+    "CFLAGS": null,
+    "CXXFLAGS": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_LIB_DIR": null,
+    "OPENSSL_INCLUDE_DIR": null,
+    "OPENSSL_NO_VENDOR": null,
+    "PKG_CONFIG_PATH": null
+  },
+  "disk_start": {
+    "workspace": {
+      "total": 67586535424,
+      "used": 55188791296,
+      "free": 8944996352
+    },
+    "target": {
+      "total": 67586535424,
+      "used": 55188791296,
+      "free": 8944996352
+    }
+  },
+  "runner_sha256": "958234f87e32223591124bdaa3260a02a8f32e6f228adbcd2cc67d83772620a5",
+  "profile_note": "Third attempt after preceding resource guards stopped external workspace then tmpfs exhaustion. Exact target/cache bytes relocated to task workspace with original absolute aliases preserved; all mutable compiler target, Cargo cache, temp and logs use these task-owned paths; Rustup toolchain and repository remain read-only with GIT_OPTIONAL_LOCKS=0. One compiler job limits memory. Dev/test debug info disabled; original opt-level, debug assertions and overflow checks preserved. No features or strict warnings relaxed. Offline after successful locked full metadata dependency acquisition."
+}

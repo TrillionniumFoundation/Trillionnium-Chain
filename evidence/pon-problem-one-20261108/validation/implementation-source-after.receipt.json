@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "187b880048e30196407960f48b10c379859d1396",
+    "--output",
+    "/workspace/scratch/6050776ac4f9/evidence-validation/implementation-source-after.json"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "start_utc": "2026-11-09T03:01:09.044294+00:00",
+  "end_utc": "2026-11-09T03:01:19.932575+00:00",
+  "elapsed_seconds": 10.888280136000049,
+  "exit_code": 0,
+  "stdout_sha256": "0adb6cb82d21621ea48b5c4044fa76e6e49f7d61c77cbb6a54c3629f055693e3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_checker_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "scope": "original whole-source identity check after all implementation formal, source/CI and native validation; identity check itself executes no tests",
+  "identical_to_initial_source_before": true,
+  "identical_to_native_source_before": true
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "native-storage-relocation-v1",
+  "started_utc": "2026-11-09T02:57:26.292913+00:00",
+  "reason": "Attempt2 stopped for tmpfs reserve exhaustion by external consumers; available workspace storage permits unchanged gate/cache reuse. Only these task-created directories move; original absolute aliases preserved.",
+  "moves": [
+    {
+      "alias": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+      "destination": "/workspace/scratch/6050776ac4f9/native-target-relocated",
+      "manifest_before": {
+        "entries": 2141,
+        "bytes": 198521113,
+        "sha256": "a482ac428ee238ae58134f112d11caab2a04797879924cf7e6b3b90c879b6a05"
+      },
+      "manifest_after": {
+        "entries": 2141,
+        "bytes": 198521113,
+        "sha256": "a482ac428ee238ae58134f112d11caab2a04797879924cf7e6b3b90c879b6a05"
+      },
+      "identical": true
+    },
+    {
+      "alias": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_",
+      "destination": "/workspace/scratch/6050776ac4f9/native-stage-relocated",
+      "manifest_before": {
+        "entries": 11785,
+        "bytes": 592072827,
+        "sha256": "66287902d971368ff425d23d7f7a1b10d47cef29e16e90331860c4738c4d1a7f"
+      },
+      "manifest_after": {
+        "entries": 11785,
+        "bytes": 592072827,
+        "sha256": "66287902d971368ff425d23d7f7a1b10d47cef29e16e90331860c4738c4d1a7f"
+      },
+      "identical": true
+    }
+  ],
+  "disk_before": {
+    "workspace": {
+      "total": 67586535424,
+      "used": 54351237120,
+      "free": 9782550528
+    },
+    "tmpfs": {
+      "total": 5225713664,
+      "used": 3417571328,
+      "free": 1808142336
+    }
+  },
+  "finished_utc": "2026-11-09T02:57:31.003089+00:00",
+  "disk_after": {
+    "workspace": {
+      "total": 67586535424,
+      "used": 55188766720,
+      "free": 8945020928
+    },
+    "tmpfs": {
+      "total": 5225713664,
+      "used": 61370368,
+      "free": 5164343296
+    }
+  }
+}

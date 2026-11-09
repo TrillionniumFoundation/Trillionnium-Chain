@@ -1,0 +1,113 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 31935567,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_fixed_probability_contract.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:30.138818+00:00",
+  "imported_repository_modules_after": {
+    "bounded_process": {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "contract_wire": {
+      "bytes": 8924,
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "fixed_probability_contract": {
+      "bytes": 11399,
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc"
+    },
+    "mandatory_units_relation": {
+      "bytes": 14587,
+      "path": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+    },
+    "test_fixed_probability_contract": {
+      "bytes": 9606,
+      "path": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+      "sha256": "d84bf207c8aec58de95912f6f282109145e6fa1be010e942908d2122a2c4cf51"
+    },
+    "work_oracle": {
+      "bytes": 2944,
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    }
+  },
+  "imported_repository_modules_before": {
+    "bounded_process": {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "contract_wire": {
+      "bytes": 8924,
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "fixed_probability_contract": {
+      "bytes": 11399,
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc"
+    },
+    "mandatory_units_relation": {
+      "bytes": 14587,
+      "path": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+      "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+    },
+    "test_fixed_probability_contract": {
+      "bytes": 9606,
+      "path": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+      "sha256": "d84bf207c8aec58de95912f6f282109145e6fa1be010e942908d2122a2c4cf51"
+    },
+    "work_oracle": {
+      "bytes": 2944,
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    }
+  },
+  "passed": 16,
+  "pattern": "test_fixed_probability_contract.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:30.106884+00:00",
+  "successful_test_ids": [
+    "test_fixed_probability_contract.ContractTests.test_actual_mu1_sources_bind_without_promoting_the_cost_gate",
+    "test_fixed_probability_contract.ContractTests.test_changed_actual_source_is_detected_even_with_unchanged_profile",
+    "test_fixed_probability_contract.ContractTests.test_contract_byte_limit_preserves_exact_boundary_and_refuses_extra_data",
+    "test_fixed_probability_contract.ContractTests.test_duplicate_nested_keys_and_float_tokens_are_rejected",
+    "test_fixed_probability_contract.ContractTests.test_lifecycle_reset_and_omitted_strategies_are_rejected",
+    "test_fixed_probability_contract.ContractTests.test_missing_scale_class_or_duplicate_scale_is_rejected",
+    "test_fixed_probability_contract.ContractTests.test_no_unknown_cost_is_replaced_by_zero_or_observed_time",
+    "test_fixed_probability_contract.ContractTests.test_open_proof_obligation_cannot_be_deleted",
+    "test_fixed_probability_contract.ContractTests.test_scope_cannot_change_probability_credit_units_or_context_fields",
+    "test_fixed_probability_contract.ContractTests.test_source_path_cannot_escape_the_exact_source_set",
+    "test_fixed_probability_contract.SubsetTests.test_classical_negative_screen_can_miss_quantum_advantage",
+    "test_fixed_probability_contract.SubsetTests.test_eight_point_domain_subset_mass_feasibility_by_actual_enumeration",
+    "test_fixed_probability_contract.SubsetTests.test_exact_boundary_comparison_does_not_round_an_irrational_root",
+    "test_fixed_probability_contract.SubsetTests.test_impossible_inside_and_outside_winner_masses_rejected",
+    "test_fixed_probability_contract.SubsetTests.test_non_rational_zero_and_boolean_inputs_rejected",
+    "test_fixed_probability_contract.SubsetTests.test_quarter_winners_quarter_domain_does_not_quarter_density"
+  ],
+  "tests_run": 16,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}

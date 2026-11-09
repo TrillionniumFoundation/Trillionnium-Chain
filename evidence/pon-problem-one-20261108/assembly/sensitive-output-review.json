@@ -1,0 +1,19 @@
+{
+  "authentication_or_credential_command_outputs_selected": false,
+  "closed_allowlist_used": true,
+  "credential_pattern_classes_checked": [
+    "github_token",
+    "private_key_pem",
+    "authorization_credential",
+    "access_key",
+    "api_secret",
+    "url_user_password"
+  ],
+  "excluded_publication_preparation_packs": true,
+  "historical_protocol_authorization_fields": "Retained public protocol check/authorization observations, not account login credentials.",
+  "pattern_matches": [],
+  "schema": "pon-evidence-sensitive-output-selection-review-v1",
+  "scope": "Closed file selection plus common credential-pattern inspection; not a universal secret-detection proof.",
+  "secret_values_printed": false,
+  "selected_regular_files_scanned_before_this_record": 150
+}

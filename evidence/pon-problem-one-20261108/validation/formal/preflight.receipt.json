@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "duration_ns": 103347003,
+  "environment": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "selected_env": {
+      "PYTHONDONTWRITEBYTECODE": null,
+      "PYTHONHASHSEED": null,
+      "PYTHONPATH": null,
+      "TRNM_PON_EVALUATION_POLICY": null
+    },
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "uid": 1000
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-09T02:33:47.328723+00:00",
+  "head": "187b880048e30196407960f48b10c379859d1396",
+  "name": "preflight",
+  "schema": "pon-formal-command-receipt-v1",
+  "started_utc": "2026-11-09T02:33:47.225383+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "preflight.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 169,
+    "path": "preflight.stdout",
+    "sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081"
+  }
+}

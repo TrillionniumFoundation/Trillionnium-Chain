@@ -1,0 +1,12 @@
+{
+  "schema": "pon-local-preparation-observation-v1",
+  "utc": "2026-11-09T02:45:18.816196+00:00",
+  "path": "/workspace/scratch/6050776ac4f9/chain-source.tar.gz",
+  "bytes": 1269358289,
+  "sha256": "2ad5f8a0006256ea3c0e1534eb2a8e022d56160134fd4df251a86e2d37e53595",
+  "source_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "disposition": "removed reproduced download archive after full tracked source and local git object preservation",
+  "reason": "free build disk space",
+  "source_identity_preserved_at": "source-baseline.json",
+  "validation_scope": "preparation only; not a new workload or validation result"
+}

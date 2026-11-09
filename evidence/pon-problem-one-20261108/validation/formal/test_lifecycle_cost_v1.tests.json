@@ -1,0 +1,88 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 1482187365,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_lifecycle_cost_v1.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:37.659072+00:00",
+  "imported_repository_modules_after": {
+    "lifecycle_cost_v1": {
+      "bytes": 29530,
+      "path": "formal/pon-nakamoto-v1/lifecycle_cost_v1.py",
+      "sha256": "8d7f54d376df9d4c862bdab332399f5eefd6e08cd23d15cb011e795bc2ead3f9"
+    },
+    "test_lifecycle_cost_v1": {
+      "bytes": 19926,
+      "path": "formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py",
+      "sha256": "cd09aa425cfd8df80fa6f91f30a23511bfb9cd524fc1e7e58b91954b27986da1"
+    }
+  },
+  "imported_repository_modules_before": {
+    "lifecycle_cost_v1": {
+      "bytes": 29530,
+      "path": "formal/pon-nakamoto-v1/lifecycle_cost_v1.py",
+      "sha256": "8d7f54d376df9d4c862bdab332399f5eefd6e08cd23d15cb011e795bc2ead3f9"
+    },
+    "test_lifecycle_cost_v1": {
+      "bytes": 19926,
+      "path": "formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py",
+      "sha256": "cd09aa425cfd8df80fa6f91f30a23511bfb9cd524fc1e7e58b91954b27986da1"
+    }
+  },
+  "passed": 31,
+  "pattern": "test_lifecycle_cost_v1.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:36.176887+00:00",
+  "successful_test_ids": [
+    "test_lifecycle_cost_v1.LifecycleCycleTests.test_eta_is_cumulative_credit_gap_not_erased_cost",
+    "test_lifecycle_cost_v1.LifecycleCycleTests.test_nonstationary_flow_cannot_masquerade_as_unlimited_credit",
+    "test_lifecycle_cost_v1.LifecycleCycleTests.test_restart_recredit_has_an_exact_positive_cycle",
+    "test_lifecycle_cost_v1.LifecycleCycleTests.test_stochastic_occupation_witness_covers_more_than_deterministic_cycles",
+    "test_lifecycle_cost_v1.LifecycleCycleTests.test_zero_gain_cycle_is_not_a_counterexample",
+    "test_lifecycle_cost_v1.LifecycleInputTests.test_cost_rewards_eta_and_probability_are_validated",
+    "test_lifecycle_cost_v1.LifecycleInputTests.test_float_bool_and_noncanonical_rationals_are_rejected",
+    "test_lifecycle_cost_v1.LifecycleInputTests.test_sub_float_epsilon_violation_is_detected_exactly",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_adding_constant_potential_cannot_hide_initial_cost",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_all_actions_of_expanded_nonce_bank_are_checked",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_asymptotic_bellman_convergence_never_uses_float_tolerance",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_deferred_selectors_failures_unused_bank_and_cache_reuse_are_charged",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_discarding_or_aborting_can_only_destroy_unpaid_potential",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_initial_bank_requires_a_finite_initial_credit_allowance",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_iteration_limit_is_not_a_certificate",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_negative_terminal_and_missing_states_are_refused",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_new_batch_shortcut_invalidates_an_old_atomic_oracle_certificate",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_policy_refutation_is_recomputed_forward",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_redeemed_credit_cannot_remain_in_potential",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_restart_and_alias_keep_unspent_and_spent_records",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_simple_analytic_potential_independently_dominates_bellman",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_uncontinued_paid_nonce_survives_a_win",
+    "test_lifecycle_cost_v1.LifecyclePotentialTests.test_verifier_owns_kappa_and_exact_game",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_exact_tail_bounds_all_crossing_times_not_just_terminal_time",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_initial_expectation_is_not_substituted_for_exponential_moment",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_loose_tail_is_explicitly_one",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_negative_or_subunit_normalizer_and_degenerate_tilt_are_rejected",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_nonintegral_exponents_and_unbounded_horizons_are_not_rounded",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_synthesizer_refuses_an_unsupported_initial_moment_too",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_tail_certificate_is_bound_to_exact_potential",
+    "test_lifecycle_cost_v1.LifecycleTailTests.test_unverified_normalizer_cannot_hide_tail"
+  ],
+  "tests_run": 31,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}

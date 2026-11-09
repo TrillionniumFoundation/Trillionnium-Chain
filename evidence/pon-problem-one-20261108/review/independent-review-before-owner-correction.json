@@ -1,0 +1,81 @@
+{
+  "git_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "identity_enumeration": {
+    "all_independent_expectations_matched": true,
+    "anchored_accepted": 1,
+    "assignments": 729,
+    "costs_attempts_and_zero_chainwork_preserved": true,
+    "unanchored_structural_accepted": 6
+  },
+  "limitations": [
+    "finite-synthetic-checks-only",
+    "no-new-native-campaign",
+    "no-general-cost-lower-bound",
+    "no-task-supply-liveness-qualification"
+  ],
+  "schema": "pon-independent-problem-one-review-v1",
+  "service_reconciliation": {
+    "branch_outcomes": [
+      {
+        "outcome": "unknown",
+        "paid": 0
+      },
+      {
+        "outcome": "unknown",
+        "paid": 0
+      }
+    ],
+    "branch_resolution_matches_local": null,
+    "expected_reconciliation_required": true,
+    "no_authority_promotion": true,
+    "observation": {
+      "actual_demand_verified": false,
+      "additional_consensus_credit": 0,
+      "conditional_base_reservations": 0,
+      "execution_dispatch_authorized": false,
+      "expired_contracts": 1,
+      "fresh_work_supply_verified": false,
+      "liveness_qualified": false,
+      "native_funding_verified": false,
+      "no_pending_contracts": true,
+      "observations": [
+        {
+          "branch_status": "resolved",
+          "contract": "77be101ed4cfe0a3257433e32d92695e82d281d8d3accb03057f89a7d5b2b655",
+          "execution_dispatch_authorized": false,
+          "local_state": "recorded-terminal",
+          "orphaned_resource_job": false,
+          "reconciliation_required": false,
+          "recorded_outcome": "complete",
+          "resource_lanes_accounted": 2,
+          "task": "2468d33ad641cf9e7f97c595631d545af40ac5544f0ff99e2d5325a735fee711",
+          "window": "expired"
+        }
+      ],
+      "orphaned_resource_contracts": 0,
+      "pending_contracts": 0,
+      "pending_scope": "active-branch-monetary-reservations-not-fresh-execution",
+      "qualification": "HOLD",
+      "reconciliation_required_contracts": 0,
+      "recorded_terminal_contracts": 1,
+      "recorded_unknown_contracts": 0,
+      "reserved_unobserved_contracts": 0,
+      "resource_accounted_contracts": 1,
+      "schema": "pon-service-work-supply-observation-v2",
+      "supplied_contracts": 1,
+      "synthetic_fill_authorized": false
+    },
+    "original_local_outcome": "complete",
+    "reconciliation_reported": false,
+    "requirement_satisfied": false,
+    "scenario": "complete-reorg-generic-close"
+  },
+  "source_sha256": {
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1/reward_budget_oracle.py": "0db5df89b87cf56538100ba21e813f0447aa8fa15247d181098bdb67c483e15f",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py": "af0ca743bd003762ffbabfb4f8d0262ca698a221c5c3189b38e98edfe9438eeb",
+    "/workspace/scratch/6050776ac4f9/evidence-review/independent_review.py": "f94906dfd2b47d3307596bfe3e4df1750993246538375313ce9501435447023f",
+    "/workspace/scratch/6050776ac4f9/evidence-review/service_work_reviewed_snapshot.py": "5daa843f352224cc92eb0347f11fde7b002d8b185cd4f16f5bc5eb3af3599b9b"
+  },
+  "sources_unchanged_during_run": true
+}

@@ -1,0 +1,8 @@
+{
+  "schema": "evidence-closed-selection-review-v1",
+  "files_scanned": 234,
+  "credential_pattern_match_count": 0,
+  "authentication_command_output_included": false,
+  "native_and_publication_extensions_included": true,
+  "scope": "Known token/private-key patterns; not a universal secret detector."
+}

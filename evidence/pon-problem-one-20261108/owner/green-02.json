@@ -1,0 +1,25 @@
+{
+  "schema": "pon-service-resolution-control-run-v1",
+  "scope": "working-tree targeted Python service and retained budget suites after independent review; not native/full-checkout acceptance",
+  "head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_service_work_settlement_v1",
+    "test_reward_budget_oracle"
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/service_work_settlement_v1.py": "e9fcb38c6f964678fb24de545a65085ab8dbdf6eb4b470aefc98626dfe05e899",
+    "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py": "0fd97146f9bb9cb10abfa03b6929381627a9ab9e4f257da63d57a5732b5b4023",
+    "formal/pon-nakamoto-v1/reward_budget_oracle.py": "0db5df89b87cf56538100ba21e813f0447aa8fa15247d181098bdb67c483e15f"
+  },
+  "retained_original_red_regression_function_sha256": {
+    "test_completed_service_cannot_become_cancelled_after_reorg": "505baf79ab6dbf4e615dc807da8675a2c333c036dbaf596d397b4f2c09532ce7",
+    "test_cancelled_service_cannot_become_complete_after_reorg": "22487ce7a804a33cf4b4b94f2fa69f4960766b4acb68598fa0d9ddce6ef98a0b",
+    "test_completed_service_cannot_become_unknown_after_reorg": "8147860729f88e08347dd838cce2ecc618a29339c8471d4cf381f497d4213fe4"
+  },
+  "exit_code": 0
+}

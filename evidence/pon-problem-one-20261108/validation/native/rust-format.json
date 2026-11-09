@@ -1,0 +1,49 @@
+{
+  "name": "rust-format",
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "started_utc": "2026-11-09T02:48:47.201946+00:00",
+  "commit_before": "187b880048e30196407960f48b10c379859d1396",
+  "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c",
+  "env_overrides": {
+    "CARGO_HOME": "/workspace/scratch/6050776ac4f9/toolchain/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/6050776ac4f9/toolchain/rustup",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "TMPDIR": "/workspace/scratch/6050776ac4f9/validation-tmp",
+    "CARGO_TARGET_DIR": "/workspace/scratch/6050776ac4f9/native-target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_TERM_COLOR": "never",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CI": "true",
+    "PATH": "/workspace/scratch/6050776ac4f9/toolchain/cargo/bin:/home/agent/.codex/tmp/arg0-linux/codex-arg0i9fjYg:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+  },
+  "disk_before": {
+    "total": 67586535424,
+    "used": 61958684672,
+    "free": 2175102976
+  },
+  "finished_utc": "2026-11-09T02:49:05.929818+00:00",
+  "duration_seconds": 18.721438347000003,
+  "exit_code": 0,
+  "disk_after": {
+    "total": 67586535424,
+    "used": 62251417600,
+    "free": 1882370048
+  },
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "commit_after": "187b880048e30196407960f48b10c379859d1396",
+  "worktree_status_after": ""
+}

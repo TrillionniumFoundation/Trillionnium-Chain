@@ -1,0 +1,195 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 9520241008,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_service_work_settlement_v1.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:29.762021+00:00",
+  "imported_repository_modules_after": {
+    "bounded_process": {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "contract_wire": {
+      "bytes": 8924,
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "evaluation": {
+      "bytes": 5485,
+      "path": "formal/pon-nakamoto-v1/evaluation.py",
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842"
+    },
+    "ledger": {
+      "bytes": 37985,
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e"
+    },
+    "model_contract": {
+      "bytes": 2416,
+      "path": "formal/pon-nakamoto-v1/model_contract.py",
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd"
+    },
+    "reward_budget_oracle": {
+      "bytes": 16832,
+      "path": "formal/pon-nakamoto-v1/reward_budget_oracle.py",
+      "sha256": "0db5df89b87cf56538100ba21e813f0447aa8fa15247d181098bdb67c483e15f"
+    },
+    "service_work_settlement_v1": {
+      "bytes": 31262,
+      "path": "formal/pon-nakamoto-v1/service_work_settlement_v1.py",
+      "sha256": "e9fcb38c6f964678fb24de545a65085ab8dbdf6eb4b470aefc98626dfe05e899"
+    },
+    "strict_signature": {
+      "bytes": 2151,
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+    },
+    "test_service_work_settlement_v1": {
+      "bytes": 35328,
+      "path": "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+      "sha256": "0fd97146f9bb9cb10abfa03b6929381627a9ab9e4f257da63d57a5732b5b4023"
+    },
+    "useful_cell_numeric_v1": {
+      "bytes": 9878,
+      "path": "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py",
+      "sha256": "62f3caec42a7cf8382cfe67bef1de710fcea4f685112e3465a1d52883a87c401"
+    },
+    "work_backend": {
+      "bytes": 1841,
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27"
+    },
+    "work_oracle": {
+      "bytes": 2944,
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    }
+  },
+  "imported_repository_modules_before": {
+    "bounded_process": {
+      "bytes": 8627,
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    "contract_wire": {
+      "bytes": 8924,
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    "evaluation": {
+      "bytes": 5485,
+      "path": "formal/pon-nakamoto-v1/evaluation.py",
+      "sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842"
+    },
+    "ledger": {
+      "bytes": 37985,
+      "path": "formal/pon-nakamoto-v1/ledger.py",
+      "sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e"
+    },
+    "model_contract": {
+      "bytes": 2416,
+      "path": "formal/pon-nakamoto-v1/model_contract.py",
+      "sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd"
+    },
+    "reward_budget_oracle": {
+      "bytes": 16832,
+      "path": "formal/pon-nakamoto-v1/reward_budget_oracle.py",
+      "sha256": "0db5df89b87cf56538100ba21e813f0447aa8fa15247d181098bdb67c483e15f"
+    },
+    "service_work_settlement_v1": {
+      "bytes": 31262,
+      "path": "formal/pon-nakamoto-v1/service_work_settlement_v1.py",
+      "sha256": "e9fcb38c6f964678fb24de545a65085ab8dbdf6eb4b470aefc98626dfe05e899"
+    },
+    "strict_signature": {
+      "bytes": 2151,
+      "path": "formal/pon-nakamoto-v1/strict_signature.py",
+      "sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e"
+    },
+    "test_service_work_settlement_v1": {
+      "bytes": 35328,
+      "path": "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+      "sha256": "0fd97146f9bb9cb10abfa03b6929381627a9ab9e4f257da63d57a5732b5b4023"
+    },
+    "useful_cell_numeric_v1": {
+      "bytes": 9878,
+      "path": "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py",
+      "sha256": "62f3caec42a7cf8382cfe67bef1de710fcea4f685112e3465a1d52883a87c401"
+    },
+    "work_backend": {
+      "bytes": 1841,
+      "path": "formal/pon-nakamoto-v1/work_backend.py",
+      "sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27"
+    },
+    "work_oracle": {
+      "bytes": 2944,
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    }
+  },
+  "passed": 38,
+  "pattern": "test_service_work_settlement_v1.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:20.241781+00:00",
+  "successful_test_ids": [
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_cancelled_service_cannot_become_complete_after_reorg",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_completed_service_cannot_become_cancelled_after_reorg",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_completed_service_cannot_become_unknown_after_reorg",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_different_branch_resolution_still_requires_owner_reconciliation",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_exact_terminal_reapplication_preserves_costs_and_external_intent",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_expiry_and_orphaning_do_not_erase_unknown_or_terminal_history",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_generic_close_accounts_resources_without_proving_execution",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_reserve_after_branch_rewind_does_not_reset_terminal_outcome",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_terminal_result_bytes_and_cost_vector_remain_pinned",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_two_resolution_pins_must_agree_and_bind_original_charge_vectors",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_unbound_generic_resolution_is_not_a_service_completion",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_unknown_is_retained_but_can_reconcile_to_one_terminal_outcome",
+    "test_service_work_settlement_v1.ServiceWorkResolutionTests.test_unobserved_reservation_is_not_a_not_dispatched_certificate",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_base_payment_does_not_publish_when_bonus_resource_cost_overruns",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_base_reservation_does_not_publish_when_bonus_fails",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_contract_rejects_caller_work_qualification_and_identity_alias",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_deadline_expiry_and_unsupported_no_update_event_refuse",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_demo_is_explicitly_synthetic_and_never_records_payment",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_each_budget_must_mature_before_the_entire_service_window",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_empty_and_finite_supply_never_fabricate_liveness_or_filler",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_external_expected_context_refuses_self_consistent_replacement",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_failure_and_cancellation_are_not_successful_no_update",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_full_output_replay_rejects_product_omission_and_forged_decision",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_incomplete_cluster_support_is_no_update_not_free_bonus",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_material_binding_and_execution_use_the_same_private_snapshot",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_measured_improvement_has_separate_beneficiary_and_funding",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_numeric_aliases_duplicate_tasks_and_overlap_refuse",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_observed_expiry_cannot_be_backdated_after_unknown_or_branch_rewind",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_one_stronger_control_blocks_bonus",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_repeated_or_renamed_contract_cannot_collect_again",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_resources_or_beneficiary_cannot_change_after_reservation",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_retention_loss_blocks_bonus_but_not_completed_evaluation_fee",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_task_policy_material_and_deadline_pins_survive_branch_rewind",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_unknown_can_finish_once_without_new_reservation",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_unknown_keeps_money_resources_and_exact_original_claims",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_unselected_expert_output_must_be_replayed",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_valid_no_update_pays_base_only_and_keeps_all_authority_closed",
+    "test_service_work_settlement_v1.ServiceWorkSettlementTests.test_wrong_budget_lane_or_mining_money_cannot_fund_the_service"
+  ],
+  "tests_run": 38,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}

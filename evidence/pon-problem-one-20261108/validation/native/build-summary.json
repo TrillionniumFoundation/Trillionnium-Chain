@@ -1,0 +1,166 @@
+{
+  "schema": "native-build-summary-v1",
+  "finished_utc": "2026-11-09T02:51:25.539447+00:00",
+  "commit": "187b880048e30196407960f48b10c379859d1396",
+  "all_requested_build_commands_completed": false,
+  "all_commands_passed": false,
+  "commands": [
+    {
+      "name": "preflight-build",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "started_utc": "2026-11-09T02:49:54.933207+00:00",
+      "commit_before": "187b880048e30196407960f48b10c379859d1396",
+      "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c",
+      "env_overrides": {
+        "CARGO_HOME": "/workspace/scratch/6050776ac4f9/toolchain/cargo",
+        "RUSTUP_HOME": "/workspace/scratch/6050776ac4f9/toolchain/rustup",
+        "RUSTUP_AUTO_INSTALL": "0",
+        "TMPDIR": "/workspace/scratch/6050776ac4f9/validation-tmp",
+        "CARGO_TARGET_DIR": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "RUST_TEST_THREADS": "1",
+        "CARGO_TERM_COLOR": "never",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "CI": "true",
+        "PATH": "/workspace/scratch/6050776ac4f9/toolchain/cargo/bin:/home/agent/.codex/tmp/arg0-linux/codex-arg0i9fjYg:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+      },
+      "disk_before": {
+        "workspace": {
+          "total": 67586535424,
+          "used": 62223089664,
+          "free": 1910697984
+        },
+        "target": {
+          "total": 5225713664,
+          "used": 2579009536,
+          "free": 2646704128
+        }
+      },
+      "finished_utc": "2026-11-09T02:49:55.058391+00:00",
+      "duration_seconds": 0.11711378400013928,
+      "exit_code": 0,
+      "stop_reason": null,
+      "disk_after": {
+        "workspace": {
+          "total": 67586535424,
+          "used": 62228733952,
+          "free": 1905053696
+        },
+        "target": {
+          "total": 5225713664,
+          "used": 2579009536,
+          "free": 2646704128
+        }
+      },
+      "stdout_sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit_after": "187b880048e30196407960f48b10c379859d1396",
+      "worktree_status_after": ""
+    },
+    {
+      "name": "rust-clippy",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "started_utc": "2026-11-09T02:49:55.188495+00:00",
+      "commit_before": "187b880048e30196407960f48b10c379859d1396",
+      "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c",
+      "env_overrides": {
+        "CARGO_HOME": "/workspace/scratch/6050776ac4f9/toolchain/cargo",
+        "RUSTUP_HOME": "/workspace/scratch/6050776ac4f9/toolchain/rustup",
+        "RUSTUP_AUTO_INSTALL": "0",
+        "TMPDIR": "/workspace/scratch/6050776ac4f9/validation-tmp",
+        "CARGO_TARGET_DIR": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "RUST_TEST_THREADS": "1",
+        "CARGO_TERM_COLOR": "never",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "CI": "true",
+        "PATH": "/workspace/scratch/6050776ac4f9/toolchain/cargo/bin:/home/agent/.codex/tmp/arg0-linux/codex-arg0i9fjYg:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+      },
+      "disk_before": {
+        "workspace": {
+          "total": 67586535424,
+          "used": 62266834944,
+          "free": 1866952704
+        },
+        "target": {
+          "total": 5225713664,
+          "used": 2578944000,
+          "free": 2646769664
+        }
+      },
+      "finished_utc": "2026-11-09T02:51:25.220104+00:00",
+      "duration_seconds": 90.02954891800027,
+      "exit_code": -15,
+      "stop_reason": "resource guard: disk reserve below 256 MiB target or 128 MiB evidence",
+      "disk_after": {
+        "workspace": {
+          "total": 67586535424,
+          "used": 64139919360,
+          "free": 0
+        },
+        "target": {
+          "total": 5225713664,
+          "used": 2628882432,
+          "free": 2596831232
+        }
+      },
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "dcd62660918a9ad6ed6284e7319b55daa98f8b0125baacf1747a9fd651702590",
+      "commit_after": "187b880048e30196407960f48b10c379859d1396",
+      "worktree_status_after": ""
+    }
+  ],
+  "disk_final": {
+    "workspace": {
+      "total": 67586535424,
+      "used": 64140705792,
+      "free": 0
+    },
+    "target": {
+      "total": 5225713664,
+      "used": 2628882432,
+      "free": 2596831232
+    }
+  },
+  "target_dir": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+  "source_hashes_after": {
+    "AGENTS.md": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+    "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+    "tests/fuzz/Cargo.lock": "93cdc50ae55389e4f90f919ab7c29d3c4c3a7ed5567e80a8436b9a7c2c4357ab",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+    "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+    "scripts/ci/ci_job.sh": "691b151d3a5f27dd373516e2cc7a199871af555652001ce34b8bd03fd8571ed4",
+    ".github/workflows/trnm-required-baseline.yml": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d"
+  },
+  "worktree_status_after": "",
+  "source_inputs_unchanged": true
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "native-resume-setup-v1",
+  "utc": "2026-11-09T02:52:58.529794+00:00",
+  "stage_dir": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_",
+  "target_reused": "/tmp/trnm-native-6050776ac4f9-4g9md67l",
+  "copied_cargo_home": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/cargo",
+  "source_cargo_home": "/workspace/scratch/6050776ac4f9/toolchain/cargo",
+  "runner": "/tmp/trnm-native-resume-6050776ac4f9-mkhj90b_/run_build_attempt2.py",
+  "initial_attempt_preserved": "build-summary.json",
+  "disk_workspace": {
+    "total": 67586535424,
+    "used": 62761832448,
+    "free": 1371955200
+  },
+  "disk_tmpfs": {
+    "total": 5225713664,
+    "used": 700727296,
+    "free": 4524986368
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "actual_cost": {
+    "audit": "validation/actual-cost-contract-audit.json",
+    "binding_validation": "PASS",
+    "finite_model_certificate_is_actual_w1_lower_bound": false,
+    "new_actual_cost_experiment": false,
+    "qualification": "HOLD_NO_GO",
+    "source_binding_scope": "four_relation_source_files_only",
+    "unclosed_obligations": [
+      "complete-legal-strategy-simulation",
+      "classical-amortized-cost-lower-bound",
+      "quantum-amortized-cost-lower-bound",
+      "bounded-initial-classical-and-quantum-potential",
+      "cross-scale-and-cross-fork-composition",
+      "actual-hash-to-search-model-reduction",
+      "resource-to-physical-time-and-network-model",
+      "mixed-miner-common-prefix-chain-quality-chain-growth",
+      "native-work-identity-and-weight-bridge",
+      "real-cell-quality-and-owner-adoption"
+    ],
+    "unknown_cost_point_count": 16,
+    "unknown_cost_points": [
+      {
+        "class": "classical",
+        "units": 1
+      },
+      {
+        "class": "classical",
+        "units": 2
+      },
+      {
+        "class": "classical",
+        "units": 3
+      },
+      {
+        "class": "classical",
+        "units": 4
+      },
+      {
+        "class": "classical",
+        "units": 5
+      },
+      {
+        "class": "classical",
+        "units": 6
+      },
+      {
+        "class": "classical",
+        "units": 7
+      },
+      {
+        "class": "classical",
+        "units": 8
+      },
+      {
+        "class": "quantum",
+        "units": 1
+      },
+      {
+        "class": "quantum",
+        "units": 2
+      },
+      {
+        "class": "quantum",
+        "units": 3
+      },
+      {
+        "class": "quantum",
+        "units": 4
+      },
+      {
+        "class": "quantum",
+        "units": 5
+      },
+      {
+        "class": "quantum",
+        "units": 6
+      },
+      {
+        "class": "quantum",
+        "units": 7
+      },
+      {
+        "class": "quantum",
+        "units": 8
+      }
+    ]
+  },
+  "actual_demand_verified": false,
+  "additional_consensus_credit": 0,
+  "archive_finalized_utc": "2026-11-09T03:04:23.075789+00:00",
+  "bundle_manifest": "manifest.json",
+  "formal": {
+    "all_suite_imported_module_bytes_unchanged": true,
+    "commit": "187b880048e30196407960f48b10c379859d1396",
+    "distinct_successful_test_ids": 327,
+    "empty_suites": [],
+    "imported_repository_module_paths": 42,
+    "missing_observation_suites": [],
+    "runtime": "validation/formal/plan.json",
+    "source": "validation/formal/summary.json",
+    "status": "PASS",
+    "suite_count": 11,
+    "timed_out_suites": [],
+    "totals": {
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "passed": 327,
+      "skipped": 0,
+      "tests_run": 327,
+      "unexpected_successes": 0
+    }
+  },
+  "fresh_task_supply_verified": false,
+  "historical_reanalysis": {
+    "actual_consumer_uses_observed": 0,
+    "completed_transport_attempts": 42,
+    "independent_full_cell_calls": 28,
+    "input": "metering/inputs/historical-fanout-report.json",
+    "input_bytes": 402979,
+    "input_sha256": "915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96",
+    "new_native_campaign": false,
+    "original_source_and_binary_checks_reexecuted": false,
+    "output": "metering/historical-fanout-reanalysis-v2.json",
+    "raw_original_transport_files_reread": false,
+    "same_distinct_work_ids_across_campaign": 2,
+    "status": "PASS",
+    "topologies": [
+      {
+        "completed_transport_attempts": 6,
+        "distinct_verified_work_ids": 2,
+        "independent_full_cell_calls": 4,
+        "producer_work_ids_bound": true,
+        "receivers": 1,
+        "verified_receptions": 3
+      },
+      {
+        "completed_transport_attempts": 12,
+        "distinct_verified_work_ids": 2,
+        "independent_full_cell_calls": 8,
+        "producer_work_ids_bound": true,
+        "receivers": 2,
+        "verified_receptions": 6
+      },
+      {
+        "completed_transport_attempts": 24,
+        "distinct_verified_work_ids": 2,
+        "independent_full_cell_calls": 16,
+        "producer_work_ids_bound": true,
+        "receivers": 4,
+        "verified_receptions": 12
+      }
+    ],
+    "verified_receptions": 21
+  },
+  "implementation": {
+    "commit": "187b880048e30196407960f48b10c379859d1396",
+    "parent": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "source_map": "implementation-source-map.json",
+    "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c"
+  },
+  "independent_review": {
+    "after": "review/independent-review-after-owner-correction.json",
+    "all_independent_expectations_matched": true,
+    "anchored_accepted": 1,
+    "assignments": 729,
+    "before": "review/independent-review-before-owner-correction.json",
+    "costs_attempts_and_zero_chainwork_preserved": true,
+    "generic_close_requirement_after_correction": true,
+    "generic_close_requirement_before_correction": false,
+    "scope": "Byte-pinned pre-commit working-tree review; not relabelled as exact-commit execution.",
+    "unanchored_structural_accepted": 6
+  },
+  "metering_same_input_controls": {
+    "cases": [
+      {
+        "case": "carrier_replay_relabel",
+        "input_sha256": "8f2f3381d3716aa34380dafd1e27b1584f021dcf16d89de287d60f787da8c4b0",
+        "new_status": "FAIL",
+        "old_status": "PASS"
+      },
+      {
+        "case": "cross_receiver_slot_swap",
+        "input_sha256": "6d098f5ac9830417664fb4b68a6fa01a5f3ed203cd59798a8b2d5a76a4c2c6cb",
+        "new_status": "FAIL",
+        "old_status": "PASS"
+      },
+      {
+        "case": "distinct_nonce_alias",
+        "input_sha256": "7b78be4747d0973ebbfc59d6ac166279219f7c9cfb438942424c3ce9104de2fb",
+        "new_status": "FAIL",
+        "old_status": "PASS"
+      },
+      {
+        "case": "one_topology_renamed",
+        "input_sha256": "455fcd6c297a997f2d2158f6335461c94b43c081b2232557f54577f35a54afdb",
+        "new_status": "FAIL",
+        "old_status": "PASS"
+      },
+      {
+        "case": "all_topologies_swapped",
+        "input_sha256": "cedc437bb1ad72647ba73da390f909908a3a4cc16a5997d430260d2accf986ef",
+        "new_status": "FAIL",
+        "old_status": "PASS"
+      },
+      {
+        "case": "producer_roster_missing",
+        "input_sha256": "d0e2ec8f7ed8a626e061604940fb216199d64f580d149d53324f72cbdb34c540",
+        "new_status": "FAIL",
+        "old_status": "PASS"
+      }
+    ],
+    "complete_distinct_work_count_on_inconsistent_input": null,
+    "count": 6,
+    "fixed_status": "FAIL",
+    "observed_partial_ids_costs_and_attempts_retained": true,
+    "old_source_subset": "metering/baseline",
+    "original_status": "PASS",
+    "scope": "Synthetic report integrity; no native consensus exploit or new native workload.",
+    "unchanged_probe_sha256": "3221ddb05d1f5218be368e4bc6dfab66a3d26315dde2feb754fb8a281d84aacf"
+  },
+  "native": {
+    "commit": "187b880048e30196407960f48b10c379859d1396",
+    "full_ci_matrix_run": false,
+    "performance_or_workload_campaign": false,
+    "prior_resource_stops_preserved": 2,
+    "record": "validation/native/SUMMARY.json",
+    "retained_work_tests": {
+      "execution_seconds": 0.58,
+      "failed": 0,
+      "filtered_out": 146,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 33,
+      "roster": [
+        "pon_work::tests::bad_proof_never_gains_a_verified_type",
+        "pon_work::tests::borrowed_product_bytes_keep_rejection_before_cancellation_and_retry",
+        "pon_work::tests::borrowed_product_bytes_reject_first_middle_last_and_noncanonical_cells",
+        "pon_work::tests::cancellation_on_last_transcript_tile_never_starts_product_reconstruction",
+        "pon_work::tests::canonical_task_byte_reuse_preserves_asymmetric_inputs_and_field_precedence",
+        "pon_work::tests::cheap_rejection_precedes_progress_and_noise_cancellation_is_local",
+        "pon_work::tests::column_limb_each_prefix_matches_independent_scalar_with_strided_extremes",
+        "pon_work::tests::column_limb_full_proofs_keep_exact_statement_and_challenge_binding",
+        "pon_work::tests::controlled_verification_preserves_full_success_and_late_relation_errors",
+        "pon_work::tests::decoded_output_is_the_real_matrix_product",
+        "pon_work::tests::exact_length_and_field_are_required",
+        "pon_work::tests::expansion_cannot_exceed_fixed_hash_budget",
+        "pon_work::tests::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
+        "pon_work::tests::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results",
+        "pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof",
+        "pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes",
+        "pon_work::tests::full_limb_matrix_products_match_reference_for_all_w1_shapes",
+        "pon_work::tests::full_limb_preserves_every_cancellation_boundary_and_retry_isolation",
+        "pon_work::tests::in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh",
+        "pon_work::tests::in_place_corrections_match_independent_scalar_for_full_w1_shape",
+        "pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields",
+        "pon_work::tests::owned_square_transpose_preserves_allocation_and_exact_permutation",
+        "pon_work::tests::producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples",
+        "pon_work::tests::product_row_and_final_cancellation_never_yield_verified_work",
+        "pon_work::tests::proof_encoding_precheck_enforces_exact_wire_and_all_matrix_boundaries",
+        "pon_work::tests::proof_encoding_precheck_never_substitutes_for_full_work_or_cancellation",
+        "pon_work::tests::proof_encoding_precheck_preserves_full_verifier_zero_target_precedence",
+        "pon_work::tests::proof_statement_precheck_never_promotes_a_passing_forgery",
+        "pon_work::tests::proof_statement_precheck_rejects_task_and_ticket_without_replay",
+        "pon_work::tests::transcript_mismatch_skips_corrections_but_matching_digest_requires_product",
+        "pon_work::tests::untrusted_trace_ticket_search_needs_no_producer_and_never_gains_verified_work",
+        "pon_work::tests::verifier_error_precedence_is_preserved_before_deferred_product",
+        "pon_work::tests::work_binds_challenge_and_inputs"
+      ],
+      "scope": "Existing pon_work::tests module under all features; remaining146 library tests intentionally outside this scoped suite."
+    },
+    "status": "PASS"
+  },
+  "preserved_assembly_retry": {
+    "exit_code": 1,
+    "record": "assembly/assembly-first-attempt.json",
+    "scope": "Draft link validation ran before the final manifest existed; assembly ordering only, no source or protocol test."
+  },
+  "preserved_preparation_refusal": {
+    "exit_code": 1,
+    "reason": "Development-plan source pin changed before its legitimate corpus refresh.",
+    "record": "validation/preparation-source-pin.json"
+  },
+  "preserved_prepublication_archive_observation": {
+    "expected_archive_members_at_that_stage": 238,
+    "implementation_source_changed": false,
+    "initial_archive_commit": "ae1ab19d036b077d841d82dd946bb5886e7cf703",
+    "initial_tracked_members": 236,
+    "missing_original_logs_explicitly_staged": true,
+    "raw_artifact_attribute_path_count": 3,
+    "record": "assembly/prepublication-archive-observation.json"
+  },
+  "production_activation": false,
+  "publication": {
+    "actual_publication_attestation": "Subsequent GitHub PR/ref metadata; this archive predates its own evidence commit and push.",
+    "delivery_scope": "Evidence and three exact raw-artifact Git attributes; no implementation source changes.",
+    "merge_or_activation_authorized": false,
+    "projection_is_full_source": false,
+    "record": "publication/prepared-sender-187.json",
+    "sender": "ProfHepta",
+    "source_projection_files": 33,
+    "status": "PREPARED_SENDER_VERIFIED",
+    "transport_record": "publication/transport-audit-187.json"
+  },
+  "qualification": "HOLD",
+  "schema": "pon-problem-one-evidence-delivery-v1",
+  "service_regressions": {
+    "exact_original_three_methods_retained": true,
+    "fixed_passed": 3,
+    "latest_targeted_service_and_budget_tests": 61,
+    "latest_targeted_test_count_already_in_formal_total": true,
+    "original_exit_code": 1,
+    "original_failed": 3,
+    "records": [
+      "owner/baseline-red.json",
+      "owner/green-01.json",
+      "owner/green-02.json",
+      "owner/SUMMARY.json"
+    ],
+    "scope": "Original owner terminal service outcomes across reorganization and branch accounting reconciliation."
+  },
+  "source_after": {
+    "identical_to_initial_source_before": true,
+    "identical_to_native_source_before": true,
+    "invocation": "validation/implementation-source-after.receipt.json",
+    "record": "validation/implementation-source-after.json",
+    "status": "PASS",
+    "tests_executed_by_identity_check": false
+  },
+  "source_before": {
+    "record": "validation/implementation-source-before.json",
+    "status": "PASS",
+    "tests_executed_by_identity_check": false
+  },
+  "source_ci": {
+    "checked_source_roster_unchanged": true,
+    "command_count": 10,
+    "commit": "187b880048e30196407960f48b10c379859d1396",
+    "counts_are_not_added_to_formal_distinct_test_total": true,
+    "counts_overlap": true,
+    "per_suite_test_counts": [
+      {
+        "name": "source-integrity-tests",
+        "reported_test_count": 43
+      },
+      {
+        "name": "project-boundary-tests",
+        "reported_test_count": 16
+      },
+      {
+        "name": "ci-execution-tests",
+        "reported_test_count": 77
+      },
+      {
+        "name": "ci-contract-tests",
+        "reported_test_count": 164
+      },
+      {
+        "name": "pq-integration-tests",
+        "reported_test_count": 57
+      }
+    ],
+    "source": "validation/source-ci/summary.json",
+    "status": "PASS"
+  },
+  "status": "IMPLEMENTATION_VALIDATION_COMPLETE",
+  "theoretical_contract": {
+    "actual_lower_bound_proved": false,
+    "commit": "187b880048e30196407960f48b10c379859d1396",
+    "repository_path": "formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md",
+    "scope": "Fixed work/success/resource context, unconditional lifecycle cost, legal task selection, cache/reuse, matched application and joint savings baselines, and quantum model limits.",
+    "section": "6",
+    "sha256": "e1beca8eda3951f813abb2098eb6cd6c9045923f69cdb147de3bb46e612e6a65"
+  }
+}
